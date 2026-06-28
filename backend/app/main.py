@@ -3,6 +3,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 import structlog
 import uuid
 
@@ -41,13 +43,43 @@ app = FastAPI(
 
 # ── Middlewares ────────────────────────────────────────────────────
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+def _origin_allowed(origin: str) -> bool:
+    if origin in settings.cors_origins:
+        return True
+    # Support wildcard subdomains: *.nexusblog.io
+    platform = settings.PLATFORM_DOMAIN
+    if origin.startswith("https://") and origin.endswith(f".{platform}"):
+        return True
+    return False
+
+
+class DynamicCORSMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        origin = request.headers.get("origin", "")
+        allowed = _origin_allowed(origin)
+
+        if request.method == "OPTIONS":
+            if allowed:
+                return Response(
+                    status_code=204,
+                    headers={
+                        "Access-Control-Allow-Origin": origin,
+                        "Access-Control-Allow-Credentials": "true",
+                        "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+                        "Access-Control-Allow-Headers": "*",
+                        "Access-Control-Max-Age": "600",
+                    },
+                )
+            return Response(status_code=403)
+
+        response = await call_next(request)
+        if allowed:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response
+
+
+app.add_middleware(DynamicCORSMiddleware)
 
 app.add_middleware(TenantMiddleware)
 

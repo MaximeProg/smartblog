@@ -93,15 +93,13 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins(self) -> list[str]:
-        base = (
-            ["http://localhost:3000", "http://127.0.0.1:3000"]
-            if self.APP_ENV == "development"
-            else [f"https://*.{self.PLATFORM_DOMAIN}", f"https://{self.PLATFORM_DOMAIN}"]
-        )
+        origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+        if self.APP_ENV != "development":
+            origins += [f"https://{self.PLATFORM_DOMAIN}"]
         if self.EXTRA_CORS_ORIGINS:
             extra = [o.strip() for o in self.EXTRA_CORS_ORIGINS.split(",") if o.strip()]
-            base = list(dict.fromkeys(base + extra))
-        return base
+            origins += extra
+        return list(dict.fromkeys(origins))
 
 
 settings = Settings()
