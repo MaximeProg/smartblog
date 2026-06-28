@@ -124,9 +124,10 @@ interface Props {
   locale: string;
   q?: string;
   category?: string;
+  apiError?: boolean;
 }
 
-export function BlogClient({ blogs, locale, q: initialQ, category: initialCat }: Props) {
+export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, apiError }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -187,7 +188,25 @@ export function BlogClient({ blogs, locale, q: initialQ, category: initialCat }:
       </p>
 
       {/* Grid */}
-      {blogs.length === 0 ? (
+      {apiError ? (
+        <div className="text-center py-32 text-slate-400">
+          <Rss className="h-14 w-14 mx-auto mb-5 opacity-20" />
+          <p className="font-semibold text-lg">
+            {isFr ? 'Service temporairement indisponible' : 'Service temporarily unavailable'}
+          </p>
+          <p className="text-sm mt-2 max-w-sm mx-auto">
+            {isFr
+              ? 'Le serveur met quelques secondes à démarrer. Rechargez la page dans un instant.'
+              : 'The server is waking up. Reload the page in a moment.'}
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="inline-block mt-6 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors"
+          >
+            {isFr ? 'Recharger' : 'Reload'}
+          </button>
+        </div>
+      ) : blogs.length === 0 ? (
         <div className="text-center py-32 text-slate-400">
           <Rss className="h-14 w-14 mx-auto mb-5 opacity-20" />
           <p className="font-semibold text-lg">

@@ -52,7 +52,7 @@ export interface PublicCategory {
 
 async function fetchPublic<T>(path: string, options?: RequestInit): Promise<T> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 5000);
+  const timer = setTimeout(() => controller.abort(), 12000);
   try {
     const res = await fetch(`${API_BASE}/api/v1/public${path}`, {
       ...options,

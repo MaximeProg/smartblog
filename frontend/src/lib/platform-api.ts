@@ -46,7 +46,7 @@ export interface PricingPlan {
 
 async function apiFetch(url: string, revalidate: number) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 4000);
+  const timer = setTimeout(() => controller.abort(), 12000);
   try {
     const res = await fetch(url, {
       signal: controller.signal,

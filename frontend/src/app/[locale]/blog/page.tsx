@@ -6,24 +6,31 @@ import { BlogClient } from './BlogClient';
 
 export const dynamic = 'force-dynamic';
 
-async function fetchBlogs(q?: string, category?: string) {
+async function fetchBlogs(q?: string, category?: string): Promise<{ blogs: Blog[]; error: boolean }> {
   const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
   const params = new URLSearchParams({ limit: '48' });
   if (q) params.set('q', q);
   if (category) params.set('category', category);
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 4000);
+  const timer = setTimeout(() => controller.abort(), 12000);
   try {
     const res = await fetch(`${API}/api/v1/public?${params}`, {
       signal: controller.signal,
     });
-    if (!res.ok) return [];
-    return res.json();
+    if (!res.ok) return { blogs: [], error: true };
+    const data = await res.json();
+    return { blogs: Array.isArray(data) ? data : [], error: false };
   } catch {
-    return [];
+    return { blogs: [], error: true };
   } finally {
     clearTimeout(timer);
   }
+}
+
+interface Blog {
+  name: string; slug: string; description: string | null; category: string | null;
+  logo_url: string | null; cover_image_url: string | null; language: string;
+  theme: string; primary_color: string; articles_count: number;
 }
 
 interface Props {
@@ -35,7 +42,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const { locale } = await params;
   const { q, category } = await searchParams;
   const isFr = locale === 'fr';
-  const blogs = await fetchBlogs(q, category);
+  const { blogs, error } = await fetchBlogs(q, category);
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
@@ -50,7 +57,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
       />
 
       <Suspense>
-        <BlogClient blogs={blogs} locale={locale} q={q} category={category} />
+        <BlogClient blogs={blogs} locale={locale} q={q} category={category} apiError={error} />
       </Suspense>
 
       <PublicFooter locale={locale} />
