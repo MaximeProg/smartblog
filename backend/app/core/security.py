@@ -84,13 +84,20 @@ async def store_refresh_token(
         "tenant_id": tenant_id,
         "role": role,
     })
-    await redis.setex(key_refresh_token(token_hash), ttl, payload)
+    try:
+        await redis.setex(key_refresh_token(token_hash), ttl, payload)
+    except Exception:
+        # Redis unavailable — login still works, refresh tokens won't persist
+        pass
 
 
 async def get_refresh_token_data(token_plain: str) -> dict | None:
     import json
     token_hash = hashlib.sha256(token_plain.encode()).hexdigest()
-    data = await redis.get(key_refresh_token(token_hash))
+    try:
+        data = await redis.get(key_refresh_token(token_hash))
+    except Exception:
+        return None
     if data is None:
         return None
     return json.loads(data)
