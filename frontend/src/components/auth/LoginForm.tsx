@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MailCheck } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useAuthStore } from '@/store/auth.store';
 import { authApi } from '@/lib/api';
-import { signInWithEmail, signInWithGoogle } from '@/lib/firebase';
+import { signInWithEmail, signInWithGoogle, resendVerificationEmail } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 const schema = z.object({
@@ -38,10 +38,13 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
 
   const [googleLoading, setGoogleLoading] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  const [showResend, setShowResend] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
@@ -69,11 +72,11 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
       await handleBackendLogin(idToken);
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code ?? '';
-      const detail: string =
-        (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? '';
+      const responseData = (err as { response?: { data?: Record<string, string> } })?.response?.data ?? {};
+      const serverMsg: string = responseData.message ?? responseData.detail ?? '';
       const rawMsg = err instanceof Error ? err.message : '';
 
-      console.error('[Login] error:', code || rawMsg, detail || '');
+      console.error('[Login] error:', code || rawMsg, serverMsg || '');
 
       let msg: string;
       if (
@@ -85,14 +88,17 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
         msg = t('errors.invalidCredentials');
       } else if (code === 'auth/too-many-requests') {
         msg = 'Too many attempts. Try again later or reset your password.';
-      } else if (detail.toLowerCase().includes('verify') || detail.includes('EMAIL_NOT_VERIFIED')) {
-        msg = t('errors.emailNotVerified');
       } else if (code === 'auth/network-request-failed') {
         msg = 'Network error — cannot reach Firebase.';
       } else if (code === 'auth/operation-not-allowed') {
         msg = 'Email/password sign-in is disabled in Firebase Console.';
+      } else if (serverMsg.toLowerCase().includes('verify') || serverMsg.includes('EMAIL_NOT_VERIFIED')) {
+        msg = t('errors.emailNotVerified');
+        setShowResend(true);
+      } else if (serverMsg) {
+        msg = serverMsg;
       } else {
-        msg = `${t('errors.generic')} [${code || detail || rawMsg || 'unknown'}]`;
+        msg = `${t('errors.generic')} [${code || rawMsg || 'unknown'}]`;
       }
 
       setFormError(msg);
@@ -192,6 +198,30 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
           <div className="rounded-md bg-destructive/10 border border-destructive/30 px-3 py-2 text-sm text-destructive">
             {formError}
           </div>
+        )}
+
+        {showResend && (
+          <button
+            type="button"
+            disabled={resendLoading}
+            onClick={async () => {
+              const { email, password } = getValues();
+              setResendLoading(true);
+              try {
+                await resendVerificationEmail(email, password);
+                toast({ title: 'Email de vérification renvoyé — vérifiez votre boîte mail.' });
+                setShowResend(false);
+              } catch {
+                toast({ variant: 'destructive', title: 'Impossible de renvoyer l\'email.' });
+              } finally {
+                setResendLoading(false);
+              }
+            }}
+            className="w-full flex items-center justify-center gap-2 text-sm text-blue-600 hover:text-blue-700 underline underline-offset-2"
+          >
+            {resendLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <MailCheck className="h-3.5 w-3.5" />}
+            Renvoyer l&apos;email de vérification
+          </button>
         )}
 
         <Button type="submit" className="w-full" disabled={isSubmitting || googleLoading}>

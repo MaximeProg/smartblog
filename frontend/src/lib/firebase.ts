@@ -59,6 +59,11 @@ export async function sendPasswordReset(email: string): Promise<void> {
   await sendPasswordResetEmail(getFirebaseAuth(), email);
 }
 
+export async function resendVerificationEmail(email: string, password: string): Promise<void> {
+  const credential = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
+  await sendEmailVerification(credential.user);
+}
+
 // Opens a Google popup and returns the Firebase ID token
 export async function signInWithGoogle(): Promise<string> {
   const result = await signInWithPopup(getFirebaseAuth(), googleProvider);

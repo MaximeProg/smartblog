@@ -43,9 +43,10 @@ async def verify_firebase_id_token(id_token: str) -> dict:
     sign_in_provider = decoded.get("firebase", {}).get("sign_in_provider", "unknown")
     email_verified = decoded.get("email_verified", False)
 
-    # Les comptes email/password doivent avoir vérifié leur adresse (prod uniquement)
+    # Les comptes email/password doivent avoir vérifié leur adresse (optionnel, contrôlé par env)
     from app.core.config import settings
-    if sign_in_provider == "password" and not email_verified and settings.is_production:
+    require_verification = getattr(settings, "REQUIRE_EMAIL_VERIFICATION", "false").lower() == "true"
+    if sign_in_provider == "password" and not email_verified and require_verification:
         raise ValueError("EMAIL_NOT_VERIFIED")
 
     return {

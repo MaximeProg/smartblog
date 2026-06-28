@@ -80,6 +80,9 @@ class Settings(BaseSettings):
     # Ex: EXTRA_CORS_ORIGINS=https://nexusblog.vercel.app,https://staging.nexusblog.io
     EXTRA_CORS_ORIGINS: str = ""
 
+    # Exiger la vérification email avant connexion (mettre "true" en prod quand email configuré)
+    REQUIRE_EMAIL_VERIFICATION: str = "false"
+
     @field_validator("DATABASE_URL")
     @classmethod
     def validate_db_url(cls, v: str) -> str:
