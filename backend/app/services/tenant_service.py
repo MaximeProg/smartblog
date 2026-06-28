@@ -21,54 +21,55 @@ from app.schemas.tenant import (
 # -1 = illimité
 
 USER_PLAN_BLOG_LIMITS: dict[PlanTier, int] = {
-    PlanTier.FREE: 1,
-    PlanTier.STARTER: 1,
-    PlanTier.PRO: 1,
-    PlanTier.BUSINESS: 5,
-    PlanTier.ENTERPRISE: -1,
+    PlanTier.FREE:       1,
+    PlanTier.STARTER:    2,
+    PlanTier.PRO:        5,
+    PlanTier.BUSINESS:  -1,
+    PlanTier.ENTERPRISE: -1,  # legacy
 }
 
 # ── Limites de ressources par blog (héritées du plan utilisateur) ──
+# None = illimité
 
 PLAN_LIMITS: dict[PlanTier, dict] = {
     PlanTier.FREE: {
-        "articles_max": 10,
+        "articles_max": 10,       # 10 articles/month
         "authors_max": 1,
         "storage_gb": 2.0,
-        "subscribers_max": 500,
-        "domains_max": 0,
+        "subscribers_max": 0,     # no newsletter
+        "domains_max": 0,         # nexusblog.io subdomain only
         "api_requests_monthly": 0,
     },
     PlanTier.STARTER: {
-        "articles_max": 100,
-        "authors_max": 2,
+        "articles_max": None,     # unlimited
+        "authors_max": 3,
         "storage_gb": 20.0,
-        "subscribers_max": 5_000,
+        "subscribers_max": 1_000,
         "domains_max": 1,
-        "api_requests_monthly": 5_000,
+        "api_requests_monthly": 0,
     },
     PlanTier.PRO: {
-        "articles_max": 500,
-        "authors_max": 5,
+        "articles_max": None,     # unlimited
+        "authors_max": 10,
         "storage_gb": 50.0,
-        "subscribers_max": 25_000,
-        "domains_max": 3,
-        "api_requests_monthly": 50_000,
+        "subscribers_max": 10_000,
+        "domains_max": 1,
+        "api_requests_monthly": 0,
     },
     PlanTier.BUSINESS: {
-        "articles_max": 2_000,
-        "authors_max": 20,
+        "articles_max": None,     # unlimited
+        "authors_max": None,      # unlimited
         "storage_gb": 200.0,
-        "subscribers_max": 100_000,
-        "domains_max": 10,
-        "api_requests_monthly": 200_000,
+        "subscribers_max": None,  # unlimited
+        "domains_max": None,      # unlimited
+        "api_requests_monthly": None,  # unlimited
     },
-    PlanTier.ENTERPRISE: {
+    PlanTier.ENTERPRISE: {        # legacy — same as business
         "articles_max": None,
         "authors_max": None,
         "storage_gb": 500.0,
         "subscribers_max": None,
-        "domains_max": 25,
+        "domains_max": None,
         "api_requests_monthly": None,
     },
 }

@@ -53,7 +53,7 @@ class TenantLimits(BaseModel):
     authors_max: int | None
     storage_gb: float
     subscribers_max: int | None
-    domains_max: int
+    domains_max: int | None
     api_requests_monthly: int | None
 
 

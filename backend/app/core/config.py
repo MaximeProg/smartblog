@@ -76,6 +76,10 @@ class Settings(BaseSettings):
     PLATFORM_DOMAIN: str = "nexusblog.io"
     PLATFORM_API_DOMAIN: str = "api.nexusblog.io"
 
+    # URLs frontend supplémentaires autorisées (séparées par des virgules)
+    # Ex: EXTRA_CORS_ORIGINS=https://nexusblog.vercel.app,https://staging.nexusblog.io
+    EXTRA_CORS_ORIGINS: str = ""
+
     @field_validator("DATABASE_URL")
     @classmethod
     def validate_db_url(cls, v: str) -> str:
@@ -89,9 +93,15 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins(self) -> list[str]:
-        if self.APP_ENV == "development":
-            return ["http://localhost:3000", "http://127.0.0.1:3000"]
-        return [f"https://*.{self.PLATFORM_DOMAIN}", f"https://{self.PLATFORM_DOMAIN}"]
+        base = (
+            ["http://localhost:3000", "http://127.0.0.1:3000"]
+            if self.APP_ENV == "development"
+            else [f"https://*.{self.PLATFORM_DOMAIN}", f"https://{self.PLATFORM_DOMAIN}"]
+        )
+        if self.EXTRA_CORS_ORIGINS:
+            extra = [o.strip() for o in self.EXTRA_CORS_ORIGINS.split(",") if o.strip()]
+            base = list(dict.fromkeys(base + extra))
+        return base
 
 
 settings = Settings()
