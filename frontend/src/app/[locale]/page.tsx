@@ -31,16 +31,72 @@ export default async function HomePage({
     { icon: FileText, title: t('features.seoTitle'), desc: t('features.seoDesc'), color: 'bg-orange-500/10 text-orange-400' },
   ];
 
-  const plans = pricingPlans.map((p: PricingPlan) => ({
-    name: isFr ? p.name_fr : p.name,
-    price: p.price_monthly === null ? (isFr ? 'Gratuit' : 'Free') : `$${p.price_monthly}`,
-    period: p.price_monthly !== null ? (isFr ? '/mois' : '/mo') : undefined,
-    desc: isFr ? (p.description_fr ?? '') : (p.description ?? ''),
-    features: isFr ? p.features_fr : p.features,
-    cta: p.price_monthly === null ? t('pricing.ctaFree') : t('pricing.cta'),
-    highlight: p.is_highlighted,
-    badge: isFr ? p.badge_fr : p.badge,
-  }));
+  const STATIC_PLANS = [
+    {
+      name: isFr ? 'Gratuit' : 'Free',
+      price: isFr ? 'Gratuit' : 'Free',
+      period: undefined,
+      desc: isFr ? 'Parfait pour commencer à bloguer.' : 'Perfect to start blogging.',
+      features: isFr
+        ? ['1 blog', '10 articles / mois', '1 auteur', 'Sous-domaine nexusblog.io']
+        : ['1 blog', '10 articles / month', '1 author', 'nexusblog.io subdomain'],
+      cta: t('pricing.ctaFree'),
+      highlight: false,
+      badge: null,
+    },
+    {
+      name: 'Starter',
+      price: '€9',
+      period: isFr ? '/mois' : '/mo',
+      desc: isFr ? 'Pour les blogueurs sérieux.' : 'For serious bloggers.',
+      features: isFr
+        ? ['2 blogs', 'Articles illimités', '3 auteurs', 'Domaine personnalisé', 'Newsletter — 1 000 abonnés']
+        : ['2 blogs', 'Unlimited articles', '3 authors', 'Custom domain', 'Newsletter — 1,000 subscribers'],
+      cta: t('pricing.cta'),
+      highlight: false,
+      badge: null,
+    },
+    {
+      name: 'Pro',
+      price: '€29',
+      period: isFr ? '/mois' : '/mo',
+      desc: isFr ? 'Pour les équipes créatives.' : 'For creative teams.',
+      features: isFr
+        ? ['5 blogs', 'Articles illimités', '10 auteurs', 'Domaine personnalisé', 'Newsletter — 10 000 abonnés', 'IA — 50 articles / mois', 'Analytics avancés']
+        : ['5 blogs', 'Unlimited articles', '10 authors', 'Custom domain', 'Newsletter — 10,000 subscribers', 'AI — 50 articles / month', 'Advanced analytics'],
+      cta: t('pricing.cta'),
+      highlight: true,
+      badge: isFr ? 'Populaire' : 'Popular',
+    },
+    {
+      name: 'Business',
+      price: '€79',
+      period: isFr ? '/mois' : '/mo',
+      desc: isFr ? 'Pour les grandes organisations.' : 'For large organizations.',
+      features: isFr
+        ? ['Blogs illimités', 'Articles illimités', 'Auteurs illimités', 'Domaines illimités', 'Newsletter illimitée', 'IA illimitée', 'Accès API', 'White label']
+        : ['Unlimited blogs', 'Unlimited articles', 'Unlimited authors', 'Unlimited domains', 'Unlimited newsletter', 'Unlimited AI', 'API access', 'White label'],
+      cta: t('pricing.cta'),
+      highlight: false,
+      badge: null,
+    },
+  ];
+
+  // Use API plans if the API returns exactly 4 plans; otherwise use static fallback
+  const plans = pricingPlans.length === 4
+    ? pricingPlans.map((p: PricingPlan) => ({
+        name: isFr ? p.name_fr : p.name,
+        price: p.price_monthly === null
+          ? (isFr ? 'Gratuit' : 'Free')
+          : `${p.currency === 'EUR' ? '€' : '$'}${p.price_monthly}`,
+        period: p.price_monthly !== null ? (isFr ? '/mois' : '/mo') : undefined,
+        desc: isFr ? (p.description_fr ?? '') : (p.description ?? ''),
+        features: isFr ? p.features_fr : p.features,
+        cta: p.price_monthly === null ? t('pricing.ctaFree') : t('pricing.cta'),
+        highlight: p.is_highlighted,
+        badge: isFr ? p.badge_fr : p.badge,
+      }))
+    : STATIC_PLANS;
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
@@ -221,7 +277,7 @@ export default async function HomePage({
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3 md:mb-4">{t('pricing.title')}</h2>
             <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg">{t('pricing.subtitle')}</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 items-start">
             {plans.map((plan) => (
               <div
                 key={plan.name}
