@@ -79,9 +79,9 @@ class DynamicCORSMiddleware(BaseHTTPMiddleware):
         return response
 
 
-app.add_middleware(DynamicCORSMiddleware)
-
 app.add_middleware(TenantMiddleware)
+
+app.add_middleware(DynamicCORSMiddleware)
 
 
 # ── Gestionnaires d'erreurs ────────────────────────────────────────
@@ -137,6 +137,11 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 # ── Routes ────────────────────────────────────────────────────────
 
 app.include_router(api_router)
+
+
+@app.get("/", tags=["infra"])
+async def root():
+    return {"status": "ok", "name": "NexusBlog API", "version": "1.0.0"}
 
 
 @app.get("/health", tags=["infra"])

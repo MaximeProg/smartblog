@@ -20,7 +20,8 @@ class TenantMiddleware(BaseHTTPMiddleware):
         LOCAL_HOSTS = {"127.0.0.1", "localhost", "testclient"}
         host_raw = request.headers.get("host", "").split(":")[0].lower()
 
-        if path.startswith("/superadmin") or path in ("/health", "/metrics", "/docs", "/openapi.json", "/redoc") or host_raw in LOCAL_HOSTS:
+        API_BYPASS_PREFIXES = ("/api/v1/", "/superadmin", "/health", "/metrics", "/docs", "/openapi.json", "/redoc")
+        if any(path.startswith(p) for p in API_BYPASS_PREFIXES) or host_raw in LOCAL_HOSTS:
             request.state.tenant_id = None
             request.state.is_super_admin = False
             return await call_next(request)
