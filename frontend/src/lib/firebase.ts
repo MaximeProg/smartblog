@@ -5,8 +5,7 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   sendPasswordResetEmail,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   GoogleAuthProvider,
   signOut,
   onAuthStateChanged,
@@ -24,7 +23,6 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
 };
 
-const GOOGLE_REDIRECT_KEY = 'nexusblog_google_redirect';
 
 // Lazy init — only called in the browser, avoids SSR issues
 function getFirebaseAuth(): Auth {
@@ -61,28 +59,10 @@ export async function sendPasswordReset(email: string): Promise<void> {
   await sendPasswordResetEmail(getFirebaseAuth(), email);
 }
 
-// Marks a redirect as pending, then navigates to Google
-export async function signInWithGoogle(): Promise<void> {
-  sessionStorage.setItem(GOOGLE_REDIRECT_KEY, '1');
-  await signInWithRedirect(getFirebaseAuth(), googleProvider);
-}
-
-// Only calls getRedirectResult when we know a Google redirect was triggered —
-// avoids the unnecessary network call that caused auth/network-request-failed on every page load
-export async function getGoogleRedirectResult(): Promise<string | null> {
-  if (typeof window === 'undefined') return null;
-  const isPending = sessionStorage.getItem(GOOGLE_REDIRECT_KEY);
-  if (!isPending) return null;
-
-  sessionStorage.removeItem(GOOGLE_REDIRECT_KEY);
-  try {
-    const result = await getRedirectResult(getFirebaseAuth());
-    if (!result) return null;
-    return result.user.getIdToken();
-  } catch (err) {
-    console.warn('[Firebase] getRedirectResult failed:', err);
-    return null;
-  }
+// Opens a Google popup and returns the Firebase ID token
+export async function signInWithGoogle(): Promise<string> {
+  const result = await signInWithPopup(getFirebaseAuth(), googleProvider);
+  return result.user.getIdToken();
 }
 
 export async function firebaseSignOut(): Promise<void> {

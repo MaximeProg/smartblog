@@ -66,7 +66,7 @@ class DynamicCORSMiddleware(BaseHTTPMiddleware):
                         "Access-Control-Allow-Origin": origin,
                         "Access-Control-Allow-Credentials": "true",
                         "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-                        "Access-Control-Allow-Headers": "*",
+                        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, Accept, Origin, X-Tenant-ID, X-API-Key",
                         "Access-Control-Max-Age": "600",
                     },
                 )

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useAuthStore } from '@/store/auth.store';
 import { authApi } from '@/lib/api';
-import { signInWithEmail, signInWithGoogle, getGoogleRedirectResult } from '@/lib/firebase';
+import { signInWithEmail, signInWithGoogle } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 const schema = z.object({
@@ -59,39 +59,6 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
     }
   }
 
-  // After signInWithRedirect, sessionStorage flag signals a pending result
-  useEffect(() => {
-    const hasPendingRedirect =
-      typeof window !== 'undefined' &&
-      sessionStorage.getItem('nexusblog_google_redirect') === '1';
-    if (!hasPendingRedirect) return;
-
-    let cancelled = false;
-    setGoogleLoading(true);
-
-    getGoogleRedirectResult()
-      .then(async (idToken) => {
-        if (idToken && !cancelled) await handleBackendLogin(idToken);
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        const code = (err as { code?: string })?.code ?? '';
-        console.error('[Google Login] redirect result error:', code, err);
-        if (code === 'auth/account-exists-with-different-credential') {
-          const msg = 'An account already exists with this email using a different sign-in method. Please sign in with email/password instead.';
-          setFormError(msg);
-          toast({ variant: 'destructive', title: msg });
-        } else {
-          toast({ variant: 'destructive', title: t('errors.generic') });
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setGoogleLoading(false);
-      });
-
-    return () => { cancelled = true; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const onSubmit = async ({ email, password }: FormValues) => {
     setFormError(null);
@@ -133,14 +100,24 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
     }
   };
 
-  // Trigger the redirect to Google
   const handleGoogle = async () => {
     setGoogleLoading(true);
     try {
-      await signInWithGoogle(); // navigates away — page redirects to Google
-    } catch {
+      const idToken = await signInWithGoogle();
+      await handleBackendLogin(idToken);
+    } catch (err: unknown) {
+      const code = (err as { code?: string })?.code ?? '';
+      if (code === 'auth/account-exists-with-different-credential') {
+        const msg = 'An account already exists with this email. Please sign in with email/password.';
+        setFormError(msg);
+        toast({ variant: 'destructive', title: msg });
+      } else if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+        // user closed popup — silent
+      } else {
+        toast({ variant: 'destructive', title: t('errors.generic') });
+      }
+    } finally {
       setGoogleLoading(false);
-      toast({ variant: 'destructive', title: t('errors.generic') });
     }
   };
 
