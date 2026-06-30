@@ -89,7 +89,16 @@ export interface CreateTenantData {
   timezone?: string;
   theme?: string;
   primary_color?: string;
+  secondary_color?: string;
   font_family?: string;
+  logo_url?: string;
+  favicon_url?: string;
+  cover_image_url?: string;
+  social_links?: Record<string, string>;
+  sidebar_config?: Record<string, unknown>;
+  seo_title_template?: string;
+  seo_meta_description?: string;
+  template_config?: Record<string, unknown>;
 }
 
 export interface UpdateTenantData {
@@ -99,10 +108,18 @@ export interface UpdateTenantData {
   language?: string;
   timezone?: string;
   primary_color?: string;
+  secondary_color?: string;
   font_family?: string;
   theme?: string;
+  logo_url?: string;
+  favicon_url?: string;
+  cover_image_url?: string;
+  social_links?: Record<string, string>;
+  sidebar_config?: Record<string, unknown>;
   comments_mode?: CommentsMode;
+  seo_title_template?: string;
   seo_meta_description?: string;
+  template_config?: Record<string, unknown>;
 }
 
 export interface SlugCheckResponse {

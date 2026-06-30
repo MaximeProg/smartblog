@@ -20,7 +20,7 @@ export function Header({ locale, title, breadcrumbs, actions }: HeaderProps) {
   const showBreadcrumbs = breadcrumbs && breadcrumbs.length > 0;
 
   return (
-    <header className="fixed top-0 right-0 left-[260px] z-20 flex h-14 items-center justify-between border-b border-slate-100 bg-white/95 dark:bg-zinc-900/95 dark:border-zinc-800 backdrop-blur px-5 gap-4">
+    <header className="shrink-0 z-20 flex h-14 items-center justify-between border-b border-slate-100 bg-white/95 dark:bg-zinc-900/95 dark:border-zinc-800 backdrop-blur px-5 gap-4">
 
       {/* Left: breadcrumbs OR title */}
       <div className="flex items-center gap-1.5 min-w-0">

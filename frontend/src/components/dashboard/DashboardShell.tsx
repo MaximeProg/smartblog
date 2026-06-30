@@ -29,10 +29,10 @@ export function DashboardShell({
   noPadding = false,
 }: DashboardShellProps) {
   return (
-    <div className="flex min-h-screen bg-slate-50 dark:bg-zinc-950">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-zinc-950">
       <Sidebar locale={locale} blogId={blogId} />
 
-      <div className="flex-1 ml-[260px] flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <Header
           locale={locale}
           title={title}
@@ -40,7 +40,7 @@ export function DashboardShell({
           actions={actions}
         />
 
-        <main className={`flex-1 mt-14 overflow-auto ${noPadding ? '' : 'p-6'}`}>
+        <main className={noPadding ? 'flex-1 flex flex-col overflow-hidden' : 'flex-1 overflow-auto p-6'}>
           {children}
         </main>
       </div>

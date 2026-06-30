@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
-  LayoutDashboard, FileText, Tags, MessageSquare, Image, Megaphone,
-  BarChart2, Bot, Share2, Palette, Users, Settings,
+  LayoutDashboard, FileText, Tag, MessageSquare, Image,
+  BarChart2, Bot, Megaphone, Share2, Palette, Users, Settings,
   Plus, ChevronDown, ChevronRight, Mail, Globe, LogOut,
-  ExternalLink, Zap, ArrowLeft,
+  ExternalLink, Zap, ArrowLeft, Brush, Menu, LayoutGrid,
+  Search, FileStack, Sparkles,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useAuthStore, useCurrentTenant } from '@/store/auth.store';
@@ -44,40 +45,50 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
     {
       label: t('sectionOverview'),
       items: [
-        { href: `${base}/overview`,   icon: LayoutDashboard, label: t('overview') },
+        { href: `${base}/overview`, icon: LayoutDashboard, label: t('overview') },
       ],
     },
     {
       label: t('sectionContent'),
       items: [
         { href: `${base}/articles`,   icon: FileText,      label: t('articles') },
-        { href: `${base}/categories`, icon: Tags,          label: t('categories') },
-        { href: `${base}/tags`,       icon: Tags,          label: t('tags'),    soon: true },
+        { href: `${base}/categories`, icon: Tag,           label: t('categories') },
+        { href: `${base}/tags`,       icon: Sparkles,      label: t('tags'),     soon: true },
+        { href: `${base}/media`,      icon: Image,         label: t('media'),    soon: true },
+        { href: `${base}/pages`,      icon: FileStack,     label: t('pages'),    soon: true },
         { href: `${base}/comments`,   icon: MessageSquare, label: t('comments'), soon: true },
-        { href: `${base}/media`,      icon: Image,         label: t('media'),   soon: true },
+      ],
+    },
+    {
+      label: t('sectionDesign'),
+      items: [
+        { href: `${base}/appearance`,       icon: Palette,    label: t('appearance') },
+        { href: `${base}/customization`,    icon: Brush,      label: t('customization'), soon: true },
+        { href: `${base}/menus`,            icon: Menu,       label: t('menus'),         soon: true },
+        { href: `${base}/widgets`,          icon: LayoutGrid, label: t('widgets'),       soon: true },
       ],
     },
     {
       label: t('sectionGrowth'),
       items: [
         { href: `${base}/analytics`,  icon: BarChart2, label: t('analytics') },
-        { href: `${base}/ai`,         icon: Bot,       label: t('ai'),         soon: true },
-        { href: `${base}/ads`,        icon: Megaphone, label: t('ads'),        soon: true },
-        { href: `${base}/social`,     icon: Share2,    label: t('social'),     soon: true },
         { href: `${base}/newsletter`, icon: Mail,      label: t('newsletter') },
+        { href: `${base}/seo`,        icon: Search,    label: t('seo'),     soon: true },
+        { href: `${base}/ai`,         icon: Bot,       label: t('ai'),      soon: true },
+        { href: `${base}/ads`,        icon: Megaphone, label: t('ads'),     soon: true },
+        { href: `${base}/social`,     icon: Share2,    label: t('social'),  soon: true },
       ],
     },
     {
       label: t('sectionBlog'),
       items: [
-        { href: `${base}/appearance`, icon: Palette,  label: t('appearance') },
-        { href: `${base}/team`,       icon: Users,    label: t('collaborators') },
-        { href: `${base}/settings`,   icon: Settings, label: t('settings') },
+        { href: `${base}/team`,     icon: Users,    label: t('collaborators') },
+        { href: `${base}/settings`, icon: Settings, label: t('settings') },
       ],
     },
   ];
 
-  const planKey = (currentTenant?.plan ?? 'free').toLowerCase();
+  const planKey  = (currentTenant?.plan ?? 'free').toLowerCase();
   const gradient = PLAN_GRADIENT[planKey] ?? PLAN_GRADIENT.free;
 
   const handleSignOut = async () => {
@@ -88,9 +99,9 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
   };
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 flex w-[260px] flex-col border-r border-slate-100 bg-white dark:bg-zinc-900 dark:border-zinc-800">
+    <aside className="h-screen w-[260px] shrink-0 flex flex-col border-r border-slate-100 bg-white dark:bg-zinc-900 dark:border-zinc-800 overflow-hidden z-30">
 
-      {/* ── Logo + back ─────────────────────────────────────── */}
+      {/* ── Logo + back ───────────────────────────────────────────── */}
       <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-100 dark:border-zinc-800 px-4">
         <Link href={`/${locale}/dashboard`} className="flex items-center gap-2.5 group min-w-0">
           <div className="h-7 w-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm font-black shadow-sm shrink-0">
@@ -109,7 +120,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
         </Link>
       </div>
 
-      {/* ── Blog selector ──────────────────────────────────── */}
+      {/* ── Blog selector ─────────────────────────────────────────── */}
       <div className="shrink-0 px-3 py-2.5 border-b border-slate-100 dark:border-zinc-800">
         <DropdownMenu>
           <DropdownMenuTrigger className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800 outline-none">
@@ -118,7 +129,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
             </div>
             <div className="flex-1 min-w-0 text-left">
               <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-100 truncate leading-tight">
-                {currentTenant?.name ?? 'My blog'}
+                {currentTenant?.name ?? 'Mon blog'}
               </p>
               <p className="text-[11px] text-slate-400 dark:text-zinc-500 leading-tight mt-0.5 truncate">
                 {currentTenant?.slug ?? '...'}.nexusblog.io
@@ -162,7 +173,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
         </DropdownMenu>
       </div>
 
-      {/* ── Navigation ─────────────────────────────────────── */}
+      {/* ── Navigation ────────────────────────────────────────────── */}
       <nav
         className="flex-1 overflow-y-auto py-3 px-3"
         style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}
@@ -222,7 +233,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
         )}
       </nav>
 
-      {/* ── Footer ─────────────────────────────────────────── */}
+      {/* ── Footer ────────────────────────────────────────────────── */}
       <div className="shrink-0 border-t border-slate-100 dark:border-zinc-800 p-3 space-y-1.5">
         <div className="flex items-center justify-between rounded-lg bg-slate-50 dark:bg-zinc-800/60 px-3 py-2">
           <div className="flex items-center gap-2">
