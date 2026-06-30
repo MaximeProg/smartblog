@@ -47,14 +47,21 @@ def decode_access_token(token: str) -> dict:
 
 
 async def is_token_blacklisted(jti: str) -> bool:
-    result = await redis.get(key_jwt_blacklist(jti))
-    return result is not None
+    try:
+        result = await redis.get(key_jwt_blacklist(jti))
+        return result is not None
+    except Exception:
+        # Redis unavailable — assume token is valid (fail open)
+        return False
 
 
 async def blacklist_token(jti: str, expire: datetime) -> None:
     ttl = int((expire - datetime.now(timezone.utc)).total_seconds())
     if ttl > 0:
-        await redis.setex(key_jwt_blacklist(jti), ttl, "1")
+        try:
+            await redis.setex(key_jwt_blacklist(jti), ttl, "1")
+        except Exception:
+            pass
 
 
 # ── Refresh Tokens ─────────────────────────────────────────────────
@@ -105,7 +112,10 @@ async def get_refresh_token_data(token_plain: str) -> dict | None:
 
 async def revoke_refresh_token(token_plain: str) -> None:
     token_hash = hashlib.sha256(token_plain.encode()).hexdigest()
-    await redis.delete(key_refresh_token(token_hash))
+    try:
+        await redis.delete(key_refresh_token(token_hash))
+    except Exception:
+        pass
 
 
 async def revoke_all_user_tokens(user_id: str) -> None:

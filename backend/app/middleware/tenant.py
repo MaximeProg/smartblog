@@ -48,11 +48,13 @@ class TenantMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
     async def _resolve_by_slug(self, slug: str) -> str | None:
-        cached = await redis.get(key_tenant_slug(slug))
-        if cached:
-            return cached
+        try:
+            cached = await redis.get(key_tenant_slug(slug))
+            if cached:
+                return cached
+        except Exception:
+            pass  # Cache miss — fall through to DB
 
-        # Fallback DB (lazy import pour éviter les imports circulaires)
         from app.core.database import get_db_no_rls
         from app.models.tenant import Tenant
         from sqlalchemy import select
@@ -64,14 +66,20 @@ class TenantMiddleware(BaseHTTPMiddleware):
             row = result.scalar_one_or_none()
             if row:
                 tenant_id = str(row)
-                await redis.setex(key_tenant_slug(slug), 3600, tenant_id)
+                try:
+                    await redis.setex(key_tenant_slug(slug), 3600, tenant_id)
+                except Exception:
+                    pass
                 return tenant_id
         return None
 
     async def _resolve_by_domain(self, domain: str) -> str | None:
-        cached = await redis.get(key_tenant_domain(domain))
-        if cached:
-            return cached
+        try:
+            cached = await redis.get(key_tenant_domain(domain))
+            if cached:
+                return cached
+        except Exception:
+            pass  # Cache miss — fall through to DB
 
         from app.core.database import get_db_no_rls
         from sqlalchemy import select, text
@@ -84,6 +92,9 @@ class TenantMiddleware(BaseHTTPMiddleware):
             row = result.fetchone()
             if row:
                 tenant_id = str(row[0])
-                await redis.setex(key_tenant_domain(domain), 3600, tenant_id)
+                try:
+                    await redis.setex(key_tenant_domain(domain), 3600, tenant_id)
+                except Exception:
+                    pass
                 return tenant_id
         return None
