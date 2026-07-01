@@ -32,7 +32,7 @@ export function DashboardShell({
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-zinc-950">
       <Sidebar locale={locale} blogId={blogId} />
 
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+      <div className="flex-1 ml-[260px] flex flex-col overflow-hidden min-w-0">
         <Header
           locale={locale}
           title={title}
