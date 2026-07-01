@@ -167,8 +167,11 @@ async def create_tenant(
     await db.commit()
     await db.refresh(tenant)
 
-    # Invalide le cache slug si existait
-    await redis.delete(key_tenant_slug(data.slug))
+    # Invalide le cache slug si existait (Redis optionnel)
+    try:
+        await redis.delete(key_tenant_slug(data.slug))
+    except Exception:
+        pass
 
     return tenant
 

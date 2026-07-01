@@ -8,17 +8,8 @@ import {
   Loader2, Save, Eye, Monitor, Smartphone,
   Globe, ChevronDown, ChevronRight,
   Twitter, Instagram, Youtube, Linkedin, Github, Facebook,
-  Layers, Brush, FileText, Lock, GripVertical, Type,
+  Layers, Brush, FileText, Lock, MousePointerClick,
 } from 'lucide-react';
-import {
-  DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove, SortableContext, sortableKeyboardCoordinates,
-  useSortable, verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { Button } from '@/components/ui/button';
@@ -31,20 +22,11 @@ import { tenantsApi } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import {
   TEMPLATES, EXTENDED_COLOR_PRESETS, HEADING_FONTS, BODY_FONTS,
-  DEFAULT_TEMPLATE_CONTENT, DEFAULT_SECTION_ORDER,
   type BlogTemplateConfig, type TemplateDefinition, type TemplateContent,
 } from '@/lib/templates';
 import { TemplatePreview } from '@/components/templates/TemplatePreview';
 
 type Tab = 'template' | 'content' | 'design';
-
-const SECTION_LABELS: Record<string, string> = {
-  hero: 'Section Héro',
-  featured: 'Articles à la une',
-  categories: 'Catégories',
-  latest: 'Derniers articles',
-  newsletter: 'Newsletter',
-};
 
 function buildDefaultContent(tenant: Record<string, unknown>, themeId: string): TemplateContent {
   const tpl = TEMPLATES.find((t) => t.id === themeId) ?? TEMPLATES[0];
@@ -79,7 +61,6 @@ export default function AppearancePage() {
   const [templateId, setTemplateId]       = useState<string>('minimal');
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('desktop');
   const [openSections, setOpenSections]   = useState<string[]>(['colors', 'typography']);
-  const [openContent, setOpenContent]     = useState<string[]>(['identity', 'hero']);
 
   const { data: tenant, isLoading } = useQuery({
     queryKey: ['tenant', blogId],
@@ -254,14 +235,13 @@ export default function AppearancePage() {
 
       {/* ── TAB: Contenu ─────────────────────────────────────────── */}
       {activeTab === 'content' && content && (
-        <ContentEditor
+        <VisualEditor
           content={content}
           onChange={updateContent}
           previewDevice={previewDevice}
           templateId={templateId}
           config={config!}
-          openContent={openContent}
-          setOpenContent={setOpenContent}
+          slug={slug}
         />
       )}
 
@@ -534,65 +514,120 @@ function TemplateCard({ template, selected, locked, onSelect }: {
   );
 }
 
-// ─── Sortable section ─────────────────────────────────────────────────────────
-function SortableSection({ id, label, open, onToggle, children }: {
-  id: string; label: string; open: boolean; onToggle: () => void; children: React.ReactNode;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-  return (
-    <div
-      ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }}
-      className="rounded-xl border border-slate-200 dark:border-zinc-700 overflow-hidden bg-white dark:bg-zinc-900"
-    >
-      <div className="flex items-center">
-        <button
-          className="p-3 cursor-grab active:cursor-grabbing touch-none text-slate-300 dark:text-zinc-600 hover:text-slate-500 dark:hover:text-zinc-400"
-          {...attributes} {...listeners}
-        >
-          <GripVertical className="h-4 w-4" />
-        </button>
-        <button
-          onClick={onToggle}
-          className="flex-1 flex items-center justify-between px-2 py-3 text-left hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors"
-        >
-          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">{label}</span>
-          {open ? <ChevronDown className="h-3.5 w-3.5 text-slate-400 mr-3" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400 mr-3" />}
-        </button>
-      </div>
-      {open && <div className="px-4 pb-4 pt-1 space-y-3 border-t border-slate-100 dark:border-zinc-800">{children}</div>}
-    </div>
-  );
-}
-
-// ─── Content editor tab ───────────────────────────────────────────────────────
-function ContentEditor({
-  content, onChange, previewDevice, templateId, config, openContent, setOpenContent,
+// ─── Visual inline editor ─────────────────────────────────────────────────────
+function VisualEditor({
+  content, onChange, previewDevice, templateId, config, slug,
 }: {
   content: TemplateContent;
   onChange: (patch: Partial<TemplateContent>) => void;
   previewDevice: 'desktop' | 'mobile';
   templateId: string;
   config: BlogTemplateConfig;
-  openContent: string[];
-  setOpenContent: React.Dispatch<React.SetStateAction<string[]>>;
+  slug: string;
 }) {
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  const [selectedSection, setSelectedSection] = useState<string | null>(null);
+
+  return (
+    <div className="flex flex-1 overflow-hidden">
+      {/* Main — scrollable full-site preview with edit mode */}
+      <div
+        className="flex-1 bg-slate-100 dark:bg-zinc-950 overflow-auto"
+        onClick={() => setSelectedSection(null)}
+      >
+        <div className="p-8 flex justify-center">
+          <div
+            className="bg-white shadow-2xl rounded-xl overflow-hidden"
+            style={{ width: previewDevice === 'desktop' ? 960 : 375 }}
+          >
+            {/* Browser chrome */}
+            <div className="bg-slate-100 dark:bg-zinc-800 px-3 py-2 flex items-center gap-2 border-b border-slate-200 dark:border-zinc-700">
+              <div className="flex gap-1.5">
+                <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
+                <div className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
+                <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
+              </div>
+              <div className="flex-1 bg-white dark:bg-zinc-700 rounded-md px-3 py-1 text-[10px] text-slate-400 flex items-center gap-1">
+                <Globe className="h-2.5 w-2.5" />
+                {slug}.nexusblog.io
+              </div>
+            </div>
+            {/* Zoomable editable content */}
+            <div style={{ overflow: 'hidden' }}>
+              <div style={{ zoom: previewDevice === 'desktop' ? 960 / 1200 : 375 / 1200, width: 1200 }}>
+                <TemplatePreview
+                  templateId={templateId}
+                  config={config}
+                  content={content}
+                  editMode
+                  selectedSection={selectedSection}
+                  onSelectSection={setSelectedSection}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right sidebar — contextual edit fields */}
+      <div className="w-80 shrink-0 border-l border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex flex-col overflow-hidden">
+        {selectedSection ? (
+          <SectionEditPanel
+            sectionId={selectedSection}
+            content={content}
+            onChange={onChange}
+            onClose={() => setSelectedSection(null)}
+          />
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center gap-4">
+            <div className="h-16 w-16 rounded-2xl bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+              <MousePointerClick className="h-7 w-7 text-slate-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Sélectionner une section</p>
+              <p className="text-xs text-slate-400 dark:text-zinc-500 leading-relaxed">Cliquez sur n&apos;importe quelle section du site pour l&apos;éditer directement.</p>
+            </div>
+            <div className="w-full mt-2 space-y-1.5">
+              {[
+                { id: 'header', label: 'En-tête' },
+                { id: 'hero', label: 'Section Hero' },
+                { id: 'featured', label: 'Articles vedettes' },
+                { id: 'latest', label: 'Articles récents' },
+                { id: 'newsletter', label: 'Newsletter' },
+                { id: 'footer', label: 'Pied de page' },
+              ].map(({ id, label }) => (
+                <button
+                  key={id}
+                  onClick={(e) => { e.stopPropagation(); setSelectedSection(id); }}
+                  className="w-full text-left px-3 py-2 rounded-lg border border-slate-200 dark:border-zinc-700 text-xs text-slate-600 dark:text-zinc-400 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-all"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
+}
 
-  const toggleOpen = (key: string) =>
-    setOpenContent((s) => s.includes(key) ? s.filter((x) => x !== key) : [...s, key]);
-  const isOpen = (key: string) => openContent.includes(key);
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      const oldIndex = content.sectionOrder.indexOf(active.id as string);
-      const newIndex = content.sectionOrder.indexOf(over.id as string);
-      onChange({ sectionOrder: arrayMove(content.sectionOrder, oldIndex, newIndex) });
-    }
+// ─── Section edit panel ───────────────────────────────────────────────────────
+function SectionEditPanel({ sectionId, content, onChange, onClose }: {
+  sectionId: string;
+  content: TemplateContent;
+  onChange: (patch: Partial<TemplateContent>) => void;
+  onClose: () => void;
+}) {
+  const LABELS: Record<string, string> = {
+    header: 'En-tête',
+    hero: 'Section Hero',
+    featured: 'Articles vedettes',
+    categories: 'Catégories',
+    latest: 'Articles récents',
+    newsletter: 'Newsletter',
+    about: 'À propos',
+    contact: 'Contact',
+    footer: 'Pied de page',
   };
 
   const Field = ({ label, value, onChangeVal, multiline = false }: {
@@ -601,97 +636,62 @@ function ContentEditor({
     <div className="space-y-1">
       <Label className="text-xs text-slate-500 dark:text-zinc-400">{label}</Label>
       {multiline
-        ? <Textarea value={value} onChange={(e) => onChangeVal(e.target.value)} rows={2} className="text-xs resize-none" />
+        ? <Textarea value={value} onChange={(e) => onChangeVal(e.target.value)} rows={3} className="text-xs resize-none" />
         : <Input value={value} onChange={(e) => onChangeVal(e.target.value)} className="h-8 text-xs" />
       }
     </div>
   );
 
   return (
-    <div className="flex flex-1 overflow-hidden">
-      {/* Left — editor */}
-      <div className="w-80 shrink-0 border-r border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-y-auto">
-        <div className="p-4 space-y-3">
-
-          {/* Blog identity */}
-          <div className="rounded-xl border border-slate-200 dark:border-zinc-700 overflow-hidden bg-white dark:bg-zinc-900">
-            <button
-              onClick={() => toggleOpen('identity')}
-              className="w-full flex items-center gap-2 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-zinc-800/60 transition-colors"
-            >
-              <Type className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-              <span className="flex-1 text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Identité du blog</span>
-              {isOpen('identity') ? <ChevronDown className="h-3.5 w-3.5 text-slate-400" /> : <ChevronRight className="h-3.5 w-3.5 text-slate-400" />}
-            </button>
-            {isOpen('identity') && (
-              <div className="px-4 pb-4 pt-1 space-y-3 border-t border-slate-100 dark:border-zinc-800">
-                <Field label="Nom du blog" value={content.blogName} onChangeVal={(v) => onChange({ blogName: v })} />
-                <Field label="Tagline / Slogan" value={content.tagline} onChangeVal={(v) => onChange({ tagline: v })} multiline />
-              </div>
-            )}
-          </div>
-
-          {/* Sortable sections */}
-          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider px-1 pt-1">Sections (glisser pour réordonner)</p>
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={content.sectionOrder} strategy={verticalListSortingStrategy}>
-              <div className="space-y-2">
-                {content.sectionOrder.map((sectionId) => (
-                  <SortableSection
-                    key={sectionId}
-                    id={sectionId}
-                    label={SECTION_LABELS[sectionId] ?? sectionId}
-                    open={isOpen(sectionId)}
-                    onToggle={() => toggleOpen(sectionId)}
-                  >
-                    {sectionId === 'hero' && (
-                      <>
-                        <Field label="Titre principal" value={content.heroHeadline} onChangeVal={(v) => onChange({ heroHeadline: v })} />
-                        <Field label="Sous-titre" value={content.heroSubheadline} onChangeVal={(v) => onChange({ heroSubheadline: v })} multiline />
-                        <Field label="Texte du bouton CTA" value={content.heroCta} onChangeVal={(v) => onChange({ heroCta: v })} />
-                      </>
-                    )}
-                    {sectionId === 'featured' && (
-                      <Field label="Titre de la section" value={content.featuredSectionTitle} onChangeVal={(v) => onChange({ featuredSectionTitle: v })} />
-                    )}
-                    {sectionId === 'categories' && (
-                      <Field label="Titre de la section" value={content.categoriesSectionTitle} onChangeVal={(v) => onChange({ categoriesSectionTitle: v })} />
-                    )}
-                    {sectionId === 'latest' && (
-                      <Field label="Titre de la section" value={content.latestSectionTitle} onChangeVal={(v) => onChange({ latestSectionTitle: v })} />
-                    )}
-                    {sectionId === 'newsletter' && (
-                      <>
-                        <Field label="Titre" value={content.newsletterTitle} onChangeVal={(v) => onChange({ newsletterTitle: v })} />
-                        <Field label="Description" value={content.newsletterDescription} onChangeVal={(v) => onChange({ newsletterDescription: v })} multiline />
-                        <Field label="Texte du bouton" value={content.newsletterCta} onChangeVal={(v) => onChange({ newsletterCta: v })} />
-                      </>
-                    )}
-                  </SortableSection>
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
-
-          <Field label="Pied de page — Tagline" value={content.footerTagline} onChangeVal={(v) => onChange({ footerTagline: v })} />
+    <div className="flex flex-col h-full overflow-hidden">
+      <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-zinc-800">
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-blue-500" />
+          <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">{LABELS[sectionId] ?? sectionId}</span>
         </div>
+        <button
+          onClick={onClose}
+          className="text-slate-400 hover:text-slate-600 dark:hover:text-zinc-300 text-sm leading-none transition-colors"
+        >
+          ✕
+        </button>
       </div>
-
-      {/* Right — live preview */}
-      <div className="flex-1 bg-slate-100 dark:bg-zinc-950 flex flex-col overflow-hidden">
-        <div className="shrink-0 flex items-center justify-center gap-2 py-3 border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900">
-          <Eye className="h-3.5 w-3.5 text-slate-400" />
-          <span className="text-xs text-slate-400 dark:text-zinc-500">Aperçu en direct</span>
-        </div>
-        <div className="flex-1 overflow-auto p-8 flex justify-center">
-          <div className="bg-white shadow-2xl rounded-xl overflow-hidden" style={{ width: previewDevice === 'desktop' ? 960 : 375 }}>
-            <div style={{ overflow: 'hidden' }}>
-              <div style={{ zoom: previewDevice === 'desktop' ? 960 / 1200 : 375 / 1200, width: 1200 }}>
-                <TemplatePreview templateId={templateId} config={config} content={content} />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {sectionId === 'header' && (
+          <>
+            <Field label="Nom du blog" value={content.blogName} onChangeVal={(v) => onChange({ blogName: v })} />
+            <Field label="Tagline / Slogan" value={content.tagline} onChangeVal={(v) => onChange({ tagline: v })} multiline />
+          </>
+        )}
+        {sectionId === 'hero' && (
+          <>
+            <Field label="Titre principal" value={content.heroHeadline} onChangeVal={(v) => onChange({ heroHeadline: v })} />
+            <Field label="Sous-titre" value={content.heroSubheadline} onChangeVal={(v) => onChange({ heroSubheadline: v })} multiline />
+            <Field label="Bouton CTA" value={content.heroCta} onChangeVal={(v) => onChange({ heroCta: v })} />
+          </>
+        )}
+        {sectionId === 'featured' && (
+          <Field label="Titre de la section" value={content.featuredSectionTitle} onChangeVal={(v) => onChange({ featuredSectionTitle: v })} />
+        )}
+        {sectionId === 'categories' && (
+          <Field label="Titre de la section" value={content.categoriesSectionTitle} onChangeVal={(v) => onChange({ categoriesSectionTitle: v })} />
+        )}
+        {sectionId === 'latest' && (
+          <Field label="Titre de la section" value={content.latestSectionTitle} onChangeVal={(v) => onChange({ latestSectionTitle: v })} />
+        )}
+        {sectionId === 'newsletter' && (
+          <>
+            <Field label="Titre" value={content.newsletterTitle} onChangeVal={(v) => onChange({ newsletterTitle: v })} />
+            <Field label="Description" value={content.newsletterDescription} onChangeVal={(v) => onChange({ newsletterDescription: v })} multiline />
+            <Field label="Bouton CTA" value={content.newsletterCta} onChangeVal={(v) => onChange({ newsletterCta: v })} />
+          </>
+        )}
+        {(sectionId === 'footer' || sectionId === 'about' || sectionId === 'contact') && (
+          <>
+            <Field label="Nom du blog" value={content.blogName} onChangeVal={(v) => onChange({ blogName: v })} />
+            <Field label="Tagline du pied de page" value={content.footerTagline} onChangeVal={(v) => onChange({ footerTagline: v })} multiline />
+          </>
+        )}
       </div>
     </div>
   );
