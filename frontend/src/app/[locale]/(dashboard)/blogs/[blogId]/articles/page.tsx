@@ -52,7 +52,7 @@ function ArticleRow({
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-semibold text-slate-800 truncate leading-snug">{article.title}</p>
         <p className="text-[11px] text-slate-400 mt-0.5">
-          {formatRelativeTime(article.updated_at)} · {article.reading_time_minutes} min de lecture
+          {formatRelativeTime(article.updated_at ?? article.created_at)} · {article.reading_time_minutes ?? 0} min de lecture
         </p>
       </div>
 

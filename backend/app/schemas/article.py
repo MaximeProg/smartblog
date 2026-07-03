@@ -127,9 +127,11 @@ class ArticleListItem(BaseModel):
     cover_image_url: str | None
     is_featured: bool
     views_count: int
+    reading_time_minutes: int | None
     published_at: datetime | None
     author: ArticleAuthor | None
     created_at: datetime
+    updated_at: datetime
 
     model_config = {"from_attributes": True}
 

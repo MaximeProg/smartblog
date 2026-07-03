@@ -13,9 +13,11 @@ export function formatDate(date: string | Date, locale = 'en'): string {
   }).format(new Date(date));
 }
 
-export function formatRelativeTime(date: string | Date, locale = 'en'): string {
+export function formatRelativeTime(date: string | Date | null | undefined, locale = 'en'): string {
+  if (!date) return '–';
   const now = new Date();
-  const then = new Date(date);
+  const then = new Date(date as string | Date);
+  if (isNaN(then.getTime())) return '–';
   const diffMs = now.getTime() - then.getTime();
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
