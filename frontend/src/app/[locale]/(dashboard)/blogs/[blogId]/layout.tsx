@@ -26,7 +26,7 @@ export default function BlogStudioLayout({ children }: { children: React.ReactNo
   const setFullWidth = useCallback((full: boolean) => setFullWidthState(full), []);
 
   const previewUrl = blogSlug
-    ? `/en/template${previewPath}?preview=${blogSlug}`
+    ? `/${locale}/${blogSlug}${previewPath}`
     : `/en/template${previewPath}`;
 
   const ctx = useMemo(() => ({ setPreview, refresh, setFullWidth }), [setPreview, refresh, setFullWidth]);

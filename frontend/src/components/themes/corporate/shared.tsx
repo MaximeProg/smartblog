@@ -3,6 +3,7 @@ import { useState, type CSSProperties, type FormEvent, type ReactNode } from 're
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   Search, Menu, X, Clock, Calendar, Mail,
   Facebook, Twitter, Instagram, Youtube, Linkedin, Rss, ChevronRight,
@@ -13,14 +14,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-export function fmtDate(iso: string | null) {
+export function fmtDate(iso: string | null, locale = 'fr') {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  return new Date(iso).toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export function fmtDateShort(iso: string | null) {
+export function fmtDateShort(iso: string | null, locale = 'fr') {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  return new Date(iso).toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', { day: 'numeric', month: 'short' });
 }
 
 const GRADS = [
@@ -201,6 +202,8 @@ export function CorporateHeader({
   previewSlug?: string;
 }) {
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations('publicBlog');
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
@@ -219,9 +222,9 @@ export function CorporateHeader({
 
   const defaultPageLinks = basePath
     ? [
-        { href: basePath + pq, label: 'Accueil' },
-        { href: `${basePath}/about${pq}`, label: 'À propos' },
-        { href: `${basePath}/contact${pq}`, label: 'Contact' },
+        { href: basePath + pq, label: t('navHome') },
+        { href: `${basePath}/about${pq}`, label: t('navAbout') },
+        { href: `${basePath}/contact${pq}`, label: t('navContact') },
       ]
     : [];
 
@@ -270,7 +273,7 @@ export function CorporateHeader({
           <div className="max-w-7xl mx-auto px-6 h-9 flex items-center justify-between text-xs">
             {showDate && (
               <p className="text-slate-500">
-                {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                {new Date().toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             )}
             <div className="flex items-center gap-5 ml-auto">
@@ -338,7 +341,7 @@ export function CorporateHeader({
                         onBlur={() => setTimeout(() => setCatOpen(false), 150)}
                         className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/8 transition-all"
                       >
-                        Catégories
+                        {t('categories')}
                         <ChevronRight className={`h-3.5 w-3.5 transition-transform duration-200 ${catOpen ? 'rotate-90' : ''}`} />
                       </button>
 
@@ -379,7 +382,7 @@ export function CorporateHeader({
                               style={{ borderColor: primaryColor, color: primaryColor }}
                               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = primaryColor; (e.currentTarget as HTMLElement).style.color = 'white'; }}
                               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = ''; (e.currentTarget as HTMLElement).style.color = primaryColor; }}>
-                              Voir toutes les catégories
+                              {t('allCategories')}
                               <ChevronRight className="h-4 w-4" />
                             </Link>
                           </div>
@@ -397,7 +400,7 @@ export function CorporateHeader({
                 <form onSubmit={handleSearch} className="flex items-center gap-2">
                   <input
                     autoFocus value={q} onChange={e => setQ(e.target.value)}
-                    placeholder="Rechercher…"
+                    placeholder={t('searchPlaceholder')}
                     className="h-9 w-40 sm:w-56 rounded-xl border border-white/10 bg-white/5 text-white placeholder-slate-500 px-3.5 text-sm focus:outline-none focus:ring-2"
                     style={{ '--tw-ring-color': `${primaryColor}80` } as CSSProperties}
                   />
@@ -442,7 +445,7 @@ export function CorporateHeader({
               {catBasePath && categories.length > 0 && (
                 <>
                   <div className="my-2 border-t border-white/5" />
-                  <p className="px-4 py-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Catégories</p>
+                  <p className="px-4 py-1 text-[10px] font-black uppercase tracking-widest text-slate-500">{t('categories')}</p>
                   {categories.map(c => (
                     <Link key={c.slug} href={`${catBasePath}/${c.slug}${pq}`} onClick={() => setMenuOpen(false)}
                       className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
@@ -460,7 +463,7 @@ export function CorporateHeader({
                   <Link href={catBasePath + pq} onClick={() => setMenuOpen(false)}
                     className="px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors text-[var(--cp)] hover:bg-white/5"
                     style={{ '--cp': primaryColor } as CSSProperties}>
-                    → Voir toutes les catégories
+                    → {t('allCategories')}
                   </Link>
                 </>
               )}
@@ -491,6 +494,7 @@ export function CorporateFooter({
   basePath?: string;
   previewSlug?: string;
 }) {
+  const t = useTranslations('publicBlog');
   const footerConfig = blog.template_config?.footer;
 
   const pq = previewSlug ? `?preview=${previewSlug}` : '';
@@ -499,14 +503,14 @@ export function CorporateFooter({
   const showNewsletterMini = footerConfig?.showNewsletterMini !== false;
   const showPoweredBy = footerConfig?.showPoweredBy !== false;
   const footerDesc = footerConfig?.description || blog.description;
-  const newsletterMiniText = footerConfig?.newsletterMiniText || 'Recevez nos meilleurs articles chaque semaine dans votre boîte mail.';
+  const newsletterMiniText = footerConfig?.newsletterMiniText || t('subscribeDesc');
   const copyrightText = footerConfig?.copyrightText || `© ${new Date().getFullYear()} ${blog.name}. Tous droits réservés.`;
 
   const defaultNavLinks = [
-    { href: (basePath ?? '/') + pq, label: 'Accueil' },
-    { href: basePath ? `${basePath}/about${pq}` : '/a-propos', label: 'À propos' },
-    { href: basePath ? `${basePath}/contact${pq}` : '/contact', label: 'Contact' },
-    { href: '/rss.xml', label: 'Flux RSS' },
+    { href: (basePath ?? '/') + pq, label: t('navHome') },
+    { href: basePath ? `${basePath}/about${pq}` : '/a-propos', label: t('navAbout') },
+    { href: basePath ? `${basePath}/contact${pq}` : '/contact', label: t('navContact') },
+    { href: '/rss.xml', label: t('navRss') },
   ];
   const navLinks = footerConfig?.navLinks?.length
     ? footerConfig.navLinks.map(l => ({ href: l.url, label: l.label }))
@@ -560,7 +564,7 @@ export function CorporateFooter({
           {/* Categories */}
           {showCategories && categories.length > 0 && (
             <div>
-              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-5">Catégories</h4>
+              <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-5">{t('categories')}</h4>
               <ul className="space-y-2.5">
                 {categories.slice(0, 7).map(c => (
                   <li key={c.slug}>
@@ -578,7 +582,7 @@ export function CorporateFooter({
 
           {/* Navigation */}
           <div>
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-5">Navigation</h4>
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-5">{t('navigation')}</h4>
             <ul className="space-y-2.5">
               {navLinks.map(({ href, label }) => (
                 <li key={href}>
@@ -600,7 +604,7 @@ export function CorporateFooter({
               <a href="#newsletter"
                 className="flex items-center justify-center gap-2 h-11 w-full rounded-xl text-sm font-bold text-white hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: primaryColor }}>
-                <Mail className="h-4 w-4" /> S'abonner gratuitement
+                <Mail className="h-4 w-4" /> {t('subscribeFree')}
               </a>
             </div>
           )}
@@ -609,7 +613,7 @@ export function CorporateFooter({
         <div className="pt-7 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
           <span>{copyrightText}</span>
           {showPoweredBy && (
-            <span>Propulsé par{' '}
+            <span>{t('poweredBy')}{' '}
               <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer"
                 className="font-semibold transition-colors hover:text-white" style={{ color: primaryColor }}>
                 NexusBlog
@@ -632,6 +636,7 @@ export function NewsletterSection({
   title?: string;
   description?: string;
 }) {
+  const t = useTranslations('publicBlog');
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
 
@@ -663,34 +668,34 @@ export function NewsletterSection({
           <Mail className="h-7 w-7 text-white" />
         </div>
         <h2 className="text-3xl sm:text-4xl font-black mb-4 leading-tight">
-          {title || 'Restez toujours informé'}
+          {title || t('stayInformed')}
         </h2>
         <p className="text-white/80 text-lg mb-8 leading-relaxed">
-          {description || `Rejoignez nos abonnés et recevez chaque semaine nos meilleurs articles de ${blog.name} directement dans votre boîte mail.`}
+          {description || t('subscribeDesc')}
         </p>
 
         {status === 'ok' ? (
           <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm px-8 py-4 rounded-2xl font-bold text-lg">
-            ✓ Vous êtes abonné·e — merci !
+            ✓ {t('subscribeSuccess')}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email" required value={email} onChange={e => setEmail(e.target.value)}
-              placeholder="votre@email.com"
+              placeholder={t('emailPlaceholder')}
               disabled={status === 'loading'}
               className="flex-1 h-14 rounded-2xl border-0 bg-white/15 backdrop-blur-sm text-white placeholder-white/40 px-5 text-base focus:outline-none focus:ring-2 focus:ring-white/40"
             />
             <button type="submit" disabled={status === 'loading'}
               className="h-14 px-8 rounded-2xl bg-white font-bold text-base whitespace-nowrap hover:bg-white/90 transition-colors disabled:opacity-60"
               style={{ color: primaryColor }}>
-              {status === 'loading' ? 'Envoi…' : "S'abonner"}
+              {status === 'loading' ? t('subscribeSending') : t('subscribeButton')}
             </button>
           </form>
         )}
 
-        {status === 'error' && <p className="text-white/70 text-sm mt-3">Une erreur est survenue. Réessayez.</p>}
-        <p className="text-white/40 text-xs mt-4">Pas de spam · Désabonnement en un clic</p>
+        {status === 'error' && <p className="text-white/70 text-sm mt-3">{t('subscribeError')}</p>}
+        <p className="text-white/40 text-xs mt-4">{t('noSpam')}</p>
       </div>
     </section>
   );

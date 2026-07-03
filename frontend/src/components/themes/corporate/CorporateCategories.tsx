@@ -3,6 +3,7 @@
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { ArrowRight, BookOpen, ChevronRight } from 'lucide-react';
 import {
   CorporateHeader, CorporateFooter, NewsletterSection,
@@ -20,6 +21,7 @@ interface Props {
 
 export default function CorporateCategoriesPage({ blog, categories, articles, basePath, previewSlug }: Props) {
   const primaryColor = blog.primary_color || '#2563eb';
+  const t = useTranslations('publicBlog');
   const cpStyle = { '--cp': primaryColor } as CSSProperties;
   const pq = previewSlug ? `?preview=${previewSlug}` : '';
 
@@ -38,17 +40,17 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
       <section className="bg-slate-950 text-white py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-8">
-            <Link href={basePath} className="hover:text-slate-300 transition-colors">Accueil</Link>
+            <Link href={basePath} className="hover:text-slate-300 transition-colors">{t('navHome')}</Link>
             <ChevronRight className="h-3 w-3" />
-            <span className="text-slate-300">Catégories</span>
+            <span className="text-slate-300">{t('categories')}</span>
           </div>
           <div className="max-w-2xl">
             <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4">
-              Explorez nos thématiques
+              {t('categoriesHeroTitle')}
             </h1>
             <p className="text-lg text-slate-400 leading-relaxed">
-              {articles.length} article{articles.length > 1 ? 's' : ''} répartis en {categories.length} domaine{categories.length > 1 ? 's' : ''}.
-              Choisissez votre thématique et plongez dans les analyses de nos experts.
+              {t('articleCountPlural', { count: articles.length })}{' '}
+              {categories.length > 1 ? t('inTopicsPlural', { count: categories.length }) : t('inTopics', { count: categories.length })}.
             </p>
           </div>
         </div>
@@ -59,11 +61,11 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
         {categories.length === 0 ? (
           <div className="py-32 text-center">
             <BookOpen className="h-14 w-14 mx-auto mb-5 text-slate-200" />
-            <p className="text-xl font-bold text-slate-400 mb-2">Aucune catégorie pour l'instant</p>
+            <p className="text-xl font-bold text-slate-400 mb-2">{t('noCategoriesYet')}</p>
             <Link href={basePath}
               className="inline-flex items-center gap-2 text-sm font-bold hover:underline"
               style={{ color: primaryColor }}>
-              <ArrowRight className="h-4 w-4 rotate-180" /> Retour à l'accueil
+              <ArrowRight className="h-4 w-4 rotate-180" /> {t('backToHome')}
             </Link>
           </div>
         ) : (
@@ -121,7 +123,7 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
                     )}
                     <div className="flex items-center gap-2 text-sm font-bold transition-colors group-hover:text-[var(--cp)]"
                       style={{ color: primaryColor }}>
-                      Explorer la catégorie
+                      {t('exploreCategory')}
                       <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
@@ -137,10 +139,10 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
         <section className="bg-slate-50 border-t border-slate-100 py-14 px-4">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center gap-3 mb-8">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-700">Articles récents</h2>
+              <h2 className="text-xs font-black uppercase tracking-widest text-slate-700">{t('recentArticles')}</h2>
               <div className="flex-1 h-px bg-slate-200" />
               <Link href={basePath} className="text-xs font-bold hover:underline" style={{ color: primaryColor }}>
-                Voir tout
+                {t('seeAll')}
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">

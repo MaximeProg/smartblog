@@ -12,6 +12,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { authApi } from '@/lib/api';
 import { firebaseSignOut } from '@/lib/firebase';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
 
 const SEG_LABELS: Record<string, string> = {
   dashboard:     'Dashboard',
@@ -50,6 +51,7 @@ export function TopBar() {
 
       <div className="flex items-center gap-1">
 
+        <LanguageSwitcher locale={locale} />
         <ThemeToggle />
 
         <Link

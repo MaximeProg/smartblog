@@ -3,6 +3,7 @@
 import { useCallback, type CSSProperties } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { TrendingUp, BookOpen, Hash, ChevronRight, ArrowRight } from 'lucide-react';
 
 import type { HomeProps } from '../ThemeRenderer';
@@ -16,6 +17,7 @@ export default function CorporateHome({
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
 
   const primaryColor = blog.primary_color || '#2563eb';
   const homeConfig = blog.template_config?.home;
@@ -35,8 +37,8 @@ export default function CorporateHome({
     [getArticleHref, previewSlug, locale, blog.slug],
   );
 
-  const featuredTitle = homeConfig?.hero?.sectionTitle || legacyContent?.featuredSectionTitle || 'À la une';
-  const latestTitle = homeConfig?.latest?.sectionTitle || legacyContent?.latestSectionTitle || 'Derniers articles';
+  const featuredTitle = homeConfig?.hero?.sectionTitle || legacyContent?.featuredSectionTitle || t('featuredNews');
+  const latestTitle = homeConfig?.latest?.sectionTitle || legacyContent?.latestSectionTitle || t('noArticles').split(' ')[0];
   const newsletterTitle = homeConfig?.newsletter?.title || legacyContent?.newsletterTitle;
   const newsletterDesc = homeConfig?.newsletter?.description || legacyContent?.newsletterDescription;
 
@@ -75,25 +77,27 @@ export default function CorporateHome({
             <div>
               {searchQuery ? (
                 <>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Résultats de recherche</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{t('searchResults')}</p>
                   <h1 className="text-2xl font-black">« {searchQuery} »</h1>
                 </>
               ) : (
                 <>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">Catégorie</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{t('categoryLabel')}</p>
                   <h1 className="text-2xl font-black">{categories.find(c => c.slug === currentCategory)?.name ?? currentCategory}</h1>
                 </>
               )}
-              <p className="text-sm text-slate-400 mt-0.5">{articles.length} article{articles.length !== 1 ? 's' : ''}</p>
+              <p className="text-sm text-slate-400 mt-0.5">
+                {articles.length} {articles.length !== 1 ? t('articleCountPlural', { count: '' }).replace('{count} ', '') : t('articleCount', { count: '' }).replace('{count} ', '')}
+              </p>
             </div>
           </div>
 
           {articles.length === 0 ? (
             <div className="py-32 text-center">
               <BookOpen className="h-14 w-14 mx-auto mb-5 text-slate-200" />
-              <p className="text-xl font-bold text-slate-400 mb-2">Aucun article trouvé</p>
+              <p className="text-xl font-bold text-slate-400 mb-2">{t('noArticlesFound')}</p>
               <Link href={basePath} className="inline-flex items-center gap-2 text-sm font-semibold hover:underline" style={{ color: primaryColor }}>
-                <ArrowRight className="h-4 w-4 rotate-180" /> Revenir à l'accueil
+                <ArrowRight className="h-4 w-4 rotate-180" /> {t('backToHome')}
               </Link>
             </div>
           ) : (
@@ -111,8 +115,8 @@ export default function CorporateHome({
               <div className="inline-flex items-center justify-center h-20 w-20 rounded-3xl bg-slate-100 mb-6">
                 <BookOpen className="h-10 w-10 text-slate-300" />
               </div>
-              <h2 className="text-2xl font-black text-slate-400 mb-2">Aucun article pour l'instant</h2>
-              <p className="text-slate-400">Revenez bientôt pour de nouveaux contenus de qualité.</p>
+              <h2 className="text-2xl font-black text-slate-400 mb-2">{t('noArticles')}</h2>
+              <p className="text-slate-400">{t('noArticlesDesc')}</p>
             </div>
           ) : (
             <>
@@ -146,7 +150,7 @@ export default function CorporateHome({
               {categories.length > 0 && (
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
                   <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 shrink-0 mr-3">Explorer</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 shrink-0 mr-3">{t('explore')}</span>
                     {categories.map(c => (
                       <Link key={c.slug} href={`?category=${c.slug}`}
                         className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 bg-white text-slate-600 hover:border-[var(--cp)] hover:text-[var(--cp)] transition-all shadow-sm whitespace-nowrap">
@@ -193,7 +197,7 @@ export default function CorporateHome({
                         <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
                           <div className="flex items-center gap-2 mb-5">
                             <TrendingUp className="h-4 w-4 shrink-0" style={{ color: primaryColor }} />
-                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">Articles populaires</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">{t('popularArticles')}</h3>
                           </div>
                           {sidebarPopular.map((a, i) => (
                             <CardCompact key={a.id} article={a} href={aHref(a.slug)} rank={i + 1} />
@@ -206,7 +210,7 @@ export default function CorporateHome({
                         <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
                           <div className="flex items-center gap-2 mb-5">
                             <BookOpen className="h-4 w-4 shrink-0" style={{ color: primaryColor }} />
-                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">Catégories</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">{t('categories')}</h3>
                           </div>
                           <div className="space-y-0.5">
                             {categories.map(c => (
@@ -232,13 +236,13 @@ export default function CorporateHome({
                         <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
                           <div className="flex items-center gap-2 mb-5">
                             <Hash className="h-4 w-4 shrink-0" style={{ color: primaryColor }} />
-                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">Tags</h3>
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">{t('tagsLabel')}</h3>
                           </div>
                           <div className="flex flex-wrap gap-2">
-                            {tags.map(t => (
-                              <Link key={t} href={`?q=${encodeURIComponent(t)}`}
+                            {tags.map(tag => (
+                              <Link key={tag} href={`?q=${encodeURIComponent(tag)}`}
                                 className="text-xs px-3 py-1.5 rounded-xl border border-slate-200 text-slate-500 hover:border-[var(--cp)] hover:text-[var(--cp)] transition-colors bg-slate-50">
-                                #{t}
+                                #{tag}
                               </Link>
                             ))}
                           </div>
@@ -252,14 +256,14 @@ export default function CorporateHome({
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                           </svg>
                         </div>
-                        <h3 className="font-black text-lg mb-2 leading-tight">Rejoignez notre communauté</h3>
+                        <h3 className="font-black text-lg mb-2 leading-tight">{t('joinCommunity')}</h3>
                         <p className="text-white/80 text-sm leading-relaxed mb-4">
-                          Nos meilleurs articles chaque semaine, directement dans votre boîte mail.
+                          {t('subscribeDesc')}
                         </p>
                         <a href="#newsletter"
                           className="flex items-center justify-center gap-2 h-10 w-full rounded-xl bg-white font-bold text-sm hover:bg-white/90 transition-colors"
                           style={{ color: primaryColor }}>
-                          S'abonner gratuitement
+                          {t('subscribeFree')}
                         </a>
                       </div>
                     </aside>

@@ -199,47 +199,43 @@ export default function AboutPage() {
 
       {/* ── Équipe ── */}
       <StudioSection id="team" title="Équipe" defaultOpen={false}>
-        <StudioSwitch label="Afficher l'équipe" checked={cfg.team.enabled} onChange={v => patch(c => ({ ...c, team: { ...c.team, enabled: v } }))} />
-        {cfg.team.enabled && (
-          <>
-            <StudioField label="Titre de la section">
-              <StudioInput value={cfg.team.title} onChange={v => patch(c => ({ ...c, team: { ...c.team, title: v } }))} placeholder="Notre équipe" />
-            </StudioField>
-            <div className="space-y-3">
-              {cfg.team.members.map((m, i) => (
-                <div key={i} className="p-3 rounded-xl border border-slate-200 bg-slate-50/60 space-y-2">
-                  <div className="flex items-start gap-3">
-                    <div className="w-20 shrink-0">
-                      <ImagePicker
-                        value={m.avatar_url ?? ''}
-                        onChange={url => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.map((x, j) => j === i ? { ...x, avatar_url: url } : x) } }))}
-                        tenantId={blogId}
-                        ratio="1/1"
-                      />
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <input value={m.name} onChange={e => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.map((x, j) => j === i ? { ...x, name: e.target.value } : x) } }))}
-                        placeholder="Prénom Nom" className="w-full h-9 px-3 rounded-lg border border-slate-200 bg-white text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
-                      <input value={m.role} onChange={e => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.map((x, j) => j === i ? { ...x, role: e.target.value } : x) } }))}
-                        placeholder="Rôle / Titre" className="w-full h-9 px-3 rounded-lg border border-slate-200 bg-white text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
-                      <textarea value={m.bio} onChange={e => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.map((x, j) => j === i ? { ...x, bio: e.target.value } : x) } }))}
-                        placeholder="Bio courte…" rows={2}
-                        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none" />
-                    </div>
-                    <button onClick={() => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.filter((_, j) => j !== i) } }))}
-                      className="h-8 w-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 transition-colors shrink-0">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
+        <StudioSwitch label="Afficher la section équipe sur le blog" checked={cfg.team.enabled} onChange={v => patch(c => ({ ...c, team: { ...c.team, enabled: v } }))} />
+        <StudioField label="Titre de la section">
+          <StudioInput value={cfg.team.title} onChange={v => patch(c => ({ ...c, team: { ...c.team, title: v } }))} placeholder="Notre équipe" />
+        </StudioField>
+        <div className="space-y-3">
+          {cfg.team.members.map((m, i) => (
+            <div key={i} className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/60 space-y-2">
+              <div className="flex items-start gap-3">
+                <div className="w-20 shrink-0">
+                  <ImagePicker
+                    value={m.avatar_url ?? ''}
+                    onChange={url => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.map((x, j) => j === i ? { ...x, avatar_url: url } : x) } }))}
+                    tenantId={blogId}
+                    ratio="1/1"
+                  />
                 </div>
-              ))}
-              <button onClick={() => patch(c => ({ ...c, team: { ...c.team, members: [...c.team.members, { name: '', role: '', bio: '', avatar_url: '' }] } }))}
-                className="flex items-center gap-1.5 text-[12px] font-medium text-blue-600 hover:text-blue-700">
-                <Plus className="h-3.5 w-3.5" /> Ajouter un membre
-              </button>
+                <div className="flex-1 space-y-2">
+                  <input value={m.name} onChange={e => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.map((x, j) => j === i ? { ...x, name: e.target.value } : x) } }))}
+                    placeholder="Prénom Nom" className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-slate-200 text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                  <input value={m.role} onChange={e => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.map((x, j) => j === i ? { ...x, role: e.target.value } : x) } }))}
+                    placeholder="Rôle / Titre" className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-slate-200 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                  <textarea value={m.bio} onChange={e => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.map((x, j) => j === i ? { ...x, bio: e.target.value } : x) } }))}
+                    placeholder="Bio courte…" rows={2}
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 dark:text-slate-300 text-[12px] text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none" />
+                </div>
+                <button onClick={() => patch(c => ({ ...c, team: { ...c.team, members: c.team.members.filter((_, j) => j !== i) } }))}
+                  className="h-8 w-8 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 dark:hover:border-red-800 transition-colors shrink-0">
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
-          </>
-        )}
+          ))}
+          <button onClick={() => patch(c => ({ ...c, team: { ...c.team, members: [...c.team.members, { name: '', role: '', bio: '', avatar_url: '' }] } }))}
+            className="flex items-center gap-1.5 text-[12px] font-medium text-blue-600 hover:text-blue-700">
+            <Plus className="h-3.5 w-3.5" /> Ajouter un membre
+          </button>
+        </div>
       </StudioSection>
 
       {/* ── CTA ── */}

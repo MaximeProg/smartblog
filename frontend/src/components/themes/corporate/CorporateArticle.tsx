@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback, type CSSProperties, type For
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import {
   Clock, Calendar, ChevronRight, Hash,
   ArrowLeft, BookOpen, TrendingUp, Heart, Eye,
@@ -231,6 +232,7 @@ function CommentCard({
 // ─── Comments section ─────────────────────────────────────────────────────────
 
 function CommentsSection({ comments, primaryColor }: { comments: MockComment[]; primaryColor: string }) {
+  const t = useTranslations('publicBlog');
   const [all, setAll] = useState(comments);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -263,45 +265,45 @@ function CommentsSection({ comments, primaryColor }: { comments: MockComment[]; 
       <div className="flex items-center gap-3 mb-8">
         <MessageCircle className="h-5 w-5 shrink-0" style={{ color: primaryColor }} />
         <h2 className="text-lg font-black text-slate-900">
-          Commentaires <span className="text-slate-400 font-normal text-base">({all.length})</span>
+          {t('comments')} <span className="text-slate-400 font-normal text-base">({all.length})</span>
         </h2>
       </div>
 
       {/* Form */}
       <div className="bg-slate-50 rounded-2xl border border-slate-100 p-6 mb-8">
-        <h3 className="text-sm font-bold text-slate-700 mb-4">Laisser un commentaire</h3>
+        <h3 className="text-sm font-bold text-slate-700 mb-4">{t('leaveComment')}</h3>
         <form onSubmit={submit} className="space-y-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1.5">Nom <span className="text-red-400">*</span></label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5">{t('commentFormNameLabel')} <span className="text-red-400">*</span></label>
               <input
                 value={name} onChange={e => setName(e.target.value)} required
-                placeholder="Jean Dupont"
+                placeholder={t('commentFormNamePlaceholder')}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2"
                 style={ring}
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1.5">Email <span className="text-slate-300">(non publié)</span></label>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5">{t('commentFormEmailLabel')} <span className="text-slate-300">{t('commentFormEmailNote')}</span></label>
               <input
                 type="email" value={email} onChange={e => setEmail(e.target.value)}
-                placeholder="jean@exemple.fr"
+                placeholder={t('commentFormEmailPlaceholder')}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2"
                 style={ring}
               />
             </div>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5">Commentaire <span className="text-red-400">*</span></label>
+            <label className="block text-xs font-semibold text-slate-500 mb-1.5">{t('commentLabel')} <span className="text-red-400">*</span></label>
             <textarea
               value={text} onChange={e => setText(e.target.value)} required rows={4}
-              placeholder="Partagez votre avis, votre expérience ou posez une question…"
+              placeholder={t('commentFormPlaceholder')}
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm resize-none focus:outline-none focus:ring-2"
               style={ring}
             />
           </div>
           <div className="flex items-center justify-between gap-4">
-            <p className="text-xs text-slate-400">Votre email ne sera jamais affiché ni partagé.</p>
+            <p className="text-xs text-slate-400">{t('commentFormEmailPrivacy')}</p>
             <button
               type="submit"
               className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-opacity shrink-0"
@@ -312,7 +314,7 @@ function CommentsSection({ comments, primaryColor }: { comments: MockComment[]; 
         </form>
         {done && (
           <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-100">
-            <Check className="h-4 w-4" /> Commentaire publié avec succès !
+            <Check className="h-4 w-4" /> {t('commentPublished')}
           </div>
         )}
       </div>
@@ -321,7 +323,7 @@ function CommentsSection({ comments, primaryColor }: { comments: MockComment[]; 
       {all.length === 0 ? (
         <div className="text-center py-12">
           <MessageCircle className="h-12 w-12 mx-auto mb-3 text-slate-200" />
-          <p className="text-slate-400 font-medium">Soyez le premier à commenter cet article.</p>
+          <p className="text-slate-400 font-medium">{t('beFirstToComment')}</p>
         </div>
       ) : (
         <div className="divide-y divide-slate-100">
@@ -342,6 +344,7 @@ export default function CorporateArticle({
   const primaryColor = blog.primary_color || '#2563eb';
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const basePath = baseProp ?? (getArticleHref || blog.slug === 'demo' ? '/en/template' : `/${locale}/${blog.slug}`);
   const [imgErr, setImgErr] = useState(false);
   const hasImg = !!article.cover_image_url && !imgErr;
@@ -451,7 +454,7 @@ export default function CorporateArticle({
       {/* ── BREADCRUMB ────────────────────────────────────────────────────────── */}
       <div className="bg-slate-50 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-1.5 text-xs text-slate-400 overflow-x-auto scrollbar-none">
-          <Link href=".." className="shrink-0 hover:text-slate-700 transition-colors">Accueil</Link>
+          <Link href=".." className="shrink-0 hover:text-slate-700 transition-colors">{t('navHome')}</Link>
           <ChevronRight className="h-3 w-3 shrink-0" />
           {article.category_name && article.category_slug && (
             <>
@@ -530,7 +533,7 @@ export default function CorporateArticle({
               {article.views_count !== undefined && (
                 <div className="flex items-center gap-1.5 text-sm text-slate-500">
                   <Eye className="h-4 w-4 shrink-0" />
-                  {article.views_count.toLocaleString('fr-FR')} vues
+                  {article.views_count.toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')} {t('viewsLabel')}
                 </div>
               )}
 
@@ -545,7 +548,7 @@ export default function CorporateArticle({
                 style={liked ? { backgroundColor: primaryColor, borderColor: primaryColor } : {}}
               >
                 <Heart className={`h-4 w-4 ${liked ? 'fill-white' : ''}`} />
-                <span>{likeCount.toLocaleString('fr-FR')}</span>
+                <span>{likeCount.toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')}</span>
               </button>
             </div>
           </header>
@@ -595,7 +598,7 @@ export default function CorporateArticle({
 
           {/* Share */}
           <div className="flex items-center gap-3 mt-12 pt-8 border-t border-slate-100 flex-wrap">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400 mr-2">Partager</span>
+            <span className="text-xs font-black uppercase tracking-widest text-slate-400 mr-2">{t('shareLabel')}</span>
             <button onClick={shareTwitter}
               className="flex items-center gap-2 h-9 px-4 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-sky-50 hover:border-sky-300 hover:text-sky-600 transition-all bg-white">
               <Twitter className="h-4 w-4" /> Twitter
@@ -615,7 +618,7 @@ export default function CorporateArticle({
             </button>
             <div className="ml-auto flex items-center gap-2 text-sm text-slate-400">
               <Eye className="h-4 w-4" />
-              {(article.views_count ?? 0).toLocaleString('fr-FR')} vues
+              {(article.views_count ?? 0).toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')} {t('viewsLabel')}
             </div>
           </div>
 
@@ -641,16 +644,12 @@ export default function CorporateArticle({
                   {article.author_name[0]?.toUpperCase()}
                 </div>
                 <div className="flex-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">À propos de l'auteur</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('aboutAuthor')}</p>
                   <h3 className="font-black text-slate-900 text-xl mb-2">{article.author_name}</h3>
-                  <p className="text-sm text-slate-500 leading-relaxed mb-4">
-                    Auteur et expert contribuant régulièrement à <strong className="text-slate-700">{blog.name}</strong>.
-                    Passionné par son domaine, il partage analyses approfondies, expériences terrain et perspectives d'avenir pour aider les professionnels à prendre les meilleures décisions.
-                  </p>
                   <Link href=".."
                     className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:border-[var(--cp)] hover:text-[var(--cp)] transition-all bg-white">
                     <BookOpen className="h-3.5 w-3.5" />
-                    Voir tous ses articles
+                    {t('seeAllAuthorArticles')}
                   </Link>
                 </div>
               </div>
@@ -665,7 +664,7 @@ export default function CorporateArticle({
             <Link href=".."
               className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[var(--cp)] transition-colors group">
               <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-              Retour à l'accueil
+              {t('backToHome')}
             </Link>
           </div>
         </article>
@@ -679,7 +678,7 @@ export default function CorporateArticle({
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <List className="h-4 w-4 shrink-0" style={{ color: primaryColor }} />
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">Dans cet article</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">{t('tableOfContents')}</h3>
                 </div>
                 <nav className="space-y-0.5">
                   {toc.map(item => (
@@ -706,7 +705,7 @@ export default function CorporateArticle({
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <TrendingUp className="h-4 w-4 shrink-0" style={{ color: primaryColor }} />
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">Articles similaires</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700">{t('relatedArticles')}</h3>
                 </div>
                 <div className="space-y-0">
                   {relatedArticles.slice(0, 4).map((a, i) => (
@@ -721,7 +720,7 @@ export default function CorporateArticle({
                           {a.title}
                         </p>
                         <p className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                          <Clock className="h-2.5 w-2.5" />{a.reading_time_minutes} min · {fmtDateShort(a.published_at)}
+                          <Clock className="h-2.5 w-2.5" />{a.reading_time_minutes} min · {fmtDateShort(a.published_at, locale)}
                         </p>
                       </div>
                     </Link>
@@ -737,14 +736,14 @@ export default function CorporateArticle({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="font-black text-base mb-1.5 leading-tight">Rejoignez la newsletter</h3>
+              <h3 className="font-black text-base mb-1.5 leading-tight">{t('joinNewsletter')}</h3>
               <p className="text-white/75 text-xs leading-relaxed mb-4">
-                Chaque semaine, nos meilleures analyses dans votre boîte mail.
+                {t('subscribeDesc')}
               </p>
               <a href="#newsletter"
                 className="flex items-center justify-center gap-2 h-9 w-full rounded-xl bg-white text-xs font-bold hover:bg-white/90 transition-colors"
                 style={{ color: primaryColor }}>
-                S'abonner gratuitement
+                {t('subscribeFree')}
               </a>
             </div>
 
@@ -771,7 +770,7 @@ export default function CorporateArticle({
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-center gap-3 mb-8">
               <TrendingUp className="h-4 w-4 shrink-0" style={{ color: primaryColor }} />
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-700">Vous aimerez aussi</h2>
+              <h2 className="text-xs font-black uppercase tracking-widest text-slate-700">{t('youMightAlsoLike')}</h2>
               <div className="flex-1 h-px bg-slate-200" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -784,7 +783,7 @@ export default function CorporateArticle({
                 className="inline-flex items-center gap-2 text-sm font-bold px-6 py-3 rounded-xl border-2 hover:bg-[var(--cp)] hover:text-white transition-all duration-200"
                 style={{ borderColor: primaryColor, color: primaryColor }}>
                 <BookOpen className="h-4 w-4" />
-                Voir tous les articles
+                {t('seeAllArticles')}
               </Link>
             </div>
           </div>

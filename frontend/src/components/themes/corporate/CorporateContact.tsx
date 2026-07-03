@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Mail, Phone, MapPin, Send, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 import { CorporateHeader, CorporateFooter } from './shared';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
@@ -16,18 +17,19 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export default function CorporateContactPage({ blog, categories, basePath }: Props) {
   const primaryColor = blog.primary_color || '#2563eb';
+  const t = useTranslations('publicBlog');
   const contactConfig = blog.template_config?.contact as Record<string, any> | undefined;
 
   const hero = contactConfig?.hero ?? {};
-  const heroTitle = hero.title || 'Contactez-nous';
-  const heroSubtitle = hero.subtitle || 'Contact';
-  const heroDesc = hero.description || 'Une question ? Une idée ? Nous sommes à votre écoute.';
+  const heroTitle = hero.title || t('contactTitle');
+  const heroSubtitle = hero.subtitle || t('contactSubtitle');
+  const heroDesc = hero.description || t('contactDesc');
 
   const info = contactConfig?.info ?? {};
   const infoEmail = info.email || null;
   const infoPhone = info.phone || null;
   const infoAddress = info.address || null;
-  const formTitle = contactConfig?.form?.title || 'Envoyez-nous un message';
+  const formTitle = contactConfig?.form?.title || t('contactFormTitle');
   const formDesc = contactConfig?.form?.description || null;
 
   const [name, setName] = useState('');
@@ -47,11 +49,11 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, subject, message }),
       });
-      if (!res.ok) throw new Error('Erreur lors de l\'envoi');
+      if (!res.ok) throw new Error('send_failed');
       setStatus('success');
     } catch {
       setStatus('error');
-      setErrorMsg('L\'envoi a échoué. Veuillez réessayer ou nous contacter directement par email.');
+      setErrorMsg(t('contactErrorMsg'));
     }
   }
 
@@ -91,8 +93,8 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
           {hasInfo && (
             <aside className="space-y-6">
               <div>
-                <h2 className="text-xl font-black text-slate-900 mb-1">Informations</h2>
-                <p className="text-sm text-slate-500">Comment nous joindre directement</p>
+                <h2 className="text-xl font-black text-slate-900 mb-1">{t('contactInfoSection')}</h2>
+                <p className="text-sm text-slate-500">{t('contactInfoDesc')}</p>
               </div>
               <div className="space-y-4">
                 {infoEmail && (
@@ -115,7 +117,7 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
                       <Phone className="h-5 w-5" style={{ color: primaryColor }} />
                     </div>
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Téléphone</p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">{t('contactPhone')}</p>
                       <a href={`tel:${infoPhone}`} className="text-sm font-semibold hover:underline"
                         style={{ color: primaryColor }}>{infoPhone}</a>
                     </div>
@@ -128,7 +130,7 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
                       <MapPin className="h-5 w-5" style={{ color: primaryColor }} />
                     </div>
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Adresse</p>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">{t('contactAddress')}</p>
                       <p className="text-sm font-semibold text-slate-700">{infoAddress}</p>
                     </div>
                   </div>
@@ -139,7 +141,7 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
                 <Link href={basePath}
                   className="inline-flex items-center gap-2 text-sm font-semibold hover:underline"
                   style={{ color: primaryColor }}>
-                  <ArrowRight className="h-4 w-4 rotate-180" /> Retour aux articles
+                  <ArrowRight className="h-4 w-4 rotate-180" /> {t('backToArticles')}
                 </Link>
               </div>
             </aside>
@@ -159,14 +161,14 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
                     style={{ backgroundColor: `${primaryColor}18` }}>
                     <CheckCircle2 className="h-8 w-8" style={{ color: primaryColor }} />
                   </div>
-                  <h3 className="text-xl font-black text-slate-900 mb-2">Message envoyé !</h3>
-                  <p className="text-slate-500 text-sm mb-6">Nous vous répondrons dans les meilleurs délais.</p>
+                  <h3 className="text-xl font-black text-slate-900 mb-2">{t('contactMessageSent')}</h3>
+                  <p className="text-slate-500 text-sm mb-6">{t('contactMessageSentDesc')}</p>
                   <button
                     onClick={() => { setStatus('idle'); setName(''); setEmail(''); setSubject(''); setMessage(''); }}
                     className="text-sm font-semibold hover:underline"
                     style={{ color: primaryColor }}
                   >
-                    Envoyer un autre message
+                    {t('contactSendAnother')}
                   </button>
                 </div>
               ) : (
@@ -174,11 +176,11 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                        Nom complet *
+                        {t('contactNameLabel')} *
                       </label>
                       <input
                         type="text" required value={name} onChange={e => setName(e.target.value)}
-                        placeholder="Jean Dupont"
+                        placeholder={t('contactNamePlaceholder')}
                         className="w-full h-11 px-4 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all"
                         style={{ '--tw-ring-color': primaryColor } as CSSProperties}
                       />
@@ -189,7 +191,7 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
                       </label>
                       <input
                         type="email" required value={email} onChange={e => setEmail(e.target.value)}
-                        placeholder="jean@exemple.com"
+                        placeholder={t('contactEmailPlaceholder')}
                         className="w-full h-11 px-4 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all"
                         style={{ '--tw-ring-color': primaryColor } as CSSProperties}
                       />
@@ -198,11 +200,11 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                      Sujet
+                      {t('contactSubjectLabel')}
                     </label>
                     <input
                       type="text" value={subject} onChange={e => setSubject(e.target.value)}
-                      placeholder="En quoi pouvons-nous vous aider ?"
+                      placeholder={t('contactSubjectPlaceholder')}
                       className="w-full h-11 px-4 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all"
                       style={{ '--tw-ring-color': primaryColor } as CSSProperties}
                     />
@@ -210,11 +212,11 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                      Message *
+                      {t('contactMessageLabel')} *
                     </label>
                     <textarea
                       required value={message} onChange={e => setMessage(e.target.value)}
-                      rows={6} placeholder="Décrivez votre demande..."
+                      rows={6} placeholder={t('contactMessagePlaceholder')}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all resize-none"
                       style={{ '--tw-ring-color': primaryColor } as CSSProperties}
                     />
@@ -233,9 +235,9 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
                     style={{ backgroundColor: primaryColor }}
                   >
                     {status === 'loading' ? (
-                      <><Loader2 className="h-4 w-4 animate-spin" /> Envoi en cours…</>
+                      <><Loader2 className="h-4 w-4 animate-spin" /> {t('contactSendingButton')}</>
                     ) : (
-                      <><Send className="h-4 w-4" /> Envoyer le message</>
+                      <><Send className="h-4 w-4" /> {t('contactSendButton')}</>
                     )}
                   </button>
                 </form>

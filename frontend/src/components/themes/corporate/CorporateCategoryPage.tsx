@@ -3,6 +3,7 @@
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 import { BookOpen, ChevronRight, Clock, Calendar, Heart, Eye, ArrowRight } from 'lucide-react';
 import {
   CorporateHeader, CorporateFooter, NewsletterSection,
@@ -24,6 +25,8 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
   const otherCategories = categories.filter(c => c.slug !== category.slug);
   const cpStyle = { '--cp': primaryColor } as CSSProperties;
   const pq = previewSlug ? `?preview=${previewSlug}` : '';
+  const t = useTranslations('publicBlog');
+  const locale = useLocale();
 
   return (
     <div className="min-h-screen bg-white text-slate-900" style={cpStyle}>
@@ -55,9 +58,9 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16">
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-8 flex-wrap">
-            <Link href={basePath} className="hover:text-white transition-colors">Accueil</Link>
+            <Link href={basePath} className="hover:text-white transition-colors">{t('navHome')}</Link>
             <ChevronRight className="h-3 w-3" />
-            <Link href={`${basePath}/categories`} className="hover:text-white transition-colors">Catégories</Link>
+            <Link href={`${basePath}/categories`} className="hover:text-white transition-colors">{t('categories')}</Link>
             <ChevronRight className="h-3 w-3" />
             <span className="text-white">{category.name}</span>
           </div>
@@ -76,7 +79,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
             <div className="flex items-center gap-4 text-sm text-slate-400">
               <div className="flex items-center gap-1.5">
                 <BookOpen className="h-4 w-4" />
-                <span>{articles.length} article{articles.length > 1 ? 's' : ''}</span>
+                <span>{articles.length > 1 ? t('articleCountPlural', { count: articles.length }) : t('articleCount', { count: articles.length })}</span>
               </div>
             </div>
           </div>
@@ -91,21 +94,23 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
           <div>
             <div className="flex items-center gap-3 mb-8">
               <h2 className="text-xs font-black uppercase tracking-widest text-slate-700">
-                Articles — {category.name}
+                {category.name}
               </h2>
               <div className="flex-1 h-px bg-slate-200" />
-              <span className="text-xs text-slate-400">{articles.length} résultat{articles.length > 1 ? 's' : ''}</span>
+              <span className="text-xs text-slate-400">
+                {articles.length > 1 ? t('resultCountPlural', { count: articles.length }) : t('resultCount', { count: articles.length })}
+              </span>
             </div>
 
             {articles.length === 0 ? (
               <div className="py-24 text-center">
                 <BookOpen className="h-16 w-16 mx-auto mb-5 text-slate-200" />
-                <p className="text-xl font-bold text-slate-400 mb-2">Aucun article pour l'instant</p>
-                <p className="text-slate-400 text-sm mb-6">Revenez bientôt pour de nouveaux contenus dans cette catégorie.</p>
+                <p className="text-xl font-bold text-slate-400 mb-2">{t('noArticles')}</p>
+                <p className="text-slate-400 text-sm mb-6">{t('noArticlesInCategoryDesc')}</p>
                 <Link href={basePath}
                   className="inline-flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: primaryColor }}>
-                  <ArrowRight className="h-4 w-4 rotate-180" /> Voir tous les articles
+                  <ArrowRight className="h-4 w-4 rotate-180" /> {t('seeAllArticles')}
                 </Link>
               </div>
             ) : (
@@ -124,7 +129,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
                       )}
                       <span className="absolute top-3 left-3 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg text-white"
                         style={{ backgroundColor: primaryColor }}>
-                        À la une
+                        {t('featuredLabel')}
                       </span>
                     </div>
                     <div className="flex-1">
@@ -139,12 +144,12 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
                           <span className="font-medium text-slate-600">{articles[0].author_name}</span>
                         )}
                         {articles[0].published_at && (
-                          <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{fmtDate(articles[0].published_at)}</span>
+                          <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{fmtDate(articles[0].published_at, locale)}</span>
                         )}
                         {articles[0].reading_time_minutes && (
                           <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{articles[0].reading_time_minutes} min</span>
                         )}
-                        <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{articles[0].views_count.toLocaleString('fr-FR')}</span>
+                        <span className="flex items-center gap-1"><Eye className="h-3 w-3" />{articles[0].views_count.toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')}</span>
                         <span className="flex items-center gap-1"><Heart className="h-3 w-3" />{articles[0].likes_count}</span>
                       </div>
                     </div>
@@ -166,7 +171,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
           <aside className="space-y-6">
             {otherCategories.length > 0 && (
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700 mb-4">Autres catégories</h3>
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700 mb-4">{t('otherCategories')}</h3>
                 <div className="space-y-2">
                   {otherCategories.map(c => (
                     <Link key={c.slug} href={`${basePath}/categories/${c.slug}${pq}`}
@@ -184,7 +189,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
                         <p className="text-sm font-bold text-slate-800 group-hover:text-[var(--cp)] transition-colors truncate">
                           {c.name}
                         </p>
-                        <p className="text-xs text-slate-400">{c.articles_count} article{c.articles_count > 1 ? 's' : ''}</p>
+                        <p className="text-xs text-slate-400">{c.articles_count > 1 ? t('articleCountPlural', { count: c.articles_count }) : t('articleCount', { count: c.articles_count })}</p>
                       </div>
                       <ChevronRight className="h-4 w-4 text-slate-300 shrink-0" />
                     </Link>
@@ -193,7 +198,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
                 <Link href={`${basePath}/categories`}
                   className="flex items-center justify-center gap-2 mt-4 h-9 w-full rounded-xl text-xs font-bold border-2 transition-colors"
                   style={{ borderColor: primaryColor, color: primaryColor }}>
-                  Toutes les catégories
+                  {t('allCategoriesLink')}
                 </Link>
               </div>
             )}
@@ -204,14 +209,14 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="font-black text-base mb-1.5">Newsletter {category.name}</h3>
+              <h3 className="font-black text-base mb-1.5">Newsletter — {category.name}</h3>
               <p className="text-white/75 text-xs leading-relaxed mb-4">
-                Recevez chaque semaine nos meilleurs articles directement dans votre boîte mail.
+                {t('weeklyNewsletterDesc')}
               </p>
               <a href="#newsletter"
                 className="flex items-center justify-center gap-2 h-9 w-full rounded-xl bg-white text-xs font-bold hover:bg-white/90 transition-colors"
                 style={{ color: primaryColor }}>
-                S'abonner gratuitement
+                {t('subscribeFree')}
               </a>
             </div>
           </aside>
