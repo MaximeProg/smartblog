@@ -26,7 +26,7 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
   const gradient = PLAN_GRADIENTS[plan] ?? PLAN_GRADIENTS.free;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all overflow-hidden flex flex-col">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 transition-all overflow-hidden flex flex-col">
       <div className="relative h-[100px] shrink-0 overflow-hidden">
         {blog.cover_image_url ? (
           <img src={blog.cover_image_url} alt={blog.name} className="w-full h-full object-cover" />
@@ -44,8 +44,8 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
 
       <div className="flex flex-col flex-1 p-4 gap-3">
         <div className="min-w-0">
-          <h3 className="font-bold text-slate-900 text-[14px] leading-tight truncate">{blog.name}</h3>
-          <p className="text-[11px] text-slate-400 font-mono mt-0.5 truncate">{blog.slug}.nexusblog.io</p>
+          <h3 className="font-bold text-slate-900 dark:text-slate-100 text-[14px] leading-tight truncate">{blog.name}</h3>
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 font-mono mt-0.5 truncate">{blog.slug}.nexusblog.io</p>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
@@ -54,9 +54,9 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
             { icon: Mail,      val: blog.subscribers_count ?? 0, label: 'abonnés'  },
             { icon: Users,     val: blog.authors_count ?? 0,     label: 'auteurs'  },
           ].map(s => (
-            <div key={s.label} className="flex flex-col items-center py-2 rounded-lg bg-slate-50">
-              <span className="text-[15px] font-black text-slate-800 leading-none">{s.val}</span>
-              <span className="text-[10px] text-slate-400 mt-0.5">{s.label}</span>
+            <div key={s.label} className="flex flex-col items-center py-2 rounded-lg bg-slate-50 dark:bg-slate-800">
+              <span className="text-[15px] font-black text-slate-800 dark:text-slate-200 leading-none">{s.val}</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{s.label}</span>
             </div>
           ))}
         </div>
@@ -64,7 +64,7 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
         <div className="flex items-center gap-2 mt-auto">
           <Link
             href={`/${locale}/blogs/${blog.id}/general`}
-            className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-[12px] font-semibold transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[12px] font-semibold transition-colors"
           >
             <Settings className="h-3.5 w-3.5" />
             Studio
@@ -73,7 +73,7 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
             href={`/${locale}/${blog.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-500 hover:text-slate-700 transition-all"
+            className="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"
             title="Voir le blog"
           >
             <ExternalLink className="h-3.5 w-3.5" />
@@ -100,7 +100,7 @@ export default function BlogsPage() {
     : blogs;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
       <DashboardSidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -112,9 +112,9 @@ export default function BlogsPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-[20px] font-black text-slate-900">Mes blogs</h2>
+                <h2 className="text-[20px] font-black text-slate-900 dark:text-slate-100">Mes blogs</h2>
                 {!isLoading && (
-                  <p className="text-[13px] text-slate-500 mt-0.5">
+                  <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-0.5">
                     {blogs.length === 0
                       ? 'Aucun blog créé pour le moment.'
                       : `${blogs.length} blog${blogs.length > 1 ? 's' : ''} créé${blogs.length > 1 ? 's' : ''}`}
@@ -129,13 +129,13 @@ export default function BlogsPage() {
                       value={search}
                       onChange={e => setSearch(e.target.value)}
                       placeholder="Rechercher…"
-                      className="h-9 pl-9 pr-4 rounded-xl border border-slate-200 bg-white text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors w-[200px]"
+                      className="h-9 pl-9 pr-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors w-[200px]"
                     />
                   </div>
                 )}
                 <button
                   onClick={() => router.push(`/${locale}/onboarding`)}
-                  className="flex items-center gap-2 h-9 px-4 rounded-xl bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-semibold transition-colors shadow-sm"
+                  className="flex items-center gap-2 h-9 px-4 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors shadow-sm"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   Nouveau blog
@@ -147,39 +147,39 @@ export default function BlogsPage() {
             {isLoading ? (
               <div className="grid grid-cols-4 gap-4">
                 {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden animate-pulse">
-                    <div className="h-[100px] bg-slate-100" />
+                  <div key={i} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 overflow-hidden animate-pulse">
+                    <div className="h-[100px] bg-slate-100 dark:bg-slate-800" />
                     <div className="p-4 space-y-3">
-                      <div className="h-3.5 bg-slate-100 rounded-lg w-3/5" />
-                      <div className="h-3 bg-slate-100 rounded-lg w-2/5" />
+                      <div className="h-3.5 bg-slate-100 dark:bg-slate-800 rounded-lg w-3/5" />
+                      <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded-lg w-2/5" />
                       <div className="grid grid-cols-3 gap-2">
-                        <div className="h-10 bg-slate-100 rounded-lg" />
-                        <div className="h-10 bg-slate-100 rounded-lg" />
-                        <div className="h-10 bg-slate-100 rounded-lg" />
+                        <div className="h-10 bg-slate-100 dark:bg-slate-800 rounded-lg" />
+                        <div className="h-10 bg-slate-100 dark:bg-slate-800 rounded-lg" />
+                        <div className="h-10 bg-slate-100 dark:bg-slate-800 rounded-lg" />
                       </div>
-                      <div className="h-8 bg-slate-100 rounded-lg" />
+                      <div className="h-8 bg-slate-100 dark:bg-slate-800 rounded-lg" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : filtered.length === 0 && search ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-slate-200/80">
-                <Search className="h-10 w-10 text-slate-300 mb-4" />
-                <p className="text-[14px] font-bold text-slate-800">Aucun résultat pour «{search}»</p>
-                <p className="text-[13px] text-slate-400 mt-1">Essayez un autre terme.</p>
+              <div className="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700">
+                <Search className="h-10 w-10 text-slate-300 dark:text-slate-600 mb-4" />
+                <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200">Aucun résultat pour «{search}»</p>
+                <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-1">Essayez un autre terme.</p>
               </div>
             ) : blogs.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-slate-200/80 shadow-sm">
-                <div className="h-14 w-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-5">
-                  <Newspaper className="h-6 w-6 text-slate-400" />
+              <div className="flex flex-col items-center justify-center py-24 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-5">
+                  <Newspaper className="h-6 w-6 text-slate-400 dark:text-slate-500" />
                 </div>
-                <h3 className="text-[16px] font-bold text-slate-900 mb-2">Aucun blog</h3>
-                <p className="text-[13px] text-slate-500 max-w-[260px] mb-6 leading-relaxed">
+                <h3 className="text-[16px] font-bold text-slate-900 dark:text-slate-100 mb-2">Aucun blog</h3>
+                <p className="text-[13px] text-slate-500 dark:text-slate-400 max-w-[260px] mb-6 leading-relaxed">
                   Créez votre premier blog en quelques secondes.
                 </p>
                 <button
                   onClick={() => router.push(`/${locale}/onboarding`)}
-                  className="flex items-center gap-2 h-10 px-5 rounded-xl bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-semibold transition-colors"
+                  className="flex items-center gap-2 h-10 px-5 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors"
                 >
                   <Plus className="h-4 w-4" />
                   Créer mon premier blog

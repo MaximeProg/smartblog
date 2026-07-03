@@ -30,22 +30,22 @@ interface StudioSectionProps {
 export function StudioSection({ id, title, icon, badge, defaultOpen = true, children }: StudioSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-slate-100 last:border-0">
+    <div className="border-b border-slate-100 dark:border-slate-700 last:border-0">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between gap-3 px-5 py-3.5 text-left hover:bg-slate-50 transition-colors"
+        className="w-full flex items-center justify-between gap-3 px-5 py-3.5 text-left hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
       >
         <div className="flex items-center gap-2.5">
-          {icon && <span className="text-slate-500">{icon}</span>}
-          <span className="text-[13px] font-semibold text-slate-800">{title}</span>
+          {icon && <span className="text-slate-500 dark:text-slate-400">{icon}</span>}
+          <span className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">{title}</span>
           {badge && (
-            <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 border border-blue-100">
+            <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800">
               {badge}
             </span>
           )}
         </div>
         <svg
-          className={`h-4 w-4 text-slate-400 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`h-4 w-4 text-slate-400 dark:text-slate-500 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -71,8 +71,8 @@ interface StudioFieldProps {
 export function StudioField({ label, hint, children }: StudioFieldProps) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-slate-600 mb-1.5">{label}</label>
-      {hint && <p className="text-[11px] text-slate-400 mb-2 leading-snug">{hint}</p>}
+      <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">{label}</label>
+      {hint && <p className="text-[11px] text-slate-400 dark:text-slate-500 mb-2 leading-snug">{hint}</p>}
       {children}
     </div>
   );
@@ -91,13 +91,13 @@ export function StudioSwitch({ label, description, checked, onChange }: StudioSw
   return (
     <div className="flex items-start justify-between gap-4 py-1">
       <div className="flex-1">
-        <p className="text-[13px] font-medium text-slate-700 leading-snug">{label}</p>
-        {description && <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">{description}</p>}
+        <p className="text-[13px] font-medium text-slate-700 dark:text-slate-300 leading-snug">{label}</p>
+        {description && <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 leading-snug">{description}</p>}
       </div>
       <button
         type="button"
         onClick={() => onChange(!checked)}
-        className={`relative h-5 w-9 shrink-0 rounded-full transition-colors duration-200 ${checked ? 'bg-blue-600' : 'bg-slate-200'}`}
+        className={`relative h-5 w-9 shrink-0 rounded-full transition-colors duration-200 ${checked ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-600'}`}
       >
         <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${checked ? 'translate-x-[18px]' : 'translate-x-0.5'}`} />
       </button>
@@ -116,7 +116,7 @@ interface StudioInputProps {
 }
 
 export function StudioInput({ value, onChange, placeholder, multiline, rows = 3 }: StudioInputProps) {
-  const cls = 'w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-[13px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors resize-none';
+  const cls = 'w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors resize-none';
   if (multiline) {
     return <textarea value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} rows={rows} className={cls} />;
   }
@@ -140,17 +140,17 @@ export function StudioColorPicker({ value, onChange }: StudioColorPickerProps) {
   return (
     <div className="space-y-2.5">
       <div className="flex items-center gap-2">
-        <div className="h-9 w-9 rounded-xl border-2 border-white shadow-md shrink-0" style={{ backgroundColor: value }} />
+        <div className="h-9 w-9 rounded-xl border-2 border-white dark:border-slate-700 shadow-md shrink-0" style={{ backgroundColor: value }} />
         <input
           type="text"
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="flex-1 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-[13px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 font-mono"
+          className="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 font-mono"
           placeholder="#2563eb"
         />
-        <label className="h-9 w-9 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors shrink-0">
+        <label className="h-9 w-9 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shrink-0">
           <input type="color" value={value} onChange={e => onChange(e.target.value)} className="sr-only" />
-          <svg className="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="h-4 w-4 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
           </svg>
         </label>
@@ -199,13 +199,13 @@ export function BlogStudioShell({
   }, [saving, refresh]);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden bg-white dark:bg-slate-900">
       {/* Panel header */}
-      <div className="shrink-0 border-b border-slate-100 px-5 py-4 bg-white">
+      <div className="shrink-0 border-b border-slate-100 dark:border-slate-700 px-5 py-4 bg-white dark:bg-slate-900">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <h1 className="text-[13px] font-bold text-slate-900 leading-tight">{title}</h1>
-            {description && <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">{description}</p>}
+            <h1 className="text-[13px] font-bold text-slate-900 dark:text-slate-100 leading-tight">{title}</h1>
+            {description && <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 leading-snug">{description}</p>}
           </div>
           {onSave && (
             <button

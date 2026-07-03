@@ -52,8 +52,8 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
   };
 
   return (
-    <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3">
-      <p className="text-[12px] font-semibold text-slate-700">Nouvelle catégorie</p>
+    <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 space-y-3">
+      <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">Nouvelle catégorie</p>
 
       {/* Name */}
       <input
@@ -61,17 +61,17 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
         onChange={e => handleNameChange(e.target.value)}
         placeholder="Nom de la catégorie"
         autoFocus
-        className="w-full h-9 px-3 rounded-lg border border-slate-200 bg-white text-[13px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+        className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
       />
 
       {/* Slug */}
-      <div className="flex rounded-lg border border-slate-200 bg-white overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-400">
-        <span className="flex items-center px-2 text-[10px] text-slate-400 bg-slate-50 border-r border-slate-200 font-mono shrink-0">slug:</span>
+      <div className="flex rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-400">
+        <span className="flex items-center px-2 text-[10px] text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-600 font-mono shrink-0">slug:</span>
         <input
           value={slug}
           onChange={e => { setSlugManual(true); setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-')); }}
           placeholder="mon-slug"
-          className="flex-1 h-9 px-2 text-[12px] font-mono bg-transparent outline-none text-slate-700"
+          className="flex-1 h-9 px-2 text-[12px] font-mono bg-transparent outline-none text-slate-700 dark:text-slate-300"
         />
       </div>
 
@@ -81,7 +81,7 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
         onChange={e => setDescription(e.target.value)}
         placeholder="Description (optionnel)"
         rows={2}
-        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none"
+        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-[12px] text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none"
       />
 
       {/* Color */}
@@ -130,7 +130,7 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
           <Check className="h-3.5 w-3.5" />
           {createMut.isPending ? 'Création…' : 'Créer'}
         </button>
-        <button onClick={onDone} className="h-8 px-3 rounded-lg border border-slate-200 text-[12px] text-slate-500 hover:bg-slate-50 transition-colors flex items-center gap-1.5">
+        <button onClick={onDone} className="h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-600 text-[12px] text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5">
           <X className="h-3.5 w-3.5" /> Annuler
         </button>
       </div>
@@ -185,12 +185,12 @@ function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
 
   if (editing) {
     return (
-      <div className="border border-blue-200 bg-blue-50/30 rounded-xl p-3 space-y-3">
+      <div className="border border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/10 rounded-xl p-3 space-y-3">
         <input
           value={editName}
           onChange={e => setEditName(e.target.value)}
           autoFocus
-          className="w-full h-9 px-3 rounded-lg border border-slate-200 bg-white text-[13px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+          className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
         />
 
         {/* Color */}
@@ -238,7 +238,7 @@ function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
           </button>
           <button
             onClick={() => setEditing(false)}
-            className="h-7 px-3 rounded-lg border border-slate-200 text-[11px] text-slate-500 hover:bg-slate-50 transition-colors flex items-center gap-1"
+            className="h-7 px-3 rounded-lg border border-slate-200 dark:border-slate-600 text-[11px] text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-1"
           >
             <X className="h-3 w-3" /> Annuler
           </button>
@@ -248,9 +248,9 @@ function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
   }
 
   return (
-    <div className="group flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-slate-200 bg-white transition-all cursor-pointer" onClick={openEdit}>
+    <div className="group flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 bg-white dark:bg-slate-800 transition-all cursor-pointer" onClick={openEdit}>
       {cat.cover_image_url ? (
-        <div className="h-8 w-8 rounded-lg shrink-0 overflow-hidden border border-slate-100">
+        <div className="h-8 w-8 rounded-lg shrink-0 overflow-hidden border border-slate-100 dark:border-slate-700">
           <img src={cat.cover_image_url} alt="" className="w-full h-full object-cover" />
         </div>
       ) : (
@@ -259,12 +259,12 @@ function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-semibold text-slate-800">{cat.name}</p>
-        <p className="text-[11px] text-slate-400 font-mono">{cat.slug} · {cat.articles_count ?? 0} article{(cat.articles_count ?? 0) > 1 ? 's' : ''}</p>
+        <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">{cat.name}</p>
+        <p className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">{cat.slug} · {cat.articles_count ?? 0} article{(cat.articles_count ?? 0) > 1 ? 's' : ''}</p>
       </div>
       <button
         onClick={e => { e.stopPropagation(); deleteMut.mutate(); }}
-        className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
+        className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors opacity-0 group-hover:opacity-100"
         title="Supprimer"
       >
         <Trash2 className="h-3.5 w-3.5" />
@@ -305,7 +305,7 @@ export default function CategoriesPage() {
         ) : (
           <button
             onClick={() => setCreating(true)}
-            className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border-2 border-dashed border-slate-200 text-[12px] font-medium text-slate-500 hover:border-blue-300 hover:text-blue-600 transition-colors"
+            className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:border-blue-300 dark:hover:border-blue-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             <Plus className="h-4 w-4" /> Nouvelle catégorie
           </button>
@@ -317,11 +317,11 @@ export default function CategoriesPage() {
           </div>
         ) : categories.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="h-12 w-12 rounded-2xl bg-blue-50 flex items-center justify-center mb-3">
-              <Tag className="h-6 w-6 text-blue-500" />
+            <div className="h-12 w-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-3">
+              <Tag className="h-6 w-6 text-blue-500 dark:text-blue-400" />
             </div>
-            <p className="text-[14px] font-bold text-slate-800 mb-1">Aucune catégorie</p>
-            <p className="text-[12px] text-slate-400">Créez votre première catégorie pour organiser vos articles.</p>
+            <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200 mb-1">Aucune catégorie</p>
+            <p className="text-[12px] text-slate-400 dark:text-slate-500">Créez votre première catégorie pour organiser vos articles.</p>
           </div>
         ) : (
           <div className="space-y-1.5">

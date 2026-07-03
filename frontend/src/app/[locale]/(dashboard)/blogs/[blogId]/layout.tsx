@@ -33,19 +33,19 @@ export default function BlogStudioLayout({ children }: { children: React.ReactNo
 
   return (
     <StudioPreviewContext.Provider value={ctx}>
-      <div className="flex h-screen overflow-hidden bg-white">
+      <div className="flex h-screen overflow-hidden bg-white dark:bg-slate-900">
         <Sidebar locale={locale} blogId={blogId} />
 
         <div className="flex-1 flex overflow-hidden">
           {fullWidth ? (
             /* Article editor mode — full available width, no preview */
-            <main className="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <main className="flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">
               {children}
             </main>
           ) : (
             /* Normal studio mode — 400px settings panel + preview */
             <>
-              <main className="w-[400px] shrink-0 flex flex-col overflow-hidden border-r border-slate-100 bg-white shadow-sm z-10">
+              <main className="w-[400px] shrink-0 flex flex-col overflow-hidden border-r border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm z-10">
                 {children}
               </main>
               <StudioPreviewPanel previewUrl={previewUrl} refreshSignal={refreshSignal} />

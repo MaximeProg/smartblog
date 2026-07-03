@@ -70,7 +70,7 @@ export function StudioRichText({
     if (!editor) return;
     const url = window.prompt('URL du lien :');
     if (!url) return;
-    editor.chain().focus().extendMarkToLink({ href: url }).setLink({ href: url }).run();
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
   }, [editor]);
 
   const addImage = useCallback(async () => {

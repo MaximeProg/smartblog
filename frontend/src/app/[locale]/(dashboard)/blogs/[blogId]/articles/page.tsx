@@ -42,26 +42,26 @@ function ArticleRow({
   const sc = STATUS_CONFIG[article.status] ?? STATUS_CONFIG.draft;
 
   return (
-    <div className="group flex items-center gap-3 py-3 border-b border-slate-50 last:border-0 hover:bg-slate-50/60 rounded-lg px-2 transition-colors">
+    <div className="group flex items-center gap-3 py-3 border-b border-slate-50 dark:border-slate-800 last:border-0 hover:bg-slate-50/60 dark:hover:bg-slate-800/60 rounded-lg px-2 transition-colors">
       {/* Cover thumb */}
-      <div className="h-10 w-14 rounded-lg bg-slate-100 shrink-0 overflow-hidden">
+      <div className="h-10 w-14 rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0 overflow-hidden">
         {article.cover_image_url
           ? <img src={article.cover_image_url} alt="" className="h-full w-full object-cover" />
-          : <div className="h-full w-full flex items-center justify-center"><FileText className="h-4 w-4 text-slate-300" /></div>
+          : <div className="h-full w-full flex items-center justify-center"><FileText className="h-4 w-4 text-slate-300 dark:text-slate-600" /></div>
         }
       </div>
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-semibold text-slate-800 truncate leading-snug">{article.title}</p>
-        <p className="text-[11px] text-slate-400 mt-0.5">
+        <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200 truncate leading-snug">{article.title}</p>
+        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
           {formatRelativeTime(article.updated_at ?? article.created_at)} · {t('readTime', { n: article.reading_time_minutes ?? 0 })}
         </p>
       </div>
 
       {/* Stats */}
       <div className="flex items-center gap-3 shrink-0">
-        <div className="flex items-center gap-1 text-[11px] text-slate-400">
+        <div className="flex items-center gap-1 text-[11px] text-slate-400 dark:text-slate-500">
           <Eye className="h-3 w-3" />
           {article.views_count}
         </div>
@@ -75,7 +75,7 @@ function ArticleRow({
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={() => router.push(`/${locale}/blogs/${blogId}/articles/${article.id}/edit`)}
-          className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+          className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
           title={t('editTooltip')}
         >
           <Edit2 className="h-3.5 w-3.5" />
@@ -83,26 +83,26 @@ function ArticleRow({
         <div className="relative">
           <button
             onClick={() => setMenuOpen(o => !o)}
-            className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
           >
             <MoreVertical className="h-3.5 w-3.5" />
           </button>
           {menuOpen && (
-            <div className="absolute right-0 top-8 z-50 bg-white border border-slate-200 rounded-xl shadow-lg py-1 w-40" onBlur={() => setMenuOpen(false)}>
+            <div className="absolute right-0 top-8 z-50 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg py-1 w-40" onBlur={() => setMenuOpen(false)}>
               {article.status === 'draft' && (
                 <button onClick={() => { onPublish(article.id); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50">
+                  className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> {t('publishAction')}
                 </button>
               )}
               {article.status === 'published' && (
                 <button onClick={() => { onArchive(article.id); setMenuOpen(false); }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50">
+                  className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
                   <Archive className="h-3.5 w-3.5 text-slate-400" /> {t('archiveAction')}
                 </button>
               )}
               <button onClick={() => { onDelete(article.id); setMenuOpen(false); }}
-                className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-red-600 hover:bg-red-50">
+                className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
                 <Trash2 className="h-3.5 w-3.5" /> {t('deleteAction')}
               </button>
             </div>
@@ -182,19 +182,19 @@ export default function ArticlesPage() {
 
         {/* Toolbar */}
         <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center gap-2 h-9 px-3 rounded-xl border border-slate-200 bg-slate-50">
-            <Search className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+          <div className="flex-1 flex items-center gap-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+            <Search className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={t('searchPlaceholderShort')}
-              className="flex-1 bg-transparent text-[13px] text-slate-800 placeholder-slate-400 outline-none"
+              className="flex-1 bg-transparent text-[13px] text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 outline-none"
             />
           </div>
           <select
             value={status}
             onChange={e => setStatus(e.target.value as ArticleStatus | '')}
-            className="h-9 px-3 rounded-xl border border-slate-200 bg-slate-50 text-[12px] text-slate-600 outline-none"
+            className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-600 dark:text-slate-300 outline-none"
           >
             <option value="">{t('filterAll')}</option>
             <option value="draft">{t('filterDraft')}</option>

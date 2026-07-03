@@ -59,24 +59,24 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-slate-100">
+    <div className="flex-1 flex flex-col overflow-hidden bg-slate-100 dark:bg-slate-950">
 
       {/* Toolbar */}
-      <div className="shrink-0 h-10 border-b border-slate-200 bg-white/80 backdrop-blur flex items-center justify-between px-4 gap-3">
-        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+      <div className="shrink-0 h-10 border-b border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur flex items-center justify-between px-4 gap-3">
+        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
           Prévisualisation en direct
         </span>
 
         <div className="flex items-center gap-1">
           {/* Device switcher */}
-          <div className="flex items-center gap-0.5 bg-slate-100 rounded-lg p-0.5 mr-1">
+          <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 mr-1">
             {(Object.entries(DEVICE_CONFIG) as [Device, typeof DEVICE_CONFIG[Device]][]).map(([key, cfg]) => (
               <button
                 key={key}
                 onClick={() => setDevice(key)}
                 title={cfg.label}
                 className={`h-6 w-6 rounded-md flex items-center justify-center transition-all ${
-                  device === key ? 'bg-white shadow-sm text-slate-700' : 'text-slate-400 hover:text-slate-600'
+                  device === key ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
                 <cfg.icon className="h-3.5 w-3.5" />
@@ -87,7 +87,7 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
           <button
             onClick={handleManualRefresh}
             title="Actualiser"
-            className="h-6 w-6 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            className="h-6 w-6 rounded-md flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <RefreshCw className="h-3 w-3" />
           </button>
@@ -96,7 +96,7 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             title="Ouvrir dans un nouvel onglet"
-            className="h-6 w-6 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            className="h-6 w-6 rounded-md flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <ExternalLink className="h-3 w-3" />
           </a>

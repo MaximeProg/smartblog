@@ -75,7 +75,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
   if (value && !previewError) {
     return (
       <div className="space-y-2">
-        <div className="relative rounded-xl overflow-hidden bg-slate-100 border border-slate-200 group" style={{ paddingBottom: paddingPct }}>
+        <div className="relative rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 group" style={{ paddingBottom: paddingPct }}>
           <img
             src={value}
             alt="Aperçu"
@@ -100,7 +100,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
           </div>
         </div>
         <input ref={fileRef} type="file" accept="image/*" onChange={handleFileInput} className="sr-only" />
-        <p className="text-[10px] text-slate-400 truncate font-mono">{value}</p>
+        <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate font-mono">{value}</p>
       </div>
     );
   }
@@ -109,12 +109,12 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
   return (
     <div className="space-y-2.5">
       {/* Tabs */}
-      <div className="flex border border-slate-200 rounded-xl overflow-hidden">
+      <div className="flex border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
         <button
           type="button"
           onClick={() => setTab('file')}
           className={`flex-1 flex items-center justify-center gap-1.5 h-8 text-[11px] font-semibold transition-colors ${
-            tab === 'file' ? 'bg-slate-800 text-white' : 'bg-white text-slate-500 hover:bg-slate-50'
+            tab === 'file' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
           }`}
         >
           <Upload className="h-3 w-3" /> Depuis l'ordinateur
@@ -122,8 +122,8 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
         <button
           type="button"
           onClick={() => setTab('url')}
-          className={`flex-1 flex items-center justify-center gap-1.5 h-8 text-[11px] font-semibold transition-colors border-l border-slate-200 ${
-            tab === 'url' ? 'bg-slate-800 text-white' : 'bg-white text-slate-500 hover:bg-slate-50'
+          className={`flex-1 flex items-center justify-center gap-1.5 h-8 text-[11px] font-semibold transition-colors border-l border-slate-200 dark:border-slate-700 ${
+            tab === 'url' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
           }`}
         >
           <Link2 className="h-3 w-3" /> URL directe
@@ -143,8 +143,8 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
             onDrop={handleDrop}
             className={`w-full border-2 border-dashed rounded-xl transition-all ${
               dragging
-                ? 'border-blue-400 bg-blue-50'
-                : 'border-slate-200 hover:border-blue-300 hover:bg-slate-50 bg-white'
+                ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                : 'border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-900'
             }`}
             style={{ paddingBottom: paddingPct, position: 'relative' }}
           >
@@ -152,18 +152,18 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
               {uploading ? (
                 <>
                   <Loader2 className="h-7 w-7 text-blue-500 animate-spin" />
-                  <span className="text-[11px] text-slate-500 font-medium">Upload en cours…</span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Upload en cours…</span>
                 </>
               ) : (
                 <>
-                  <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center">
-                    <ImageIcon className="h-5 w-5 text-slate-400" />
+                  <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                    <ImageIcon className="h-5 w-5 text-slate-400 dark:text-slate-500" />
                   </div>
                   <div className="text-center">
-                    <p className="text-[12px] font-semibold text-slate-700">
+                    <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">
                       {dragging ? 'Déposez ici' : 'Cliquez ou glissez une image'}
                     </p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">JPG, PNG, WebP, GIF • max 10 Mo</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">JPG, PNG, WebP, GIF • max 10 Mo</p>
                   </div>
                 </>
               )}
@@ -182,7 +182,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
               onChange={e => setUrlInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') handleUrlConfirm(); }}
               placeholder="https://exemple.com/image.jpg"
-              className="flex-1 h-9 px-3 rounded-xl border border-slate-200 bg-slate-50 text-[12px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 font-mono"
+              className="flex-1 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 font-mono"
             />
             <button
               type="button"
@@ -198,7 +198,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
 
       {/* Error */}
       {uploadError && (
-        <p className="text-[11px] text-red-500 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{uploadError}</p>
+        <p className="text-[11px] text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg px-3 py-2">{uploadError}</p>
       )}
     </div>
   );

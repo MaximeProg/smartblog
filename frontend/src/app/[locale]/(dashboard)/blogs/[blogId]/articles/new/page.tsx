@@ -134,22 +134,22 @@ export default function NewArticlePage() {
     setShowImgPicker(false);
   }, []);
 
-  const toolbarBtnCls = 'h-7 w-7 flex items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors';
+  const toolbarBtnCls = 'h-7 w-7 flex items-center justify-center rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200 transition-colors';
 
   return (
-    <div className="flex flex-col h-full overflow-hidden bg-slate-50">
+    <div className="flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-950">
 
       {/* ── Top bar ──────────────────────────────────────────────────────── */}
-      <div className="shrink-0 h-14 border-b border-slate-200/70 bg-white flex items-center justify-between px-6 gap-4 shadow-sm">
+      <div className="shrink-0 h-14 border-b border-slate-200/70 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-between px-6 gap-4 shadow-sm">
         <div className="flex items-center gap-3 min-w-0">
           <Link
             href={`/${locale}/blogs/${blogId}/articles`}
-            className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-800 transition-colors shrink-0"
+            className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors shrink-0"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Articles
           </Link>
-          <span className="text-slate-300">/</span>
-          <span className="text-[13px] font-semibold text-slate-700 truncate">
+          <span className="text-slate-300 dark:text-slate-600">/</span>
+          <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 truncate">
             {title || 'Nouvel article'}
           </span>
         </div>
@@ -157,7 +157,7 @@ export default function NewArticlePage() {
           <button
             onClick={() => { setPublish(false); mutation.mutate(); }}
             disabled={!canSave}
-            className="flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 bg-white text-[12px] font-semibold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-40"
+            className="flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40"
           >
             {mutation.isPending && !publish
               ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -189,18 +189,18 @@ export default function NewArticlePage() {
             onChange={e => handleTitleChange(e.target.value)}
             placeholder="Titre de l'article…"
             autoFocus
-            className="w-full text-[32px] font-black text-slate-900 bg-transparent border-0 outline-none placeholder-slate-200 mb-2 leading-tight"
+            className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-transparent border-0 outline-none placeholder-slate-200 dark:placeholder-slate-700 mb-2 leading-tight"
           />
 
           {/* Slug */}
-          <div className="flex items-center gap-2 text-[12px] mb-8 pb-6 border-b border-slate-200">
-            <span className="text-slate-400 font-mono shrink-0">URL :</span>
-            <div className="flex items-center gap-0 px-2.5 py-1 rounded-lg bg-slate-100 font-mono text-[12px]">
-              <span className="text-slate-400 shrink-0">nexusblog.io/{blogId}/</span>
+          <div className="flex items-center gap-2 text-[12px] mb-8 pb-6 border-b border-slate-200 dark:border-slate-700">
+            <span className="text-slate-400 dark:text-slate-500 font-mono shrink-0">URL :</span>
+            <div className="flex items-center gap-0 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 font-mono text-[12px]">
+              <span className="text-slate-400 dark:text-slate-500 shrink-0">nexusblog.io/{blogId}/</span>
               <input
                 value={slug}
                 onChange={e => { setSlugManual(true); setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-')); }}
-                className="bg-transparent outline-none text-slate-700 min-w-[120px]"
+                className="bg-transparent outline-none text-slate-700 dark:text-slate-300 min-w-[120px]"
                 placeholder="mon-article"
               />
             </div>
@@ -208,34 +208,34 @@ export default function NewArticlePage() {
 
           {/* Excerpt */}
           <div className="mb-6">
-            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Résumé</label>
+            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Résumé</label>
             <textarea
               value={excerpt}
               onChange={e => setExcerpt(e.target.value)}
               placeholder="Un résumé court affiché dans les listings et les moteurs de recherche…"
               rows={3}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-[14px] text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none leading-relaxed"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[14px] text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none leading-relaxed"
             />
-            <p className="text-[10px] text-slate-400 mt-1">Les liens au format <code className="bg-slate-100 px-1 rounded">[texte](url)</code> seront cliquables dans l'article publié.</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Les liens au format <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">[texte](url)</code> seront cliquables dans l'article publié.</p>
           </div>
 
           {/* Content editor */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400">Contenu</label>
-              <span className="text-[10px] text-slate-400">Markdown</span>
+              <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Contenu</label>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500">Markdown</span>
             </div>
 
             {/* Markdown toolbar */}
-            <div className="flex items-center gap-0.5 px-2 py-1.5 border border-slate-200 border-b-0 rounded-t-xl bg-slate-50 flex-wrap">
+            <div className="flex items-center gap-0.5 px-2 py-1.5 border border-slate-200 dark:border-slate-700 border-b-0 rounded-t-xl bg-slate-50 dark:bg-slate-800 flex-wrap">
               <button type="button" onClick={handleBold}   title="Gras"             className={toolbarBtnCls}><Bold      className="h-3.5 w-3.5" /></button>
               <button type="button" onClick={handleItalic} title="Italique"          className={toolbarBtnCls}><Italic    className="h-3.5 w-3.5" /></button>
-              <div className="w-px h-4 bg-slate-200 mx-1" />
+              <div className="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-1" />
               <button type="button" onClick={handleH2}     title="Titre H2"          className={toolbarBtnCls}><Heading2  className="h-3.5 w-3.5" /></button>
               <button type="button" onClick={handleH3}     title="Titre H3"          className={toolbarBtnCls}><Heading3  className="h-3.5 w-3.5" /></button>
               <button type="button" onClick={handleQuote}  title="Citation"          className={toolbarBtnCls}><Quote     className="h-3.5 w-3.5" /></button>
               <button type="button" onClick={handleRule}   title="Ligne de séparation" className={toolbarBtnCls}><Minus   className="h-3.5 w-3.5" /></button>
-              <div className="w-px h-4 bg-slate-200 mx-1" />
+              <div className="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-1" />
 
               {/* Link button + inline input */}
               <div className="relative flex items-center">
@@ -243,24 +243,24 @@ export default function NewArticlePage() {
                   type="button"
                   onClick={() => { setShowLinkInput(v => !v); setShowImgPicker(false); }}
                   title="Insérer un lien"
-                  className={`${toolbarBtnCls} ${showLinkInput ? 'bg-blue-50 text-blue-600' : ''}`}
+                  className={`${toolbarBtnCls} ${showLinkInput ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : ''}`}
                 >
                   <Link2 className="h-3.5 w-3.5" />
                 </button>
                 {showLinkInput && (
-                  <div className="absolute top-full left-0 mt-1 flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl shadow-lg p-1.5 z-20 whitespace-nowrap">
+                  <div className="absolute top-full left-0 mt-1 flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg p-1.5 z-20 whitespace-nowrap">
                     <input
                       autoFocus
                       value={linkUrl}
                       onChange={e => setLinkUrl(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter') handleInsertLink(); if (e.key === 'Escape') setShowLinkInput(false); }}
                       placeholder="https://exemple.com"
-                      className="h-7 w-56 px-2.5 rounded-lg border border-slate-200 bg-slate-50 text-[12px] font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      className="h-7 w-56 px-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-[12px] font-mono text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     />
                     <button onClick={handleInsertLink} className="h-7 w-7 flex items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700">
                       <Check className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => setShowLinkInput(false)} className="h-7 w-7 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50">
+                    <button onClick={() => setShowLinkInput(false)} className="h-7 w-7 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-600 text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700">
                       <X className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -272,7 +272,7 @@ export default function NewArticlePage() {
                 type="button"
                 onClick={() => { setShowImgPicker(v => !v); setShowLinkInput(false); }}
                 title="Insérer une image"
-                className={`${toolbarBtnCls} ${showImgPicker ? 'bg-blue-50 text-blue-600' : ''}`}
+                className={`${toolbarBtnCls} ${showImgPicker ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : ''}`}
               >
                 <ImageIcon className="h-3.5 w-3.5" />
               </button>
@@ -280,7 +280,7 @@ export default function NewArticlePage() {
 
             {/* Inline image picker (collapsible) */}
             {showImgPicker && (
-              <div className="border border-slate-200 border-t-0 border-b-0 bg-white px-4 py-3">
+              <div className="border border-slate-200 dark:border-slate-700 border-t-0 border-b-0 bg-white dark:bg-slate-800 px-4 py-3">
                 <ImagePicker
                   value=""
                   onChange={handleInsertImage}
@@ -296,17 +296,17 @@ export default function NewArticlePage() {
               onChange={e => setContent(e.target.value)}
               placeholder={'Commencez à écrire votre article…\n\nExemples Markdown :\n**gras**  *italique*  ## Titre\n[texte](https://…)  ![alt](https://image.jpg)'}
               rows={26}
-              className="w-full px-4 py-4 border border-slate-200 rounded-b-xl bg-white text-[14px] text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none font-mono leading-relaxed"
+              className="w-full px-4 py-4 border border-slate-200 dark:border-slate-700 rounded-b-xl bg-white dark:bg-slate-800 text-[14px] text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none font-mono leading-relaxed"
             />
           </div>
         </div>
 
         {/* Right: metadata sidebar */}
-        <div className="w-[280px] shrink-0 border-l border-slate-200/70 bg-white overflow-y-auto px-5 py-6 space-y-6">
+        <div className="w-[280px] shrink-0 border-l border-slate-200/70 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto px-5 py-6 space-y-6">
 
           {/* Cover image */}
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Image de couverture</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Image de couverture</p>
             <ImagePicker
               value={coverImageUrl}
               onChange={setCoverImageUrl}
@@ -317,11 +317,11 @@ export default function NewArticlePage() {
 
           {/* Category */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Catégorie</label>
+            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Catégorie</label>
             <select
               value={categoryId}
               onChange={e => setCategoryId(e.target.value)}
-              className="w-full h-9 px-3 rounded-xl border border-slate-200 bg-slate-50 text-[13px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+              className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
             >
               <option value="">Sans catégorie</option>
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -329,9 +329,9 @@ export default function NewArticlePage() {
           </div>
 
           {/* Tips */}
-          <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
-            <p className="text-[10px] font-bold text-slate-500 mb-1.5">Raccourcis Markdown</p>
-            <div className="space-y-1 text-[10px] text-slate-400 font-mono">
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
+            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Raccourcis Markdown</p>
+            <div className="space-y-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono">
               <p><span className="font-bold">**gras**</span></p>
               <p><span className="italic">*italique*</span></p>
               <p>## Titre H2</p>
@@ -356,7 +356,7 @@ export default function NewArticlePage() {
             <button
               onClick={() => { setPublish(false); mutation.mutate(); }}
               disabled={!canSave}
-              className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 bg-white text-[12px] font-semibold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-40"
+              className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40"
             >
               {mutation.isPending && !publish
                 ? <Loader2 className="h-3.5 w-3.5 animate-spin" />

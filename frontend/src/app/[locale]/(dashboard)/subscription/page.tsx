@@ -102,7 +102,7 @@ export default function SubscriptionPage() {
   const currentPlan = user?.plan ?? 'free';
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
       <DashboardSidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -113,8 +113,8 @@ export default function SubscriptionPage() {
 
             {/* Header */}
             <div className="text-center mb-10">
-              <h2 className="text-[26px] font-black text-slate-900 mb-2">Choisissez votre plan</h2>
-              <p className="text-[14px] text-slate-500 max-w-lg mx-auto">
+              <h2 className="text-[26px] font-black text-slate-900 dark:text-slate-100 mb-2">Choisissez votre plan</h2>
+              <p className="text-[14px] text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
                 Démarrez gratuitement et évoluez à votre rythme. Tous les plans incluent le template corporate complet.
               </p>
             </div>
@@ -126,31 +126,31 @@ export default function SubscriptionPage() {
                 return (
                   <div
                     key={plan.id}
-                    className={`relative bg-white rounded-2xl border-2 transition-all flex flex-col p-6 shadow-sm ${
-                      isCurrent ? 'border-blue-400 shadow-blue-50 shadow-lg' : 'border-slate-200/80 hover:border-slate-300 hover:shadow-md'
+                    className={`relative bg-white dark:bg-slate-900 rounded-2xl border-2 transition-all flex flex-col p-6 shadow-sm ${
+                      isCurrent ? 'border-blue-400 dark:border-blue-600 shadow-blue-50 dark:shadow-blue-900/20 shadow-lg' : 'border-slate-200/80 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md'
                     }`}
                   >
                     {/* Badge */}
                     {(plan.badge || isCurrent) && (
                       <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                        <span className={`text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-sm ${isCurrent ? 'bg-slate-800' : (plan as any).badgeCls ?? 'bg-blue-600'}`}>
+                        <span className={`text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-sm ${isCurrent ? 'bg-slate-800 dark:bg-slate-600' : (plan as any).badgeCls ?? 'bg-blue-600'}`}>
                           {isCurrent ? 'Votre plan' : plan.badge}
                         </span>
                       </div>
                     )}
 
                     {/* Icon + plan name */}
-                    <div className={`h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center mb-4`}>
+                    <div className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-4">
                       <plan.icon className={`h-5 w-5 ${plan.accent}`} />
                     </div>
-                    <h3 className="text-[16px] font-black text-slate-900 mb-1">{plan.name}</h3>
+                    <h3 className="text-[16px] font-black text-slate-900 dark:text-slate-100 mb-1">{plan.name}</h3>
 
                     {/* Price */}
                     <div className="flex items-baseline gap-1 mb-5">
-                      <span className="text-[30px] font-black text-slate-900">
+                      <span className="text-[30px] font-black text-slate-900 dark:text-slate-100">
                         {plan.price === 0 ? 'Gratuit' : `${plan.price}€`}
                       </span>
-                      {plan.price > 0 && <span className="text-[13px] text-slate-400">/mois</span>}
+                      {plan.price > 0 && <span className="text-[13px] text-slate-400 dark:text-slate-500">/mois</span>}
                     </div>
 
                     {/* Features */}
@@ -158,14 +158,14 @@ export default function SubscriptionPage() {
                       {plan.features.map(f => (
                         <li key={f} className="flex items-start gap-2.5">
                           <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                          <span className="text-[12.5px] text-slate-600">{f}</span>
+                          <span className="text-[12.5px] text-slate-600 dark:text-slate-400">{f}</span>
                         </li>
                       ))}
                     </ul>
 
                     {/* CTA */}
                     <button
-                      className={`w-full h-10 rounded-xl text-[13px] font-bold transition-colors ${isCurrent ? 'bg-slate-100 text-slate-400 cursor-default' : plan.ctaCls}`}
+                      className={`w-full h-10 rounded-xl text-[13px] font-bold transition-colors ${isCurrent ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-default' : plan.ctaCls}`}
                       disabled={isCurrent}
                     >
                       {isCurrent ? 'Plan actuel' : plan.cta}
@@ -175,7 +175,7 @@ export default function SubscriptionPage() {
               })}
             </div>
 
-            <p className="text-center text-[12px] text-slate-400 mt-10">
+            <p className="text-center text-[12px] text-slate-400 dark:text-slate-500 mt-10">
               Paiement sécurisé · Annulation possible à tout moment · Pas de frais cachés
             </p>
           </div>

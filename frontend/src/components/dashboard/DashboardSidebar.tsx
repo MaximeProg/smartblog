@@ -45,14 +45,16 @@ export function DashboardSidebar() {
     cn(
       'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all',
       isActive(seg, exact)
-        ? 'bg-blue-50 text-blue-700'
-        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800',
+        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+        : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-100',
     );
 
   const iconCls = (seg: string, exact = false) =>
     cn(
       'h-4 w-4 shrink-0 transition-colors',
-      isActive(seg, exact) ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600',
+      isActive(seg, exact)
+        ? 'text-blue-600 dark:text-blue-400'
+        : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300',
     );
 
   const handleSignOut = async () => {
@@ -63,19 +65,18 @@ export function DashboardSidebar() {
   };
 
   return (
-    <aside className="h-full w-[240px] shrink-0 flex flex-col border-r border-slate-200/70 bg-white overflow-hidden">
+    <aside className="h-full w-[240px] shrink-0 flex flex-col border-r border-slate-200/70 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
 
-      {/* ── Logo ─────────────────────────────────────────────── */}
-      <div className="h-[57px] shrink-0 flex items-center gap-2.5 px-5 border-b border-slate-200/70">
+      {/* Logo */}
+      <div className="h-[57px] shrink-0 flex items-center gap-2.5 px-5 border-b border-slate-200/70 dark:border-slate-700">
         <div className="h-7 w-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm font-black shadow-sm shrink-0">
           N
         </div>
-        <span className="font-extrabold text-[14px] tracking-tight text-slate-900">NexusBlog</span>
+        <span className="font-extrabold text-[14px] tracking-tight text-slate-900 dark:text-slate-100">NexusBlog</span>
       </div>
 
-      {/* ── Navigation ───────────────────────────────────────── */}
+      {/* Navigation */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-0.5">
-
         {MAIN_NAV.map(item => (
           <Link key={item.seg} href={`/${locale}/${item.seg}`} className={itemCls(item.seg, item.exact)}>
             <item.icon className={iconCls(item.seg, item.exact)} />
@@ -87,7 +88,7 @@ export function DashboardSidebar() {
         ))}
 
         <div className="pt-4">
-          <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 select-none">
+          <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 select-none">
             Compte
           </p>
           {ACCOUNT_NAV.map(item => (
@@ -102,45 +103,41 @@ export function DashboardSidebar() {
         </div>
       </nav>
 
-      {/* ── Footer ───────────────────────────────────────────── */}
-      <div className="shrink-0 border-t border-slate-200/70 p-3 space-y-2">
-
-        {/* New blog CTA */}
+      {/* Footer */}
+      <div className="shrink-0 border-t border-slate-200/70 dark:border-slate-700 p-3 space-y-2">
         <Link
           href={`/${locale}/onboarding`}
-          className="flex items-center justify-center gap-2 h-9 w-full rounded-xl bg-slate-900 hover:bg-slate-700 text-white text-[12.5px] font-bold transition-colors"
+          className="flex items-center justify-center gap-2 h-9 w-full rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[12.5px] font-bold transition-colors"
         >
           <Plus className="h-3.5 w-3.5" />
           Nouveau blog
         </Link>
 
-        {/* Plan pill */}
-        <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-xl">
+        <div className="flex items-center justify-between px-3 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl">
           <div className="flex items-center gap-1.5">
             <Zap className="h-3.5 w-3.5 text-amber-500" />
-            <span className="text-[12px] font-semibold text-slate-700">{PLAN_LABELS[plan] ?? plan}</span>
+            <span className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">{PLAN_LABELS[plan] ?? plan}</span>
           </div>
           <Link
             href={`/${locale}/subscription`}
-            className="text-[10px] font-bold text-blue-600 border border-blue-200 hover:border-blue-400 px-2 py-0.5 rounded-full transition-colors"
+            className="text-[10px] font-bold text-blue-600 border border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 px-2 py-0.5 rounded-full transition-colors"
           >
             Upgrade
           </Link>
         </div>
 
-        {/* User row / sign out */}
         <button
           onClick={handleSignOut}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all group"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all group"
         >
           <div className="h-7 w-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-[10px] font-bold shrink-0">
             {initials}
           </div>
           <div className="flex-1 min-w-0 text-left">
-            <p className="text-[12px] font-semibold text-slate-700 truncate leading-none group-hover:text-red-600 transition-colors">
+            <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300 truncate leading-none group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
               {user?.display_name ?? user?.email?.split('@')[0]}
             </p>
-            <p className="text-[10px] text-slate-400 truncate leading-none mt-0.5">{user?.email}</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate leading-none mt-0.5">{user?.email}</p>
           </div>
           <LogOut className="h-3.5 w-3.5 shrink-0 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         </button>
