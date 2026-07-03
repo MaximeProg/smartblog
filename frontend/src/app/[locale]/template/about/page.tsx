@@ -102,6 +102,7 @@ export default function AboutPage() {
         primaryColor={primaryColor}
         minimal
         basePath={templateBasePath}
+        previewSlug={preview ?? undefined}
       />
 
       {/* ── HERO ────────────────────────────────────────────────────────────── */}
@@ -267,7 +268,7 @@ export default function AboutPage() {
       </section>
 
       <NewsletterSection blog={blog as any} primaryColor={primaryColor} />
-      <CorporateFooter blog={blog as any} categories={MOCK_CATEGORIES as any} primaryColor={primaryColor} basePath={templateBasePath} />
+      <CorporateFooter blog={blog as any} categories={MOCK_CATEGORIES as any} primaryColor={primaryColor} basePath={templateBasePath} previewSlug={preview ?? undefined} />
     </div>
   );
 }

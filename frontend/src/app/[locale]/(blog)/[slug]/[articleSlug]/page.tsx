@@ -52,6 +52,7 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
       blog={blog}
       article={article}
       relatedArticles={relatedArticles}
+      basePath={`/${locale}/${slug}`}
     />
   );
 }

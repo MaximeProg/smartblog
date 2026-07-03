@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback, type CSSProperties, type FormEvent } from 'react';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -28,7 +29,60 @@ interface CorporateArticleProps extends ArticleProps {
 
 interface TocItem { id: string; text: string; level: number }
 
-function processContent(html: string): { processed: string; toc: TocItem[] } {
+function markdownToHtml(md: string): string {
+  let html = md
+    // Escape HTML special chars first (avoid XSS from raw <> in content)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // Headings
+    .replace(/^######\s+(.+)$/gm, '<h6>$1</h6>')
+    .replace(/^#####\s+(.+)$/gm, '<h5>$1</h5>')
+    .replace(/^####\s+(.+)$/gm, '<h4>$1</h4>')
+    .replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
+    .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
+    .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>')
+    // Horizontal rule
+    .replace(/^---+$/gm, '<hr>')
+    // Blockquote
+    .replace(/^&gt;\s*(.+)$/gm, '<blockquote>$1</blockquote>')
+    // Unordered lists (convert consecutive items)
+    .replace(/^[-*]\s+(.+)$/gm, '<li>$1</li>')
+    // Ordered lists
+    .replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>')
+    // Images before links (order matters)
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" style="max-width:100%;border-radius:8px;margin:1em 0" />')
+    // Links
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">$1</a>')
+    // Bold + italic
+    .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>')
+    // Bold
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // Italic
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    // Inline code
+    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.9em">$1</code>');
+
+  // Wrap <li> sequences in <ul>
+  html = html.replace(/(<li>[\s\S]*?<\/li>)(\s*<li>[\s\S]*?<\/li>)*/g, m => `<ul style="padding-left:1.5em;margin:1em 0">${m}</ul>`);
+
+  // Wrap plain text paragraphs (lines not already wrapped in block tags)
+  const blockTags = /^<(h[1-6]|ul|ol|li|blockquote|hr|img|pre|div)/;
+  html = html.split(/\n{2,}/).map(block => {
+    block = block.trim();
+    if (!block) return '';
+    if (blockTags.test(block)) return block;
+    return `<p>${block.replace(/\n/g, '<br>')}</p>`;
+  }).join('\n');
+
+  return html;
+}
+
+function processContent(source: string): { processed: string; toc: TocItem[] } {
+  // Detect if content is Markdown (no HTML tags) or already HTML
+  const isMarkdown = !/<[a-z][\s\S]*>/i.test(source);
+  const html = isMarkdown ? markdownToHtml(source) : source;
+
   let i = 0;
   const toc: TocItem[] = [];
   const processed = html.replace(/<h([23])([^>]*)>([\s\S]*?)<\/h\1>/gi, (_, lvl, attrs, inner) => {
@@ -283,10 +337,12 @@ function CommentsSection({ comments, primaryColor }: { comments: MockComment[]; 
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function CorporateArticle({
-  blog, article, relatedArticles, getArticleHref, comments = [],
+  blog, article, relatedArticles, getArticleHref, comments = [], basePath: baseProp, previewSlug,
 }: CorporateArticleProps) {
   const primaryColor = blog.primary_color || '#2563eb';
-  const basePath = blog.slug === 'demo' ? '/en/template' : undefined;
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  const basePath = baseProp ?? (getArticleHref || blog.slug === 'demo' ? '/en/template' : `/${locale}/${blog.slug}`);
   const [imgErr, setImgErr] = useState(false);
   const hasImg = !!article.cover_image_url && !imgErr;
   const gradient = grad(article.id);
@@ -382,6 +438,7 @@ export default function CorporateArticle({
         primaryColor={primaryColor}
         minimal
         basePath={basePath}
+        previewSlug={previewSlug}
       />
 
       {/* ── BREADCRUMB ────────────────────────────────────────────────────────── */}
@@ -728,7 +785,7 @@ export default function CorporateArticle({
       )}
 
       <NewsletterSection blog={blog} primaryColor={primaryColor} />
-      <CorporateFooter blog={blog} categories={[]} primaryColor={primaryColor} basePath={basePath} />
+      <CorporateFooter blog={blog} categories={[]} primaryColor={primaryColor} basePath={basePath} previewSlug={previewSlug} />
     </div>
   );
 }

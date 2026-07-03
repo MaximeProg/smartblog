@@ -189,7 +189,7 @@ export function CardCompact({ article, href, rank }: { article: PublicArticle; h
 // ─── Header ───────────────────────────────────────────────────────────────────
 
 export function CorporateHeader({
-  blog, categories, current, searchQuery, primaryColor, minimal = false, basePath,
+  blog, categories, current, searchQuery, primaryColor, minimal = false, basePath, previewSlug,
 }: {
   blog: { name: string; logo_url?: string | null; social_links?: Record<string, string>; template_config?: { header?: { topBar?: { enabled?: boolean; showDate?: boolean; showSocial?: boolean; showNewsletter?: boolean; showRss?: boolean }; subscribe?: { enabled?: boolean; label?: string }; nav?: { links?: { label: string; url: string }[] } } } | null };
   categories: PublicCategory[];
@@ -198,6 +198,7 @@ export function CorporateHeader({
   primaryColor: string;
   minimal?: boolean;
   basePath?: string;
+  previewSlug?: string;
 }) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -210,14 +211,17 @@ export function CorporateHeader({
   const subscribeConfig = headerConfig?.subscribe;
   const customNavLinks = headerConfig?.nav?.links ?? [];
 
-  const homeHref = basePath ?? '/';
+  // Appends ?preview=slug to internal links when in preview mode
+  const pq = previewSlug ? `?preview=${previewSlug}` : '';
+
+  const homeHref = (basePath ?? '/') + pq;
   const catBasePath = basePath ? `${basePath}/categories` : null;
 
   const defaultPageLinks = basePath
     ? [
-        { href: basePath, label: 'Accueil' },
-        { href: `${basePath}/about`, label: 'À propos' },
-        { href: `${basePath}/contact`, label: 'Contact' },
+        { href: basePath + pq, label: 'Accueil' },
+        { href: `${basePath}/about${pq}`, label: 'À propos' },
+        { href: `${basePath}/contact${pq}`, label: 'Contact' },
       ]
     : [];
 
@@ -333,7 +337,7 @@ export function CorporateHeader({
                             {categories.map(c => (
                               <Link
                                 key={c.slug}
-                                href={`${catBasePath}/${c.slug}`}
+                                href={`${catBasePath}/${c.slug}${pq}`}
                                 onClick={() => setCatOpen(false)}
                                 className="group flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200"
                               >
@@ -358,7 +362,7 @@ export function CorporateHeader({
                             ))}
                           </div>
                           <div className="px-4 pb-4">
-                            <Link href={catBasePath} onClick={() => setCatOpen(false)}
+                            <Link href={catBasePath + pq} onClick={() => setCatOpen(false)}
                               className="flex items-center justify-center gap-2 w-full h-10 rounded-xl text-sm font-bold border-2 transition-all hover:text-white"
                               style={{ borderColor: primaryColor, color: primaryColor }}
                               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = primaryColor; (e.currentTarget as HTMLElement).style.color = 'white'; }}
@@ -428,7 +432,7 @@ export function CorporateHeader({
                   <div className="my-2 border-t border-white/5" />
                   <p className="px-4 py-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Catégories</p>
                   {categories.map(c => (
-                    <Link key={c.slug} href={`${catBasePath}/${c.slug}`} onClick={() => setMenuOpen(false)}
+                    <Link key={c.slug} href={`${catBasePath}/${c.slug}${pq}`} onClick={() => setMenuOpen(false)}
                       className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
                       <div className="relative w-10 h-7 rounded-lg overflow-hidden shrink-0 bg-slate-800">
                         {c.cover_image_url ? (
@@ -441,7 +445,7 @@ export function CorporateHeader({
                       <span className="ml-auto text-xs text-slate-600">{c.articles_count}</span>
                     </Link>
                   ))}
-                  <Link href={catBasePath} onClick={() => setMenuOpen(false)}
+                  <Link href={catBasePath + pq} onClick={() => setMenuOpen(false)}
                     className="px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors text-[var(--cp)] hover:bg-white/5"
                     style={{ '--cp': primaryColor } as CSSProperties}>
                     → Voir toutes les catégories
@@ -467,15 +471,17 @@ export function CorporateHeader({
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
 export function CorporateFooter({
-  blog, categories, primaryColor, basePath,
+  blog, categories, primaryColor, basePath, previewSlug,
 }: {
   blog: { name: string; description?: string | null; logo_url?: string | null; social_links?: Record<string, string>; template_config?: { footer?: { description?: string; showCategories?: boolean; navLinks?: { label: string; url: string }[]; showSocialLinks?: boolean; showNewsletterMini?: boolean; newsletterMiniText?: string; copyrightText?: string; showPoweredBy?: boolean } } | null };
   categories: PublicCategory[];
   primaryColor: string;
   basePath?: string;
+  previewSlug?: string;
 }) {
   const footerConfig = blog.template_config?.footer;
 
+  const pq = previewSlug ? `?preview=${previewSlug}` : '';
   const showCategories = footerConfig?.showCategories !== false;
   const showSocialLinks = footerConfig?.showSocialLinks !== false;
   const showNewsletterMini = footerConfig?.showNewsletterMini !== false;
@@ -485,9 +491,9 @@ export function CorporateFooter({
   const copyrightText = footerConfig?.copyrightText || `© ${new Date().getFullYear()} ${blog.name}. Tous droits réservés.`;
 
   const defaultNavLinks = [
-    { href: basePath ?? '/', label: 'Accueil' },
-    { href: basePath ? `${basePath}/about` : '/a-propos', label: 'À propos' },
-    { href: basePath ? `${basePath}/contact` : '/contact', label: 'Contact' },
+    { href: (basePath ?? '/') + pq, label: 'Accueil' },
+    { href: basePath ? `${basePath}/about${pq}` : '/a-propos', label: 'À propos' },
+    { href: basePath ? `${basePath}/contact${pq}` : '/contact', label: 'Contact' },
     { href: '/rss.xml', label: 'Flux RSS' },
   ];
   const navLinks = footerConfig?.navLinks?.length
@@ -546,7 +552,7 @@ export function CorporateFooter({
               <ul className="space-y-2.5">
                 {categories.slice(0, 7).map(c => (
                   <li key={c.slug}>
-                    <Link href={`?category=${c.slug}`}
+                    <Link href={basePath ? `${basePath}/categories/${c.slug}${pq}` : `?category=${c.slug}`}
                       className="group flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors">
                       <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 shrink-0 transition-opacity" style={{ color: primaryColor }} />
                       <span>{c.name}</span>

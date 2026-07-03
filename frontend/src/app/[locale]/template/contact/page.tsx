@@ -95,6 +95,7 @@ export default function ContactPage() {
         primaryColor={primaryColor}
         minimal
         basePath="/en/template"
+        previewSlug={preview ?? undefined}
       />
 
       {/* ── HERO ────────────────────────────────────────────────────────────── */}
@@ -306,7 +307,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      <CorporateFooter blog={blog as any} categories={MOCK_CATEGORIES as any} primaryColor={primaryColor} basePath="/en/template" />
+      <CorporateFooter blog={blog as any} categories={MOCK_CATEGORIES as any} primaryColor={primaryColor} basePath="/en/template" previewSlug={preview ?? undefined} />
     </div>
   );
 }

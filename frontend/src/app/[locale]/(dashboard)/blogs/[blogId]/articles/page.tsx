@@ -12,6 +12,7 @@ import { formatRelativeTime } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import type { ArticleListItem, ArticleStatus } from '@/types';
 import { BlogStudioShell } from '@/components/dashboard/BlogStudioShell';
+import { useStudioPreview } from '@/contexts/studio-preview';
 
 const STATUS_CONFIG: Record<ArticleStatus, { label: string; color: string; icon: typeof FileText }> = {
   draft:     { label: 'Brouillon',   color: 'text-slate-500 bg-slate-100',    icon: FileText },
@@ -114,6 +115,7 @@ export default function ArticlesPage() {
   const router = useRouter();
   const { toast } = useToast();
   const qc = useQueryClient();
+  const { refresh } = useStudioPreview();
 
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<ArticleStatus | ''>('');
@@ -131,7 +133,7 @@ export default function ArticlesPage() {
     },
   });
 
-  const articles = (data?.items ?? []).filter(a =>
+  const articles = (data?.data ?? []).filter(a =>
     !search || a.title.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -140,6 +142,7 @@ export default function ArticlesPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['articles', blogId] });
       toast({ title: 'Article supprimé.' });
+      setTimeout(refresh, 600);
     },
     onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la suppression.' }),
   });
@@ -149,6 +152,7 @@ export default function ArticlesPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['articles', blogId] });
       toast({ title: 'Article publié !' });
+      setTimeout(refresh, 600);
     },
   });
 
@@ -157,6 +161,7 @@ export default function ArticlesPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['articles', blogId] });
       toast({ title: 'Article archivé.' });
+      setTimeout(refresh, 600);
     },
   });
 

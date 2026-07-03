@@ -56,7 +56,7 @@ export function MediaPickerModal({
     enabled: open && !!blogId,
   });
 
-  const items: MediaItem[] = data?.items ?? [];
+  const items: MediaItem[] = data?.data ?? [];
 
   const uploadMutation = useMutation({
     mutationFn: (file: File) => mediaApi.upload(blogId, file).then((r) => r.data),

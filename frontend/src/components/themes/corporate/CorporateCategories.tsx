@@ -15,11 +15,13 @@ interface Props {
   categories: PublicCategory[];
   articles: PublicArticle[];
   basePath: string;
+  previewSlug?: string;
 }
 
-export default function CorporateCategoriesPage({ blog, categories, articles, basePath }: Props) {
+export default function CorporateCategoriesPage({ blog, categories, articles, basePath, previewSlug }: Props) {
   const primaryColor = blog.primary_color || '#2563eb';
   const cpStyle = { '--cp': primaryColor } as CSSProperties;
+  const pq = previewSlug ? `?preview=${previewSlug}` : '';
 
   return (
     <div className="min-h-screen bg-white text-slate-900" style={cpStyle}>
@@ -28,6 +30,7 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
         categories={categories}
         primaryColor={primaryColor}
         minimal
+        previewSlug={previewSlug}
         basePath={basePath}
       />
 
@@ -70,7 +73,7 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
               return (
                 <Link
                   key={cat.slug}
-                  href={`${basePath}/categories/${cat.slug}`}
+                  href={`${basePath}/categories/${cat.slug}${pq}`}
                   className="group relative flex flex-col rounded-3xl overflow-hidden border border-slate-100 bg-white hover:shadow-2xl hover:border-[var(--cp)]/20 transition-all duration-300"
                 >
                   <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
@@ -142,7 +145,7 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {articles.slice(0, 4).map(a => (
-                <CardMedium key={a.id} article={a} href={`${basePath}/${a.slug}`} />
+                <CardMedium key={a.id} article={a} href={`${basePath}/${a.slug}${pq}`} />
               ))}
             </div>
           </div>
@@ -150,7 +153,7 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
       )}
 
       <NewsletterSection blog={blog} primaryColor={primaryColor} />
-      <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} />
+      <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} previewSlug={previewSlug} />
     </div>
   );
 }

@@ -16,12 +16,14 @@ interface Props {
   category: PublicCategory;
   articles: PublicArticle[];
   basePath: string;
+  previewSlug?: string;
 }
 
-export default function CorporateCategoryPage({ blog, categories, category, articles, basePath }: Props) {
+export default function CorporateCategoryPage({ blog, categories, category, articles, basePath, previewSlug }: Props) {
   const primaryColor = blog.primary_color || '#2563eb';
   const otherCategories = categories.filter(c => c.slug !== category.slug);
   const cpStyle = { '--cp': primaryColor } as CSSProperties;
+  const pq = previewSlug ? `?preview=${previewSlug}` : '';
 
   return (
     <div className="min-h-screen bg-white text-slate-900" style={cpStyle}>
@@ -31,6 +33,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
         primaryColor={primaryColor}
         minimal
         basePath={basePath}
+        previewSlug={previewSlug}
       />
 
       {/* Category hero */}
@@ -151,7 +154,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
                 {articles.length > 1 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-6">
                     {articles.slice(1).map(a => (
-                      <CardMedium key={a.id} article={a} href={`${basePath}/${a.slug}`} />
+                      <CardMedium key={a.id} article={a} href={`${basePath}/${a.slug}${pq}`} />
                     ))}
                   </div>
                 )}
@@ -166,7 +169,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
                 <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-700 mb-4">Autres catégories</h3>
                 <div className="space-y-2">
                   {otherCategories.map(c => (
-                    <Link key={c.slug} href={`${basePath}/categories/${c.slug}`}
+                    <Link key={c.slug} href={`${basePath}/categories/${c.slug}${pq}`}
                       className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                       <div className="relative w-12 h-9 rounded-lg overflow-hidden shrink-0 bg-slate-100">
                         {c.cover_image_url ? (
@@ -216,7 +219,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
       </section>
 
       <NewsletterSection blog={blog} primaryColor={primaryColor} />
-      <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} />
+      <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} previewSlug={previewSlug} />
     </div>
   );
 }

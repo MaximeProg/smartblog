@@ -61,6 +61,7 @@ export default function CorporateHome({
         searchQuery={searchQuery}
         primaryColor={primaryColor}
         basePath={basePath}
+        previewSlug={previewSlug}
       />
 
       {/* ── FILTERED / SEARCH VIEW ─────────────────────────────────────────── */}
@@ -270,7 +271,7 @@ export default function CorporateHome({
         </>
       )}
 
-      <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} />
+      <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} previewSlug={previewSlug} />
     </div>
   );
 }

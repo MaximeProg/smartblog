@@ -17,6 +17,8 @@ export interface ArticleProps {
   article: PublicArticleFull;
   relatedArticles: PublicArticle[];
   getArticleHref?: (slug: string) => string;
+  basePath?: string;
+  previewSlug?: string;
 }
 
 export function ThemeHome(props: HomeProps) {

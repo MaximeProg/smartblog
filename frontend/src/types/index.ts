@@ -263,11 +263,12 @@ export interface ArticleListParams {
 }
 
 export interface PaginatedResponse<T> {
-  items: T[];
-  total: number;
-  page: number;
-  limit: number;
-  pages: number;
+  data: T[];
+  meta: {
+    cursor: string | null;
+    has_more: boolean;
+    total: number | null;
+  };
 }
 
 // ─── Menus ────────────────────────────────────────────────────────────────────

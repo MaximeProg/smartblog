@@ -46,6 +46,7 @@ export default function CategoryPage() {
       category={category}
       articles={articles}
       basePath={templateBasePath}
+      previewSlug={preview ?? undefined}
     />
   );
 }

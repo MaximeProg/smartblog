@@ -33,6 +33,8 @@ export default async function TemplateArticlePage({
           article={article as any}
           relatedArticles={related as any}
           comments={[]}
+          basePath="/en/template"
+          previewSlug={preview}
           getArticleHref={(s: string) => `/en/template/${s}?preview=${preview}`}
         />
       );
