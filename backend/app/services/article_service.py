@@ -251,9 +251,11 @@ async def list_articles(
             cover_image_url=a.cover_image_url,
             is_featured=a.is_featured,
             views_count=a.views_count,
+            reading_time_minutes=a.reading_time_minutes,
             published_at=a.published_at,
             author=_build_author(u),
             created_at=a.created_at,
+            updated_at=a.updated_at,
         )
         for a, u in rows
     ]
