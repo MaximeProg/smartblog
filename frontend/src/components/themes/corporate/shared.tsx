@@ -225,8 +225,17 @@ export function CorporateHeader({
       ]
     : [];
 
+  // Resolve a stored URL against basePath so relative paths (/about, /contact, /)
+  // work correctly on the real public blog instead of pointing to the platform root.
+  const resolveNavHref = (url: string): string => {
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (!basePath) return url;
+    if (url === '/') return basePath + pq;
+    return basePath + url + pq;
+  };
+
   const pageLinks = customNavLinks.length > 0
-    ? customNavLinks.map(l => ({ href: l.url, label: l.label }))
+    ? customNavLinks.map(l => ({ href: resolveNavHref(l.url), label: l.label }))
     : defaultPageLinks;
 
   const handleSearch = (e: FormEvent) => {
