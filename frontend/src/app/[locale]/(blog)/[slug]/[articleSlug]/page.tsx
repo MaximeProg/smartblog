@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
 import { ThemeArticle } from '@/components/themes/ThemeRenderer';
+import { ViewTracker } from '@/components/ViewTracker';
 
 export const revalidate = 60;
 
@@ -48,11 +49,14 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
   }
 
   return (
-    <ThemeArticle
-      blog={blog}
-      article={article}
-      relatedArticles={relatedArticles}
-      basePath={`/${locale}/${slug}`}
-    />
+    <>
+      <ViewTracker blogSlug={slug} articleSlug={articleSlug} />
+      <ThemeArticle
+        blog={blog}
+        article={article}
+        relatedArticles={relatedArticles}
+        basePath={`/${locale}/${slug}`}
+      />
+    </>
   );
 }

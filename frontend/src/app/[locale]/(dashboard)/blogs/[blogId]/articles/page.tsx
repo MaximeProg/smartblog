@@ -3,6 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Plus, Search, FileText, Eye, Clock, CheckCircle2,
   Archive, MoreVertical, Edit2, Trash2,
@@ -13,15 +14,6 @@ import { useToast } from '@/hooks/use-toast';
 import type { ArticleListItem, ArticleStatus } from '@/types';
 import { BlogStudioShell } from '@/components/dashboard/BlogStudioShell';
 import { useStudioPreview } from '@/contexts/studio-preview';
-
-const STATUS_CONFIG: Record<ArticleStatus, { label: string; color: string; icon: typeof FileText }> = {
-  draft:       { label: 'Brouillon',   color: 'text-slate-500 bg-slate-100',    icon: FileText },
-  published:   { label: 'Publié',      color: 'text-emerald-700 bg-emerald-50', icon: CheckCircle2 },
-  scheduled:   { label: 'Planifié',    color: 'text-blue-700 bg-blue-50',       icon: Clock },
-  archived:    { label: 'Archivé',     color: 'text-slate-400 bg-slate-50',     icon: Archive },
-  in_review:   { label: 'En révision', color: 'text-amber-700 bg-amber-50',     icon: Clock },
-  unpublished: { label: 'Dépublié',    color: 'text-slate-400 bg-slate-50',     icon: Archive },
-};
 
 function ArticleRow({
   article, locale, blogId,
@@ -35,7 +27,18 @@ function ArticleRow({
   onArchive: (id: string) => void;
 }) {
   const router = useRouter();
+  const t = useTranslations('articles');
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const STATUS_CONFIG: Record<ArticleStatus, { label: string; color: string; icon: typeof FileText }> = {
+    draft:       { label: t('status.draft'),       color: 'text-slate-500 bg-slate-100',    icon: FileText },
+    published:   { label: t('status.published'),   color: 'text-emerald-700 bg-emerald-50', icon: CheckCircle2 },
+    scheduled:   { label: t('status.scheduled'),   color: 'text-blue-700 bg-blue-50',       icon: Clock },
+    archived:    { label: t('status.archived'),    color: 'text-slate-400 bg-slate-50',     icon: Archive },
+    in_review:   { label: t('status.in_review'),   color: 'text-amber-700 bg-amber-50',     icon: Clock },
+    unpublished: { label: t('status.unpublished'), color: 'text-slate-400 bg-slate-50',     icon: Archive },
+  };
+
   const sc = STATUS_CONFIG[article.status] ?? STATUS_CONFIG.draft;
 
   return (
@@ -52,7 +55,7 @@ function ArticleRow({
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-semibold text-slate-800 truncate leading-snug">{article.title}</p>
         <p className="text-[11px] text-slate-400 mt-0.5">
-          {formatRelativeTime(article.updated_at ?? article.created_at)} · {article.reading_time_minutes ?? 0} min de lecture
+          {formatRelativeTime(article.updated_at ?? article.created_at)} · {t('readTime', { n: article.reading_time_minutes ?? 0 })}
         </p>
       </div>
 
@@ -73,7 +76,7 @@ function ArticleRow({
         <button
           onClick={() => router.push(`/${locale}/blogs/${blogId}/articles/${article.id}/edit`)}
           className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-          title="Modifier"
+          title={t('editTooltip')}
         >
           <Edit2 className="h-3.5 w-3.5" />
         </button>
@@ -89,18 +92,18 @@ function ArticleRow({
               {article.status === 'draft' && (
                 <button onClick={() => { onPublish(article.id); setMenuOpen(false); }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50">
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> Publier
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> {t('publishAction')}
                 </button>
               )}
               {article.status === 'published' && (
                 <button onClick={() => { onArchive(article.id); setMenuOpen(false); }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 hover:bg-slate-50">
-                  <Archive className="h-3.5 w-3.5 text-slate-400" /> Archiver
+                  <Archive className="h-3.5 w-3.5 text-slate-400" /> {t('archiveAction')}
                 </button>
               )}
               <button onClick={() => { onDelete(article.id); setMenuOpen(false); }}
                 className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-red-600 hover:bg-red-50">
-                <Trash2 className="h-3.5 w-3.5" /> Supprimer
+                <Trash2 className="h-3.5 w-3.5" /> {t('deleteAction')}
               </button>
             </div>
           )}
@@ -118,6 +121,7 @@ export default function ArticlesPage() {
   const { toast } = useToast();
   const qc = useQueryClient();
   const { refresh } = useStudioPreview();
+  const t = useTranslations('articles');
 
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<ArticleStatus | ''>('');
@@ -143,17 +147,17 @@ export default function ArticlesPage() {
     mutationFn: (id: string) => articlesApi.delete(blogId, id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['articles', blogId] });
-      toast({ title: 'Article supprimé.' });
+      toast({ title: t('toastDeleted') });
       setTimeout(refresh, 600);
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la suppression.' }),
+    onError: () => toast({ variant: 'destructive', title: t('toastDeleteError') }),
   });
 
   const publishMut = useMutation({
     mutationFn: (id: string) => articlesApi.publish(blogId, id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['articles', blogId] });
-      toast({ title: 'Article publié !' });
+      toast({ title: t('toastPublished') });
       setTimeout(refresh, 600);
     },
   });
@@ -162,15 +166,15 @@ export default function ArticlesPage() {
     mutationFn: (id: string) => articlesApi.archive(blogId, id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['articles', blogId] });
-      toast({ title: 'Article archivé.' });
+      toast({ title: t('toastArchived') });
       setTimeout(refresh, 600);
     },
   });
 
   return (
     <BlogStudioShell
-      title="Articles"
-      description="Tous les articles de votre blog."
+      title={t('title')}
+      description={t('subtitle')}
       previewPath=""
       blogSlug={tenant?.slug}
     >
@@ -183,7 +187,7 @@ export default function ArticlesPage() {
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Rechercher…"
+              placeholder={t('searchPlaceholderShort')}
               className="flex-1 bg-transparent text-[13px] text-slate-800 placeholder-slate-400 outline-none"
             />
           </div>
@@ -192,16 +196,16 @@ export default function ArticlesPage() {
             onChange={e => setStatus(e.target.value as ArticleStatus | '')}
             className="h-9 px-3 rounded-xl border border-slate-200 bg-slate-50 text-[12px] text-slate-600 outline-none"
           >
-            <option value="">Tous</option>
-            <option value="draft">Brouillons</option>
-            <option value="published">Publiés</option>
-            <option value="archived">Archivés</option>
+            <option value="">{t('filterAll')}</option>
+            <option value="draft">{t('filterDraft')}</option>
+            <option value="published">{t('filterPublished')}</option>
+            <option value="archived">{t('filterArchived')}</option>
           </select>
           <button
             onClick={() => router.push(`/${locale}/blogs/${blogId}/articles/new`)}
             className="flex items-center gap-1.5 h-9 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold transition-colors shrink-0"
           >
-            <Plus className="h-3.5 w-3.5" /> Créer
+            <Plus className="h-3.5 w-3.5" /> {t('createShort')}
           </button>
         </div>
 
@@ -224,23 +228,25 @@ export default function ArticlesPage() {
               <FileText className="h-6 w-6 text-blue-500" />
             </div>
             <p className="text-[14px] font-bold text-slate-800 mb-1">
-              {search ? 'Aucun article trouvé' : 'Aucun article'}
+              {search ? t('noResultsSearch') : t('noArticlesEmpty')}
             </p>
             {!search && (
               <>
-                <p className="text-[12px] text-slate-400 mb-4">Commencez par créer votre premier article.</p>
+                <p className="text-[12px] text-slate-400 mb-4">{t('noArticlesEmptyDesc')}</p>
                 <button
                   onClick={() => router.push(`/${locale}/blogs/${blogId}/articles/new`)}
                   className="flex items-center gap-2 h-9 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold transition-colors"
                 >
-                  <Plus className="h-3.5 w-3.5" /> Créer un article
+                  <Plus className="h-3.5 w-3.5" /> {t('createFirst')}
                 </button>
               </>
             )}
           </div>
         ) : (
           <div className="pt-1">
-            <p className="text-[11px] text-slate-400 mb-2 px-2">{articles.length} article{articles.length > 1 ? 's' : ''}</p>
+            <p className="text-[11px] text-slate-400 mb-2 px-2">
+              {articles.length > 1 ? t('countPlural', { n: articles.length }) : t('countSingular', { n: articles.length })}
+            </p>
             {articles.map(a => (
               <ArticleRow
                 key={a.id}

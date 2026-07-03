@@ -2,7 +2,7 @@ import uuid
 import math
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, and_
+from sqlalchemy import select, func, and_, update
 
 from app.models.article import Article, ArticleVersion, Category, Tag, ArticleTag
 from app.models.user import User
@@ -143,6 +143,8 @@ async def create_article(
 
     reading_time, word_count = _estimate_reading_time(data.content)
 
+    cat_id = uuid.UUID(data.category_id) if data.category_id else None
+
     article = Article(
         tenant_id=tenant_id,
         author_id=author_id,
@@ -160,6 +162,7 @@ async def create_article(
         seo_title=data.seo_title,
         seo_description=data.seo_description,
         seo_keywords=data.seo_keywords,
+        category_id=cat_id,
         price=data.price,
         currency=data.currency,
         is_featured=data.is_featured,
@@ -174,6 +177,12 @@ async def create_article(
 
     if data.tags:
         await _sync_tags(db, article, data.tags)
+
+    # Increment category counter
+    if cat_id:
+        await db.execute(
+            update(Category).where(Category.id == cat_id).values(articles_count=Category.articles_count + 1)
+        )
 
     # Snapshot version initiale
     db.add(ArticleVersion(
@@ -282,10 +291,29 @@ async def update_article(
     if not article:
         raise NotFoundException("Article")
 
+    old_category_id = article.category_id
+
     changed = False
-    for field, value in data.model_dump(exclude_unset=True, exclude={"tags"}).items():
+    for field, value in data.model_dump(exclude_unset=True, exclude={"tags", "category_id"}).items():
         if getattr(article, field) != value:
             setattr(article, field, value)
+            changed = True
+
+    # Handle category_id separately to manage articles_count counters
+    if data.category_id is not None or "category_id" in data.model_fields_set:
+        new_cat_id = uuid.UUID(data.category_id) if data.category_id else None
+        if new_cat_id != old_category_id:
+            if old_category_id:
+                await db.execute(
+                    update(Category).where(Category.id == old_category_id)
+                    .values(articles_count=func.greatest(Category.articles_count - 1, 0))
+                )
+            if new_cat_id:
+                await db.execute(
+                    update(Category).where(Category.id == new_cat_id)
+                    .values(articles_count=Category.articles_count + 1)
+                )
+            article.category_id = new_cat_id
             changed = True
 
     if data.content is not None:
@@ -357,6 +385,11 @@ async def delete_article(
     if not article:
         raise NotFoundException("Article")
     article.deleted_at = datetime.now(timezone.utc)
+    if article.category_id:
+        await db.execute(
+            update(Category).where(Category.id == article.category_id)
+            .values(articles_count=func.greatest(Category.articles_count - 1, 0))
+        )
     await db.commit()
 
 

@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { publicApi } from '@/lib/public-api';
 import { ThemeArticle } from '@/components/themes/ThemeRenderer';
+import { ViewTracker } from '@/components/ViewTracker';
 
 interface Props {
   params: Promise<{ slug: string; articleSlug: string }>;
@@ -50,11 +51,14 @@ export default async function ArticlePage({ params }: Props) {
     const related = relatedArticles.filter((a) => a.slug !== articleSlug).slice(0, 3);
 
     return (
-      <ThemeArticle
-        blog={blog}
-        article={article}
-        relatedArticles={related}
-      />
+      <>
+        <ViewTracker blogSlug={slug} articleSlug={articleSlug} />
+        <ThemeArticle
+          blog={blog}
+          article={article}
+          relatedArticles={related}
+        />
+      </>
     );
   } catch {
     notFound();

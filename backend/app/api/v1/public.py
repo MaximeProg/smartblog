@@ -2,9 +2,9 @@
 API publique — blogs en lecture sans authentification.
 Résout le tenant par slug (path param).
 """
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
 from fastapi.responses import Response
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel
 from datetime import datetime
@@ -170,6 +170,31 @@ async def get_public_article(
         seo_description=article.seo_description,
         seo_keywords=article.seo_keywords,
     )
+
+
+# ── POST /public/{slug}/articles/{article_slug}/view ─────────────
+
+@router.post("/articles/{article_slug}/view", status_code=200)
+async def track_article_view(slug: str, article_slug: str, db: DBSession):
+    """Increment view counter for a published article. Idempotent — silent on miss."""
+    tenant = await _resolve_tenant(db, slug)
+    result = await db.execute(
+        select(Article).where(
+            Article.tenant_id == tenant.id,
+            Article.slug == article_slug,
+            Article.status == ArticleStatus.PUBLISHED,
+            Article.deleted_at.is_(None),
+        )
+    )
+    article = result.scalar_one_or_none()
+    if article:
+        await db.execute(
+            update(Article)
+            .where(Article.id == article.id)
+            .values(views_count=Article.views_count + 1)
+        )
+        await db.commit()
+    return {"ok": True}
 
 
 # ── GET /public/{slug}/categories ─────────────────────────────────

@@ -168,7 +168,9 @@
       "draft": "Draft",
       "published": "Published",
       "scheduled": "Scheduled",
-      "archived": "Archived"
+      "archived": "Archived",
+      "in_review": "In review",
+      "unpublished": "Unpublished"
     },
     "actions": {
       "edit": "Edit",
@@ -195,7 +197,24 @@
     "filterPublished": "Published",
     "filterDraft": "Drafts",
     "filterScheduled": "Scheduled",
-    "filterArchived": "Archived"
+    "filterArchived": "Archived",
+    "readTime": "{n} min read",
+    "editTooltip": "Edit",
+    "publishAction": "Publish",
+    "archiveAction": "Archive",
+    "deleteAction": "Delete",
+    "toastDeleted": "Article deleted.",
+    "toastDeleteError": "Error while deleting.",
+    "toastPublished": "Article published!",
+    "toastArchived": "Article archived.",
+    "searchPlaceholderShort": "Search…",
+    "createShort": "Create",
+    "noResultsSearch": "No article found",
+    "noArticlesEmpty": "No articles",
+    "noArticlesEmptyDesc": "Start by creating your first article.",
+    "createFirst": "Create an article",
+    "countSingular": "{n} article",
+    "countPlural": "{n} articles"
   },
   "pages": {
     "title": "Pages",

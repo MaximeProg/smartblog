@@ -36,7 +36,7 @@ export const useAuthStore = create<AuthState>()(
         setAccessToken(token);
         // Cookie de session lisible par le middleware Next.js (même origine que le frontend)
         if (typeof document !== 'undefined') {
-          document.cookie = 'nexusblog_session=1; path=/; samesite=lax; max-age=86400';
+          document.cookie = 'nexusblog_session=1; path=/; samesite=lax; max-age=604800';
         }
         set({
           user,

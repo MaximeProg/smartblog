@@ -1,11 +1,11 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Toaster } from '@/components/ui/toaster';
 import { useAuthStore } from '@/store/auth.store';
-import { tenantsApi, registerLogoutCallback } from '@/lib/api';
+import { tenantsApi, registerLogoutCallback, setAccessToken, authApi } from '@/lib/api';
 import type { TenantInfo } from '@/types';
 import type { PlanTier, UserRole } from '@/types';
 
@@ -16,18 +16,45 @@ if (typeof window !== 'undefined') {
 }
 
 const AUTH_PAGES = ['/login', '/register', '/forgot-password'];
+// Refresh access token 2 min before the 15-min expiry = every 13 min
+const REFRESH_INTERVAL_MS = 13 * 60 * 1000;
 
 interface ProvidersProps {
   children: ReactNode;
 }
 
 function AuthBootstrap() {
-  const { isAuthenticated, isHydrated, syncTenants } = useAuthStore();
+  const { isAuthenticated, isHydrated, syncTenants, setAuth, user, tenants } = useAuthStore();
   const pathname = usePathname();
+  const refreshTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Proactive token refresh — fires before the 15-min access token expires
+  useEffect(() => {
+    if (!isHydrated || !isAuthenticated) return;
+    if (AUTH_PAGES.some((p) => pathname.includes(p))) return;
+
+    async function proactiveRefresh() {
+      try {
+        const { data } = await authApi.refresh();
+        setAccessToken(data.access_token);
+        // Renew the session sentinel for another 7 days
+        document.cookie = 'nexusblog_session=1; path=/; samesite=lax; max-age=604800';
+      } catch {
+        // If refresh fails the 401 interceptor will handle the next real request
+      }
+    }
+
+    // Run once immediately on mount to ensure the token is fresh after a tab reopen
+    proactiveRefresh();
+
+    refreshTimerRef.current = setInterval(proactiveRefresh, REFRESH_INTERVAL_MS);
+    return () => {
+      if (refreshTimerRef.current) clearInterval(refreshTimerRef.current);
+    };
+  }, [isHydrated, isAuthenticated, pathname]);
 
   useEffect(() => {
     if (!isHydrated || !isAuthenticated) return;
-    // Never call the API from auth pages — avoids the 401-redirect infinite loop.
     if (AUTH_PAGES.some((p) => pathname.includes(p))) return;
 
     tenantsApi.list()

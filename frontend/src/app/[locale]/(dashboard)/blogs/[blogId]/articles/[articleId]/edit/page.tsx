@@ -9,7 +9,7 @@ import {
   Minus, X, Check,
 } from 'lucide-react';
 import Link from 'next/link';
-import { articlesApi, categoriesApi } from '@/lib/api';
+import { articlesApi, categoriesApi, mediaApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useStudioPreview } from '@/contexts/studio-preview';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
@@ -88,6 +88,8 @@ export default function EditArticlePage() {
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl,       setLinkUrl]       = useState('');
   const [showImgPicker, setShowImgPicker] = useState(false);
+  const [textareaDragging, setTextareaDragging] = useState(false);
+  const [textareaUploading, setTextareaUploading] = useState(false);
 
   const { data: article, isLoading } = useQuery({
     queryKey: ['article', blogId, articleId],
@@ -170,6 +172,23 @@ export default function EditArticlePage() {
     setShowImgPicker(false);
     mark();
   }, []);
+
+  const handleTextareaDrop = useCallback(async (e: React.DragEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    setTextareaDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (!file || !file.type.startsWith('image/')) return;
+    setTextareaUploading(true);
+    try {
+      const { data } = await mediaApi.upload(blogId, file);
+      insertAtCursor(contentRef, setContent, `\n![image](${data.cloudinary_secure_url})\n`);
+      mark();
+    } catch {
+      toast({ variant: 'destructive', title: 'Erreur lors de l\'upload de l\'image.' });
+    } finally {
+      setTextareaUploading(false);
+    }
+  }, [blogId, toast]);
 
   const toolbarBtnCls = 'h-7 w-7 flex items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors';
 
@@ -342,14 +361,37 @@ export default function EditArticlePage() {
               </div>
             )}
 
-            <textarea
-              ref={contentRef}
-              value={content}
-              onChange={e => { setContent(e.target.value); mark(); }}
-              placeholder={'Commencez à écrire votre article…\n\nExemples Markdown :\n**gras**  *italique*  ## Titre\n[texte](https://…)  ![alt](https://image.jpg)'}
-              rows={26}
-              className="w-full px-4 py-4 border border-slate-200 rounded-b-xl bg-white text-[14px] text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none font-mono leading-relaxed"
-            />
+            <div className="relative">
+              <textarea
+                ref={contentRef}
+                value={content}
+                onChange={e => { setContent(e.target.value); mark(); }}
+                placeholder={'Commencez à écrire votre article…\n\nExemples Markdown :\n**gras**  *italique*  ## Titre\n[texte](https://…)  ![alt](https://image.jpg)\n\nGlissez-déposez une image directement ici'}
+                rows={26}
+                onDragOver={e => { e.preventDefault(); setTextareaDragging(true); }}
+                onDragLeave={() => setTextareaDragging(false)}
+                onDrop={handleTextareaDrop}
+                className={`w-full px-4 py-4 border rounded-b-xl bg-white text-[14px] text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none font-mono leading-relaxed transition-colors ${
+                  textareaDragging ? 'border-blue-400 bg-blue-50/40 focus:border-blue-400' : 'border-slate-200 focus:border-blue-400'
+                }`}
+              />
+              {textareaUploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-b-xl">
+                  <div className="flex items-center gap-2 text-[13px] text-blue-600 font-medium">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Upload en cours…
+                  </div>
+                </div>
+              )}
+              {textareaDragging && (
+                <div className="absolute inset-0 flex items-center justify-center bg-blue-50/70 border-2 border-blue-400 border-dashed rounded-b-xl pointer-events-none">
+                  <div className="flex items-center gap-2 text-[13px] text-blue-600 font-semibold">
+                    <ImageIcon className="h-5 w-5" />
+                    Déposez l&apos;image ici
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
