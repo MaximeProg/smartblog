@@ -86,6 +86,8 @@ class ArticleResponse(BaseModel):
     title: str
     slug: str
     excerpt: str | None
+    content: str | None
+    content_json: dict | None
     article_type: ArticleType
     status: ArticleStatus
     visibility: ContentVisibility

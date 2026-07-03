@@ -83,6 +83,8 @@ async def _build_response(db: AsyncSession, article: Article) -> ArticleResponse
         title=article.title,
         slug=article.slug,
         excerpt=article.excerpt,
+        content=article.content,
+        content_json=article.content_json,
         article_type=article.article_type,
         status=article.status,
         visibility=article.visibility,
