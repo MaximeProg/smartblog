@@ -18,6 +18,7 @@ import type {
   PaginatedResponse,
   CategoryInfo,
   CreateCategoryData,
+  UpdateCategoryData,
   AnalyticsOverview,
   TeamMember,
   TeamInvitation,
@@ -26,6 +27,22 @@ import type {
   PublicBlog,
   PublicArticle,
   TenantInfo,
+  PageListItem,
+  PageResponse,
+  PageStatus,
+  CreatePageData,
+  UpdatePageData,
+  TagInfo,
+  MediaItem,
+  MenuItemData,
+  MenuResponse,
+  LikeResponse,
+  ShareResponse,
+  SharePlatform,
+  PublicCommentItem,
+  CommentListItem,
+  CommentStats,
+  CommentStatus,
 } from '@/types';
 
 const API_URL =
@@ -198,6 +215,9 @@ export const categoriesApi = {
   create: (tenantId: string, data: CreateCategoryData) =>
     api.post<CategoryInfo>(`/tenants/${tenantId}/categories`, data),
 
+  update: (tenantId: string, categoryId: string, data: UpdateCategoryData) =>
+    api.patch<CategoryInfo>(`/tenants/${tenantId}/categories/${categoryId}`, data),
+
   delete: (tenantId: string, categoryId: string) =>
     api.delete<void>(`/tenants/${tenantId}/categories/${categoryId}`),
 };
@@ -240,6 +260,121 @@ export const newsletterApi = {
       `/tenants/${tenantId}/newsletter/subscribers`,
       { params }
     ),
+};
+
+// ─── Tags ─────────────────────────────────────────────────────────────────────
+
+export const tagsApi = {
+  list: (tenantId: string) =>
+    api.get<TagInfo[]>(`/tenants/${tenantId}/tags`),
+
+  create: (tenantId: string, name: string) =>
+    api.post<TagInfo>(`/tenants/${tenantId}/tags`, { name }),
+
+  delete: (tenantId: string, tagId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/tags/${tagId}`),
+};
+
+// ─── Media ────────────────────────────────────────────────────────────────────
+
+export const mediaApi = {
+  list: (tenantId: string, params?: { type?: string; limit?: number; cursor?: string }) =>
+    api.get<PaginatedResponse<MediaItem>>(`/tenants/${tenantId}/media`, { params }),
+
+  upload: (tenantId: string, file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    return api.post<MediaItem>(`/tenants/${tenantId}/media/upload`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  update: (tenantId: string, mediaId: string, data: { alt_text?: string; caption?: string }) =>
+    api.patch<MediaItem>(`/tenants/${tenantId}/media/${mediaId}`, data),
+
+  delete: (tenantId: string, mediaId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/media/${mediaId}`),
+};
+
+// ─── Menus ────────────────────────────────────────────────────────────────────
+
+export const menusApi = {
+  list: (tenantId: string) =>
+    api.get<MenuResponse[]>(`/tenants/${tenantId}/menus`),
+
+  upsert: (tenantId: string, location: string, items: MenuItemData[]) =>
+    api.put<MenuResponse>(`/tenants/${tenantId}/menus/${location}`, { items }),
+};
+
+// ─── Pages ────────────────────────────────────────────────────────────────────
+
+export const pagesApi = {
+  list: (tenantId: string, status?: PageStatus) =>
+    api.get<PageListItem[]>(`/tenants/${tenantId}/pages`, {
+      params: status ? { status } : undefined,
+    }),
+
+  get: (tenantId: string, pageId: string) =>
+    api.get<PageResponse>(`/tenants/${tenantId}/pages/${pageId}`),
+
+  create: (tenantId: string, data: CreatePageData) =>
+    api.post<PageResponse>(`/tenants/${tenantId}/pages`, data),
+
+  update: (tenantId: string, pageId: string, data: UpdatePageData) =>
+    api.patch<PageResponse>(`/tenants/${tenantId}/pages/${pageId}`, data),
+
+  setStatus: (tenantId: string, pageId: string, status: PageStatus) =>
+    api.post<PageResponse>(`/tenants/${tenantId}/pages/${pageId}/status`, { status }),
+
+  setHomepage: (tenantId: string, pageId: string) =>
+    api.post<PageResponse>(`/tenants/${tenantId}/pages/${pageId}/homepage`),
+
+  delete: (tenantId: string, pageId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/pages/${pageId}`),
+};
+
+// ─── Modération (commentaires au niveau tenant) ────────────────────────────────
+
+export const moderationApi = {
+  listComments: (
+    tenantId: string,
+    params?: { status?: CommentStatus; article_id?: string; search?: string; limit?: number; offset?: number }
+  ) =>
+    api.get<CommentListItem[]>(`/tenants/${tenantId}/moderation/comments`, { params }),
+
+  stats: (tenantId: string) =>
+    api.get<CommentStats>(`/tenants/${tenantId}/moderation/comments/stats`),
+
+  moderate: (tenantId: string, commentId: string, status: CommentStatus) =>
+    api.patch<CommentListItem>(`/tenants/${tenantId}/moderation/comments/${commentId}`, { status }),
+
+  delete: (tenantId: string, commentId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/moderation/comments/${commentId}`),
+
+  ban: (tenantId: string, data: { email?: string; ip_address?: string; reason?: string }) =>
+    api.post(`/tenants/${tenantId}/moderation/bans`, data),
+};
+
+// ─── Engagement public (likes, partages, commentaires anonymes) ────────────────
+
+export const engagementApi = {
+  getLikeStatus: (articleId: string) =>
+    api.get<LikeResponse>(`/public/articles/${articleId}/like`),
+
+  toggleLike: (articleId: string) =>
+    api.post<LikeResponse>(`/public/articles/${articleId}/like`),
+
+  share: (articleId: string, platform: SharePlatform) =>
+    api.post<ShareResponse>(`/public/articles/${articleId}/share`, { platform }),
+
+  listComments: (articleId: string, params?: { limit?: number; offset?: number }) =>
+    api.get<PublicCommentItem[]>(`/public/articles/${articleId}/comments`, { params }),
+
+  postComment: (
+    articleId: string,
+    data: { content: string; parent_id?: string; author_name: string; author_email: string; author_website?: string }
+  ) =>
+    api.post<PublicCommentItem>(`/public/articles/${articleId}/comments`, data),
 };
 
 // ─── Public ───────────────────────────────────────────────────────────────────

@@ -16,6 +16,9 @@ export interface TenantInfo {
   slug: string;
   plan: PlanTier;
   role: UserRole;
+  logo_url?: string | null;
+  cover_image_url?: string | null;
+  status?: TenantStatus;
   articles_count?: number;
   subscribers_count?: number;
   authors_count?: number;
@@ -58,6 +61,9 @@ export interface TenantResponse {
   created_at: string;
   updated_at: string;
   font_family?: string;
+  seo_title_template?: string | null;
+  seo_meta_description?: string | null;
+  template_config?: Record<string, unknown> | null;
   limits?: PlanLimits;
   usage?: PlanUsage;
 }
@@ -113,7 +119,7 @@ export interface UpdateTenantData {
   theme?: string;
   logo_url?: string;
   favicon_url?: string;
-  cover_image_url?: string;
+  cover_image_url?: string | null;
   social_links?: Record<string, string>;
   sidebar_config?: Record<string, unknown>;
   comments_mode?: CommentsMode;
@@ -167,11 +173,58 @@ export interface AuthorInfo {
   email: string;
 }
 
+// ─── Pages ────────────────────────────────────────────────────────────────────
+
+export type PageStatus = 'draft' | 'published' | 'private';
+export type PageType = 'standard' | 'system' | 'dynamic';
+
+export interface PageListItem {
+  id: string;
+  title: string;
+  slug: string;
+  status: PageStatus;
+  page_type: PageType;
+  is_homepage: boolean;
+  sort_order: number;
+  updated_at: string;
+  published_at: string | null;
+}
+
+export interface PageResponse extends PageListItem {
+  tenant_id: string;
+  blocks: Record<string, unknown>[];
+  meta_title: string | null;
+  meta_description: string | null;
+  og_image_url: string | null;
+  created_at: string;
+}
+
+export interface CreatePageData {
+  title: string;
+  slug?: string;
+  page_type?: PageType;
+  blocks?: Record<string, unknown>[];
+  meta_title?: string;
+  meta_description?: string;
+}
+
+export interface UpdatePageData {
+  title?: string;
+  slug?: string;
+  blocks?: Record<string, unknown>[];
+  meta_title?: string;
+  meta_description?: string;
+  og_image_url?: string;
+  sort_order?: number;
+}
+
 export interface CategoryInfo {
   id: string;
   name: string;
   slug: string;
   color: string | null;
+  cover_image_url?: string | null;
+  articles_count?: number;
 }
 
 export interface TagInfo {
@@ -179,6 +232,8 @@ export interface TagInfo {
   name: string;
   slug: string;
 }
+
+export type ArticleVisibility = 'public' | 'private' | 'paid';
 
 export interface CreateArticleData {
   title: string;
@@ -193,6 +248,8 @@ export interface CreateArticleData {
   seo_description?: string;
   article_type?: ArticleType;
   scheduled_at?: string;
+  visibility?: ArticleVisibility;
+  comments_enabled?: boolean;
 }
 
 export interface UpdateArticleData extends CreateArticleData {}
@@ -213,12 +270,61 @@ export interface PaginatedResponse<T> {
   pages: number;
 }
 
+// ─── Menus ────────────────────────────────────────────────────────────────────
+
+export interface MenuItemData {
+  label: string;
+  ref_id?: string;
+  url?: string;
+  open_new_tab?: boolean;
+  children?: MenuItemData[];
+}
+
+export interface MenuResponse {
+  id: string;
+  tenant_id: string;
+  name: string;
+  location: string;
+  items: MenuItemData[];
+  updated_at: string;
+}
+
+// ─── Media ────────────────────────────────────────────────────────────────────
+
+export type MediaType = 'image' | 'video' | 'audio' | 'document';
+
+export interface MediaItem {
+  id: string;
+  tenant_id: string;
+  cloudinary_url: string;
+  cloudinary_secure_url: string;
+  cloudinary_public_id: string;
+  cloudinary_resource_type: string;
+  media_type: MediaType;
+  original_filename: string;
+  alt_text: string | null;
+  caption: string | null;
+  file_size_bytes: number;
+  width: number | null;
+  height: number | null;
+  format: string | null;
+  created_at: string;
+}
+
 // ─── Categories ───────────────────────────────────────────────────────────────
 
 export interface CreateCategoryData {
   name: string;
   slug: string;
   description?: string;
+  color?: string;
+  cover_image_url?: string;
+}
+
+export interface UpdateCategoryData {
+  name?: string;
+  description?: string;
+  cover_image_url?: string | null;
   color?: string;
 }
 
@@ -316,4 +422,60 @@ export interface PublicArticle {
   author: AuthorInfo | null;
   category: CategoryInfo | null;
   tags: TagInfo[];
+}
+
+// ─── Engagement (likes, shares, commentaires anonymes) ────────────────────────
+
+export type CommentStatus = 'pending' | 'approved' | 'rejected' | 'spam' | 'shadow_banned';
+export type SharePlatform = 'facebook' | 'twitter' | 'linkedin' | 'whatsapp' | 'telegram' | 'pinterest' | 'copy';
+
+export interface LikeResponse {
+  article_id: string;
+  likes_count: number;
+  liked: boolean;
+}
+
+export interface ShareResponse {
+  article_id: string;
+  platform: SharePlatform;
+  shares_count: number;
+  by_platform: Record<string, number>;
+}
+
+export interface PublicCommentItem {
+  id: string;
+  content: string;
+  status: CommentStatus;
+  parent_id: string | null;
+  author_name: string | null;
+  author_email: string | null;
+  author_website: string | null;
+  likes_count: number;
+  replies_count: number;
+  created_at: string;
+}
+
+/** Item utilisé dans la page de modération (management) */
+export interface CommentListItem {
+  id: string;
+  article_id: string;
+  article_title: string;
+  parent_id: string | null;
+  author_name: string | null;
+  author_email: string | null;
+  author_website: string | null;
+  content: string;
+  status: CommentStatus;
+  likes_count: number;
+  replies_count: number;
+  ip_address: string | null;
+  created_at: string;
+}
+
+export interface CommentStats {
+  total: number;
+  pending: number;
+  approved: number;
+  rejected: number;
+  spam: number;
 }

@@ -1,5 +1,48 @@
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 
+export interface TemplateContentFields {
+  heroHeadline?: string;
+  heroSubheadline?: string;
+  heroCta?: string;
+  tagline?: string;
+  featuredSectionTitle?: string;
+  latestSectionTitle?: string;
+  newsletterTitle?: string;
+  newsletterDescription?: string;
+  newsletterCta?: string;
+  footerTagline?: string;
+  sectionOrder?: string[];
+}
+
+export interface TemplateConfig {
+  content?: TemplateContentFields;
+  header?: {
+    topBar?: { enabled?: boolean; showDate?: boolean; showSocial?: boolean; showNewsletter?: boolean; showRss?: boolean };
+    subscribe?: { enabled?: boolean; label?: string };
+    nav?: { links?: { label: string; url: string }[] };
+  };
+  footer?: {
+    description?: string;
+    showCategories?: boolean;
+    navLinks?: { label: string; url: string }[];
+    showSocialLinks?: boolean;
+    showNewsletterMini?: boolean;
+    newsletterMiniText?: string;
+    copyrightText?: string;
+    showPoweredBy?: boolean;
+  };
+  home?: {
+    hero?: { enabled?: boolean; sectionTitle?: string };
+    categoriesStrip?: { enabled?: boolean; label?: string };
+    newsletter?: { enabled?: boolean; title?: string; description?: string; buttonLabel?: string; placeholder?: string; disclaimer?: string };
+    latest?: { enabled?: boolean; sectionTitle?: string };
+    sidebar?: { popularArticles?: boolean; popularTitle?: string; categories?: boolean; categoriesTitle?: string; tags?: boolean; tagsTitle?: string; newsletterMini?: boolean };
+  };
+  about?: Record<string, unknown>;
+  contact?: Record<string, unknown>;
+  article?: Record<string, unknown>;
+}
+
 export interface BlogInfo {
   name: string;
   slug: string;
@@ -13,6 +56,7 @@ export interface BlogInfo {
   primary_color: string;
   font_family: string;
   social_links: Record<string, string>;
+  template_config: TemplateConfig | null;
 }
 
 export interface PublicArticle {

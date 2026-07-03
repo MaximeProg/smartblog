@@ -76,6 +76,7 @@ class PublicBlogInfo(BaseModel):
     primary_color: str
     font_family: str
     social_links: dict
+    template_config: dict | None
 
 
 # ── GET /public/{slug} — info blog ───────────────────────────────
@@ -96,6 +97,7 @@ async def get_blog_info(slug: str, db: DBSession):
         primary_color=tenant.primary_color,
         font_family=getattr(tenant, 'font_family', 'Inter'),
         social_links=tenant.social_links or {},
+        template_config=tenant.template_config,
     )
 
 

@@ -50,8 +50,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
     const { data } = await authApi.login(idToken);
     const tenants = data.tenants ?? [];
     setAuth(data.user, tenants, data.access_token);
-    // Nouvel utilisateur → onboarding, sinon dashboard
-    router.push(tenants.length === 0 ? `/${locale}/onboarding` : `/${locale}/dashboard`);
+    router.push(`/${locale}/dashboard`);
   }
 
 

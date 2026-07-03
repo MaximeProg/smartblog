@@ -79,12 +79,13 @@ export function BusinessFooter({ blog }: { blog: { name: string } }) {
 }
 
 export default function BusinessHome({ blog, articles, categories, currentCategory }: HomeProps) {
+  const tc = blog.template_config?.content;
   const featured = articles.slice(0, 3);
   const rest = articles.slice(3);
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ fontFamily: 'var(--blog-font)' }}>
-      <BusinessHeader blog={blog} categories={categories} current={currentCategory} />
+      <BusinessHeader blog={{ ...blog, description: tc?.tagline || blog.description }} categories={categories} current={currentCategory} />
 
       <main className="max-w-6xl mx-auto px-4 py-10">
         {currentCategory && (
@@ -107,7 +108,7 @@ export default function BusinessHome({ blog, articles, categories, currentCatego
               <section className="mb-12">
                 <div className="flex items-center gap-2 mb-6">
                   <div className="h-5 w-1" style={{ background: 'var(--blog-primary)' }} />
-                  <h2 className="font-black uppercase tracking-wider text-sm text-gray-700">Articles en vedette</h2>
+                  <h2 className="font-black uppercase tracking-wider text-sm text-gray-700">{tc?.featuredSectionTitle || 'Articles en vedette'}</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {featured.map((a, i) => (
@@ -134,7 +135,7 @@ export default function BusinessHome({ blog, articles, categories, currentCatego
               <div className="flex items-center gap-2 mb-6">
                 <div className="h-5 w-1" style={{ background: 'var(--blog-primary)' }} />
                 <h2 className="font-black uppercase tracking-wider text-sm text-gray-700">
-                  {currentCategory ? 'Articles' : 'Dernières publications'}
+                  {currentCategory ? 'Articles' : (tc?.latestSectionTitle || 'Dernières publications')}
                 </h2>
               </div>
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 divide-y divide-gray-100">

@@ -13,6 +13,10 @@ class CreateTenantRequest(BaseModel):
     theme: str = "minimal"
     primary_color: str = "#3B82F6"
     font_family: str = "Inter"
+    cover_image_url: str | None = None
+    logo_url: str | None = None
+    social_links: dict | None = None
+    template_config: dict | None = None
 
     @field_validator("slug")
     @classmethod
@@ -29,6 +33,7 @@ class UpdateTenantRequest(BaseModel):
     name: str | None = None
     description: str | None = None
     category: str | None = None
+    cover_image_url: str | None = None
     logo_url: str | None = None
     favicon_url: str | None = None
     theme: str | None = None
@@ -46,6 +51,7 @@ class UpdateTenantRequest(BaseModel):
     footer_text: str | None = None
     social_links: dict | None = None
     sidebar_config: list | None = None
+    template_config: dict | None = None
 
 
 class TenantLimits(BaseModel):
@@ -70,6 +76,7 @@ class TenantResponse(BaseModel):
     name: str
     slug: str
     description: str | None
+    cover_image_url: str | None
     logo_url: str | None
     favicon_url: str | None
     theme: str
@@ -84,6 +91,7 @@ class TenantResponse(BaseModel):
     ga4_measurement_id: str | None
     pwa_enabled: bool
     social_links: dict
+    template_config: dict | None = None
     limits: TenantLimits | None = None
     usage: TenantUsage | None = None
 

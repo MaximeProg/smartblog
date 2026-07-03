@@ -67,6 +67,7 @@ export function NewsFooter({ blog }: { blog: { name: string } }) {
 }
 
 export default function NewsHome({ blog, articles, categories, currentCategory }: HomeProps) {
+  const tc = blog.template_config?.content;
   const hero = articles[0];
   const col1 = articles.slice(1, 4);
   const col2 = articles.slice(4, 7);
@@ -109,7 +110,7 @@ export default function NewsHome({ blog, articles, categories, currentCategory }
                 </div>
                 <div className="bg-white border border-gray-200 p-4 space-y-0">
                   <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 border-b border-gray-200 pb-2 mb-2">
-                    À ne pas manquer
+                    {tc?.featuredSectionTitle || 'À ne pas manquer'}
                   </h3>
                   {col1.map((a) => (
                     <ArticleCard key={a.id} article={a} blogSlug={blog.slug} lang={blog.language} variant="compact" />

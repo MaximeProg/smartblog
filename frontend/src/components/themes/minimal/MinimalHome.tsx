@@ -287,6 +287,7 @@ export default function MinimalHome({
   );
 
   const primaryColor = blog.primary_color || '#2563eb';
+  const tc = blog.template_config?.content;
   const isFiltered = !!(searchQuery || currentCategory);
   const featured = !isFiltered ? articles.slice(0, 3) : [];
   const latest = !isFiltered ? articles.slice(3) : articles;
@@ -410,14 +411,14 @@ export default function MinimalHome({
                 <Image src={blog.logo_url} alt={blog.name} width={72} height={72} className="rounded-2xl mb-4 shadow-xl" />
               )}
               <h1 className="text-4xl sm:text-5xl font-black text-white mb-3 leading-tight tracking-tight drop-shadow">
-                {blog.name}
+                {tc?.heroHeadline || blog.name}
               </h1>
-              {blog.description && (
-                <p className="text-lg text-white/80 max-w-xl leading-relaxed mb-6">{blog.description}</p>
+              {(tc?.heroSubheadline || blog.description) && (
+                <p className="text-lg text-white/80 max-w-xl leading-relaxed mb-6">{tc?.heroSubheadline || blog.description}</p>
               )}
               <a href="#articles" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold shadow-lg hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: primaryColor }}>
-                Voir les articles <ArrowRight className="h-4 w-4" />
+                {tc?.heroCta || 'Voir les articles'} <ArrowRight className="h-4 w-4" />
               </a>
             </div>
           </section>
@@ -430,14 +431,14 @@ export default function MinimalHome({
               <Image src={blog.logo_url} alt={blog.name} width={80} height={80} className="rounded-2xl shadow-md mb-4 relative" />
             )}
             <h1 className="relative text-4xl sm:text-5xl font-black text-gray-900 dark:text-white mb-3 tracking-tight">
-              {blog.name}
+              {tc?.heroHeadline || blog.name}
             </h1>
-            {blog.description && (
-              <p className="relative text-xl text-gray-500 dark:text-gray-400 max-w-xl leading-relaxed mb-6">{blog.description}</p>
+            {(tc?.heroSubheadline || blog.description) && (
+              <p className="relative text-xl text-gray-500 dark:text-gray-400 max-w-xl leading-relaxed mb-6">{tc?.heroSubheadline || blog.description}</p>
             )}
             <a href="#articles" className="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold shadow-md hover:opacity-90 transition-opacity"
               style={{ backgroundColor: primaryColor }}>
-              Explorer les articles <ArrowRight className="h-4 w-4" />
+              {tc?.heroCta || 'Explorer les articles'} <ArrowRight className="h-4 w-4" />
             </a>
           </section>
         )
@@ -464,7 +465,7 @@ export default function MinimalHome({
       {featured.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 pt-12 pb-4">
           <div className="flex items-center gap-4 mb-6">
-            <h2 className="text-sm font-bold uppercase tracking-widest text-gray-400">À la une</h2>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-gray-400">{tc?.featuredSectionTitle || 'À la une'}</h2>
             <div className="h-px flex-1 bg-gray-100 dark:bg-gray-800" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -487,7 +488,7 @@ export default function MinimalHome({
           <div className="lg:col-span-2">
             <div className="flex items-center gap-4 mb-6">
               <h2 className="text-sm font-bold uppercase tracking-widest text-gray-400 shrink-0">
-                {isFiltered ? 'Résultats' : 'Derniers articles'}
+                {isFiltered ? 'Résultats' : (tc?.latestSectionTitle || 'Derniers articles')}
               </h2>
               <div className="h-px flex-1 bg-gray-100 dark:bg-gray-800" />
               <span className="text-xs text-gray-400 shrink-0">{displayArticles.length}</span>
@@ -530,12 +531,12 @@ export default function MinimalHome({
             <Mail className="h-6 w-6" style={{ color: primaryColor }} />
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mb-3 tracking-tight">
-            Restez informé·e
+            {tc?.newsletterTitle || 'Restez informé·e'}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 mb-7 text-base">
-            Recevez les meilleurs articles de{' '}
-            <strong className="text-gray-700 dark:text-gray-300">{blog.name}</strong>{' '}
-            directement dans votre boîte mail.
+            {tc?.newsletterDescription || (
+              <>Recevez les meilleurs articles de{' '}<strong className="text-gray-700 dark:text-gray-300">{blog.name}</strong>{' '}directement dans votre boîte mail.</>
+            )}
           </p>
           {newsStatus === 'ok' ? (
             <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold" style={{ backgroundColor: primaryColor }}>

@@ -127,13 +127,14 @@ export function MagazineFooter({ blog }: { blog: { name: string; social_links?: 
 
 export default function MagazineHome({ blog, articles, categories, currentCategory, getArticleHref }: HomeProps) {
   const aHref = (slug: string) => getArticleHref ? getArticleHref(slug) : `./${slug}`;
+  const tc = blog.template_config?.content;
   const hero = articles[0];
   const topStories = articles.slice(1, 4);
   const rest = articles.slice(4);
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ fontFamily: 'var(--blog-font)' }}>
-      <MagazineHeader blog={blog} categories={categories} current={currentCategory} />
+      <MagazineHeader blog={{ ...blog, description: tc?.tagline || blog.description }} categories={categories} current={currentCategory} />
 
       <main className="max-w-7xl mx-auto px-4 py-8">
 
@@ -196,7 +197,7 @@ export default function MagazineHome({ blog, articles, categories, currentCatego
                 {/* Top stories column */}
                 <div className="flex flex-col gap-0 bg-white rounded-2xl overflow-hidden shadow-sm divide-y divide-gray-100">
                   <div className="px-5 py-3 border-b-2 border-[var(--blog-primary)]">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-[var(--blog-primary)]">À la une</h3>
+                    <h3 className="text-xs font-black uppercase tracking-widest text-[var(--blog-primary)]">{tc?.featuredSectionTitle || 'À la une'}</h3>
                   </div>
                   {topStories.map((a, i) => (
                     <Link key={a.id} href={aHref(a.slug)} className="group flex gap-3 p-4 hover:bg-gray-50 transition-colors">
@@ -226,7 +227,7 @@ export default function MagazineHome({ blog, articles, categories, currentCatego
             <div className="flex items-center gap-3 mb-6">
               <div className="h-5 w-1 rounded-full bg-[var(--blog-primary)]" />
               <h2 className="text-sm font-black uppercase tracking-widest text-gray-800">
-                {currentCategory ? currentCategory : 'Derniers articles'}
+                {currentCategory ? currentCategory : (tc?.latestSectionTitle || 'Derniers articles')}
               </h2>
               <div className="flex-1 h-px bg-gray-200" />
             </div>

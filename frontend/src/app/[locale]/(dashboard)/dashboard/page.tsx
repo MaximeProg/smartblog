@@ -1,212 +1,224 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { Plus, ArrowRight, Zap, Globe, FileText, Users, BarChart2, Newspaper } from 'lucide-react';
+import { useParams, useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { Plus, Newspaper, Mail, Users, ExternalLink, Settings, TrendingUp, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-
+import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
+import { TopBar } from '@/components/dashboard/TopBar';
 import { useAuthStore } from '@/store/auth.store';
-import { getPlanConfig, canCreateBlog } from '@/lib/plans';
-import { Button } from '@/components/ui/button';
-import { PlatformShell } from '@/components/dashboard/PlatformShell';
+import { tenantsApi } from '@/lib/api';
+import type { TenantInfo } from '@/types';
+
+const PLAN_GRADIENTS: Record<string, string> = {
+  free:     'from-slate-400 to-slate-600',
+  starter:  'from-indigo-400 to-indigo-600',
+  pro:      'from-blue-400 to-blue-600',
+  business: 'from-amber-400 to-orange-500',
+};
+
+const PLAN_LABELS: Record<string, string> = {
+  free: 'Gratuit', starter: 'Starter', pro: 'Pro', business: 'Business',
+};
+
+function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
+  const plan     = blog.plan?.toLowerCase() ?? 'free';
+  const gradient = PLAN_GRADIENTS[plan] ?? PLAN_GRADIENTS.free;
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-slate-300 transition-all overflow-hidden flex flex-col">
+      {/* Cover */}
+      <div className="relative h-[100px] shrink-0 overflow-hidden">
+        {blog.cover_image_url ? (
+          <img src={blog.cover_image_url} alt={blog.name} className="w-full h-full object-cover" />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+            <span className="text-[72px] font-black text-white/[0.12] leading-none select-none">
+              {blog.name[0]?.toUpperCase()}
+            </span>
+          </div>
+        )}
+        <span className="absolute top-2.5 right-2.5 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-black/25 text-white backdrop-blur-sm">
+          {PLAN_LABELS[plan] ?? plan}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-col flex-1 p-4 gap-3">
+        <div className="min-w-0">
+          <h3 className="font-bold text-slate-900 text-[14px] leading-tight truncate">{blog.name}</h3>
+          <p className="text-[11px] text-slate-400 font-mono mt-0.5 truncate">{blog.slug}.nexusblog.io</p>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { icon: Newspaper, val: blog.articles_count ?? 0,    label: 'articles' },
+            { icon: Mail,      val: blog.subscribers_count ?? 0, label: 'abonnés'  },
+            { icon: Users,     val: blog.authors_count ?? 0,     label: 'auteurs'  },
+          ].map(s => (
+            <div key={s.label} className="flex flex-col items-center py-2 rounded-lg bg-slate-50">
+              <span className="text-[15px] font-black text-slate-800 leading-none">{s.val}</span>
+              <span className="text-[10px] text-slate-400 mt-0.5">{s.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 mt-auto">
+          <Link
+            href={`/${locale}/blogs/${blog.id}/general`}
+            className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-[12px] font-semibold transition-colors"
+          >
+            <Settings className="h-3.5 w-3.5" />
+            Studio
+          </Link>
+          <a
+            href={`/${locale}/${blog.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-500 hover:text-slate-700 transition-all"
+            title="Voir le blog"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SkeletonCard() {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden animate-pulse">
+      <div className="h-[100px] bg-slate-100" />
+      <div className="p-4 space-y-3">
+        <div className="h-3.5 bg-slate-100 rounded-lg w-3/5" />
+        <div className="h-3 bg-slate-100 rounded-lg w-2/5" />
+        <div className="grid grid-cols-3 gap-2 mt-1">
+          <div className="h-10 bg-slate-100 rounded-lg" />
+          <div className="h-10 bg-slate-100 rounded-lg" />
+          <div className="h-10 bg-slate-100 rounded-lg" />
+        </div>
+        <div className="h-8 bg-slate-100 rounded-lg" />
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const params = useParams();
   const locale = params.locale as string;
-  const t = useTranslations('dashboardPage');
-  const tNav = useTranslations('platformNav');
-  const { user, tenants, setCurrentTenant } = useAuthStore();
+  const router = useRouter();
+  const { user } = useAuthStore();
 
-  const plan = user?.plan ?? 'free';
-  const planConfig = getPlanConfig(plan);
-  const blogCount = tenants.length;
-  const canCreate = canCreateBlog(plan, blogCount);
+  const { data: blogs = [], isLoading } = useQuery({
+    queryKey: ['tenants'],
+    queryFn: async () => {
+      const { data } = await tenantsApi.list();
+      return data;
+    },
+  });
 
-  /* ── Aggregate stats across all blogs ── */
-  const totalArticles    = tenants.reduce((s, b) => s + (b.articles_count    ?? 0), 0);
-  const totalSubscribers = tenants.reduce((s, b) => s + (b.subscribers_count ?? 0), 0);
-  const totalAuthors     = tenants.reduce((s, b) => s + (b.authors_count     ?? 0), 0);
-
-  const globalStats = [
-    { label: t('statBlogs'),       value: blogCount,         icon: Newspaper,  color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-950/30',    href: `/${locale}/blogs` },
-    { label: t('statArticles'),    value: totalArticles,     icon: FileText,   color: 'text-violet-600', bg: 'bg-violet-50 dark:bg-violet-950/30', href: `/${locale}/blogs` },
-    { label: t('statSubscribers'), value: totalSubscribers,  icon: Users,      color: 'text-emerald-600',bg: 'bg-emerald-50 dark:bg-emerald-950/30',href: `/${locale}/blogs` },
-    { label: t('statAuthors'),     value: totalAuthors,      icon: BarChart2,  color: 'text-amber-600',  bg: 'bg-amber-50 dark:bg-amber-950/30',   href: `/${locale}/blogs` },
-  ];
-
-  const firstName = user?.display_name?.split(' ')[0] ?? 'there';
+  const firstName        = user?.display_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? 'là';
+  const totalArticles    = blogs.reduce((s, b) => s + (b.articles_count    ?? 0), 0);
+  const totalSubscribers = blogs.reduce((s, b) => s + (b.subscribers_count ?? 0), 0);
+  const totalAuthors     = blogs.reduce((s, b) => s + (b.authors_count     ?? 0), 0);
 
   return (
-    <PlatformShell
-      locale={locale}
-      breadcrumbs={[{ label: tNav('dashboard') }]}
-      actions={
-        canCreate ? (
-          <Button asChild size="sm" className="h-8 text-xs gap-1.5">
-            <Link href={`/${locale}/blogs/new`}>
-              <Plus className="h-3.5 w-3.5" />
-              {t('newBlog')}
-            </Link>
-          </Button>
-        ) : undefined
-      }
-    >
-      <div className="max-w-4xl space-y-8">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
+      <DashboardSidebar />
 
-        {/* ── Welcome ─────────────────────────────────── */}
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-            {t('greeting', { name: firstName })}
-          </h1>
-          <p className="text-sm text-slate-400 dark:text-zinc-500 mt-1">
-            {t('subtitle')}
-          </p>
-        </div>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopBar />
 
-        {/* ── Plan banner ─────────────────────────────── */}
-        <div className={`relative rounded-2xl bg-gradient-to-br ${planConfig.color} p-5 text-white overflow-hidden shadow-lg`}>
-          <div className="pointer-events-none absolute -right-4 -top-4 opacity-10">
-            <Zap strokeWidth={1} className="h-32 w-32" />
-          </div>
-          <div className="relative flex items-center justify-between">
-            <div>
-              <p className="text-[10px] font-semibold opacity-70 uppercase tracking-widest">
-                {t('planCurrent')}
-              </p>
-              <h2 className="text-xl font-black mt-0.5">{planConfig.label}</h2>
-              <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-2">
-                {planConfig.customDomain && <FeaturePill icon={<Globe className="h-3 w-3" />} label={t('planCustomDomain')} />}
-                {planConfig.newsletter   && <FeaturePill icon={<FileText className="h-3 w-3" />} label={t('planNewsletter')} />}
-                {planConfig.api          && <FeaturePill icon={<Zap className="h-3 w-3" />} label={t('planAPI')} />}
-                {planConfig.whiteLabel   && <FeaturePill icon={<span>✦</span>} label={t('planWhiteLabel')} />}
-                {!planConfig.hasAds      && <FeaturePill icon={<span>✓</span>} label={t('planNoAds')} />}
-              </div>
-            </div>
-            <Button
-              asChild size="sm"
-              className="shrink-0 bg-white/20 hover:bg-white/30 text-white border-0 text-xs font-semibold"
-            >
-              <Link href={`/${locale}/subscription`}>
-                <Zap className="h-3.5 w-3.5" />
-                {t('planUpgrade')}
-              </Link>
-            </Button>
-          </div>
-        </div>
+        <main className="flex-1 overflow-y-auto">
+          <div className="px-8 py-8">
 
-        {/* ── Global stats ────────────────────────────── */}
-        <div>
-          <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">
-            {t('statsTitle')}
-          </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {globalStats.map((stat) => (
-              <Link
-                key={stat.label}
-                href={stat.href}
-                className="group rounded-xl border border-slate-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-blue-200 hover:shadow-sm transition-all"
-              >
-                <div className={`h-9 w-9 rounded-lg ${stat.bg} flex items-center justify-center mb-3`}>
-                  <stat.icon className={`h-[18px] w-[18px] ${stat.color}`} />
-                </div>
-                <p className="text-2xl font-black text-slate-800 dark:text-white leading-none mb-0.5">
-                  {stat.value.toLocaleString()}
+            {/* Welcome header */}
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-[22px] font-black text-slate-900 leading-tight">
+                  Bonjour, {firstName} 👋
+                </h2>
+                <p className="text-[13px] text-slate-500 mt-1">
+                  {isLoading
+                    ? 'Chargement de vos blogs…'
+                    : blogs.length === 0
+                    ? 'Créez votre premier blog pour commencer.'
+                    : `Vous gérez ${blogs.length} blog${blogs.length > 1 ? 's' : ''}.`}
                 </p>
-                <p className="text-xs text-slate-400 dark:text-zinc-500 font-medium">{stat.label}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* ── My blogs (compact, max 3) ────────────────── */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200">
-              {t('myBlogsTitle')}
-            </h2>
-            <Button asChild variant="ghost" size="sm" className="h-7 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 gap-1">
-              <Link href={`/${locale}/blogs`}>
-                {t('seeAllBlogs')}
-                <ArrowRight className="h-3 w-3" />
-              </Link>
-            </Button>
-          </div>
-
-          {tenants.length === 0 ? (
-            <div className="rounded-2xl border-2 border-dashed border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 py-14 px-6 text-center">
-              <div className="mx-auto w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-violet-50 dark:from-blue-950/30 dark:to-violet-950/30 flex items-center justify-center mb-4 border border-blue-100 dark:border-blue-900/50">
-                <Newspaper className="h-5 w-5 text-blue-500" />
               </div>
-              <h3 className="font-semibold text-slate-800 dark:text-white mb-1 text-sm">{t('createFirstTitle')}</h3>
-              <p className="text-xs text-slate-400 dark:text-zinc-500 mb-5 max-w-xs mx-auto leading-relaxed">
-                {t('createFirstDesc')}
-              </p>
-              <Button asChild size="sm">
-                <Link href={`/${locale}/blogs/new`}>
-                  <Plus className="h-4 w-4" />
-                  {t('createFirstCta')}
-                </Link>
-              </Button>
+              <button
+                onClick={() => router.push(`/${locale}/onboarding`)}
+                className="flex items-center gap-2 h-9 px-5 rounded-xl bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-semibold transition-colors shadow-sm"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Nouveau blog
+              </button>
             </div>
-          ) : (
-            <div className="space-y-2">
-              {tenants.slice(0, 3).map((tenant) => (
-                <div
-                  key={tenant.id}
-                  className="group flex items-center gap-3 rounded-xl bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 hover:border-blue-200 dark:hover:border-blue-800 hover:shadow-sm transition-all px-4 py-3"
-                >
-                  <div className={`h-9 w-9 rounded-lg bg-gradient-to-br ${planConfig.color} flex items-center justify-center text-white font-black text-sm shadow-sm shrink-0`}>
-                    {tenant.name[0]?.toUpperCase() ?? '?'}
+
+            {/* Global stats — only when blogs exist */}
+            {!isLoading && blogs.length > 0 && (
+              <div className="grid grid-cols-4 gap-4 mb-8">
+                {[
+                  { label: 'Blogs actifs',      value: blogs.length,     icon: TrendingUp, color: 'text-blue-600',    bg: 'bg-blue-50',    border: 'border-blue-100'   },
+                  { label: 'Articles publiés',   value: totalArticles,    icon: Newspaper,  color: 'text-violet-600', bg: 'bg-violet-50',  border: 'border-violet-100' },
+                  { label: 'Abonnés cumulés',    value: totalSubscribers, icon: Mail,       color: 'text-emerald-600',bg: 'bg-emerald-50', border: 'border-emerald-100'},
+                  { label: 'Auteurs au total',   value: totalAuthors,     icon: Users,      color: 'text-amber-600',  bg: 'bg-amber-50',   border: 'border-amber-100'  },
+                ].map(stat => (
+                  <div key={stat.label} className="bg-white rounded-2xl border border-slate-200/80 shadow-sm px-5 py-5 flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{stat.label}</p>
+                      <p className="text-[28px] font-black text-slate-900 leading-none">{stat.value}</p>
+                    </div>
+                    <div className={`h-11 w-11 rounded-xl border ${stat.border} ${stat.bg} flex items-center justify-center shrink-0`}>
+                      <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                      {tenant.name}
-                    </p>
-                    <p className="text-[11px] text-slate-400 dark:text-zinc-500">
-                      {tenant.slug}.nexusblog.io
-                      {(tenant.articles_count ?? 0) > 0 && (
-                        <span className="ml-2 text-slate-300 dark:text-zinc-600">·</span>
-                      )}
-                      {(tenant.articles_count ?? 0) > 0 && (
-                        <span className="ml-2">{tenant.articles_count} {t('statArticles').toLowerCase()}</span>
-                      )}
-                    </p>
-                  </div>
-                  <Button
-                    asChild variant="ghost" size="sm"
-                    className="h-7 text-xs text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:text-zinc-500 dark:hover:text-blue-400 dark:hover:bg-blue-950/20 gap-1 shrink-0"
-                    onClick={() => setCurrentTenant(tenant.id)}
-                  >
-                    <Link href={`/${locale}/blogs/${tenant.id}/overview`}>
-                      {t('manageBlog')}
-                      <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </Button>
+                ))}
+              </div>
+            )}
+
+            {/* Blogs section */}
+            {!isLoading && blogs.length > 0 && (
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Vos blogs</p>
+                <Link href={`/${locale}/blogs`} className="flex items-center gap-1 text-[12px] font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                  Voir tout <ArrowUpRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            )}
+
+            {isLoading ? (
+              <div className="grid grid-cols-4 gap-4">
+                <SkeletonCard /><SkeletonCard /><SkeletonCard /><SkeletonCard />
+              </div>
+            ) : blogs.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-24 text-center bg-white rounded-2xl border border-slate-200/80 shadow-sm">
+                <div className="h-14 w-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-5">
+                  <Newspaper className="h-6 w-6 text-slate-400" />
                 </div>
-              ))}
-
-              {tenants.length > 3 && (
-                <Link
-                  href={`/${locale}/blogs`}
-                  className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-200 dark:border-zinc-700 py-3 text-xs font-medium text-slate-400 hover:text-blue-600 hover:border-blue-300 dark:hover:border-blue-700 dark:hover:text-blue-400 transition-all"
+                <h3 className="text-[16px] font-bold text-slate-900 mb-2">Aucun blog pour l'instant</h3>
+                <p className="text-[13px] text-slate-500 max-w-[260px] mb-6 leading-relaxed">
+                  Créez votre premier blog et publiez du contenu de qualité en quelques minutes.
+                </p>
+                <button
+                  onClick={() => router.push(`/${locale}/onboarding`)}
+                  className="flex items-center gap-2 h-10 px-5 rounded-xl bg-slate-900 hover:bg-slate-700 text-white text-[13px] font-semibold transition-colors"
                 >
-                  {t('moreBlogs', { count: tenants.length - 3 })}
-                  <ArrowRight className="h-3 w-3" />
-                </Link>
-              )}
-            </div>
-          )}
-        </div>
-
+                  <Plus className="h-4 w-4" />
+                  Créer mon premier blog
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-4 gap-4">
+                {blogs.map(blog => <BlogCard key={blog.id} blog={blog} locale={locale} />)}
+              </div>
+            )}
+          </div>
+        </main>
       </div>
-    </PlatformShell>
-  );
-}
-
-function FeaturePill({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <span className="flex items-center gap-1 text-[10px] font-medium opacity-80">
-      {icon} {label}
-    </span>
+    </div>
   );
 }

@@ -2,148 +2,174 @@
 
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
-import { Eye, Users, Clock, ExternalLink } from 'lucide-react';
-
+import { useState } from 'react';
+import { Eye, Users, Clock, TrendingUp, ExternalLink, Globe } from 'lucide-react';
 import { analyticsApi, tenantsApi } from '@/lib/api';
-import { DashboardShell } from '@/components/dashboard/DashboardShell';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { BlogStudioShell } from '@/components/dashboard/BlogStudioShell';
+import type { DailyMetric } from '@/types';
+
+const PERIODS = [
+  { label: '7 j',  value: 7  },
+  { label: '30 j', value: 30 },
+  { label: '90 j', value: 90 },
+];
 
 function formatDuration(seconds: number): string {
   if (seconds < 60) return `${Math.round(seconds)}s`;
-  return `${Math.floor(seconds / 60)}m ${Math.round(seconds % 60)}s`;
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60);
+  return `${m}m ${s}s`;
+}
+
+function MiniBarChart({ data }: { data: DailyMetric[] }) {
+  if (!data.length) return null;
+  const max = Math.max(...data.map(d => d.views), 1);
+  return (
+    <div className="flex items-end gap-0.5 h-16">
+      {data.map((d, i) => (
+        <div key={i} className="flex-1 flex flex-col items-center gap-0.5 group relative">
+          <div
+            className="w-full rounded-t bg-blue-500/70 hover:bg-blue-600 transition-colors min-h-[2px]"
+            style={{ height: `${Math.max(4, (d.views / max) * 56)}px` }}
+          />
+          <div className="absolute bottom-full mb-1 hidden group-hover:flex bg-slate-800 text-white text-[10px] rounded px-1.5 py-0.5 whitespace-nowrap">
+            {d.date.slice(5)}: {d.views} vues
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default function AnalyticsPage() {
-  const t = useTranslations('analytics');
   const params = useParams();
-  const locale = params.locale as string;
   const blogId = params.blogId as string;
+  const [days, setDays] = useState(30);
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
-    queryFn: () => tenantsApi.get(blogId).then((r) => r.data),
+    queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['analytics', blogId],
-    queryFn: () => analyticsApi.overview(blogId, 30).then((r) => r.data),
-    enabled: !!blogId,
+  const { data: analytics, isLoading } = useQuery({
+    queryKey: ['analytics', blogId, days],
+    queryFn: async () => {
+      const { data } = await analyticsApi.overview(blogId, days);
+      return data;
+    },
   });
 
-  const stats = data
-    ? [
-        {
-          label: t('pageViews'),
-          value: (data.total_views ?? 0).toLocaleString(),
-          icon: Eye,
-        },
-        {
-          label: t('uniqueVisitors'),
-          value: (data.unique_sessions ?? 0).toLocaleString(),
-          icon: Users,
-        },
-        {
-          label: 'Avg. session',
-          value: formatDuration(data.avg_duration_seconds ?? 0),
-          icon: Clock,
-        },
-        {
-          label: 'Top referrers',
-          value: (data.top_referrers ?? []).length.toString(),
-          icon: ExternalLink,
-        },
-      ]
-    : [];
+  const stats = [
+    { label: 'Vues totales',    value: analytics?.total_views ?? 0,       icon: Eye,       color: 'text-blue-600',   bg: 'bg-blue-50',   border: 'border-blue-100'   },
+    { label: 'Sessions uniques',value: analytics?.unique_sessions ?? 0,    icon: Users,     color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-100' },
+    { label: 'Durée moyenne',   value: formatDuration(analytics?.avg_duration_seconds ?? 0), icon: Clock, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { label: 'Tendance',        value: analytics ? `+${analytics.total_views}` : '–',  icon: TrendingUp, color: 'text-amber-600',  bg: 'bg-amber-50',  border: 'border-amber-100'  },
+  ];
 
   return (
-    <DashboardShell
-      locale={locale}
-      blogId={blogId}
-      breadcrumbs={[
-        { label: tenant?.name ?? '…' },
-        { label: t('title') },
-      ]}
+    <BlogStudioShell
+      title="Analytics"
+      description="Performances de votre blog."
+      previewPath=""
+      blogSlug={tenant?.slug}
     >
-      <div className="max-w-4xl">
-          <div className="mb-6">
-            <h2 className="text-base font-semibold text-slate-800 dark:text-slate-100">{t('title')}</h2>
-            <p className="text-sm text-slate-400 dark:text-zinc-500 mt-0.5">{t('subtitle')}</p>
-          </div>
+      <div className="p-4 space-y-4">
 
-          {isLoading ? (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                {stats.map(({ label, value, icon: Icon }) => (
-                  <Card key={label}>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                      <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-                      <Icon className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{value}</div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {data && (data.top_articles ?? []).length > 0 && (
-                <Card className="mb-6">
-                  <CardHeader>
-                    <CardTitle className="text-base">{t('topArticles')}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {data.top_articles.map((article, i) => (
-                        <div key={article.id} className="flex items-center gap-3">
-                          <span className="text-sm font-bold text-muted-foreground w-5">{i + 1}</span>
-                          <p className="flex-1 text-sm font-medium truncate">{article.title}</p>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <Eye className="h-3.5 w-3.5" />
-                            {(article.views ?? 0).toLocaleString()}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {data && (data.top_referrers ?? []).length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Top Referrers</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {data.top_referrers.map((ref) => (
-                        <div key={ref.domain} className="flex items-center gap-3">
-                          <ExternalLink className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                          <p className="flex-1 text-sm font-medium truncate">{ref.domain}</p>
-                          <span className="text-xs text-muted-foreground">
-                            {(ref.visits ?? 0).toLocaleString()} visits
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {data && (data.top_articles ?? []).length === 0 && (
-                <div className="text-center py-16 text-slate-300 dark:text-zinc-600">
-                  <Eye className="h-10 w-10 mx-auto mb-3" />
-                  <p className="text-sm text-slate-400 dark:text-zinc-500">{t('noData')}</p>
-                </div>
-              )}
-            </>
-          )}
+        {/* Period selector */}
+        <div className="flex items-center gap-1 bg-slate-100 rounded-xl p-1">
+          {PERIODS.map(p => (
+            <button
+              key={p.value}
+              onClick={() => setDays(p.value)}
+              className={`flex-1 h-7 rounded-lg text-[11px] font-semibold transition-all ${
+                days === p.value ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
-    </DashboardShell>
+
+        {/* Stats cards */}
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-2">
+            {[1,2,3,4].map(i => <div key={i} className="h-20 bg-slate-100 rounded-xl animate-pulse" />)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2">
+            {stats.map(s => (
+              <div key={s.label} className="bg-white rounded-xl border border-slate-100 p-3 flex items-center gap-3">
+                <div className={`h-8 w-8 rounded-lg border ${s.border} ${s.bg} flex items-center justify-center shrink-0`}>
+                  <s.icon className={`h-3.5 w-3.5 ${s.color}`} />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[18px] font-black text-slate-900 leading-none">{s.value}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">{s.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Bar chart */}
+        {analytics?.views_by_day && analytics.views_by_day.length > 0 && (
+          <div className="bg-white rounded-xl border border-slate-100 p-4">
+            <p className="text-[11px] font-bold text-slate-600 mb-3 uppercase tracking-wider">Vues par jour</p>
+            <MiniBarChart data={analytics.views_by_day} />
+            <div className="flex justify-between mt-1">
+              <span className="text-[9px] text-slate-400">{analytics.views_by_day[0]?.date?.slice(5)}</span>
+              <span className="text-[9px] text-slate-400">{analytics.views_by_day[analytics.views_by_day.length - 1]?.date?.slice(5)}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Top articles */}
+        {analytics?.top_articles && analytics.top_articles.length > 0 && (
+          <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-50">
+              <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Articles populaires</p>
+            </div>
+            <div className="divide-y divide-slate-50">
+              {analytics.top_articles.slice(0, 5).map((art, i) => (
+                <div key={art.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <span className="text-[11px] font-bold text-slate-300 w-4 shrink-0">{i + 1}</span>
+                  <p className="flex-1 text-[12px] text-slate-700 truncate">{art.title}</p>
+                  <span className="text-[11px] font-semibold text-slate-500 shrink-0">{art.views} vues</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Top referrers */}
+        {analytics?.top_referrers && analytics.top_referrers.length > 0 && (
+          <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-50">
+              <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Sources de trafic</p>
+            </div>
+            <div className="divide-y divide-slate-50">
+              {analytics.top_referrers.slice(0, 5).map(ref => (
+                <div key={ref.domain} className="flex items-center gap-3 px-4 py-2.5">
+                  <Globe className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                  <p className="flex-1 text-[12px] text-slate-700 truncate font-mono">{ref.domain || 'Direct'}</p>
+                  <span className="text-[11px] font-semibold text-slate-500 shrink-0">{ref.visits}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!isLoading && !analytics?.total_views && (
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-3">
+              <TrendingUp className="h-5 w-5 text-slate-400" />
+            </div>
+            <p className="text-[13px] font-semibold text-slate-600 mb-1">Aucune donnée pour la période</p>
+            <p className="text-[11px] text-slate-400">Publiez des articles et partagez votre blog pour voir les statistiques.</p>
+          </div>
+        )}
+      </div>
+    </BlogStudioShell>
   );
 }

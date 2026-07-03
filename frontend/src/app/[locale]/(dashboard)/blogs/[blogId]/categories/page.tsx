@@ -1,171 +1,340 @@
 'use client';
 
-import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
-import { Plus, Tags, Trash2, Loader2 } from 'lucide-react';
-import { DashboardShell } from '@/components/dashboard/DashboardShell';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
+import { Plus, Tag, Trash2, Check, X, ChevronDown, ImageIcon } from 'lucide-react';
 import { categoriesApi, tenantsApi } from '@/lib/api';
 import { slugify } from '@/lib/utils';
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel,
-  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
-  AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import { BlogStudioShell } from '@/components/dashboard/BlogStudioShell';
+import { ImagePicker } from '@/components/dashboard/ImagePicker';
+import type { CategoryInfo } from '@/types';
+
+const CATEGORY_COLORS = [
+  '#2563eb', '#7c3aed', '#db2777', '#dc2626',
+  '#ea580c', '#16a34a', '#0891b2', '#334155',
+];
+
+// ─── New-category form ────────────────────────────────────────────────────────
+
+function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => void }) {
+  const { toast } = useToast();
+  const qc = useQueryClient();
+
+  const [name, setName] = useState('');
+  const [slug, setSlug] = useState('');
+  const [description, setDescription] = useState('');
+  const [color, setColor] = useState('#2563eb');
+  const [coverImageUrl, setCoverImageUrl] = useState('');
+  const [slugManual, setSlugManual] = useState(false);
+  const [showImage, setShowImage] = useState(false);
+
+  const createMut = useMutation({
+    mutationFn: () => categoriesApi.create(blogId, {
+      name: name.trim(),
+      slug: slug.trim(),
+      description: description.trim() || undefined,
+      color,
+      cover_image_url: coverImageUrl || undefined,
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['categories', blogId] });
+      toast({ title: 'Catégorie créée !' });
+      onDone();
+    },
+    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la création.' }),
+  });
+
+  const handleNameChange = (v: string) => {
+    setName(v);
+    if (!slugManual) setSlug(slugify(v));
+  };
+
+  return (
+    <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3">
+      <p className="text-[12px] font-semibold text-slate-700">Nouvelle catégorie</p>
+
+      {/* Name */}
+      <input
+        value={name}
+        onChange={e => handleNameChange(e.target.value)}
+        placeholder="Nom de la catégorie"
+        autoFocus
+        className="w-full h-9 px-3 rounded-lg border border-slate-200 bg-white text-[13px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+      />
+
+      {/* Slug */}
+      <div className="flex rounded-lg border border-slate-200 bg-white overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-400">
+        <span className="flex items-center px-2 text-[10px] text-slate-400 bg-slate-50 border-r border-slate-200 font-mono shrink-0">slug:</span>
+        <input
+          value={slug}
+          onChange={e => { setSlugManual(true); setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-')); }}
+          placeholder="mon-slug"
+          className="flex-1 h-9 px-2 text-[12px] font-mono bg-transparent outline-none text-slate-700"
+        />
+      </div>
+
+      {/* Description */}
+      <textarea
+        value={description}
+        onChange={e => setDescription(e.target.value)}
+        placeholder="Description (optionnel)"
+        rows={2}
+        className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none"
+      />
+
+      {/* Color */}
+      <div>
+        <p className="text-[11px] text-slate-500 mb-1.5">Couleur</p>
+        <div className="flex items-center gap-1.5">
+          {CATEGORY_COLORS.map(c => (
+            <button
+              key={c} type="button" onClick={() => setColor(c)}
+              className={`h-6 w-6 rounded-lg transition-transform hover:scale-110 ${color === c ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`}
+              style={{ backgroundColor: c }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Image optionnelle */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setShowImage(v => !v)}
+          className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 hover:text-blue-600 transition-colors"
+        >
+          <ImageIcon className="h-3.5 w-3.5" />
+          Image de couverture (optionnel)
+          <ChevronDown className={`h-3 w-3 transition-transform ${showImage ? 'rotate-180' : ''}`} />
+        </button>
+        {showImage && (
+          <div className="mt-2">
+            <ImagePicker
+              value={coverImageUrl}
+              onChange={setCoverImageUrl}
+              tenantId={blogId}
+              ratio="3/2"
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-2 pt-1">
+        <button
+          onClick={() => createMut.mutate()}
+          disabled={!name.trim() || createMut.isPending}
+          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold transition-colors disabled:opacity-50"
+        >
+          <Check className="h-3.5 w-3.5" />
+          {createMut.isPending ? 'Création…' : 'Créer'}
+        </button>
+        <button onClick={onDone} className="h-8 px-3 rounded-lg border border-slate-200 text-[12px] text-slate-500 hover:bg-slate-50 transition-colors flex items-center gap-1.5">
+          <X className="h-3.5 w-3.5" /> Annuler
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Category row (with inline edit) ─────────────────────────────────────────
+
+function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
+  const { toast } = useToast();
+  const qc = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState(cat.name);
+  const [editDescription, setEditDescription] = useState('');
+  const [editColor, setEditColor] = useState(cat.color ?? '#2563eb');
+  const [editCover, setEditCover] = useState(cat.cover_image_url ?? '');
+  const [showImage, setShowImage] = useState(!!cat.cover_image_url);
+
+  function openEdit() {
+    setEditName(cat.name);
+    setEditDescription('');
+    setEditColor(cat.color ?? '#2563eb');
+    setEditCover(cat.cover_image_url ?? '');
+    setShowImage(!!cat.cover_image_url);
+    setEditing(true);
+  }
+
+  const updateMut = useMutation({
+    mutationFn: () => categoriesApi.update(blogId, cat.id, {
+      name: editName.trim(),
+      color: editColor,
+      cover_image_url: editCover || null,
+      description: editDescription.trim() || undefined,
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['categories', blogId] });
+      toast({ title: 'Catégorie mise à jour.' });
+      setEditing(false);
+    },
+    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la mise à jour.' }),
+  });
+
+  const deleteMut = useMutation({
+    mutationFn: () => categoriesApi.delete(blogId, cat.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['categories', blogId] });
+      toast({ title: 'Catégorie supprimée.' });
+    },
+    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la suppression.' }),
+  });
+
+  if (editing) {
+    return (
+      <div className="border border-blue-200 bg-blue-50/30 rounded-xl p-3 space-y-3">
+        <input
+          value={editName}
+          onChange={e => setEditName(e.target.value)}
+          autoFocus
+          className="w-full h-9 px-3 rounded-lg border border-slate-200 bg-white text-[13px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+        />
+
+        {/* Color */}
+        <div className="flex items-center gap-1.5">
+          {CATEGORY_COLORS.map(c => (
+            <button
+              key={c} type="button" onClick={() => setEditColor(c)}
+              className={`h-5 w-5 rounded-md transition-transform hover:scale-110 ${editColor === c ? 'ring-2 ring-offset-1 ring-blue-500' : ''}`}
+              style={{ backgroundColor: c }}
+            />
+          ))}
+        </div>
+
+        {/* Image */}
+        <div>
+          <button
+            type="button"
+            onClick={() => setShowImage(v => !v)}
+            className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 hover:text-blue-600 transition-colors"
+          >
+            <ImageIcon className="h-3.5 w-3.5" />
+            Image de couverture
+            <ChevronDown className={`h-3 w-3 transition-transform ${showImage ? 'rotate-180' : ''}`} />
+          </button>
+          {showImage && (
+            <div className="mt-2">
+              <ImagePicker
+                value={editCover}
+                onChange={setEditCover}
+                tenantId={blogId}
+                ratio="3/2"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => updateMut.mutate()}
+            disabled={!editName.trim() || updateMut.isPending}
+            className="flex items-center gap-1.5 h-7 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold transition-colors disabled:opacity-50"
+          >
+            <Check className="h-3 w-3" />
+            {updateMut.isPending ? '…' : 'Enregistrer'}
+          </button>
+          <button
+            onClick={() => setEditing(false)}
+            className="h-7 px-3 rounded-lg border border-slate-200 text-[11px] text-slate-500 hover:bg-slate-50 transition-colors flex items-center gap-1"
+          >
+            <X className="h-3 w-3" /> Annuler
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="group flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-slate-200 bg-white transition-all cursor-pointer" onClick={openEdit}>
+      {cat.cover_image_url ? (
+        <div className="h-8 w-8 rounded-lg shrink-0 overflow-hidden border border-slate-100">
+          <img src={cat.cover_image_url} alt="" className="w-full h-full object-cover" />
+        </div>
+      ) : (
+        <div className="h-8 w-8 rounded-lg shrink-0 flex items-center justify-center" style={{ backgroundColor: `${cat.color ?? '#94a3b8'}20` }}>
+          <div className="h-3.5 w-3.5 rounded-full" style={{ backgroundColor: cat.color ?? '#94a3b8' }} />
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        <p className="text-[13px] font-semibold text-slate-800">{cat.name}</p>
+        <p className="text-[11px] text-slate-400 font-mono">{cat.slug} · {cat.articles_count ?? 0} article{(cat.articles_count ?? 0) > 1 ? 's' : ''}</p>
+      </div>
+      <button
+        onClick={e => { e.stopPropagation(); deleteMut.mutate(); }}
+        className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
+        title="Supprimer"
+      >
+        <Trash2 className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function CategoriesPage() {
   const params = useParams();
-  const locale  = params.locale as string;
-  const blogId  = params.blogId as string;
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const t = useTranslations('categories');
-  const [newName, setNewName] = useState('');
+  const blogId = params.blogId as string;
+
+  const [creating, setCreating] = useState(false);
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
-    queryFn: () => tenantsApi.get(blogId).then((r) => r.data),
+    queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ['categories', blogId],
-    queryFn: () => categoriesApi.list(blogId).then((r) => r.data),
-    enabled: !!blogId,
+    queryFn: async () => { const { data } = await categoriesApi.list(blogId); return data; },
   });
-
-  const createMutation = useMutation({
-    mutationFn: (name: string) => categoriesApi.create(blogId, { name, slug: slugify(name) }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories', blogId] });
-      setNewName('');
-      toast({ variant: 'success', title: 'Category created!' });
-    },
-    onError: () => toast({ variant: 'destructive', title: 'Failed to create category.' }),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (categoryId: string) => categoriesApi.delete(blogId, categoryId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories', blogId] });
-      toast({ title: 'Category deleted.' });
-    },
-    onError: () => toast({ variant: 'destructive', title: 'Failed to delete category.' }),
-  });
-
-  const handleCreate = (e: React.FormEvent) => {
-    e.preventDefault();
-    const name = newName.trim();
-    if (name.length < 2) return;
-    createMutation.mutate(name);
-  };
 
   return (
-    <DashboardShell
-      locale={locale}
-      blogId={blogId}
-      breadcrumbs={[
-        { label: tenant?.name ?? '…' },
-        { label: t('title') },
-      ]}
+    <BlogStudioShell
+      title="Catégories"
+      description="Organisez vos articles par catégories."
+      previewPath=""
+      blogSlug={tenant?.slug}
     >
-      <div className="max-w-2xl">
+      <div className="p-4 space-y-4">
 
-        <div className="mb-6">
-          <h2 className="text-base font-semibold text-slate-800 dark:text-slate-100">{t('title')}</h2>
-          <p className="text-sm text-slate-400 dark:text-zinc-500 mt-0.5">{t('subtitle')}</p>
-        </div>
-
-        <form onSubmit={handleCreate} className="flex gap-2 mb-8">
-          <Input
-            placeholder={t('namePlaceholder')}
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            maxLength={60}
-            className="flex-1"
-          />
-          <Button
-            type="submit"
-            disabled={newName.trim().length < 2 || createMutation.isPending}
-            className="gap-1.5 shrink-0"
+        {creating ? (
+          <NewCategoryForm blogId={blogId} onDone={() => setCreating(false)} />
+        ) : (
+          <button
+            onClick={() => setCreating(true)}
+            className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border-2 border-dashed border-slate-200 text-[12px] font-medium text-slate-500 hover:border-blue-300 hover:text-blue-600 transition-colors"
           >
-            {createMutation.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Plus className="h-4 w-4" />
-            )}
-            {t('create')}
-          </Button>
-        </form>
+            <Plus className="h-4 w-4" /> Nouvelle catégorie
+          </button>
+        )}
 
         {isLoading ? (
           <div className="space-y-2">
-            {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-14 bg-slate-100 rounded-xl animate-pulse" />)}
           </div>
         ) : categories.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-slate-200 dark:border-zinc-700 py-16 text-center bg-white dark:bg-zinc-900">
-            <Tags className="h-8 w-8 mx-auto text-slate-300 dark:text-zinc-600 mb-3" />
-            <p className="text-sm font-medium text-slate-500 dark:text-zinc-400 mb-1">{t('noCategories')}</p>
-            <p className="text-xs text-slate-400 dark:text-zinc-500">{t('noCategoriesDesc')}</p>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="h-12 w-12 rounded-2xl bg-blue-50 flex items-center justify-center mb-3">
+              <Tag className="h-6 w-6 text-blue-500" />
+            </div>
+            <p className="text-[14px] font-bold text-slate-800 mb-1">Aucune catégorie</p>
+            <p className="text-[12px] text-slate-400">Créez votre première catégorie pour organiser vos articles.</p>
           </div>
         ) : (
-          <div className="rounded-xl border border-slate-100 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900">
-            {categories.map((cat: any, i: number) => {
-              const count = cat.articles_count ?? 0;
-              return (
-                <div
-                  key={cat.id}
-                  className={`flex items-center justify-between px-4 py-3 hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition-colors ${i > 0 ? 'border-t border-slate-50 dark:border-zinc-800' : ''}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
-                      <Tags className="h-4 w-4 text-slate-400 dark:text-zinc-500" />
-                    </div>
-                    <div>
-                      <p className="text-[13px] font-medium text-slate-800 dark:text-slate-100">{cat.name}</p>
-                      <p className="text-[11px] text-slate-400 dark:text-zinc-500">
-                        {count} {count !== 1 ? t('articles') : t('article')}
-                      </p>
-                    </div>
-                  </div>
-
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
-                        disabled={deleteMutation.isPending}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>{t('deleteTitle')}</AlertDialogTitle>
-                        <AlertDialogDescription>{t('deleteDesc')}</AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => deleteMutation.mutate(cat.id)}
-                          className="bg-destructive hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              );
-            })}
+          <div className="space-y-1.5">
+            {categories.map(cat => (
+              <CategoryRow key={cat.id} cat={cat} blogId={blogId} />
+            ))}
           </div>
         )}
+
+        {categories.length > 0 && (
+          <p className="text-[10px] text-slate-400 text-center">Cliquez sur une catégorie pour la modifier.</p>
+        )}
       </div>
-    </DashboardShell>
+    </BlogStudioShell>
   );
 }

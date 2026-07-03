@@ -52,11 +52,8 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
     const { data } = await authApi.login(idToken);
     const tenants = data.tenants ?? [];
     setAuth(data.user, tenants, data.access_token);
-    // Redirect to onboarding if user has no blogs yet
     if (callbackUrl) {
       router.push(callbackUrl);
-    } else if (tenants.length === 0) {
-      router.push(`/${locale}/onboarding`);
     } else {
       router.push(`/${locale}/dashboard`);
     }

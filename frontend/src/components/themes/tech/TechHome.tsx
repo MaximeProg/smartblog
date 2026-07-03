@@ -88,6 +88,7 @@ export function TechFooter({ blog }: { blog: { name: string; social_links?: Reco
 
 export default function TechHome({ blog, articles, categories, currentCategory, getArticleHref }: HomeProps) {
   const aHref = (slug: string) => getArticleHref ? getArticleHref(slug) : `./${slug}`;
+  const tc = blog.template_config?.content;
   const featured = articles[0];
   const rest = articles.slice(1);
 
@@ -155,7 +156,7 @@ export default function TechHome({ blog, articles, categories, currentCategory, 
 
             {!currentCategory && rest.length > 0 && (
               <div className="flex items-center gap-3 mb-6">
-                <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Derniers articles</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-500">{tc?.latestSectionTitle || 'Derniers articles'}</span>
                 <div className="flex-1 h-px bg-white/5" />
               </div>
             )}

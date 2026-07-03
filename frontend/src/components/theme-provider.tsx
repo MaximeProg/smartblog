@@ -9,10 +9,10 @@ interface ThemeCtx {
   toggle: () => void;
 }
 
-const ThemeContext = createContext<ThemeCtx>({ theme: 'dark', toggle: () => {} });
+const ThemeContext = createContext<ThemeCtx>({ theme: 'light', toggle: () => {} });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
     const stored = (localStorage.getItem('nexusblog-theme') as Theme) ?? 'dark';
@@ -55,7 +55,7 @@ export function ThemeScript() {
         __html: `
 (function(){
   try{
-    var t=localStorage.getItem('nexusblog-theme')||'dark';
+    var t=localStorage.getItem('nexusblog-theme')||'light';
     document.documentElement.classList.add(t);
   }catch(e){}
 })();

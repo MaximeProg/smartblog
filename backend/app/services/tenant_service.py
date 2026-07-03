@@ -16,6 +16,7 @@ from app.schemas.tenant import (
     CreateTenantRequest, UpdateTenantRequest,
     TenantResponse, TenantLimits, TenantUsage, SlugCheckResponse,
 )
+from app.services.template_seed import seed_blog
 
 # ── Nombre max de blogs par plan utilisateur (account-level) ──────
 # -1 = illimité
@@ -148,6 +149,10 @@ async def create_tenant(
         theme=data.theme,
         primary_color=data.primary_color,
         font_family=data.font_family,
+        cover_image_url=data.cover_image_url,
+        logo_url=data.logo_url,
+        social_links=data.social_links or {},
+        template_config=data.template_config,
         plan=user_plan,
         trial_ends_at=datetime.now(timezone.utc) + timedelta(days=14),
     )
@@ -166,6 +171,9 @@ async def create_tenant(
     db.add(membership)
     await db.commit()
     await db.refresh(tenant)
+
+    # Seed pages + menus par défaut selon le template choisi
+    await seed_blog(db, tenant.id, data.name, data.theme or "minimal")
 
     # Invalide le cache slug si existait (Redis optionnel)
     try:
@@ -209,8 +217,10 @@ async def update_tenant(
     await db.commit()
     await db.refresh(tenant)
 
-    # Invalide le cache config
-    await redis.delete(key_tenant_config(str(tenant_id)))
+    try:
+        await redis.delete(key_tenant_config(str(tenant_id)))
+    except Exception:
+        pass
 
     return tenant
 
@@ -220,8 +230,11 @@ async def delete_tenant(db: AsyncSession, tenant_id: uuid.UUID) -> None:
     tenant.deleted_at = datetime.now(timezone.utc)
     tenant.status = TenantStatus.DELETED
     await db.commit()
-    await redis.delete(key_tenant_slug(tenant.slug))
-    await redis.delete(key_tenant_config(str(tenant_id)))
+    try:
+        await redis.delete(key_tenant_slug(tenant.slug))
+        await redis.delete(key_tenant_config(str(tenant_id)))
+    except Exception:
+        pass
 
 
 async def get_user_tenants(db: AsyncSession, user_id: uuid.UUID) -> list[dict]:
@@ -242,9 +255,13 @@ async def get_user_tenants(db: AsyncSession, user_id: uuid.UUID) -> list[dict]:
             "name": t.name,
             "slug": t.slug,
             "logo_url": t.logo_url,
+            "cover_image_url": t.cover_image_url,
             "plan": t.plan,
             "status": t.status,
             "role": role,
+            "articles_count": t.articles_count,
+            "subscribers_count": t.subscribers_count,
+            "authors_count": t.authors_count,
         }
         for t, role in rows
     ]
@@ -266,6 +283,7 @@ def build_tenant_response(tenant: Tenant, include_limits: bool = False, include_
         slug=tenant.slug,
         description=tenant.description,
         category=tenant.category,
+        cover_image_url=tenant.cover_image_url,
         logo_url=tenant.logo_url,
         favicon_url=tenant.favicon_url,
         theme=tenant.theme,
@@ -279,6 +297,7 @@ def build_tenant_response(tenant: Tenant, include_limits: bool = False, include_
         ga4_measurement_id=tenant.ga4_measurement_id,
         pwa_enabled=tenant.pwa_enabled,
         social_links=tenant.social_links or {},
+        template_config=tenant.template_config,
         limits=limits,
         usage=usage,
     )
