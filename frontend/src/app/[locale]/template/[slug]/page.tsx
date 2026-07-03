@@ -35,7 +35,6 @@ export default async function TemplateArticlePage({
           comments={[]}
           basePath="/en/template"
           previewSlug={preview}
-          getArticleHref={(s: string) => `/en/template/${s}?preview=${preview}`}
         />
       );
     } catch {

@@ -412,8 +412,15 @@ export default function CorporateArticle({
   };
 
   const aHref = useCallback(
-    (slug: string) => getArticleHref ? getArticleHref(slug) : `../${slug}`,
-    [getArticleHref],
+    (slug: string) => {
+      if (getArticleHref) return getArticleHref(slug);
+      if (basePath) {
+        const pq = previewSlug ? `?preview=${previewSlug}` : '';
+        return `${basePath}/${slug}${pq}`;
+      }
+      return `../${slug}`;
+    },
+    [getArticleHref, basePath, previewSlug],
   );
 
   const cpStyle = {
