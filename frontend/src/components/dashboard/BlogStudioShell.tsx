@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Save, Loader2 } from 'lucide-react';
 import { useStudioPreview } from '@/contexts/studio-preview';
 
@@ -177,12 +177,26 @@ export function BlogStudioShell({
   saving, onSave,
   children,
 }: BlogStudioShellProps) {
-  const { setPreview } = useStudioPreview();
+  const { setPreview, refresh, setFullWidth } = useStudioPreview();
+
+  // Normal studio page: restore narrow panel mode
+  useEffect(() => {
+    setFullWidth(false);
+  }, [setFullWidth]);
 
   // Sync preview config into the persistent panel in the layout
   useEffect(() => {
     setPreview({ path: previewPath, blogSlug });
   }, [previewPath, blogSlug, setPreview]);
+
+  // Auto-refresh preview 400 ms after save completes
+  const prevSavingRef = useRef<boolean>(false);
+  useEffect(() => {
+    if (prevSavingRef.current === true && !saving) {
+      setTimeout(() => refresh(), 400);
+    }
+    prevSavingRef.current = !!saving;
+  }, [saving, refresh]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">

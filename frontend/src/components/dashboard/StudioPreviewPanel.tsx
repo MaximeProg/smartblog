@@ -12,66 +12,93 @@ const DEVICE_CONFIG: Record<Device, { icon: typeof Monitor; label: string; width
 };
 
 interface Props {
-  previewUrl: string;
+  previewUrl:    string;
+  refreshSignal: number;
 }
 
-export function StudioPreviewPanel({ previewUrl }: Props) {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [device, setDevice] = useState<Device>('desktop');
+export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
+  const iframeRef   = useRef<HTMLIFrameElement>(null);
+  const mountedUrl  = useRef<string | null>(null);
+  const [device,       setDevice]       = useState<Device>('desktop');
   const [iframeHeight, setIframeHeight] = useState(900);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const mountedUrl = useRef<string | null>(null);
+  const [reloadKey,    setReloadKey]    = useState(0);
 
-  // Soft-navigate inside the iframe when previewUrl changes (no full reload)
+  // ── Measure iframe content height accurately ───────────────────────────
+  const measureHeight = useCallback(() => {
+    try {
+      const iframe = iframeRef.current;
+      const doc    = iframe?.contentDocument;
+      if (!doc || !doc.body) return;
+
+      // Temporarily reset height so body can collapse to natural size
+      iframe!.style.height = '1px';
+      const h = Math.max(
+        doc.documentElement.scrollHeight,
+        doc.body.scrollHeight,
+        doc.documentElement.clientHeight,
+      );
+      iframe!.style.height = '';
+      if (h > 0) setIframeHeight(Math.max(600, h));
+    } catch {}
+  }, []);
+
+  // ── On load: measure immediately + after JS settles ───────────────────
+  const handleLoad = useCallback(() => {
+    measureHeight();
+    setTimeout(measureHeight, 150);
+    setTimeout(measureHeight, 600);
+  }, [measureHeight]);
+
+  // ── Soft-navigate when previewUrl changes ─────────────────────────────
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
 
-    // First load: let src handle it
     if (mountedUrl.current === null) {
       mountedUrl.current = previewUrl;
       return;
     }
-
-    // Subsequent changes: soft navigate
     if (mountedUrl.current !== previewUrl) {
       mountedUrl.current = previewUrl;
       try {
         iframe.contentWindow?.location.replace(previewUrl);
       } catch {
-        // Cross-origin fallback: change src (will reload, but shouldn't happen here)
         iframe.src = previewUrl;
       }
     }
   }, [previewUrl]);
 
-  // Full reload on refresh button
-  const handleRefresh = useCallback(() => {
+  // ── Reload when save triggers a refresh ───────────────────────────────
+  useEffect(() => {
+    if (refreshSignal === 0) return;
     const iframe = iframeRef.current;
-    if (iframe) {
-      iframe.contentWindow?.location.reload();
-    }
-    setRefreshKey(k => k + 1);
-  }, []);
-
-  // Auto-size iframe to content height
-  function handleLoad() {
     try {
-      const doc = iframeRef.current?.contentDocument;
-      if (doc) {
-        const h = doc.documentElement.scrollHeight;
-        if (h > 0) setIframeHeight(Math.max(600, h));
-      }
-    } catch {}
-  }
+      iframe?.contentWindow?.location.reload();
+    } catch {
+      setReloadKey(k => k + 1);
+    }
+  }, [refreshSignal]);
+
+  // ── Manual refresh button ──────────────────────────────────────────────
+  const handleManualRefresh = useCallback(() => {
+    try {
+      iframeRef.current?.contentWindow?.location.reload();
+    } catch {
+      setReloadKey(k => k + 1);
+    }
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-slate-100">
+
       {/* Toolbar */}
       <div className="shrink-0 h-10 border-b border-slate-200 bg-white/80 backdrop-blur flex items-center justify-between px-4 gap-3">
-        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Prévisualisation en direct</span>
+        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+          Prévisualisation en direct
+        </span>
 
         <div className="flex items-center gap-1">
+          {/* Device switcher */}
           <div className="flex items-center gap-0.5 bg-slate-100 rounded-lg p-0.5 mr-1">
             {(Object.entries(DEVICE_CONFIG) as [Device, typeof DEVICE_CONFIG[Device]][]).map(([key, cfg]) => (
               <button
@@ -86,8 +113,9 @@ export function StudioPreviewPanel({ previewUrl }: Props) {
               </button>
             ))}
           </div>
+
           <button
-            onClick={handleRefresh}
+            onClick={handleManualRefresh}
             title="Actualiser"
             className="h-6 w-6 rounded-md flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
           >
@@ -109,7 +137,7 @@ export function StudioPreviewPanel({ previewUrl }: Props) {
       <div className="flex-1 overflow-auto flex items-start justify-center p-6">
         <div
           className="bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-300"
-          style={{ width: DEVICE_CONFIG[device].width, maxWidth: '100%', minHeight: '600px' }}
+          style={{ width: DEVICE_CONFIG[device].width, maxWidth: '100%' }}
         >
           {/* Browser chrome mock */}
           <div className="h-8 bg-slate-100 border-b border-slate-200 flex items-center px-3 gap-2 shrink-0">
@@ -125,7 +153,7 @@ export function StudioPreviewPanel({ previewUrl }: Props) {
 
           <iframe
             ref={iframeRef}
-            key={refreshKey}
+            key={reloadKey}
             src={previewUrl}
             className="w-full border-0 block"
             style={{ height: `${iframeHeight}px` }}
