@@ -17,43 +17,15 @@ interface Props {
 }
 
 export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
-  const iframeRef   = useRef<HTMLIFrameElement>(null);
-  const mountedUrl  = useRef<string | null>(null);
-  const [device,       setDevice]       = useState<Device>('desktop');
-  const [iframeHeight, setIframeHeight] = useState(900);
-  const [reloadKey,    setReloadKey]    = useState(0);
+  const iframeRef  = useRef<HTMLIFrameElement>(null);
+  const mountedUrl = useRef<string | null>(null);
+  const [device,    setDevice]    = useState<Device>('desktop');
+  const [reloadKey, setReloadKey] = useState(0);
 
-  // ── Measure iframe content height accurately ───────────────────────────
-  const measureHeight = useCallback(() => {
-    try {
-      const iframe = iframeRef.current;
-      const doc    = iframe?.contentDocument;
-      if (!doc || !doc.body) return;
-
-      // Temporarily reset height so body can collapse to natural size
-      iframe!.style.height = '1px';
-      const h = Math.max(
-        doc.documentElement.scrollHeight,
-        doc.body.scrollHeight,
-        doc.documentElement.clientHeight,
-      );
-      iframe!.style.height = '';
-      if (h > 0) setIframeHeight(Math.max(600, h));
-    } catch {}
-  }, []);
-
-  // ── On load: measure immediately + after JS settles ───────────────────
-  const handleLoad = useCallback(() => {
-    measureHeight();
-    setTimeout(measureHeight, 150);
-    setTimeout(measureHeight, 600);
-  }, [measureHeight]);
-
-  // ── Soft-navigate when previewUrl changes ─────────────────────────────
+  // Soft-navigate when previewUrl changes (no full reload of the layout)
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
-
     if (mountedUrl.current === null) {
       mountedUrl.current = previewUrl;
       return;
@@ -68,18 +40,16 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
     }
   }, [previewUrl]);
 
-  // ── Reload when save triggers a refresh ───────────────────────────────
+  // Reload iframe after save
   useEffect(() => {
     if (refreshSignal === 0) return;
-    const iframe = iframeRef.current;
     try {
-      iframe?.contentWindow?.location.reload();
+      iframeRef.current?.contentWindow?.location.reload();
     } catch {
       setReloadKey(k => k + 1);
     }
   }, [refreshSignal]);
 
-  // ── Manual refresh button ──────────────────────────────────────────────
   const handleManualRefresh = useCallback(() => {
     try {
       iframeRef.current?.contentWindow?.location.reload();
@@ -133,14 +103,14 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
         </div>
       </div>
 
-      {/* Iframe area */}
-      <div className="flex-1 overflow-auto flex items-start justify-center p-6">
+      {/* Preview area — iframe fills all remaining height, content scrolls inside */}
+      <div className="flex-1 overflow-hidden flex items-stretch justify-center p-4 gap-0">
         <div
-          className="bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-300"
+          className="flex flex-col bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-300"
           style={{ width: DEVICE_CONFIG[device].width, maxWidth: '100%' }}
         >
           {/* Browser chrome mock */}
-          <div className="h-8 bg-slate-100 border-b border-slate-200 flex items-center px-3 gap-2 shrink-0">
+          <div className="shrink-0 h-8 bg-slate-100 border-b border-slate-200 flex items-center px-3 gap-2">
             <div className="flex gap-1">
               <div className="h-2.5 w-2.5 rounded-full bg-red-400" />
               <div className="h-2.5 w-2.5 rounded-full bg-amber-400" />
@@ -151,14 +121,13 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
             </div>
           </div>
 
+          {/* iframe takes remaining height — content scrolls naturally inside */}
           <iframe
             ref={iframeRef}
             key={reloadKey}
             src={previewUrl}
-            className="w-full border-0 block"
-            style={{ height: `${iframeHeight}px` }}
+            className="flex-1 w-full border-0 block min-h-0"
             title="Aperçu du blog"
-            onLoad={handleLoad}
           />
         </div>
       </div>

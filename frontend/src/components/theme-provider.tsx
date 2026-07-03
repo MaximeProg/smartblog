@@ -15,7 +15,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
-    const stored = (localStorage.getItem('nexusblog-theme') as Theme) ?? 'dark';
+    const stored = (localStorage.getItem('nexusblog-theme') as Theme) ?? 'light';
     setTheme(stored);
     applyTheme(stored);
   }, []);
