@@ -225,13 +225,16 @@ export function CorporateHeader({
       ]
     : [];
 
-  // Resolve a stored URL against basePath so relative paths (/about, /contact, /)
-  // work correctly on the real public blog instead of pointing to the platform root.
+  // Resolve a stored nav URL against basePath.
+  // Stored URLs often contain a bare locale prefix (e.g. /en, /en/about) but no blog slug.
+  // Strip that prefix first so /en/about → /about → basePath/about.
   const resolveNavHref = (url: string): string => {
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     if (!basePath) return url;
-    if (url === '/') return basePath + pq;
-    return basePath + url + pq;
+    // Strip leading /{locale} or /{locale-REGION}  e.g. /en, /fr, /en-US
+    const withoutLocale = url.replace(/^\/[a-z]{2}(?:-[A-Z]{2})?(\/|$)/, '$1') || '/';
+    if (withoutLocale === '/') return basePath + pq;
+    return basePath + withoutLocale + pq;
   };
 
   const pageLinks = customNavLinks.length > 0

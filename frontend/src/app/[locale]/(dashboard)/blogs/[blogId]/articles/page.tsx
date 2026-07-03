@@ -34,7 +34,7 @@ function ArticleRow({
 }) {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const sc = STATUS_CONFIG[article.status];
+  const sc = STATUS_CONFIG[article.status] ?? STATUS_CONFIG.draft;
 
   return (
     <div className="group flex items-center gap-3 py-3 border-b border-slate-50 last:border-0 hover:bg-slate-50/60 rounded-lg px-2 transition-colors">
