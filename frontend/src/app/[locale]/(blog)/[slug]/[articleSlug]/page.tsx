@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function PublicArticlePage({ params }: { params: Params }) {
-  const { slug, articleSlug } = await params;
+  const { locale, slug, articleSlug } = await params;
 
   let blog, article, relatedArticles;
   try {
