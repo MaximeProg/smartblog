@@ -135,7 +135,7 @@ export interface SlugCheckResponse {
 
 // ─── Articles ─────────────────────────────────────────────────────────────────
 
-export type ArticleStatus = 'draft' | 'published' | 'scheduled' | 'archived';
+export type ArticleStatus = 'draft' | 'published' | 'scheduled' | 'archived' | 'in_review' | 'unpublished';
 export type ArticleType = 'article' | 'page' | 'newsletter';
 
 export interface ArticleListItem {

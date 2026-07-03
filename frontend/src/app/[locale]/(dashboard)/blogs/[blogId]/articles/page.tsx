@@ -15,10 +15,12 @@ import { BlogStudioShell } from '@/components/dashboard/BlogStudioShell';
 import { useStudioPreview } from '@/contexts/studio-preview';
 
 const STATUS_CONFIG: Record<ArticleStatus, { label: string; color: string; icon: typeof FileText }> = {
-  draft:     { label: 'Brouillon',   color: 'text-slate-500 bg-slate-100',    icon: FileText },
-  published: { label: 'Publié',      color: 'text-emerald-700 bg-emerald-50', icon: CheckCircle2 },
-  scheduled: { label: 'Planifié',    color: 'text-blue-700 bg-blue-50',       icon: Clock },
-  archived:  { label: 'Archivé',     color: 'text-slate-400 bg-slate-50',     icon: Archive },
+  draft:       { label: 'Brouillon',   color: 'text-slate-500 bg-slate-100',    icon: FileText },
+  published:   { label: 'Publié',      color: 'text-emerald-700 bg-emerald-50', icon: CheckCircle2 },
+  scheduled:   { label: 'Planifié',    color: 'text-blue-700 bg-blue-50',       icon: Clock },
+  archived:    { label: 'Archivé',     color: 'text-slate-400 bg-slate-50',     icon: Archive },
+  in_review:   { label: 'En révision', color: 'text-amber-700 bg-amber-50',     icon: Clock },
+  unpublished: { label: 'Dépublié',    color: 'text-slate-400 bg-slate-50',     icon: Archive },
 };
 
 function ArticleRow({
