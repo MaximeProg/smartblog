@@ -207,25 +207,29 @@ async def track_article_view(slug: str, article_slug: str, db: DBSession):
 async def list_public_categories(slug: str, db: DBSession):
     tenant = await _resolve_tenant(db, slug)
 
-    # Live count of published articles per category (avoids stale cached counter)
-    pub_sq = (
+    # 1. Fetch all categories for this tenant
+    cat_result = await db.execute(
+        select(Category)
+        .where(Category.tenant_id == tenant.id)
+        .order_by(Category.sort_order, Category.name)
+    )
+    categories = cat_result.scalars().all()
+    if not categories:
+        return []
+
+    # 2. Count published articles per category in one query
+    count_result = await db.execute(
         select(Article.category_id, func.count().label("cnt"))
         .where(
             Article.tenant_id == tenant.id,
             Article.status == ArticleStatus.PUBLISHED,
             Article.deleted_at.is_(None),
-            Article.category_id.is_not(None),
+            Article.category_id.in_([c.id for c in categories]),
         )
         .group_by(Article.category_id)
-        .subquery()
     )
+    counts: dict[str, int] = {str(row.category_id): row.cnt for row in count_result.all()}
 
-    result = await db.execute(
-        select(Category, func.coalesce(pub_sq.c.cnt, 0).label("real_count"))
-        .outerjoin(pub_sq, pub_sq.c.category_id == Category.id)
-        .where(Category.tenant_id == tenant.id)
-        .order_by(Category.sort_order, Category.name)
-    )
     return [
         {
             "id": str(c.id),
@@ -233,9 +237,9 @@ async def list_public_categories(slug: str, db: DBSession):
             "slug": c.slug,
             "description": c.description,
             "cover_image_url": c.cover_image_url,
-            "articles_count": real_count,
+            "articles_count": counts.get(str(c.id), 0),
         }
-        for c, real_count in result.all()
+        for c in categories
     ]
 
 
@@ -379,34 +383,37 @@ async def list_public_blogs(
     limit: int = Query(default=24, le=100),
     offset: int = Query(default=0, ge=0),
 ):
-    """Returns all active public blogs with live article counts, sorted by count descending."""
-    # Live published article count per tenant
-    pub_sq = (
-        select(Article.tenant_id, func.count().label("cnt"))
-        .where(
-            Article.status == ArticleStatus.PUBLISHED,
-            Article.deleted_at.is_(None),
-        )
-        .group_by(Article.tenant_id)
-        .subquery()
-    )
-
-    real_count_col = func.coalesce(pub_sq.c.cnt, 0).label("real_count")
-    query = (
-        select(Tenant, real_count_col)
-        .outerjoin(pub_sq, pub_sq.c.tenant_id == Tenant.id)
-        .where(Tenant.status == TenantStatus.ACTIVE, Tenant.deleted_at.is_(None))
-    )
+    """Returns all active public blogs with live article counts."""
+    # 1. Fetch matching tenants
+    query = select(Tenant).where(Tenant.status == TenantStatus.ACTIVE, Tenant.deleted_at.is_(None))
     if category:
         query = query.where(Tenant.category == category)
     if q:
         query = query.where(
             Tenant.name.ilike(f"%{q}%") | Tenant.description.ilike(f"%{q}%")
         )
-    query = query.order_by(real_count_col.desc(), Tenant.created_at.desc())
-    query = query.offset(offset).limit(limit)
+    query = query.order_by(Tenant.created_at.desc()).offset(offset).limit(limit)
     result = await db.execute(query)
-    rows = result.all()
+    tenants = result.scalars().all()
+    if not tenants:
+        return []
+
+    # 2. Count published articles per tenant in one query
+    tenant_ids = [t.id for t in tenants]
+    count_result = await db.execute(
+        select(Article.tenant_id, func.count().label("cnt"))
+        .where(
+            Article.tenant_id.in_(tenant_ids),
+            Article.status == ArticleStatus.PUBLISHED,
+            Article.deleted_at.is_(None),
+        )
+        .group_by(Article.tenant_id)
+    )
+    counts: dict[str, int] = {str(row.tenant_id): row.cnt for row in count_result.all()}
+
+    # 3. Sort by real article count descending
+    tenants_sorted = sorted(tenants, key=lambda t: counts.get(str(t.id), 0), reverse=True)
+    rows = [(t, counts.get(str(t.id), 0)) for t in tenants_sorted]
     return [
         PublicBlogCard(
             name=t.name,
