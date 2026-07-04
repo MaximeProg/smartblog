@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
-  FileText, Tag, Mail,
+  FileText, Tag, Mail, MessageSquare,
   Home, Info, Phone, BookOpen,
   PanelTop, PanelBottom,
   BarChart2, Search, ArrowLeft, ExternalLink,
@@ -106,9 +106,10 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
   ];
 
   const contentItems: NavItem[] = [
-    { href: 'articles',   icon: FileText, label: t('articles') },
-    { href: 'categories', icon: Tag,      label: t('categories') },
-    { href: 'newsletter', icon: Mail,     label: t('newsletter') },
+    { href: 'articles',   icon: FileText,     label: t('articles') },
+    { href: 'categories', icon: Tag,          label: t('categories') },
+    { href: 'newsletter', icon: Mail,         label: t('newsletter') },
+    { href: 'comments',   icon: MessageSquare, label: t('comments') },
   ];
 
   const growthItems: NavItem[] = [
@@ -175,7 +176,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`/${locale}/onboarding`} className="gap-2.5 cursor-pointer">
+              <Link href={`/${locale}/blogs/new`} className="gap-2.5 cursor-pointer">
                 <div className="h-5 w-5 rounded-md border border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center shrink-0">
                   <Plus className="h-3 w-3 text-slate-400" />
                 </div>

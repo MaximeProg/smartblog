@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import CorporateArticle from '@/components/themes/corporate/CorporateArticle';
 import {
-  MOCK_BLOG, MOCK_ARTICLES, MOCK_COMMENTS, ARTICLE_CONTENTS,
+  MOCK_BLOG, MOCK_ARTICLES, ARTICLE_CONTENTS,
 } from '@/components/themes/corporate/mock-data';
 import { publicApi } from '@/lib/public-api';
 
@@ -32,7 +32,6 @@ export default async function TemplateArticlePage({
           blog={blog as any}
           article={article as any}
           relatedArticles={related as any}
-          comments={[]}
           basePath="/en/template"
           previewSlug={preview}
         />
@@ -46,7 +45,6 @@ export default async function TemplateArticlePage({
   if (!article) notFound();
 
   const related = MOCK_ARTICLES.filter(a => a.id !== article.id).slice(0, 5);
-  const comments = MOCK_COMMENTS[article.id] ?? [];
 
   const fullArticle = {
     ...article,
@@ -58,7 +56,6 @@ export default async function TemplateArticlePage({
       blog={MOCK_BLOG as any}
       article={fullArticle as any}
       relatedArticles={related as any}
-      comments={comments}
     />
   );
 }

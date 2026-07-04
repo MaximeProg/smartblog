@@ -225,7 +225,7 @@ export function BlogStudioShell({
       </div>
 
       {/* Panel body */}
-      <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}>
+      <div className="flex-1 overflow-y-auto min-h-0" style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}>
         {children}
       </div>
     </div>

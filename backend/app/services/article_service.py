@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_, update
 
 from app.models.article import Article, ArticleVersion, Category, Tag, ArticleTag
+from app.models.tenant import Tenant
 from app.models.user import User
 from app.models.enums import ArticleStatus, ContentVisibility
 from app.core.exceptions import (
@@ -292,6 +293,7 @@ async def update_article(
         raise NotFoundException("Article")
 
     old_category_id = article.category_id
+    old_status = article.status
 
     changed = False
     for field, value in data.model_dump(exclude_unset=True, exclude={"tags", "category_id"}).items():
@@ -323,6 +325,19 @@ async def update_article(
 
     if data.tags is not None:
         await _sync_tags(db, article, data.tags)
+
+    # Sync tenant articles_count when status transitions through PUBLISHED
+    new_status = article.status
+    if old_status != ArticleStatus.PUBLISHED and new_status == ArticleStatus.PUBLISHED:
+        await db.execute(
+            update(Tenant).where(Tenant.id == tenant_id)
+            .values(articles_count=Tenant.articles_count + 1)
+        )
+    elif old_status == ArticleStatus.PUBLISHED and new_status != ArticleStatus.PUBLISHED:
+        await db.execute(
+            update(Tenant).where(Tenant.id == tenant_id)
+            .values(articles_count=func.greatest(Tenant.articles_count - 1, 0))
+        )
 
     if changed:
         article.current_version += 1
@@ -358,11 +373,24 @@ async def change_status(
     if not article:
         raise NotFoundException("Article")
 
+    old_status = article.status
     article.status = new_status
     if new_status == ArticleStatus.PUBLISHED and not article.published_at:
         article.published_at = datetime.now(timezone.utc)
     if new_status == ArticleStatus.UNPUBLISHED:
         article.unpublished_at = datetime.now(timezone.utc)
+
+    # Keep tenant articles_count in sync
+    if old_status != ArticleStatus.PUBLISHED and new_status == ArticleStatus.PUBLISHED:
+        await db.execute(
+            update(Tenant).where(Tenant.id == tenant_id)
+            .values(articles_count=Tenant.articles_count + 1)
+        )
+    elif old_status == ArticleStatus.PUBLISHED and new_status != ArticleStatus.PUBLISHED:
+        await db.execute(
+            update(Tenant).where(Tenant.id == tenant_id)
+            .values(articles_count=func.greatest(Tenant.articles_count - 1, 0))
+        )
 
     await db.commit()
     await db.refresh(article)
@@ -389,6 +417,11 @@ async def delete_article(
         await db.execute(
             update(Category).where(Category.id == article.category_id)
             .values(articles_count=func.greatest(Category.articles_count - 1, 0))
+        )
+    if article.status == ArticleStatus.PUBLISHED:
+        await db.execute(
+            update(Tenant).where(Tenant.id == tenant_id)
+            .values(articles_count=func.greatest(Tenant.articles_count - 1, 0))
         )
     await db.commit()
 

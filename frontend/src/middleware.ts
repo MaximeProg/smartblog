@@ -4,7 +4,7 @@ import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
-const PROTECTED_PATHS = ['/dashboard', '/blogs', '/onboarding'];
+const PROTECTED_PATHS = ['/dashboard', '/blogs'];
 const SYSTEM_SUBDOMAINS = new Set(['app', 'www', 'api', 'admin', 'mail', 'cdn', 'static', 'assets']);
 const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'nexusblog.io';
 

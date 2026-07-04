@@ -109,7 +109,7 @@ export function DashboardSidebar() {
       {/* Footer */}
       <div className="shrink-0 border-t border-slate-200/70 dark:border-slate-700 p-3 space-y-2">
         <Link
-          href={`/${locale}/onboarding`}
+          href={`/${locale}/blogs/new`}
           className="flex items-center justify-center gap-2 h-9 w-full rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[12.5px] font-bold transition-colors"
         >
           <Plus className="h-3.5 w-3.5" />

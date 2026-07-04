@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
 import CorporateContactPage from '@/components/themes/corporate/CorporateContact';
+import { BlogAnalyticsTracker } from '@/components/themes/shared/BlogAnalyticsTracker';
 
 type Params = Promise<{ locale: string; slug: string }>;
 
@@ -18,10 +19,13 @@ export default async function PublicContactPage({ params }: { params: Params }) 
   }
 
   return (
-    <CorporateContactPage
-      blog={blog}
-      categories={categories}
-      basePath={`/${locale}/${slug}`}
-    />
+    <>
+      <BlogAnalyticsTracker tenantId={blog.id} />
+      <CorporateContactPage
+        blog={blog}
+        categories={categories}
+        basePath={`/${locale}/${slug}`}
+      />
+    </>
   );
 }

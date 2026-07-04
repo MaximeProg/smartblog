@@ -13,6 +13,7 @@ from app.models.enums import CommentStatus, UserRole
 from app.api.v1.tenants import _assert_member, _assert_role
 
 router = APIRouter(prefix="/tenants/{tenant_id}/articles/{article_id}/comments", tags=["comments"])
+tenant_comments_router = APIRouter(prefix="/tenants/{tenant_id}/comments", tags=["comments"])
 
 
 class CreateCommentRequest(BaseModel):
@@ -205,6 +206,79 @@ async def ban_user(
     ))
     await db.commit()
     return {"message": "Banni avec succès."}
+
+
+# ── GET /tenants/{tenant_id}/comments — all comments for a blog ───
+
+class CommentWithArticle(CommentResponse):
+    article_id: str
+    article_title: str | None
+
+
+@tenant_comments_router.get("", response_model=list[CommentWithArticle])
+async def list_tenant_comments(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+    status: CommentStatus | None = Query(default=None),
+    limit: int = Query(default=50, le=200),
+    offset: int = Query(default=0, ge=0),
+):
+    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+    query = (
+        select(Comment, User, Article)
+        .outerjoin(User, User.id == Comment.author_user_id)
+        .join(Article, Article.id == Comment.article_id)
+        .where(Comment.tenant_id == tenant_id)
+    )
+    if status:
+        query = query.where(Comment.status == status)
+    query = query.order_by(Comment.created_at.desc()).offset(offset).limit(limit)
+    result = await db.execute(query)
+    rows = result.all()
+    return [
+        CommentWithArticle(
+            id=str(c.id),
+            content=c.content,
+            status=c.status,
+            parent_id=str(c.parent_id) if c.parent_id else None,
+            author=CommentAuthor(
+                id=str(u.id) if u else None,
+                display_name=u.display_name if u else c.author_name,
+                avatar_url=u.avatar_url if u else None,
+            ),
+            likes_count=c.likes_count,
+            replies_count=c.replies_count,
+            created_at=c.created_at,
+            article_id=str(a.id),
+            article_title=a.title,
+        )
+        for c, u, a in rows
+    ]
+
+
+@tenant_comments_router.post("/{comment_id}/moderate", response_model=CommentResponse)
+async def moderate_tenant_comment(
+    tenant_id: uuid.UUID,
+    comment_id: uuid.UUID,
+    body: ModerateRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+    result = await db.execute(
+        select(Comment, User)
+        .outerjoin(User, User.id == Comment.author_user_id)
+        .where(Comment.id == comment_id, Comment.tenant_id == tenant_id)
+    )
+    row = result.first()
+    if not row:
+        raise NotFoundException("Commentaire")
+    c, u = row
+    c.status = body.status
+    await db.commit()
+    await db.refresh(c)
+    return _to_response(c, u)
 
 
 # ── Helpers ───────────────────────────────────────────────────────

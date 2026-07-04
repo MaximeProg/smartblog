@@ -141,7 +141,7 @@ export default function BlogsPage() {
                   </div>
                 )}
                 <button
-                  onClick={() => router.push(`/${locale}/onboarding`)}
+                  onClick={() => router.push(`/${locale}/blogs/new`)}
                   className="flex items-center gap-2 h-9 px-4 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors shadow-sm"
                 >
                   <Plus className="h-3.5 w-3.5" />
@@ -185,7 +185,7 @@ export default function BlogsPage() {
                   {t('noBlogsQuickDesc')}
                 </p>
                 <button
-                  onClick={() => router.push(`/${locale}/onboarding`)}
+                  onClick={() => router.push(`/${locale}/blogs/new`)}
                   className="flex items-center gap-2 h-10 px-5 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors"
                 >
                   <Plus className="h-4 w-4" />

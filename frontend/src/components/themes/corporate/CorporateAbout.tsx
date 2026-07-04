@@ -25,10 +25,13 @@ export default function CorporateAboutPage({ blog, categories, basePath }: Props
   const heroSubtitle = hero.subtitle || t('aboutHeroSubtitle');
   const heroDesc = hero.description || blog.description || t('aboutHeroDesc');
 
+  const heroCoverImage: string | undefined = hero.cover_image_url || undefined;
+
   const missionConfig = aboutConfig?.mission ?? {};
   const missionEnabled = missionConfig.enabled !== false;
   const missionTitle = missionConfig.title || t('aboutMissionTitle');
   const missionDesc = missionConfig.description || t('aboutMissionDesc');
+  const missionImageUrl: string | undefined = missionConfig.image_url || undefined;
 
   const statsItems: { value: string; label: string }[] = aboutConfig?.stats?.items ?? [];
   const statsEnabled = aboutConfig?.stats?.enabled !== false;
@@ -68,6 +71,12 @@ export default function CorporateAboutPage({ blog, categories, basePath }: Props
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-slate-950 text-white py-24 px-4">
+        {heroCoverImage && (
+          <>
+            <img src={heroCoverImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/50 to-slate-950/80" />
+          </>
+        )}
         <div className="absolute inset-0"
           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 opacity-20"
@@ -104,10 +113,19 @@ export default function CorporateAboutPage({ blog, categories, basePath }: Props
 
       {/* Mission */}
       {missionEnabled && (
-        <section className="max-w-4xl mx-auto px-4 sm:px-6 py-20">
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight mb-6">{missionTitle}</h2>
-          <div className="text-lg text-slate-500 leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: missionDesc }} />
+        <section className="max-w-5xl mx-auto px-4 sm:px-6 py-20">
+          <div className={missionImageUrl ? 'grid grid-cols-1 lg:grid-cols-2 gap-12 items-center' : 'max-w-4xl'}>
+            <div>
+              <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight mb-6">{missionTitle}</h2>
+              <div className="text-lg text-slate-500 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: missionDesc }} />
+            </div>
+            {missionImageUrl && (
+              <div className="rounded-2xl overflow-hidden shadow-lg">
+                <img src={missionImageUrl} alt={missionTitle} className="w-full h-auto object-cover" />
+              </div>
+            )}
+          </div>
         </section>
       )}
 

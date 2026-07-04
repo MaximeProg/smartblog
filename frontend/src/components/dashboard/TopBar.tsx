@@ -20,7 +20,7 @@ const SEG_LABELS: Record<string, string> = {
   subscription:  'Abonnement',
   profile:       'Profil',
   notifications: 'Notifications',
-  onboarding:    'Créer un blog',
+  'blogs/new':   'Créer un blog',
 };
 
 export function TopBar() {
@@ -31,8 +31,9 @@ export function TopBar() {
   const { user, clearAuth } = useAuthStore();
 
   const segments  = pathname.split('/').filter(Boolean);
+  const lastTwo   = segments.slice(-2).join('/');
   const lastSeg   = segments[segments.length - 1];
-  const pageTitle = SEG_LABELS[lastSeg] ?? 'Dashboard';
+  const pageTitle = SEG_LABELS[lastTwo] ?? SEG_LABELS[lastSeg] ?? 'Dashboard';
 
   const initials    = user ? getInitials(user.display_name ?? user.email).slice(0, 2) : 'U';
   const displayName = user?.display_name ?? user?.email?.split('@')[0] ?? 'Utilisateur';

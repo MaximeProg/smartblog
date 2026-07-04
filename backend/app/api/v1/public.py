@@ -2,6 +2,7 @@
 API publique — blogs en lecture sans authentification.
 Résout le tenant par slug (path param).
 """
+import uuid
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import Response
 from sqlalchemy import select, and_, update
@@ -13,10 +14,11 @@ import xml.etree.ElementTree as ET
 from sqlalchemy.orm import joinedload
 
 from app.core.database import get_db
-from app.core.exceptions import NotFoundException
+from app.core.exceptions import NotFoundException, ValidationException
 from app.models.tenant import Tenant
 from app.models.article import Article, Category, Tag
-from app.models.enums import ArticleStatus, ContentVisibility, TenantStatus
+from app.models.comment import Comment
+from app.models.enums import ArticleStatus, ContentVisibility, TenantStatus, CommentStatus
 from app.core.dependencies import DBSession
 
 router = APIRouter(prefix="/public/{slug}", tags=["public"])
@@ -64,6 +66,7 @@ class PublicArticleFull(PublicArticle):
 
 
 class PublicBlogInfo(BaseModel):
+    id: str
     name: str
     slug: str
     description: str | None
@@ -85,6 +88,7 @@ class PublicBlogInfo(BaseModel):
 async def get_blog_info(slug: str, db: DBSession):
     tenant = await _resolve_tenant(db, slug)
     return PublicBlogInfo(
+        id=str(tenant.id),
         name=tenant.name,
         slug=tenant.slug,
         description=tenant.description,
@@ -387,3 +391,129 @@ async def list_public_blogs(
         )
         for t in tenants
     ]
+
+
+# ─── Public comments ──────────────────────────────────────────────────────────
+
+class PublicCommentAuthor(BaseModel):
+    display_name: str | None
+    avatar_url: str | None = None
+
+
+class PublicCommentResponse(BaseModel):
+    id: str
+    content: str
+    author: PublicCommentAuthor
+    parent_id: str | None
+    replies_count: int
+    created_at: datetime
+
+
+class PublicCreateCommentRequest(BaseModel):
+    content: str
+    author_name: str | None = None
+    author_email: str | None = None
+    parent_id: str | None = None
+
+
+async def _resolve_public_article(db: AsyncSession, tenant: Tenant, article_slug: str) -> Article:
+    result = await db.execute(
+        select(Article).where(
+            Article.tenant_id == tenant.id,
+            Article.slug == article_slug,
+            Article.status == ArticleStatus.PUBLISHED,
+            Article.deleted_at.is_(None),
+        )
+    )
+    article = result.scalar_one_or_none()
+    if not article:
+        raise NotFoundException("Article")
+    return article
+
+
+@router.get("/articles/{article_slug}/comments", response_model=list[PublicCommentResponse])
+async def list_public_comments(slug: str, article_slug: str, db: DBSession):
+    tenant = await _resolve_tenant(db, slug)
+    article = await _resolve_public_article(db, tenant, article_slug)
+
+    result = await db.execute(
+        select(Comment).where(
+            Comment.tenant_id == tenant.id,
+            Comment.article_id == article.id,
+            Comment.status == CommentStatus.APPROVED,
+            Comment.parent_id.is_(None),
+        ).order_by(Comment.created_at.asc()).limit(100)
+    )
+    comments = result.scalars().all()
+    return [
+        PublicCommentResponse(
+            id=str(c.id),
+            content=c.content,
+            author=PublicCommentAuthor(
+                display_name=c.author_name or "Anonymous",
+                avatar_url=None,
+            ),
+            parent_id=str(c.parent_id) if c.parent_id else None,
+            replies_count=c.replies_count,
+            created_at=c.created_at,
+        )
+        for c in comments
+    ]
+
+
+@router.post("/articles/{article_slug}/comments", response_model=PublicCommentResponse, status_code=201)
+async def create_public_comment(
+    slug: str,
+    article_slug: str,
+    body: PublicCreateCommentRequest,
+    request: Request,
+    db: DBSession,
+):
+    if not body.content or len(body.content.strip()) < 2:
+        raise ValidationException("Le commentaire est trop court.")
+    if len(body.content) > 5000:
+        raise ValidationException("Le commentaire est trop long (max 5000 caractères).")
+
+    tenant = await _resolve_tenant(db, slug)
+    article = await _resolve_public_article(db, tenant, article_slug)
+
+    if not article.allow_comments:
+        raise ValidationException("Les commentaires sont désactivés pour cet article.")
+
+    ip = request.client.host if request.client else None
+
+    comment = Comment(
+        tenant_id=tenant.id,
+        article_id=article.id,
+        author_name=body.author_name or "Anonymous",
+        author_email=body.author_email,
+        parent_id=uuid.UUID(body.parent_id) if body.parent_id else None,
+        content=body.content.strip(),
+        ip_address=ip,
+        user_agent=request.headers.get("user-agent", "")[:500],
+        status=CommentStatus.PENDING,
+    )
+    db.add(comment)
+
+    from sqlalchemy import text
+    await db.execute(
+        text("UPDATE articles SET comments_count = comments_count + 1 WHERE id = :aid"),
+        {"aid": str(article.id)},
+    )
+    if body.parent_id:
+        await db.execute(
+            text("UPDATE comments SET replies_count = replies_count + 1 WHERE id = :pid"),
+            {"pid": body.parent_id},
+        )
+
+    await db.commit()
+    await db.refresh(comment)
+
+    return PublicCommentResponse(
+        id=str(comment.id),
+        content=comment.content,
+        author=PublicCommentAuthor(display_name=comment.author_name or "Anonymous"),
+        parent_id=str(comment.parent_id) if comment.parent_id else None,
+        replies_count=comment.replies_count,
+        created_at=comment.created_at,
+    )

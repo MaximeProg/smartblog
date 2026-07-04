@@ -23,7 +23,10 @@ REFRESH_COOKIE = "nexusblog_refresh"
 COOKIE_CONFIG = {
     "httponly": True,
     "secure": settings.is_production,
-    "samesite": "lax",
+    # SameSite=None is required for cross-origin requests (frontend on Vercel,
+    # backend on different domain). SameSite=Lax blocks cookies on cross-origin
+    # POST requests, breaking the token refresh flow in production.
+    "samesite": "none" if settings.is_production else "lax",
     "max_age": settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS * 24 * 3600,
 }
 

@@ -24,7 +24,7 @@ interface ProvidersProps {
 }
 
 function AuthBootstrap() {
-  const { isAuthenticated, isHydrated, syncTenants, setAuth, user, tenants } = useAuthStore();
+  const { isAuthenticated, isHydrated, syncTenants, setAuth, user, tenants, accessToken } = useAuthStore();
   const pathname = usePathname();
   const refreshTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -36,7 +36,9 @@ function AuthBootstrap() {
     async function proactiveRefresh() {
       try {
         const { data } = await authApi.refresh();
+        // Update in-memory token AND persist it to localStorage via the store
         setAccessToken(data.access_token);
+        useAuthStore.setState({ accessToken: data.access_token });
         // Renew the session sentinel for another 7 days
         document.cookie = 'nexusblog_session=1; path=/; samesite=lax; max-age=604800';
       } catch {

@@ -68,10 +68,10 @@ export function PlatformNav({ locale }: { locale: string }) {
           </Link>
         ))}
 
-        <Link href={`/${locale}/onboarding`}
+        <Link href={`/${locale}/blogs/new`}
           className={cn(
             'flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-medium transition-all mt-1',
-            isActive(`/${locale}/onboarding`)
+            isActive(`/${locale}/blogs/new`)
               ? 'bg-blue-50 text-blue-700'
               : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
           )}>

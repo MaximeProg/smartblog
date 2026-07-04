@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
 import { ThemeArticle } from '@/components/themes/ThemeRenderer';
-import { ViewTracker } from '@/components/ViewTracker';
+import { BlogAnalyticsTracker } from '@/components/themes/shared/BlogAnalyticsTracker';
 
 export const revalidate = 60;
 
@@ -50,7 +50,7 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
 
   return (
     <>
-      <ViewTracker blogSlug={slug} articleSlug={articleSlug} />
+      <BlogAnalyticsTracker tenantId={blog.id} articleId={article.id} />
       <ThemeArticle
         blog={blog}
         article={article}

@@ -24,6 +24,7 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
   const heroTitle = hero.title || t('contactTitle');
   const heroSubtitle = hero.subtitle || t('contactSubtitle');
   const heroDesc = hero.description || t('contactDesc');
+  const heroCoverImage: string | undefined = hero.cover_image_url || undefined;
 
   const info = contactConfig?.info ?? {};
   const infoEmail = info.email || null;
@@ -72,6 +73,12 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-slate-950 text-white py-24 px-4">
+        {heroCoverImage && (
+          <>
+            <img src={heroCoverImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/50 to-slate-950/80" />
+          </>
+        )}
         <div className="absolute inset-0"
           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3 opacity-20"

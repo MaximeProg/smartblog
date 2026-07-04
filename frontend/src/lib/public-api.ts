@@ -44,6 +44,7 @@ export interface TemplateConfig {
 }
 
 export interface BlogInfo {
+  id: string;
   name: string;
   slug: string;
   description: string | null;

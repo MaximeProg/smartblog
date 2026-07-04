@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, type CSSProperties, type FormEvent } from 'react';
+import { useState, useEffect, useMemo, useCallback, type CSSProperties } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,23 +8,20 @@ import { useTranslations } from 'next-intl';
 import {
   Clock, Calendar, ChevronRight, Hash,
   ArrowLeft, BookOpen, TrendingUp, Heart, Eye,
-  Twitter, Linkedin, Link2, Check, MessageCircle,
-  ThumbsUp, Reply, ChevronDown, ChevronUp,
-  List, Send,
+  Twitter, Linkedin, Link2, Check,
+  ChevronDown, ChevronUp, List,
 } from 'lucide-react';
 
 import type { ArticleProps } from '../ThemeRenderer';
-import type { MockComment } from './mock-data';
 import {
   CorporateHeader, CorporateFooter, NewsletterSection,
   CardMedium, fmtDate, fmtDateShort, grad,
 } from './shared';
+import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 
 // ─── Extended props ────────────────────────────────────────────────────────────
 
-interface CorporateArticleProps extends ArticleProps {
-  comments?: MockComment[];
-}
+interface CorporateArticleProps extends ArticleProps {}
 
 // ─── TOC ──────────────────────────────────────────────────────────────────────
 
@@ -95,251 +92,11 @@ function processContent(source: string): { processed: string; toc: TocItem[] } {
   return { processed, toc };
 }
 
-// ─── Comment card ─────────────────────────────────────────────────────────────
-
-function CommentCard({
-  comment, primaryColor, depth = 0,
-}: {
-  comment: MockComment;
-  primaryColor: string;
-  depth?: number;
-}) {
-  const [likes, setLikes] = useState(comment.likes);
-  const [liked, setLiked] = useState(false);
-  const [showReply, setShowReply] = useState(false);
-  const [showReplies, setShowReplies] = useState(depth === 0);
-  const [replyName, setReplyName] = useState('');
-  const [replyText, setReplyText] = useState('');
-  const [localReplies, setLocalReplies] = useState<MockComment[]>(comment.replies ?? []);
-  const [replyDone, setReplyDone] = useState(false);
-
-  const submitReply = (e: FormEvent) => {
-    e.preventDefault();
-    if (!replyName.trim() || !replyText.trim()) return;
-    const r: MockComment = {
-      id: `r-${Date.now()}`,
-      author: replyName,
-      initials: replyName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
-      avatarColor: primaryColor,
-      content: replyText,
-      published_at: new Date().toISOString(),
-      likes: 0,
-    };
-    setLocalReplies(prev => [...prev, r]);
-    setReplyName('');
-    setReplyText('');
-    setShowReply(false);
-    setReplyDone(true);
-    setShowReplies(true);
-  };
-
-  return (
-    <div className={depth > 0 ? 'ml-10 pl-5 border-l-2 border-slate-100' : ''}>
-      <div className="flex gap-4 py-5">
-        {/* Avatar */}
-        <div
-          className="h-10 w-10 rounded-xl flex items-center justify-center text-white font-black text-sm shrink-0 shadow"
-          style={{ backgroundColor: comment.avatarColor }}
-        >
-          {comment.initials}
-        </div>
-
-        <div className="flex-1 min-w-0">
-          {/* Header */}
-          <div className="flex items-center gap-3 mb-2 flex-wrap">
-            <span className="font-bold text-slate-900 text-sm">{comment.author}</span>
-            <span className="text-xs text-slate-400">{fmtDate(comment.published_at)}</span>
-          </div>
-
-          {/* Content */}
-          <p className="text-sm text-slate-700 leading-relaxed mb-3">{comment.content}</p>
-
-          {/* Actions */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => { setLiked(l => !l); setLikes(c => liked ? c - 1 : c + 1); }}
-              className={`flex items-center gap-1.5 text-xs font-semibold transition-colors ${liked ? 'text-[var(--cp)]' : 'text-slate-400 hover:text-slate-600'}`}
-            >
-              <ThumbsUp className="h-3.5 w-3.5" />
-              {likes > 0 && <span>{likes}</span>}
-              <span>Utile</span>
-            </button>
-            {depth === 0 && (
-              <button
-                onClick={() => setShowReply(r => !r)}
-                className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                <Reply className="h-3.5 w-3.5" />
-                Répondre
-              </button>
-            )}
-            {depth === 0 && localReplies.length > 0 && (
-              <button
-                onClick={() => setShowReplies(v => !v)}
-                className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors ml-auto"
-              >
-                {showReplies ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-                {localReplies.length} réponse{localReplies.length > 1 ? 's' : ''}
-              </button>
-            )}
-          </div>
-
-          {/* Reply form */}
-          {showReply && (
-            <form onSubmit={submitReply} className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
-              <input
-                value={replyName} onChange={e => setReplyName(e.target.value)}
-                placeholder="Votre nom"
-                className="w-full mb-2 px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:border-[var(--cp)]"
-                style={{ '--tw-ring-color': `${primaryColor}40` } as CSSProperties}
-              />
-              <textarea
-                value={replyText} onChange={e => setReplyText(e.target.value)}
-                placeholder="Votre réponse…"
-                rows={3}
-                className="w-full mb-3 px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white resize-none focus:outline-none focus:ring-2 focus:border-[var(--cp)]"
-                style={{ '--tw-ring-color': `${primaryColor}40` } as CSSProperties}
-              />
-              <div className="flex gap-2">
-                <button type="submit"
-                  className="flex items-center gap-2 h-9 px-4 rounded-xl text-xs font-bold text-white hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: primaryColor }}>
-                  <Send className="h-3.5 w-3.5" /> Envoyer
-                </button>
-                <button type="button" onClick={() => setShowReply(false)}
-                  className="h-9 px-4 rounded-xl text-xs font-semibold text-slate-500 hover:bg-slate-100 transition-colors">
-                  Annuler
-                </button>
-              </div>
-            </form>
-          )}
-          {replyDone && (
-            <p className="mt-3 text-xs text-emerald-600 font-semibold flex items-center gap-1">
-              <Check className="h-3.5 w-3.5" /> Réponse publiée
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Replies */}
-      {depth === 0 && showReplies && localReplies.map(r => (
-        <CommentCard key={r.id} comment={r} primaryColor={primaryColor} depth={1} />
-      ))}
-    </div>
-  );
-}
-
-// ─── Comments section ─────────────────────────────────────────────────────────
-
-function CommentsSection({ comments, primaryColor }: { comments: MockComment[]; primaryColor: string }) {
-  const t = useTranslations('publicBlog');
-  const [all, setAll] = useState(comments);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [text, setText] = useState('');
-  const [done, setDone] = useState(false);
-
-  const submit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !text.trim()) return;
-    const c: MockComment = {
-      id: `c-${Date.now()}`,
-      author: name,
-      initials: name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
-      avatarColor: primaryColor,
-      content: text,
-      published_at: new Date().toISOString(),
-      likes: 0,
-      replies: [],
-    };
-    setAll(prev => [c, ...prev]);
-    setName(''); setEmail(''); setText('');
-    setDone(true);
-    setTimeout(() => setDone(false), 4000);
-  };
-
-  const ring = { '--tw-ring-color': `${primaryColor}40` } as CSSProperties;
-
-  return (
-    <section className="mt-14 pt-10 border-t border-slate-100" id="comments">
-      <div className="flex items-center gap-3 mb-8">
-        <MessageCircle className="h-5 w-5 shrink-0" style={{ color: primaryColor }} />
-        <h2 className="text-lg font-black text-slate-900">
-          {t('comments')} <span className="text-slate-400 font-normal text-base">({all.length})</span>
-        </h2>
-      </div>
-
-      {/* Form */}
-      <div className="bg-slate-50 rounded-2xl border border-slate-100 p-6 mb-8">
-        <h3 className="text-sm font-bold text-slate-700 mb-4">{t('leaveComment')}</h3>
-        <form onSubmit={submit} className="space-y-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1.5">{t('commentFormNameLabel')} <span className="text-red-400">*</span></label>
-              <input
-                value={name} onChange={e => setName(e.target.value)} required
-                placeholder={t('commentFormNamePlaceholder')}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2"
-                style={ring}
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1.5">{t('commentFormEmailLabel')} <span className="text-slate-300">{t('commentFormEmailNote')}</span></label>
-              <input
-                type="email" value={email} onChange={e => setEmail(e.target.value)}
-                placeholder={t('commentFormEmailPlaceholder')}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2"
-                style={ring}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5">{t('commentLabel')} <span className="text-red-400">*</span></label>
-            <textarea
-              value={text} onChange={e => setText(e.target.value)} required rows={4}
-              placeholder={t('commentFormPlaceholder')}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm resize-none focus:outline-none focus:ring-2"
-              style={ring}
-            />
-          </div>
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-xs text-slate-400">{t('commentFormEmailPrivacy')}</p>
-            <button
-              type="submit"
-              className="flex items-center gap-2 h-11 px-6 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-opacity shrink-0"
-              style={{ backgroundColor: primaryColor }}>
-              <Send className="h-4 w-4" /> Publier
-            </button>
-          </div>
-        </form>
-        {done && (
-          <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-emerald-600 bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-100">
-            <Check className="h-4 w-4" /> {t('commentPublished')}
-          </div>
-        )}
-      </div>
-
-      {/* List */}
-      {all.length === 0 ? (
-        <div className="text-center py-12">
-          <MessageCircle className="h-12 w-12 mx-auto mb-3 text-slate-200" />
-          <p className="text-slate-400 font-medium">{t('beFirstToComment')}</p>
-        </div>
-      ) : (
-        <div className="divide-y divide-slate-100">
-          {all.map(c => (
-            <CommentCard key={c.id} comment={c} primaryColor={primaryColor} />
-          ))}
-        </div>
-      )}
-    </section>
-  );
-}
 
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function CorporateArticle({
-  blog, article, relatedArticles, getArticleHref, comments = [], basePath: baseProp, previewSlug,
+  blog, article, relatedArticles, getArticleHref, basePath: baseProp, previewSlug,
 }: CorporateArticleProps) {
   const primaryColor = blog.primary_color || '#2563eb';
   const params = useParams();
@@ -657,7 +414,7 @@ export default function CorporateArticle({
           )}
 
           {/* Comments */}
-          <CommentsSection comments={comments} primaryColor={primaryColor} />
+          <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
 
           {/* Back link */}
           <div className="mt-10 pt-8 border-t border-slate-100">

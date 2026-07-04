@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
 import { ThemeHome } from '@/components/themes/ThemeRenderer';
+import { BlogAnalyticsTracker } from '@/components/themes/shared/BlogAnalyticsTracker';
 
 export const revalidate = 60;
 
@@ -44,12 +45,15 @@ export default async function PublicBlogPage({
   }
 
   return (
-    <ThemeHome
-      blog={blog}
-      articles={articles}
-      categories={categories}
-      currentCategory={category}
-      searchQuery={q}
-    />
+    <>
+      <BlogAnalyticsTracker tenantId={blog.id} />
+      <ThemeHome
+        blog={blog}
+        articles={articles}
+        categories={categories}
+        currentCategory={category}
+        searchQuery={q}
+      />
+    </>
   );
 }

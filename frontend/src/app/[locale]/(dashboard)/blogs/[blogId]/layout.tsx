@@ -33,7 +33,7 @@ export default function BlogStudioLayout({ children }: { children: React.ReactNo
 
   return (
     <StudioPreviewContext.Provider value={ctx}>
-      <div className="flex h-screen overflow-hidden bg-white dark:bg-slate-900">
+      <div className="fixed inset-0 flex overflow-hidden bg-white dark:bg-slate-900">
         <Sidebar locale={locale} blogId={blogId} />
 
         <div className="flex-1 flex overflow-hidden">

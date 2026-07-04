@@ -6,7 +6,7 @@ from app.api.v1.articles import router as articles_router
 from app.api.v1.categories import router as categories_router
 from app.api.v1.tags import router as tags_router
 from app.api.v1.media import router as media_router
-from app.api.v1.comments import router as comments_router
+from app.api.v1.comments import router as comments_router, tenant_comments_router
 from app.api.v1.newsletter import router as newsletter_router
 from app.api.v1.social import router as social_router
 from app.api.v1.ads import router as ads_router
@@ -34,6 +34,7 @@ api_router.include_router(categories_router)
 api_router.include_router(tags_router)
 api_router.include_router(media_router)
 api_router.include_router(comments_router)
+api_router.include_router(tenant_comments_router)
 api_router.include_router(newsletter_router)
 api_router.include_router(social_router)
 api_router.include_router(ads_router)
