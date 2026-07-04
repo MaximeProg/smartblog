@@ -9,6 +9,7 @@ import {
   Minus, X, Check,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { articlesApi, categoriesApi, mediaApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useStudioPreview } from '@/contexts/studio-preview';
@@ -58,10 +59,6 @@ const STATUS_COLORS: Record<string, string> = {
   archived:  'text-slate-400 bg-slate-50',
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  draft: 'Brouillon', published: 'Publié', scheduled: 'Planifié', archived: 'Archivé',
-};
-
 export default function EditArticlePage() {
   const params      = useParams();
   const locale      = params.locale as string;
@@ -70,8 +67,16 @@ export default function EditArticlePage() {
   const { toast }   = useToast();
   const qc          = useQueryClient();
   const { setFullWidth, refresh } = useStudioPreview();
+  const ts = useTranslations('studio');
+  const ta = useTranslations('articles');
 
-  // Full-width layout for article editor
+  const STATUS_LABELS: Record<string, string> = {
+    draft:     ta('status.draft'),
+    published: ta('status.published'),
+    scheduled: ta('status.scheduled'),
+    archived:  ta('status.archived'),
+  };
+
   useEffect(() => {
     setFullWidth(true);
     return () => setFullWidth(false);
@@ -88,7 +93,7 @@ export default function EditArticlePage() {
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkUrl,       setLinkUrl]       = useState('');
   const [showImgPicker, setShowImgPicker] = useState(false);
-  const [textareaDragging, setTextareaDragging] = useState(false);
+  const [textareaDragging,  setTextareaDragging]  = useState(false);
   const [textareaUploading, setTextareaUploading] = useState(false);
 
   const { data: article, isLoading } = useQuery({
@@ -119,49 +124,48 @@ export default function EditArticlePage() {
       title:           title.trim(),
       content,
       excerpt,
-      category_id:     categoryId     || undefined,
-      cover_image_url: coverImageUrl  || undefined,
+      category_id:     categoryId    || undefined,
+      cover_image_url: coverImageUrl || undefined,
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['article', blogId, articleId] });
       setDirty(false);
-      toast({ title: 'Article sauvegardé.' });
+      toast({ title: ts('articleSavedToast') });
       setTimeout(() => refresh(), 400);
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la sauvegarde.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('articleSaveError') }),
   });
 
   const publishMut = useMutation({
     mutationFn: () => articlesApi.publish(blogId, articleId),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['article', blogId, articleId] });
-      toast({ title: 'Article publié !' });
+      toast({ title: ts('articlePublishedToast') });
       setTimeout(() => refresh(), 400);
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la publication.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('articlePublishError') }),
   });
 
   const archiveMut = useMutation({
     mutationFn: () => articlesApi.archive(blogId, articleId),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['article', blogId, articleId] });
-      toast({ title: 'Article archivé.' });
+      toast({ title: ts('articleArchivedToast') });
     },
   });
 
   const isPending = saveMut.isPending || publishMut.isPending || archiveMut.isPending;
 
-  // Toolbar actions
-  const handleBold   = () => { wrapSelection(contentRef, setContent, '**', '**', 'gras');      mark(); };
-  const handleItalic = () => { wrapSelection(contentRef, setContent, '*',  '*',  'italique');   mark(); };
-  const handleH2     = () => { wrapSelection(contentRef, setContent, '## ', '', 'Titre');       mark(); };
-  const handleH3     = () => { wrapSelection(contentRef, setContent, '### ', '', 'Sous-titre'); mark(); };
-  const handleQuote  = () => { wrapSelection(contentRef, setContent, '> ', '', 'Citation');     mark(); };
-  const handleRule   = () => { insertAtCursor(contentRef, setContent, '\n---\n');               mark(); };
+  const handleBold   = () => { wrapSelection(contentRef, setContent, '**', '**', 'bold');       mark(); };
+  const handleItalic = () => { wrapSelection(contentRef, setContent, '*',  '*',  'italic');      mark(); };
+  const handleH2     = () => { wrapSelection(contentRef, setContent, '## ', '', 'Heading');      mark(); };
+  const handleH3     = () => { wrapSelection(contentRef, setContent, '### ', '', 'Subheading'); mark(); };
+  const handleQuote  = () => { wrapSelection(contentRef, setContent, '> ', '', 'Quote');         mark(); };
+  const handleRule   = () => { insertAtCursor(contentRef, setContent, '\n---\n');                mark(); };
 
   const handleInsertLink = () => {
     if (!linkUrl.trim()) return;
-    wrapSelection(contentRef, setContent, '[', `](${linkUrl.trim()})`, 'texte du lien');
+    wrapSelection(contentRef, setContent, '[', `](${linkUrl.trim()})`, 'link text');
     setLinkUrl('');
     setShowLinkInput(false);
     mark();
@@ -184,11 +188,11 @@ export default function EditArticlePage() {
       insertAtCursor(contentRef, setContent, `\n![image](${data.cloudinary_secure_url})\n`);
       mark();
     } catch {
-      toast({ variant: 'destructive', title: 'Erreur lors de l\'upload de l\'image.' });
+      toast({ variant: 'destructive', title: ts('imageUploadError') });
     } finally {
       setTextareaUploading(false);
     }
-  }, [blogId, toast]);
+  }, [blogId, toast, ts]);
 
   const toolbarBtnCls = 'h-7 w-7 flex items-center justify-center rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200 transition-colors';
 
@@ -214,14 +218,14 @@ export default function EditArticlePage() {
           </Link>
           <span className="text-slate-300 dark:text-slate-600">/</span>
           <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 truncate max-w-[240px]">
-            {title || 'Sans titre'}
+            {title || ts('articleUntitled')}
           </span>
           {article && (
             <span className={`shrink-0 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${STATUS_COLORS[article.status] ?? STATUS_COLORS.draft}`}>
               {STATUS_LABELS[article.status] ?? article.status}
             </span>
           )}
-          {dirty && <span className="shrink-0 text-[10px] text-amber-600 font-semibold">● Non sauvegardé</span>}
+          {dirty && <span className="shrink-0 text-[10px] text-amber-600 font-semibold">● {ts('articleUnsaved')}</span>}
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -231,7 +235,7 @@ export default function EditArticlePage() {
             className="flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40"
           >
             {saveMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-            Sauvegarder
+            {ts('articleSave')}
           </button>
 
           {article?.status === 'draft' && (
@@ -241,7 +245,7 @@ export default function EditArticlePage() {
               className="flex items-center gap-1.5 h-8 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold transition-colors disabled:opacity-60 shadow-sm"
             >
               {publishMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
-              Publier
+              {ts('articlePublishAction')}
             </button>
           )}
           {article?.status === 'published' && (
@@ -251,12 +255,12 @@ export default function EditArticlePage() {
               className="flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-[12px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-60"
             >
               {archiveMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Archive className="h-3.5 w-3.5" />}
-              Archiver
+              {ts('articleArchiveAction')}
             </button>
           )}
           {article?.status === 'archived' && (
             <span className="flex items-center gap-1.5 h-8 px-3 text-[12px] text-slate-400">
-              <CheckCircle2 className="h-3.5 w-3.5" /> Archivé
+              <CheckCircle2 className="h-3.5 w-3.5" /> {STATUS_LABELS.archived}
             </span>
           )}
         </div>
@@ -272,7 +276,7 @@ export default function EditArticlePage() {
           <input
             value={title}
             onChange={e => { setTitle(e.target.value); mark(); }}
-            placeholder="Titre de l'article…"
+            placeholder={ts('articleTitlePlaceholder')}
             className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-transparent border-0 outline-none placeholder-slate-200 dark:placeholder-slate-700 mb-2 leading-tight"
           />
 
@@ -280,33 +284,32 @@ export default function EditArticlePage() {
 
           {/* Excerpt */}
           <div className="mb-6">
-            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Résumé</label>
+            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleExcerptLabel')}</label>
             <textarea
               value={excerpt}
               onChange={e => { setExcerpt(e.target.value); mark(); }}
-              placeholder="Un résumé court affiché dans les listings et les moteurs de recherche…"
+              placeholder={ts('articleExcerptPlaceholder')}
               rows={3}
               className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[14px] text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none leading-relaxed"
             />
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Les liens au format <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">[texte](url)</code> seront cliquables dans l'article publié.</p>
           </div>
 
           {/* Content editor */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Contenu</label>
+              <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">{ts('articleContentLabel')}</label>
               <span className="text-[10px] text-slate-400 dark:text-slate-500">Markdown</span>
             </div>
 
             {/* Toolbar */}
             <div className="flex items-center gap-0.5 px-2 py-1.5 border border-slate-200 dark:border-slate-700 border-b-0 rounded-t-xl bg-slate-50 dark:bg-slate-800 flex-wrap">
-              <button type="button" onClick={handleBold}   title="Gras"              className={toolbarBtnCls}><Bold      className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleItalic} title="Italique"           className={toolbarBtnCls}><Italic    className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleBold}   title={ts('toolbarBold')}   className={toolbarBtnCls}><Bold      className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleItalic} title={ts('toolbarItalic')} className={toolbarBtnCls}><Italic    className="h-3.5 w-3.5" /></button>
               <div className="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-1" />
-              <button type="button" onClick={handleH2}     title="Titre H2"           className={toolbarBtnCls}><Heading2  className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleH3}     title="Titre H3"           className={toolbarBtnCls}><Heading3  className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleQuote}  title="Citation"           className={toolbarBtnCls}><Quote     className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleRule}   title="Séparateur"         className={toolbarBtnCls}><Minus     className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleH2}     title={ts('toolbarH2')}     className={toolbarBtnCls}><Heading2  className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleH3}     title={ts('toolbarH3')}     className={toolbarBtnCls}><Heading3  className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleQuote}  title={ts('toolbarQuote')}  className={toolbarBtnCls}><Quote     className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleRule}   title={ts('toolbarRule')}   className={toolbarBtnCls}><Minus     className="h-3.5 w-3.5" /></button>
               <div className="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-1" />
 
               {/* Link */}
@@ -314,7 +317,7 @@ export default function EditArticlePage() {
                 <button
                   type="button"
                   onClick={() => { setShowLinkInput(v => !v); setShowImgPicker(false); }}
-                  title="Insérer un lien"
+                  title={ts('toolbarLink')}
                   className={`${toolbarBtnCls} ${showLinkInput ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : ''}`}
                 >
                   <Link2 className="h-3.5 w-3.5" />
@@ -326,7 +329,7 @@ export default function EditArticlePage() {
                       value={linkUrl}
                       onChange={e => setLinkUrl(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter') handleInsertLink(); if (e.key === 'Escape') setShowLinkInput(false); }}
-                      placeholder="https://exemple.com"
+                      placeholder="https://example.com"
                       className="h-7 w-56 px-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-[12px] font-mono text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     />
                     <button onClick={handleInsertLink} className="h-7 w-7 flex items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700">
@@ -343,7 +346,7 @@ export default function EditArticlePage() {
               <button
                 type="button"
                 onClick={() => { setShowImgPicker(v => !v); setShowLinkInput(false); }}
-                title="Insérer une image"
+                title={ts('toolbarImage')}
                 className={`${toolbarBtnCls} ${showImgPicker ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : ''}`}
               >
                 <ImageIcon className="h-3.5 w-3.5" />
@@ -366,7 +369,7 @@ export default function EditArticlePage() {
                 ref={contentRef}
                 value={content}
                 onChange={e => { setContent(e.target.value); mark(); }}
-                placeholder={'Commencez à écrire votre article…\n\nExemples Markdown :\n**gras**  *italique*  ## Titre\n[texte](https://…)  ![alt](https://image.jpg)\n\nGlissez-déposez une image directement ici'}
+                placeholder={ts('articleContentPlaceholder')}
                 rows={26}
                 onDragOver={e => { e.preventDefault(); setTextareaDragging(true); }}
                 onDragLeave={() => setTextareaDragging(false)}
@@ -379,7 +382,7 @@ export default function EditArticlePage() {
                 <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-b-xl">
                   <div className="flex items-center gap-2 text-[13px] text-blue-600 font-medium">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Upload en cours…
+                    {ts('articleUploading')}
                   </div>
                 </div>
               )}
@@ -387,7 +390,7 @@ export default function EditArticlePage() {
                 <div className="absolute inset-0 flex items-center justify-center bg-blue-50/70 border-2 border-blue-400 border-dashed rounded-b-xl pointer-events-none">
                   <div className="flex items-center gap-2 text-[13px] text-blue-600 font-semibold">
                     <ImageIcon className="h-5 w-5" />
-                    Déposez l&apos;image ici
+                    {ts('articleDropImageHere')}
                   </div>
                 </div>
               )}
@@ -400,7 +403,7 @@ export default function EditArticlePage() {
 
           {/* Cover image */}
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Image de couverture</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleCoverImageLabel')}</p>
             <ImagePicker
               value={coverImageUrl}
               onChange={url => { setCoverImageUrl(url); mark(); }}
@@ -411,27 +414,27 @@ export default function EditArticlePage() {
 
           {/* Category */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Catégorie</label>
+            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleCategoryLabel')}</label>
             <select
               value={categoryId}
               onChange={e => { setCategoryId(e.target.value); mark(); }}
               className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
             >
-              <option value="">Sans catégorie</option>
+              <option value="">{ts('articleNoCategory')}</option>
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
 
           {/* Tips */}
           <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
-            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Raccourcis Markdown</p>
+            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">{ts('markdownTips')}</p>
             <div className="space-y-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono">
-              <p><span className="font-bold">**gras**</span></p>
-              <p><span className="italic">*italique*</span></p>
-              <p>## Titre H2</p>
-              <p>[lien](https://…)</p>
+              <p><span className="font-bold">**bold**</span></p>
+              <p><span className="italic">*italic*</span></p>
+              <p>## Heading H2</p>
+              <p>[link](https://…)</p>
               <p>![image](https://…)</p>
-              <p>{'>'} Citation</p>
+              <p>{'>'} Quote</p>
             </div>
           </div>
 
@@ -444,7 +447,7 @@ export default function EditArticlePage() {
                 className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold transition-colors disabled:opacity-50 shadow-sm"
               >
                 {publishMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                Publier
+                {ts('articlePublishAction')}
               </button>
             )}
             <button
@@ -453,7 +456,7 @@ export default function EditArticlePage() {
               className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40"
             >
               {saveMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-              Sauvegarder
+              {ts('articleSave')}
             </button>
           </div>
         </div>

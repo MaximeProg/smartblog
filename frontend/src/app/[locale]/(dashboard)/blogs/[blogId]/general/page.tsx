@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -11,20 +12,21 @@ import {
 } from '@/components/dashboard/BlogStudioShell';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
 
-const SOCIAL_FIELDS = [
-  { key: 'twitter',   label: 'Twitter / X',  placeholder: 'https://twitter.com/...' },
-  { key: 'facebook',  label: 'Facebook',      placeholder: 'https://facebook.com/...' },
-  { key: 'instagram', label: 'Instagram',     placeholder: 'https://instagram.com/...' },
-  { key: 'linkedin',  label: 'LinkedIn',      placeholder: 'https://linkedin.com/...' },
-  { key: 'youtube',   label: 'YouTube',       placeholder: 'https://youtube.com/...' },
-  { key: 'rss',       label: 'Flux RSS',      placeholder: '/rss.xml' },
-];
-
 export default function GeneralPage() {
   const params = useParams();
   const blogId = params.blogId as string;
   const { toast } = useToast();
   const qc = useQueryClient();
+  const ts = useTranslations('studio');
+
+  const SOCIAL_FIELDS = [
+    { key: 'twitter',   label: 'Twitter / X',  placeholder: 'https://twitter.com/...' },
+    { key: 'facebook',  label: 'Facebook',      placeholder: 'https://facebook.com/...' },
+    { key: 'instagram', label: 'Instagram',     placeholder: 'https://instagram.com/...' },
+    { key: 'linkedin',  label: 'LinkedIn',      placeholder: 'https://linkedin.com/...' },
+    { key: 'youtube',   label: 'YouTube',       placeholder: 'https://youtube.com/...' },
+    { key: 'rss',       label: ts('fieldRss'),  placeholder: '/rss.xml' },
+  ];
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
@@ -64,9 +66,9 @@ export default function GeneralPage() {
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tenant', blogId] });
-      toast({ title: 'Paramètres sauvegardés !' });
+      toast({ title: ts('saved') });
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la sauvegarde.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
   const setSocial = (key: string, val: string) =>
@@ -74,22 +76,22 @@ export default function GeneralPage() {
 
   return (
     <BlogStudioShell
-      title="Paramètres généraux"
-      description="Nom, couleur, description et réseaux sociaux de votre blog."
+      title={ts('pageGeneral')}
+      description={ts('pageGeneralDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
       saving={mutation.isPending}
       onSave={() => mutation.mutate()}
     >
-      <StudioSection id="identity" title="Identité du blog" defaultOpen>
-        <StudioField label="Nom du blog">
+      <StudioSection id="identity" title={ts('sectionIdentity')} defaultOpen>
+        <StudioField label={ts('fieldBlogName')}>
           <StudioInput
             value={form.name}
             onChange={v => setForm(f => ({ ...f, name: v }))}
             placeholder="Mon blog"
           />
         </StudioField>
-        <StudioField label="Description" hint="Apparaît dans le footer et les méta SEO.">
+        <StudioField label={ts('fieldDescription')} hint={ts('fieldDescriptionHint')}>
           <StudioInput
             value={form.description}
             onChange={v => setForm(f => ({ ...f, description: v }))}
@@ -98,10 +100,7 @@ export default function GeneralPage() {
             rows={3}
           />
         </StudioField>
-        <StudioField
-          label="Miniature"
-          hint="Image affichée sur votre dashboard et les cartes de blog."
-        >
+        <StudioField label={ts('fieldThumbnail')} hint={ts('fieldThumbnailHint')}>
           <ImagePicker
             value={form.cover_image_url}
             onChange={v => setForm(f => ({ ...f, cover_image_url: v }))}
@@ -110,18 +109,18 @@ export default function GeneralPage() {
         </StudioField>
       </StudioSection>
 
-      <StudioSection id="url" title="URL du blog">
-        <StudioField label="Adresse">
+      <StudioSection id="url" title={ts('sectionUrl')}>
+        <StudioField label={ts('fieldAddress')}>
           <div className="flex items-center gap-2 h-10 px-3 rounded-xl border border-slate-200 bg-slate-50">
             <span className="text-[11px] text-slate-400 font-mono shrink-0">nexusblog.io/</span>
             <span className="text-[13px] text-slate-800 font-mono">{tenant?.slug}</span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-1">Le slug ne peut pas être modifié après création.</p>
+          <p className="text-[11px] text-slate-400 mt-1">{ts('fieldSlugHint')}</p>
         </StudioField>
       </StudioSection>
 
-      <StudioSection id="color" title="Couleur principale" defaultOpen>
-        <StudioField label="Couleur" hint="Utilisée pour les boutons, liens et accents du blog.">
+      <StudioSection id="color" title={ts('sectionColor')} defaultOpen>
+        <StudioField label={ts('fieldColor')} hint={ts('fieldColorHint')}>
           <StudioColorPicker
             value={form.primary_color}
             onChange={v => setForm(f => ({ ...f, primary_color: v }))}
@@ -129,7 +128,7 @@ export default function GeneralPage() {
         </StudioField>
       </StudioSection>
 
-      <StudioSection id="social" title="Réseaux sociaux" defaultOpen={false}>
+      <StudioSection id="social" title={ts('sectionSocial')} defaultOpen={false}>
         {SOCIAL_FIELDS.map(s => (
           <StudioField key={s.key} label={s.label}>
             <StudioInput

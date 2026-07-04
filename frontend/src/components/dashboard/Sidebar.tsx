@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   FileText, Tag, Mail,
   Home, Info, Phone, BookOpen,
@@ -42,6 +43,7 @@ interface NavItem {
 
 function SidebarItem({ item, base }: { item: NavItem; base: string }) {
   const pathname = usePathname();
+  const t = useTranslations('blogNav');
   const fullHref = `${base}/${item.href}`;
   const isActive = pathname.startsWith(fullHref);
 
@@ -50,7 +52,7 @@ function SidebarItem({ item, base }: { item: NavItem; base: string }) {
       <div className="flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-slate-300 dark:text-slate-600 cursor-default mt-0.5">
         <item.icon className="h-[15px] w-[15px] shrink-0 text-slate-200 dark:text-slate-600" />
         <span className="flex-1 leading-none">{item.label}</span>
-        <span className="text-[9px] font-bold uppercase tracking-wider text-slate-300 dark:text-slate-500 border border-slate-200 dark:border-slate-600 rounded px-1 py-0.5">Bientôt</span>
+        <span className="text-[9px] font-bold uppercase tracking-wider text-slate-300 dark:text-slate-500 border border-slate-200 dark:border-slate-600 rounded px-1 py-0.5">{t('soon')}</span>
       </div>
     );
   }
@@ -87,30 +89,31 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
   const router = useRouter();
   const { tenants, setCurrentTenant, user, clearAuth } = useAuthStore();
   const currentTenant = useCurrentTenant();
+  const t = useTranslations('blogNav');
 
   const base = `/${locale}/blogs/${blogId}`;
 
   const designItems: NavItem[] = [
-    { href: 'header',  icon: PanelTop,    label: 'Header' },
-    { href: 'footer',  icon: PanelBottom, label: 'Footer' },
+    { href: 'header',  icon: PanelTop,    label: t('header') },
+    { href: 'footer',  icon: PanelBottom, label: t('footer') },
   ];
 
   const pageItems: NavItem[] = [
-    { href: 'home',    icon: Home,     label: "Accueil" },
-    { href: 'about',   icon: Info,     label: 'À propos' },
-    { href: 'contact', icon: Phone,    label: 'Contact' },
-    { href: 'article', icon: BookOpen, label: 'Page Article' },
+    { href: 'home',    icon: Home,     label: t('pageHome') },
+    { href: 'about',   icon: Info,     label: t('pageAbout') },
+    { href: 'contact', icon: Phone,    label: t('pageContact') },
+    { href: 'article', icon: BookOpen, label: t('pageArticle') },
   ];
 
   const contentItems: NavItem[] = [
-    { href: 'articles',   icon: FileText, label: 'Articles' },
-    { href: 'categories', icon: Tag,      label: 'Catégories' },
-    { href: 'newsletter', icon: Mail,     label: 'Newsletter' },
+    { href: 'articles',   icon: FileText, label: t('articles') },
+    { href: 'categories', icon: Tag,      label: t('categories') },
+    { href: 'newsletter', icon: Mail,     label: t('newsletter') },
   ];
 
   const growthItems: NavItem[] = [
-    { href: 'analytics', icon: BarChart2, label: 'Analytics' },
-    { href: 'seo',       icon: Search,    label: 'SEO'        },
+    { href: 'analytics', icon: BarChart2, label: t('analytics') },
+    { href: 'seo',       icon: Search,    label: t('seo') },
   ];
 
   const planKey  = (currentTenant?.plan ?? 'free').toLowerCase();
@@ -134,7 +137,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
         </Link>
         <Link href={`/${locale}/dashboard`} className="shrink-0 flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
           <ArrowLeft className="h-3 w-3" />
-          Retour
+          {t('back')}
         </Link>
       </div>
 
@@ -153,7 +156,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="start" className="w-56">
-            <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Changer de blog</div>
+            <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{t('switchBlog')}</div>
             {tenants.map((tenant) => (
               <DropdownMenuItem
                 key={tenant.id}
@@ -176,7 +179,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
                 <div className="h-5 w-5 rounded-md border border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center shrink-0">
                   <Plus className="h-3 w-3 text-slate-400" />
                 </div>
-                <span className="text-sm">Nouveau blog</span>
+                <span className="text-sm">{t('newBlog')}</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -186,21 +189,21 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-2 px-3" style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}>
 
-        <SidebarItem item={{ href: 'general', icon: Settings, label: 'Paramètres généraux' }} base={base} />
+        <SidebarItem item={{ href: 'general', icon: Settings, label: t('generalSettings') }} base={base} />
 
-        <SectionLabel label="Design" />
+        <SectionLabel label={t('sectionDesign')} />
         {designItems.map(item => <SidebarItem key={item.href} item={item} base={base} />)}
 
-        <SectionLabel label="Pages" />
+        <SectionLabel label={t('sectionPages')} />
         {pageItems.map(item => <SidebarItem key={item.href} item={item} base={base} />)}
 
-        <SectionLabel label="Contenu" />
+        <SectionLabel label={t('sectionContent')} />
         {contentItems.map(item => <SidebarItem key={item.href} item={item} base={base} />)}
 
-        <SectionLabel label="Croissance" />
+        <SectionLabel label={t('sectionGrowth')} />
         {growthItems.map(item => <SidebarItem key={item.href} item={item} base={base} />)}
 
-        {/* Voir le blog */}
+        {/* View blog */}
         {currentTenant && (
           <div className="pt-2 mt-1 border-t border-slate-100 dark:border-slate-700">
             <a
@@ -210,7 +213,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
               className="group flex items-center gap-2.5 rounded-lg px-2.5 py-[7px] text-[13px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all mt-0.5"
             >
               <ExternalLink className="h-[15px] w-[15px] shrink-0" />
-              <span className="flex-1">Voir le blog</span>
+              <span className="flex-1">{t('viewBlog')}</span>
               <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
             </a>
           </div>
@@ -225,7 +228,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
             <span className="text-[12px] font-semibold text-slate-700 dark:text-slate-300 capitalize">{currentTenant?.plan ?? 'Free'}</span>
           </div>
           <Link href={`/${locale}/subscription`} className="text-[10px] font-bold text-blue-600 hover:text-blue-700 border border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-500 px-2 py-0.5 rounded-full transition-colors">
-            Améliorer
+            {t('improve')}
           </Link>
         </div>
 

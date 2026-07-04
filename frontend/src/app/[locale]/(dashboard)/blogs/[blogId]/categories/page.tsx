@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Plus, Tag, Trash2, Check, X, ChevronDown, ImageIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { categoriesApi, tenantsApi } from '@/lib/api';
 import { slugify } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +22,7 @@ const CATEGORY_COLORS = [
 function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => void }) {
   const { toast } = useToast();
   const qc = useQueryClient();
+  const ts = useTranslations('studio');
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -40,10 +42,10 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['categories', blogId] });
-      toast({ title: 'Catégorie créée !' });
+      toast({ title: ts('catToastCreated') });
       onDone();
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la création.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('catToastCreateError') }),
   });
 
   const handleNameChange = (v: string) => {
@@ -53,13 +55,13 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
 
   return (
     <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 space-y-3">
-      <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">Nouvelle catégorie</p>
+      <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">{ts('catNewTitle')}</p>
 
       {/* Name */}
       <input
         value={name}
         onChange={e => handleNameChange(e.target.value)}
-        placeholder="Nom de la catégorie"
+        placeholder={ts('catNamePlaceholder')}
         autoFocus
         className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
       />
@@ -79,14 +81,14 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
       <textarea
         value={description}
         onChange={e => setDescription(e.target.value)}
-        placeholder="Description (optionnel)"
+        placeholder={ts('catDescPlaceholder')}
         rows={2}
         className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-900 text-[12px] text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none"
       />
 
       {/* Color */}
       <div>
-        <p className="text-[11px] text-slate-500 mb-1.5">Couleur</p>
+        <p className="text-[11px] text-slate-500 mb-1.5">{ts('catColorLabel')}</p>
         <div className="flex items-center gap-1.5">
           {CATEGORY_COLORS.map(c => (
             <button
@@ -106,7 +108,7 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
           className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 hover:text-blue-600 transition-colors"
         >
           <ImageIcon className="h-3.5 w-3.5" />
-          Image de couverture (optionnel)
+          {ts('catCoverOptional')}
           <ChevronDown className={`h-3 w-3 transition-transform ${showImage ? 'rotate-180' : ''}`} />
         </button>
         {showImage && (
@@ -128,10 +130,10 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
           className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold transition-colors disabled:opacity-50"
         >
           <Check className="h-3.5 w-3.5" />
-          {createMut.isPending ? 'Création…' : 'Créer'}
+          {createMut.isPending ? ts('catCreating') : ts('catCreate')}
         </button>
         <button onClick={onDone} className="h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-600 text-[12px] text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5">
-          <X className="h-3.5 w-3.5" /> Annuler
+          <X className="h-3.5 w-3.5" /> <span>Cancel</span>
         </button>
       </div>
     </div>
@@ -143,6 +145,7 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
 function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
   const { toast } = useToast();
   const qc = useQueryClient();
+  const ts = useTranslations('studio');
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(cat.name);
   const [editDescription, setEditDescription] = useState('');
@@ -168,19 +171,19 @@ function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['categories', blogId] });
-      toast({ title: 'Catégorie mise à jour.' });
+      toast({ title: ts('catToastUpdated') });
       setEditing(false);
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la mise à jour.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('catToastUpdateError') }),
   });
 
   const deleteMut = useMutation({
     mutationFn: () => categoriesApi.delete(blogId, cat.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['categories', blogId] });
-      toast({ title: 'Catégorie supprimée.' });
+      toast({ title: ts('catToastDeleted') });
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la suppression.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('catToastDeleteError') }),
   });
 
   if (editing) {
@@ -212,7 +215,7 @@ function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
             className="flex items-center gap-1.5 text-[11px] font-medium text-slate-500 hover:text-blue-600 transition-colors"
           >
             <ImageIcon className="h-3.5 w-3.5" />
-            Image de couverture
+            {ts('catCoverLabel')}
             <ChevronDown className={`h-3 w-3 transition-transform ${showImage ? 'rotate-180' : ''}`} />
           </button>
           {showImage && (
@@ -234,13 +237,13 @@ function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
             className="flex items-center gap-1.5 h-7 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold transition-colors disabled:opacity-50"
           >
             <Check className="h-3 w-3" />
-            {updateMut.isPending ? '…' : 'Enregistrer'}
+            {updateMut.isPending ? '…' : ts('catSave')}
           </button>
           <button
             onClick={() => setEditing(false)}
             className="h-7 px-3 rounded-lg border border-slate-200 dark:border-slate-600 text-[11px] text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-1"
           >
-            <X className="h-3 w-3" /> Annuler
+            <X className="h-3 w-3" /> <span>Cancel</span>
           </button>
         </div>
       </div>
@@ -265,7 +268,7 @@ function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
       <button
         onClick={e => { e.stopPropagation(); deleteMut.mutate(); }}
         className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-300 dark:text-slate-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors opacity-0 group-hover:opacity-100"
-        title="Supprimer"
+        title="Delete"
       >
         <Trash2 className="h-3.5 w-3.5" />
       </button>
@@ -278,6 +281,7 @@ function CategoryRow({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
 export default function CategoriesPage() {
   const params = useParams();
   const blogId = params.blogId as string;
+  const ts = useTranslations('studio');
 
   const [creating, setCreating] = useState(false);
 
@@ -293,8 +297,8 @@ export default function CategoriesPage() {
 
   return (
     <BlogStudioShell
-      title="Catégories"
-      description="Organisez vos articles par catégories."
+      title={ts('pageCategories')}
+      description={ts('pageCategoriesDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
     >
@@ -307,7 +311,7 @@ export default function CategoriesPage() {
             onClick={() => setCreating(true)}
             className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-700 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:border-blue-300 dark:hover:border-blue-700 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
-            <Plus className="h-4 w-4" /> Nouvelle catégorie
+            <Plus className="h-4 w-4" /> {ts('catNewButton')}
           </button>
         )}
 
@@ -320,8 +324,8 @@ export default function CategoriesPage() {
             <div className="h-12 w-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-3">
               <Tag className="h-6 w-6 text-blue-500 dark:text-blue-400" />
             </div>
-            <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200 mb-1">Aucune catégorie</p>
-            <p className="text-[12px] text-slate-400 dark:text-slate-500">Créez votre première catégorie pour organiser vos articles.</p>
+            <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200 mb-1">{ts('catNoneTitle')}</p>
+            <p className="text-[12px] text-slate-400 dark:text-slate-500">{ts('catNoneDesc')}</p>
           </div>
         ) : (
           <div className="space-y-1.5">
@@ -332,7 +336,7 @@ export default function CategoriesPage() {
         )}
 
         {categories.length > 0 && (
-          <p className="text-[10px] text-slate-400 text-center">Cliquez sur une catégorie pour la modifier.</p>
+          <p className="text-[10px] text-slate-400 text-center">{ts('catClickToEdit')}</p>
         )}
       </div>
     </BlogStudioShell>

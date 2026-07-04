@@ -1,25 +1,25 @@
 'use client';
 
 import { Bell, CheckCheck, Info, AlertTriangle, Zap } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 
-// Placeholder data — will be replaced by real API once the endpoint exists
 const MOCK_NOTIFICATIONS = [
   {
     id: '1',
     type: 'info' as const,
-    title: 'Bienvenue sur NexusBlog !',
-    body: 'Votre compte est prêt. Créez votre premier blog pour commencer à publier.',
-    time: 'Il y a 2 minutes',
+    title: 'Welcome to NexusBlog!',
+    body: 'Your account is ready. Create your first blog to start publishing.',
+    time: '2 minutes ago',
     read: false,
   },
   {
     id: '2',
     type: 'success' as const,
-    title: 'Abonnement activé',
-    body: 'Votre plan Gratuit est actif. Passez à Pro pour débloquer toutes les fonctionnalités.',
-    time: 'Il y a 1 heure',
+    title: 'Subscription activated',
+    body: 'Your Free plan is active. Upgrade to Pro to unlock all features.',
+    time: '1 hour ago',
     read: true,
   },
 ];
@@ -31,6 +31,7 @@ const TYPE_CONFIG = {
 };
 
 export default function NotificationsPage() {
+  const t = useTranslations('notifications');
   const unread = MOCK_NOTIFICATIONS.filter(n => !n.read).length;
 
   return (
@@ -46,15 +47,15 @@ export default function NotificationsPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-[20px] font-black text-slate-900">Notifications</h2>
+                <h2 className="text-[20px] font-black text-slate-900">{t('title')}</h2>
                 <p className="text-[13px] text-slate-500 mt-0.5">
-                  {unread > 0 ? `${unread} non lue${unread > 1 ? 's' : ''}` : 'Tout est lu'}
+                  {unread > 0 ? t('unreadCount', { n: unread }) : t('allRead')}
                 </p>
               </div>
               {unread > 0 && (
                 <button className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-slate-200 hover:bg-slate-50 text-[12px] font-medium text-slate-600 transition-colors">
                   <CheckCheck className="h-3.5 w-3.5" />
-                  Tout marquer comme lu
+                  {t('markAllRead')}
                 </button>
               )}
             </div>
@@ -64,9 +65,9 @@ export default function NotificationsPage() {
                 <div className="h-14 w-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-5">
                   <Bell className="h-6 w-6 text-slate-400" />
                 </div>
-                <h3 className="text-[16px] font-bold text-slate-900 mb-2">Aucune notification</h3>
+                <h3 className="text-[16px] font-bold text-slate-900 mb-2">{t('noneTitle')}</h3>
                 <p className="text-[13px] text-slate-500 max-w-[260px] leading-relaxed">
-                  Vous serez averti ici pour les mises à jour importantes de votre compte et de vos blogs.
+                  {t('noneDesc')}
                 </p>
               </div>
             ) : (

@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -33,6 +34,7 @@ export default function ArticlePage() {
   const blogId = params.blogId as string;
   const { toast } = useToast();
   const qc = useQueryClient();
+  const ts = useTranslations('studio');
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
@@ -55,32 +57,32 @@ export default function ArticlePage() {
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tenant', blogId] });
-      toast({ title: 'Page Article sauvegardée !' });
+      toast({ title: ts('articlePageSavedToast') });
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la sauvegarde.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
   return (
     <BlogStudioShell
-      title="Page Article"
-      description="Barre de progression, table des matières, partage, auteur et articles similaires."
+      title={ts('pageArticle')}
+      description={ts('pageArticleDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
       saving={mutation.isPending}
       onSave={() => mutation.mutate()}
     >
-      <StudioSection id="progress" title="Barre de progression" defaultOpen>
-        <StudioSwitch label="Afficher la barre de lecture" description="Barre de progression en haut de page pendant la lecture d'un article." checked={cfg.progressBar.enabled} onChange={v => patch(c => ({ ...c, progressBar: { enabled: v } }))} />
+      <StudioSection id="progress" title={ts('sectionProgress')} defaultOpen>
+        <StudioSwitch label={ts('switchShowProgressBar')} description={ts('switchShowProgressBarDesc')} checked={cfg.progressBar.enabled} onChange={v => patch(c => ({ ...c, progressBar: { enabled: v } }))} />
       </StudioSection>
 
-      <StudioSection id="toc" title="Table des matières" defaultOpen>
-        <StudioSwitch label="Afficher la table des matières" description="Générée automatiquement à partir des titres H2/H3 de l'article." checked={cfg.tableOfContents.enabled} onChange={v => patch(c => ({ ...c, tableOfContents: { ...c.tableOfContents, enabled: v } }))} />
+      <StudioSection id="toc" title={ts('sectionToc')} defaultOpen>
+        <StudioSwitch label={ts('switchShowToc')} description={ts('switchShowTocDesc')} checked={cfg.tableOfContents.enabled} onChange={v => patch(c => ({ ...c, tableOfContents: { ...c.tableOfContents, enabled: v } }))} />
         {cfg.tableOfContents.enabled && (
           <>
-            <StudioField label="Titre">
+            <StudioField label={ts('fieldTitle')}>
               <StudioInput value={cfg.tableOfContents.title} onChange={v => patch(c => ({ ...c, tableOfContents: { ...c.tableOfContents, title: v } }))} placeholder="Dans cet article" />
             </StudioField>
-            <StudioField label="Nombre minimal de titres" hint="N'affiche la TdM que si l'article contient au moins N titres.">
+            <StudioField label={ts('fieldMinHeadings')} hint={ts('fieldMinHeadingsHint')}>
               <input
                 type="number" min={1} max={10}
                 value={cfg.tableOfContents.minHeadings}
@@ -92,38 +94,38 @@ export default function ArticlePage() {
         )}
       </StudioSection>
 
-      <StudioSection id="share" title="Boutons de partage" defaultOpen>
-        <StudioSwitch label="Afficher les boutons de partage" checked={cfg.share.enabled} onChange={v => patch(c => ({ ...c, share: { ...c.share, enabled: v } }))} />
+      <StudioSection id="share" title={ts('sectionShare')} defaultOpen>
+        <StudioSwitch label={ts('switchShowShare')} checked={cfg.share.enabled} onChange={v => patch(c => ({ ...c, share: { ...c.share, enabled: v } }))} />
         {cfg.share.enabled && (
           <>
-            <StudioField label="Titre">
+            <StudioField label={ts('fieldTitle')}>
               <StudioInput value={cfg.share.title} onChange={v => patch(c => ({ ...c, share: { ...c.share, title: v } }))} placeholder="Partager" />
             </StudioField>
             <StudioSwitch label="Twitter / X" checked={cfg.share.platforms.twitter} onChange={v => patch(c => ({ ...c, share: { ...c.share, platforms: { ...c.share.platforms, twitter: v } } }))} />
             <StudioSwitch label="LinkedIn" checked={cfg.share.platforms.linkedin} onChange={v => patch(c => ({ ...c, share: { ...c.share, platforms: { ...c.share.platforms, linkedin: v } } }))} />
             <StudioSwitch label="Facebook" checked={cfg.share.platforms.facebook} onChange={v => patch(c => ({ ...c, share: { ...c.share, platforms: { ...c.share.platforms, facebook: v } } }))} />
-            <StudioSwitch label="Copier le lien" checked={cfg.share.platforms.copyLink} onChange={v => patch(c => ({ ...c, share: { ...c.share, platforms: { ...c.share.platforms, copyLink: v } } }))} />
+            <StudioSwitch label={ts('switchCopyLink')} checked={cfg.share.platforms.copyLink} onChange={v => patch(c => ({ ...c, share: { ...c.share, platforms: { ...c.share.platforms, copyLink: v } } }))} />
           </>
         )}
       </StudioSection>
 
-      <StudioSection id="author" title="Bio de l'auteur" defaultOpen>
-        <StudioSwitch label="Afficher la bio de l'auteur" description="Bloc affiché en bas de l'article avec l'avatar et la bio de l'auteur." checked={cfg.authorBio.enabled} onChange={v => patch(c => ({ ...c, authorBio: { ...c.authorBio, enabled: v } }))} />
+      <StudioSection id="author" title={ts('sectionAuthorBio')} defaultOpen>
+        <StudioSwitch label={ts('switchShowAuthorBio')} description={ts('switchShowAuthorBioDesc')} checked={cfg.authorBio.enabled} onChange={v => patch(c => ({ ...c, authorBio: { ...c.authorBio, enabled: v } }))} />
         {cfg.authorBio.enabled && (
-          <StudioField label="Titre">
+          <StudioField label={ts('fieldTitle')}>
             <StudioInput value={cfg.authorBio.title} onChange={v => patch(c => ({ ...c, authorBio: { ...c.authorBio, title: v } }))} placeholder="À propos de l'auteur" />
           </StudioField>
         )}
       </StudioSection>
 
-      <StudioSection id="related" title="Articles similaires" defaultOpen>
-        <StudioSwitch label="Afficher les articles similaires" checked={cfg.relatedArticles.enabled} onChange={v => patch(c => ({ ...c, relatedArticles: { ...c.relatedArticles, enabled: v } }))} />
+      <StudioSection id="related" title={ts('sectionRelated')} defaultOpen>
+        <StudioSwitch label={ts('switchShowRelated')} checked={cfg.relatedArticles.enabled} onChange={v => patch(c => ({ ...c, relatedArticles: { ...c.relatedArticles, enabled: v } }))} />
         {cfg.relatedArticles.enabled && (
           <>
-            <StudioField label="Titre">
+            <StudioField label={ts('fieldTitle')}>
               <StudioInput value={cfg.relatedArticles.title} onChange={v => patch(c => ({ ...c, relatedArticles: { ...c.relatedArticles, title: v } }))} placeholder="Articles similaires" />
             </StudioField>
-            <StudioField label="Nombre d'articles">
+            <StudioField label={ts('fieldArticleCount')}>
               <input
                 type="number" min={2} max={6}
                 value={cfg.relatedArticles.count}
@@ -135,8 +137,8 @@ export default function ArticlePage() {
         )}
       </StudioSection>
 
-      <StudioSection id="comments" title="Commentaires" defaultOpen={false}>
-        <StudioSwitch label="Activer les commentaires" description="Fonctionnalité en cours de développement." checked={cfg.comments.enabled} onChange={v => patch(c => ({ ...c, comments: { enabled: v } }))} />
+      <StudioSection id="comments" title={ts('sectionComments')} defaultOpen={false}>
+        <StudioSwitch label={ts('switchEnableComments')} description={ts('switchEnableCommentsDesc')} checked={cfg.comments.enabled} onChange={v => patch(c => ({ ...c, comments: { enabled: v } }))} />
       </StudioSection>
     </BlogStudioShell>
   );

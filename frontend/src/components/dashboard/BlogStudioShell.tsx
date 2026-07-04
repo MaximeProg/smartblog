@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Save, Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useStudioPreview } from '@/contexts/studio-preview';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -178,6 +179,7 @@ export function BlogStudioShell({
   children,
 }: BlogStudioShellProps) {
   const { setPreview, refresh, setFullWidth } = useStudioPreview();
+  const ts = useTranslations('studio');
 
   // Normal studio page: restore narrow panel mode
   useEffect(() => {
@@ -214,8 +216,8 @@ export function BlogStudioShell({
               className="shrink-0 flex items-center gap-1.5 h-8 px-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-semibold transition-colors disabled:opacity-60"
             >
               {saving
-                ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Sauvegarde…</>
-                : <><Save className="h-3.5 w-3.5" /> Sauvegarder</>
+                ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> {ts('saving')}</>
+                : <><Save className="h-3.5 w-3.5" /> {ts('save')}</>
               }
             </button>
           )}

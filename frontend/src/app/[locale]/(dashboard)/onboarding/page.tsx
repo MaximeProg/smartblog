@@ -4,20 +4,21 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { Loader2, ArrowRight, CheckCircle2, ImageIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/auth.store';
 import { tenantsApi } from '@/lib/api';
 import { slugify } from '@/lib/utils';
 import type { TenantInfo } from '@/types';
 
 const COLORS = [
-  { hex: '#2563eb', label: 'Bleu' },
+  { hex: '#2563eb', label: 'Blue'  },
   { hex: '#7c3aed', label: 'Violet' },
-  { hex: '#db2777', label: 'Rose' },
-  { hex: '#dc2626', label: 'Rouge' },
+  { hex: '#db2777', label: 'Pink'  },
+  { hex: '#dc2626', label: 'Red'   },
   { hex: '#ea580c', label: 'Orange' },
-  { hex: '#16a34a', label: 'Vert' },
-  { hex: '#0891b2', label: 'Cyan' },
-  { hex: '#334155', label: 'Ardoise' },
+  { hex: '#16a34a', label: 'Green' },
+  { hex: '#0891b2', label: 'Cyan'  },
+  { hex: '#334155', label: 'Slate' },
 ];
 
 export default function OnboardingPage() {
@@ -25,6 +26,7 @@ export default function OnboardingPage() {
   const locale = params.locale as string;
   const router = useRouter();
   const { user, addTenant, setCurrentTenant } = useAuthStore();
+  const t = useTranslations('onboarding');
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -101,14 +103,14 @@ export default function OnboardingPage() {
       } as any,
     } as any),
     onSuccess: ({ data }) => {
-      const t: TenantInfo = { id: data.id, name: data.name, slug: data.slug, plan: data.plan, role: 'tenant_admin' };
-      addTenant(t);
+      const tenant: TenantInfo = { id: data.id, name: data.name, slug: data.slug, plan: data.plan, role: 'tenant_admin' };
+      addTenant(tenant);
       setCurrentTenant(data.id);
       router.push(`/${locale}/blogs/${data.id}/general`);
     },
     onError: (err: any) => {
       if (err?.response?.data?.detail?.includes('slug')) {
-        setSlugError('Ce slug est déjà utilisé, choisissez-en un autre.');
+        setSlugError(t('quickSlugTaken'));
       }
     },
   });
@@ -124,22 +126,22 @@ export default function OnboardingPage() {
         {/* Header card */}
         <div className="px-8 pt-8 pb-6 text-center border-b border-slate-100">
           <div className="h-12 w-12 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-black text-xl mx-auto mb-4">N</div>
-          <h1 className="text-xl font-black text-slate-900">Créez votre premier blog</h1>
+          <h1 className="text-xl font-black text-slate-900">{t('quickTitle')}</h1>
           <p className="text-sm text-slate-500 mt-1">
-            Bonjour {user?.display_name?.split(' ')[0] ?? 'là'} 👋 — tout est prêt, donnez un nom à votre blog.
+            {t('quickGreeting', { name: user?.display_name?.split(' ')[0] ?? '👋' })}
           </p>
         </div>
 
         {/* Form */}
         <div className="px-8 py-6 space-y-5">
 
-          {/* Nom */}
+          {/* Blog name */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">Nom du blog <span className="text-red-500">*</span></label>
+            <label className="block text-xs font-semibold text-slate-600 mb-1.5">{t('quickNameLabel')} <span className="text-red-500">*</span></label>
             <input
               value={name}
               onChange={e => handleNameChange(e.target.value)}
-              placeholder="Ex: NexusBlog Insights"
+              placeholder={t('quickNamePlaceholder')}
               autoFocus
               className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 text-[14px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
             />
@@ -147,7 +149,7 @@ export default function OnboardingPage() {
 
           {/* Slug */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-1.5">URL du blog <span className="text-red-500">*</span></label>
+            <label className="block text-xs font-semibold text-slate-600 mb-1.5">{t('quickUrlLabel')} <span className="text-red-500">*</span></label>
             <div className="flex rounded-xl border border-slate-200 bg-slate-50 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-400 transition-all">
               <span className="flex items-center px-3 text-[11px] text-slate-400 bg-slate-100 border-r border-slate-200 shrink-0 select-none font-mono">
                 nexusblog.io/
@@ -155,16 +157,16 @@ export default function OnboardingPage() {
               <input
                 value={slug}
                 onChange={e => handleSlugChange(e.target.value)}
-                placeholder="mon-blog"
+                placeholder="my-blog"
                 className="flex-1 h-11 px-3 text-[13px] font-mono bg-transparent outline-none text-slate-900"
               />
             </div>
             {slugError && <p className="text-[11px] text-red-500 mt-1">{slugError}</p>}
           </div>
 
-          {/* Couleur primaire */}
+          {/* Primary color */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 mb-2">Couleur principale</label>
+            <label className="block text-xs font-semibold text-slate-600 mb-2">{t('quickColorLabel')}</label>
             <div className="flex items-center gap-2 flex-wrap">
               {COLORS.map(c => (
                 <button
@@ -180,7 +182,7 @@ export default function OnboardingPage() {
                   }}
                 />
               ))}
-              <label className="h-8 w-8 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center cursor-pointer hover:border-slate-400 transition-colors" title="Couleur personnalisée">
+              <label className="h-8 w-8 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center cursor-pointer hover:border-slate-400 transition-colors">
                 <input type="color" value={color} onChange={e => setColor(e.target.value)} className="sr-only" />
                 <span className="text-slate-400 text-xs">+</span>
               </label>
@@ -188,23 +190,23 @@ export default function OnboardingPage() {
             </div>
           </div>
 
-          {/* Miniature du blog */}
+          {/* Cover thumbnail */}
           <div>
             <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-              Miniature du blog <span className="text-slate-400 font-normal">(optionnel)</span>
+              {t('quickCoverLabel')} <span className="text-slate-400 font-normal">{t('quickCoverOptional')}</span>
             </label>
             <input
               type="url"
               value={coverImageUrl}
               onChange={e => { setCoverImageUrl(e.target.value); setCoverImgError(false); }}
-              placeholder="https://exemple.com/image.jpg"
+              placeholder={t('quickCoverPlaceholder')}
               className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 text-[13px] text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
             />
             {coverImageUrl && !coverImgError && (
               <div className="mt-2 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 h-28 relative">
                 <img
                   src={coverImageUrl}
-                  alt="Aperçu miniature"
+                  alt=""
                   className="w-full h-full object-cover"
                   onError={() => setCoverImgError(true)}
                 />
@@ -213,7 +215,7 @@ export default function OnboardingPage() {
             {coverImageUrl && coverImgError && (
               <div className="mt-2 rounded-xl border border-dashed border-slate-200 bg-slate-50 h-28 flex flex-col items-center justify-center gap-1 text-slate-400">
                 <ImageIcon className="h-5 w-5" />
-                <span className="text-[11px]">URL invalide ou image inaccessible</span>
+                <span className="text-[11px]">{t('quickCoverError')}</span>
               </div>
             )}
           </div>
@@ -227,14 +229,14 @@ export default function OnboardingPage() {
             style={{ backgroundColor: color }}
           >
             {mutation.isPending
-              ? <><Loader2 className="h-4 w-4 animate-spin" /> Création en cours…</>
-              : <>Créer mon blog <ArrowRight className="h-4 w-4" /></>
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> {t('quickCreating')}</>
+              : <>{t('quickCreate')} <ArrowRight className="h-4 w-4" /></>
             }
           </button>
 
           {mutation.isSuccess && (
             <div className="flex items-center gap-2 text-emerald-600 text-sm font-medium justify-center">
-              <CheckCircle2 className="h-4 w-4" /> Blog créé ! Redirection…
+              <CheckCircle2 className="h-4 w-4" /> {t('quickSuccess')}
             </div>
           )}
         </div>

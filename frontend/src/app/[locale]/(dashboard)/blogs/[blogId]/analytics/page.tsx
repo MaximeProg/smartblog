@@ -3,16 +3,11 @@
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Eye, Users, Clock, TrendingUp, ExternalLink, Globe } from 'lucide-react';
+import { Eye, Users, Clock, TrendingUp, Globe } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { analyticsApi, tenantsApi } from '@/lib/api';
 import { BlogStudioShell } from '@/components/dashboard/BlogStudioShell';
 import type { DailyMetric } from '@/types';
-
-const PERIODS = [
-  { label: '7 j',  value: 7  },
-  { label: '30 j', value: 30 },
-  { label: '90 j', value: 90 },
-];
 
 function formatDuration(seconds: number): string {
   if (seconds < 60) return `${Math.round(seconds)}s`;
@@ -21,7 +16,7 @@ function formatDuration(seconds: number): string {
   return `${m}m ${s}s`;
 }
 
-function MiniBarChart({ data }: { data: DailyMetric[] }) {
+function MiniBarChart({ data, viewsUnit }: { data: DailyMetric[]; viewsUnit: string }) {
   if (!data.length) return null;
   const max = Math.max(...data.map(d => d.views), 1);
   return (
@@ -33,7 +28,7 @@ function MiniBarChart({ data }: { data: DailyMetric[] }) {
             style={{ height: `${Math.max(4, (d.views / max) * 56)}px` }}
           />
           <div className="absolute bottom-full mb-1 hidden group-hover:flex bg-slate-800 text-white text-[10px] rounded px-1.5 py-0.5 whitespace-nowrap">
-            {d.date.slice(5)}: {d.views} vues
+            {d.date.slice(5)}: {d.views} {viewsUnit}
           </div>
         </div>
       ))}
@@ -45,6 +40,13 @@ export default function AnalyticsPage() {
   const params = useParams();
   const blogId = params.blogId as string;
   const [days, setDays] = useState(30);
+  const ts = useTranslations('studio');
+
+  const PERIODS = [
+    { label: ts('analyticsPeriod7'),  value: 7  },
+    { label: ts('analyticsPeriod30'), value: 30 },
+    { label: ts('analyticsPeriod90'), value: 90 },
+  ];
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
@@ -60,16 +62,16 @@ export default function AnalyticsPage() {
   });
 
   const stats = [
-    { label: 'Vues totales',    value: analytics?.total_views ?? 0,       icon: Eye,       color: 'text-blue-600',   bg: 'bg-blue-50',   border: 'border-blue-100'   },
-    { label: 'Sessions uniques',value: analytics?.unique_sessions ?? 0,    icon: Users,     color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-100' },
-    { label: 'Durée moyenne',   value: formatDuration(analytics?.avg_duration_seconds ?? 0), icon: Clock, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { label: 'Tendance',        value: analytics ? `+${analytics.total_views}` : '–',  icon: TrendingUp, color: 'text-amber-600',  bg: 'bg-amber-50',  border: 'border-amber-100'  },
+    { label: ts('analyticsViews'),    value: analytics?.total_views ?? 0,       icon: Eye,       color: 'text-blue-600',   bg: 'bg-blue-50',   border: 'border-blue-100'   },
+    { label: ts('analyticsSessions'), value: analytics?.unique_sessions ?? 0,    icon: Users,     color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-100' },
+    { label: ts('analyticsDuration'), value: formatDuration(analytics?.avg_duration_seconds ?? 0), icon: Clock, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { label: ts('analyticsTrend'),    value: analytics ? `+${analytics.total_views}` : '–',  icon: TrendingUp, color: 'text-amber-600',  bg: 'bg-amber-50',  border: 'border-amber-100'  },
   ];
 
   return (
     <BlogStudioShell
-      title="Analytics"
-      description="Performances de votre blog."
+      title={ts('pageAnalytics')}
+      description={ts('pageAnalyticsDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
     >
@@ -114,8 +116,8 @@ export default function AnalyticsPage() {
         {/* Bar chart */}
         {analytics?.views_by_day && analytics.views_by_day.length > 0 && (
           <div className="bg-white rounded-xl border border-slate-100 p-4">
-            <p className="text-[11px] font-bold text-slate-600 mb-3 uppercase tracking-wider">Vues par jour</p>
-            <MiniBarChart data={analytics.views_by_day} />
+            <p className="text-[11px] font-bold text-slate-600 mb-3 uppercase tracking-wider">{ts('analyticsViewsByDay')}</p>
+            <MiniBarChart data={analytics.views_by_day} viewsUnit={ts('analyticsViewsUnit')} />
             <div className="flex justify-between mt-1">
               <span className="text-[9px] text-slate-400">{analytics.views_by_day[0]?.date?.slice(5)}</span>
               <span className="text-[9px] text-slate-400">{analytics.views_by_day[analytics.views_by_day.length - 1]?.date?.slice(5)}</span>
@@ -127,14 +129,14 @@ export default function AnalyticsPage() {
         {analytics?.top_articles && analytics.top_articles.length > 0 && (
           <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
             <div className="px-4 py-3 border-b border-slate-50">
-              <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Articles populaires</p>
+              <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">{ts('analyticsTopArticles')}</p>
             </div>
             <div className="divide-y divide-slate-50">
               {analytics.top_articles.slice(0, 5).map((art, i) => (
                 <div key={art.id} className="flex items-center gap-3 px-4 py-2.5">
                   <span className="text-[11px] font-bold text-slate-300 w-4 shrink-0">{i + 1}</span>
                   <p className="flex-1 text-[12px] text-slate-700 truncate">{art.title}</p>
-                  <span className="text-[11px] font-semibold text-slate-500 shrink-0">{art.views} vues</span>
+                  <span className="text-[11px] font-semibold text-slate-500 shrink-0">{art.views} {ts('analyticsViewsUnit')}</span>
                 </div>
               ))}
             </div>
@@ -145,7 +147,7 @@ export default function AnalyticsPage() {
         {analytics?.top_referrers && analytics.top_referrers.length > 0 && (
           <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
             <div className="px-4 py-3 border-b border-slate-50">
-              <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Sources de trafic</p>
+              <p className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">{ts('analyticsSources')}</p>
             </div>
             <div className="divide-y divide-slate-50">
               {analytics.top_referrers.slice(0, 5).map(ref => (
@@ -165,8 +167,8 @@ export default function AnalyticsPage() {
             <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-3">
               <TrendingUp className="h-5 w-5 text-slate-400" />
             </div>
-            <p className="text-[13px] font-semibold text-slate-600 mb-1">Aucune donnée pour la période</p>
-            <p className="text-[11px] text-slate-400">Publiez des articles et partagez votre blog pour voir les statistiques.</p>
+            <p className="text-[13px] font-semibold text-slate-600 mb-1">{ts('analyticsNoDataTitle')}</p>
+            <p className="text-[11px] text-slate-400">{ts('analyticsNoDataDesc')}</p>
           </div>
         )}
       </div>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard, Newspaper, User, Bell, CreditCard,
   Plus, LogOut, Zap,
@@ -11,30 +12,32 @@ import { useAuthStore } from '@/store/auth.store';
 import { authApi } from '@/lib/api';
 import { firebaseSignOut } from '@/lib/firebase';
 
-const PLAN_LABELS: Record<string, string> = {
-  free: 'Gratuit', starter: 'Starter', pro: 'Pro', business: 'Business',
-};
-
-const MAIN_NAV = [
-  { seg: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', exact: true },
-  { seg: 'blogs',     icon: Newspaper,       label: 'Mes blogs' },
-];
-
-const ACCOUNT_NAV = [
-  { seg: 'profile',       icon: User,       label: 'Profil' },
-  { seg: 'notifications', icon: Bell,       label: 'Notifications' },
-  { seg: 'subscription',  icon: CreditCard, label: 'Abonnement' },
-];
-
 export function DashboardSidebar() {
   const params   = useParams();
   const locale   = params.locale as string;
   const pathname = usePathname();
   const router   = useRouter();
   const { user, clearAuth } = useAuthStore();
+  const t = useTranslations('nav');
+  const td = useTranslations('dashboardPage');
 
   const plan     = user?.plan ?? 'free';
   const initials = user ? getInitials(user.display_name ?? user.email).slice(0, 2) : 'U';
+
+  const PLAN_LABELS: Record<string, string> = {
+    free: td('planFree'), starter: td('planStarter'), pro: td('planPro'), business: td('planBusiness'),
+  };
+
+  const MAIN_NAV = [
+    { seg: 'dashboard', icon: LayoutDashboard, label: t('dashboard'), exact: true },
+    { seg: 'blogs',     icon: Newspaper,       label: t('myBlogs') },
+  ];
+
+  const ACCOUNT_NAV = [
+    { seg: 'profile',       icon: User,       label: t('profile') },
+    { seg: 'notifications', icon: Bell,       label: t('notifications') },
+    { seg: 'subscription',  icon: CreditCard, label: t('subscription') },
+  ];
 
   const isActive = (seg: string, exact = false) => {
     const full = `/${locale}/${seg}`;
@@ -89,7 +92,7 @@ export function DashboardSidebar() {
 
         <div className="pt-4">
           <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 select-none">
-            Compte
+            {t('account')}
           </p>
           {ACCOUNT_NAV.map(item => (
             <Link key={item.seg} href={`/${locale}/${item.seg}`} className={itemCls(item.seg)}>
@@ -110,7 +113,7 @@ export function DashboardSidebar() {
           className="flex items-center justify-center gap-2 h-9 w-full rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[12.5px] font-bold transition-colors"
         >
           <Plus className="h-3.5 w-3.5" />
-          Nouveau blog
+          {t('newBlog')}
         </Link>
 
         <div className="flex items-center justify-between px-3 py-2 bg-slate-50 dark:bg-slate-800 rounded-xl">
@@ -122,7 +125,7 @@ export function DashboardSidebar() {
             href={`/${locale}/subscription`}
             className="text-[10px] font-bold text-blue-600 border border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 px-2 py-0.5 rounded-full transition-colors"
           >
-            Upgrade
+            {t('upgrade')}
           </Link>
         </div>
 

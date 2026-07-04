@@ -9,6 +9,7 @@ import {
   Minus, X, Check,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { articlesApi, categoriesApi } from '@/lib/api';
 import { slugify } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -59,8 +60,8 @@ export default function NewArticlePage() {
   const router  = useRouter();
   const { toast } = useToast();
   const { setFullWidth } = useStudioPreview();
+  const ts = useTranslations('studio');
 
-  // Full-width layout for article editor (no preview split)
   useEffect(() => {
     setFullWidth(true);
     return () => setFullWidth(false);
@@ -77,7 +78,6 @@ export default function NewArticlePage() {
   const [coverImageUrl, setCoverImageUrl] = useState('');
   const [publish,       setPublish]       = useState(false);
 
-  // Toolbar states
   const [showLinkInput,  setShowLinkInput]  = useState(false);
   const [linkUrl,        setLinkUrl]        = useState('');
   const [showImgPicker,  setShowImgPicker]  = useState(false);
@@ -95,36 +95,35 @@ export default function NewArticlePage() {
   const mutation = useMutation({
     mutationFn: async () => {
       const { data } = await articlesApi.create(blogId, {
-        title:          title.trim(),
-        slug:           slug.trim() || slugify(title),
+        title:           title.trim(),
+        slug:            slug.trim() || slugify(title),
         content,
         excerpt,
-        category_id:    categoryId  || undefined,
+        category_id:     categoryId    || undefined,
         cover_image_url: coverImageUrl || undefined,
       });
       if (publish) await articlesApi.publish(blogId, data.id);
       return data;
     },
     onSuccess: (data) => {
-      toast({ title: publish ? 'Article publié !' : 'Brouillon sauvegardé.' });
+      toast({ title: publish ? ts('articlePublishedToast') : ts('articleSavedToast') });
       router.push(`/${locale}/blogs/${blogId}/articles/${data.id}/edit`);
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la création.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('articleCreateError') }),
   });
 
   const canSave = title.trim().length >= 2 && !mutation.isPending;
 
-  // Toolbar actions
-  const handleBold   = () => wrapSelection(contentRef, setContent, '**', '**', 'texte en gras');
-  const handleItalic = () => wrapSelection(contentRef, setContent, '*',  '*',  'texte en italique');
-  const handleH2     = () => wrapSelection(contentRef, setContent, '## ', '', 'Titre de section');
-  const handleH3     = () => wrapSelection(contentRef, setContent, '### ', '', 'Sous-titre');
-  const handleQuote  = () => wrapSelection(contentRef, setContent, '> ', '', 'Citation');
+  const handleBold   = () => wrapSelection(contentRef, setContent, '**', '**', 'bold');
+  const handleItalic = () => wrapSelection(contentRef, setContent, '*',  '*',  'italic');
+  const handleH2     = () => wrapSelection(contentRef, setContent, '## ', '', 'Heading');
+  const handleH3     = () => wrapSelection(contentRef, setContent, '### ', '', 'Subheading');
+  const handleQuote  = () => wrapSelection(contentRef, setContent, '> ', '', 'Quote');
   const handleRule   = () => insertAtCursor(contentRef, setContent, '\n---\n');
 
   const handleInsertLink = () => {
     if (!linkUrl.trim()) return;
-    wrapSelection(contentRef, setContent, '[', `](${linkUrl.trim()})`, 'texte du lien');
+    wrapSelection(contentRef, setContent, '[', `](${linkUrl.trim()})`, 'link text');
     setLinkUrl('');
     setShowLinkInput(false);
   };
@@ -150,7 +149,7 @@ export default function NewArticlePage() {
           </Link>
           <span className="text-slate-300 dark:text-slate-600">/</span>
           <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 truncate">
-            {title || 'Nouvel article'}
+            {title || ts('articleNewTitle')}
           </span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -162,7 +161,7 @@ export default function NewArticlePage() {
             {mutation.isPending && !publish
               ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
               : <Save className="h-3.5 w-3.5" />}
-            Sauvegarder brouillon
+            {ts('articleSaveDraft')}
           </button>
           <button
             onClick={() => { setPublish(true); mutation.mutate(); }}
@@ -172,7 +171,7 @@ export default function NewArticlePage() {
             {mutation.isPending && publish
               ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
               : <Send className="h-3.5 w-3.5" />}
-            Publier
+            {ts('articlePublishAction')}
           </button>
         </div>
       </div>
@@ -187,7 +186,7 @@ export default function NewArticlePage() {
           <input
             value={title}
             onChange={e => handleTitleChange(e.target.value)}
-            placeholder="Titre de l'article…"
+            placeholder={ts('articleTitlePlaceholder')}
             autoFocus
             className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-transparent border-0 outline-none placeholder-slate-200 dark:placeholder-slate-700 mb-2 leading-tight"
           />
@@ -201,40 +200,39 @@ export default function NewArticlePage() {
                 value={slug}
                 onChange={e => { setSlugManual(true); setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-')); }}
                 className="bg-transparent outline-none text-slate-700 dark:text-slate-300 min-w-[120px]"
-                placeholder="mon-article"
+                placeholder="my-article"
               />
             </div>
           </div>
 
           {/* Excerpt */}
           <div className="mb-6">
-            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Résumé</label>
+            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleExcerptLabel')}</label>
             <textarea
               value={excerpt}
               onChange={e => setExcerpt(e.target.value)}
-              placeholder="Un résumé court affiché dans les listings et les moteurs de recherche…"
+              placeholder={ts('articleExcerptPlaceholder')}
               rows={3}
               className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[14px] text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none leading-relaxed"
             />
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">Les liens au format <code className="bg-slate-100 dark:bg-slate-700 px-1 rounded">[texte](url)</code> seront cliquables dans l'article publié.</p>
           </div>
 
           {/* Content editor */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Contenu</label>
+              <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">{ts('articleContentLabel')}</label>
               <span className="text-[10px] text-slate-400 dark:text-slate-500">Markdown</span>
             </div>
 
             {/* Markdown toolbar */}
             <div className="flex items-center gap-0.5 px-2 py-1.5 border border-slate-200 dark:border-slate-700 border-b-0 rounded-t-xl bg-slate-50 dark:bg-slate-800 flex-wrap">
-              <button type="button" onClick={handleBold}   title="Gras"             className={toolbarBtnCls}><Bold      className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleItalic} title="Italique"          className={toolbarBtnCls}><Italic    className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleBold}   title={ts('toolbarBold')}   className={toolbarBtnCls}><Bold      className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleItalic} title={ts('toolbarItalic')} className={toolbarBtnCls}><Italic    className="h-3.5 w-3.5" /></button>
               <div className="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-1" />
-              <button type="button" onClick={handleH2}     title="Titre H2"          className={toolbarBtnCls}><Heading2  className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleH3}     title="Titre H3"          className={toolbarBtnCls}><Heading3  className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleQuote}  title="Citation"          className={toolbarBtnCls}><Quote     className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleRule}   title="Ligne de séparation" className={toolbarBtnCls}><Minus   className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleH2}     title={ts('toolbarH2')}     className={toolbarBtnCls}><Heading2  className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleH3}     title={ts('toolbarH3')}     className={toolbarBtnCls}><Heading3  className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleQuote}  title={ts('toolbarQuote')}  className={toolbarBtnCls}><Quote     className="h-3.5 w-3.5" /></button>
+              <button type="button" onClick={handleRule}   title={ts('toolbarRule')}   className={toolbarBtnCls}><Minus     className="h-3.5 w-3.5" /></button>
               <div className="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-1" />
 
               {/* Link button + inline input */}
@@ -242,7 +240,7 @@ export default function NewArticlePage() {
                 <button
                   type="button"
                   onClick={() => { setShowLinkInput(v => !v); setShowImgPicker(false); }}
-                  title="Insérer un lien"
+                  title={ts('toolbarLink')}
                   className={`${toolbarBtnCls} ${showLinkInput ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : ''}`}
                 >
                   <Link2 className="h-3.5 w-3.5" />
@@ -254,7 +252,7 @@ export default function NewArticlePage() {
                       value={linkUrl}
                       onChange={e => setLinkUrl(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter') handleInsertLink(); if (e.key === 'Escape') setShowLinkInput(false); }}
-                      placeholder="https://exemple.com"
+                      placeholder="https://example.com"
                       className="h-7 w-56 px-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-[12px] font-mono text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     />
                     <button onClick={handleInsertLink} className="h-7 w-7 flex items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700">
@@ -271,14 +269,13 @@ export default function NewArticlePage() {
               <button
                 type="button"
                 onClick={() => { setShowImgPicker(v => !v); setShowLinkInput(false); }}
-                title="Insérer une image"
+                title={ts('toolbarImage')}
                 className={`${toolbarBtnCls} ${showImgPicker ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : ''}`}
               >
                 <ImageIcon className="h-3.5 w-3.5" />
               </button>
             </div>
 
-            {/* Inline image picker (collapsible) */}
             {showImgPicker && (
               <div className="border border-slate-200 dark:border-slate-700 border-t-0 border-b-0 bg-white dark:bg-slate-800 px-4 py-3">
                 <ImagePicker
@@ -294,7 +291,7 @@ export default function NewArticlePage() {
               ref={contentRef}
               value={content}
               onChange={e => setContent(e.target.value)}
-              placeholder={'Commencez à écrire votre article…\n\nExemples Markdown :\n**gras**  *italique*  ## Titre\n[texte](https://…)  ![alt](https://image.jpg)'}
+              placeholder={ts('articleContentPlaceholder')}
               rows={26}
               className="w-full px-4 py-4 border border-slate-200 dark:border-slate-700 rounded-b-xl bg-white dark:bg-slate-800 text-[14px] text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none font-mono leading-relaxed"
             />
@@ -306,7 +303,7 @@ export default function NewArticlePage() {
 
           {/* Cover image */}
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Image de couverture</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleCoverImageLabel')}</p>
             <ImagePicker
               value={coverImageUrl}
               onChange={setCoverImageUrl}
@@ -317,31 +314,31 @@ export default function NewArticlePage() {
 
           {/* Category */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Catégorie</label>
+            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleCategoryLabel')}</label>
             <select
               value={categoryId}
               onChange={e => setCategoryId(e.target.value)}
               className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
             >
-              <option value="">Sans catégorie</option>
+              <option value="">{ts('articleNoCategory')}</option>
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
 
           {/* Tips */}
           <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
-            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Raccourcis Markdown</p>
+            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">{ts('markdownTips')}</p>
             <div className="space-y-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono">
-              <p><span className="font-bold">**gras**</span></p>
-              <p><span className="italic">*italique*</span></p>
-              <p>## Titre H2</p>
-              <p>[lien](https://…)</p>
+              <p><span className="font-bold">**bold**</span></p>
+              <p><span className="italic">*italic*</span></p>
+              <p>## Heading H2</p>
+              <p>[link](https://…)</p>
               <p>![image](https://…)</p>
-              <p>{'>'} Citation</p>
+              <p>{'>'} Quote</p>
             </div>
           </div>
 
-          {/* Bottom CTA (sticky) */}
+          {/* Bottom CTA */}
           <div className="space-y-2 pt-2">
             <button
               onClick={() => { setPublish(true); mutation.mutate(); }}
@@ -351,7 +348,7 @@ export default function NewArticlePage() {
               {mutation.isPending && publish
                 ? <Loader2 className="h-4 w-4 animate-spin" />
                 : <Send className="h-4 w-4" />}
-              Publier l'article
+              {ts('articlePublishAction')}
             </button>
             <button
               onClick={() => { setPublish(false); mutation.mutate(); }}
@@ -361,7 +358,7 @@ export default function NewArticlePage() {
               {mutation.isPending && !publish
                 ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 : <Save className="h-3.5 w-3.5" />}
-              Sauvegarder en brouillon
+              {ts('articleSaveDraft')}
             </button>
           </div>
         </div>

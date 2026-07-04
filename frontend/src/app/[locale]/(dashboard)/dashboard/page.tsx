@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { Plus, Newspaper, Mail, Users, ExternalLink, Settings, TrendingUp, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
@@ -17,13 +18,14 @@ const PLAN_GRADIENTS: Record<string, string> = {
   business: 'from-amber-400 to-orange-500',
 };
 
-const PLAN_LABELS: Record<string, string> = {
-  free: 'Gratuit', starter: 'Starter', pro: 'Pro', business: 'Business',
-};
-
 function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
+  const t = useTranslations('dashboardPage');
   const plan     = blog.plan?.toLowerCase() ?? 'free';
   const gradient = PLAN_GRADIENTS[plan] ?? PLAN_GRADIENTS.free;
+
+  const PLAN_LABELS: Record<string, string> = {
+    free: t('planFree'), starter: t('planStarter'), pro: t('planPro'), business: t('planBusiness'),
+  };
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 transition-all overflow-hidden flex flex-col">
@@ -53,9 +55,9 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
         {/* Stats */}
         <div className="grid grid-cols-3 gap-2">
           {[
-            { icon: Newspaper, val: blog.articles_count ?? 0,    label: 'articles' },
-            { icon: Mail,      val: blog.subscribers_count ?? 0, label: 'abonnés'  },
-            { icon: Users,     val: blog.authors_count ?? 0,     label: 'auteurs'  },
+            { icon: Newspaper, val: blog.articles_count ?? 0,    label: t('blogCardArticles') },
+            { icon: Mail,      val: blog.subscribers_count ?? 0, label: t('blogCardSubscribers') },
+            { icon: Users,     val: blog.authors_count ?? 0,     label: t('blogCardAuthors') },
           ].map(s => (
             <div key={s.label} className="flex flex-col items-center py-2 rounded-lg bg-slate-50 dark:bg-slate-800">
               <span className="text-[15px] font-black text-slate-800 dark:text-slate-200 leading-none">{s.val}</span>
@@ -78,7 +80,6 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
             target="_blank"
             rel="noopener noreferrer"
             className="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"
-            title="Voir le blog"
           >
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
@@ -111,6 +112,7 @@ export default function DashboardPage() {
   const locale = params.locale as string;
   const router = useRouter();
   const { user } = useAuthStore();
+  const t = useTranslations('dashboardPage');
 
   const { data: blogs = [], isLoading } = useQuery({
     queryKey: ['tenants'],
@@ -120,10 +122,18 @@ export default function DashboardPage() {
     },
   });
 
-  const firstName        = user?.display_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? 'là';
+  const firstName        = user?.display_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? '';
   const totalArticles    = blogs.reduce((s, b) => s + (b.articles_count    ?? 0), 0);
   const totalSubscribers = blogs.reduce((s, b) => s + (b.subscribers_count ?? 0), 0);
   const totalAuthors     = blogs.reduce((s, b) => s + (b.authors_count     ?? 0), 0);
+
+  const subtitleText = isLoading
+    ? t('loadingBlogs')
+    : blogs.length === 0
+    ? t('startNow')
+    : blogs.length === 1
+    ? t('manageCount', { count: blogs.length })
+    : t('manageCountPlural', { count: blogs.length });
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
@@ -139,22 +149,16 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h2 className="text-[22px] font-black text-slate-900 dark:text-slate-100 leading-tight">
-                  Bonjour, {firstName} 👋
+                  {t('greeting', { name: firstName })} 👋
                 </h2>
-                <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1">
-                  {isLoading
-                    ? 'Chargement de vos blogs…'
-                    : blogs.length === 0
-                    ? 'Créez votre premier blog pour commencer.'
-                    : `Vous gérez ${blogs.length} blog${blogs.length > 1 ? 's' : ''}.`}
-                </p>
+                <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1">{subtitleText}</p>
               </div>
               <button
                 onClick={() => router.push(`/${locale}/onboarding`)}
                 className="flex items-center gap-2 h-9 px-5 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors shadow-sm"
               >
                 <Plus className="h-3.5 w-3.5" />
-                Nouveau blog
+                {t('newBlog')}
               </button>
             </div>
 
@@ -162,10 +166,10 @@ export default function DashboardPage() {
             {!isLoading && blogs.length > 0 && (
               <div className="grid grid-cols-4 gap-4 mb-8">
                 {[
-                  { label: 'Blogs actifs',      value: blogs.length,     icon: TrendingUp, color: 'text-blue-600 dark:text-blue-400',    bg: 'bg-blue-50 dark:bg-blue-900/20',    border: 'border-blue-100 dark:border-blue-800'   },
-                  { label: 'Articles publiés',   value: totalArticles,    icon: Newspaper,  color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/20',  border: 'border-violet-100 dark:border-violet-800' },
-                  { label: 'Abonnés cumulés',    value: totalSubscribers, icon: Mail,       color: 'text-emerald-600 dark:text-emerald-400',bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-800'},
-                  { label: 'Auteurs au total',   value: totalAuthors,     icon: Users,      color: 'text-amber-600 dark:text-amber-400',  bg: 'bg-amber-50 dark:bg-amber-900/20',   border: 'border-amber-100 dark:border-amber-800'  },
+                  { label: t('statBlogsActive'),         value: blogs.length,     icon: TrendingUp, color: 'text-blue-600 dark:text-blue-400',    bg: 'bg-blue-50 dark:bg-blue-900/20',    border: 'border-blue-100 dark:border-blue-800'   },
+                  { label: t('statArticlesPublished'),    value: totalArticles,    icon: Newspaper,  color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/20',  border: 'border-violet-100 dark:border-violet-800' },
+                  { label: t('statSubscribersTotal'),     value: totalSubscribers, icon: Mail,       color: 'text-emerald-600 dark:text-emerald-400',bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-800'},
+                  { label: t('statAuthorsTotal'),         value: totalAuthors,     icon: Users,      color: 'text-amber-600 dark:text-amber-400',  bg: 'bg-amber-50 dark:bg-amber-900/20',   border: 'border-amber-100 dark:border-amber-800'  },
                 ].map(stat => (
                   <div key={stat.label} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm px-5 py-5 flex items-center justify-between gap-3">
                     <div>
@@ -183,9 +187,9 @@ export default function DashboardPage() {
             {/* Blogs section */}
             {!isLoading && blogs.length > 0 && (
               <div className="flex items-center justify-between mb-4">
-                <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Vos blogs</p>
+                <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('yourBlogs')}</p>
                 <Link href={`/${locale}/blogs`} className="flex items-center gap-1 text-[12px] font-semibold text-blue-600 hover:text-blue-700 transition-colors">
-                  Voir tout <ArrowUpRight className="h-3.5 w-3.5" />
+                  {t('seeAll')} <ArrowUpRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             )}
@@ -199,16 +203,16 @@ export default function DashboardPage() {
                 <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-5">
                   <Newspaper className="h-6 w-6 text-slate-400 dark:text-slate-500" />
                 </div>
-                <h3 className="text-[16px] font-bold text-slate-900 dark:text-slate-100 mb-2">Aucun blog pour l'instant</h3>
+                <h3 className="text-[16px] font-bold text-slate-900 dark:text-slate-100 mb-2">{t('noBlogsTitle')}</h3>
                 <p className="text-[13px] text-slate-500 dark:text-slate-400 max-w-[260px] mb-6 leading-relaxed">
-                  Créez votre premier blog et publiez du contenu de qualité en quelques minutes.
+                  {t('noBlogsDesc')}
                 </p>
                 <button
                   onClick={() => router.push(`/${locale}/onboarding`)}
                   className="flex items-center gap-2 h-10 px-5 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors"
                 >
                   <Plus className="h-4 w-4" />
-                  Créer mon premier blog
+                  {t('createFirstBlogCta')}
                 </button>
               </div>
             ) : (

@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Search, Globe, Share2, Eye } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -16,6 +17,7 @@ export default function SeoPage() {
   const blogId = params.blogId as string;
   const { toast } = useToast();
   const qc = useQueryClient();
+  const ts = useTranslations('studio');
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
@@ -45,22 +47,21 @@ export default function SeoPage() {
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tenant', blogId] });
-      toast({ title: 'SEO sauvegardé !' });
+      toast({ title: ts('seoSavedToast') });
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la sauvegarde.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
-  // Preview title
   const previewTitle = form.seo_title_template
     .replace('{title}', 'Mon article')
     .replace('{blog_name}', tenant?.name ?? 'Blog');
 
-  const previewDesc = form.seo_meta_description || 'La description de votre article apparaîtra ici…';
+  const previewDesc = form.seo_meta_description || '…';
 
   return (
     <BlogStudioShell
-      title="SEO"
-      description="Optimisez votre référencement naturel."
+      title={ts('pageSeo')}
+      description={ts('pageSeoDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
       saving={mutation.isPending}
@@ -69,7 +70,7 @@ export default function SeoPage() {
       {/* Google preview */}
       <div className="mx-5 mt-5 mb-1 rounded-xl border border-slate-200 bg-white p-4">
         <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-1.5">
-          <Eye className="h-3 w-3" /> Aperçu Google
+          <Eye className="h-3 w-3" /> {ts('seoGooglePreview')}
         </p>
         <div className="space-y-1">
           <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
@@ -83,10 +84,10 @@ export default function SeoPage() {
         </div>
       </div>
 
-      <StudioSection id="meta" title="Balises méta" icon={<Search className="h-3.5 w-3.5" />} defaultOpen>
+      <StudioSection id="meta" title={ts('sectionMeta')} icon={<Search className="h-3.5 w-3.5" />} defaultOpen>
         <StudioField
-          label="Modèle de titre SEO"
-          hint="Variables : {title} = titre de l'article, {blog_name} = nom du blog"
+          label={ts('fieldSeoTitleTemplate')}
+          hint={ts('fieldSeoTitleTemplateHint')}
         >
           <StudioInput
             value={form.seo_title_template}
@@ -99,8 +100,8 @@ export default function SeoPage() {
         </StudioField>
 
         <StudioField
-          label="Méta-description par défaut"
-          hint="160 caractères recommandés. Apparaît sous le titre dans Google."
+          label={ts('fieldMetaDescDefault')}
+          hint={ts('fieldMetaDescDefaultHint')}
         >
           <StudioInput
             value={form.seo_meta_description}
@@ -110,15 +111,15 @@ export default function SeoPage() {
             rows={3}
           />
           <p className="text-[10px] text-slate-400 mt-1 text-right">
-            {form.seo_meta_description.length} / 160 caractères
+            {ts('seoCharCount', { n: form.seo_meta_description.length })}
           </p>
         </StudioField>
       </StudioSection>
 
-      <StudioSection id="social" title="Partage social (Open Graph)" icon={<Share2 className="h-3.5 w-3.5" />} defaultOpen={false}>
+      <StudioSection id="social" title={ts('sectionSocialShare')} icon={<Share2 className="h-3.5 w-3.5" />} defaultOpen={false}>
         <StudioField
-          label="Image Open Graph"
-          hint="Affichée lors du partage sur Twitter, LinkedIn, Facebook. Idéalement 1200×630 px."
+          label={ts('fieldOgImage')}
+          hint={ts('fieldOgImageHint')}
         >
           <ImagePicker
             value={form.og_image_url}
@@ -129,11 +130,11 @@ export default function SeoPage() {
         </StudioField>
       </StudioSection>
 
-      <StudioSection id="sitemap" title="Indexation" icon={<Globe className="h-3.5 w-3.5" />} defaultOpen={false}>
+      <StudioSection id="sitemap" title={ts('sectionIndexing')} icon={<Globe className="h-3.5 w-3.5" />} defaultOpen={false}>
         <div className="space-y-3">
           {[
-            { label: 'Sitemap XML', url: `https://${tenant?.slug ?? '…'}.nexusblog.io/sitemap.xml` },
-            { label: 'Flux RSS',    url: `https://${tenant?.slug ?? '…'}.nexusblog.io/rss.xml`    },
+            { label: ts('seoSitemap'), url: `https://${tenant?.slug ?? '…'}.nexusblog.io/sitemap.xml` },
+            { label: ts('seoRssFeed'), url: `https://${tenant?.slug ?? '…'}.nexusblog.io/rss.xml`    },
           ].map(item => (
             <div key={item.label} className="flex items-center justify-between gap-3 py-2">
               <div>
@@ -146,7 +147,7 @@ export default function SeoPage() {
                 rel="noopener noreferrer"
                 className="shrink-0 text-[11px] font-semibold text-blue-600 border border-blue-100 hover:border-blue-300 px-2.5 py-1 rounded-lg transition-colors"
               >
-                Voir
+                {ts('seoView')}
               </a>
             </div>
           ))}

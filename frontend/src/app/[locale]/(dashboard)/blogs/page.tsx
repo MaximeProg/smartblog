@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Plus, Newspaper, Mail, Users, ExternalLink, Settings, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { tenantsApi } from '@/lib/api';
@@ -17,13 +18,15 @@ const PLAN_GRADIENTS: Record<string, string> = {
   business: 'from-amber-400 to-orange-500',
 };
 
-const PLAN_LABELS: Record<string, string> = {
-  free: 'Gratuit', starter: 'Starter', pro: 'Pro', business: 'Business',
-};
-
 function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
+  const t  = useTranslations('dashboardPage');
+  const tb = useTranslations('myBlogs');
   const plan     = blog.plan?.toLowerCase() ?? 'free';
   const gradient = PLAN_GRADIENTS[plan] ?? PLAN_GRADIENTS.free;
+
+  const PLAN_LABELS: Record<string, string> = {
+    free: t('planFree'), starter: t('planStarter'), pro: t('planPro'), business: t('planBusiness'),
+  };
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 transition-all overflow-hidden flex flex-col">
@@ -50,9 +53,9 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
 
         <div className="grid grid-cols-3 gap-2">
           {[
-            { icon: Newspaper, val: blog.articles_count ?? 0,    label: 'articles' },
-            { icon: Mail,      val: blog.subscribers_count ?? 0, label: 'abonnés'  },
-            { icon: Users,     val: blog.authors_count ?? 0,     label: 'auteurs'  },
+            { icon: Newspaper, val: blog.articles_count ?? 0,    label: t('blogCardArticles') },
+            { icon: Mail,      val: blog.subscribers_count ?? 0, label: t('blogCardSubscribers') },
+            { icon: Users,     val: blog.authors_count ?? 0,     label: t('blogCardAuthors') },
           ].map(s => (
             <div key={s.label} className="flex flex-col items-center py-2 rounded-lg bg-slate-50 dark:bg-slate-800">
               <span className="text-[15px] font-black text-slate-800 dark:text-slate-200 leading-none">{s.val}</span>
@@ -74,7 +77,7 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
             target="_blank"
             rel="noopener noreferrer"
             className="h-8 w-8 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-all"
-            title="Voir le blog"
+            title={tb('viewBlogTitle')}
           >
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
@@ -89,6 +92,8 @@ export default function BlogsPage() {
   const locale = params.locale as string;
   const router = useRouter();
   const [search, setSearch] = useState('');
+  const t = useTranslations('myBlogs');
+  const tn = useTranslations('nav');
 
   const { data: blogs = [], isLoading } = useQuery({
     queryKey: ['tenants'],
@@ -98,6 +103,12 @@ export default function BlogsPage() {
   const filtered = search.trim()
     ? blogs.filter(b => b.name.toLowerCase().includes(search.toLowerCase()) || b.slug.includes(search.toLowerCase()))
     : blogs;
+
+  const subtitle = blogs.length === 0
+    ? t('noBlogs')
+    : blogs.length === 1
+    ? t('blogsCount', { count: blogs.length })
+    : t('blogsCountPlural', { count: blogs.length });
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
@@ -112,13 +123,9 @@ export default function BlogsPage() {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-[20px] font-black text-slate-900 dark:text-slate-100">Mes blogs</h2>
+                <h2 className="text-[20px] font-black text-slate-900 dark:text-slate-100">{t('title')}</h2>
                 {!isLoading && (
-                  <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-0.5">
-                    {blogs.length === 0
-                      ? 'Aucun blog créé pour le moment.'
-                      : `${blogs.length} blog${blogs.length > 1 ? 's' : ''} créé${blogs.length > 1 ? 's' : ''}`}
-                  </p>
+                  <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>
                 )}
               </div>
               <div className="flex items-center gap-3">
@@ -128,7 +135,7 @@ export default function BlogsPage() {
                     <input
                       value={search}
                       onChange={e => setSearch(e.target.value)}
-                      placeholder="Rechercher…"
+                      placeholder={t('searchPlaceholder')}
                       className="h-9 pl-9 pr-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors w-[200px]"
                     />
                   </div>
@@ -138,7 +145,7 @@ export default function BlogsPage() {
                   className="flex items-center gap-2 h-9 px-4 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors shadow-sm"
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  Nouveau blog
+                  {tn('newBlog')}
                 </button>
               </div>
             </div>
@@ -165,24 +172,24 @@ export default function BlogsPage() {
             ) : filtered.length === 0 && search ? (
               <div className="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700">
                 <Search className="h-10 w-10 text-slate-300 dark:text-slate-600 mb-4" />
-                <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200">Aucun résultat pour «{search}»</p>
-                <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-1">Essayez un autre terme.</p>
+                <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200">{t('noSearchResults', { q: search })}</p>
+                <p className="text-[13px] text-slate-400 dark:text-slate-500 mt-1">{t('noSearchResultsHint')}</p>
               </div>
             ) : blogs.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
                 <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-5">
                   <Newspaper className="h-6 w-6 text-slate-400 dark:text-slate-500" />
                 </div>
-                <h3 className="text-[16px] font-bold text-slate-900 dark:text-slate-100 mb-2">Aucun blog</h3>
+                <h3 className="text-[16px] font-bold text-slate-900 dark:text-slate-100 mb-2">{t('noBlogsTitle')}</h3>
                 <p className="text-[13px] text-slate-500 dark:text-slate-400 max-w-[260px] mb-6 leading-relaxed">
-                  Créez votre premier blog en quelques secondes.
+                  {t('noBlogsQuickDesc')}
                 </p>
                 <button
                   onClick={() => router.push(`/${locale}/onboarding`)}
                   className="flex items-center gap-2 h-10 px-5 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors"
                 >
                   <Plus className="h-4 w-4" />
-                  Créer mon premier blog
+                  {t('noBlogsQuickCta')}
                 </button>
               </div>
             ) : (

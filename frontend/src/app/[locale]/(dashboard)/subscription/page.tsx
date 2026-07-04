@@ -1,105 +1,47 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import { Check, Zap, Star, Building2, Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { useAuthStore } from '@/store/auth.store';
 
-const PLANS = [
-  {
-    id: 'free',
-    name: 'Gratuit',
-    price: 0,
-    icon: Zap,
-    accent: 'text-slate-600',
-    ring:   'ring-slate-200',
-    badge:  null,
-    cta:    'Plan actuel',
-    ctaCls: 'bg-slate-100 text-slate-400 cursor-default',
-    features: [
-      '1 blog',
-      '50 articles',
-      '500 abonnés newsletter',
-      '1 auteur',
-      '1 Go de stockage',
-      'Sous-domaine nexusblog.io',
-      'Template corporate inclus',
-    ],
-  },
-  {
-    id: 'starter',
-    name: 'Starter',
-    price: 9,
-    icon: Star,
-    accent: 'text-indigo-600',
-    ring:   'ring-indigo-300',
-    badge:  'Populaire',
-    badgeCls: 'bg-indigo-600',
-    cta:    'Passer à Starter',
-    ctaCls: 'bg-indigo-600 hover:bg-indigo-700 text-white',
-    features: [
-      '3 blogs',
-      '500 articles',
-      '5 000 abonnés newsletter',
-      '3 auteurs',
-      '5 Go de stockage',
-      'Domaine personnalisé',
-      'Analytics avancés',
-      'Support prioritaire',
-    ],
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: 29,
-    icon: Sparkles,
-    accent: 'text-blue-600',
-    ring:   'ring-blue-400',
-    badge:  'Recommandé',
-    badgeCls: 'bg-blue-600',
-    cta:    'Passer à Pro',
-    ctaCls: 'bg-blue-600 hover:bg-blue-700 text-white',
-    features: [
-      '10 blogs',
-      'Articles illimités',
-      '50 000 abonnés newsletter',
-      '10 auteurs',
-      '50 Go de stockage',
-      'Domaine personnalisé',
-      'Analytics complets + SEO',
-      'API access',
-      'Support dédié',
-    ],
-  },
-  {
-    id: 'business',
-    name: 'Business',
-    price: 99,
-    icon: Building2,
-    accent: 'text-amber-600',
-    ring:   'ring-amber-300',
-    badge:  null,
-    cta:    'Nous contacter',
-    ctaCls: 'bg-amber-600 hover:bg-amber-700 text-white',
-    features: [
-      'Blogs illimités',
-      'Articles illimités',
-      'Abonnés illimités',
-      'Auteurs illimités',
-      'Stockage illimité',
-      'Multi-domaines',
-      'White-label',
-      'SLA garanti',
-      'Onboarding dédié',
-      'Support 24/7',
-    ],
-  },
-];
+const PLAN_GRADIENTS: Record<string, string> = {
+  free:     'ring-slate-200',
+  starter:  'ring-indigo-300',
+  pro:      'ring-blue-400',
+  business: 'ring-amber-300',
+};
+
+const PLAN_ACCENTS: Record<string, string> = {
+  free:     'text-slate-600',
+  starter:  'text-indigo-600',
+  pro:      'text-blue-600',
+  business: 'text-amber-600',
+};
+
+const PLAN_ICONS = { free: Zap, starter: Star, pro: Sparkles, business: Building2 };
+
+const PLAN_CTA_CLS: Record<string, string> = {
+  free:     'bg-slate-100 text-slate-400 cursor-default',
+  starter:  'bg-indigo-600 hover:bg-indigo-700 text-white',
+  pro:      'bg-blue-600 hover:bg-blue-700 text-white',
+  business: 'bg-amber-600 hover:bg-amber-700 text-white',
+};
+
+const PLAN_BADGE_CLS: Record<string, string> = {
+  starter:  'bg-indigo-600',
+  pro:      'bg-blue-600',
+};
+
+const PLAN_PRICES: Record<string, number> = { free: 0, starter: 9, pro: 29, business: 99 };
 
 export default function SubscriptionPage() {
   const { user } = useAuthStore();
+  const t = useTranslations('subscription');
   const currentPlan = user?.plan ?? 'free';
+
+  const PLAN_IDS = ['free', 'starter', 'pro', 'business'] as const;
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
@@ -113,49 +55,55 @@ export default function SubscriptionPage() {
 
             {/* Header */}
             <div className="text-center mb-10">
-              <h2 className="text-[26px] font-black text-slate-900 dark:text-slate-100 mb-2">Choisissez votre plan</h2>
+              <h2 className="text-[26px] font-black text-slate-900 dark:text-slate-100 mb-2">{t('pageTitle')}</h2>
               <p className="text-[14px] text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
-                Démarrez gratuitement et évoluez à votre rythme. Tous les plans incluent le template corporate complet.
+                {t('pageSubtitle')}
               </p>
             </div>
 
             {/* Plans grid */}
             <div className="grid grid-cols-4 gap-5 max-w-6xl mx-auto">
-              {PLANS.map(plan => {
-                const isCurrent = currentPlan === plan.id;
+              {PLAN_IDS.map(planId => {
+                const isCurrent = currentPlan === planId;
+                const price     = PLAN_PRICES[planId];
+                const PlanIcon  = PLAN_ICONS[planId];
+                const planData  = t.raw(`plans.${planId}`) as { name: string; cta: string; badge?: string; features: string[] };
+                const ring      = PLAN_GRADIENTS[planId];
+                const accent    = PLAN_ACCENTS[planId];
+
                 return (
                   <div
-                    key={plan.id}
+                    key={planId}
                     className={`relative bg-white dark:bg-slate-900 rounded-2xl border-2 transition-all flex flex-col p-6 shadow-sm ${
                       isCurrent ? 'border-blue-400 dark:border-blue-600 shadow-blue-50 dark:shadow-blue-900/20 shadow-lg' : 'border-slate-200/80 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-md'
                     }`}
                   >
                     {/* Badge */}
-                    {(plan.badge || isCurrent) && (
+                    {(planData.badge || isCurrent) && (
                       <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                        <span className={`text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-sm ${isCurrent ? 'bg-slate-800 dark:bg-slate-600' : (plan as any).badgeCls ?? 'bg-blue-600'}`}>
-                          {isCurrent ? 'Votre plan' : plan.badge}
+                        <span className={`text-white text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-sm ${isCurrent ? 'bg-slate-800 dark:bg-slate-600' : PLAN_BADGE_CLS[planId] ?? 'bg-blue-600'}`}>
+                          {isCurrent ? t('yourPlan') : planData.badge}
                         </span>
                       </div>
                     )}
 
                     {/* Icon + plan name */}
                     <div className="h-10 w-10 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-4">
-                      <plan.icon className={`h-5 w-5 ${plan.accent}`} />
+                      <PlanIcon className={`h-5 w-5 ${accent}`} />
                     </div>
-                    <h3 className="text-[16px] font-black text-slate-900 dark:text-slate-100 mb-1">{plan.name}</h3>
+                    <h3 className="text-[16px] font-black text-slate-900 dark:text-slate-100 mb-1">{planData.name}</h3>
 
                     {/* Price */}
                     <div className="flex items-baseline gap-1 mb-5">
                       <span className="text-[30px] font-black text-slate-900 dark:text-slate-100">
-                        {plan.price === 0 ? 'Gratuit' : `${plan.price}€`}
+                        {price === 0 ? t('freeLabel') : `${price}€`}
                       </span>
-                      {plan.price > 0 && <span className="text-[13px] text-slate-400 dark:text-slate-500">/mois</span>}
+                      {price > 0 && <span className="text-[13px] text-slate-400 dark:text-slate-500">{t('perMonth')}</span>}
                     </div>
 
                     {/* Features */}
                     <ul className="space-y-2.5 flex-1 mb-6">
-                      {plan.features.map(f => (
+                      {planData.features.map(f => (
                         <li key={f} className="flex items-start gap-2.5">
                           <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
                           <span className="text-[12.5px] text-slate-600 dark:text-slate-400">{f}</span>
@@ -165,10 +113,10 @@ export default function SubscriptionPage() {
 
                     {/* CTA */}
                     <button
-                      className={`w-full h-10 rounded-xl text-[13px] font-bold transition-colors ${isCurrent ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-default' : plan.ctaCls}`}
+                      className={`w-full h-10 rounded-xl text-[13px] font-bold transition-colors ${isCurrent ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-default' : PLAN_CTA_CLS[planId]}`}
                       disabled={isCurrent}
                     >
-                      {isCurrent ? 'Plan actuel' : plan.cta}
+                      {isCurrent ? t('currentPlanButton') : planData.cta}
                     </button>
                   </div>
                 );
@@ -176,7 +124,7 @@ export default function SubscriptionPage() {
             </div>
 
             <p className="text-center text-[12px] text-slate-400 dark:text-slate-500 mt-10">
-              Paiement sécurisé · Annulation possible à tout moment · Pas de frais cachés
+              {t('footerNote')}
             </p>
           </div>
         </main>

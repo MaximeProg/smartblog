@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -28,8 +29,8 @@ const DEFAULT: FooterConfig = {
   navLinks: [{ label: 'Accueil', url: '/' }, { label: 'À propos', url: '/about' }, { label: 'Contact', url: '/contact' }],
   showSocialLinks: true,
   showNewsletterMini: true,
-  newsletterMiniText: 'Recevez nos meilleurs articles chaque semaine.',
-  copyrightText: 'Tous droits réservés.',
+  newsletterMiniText: '',
+  copyrightText: '',
   showPoweredBy: true,
 };
 
@@ -38,6 +39,7 @@ export default function FooterPage() {
   const blogId = params.blogId as string;
   const { toast } = useToast();
   const qc = useQueryClient();
+  const ts = useTranslations('studio');
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
@@ -60,42 +62,42 @@ export default function FooterPage() {
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tenant', blogId] });
-      toast({ title: 'Footer sauvegardé !' });
+      toast({ title: ts('footerSavedToast') });
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la sauvegarde.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
-  const addLink = () => patch(c => ({ ...c, navLinks: [...c.navLinks, { label: 'Nouveau', url: '/' }] }));
+  const addLink = () => patch(c => ({ ...c, navLinks: [...c.navLinks, { label: '', url: '/' }] }));
   const removeLink = (i: number) => patch(c => ({ ...c, navLinks: c.navLinks.filter((_, j) => j !== i) }));
   const updateLink = (i: number, f: 'label' | 'url', v: string) =>
     patch(c => ({ ...c, navLinks: c.navLinks.map((l, j) => j === i ? { ...l, [f]: v } : l) }));
 
   return (
     <BlogStudioShell
-      title="Footer"
-      description="Description, navigation, newsletter mini et copyright."
+      title={ts('pageFooter')}
+      description={ts('pageFooterDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
       saving={mutation.isPending}
       onSave={() => mutation.mutate()}
     >
-      <StudioSection id="brand" title="Colonne marque" defaultOpen>
-        <StudioField label="Description" hint="Texte court affiché sous le logo dans le footer.">
+      <StudioSection id="brand" title={ts('sectionBrand')} defaultOpen>
+        <StudioField label={ts('fieldDescription')} hint={ts('fieldDescriptionFooter')}>
           <StudioInput value={cfg.description} onChange={v => patch(c => ({ ...c, description: v }))} placeholder="Votre blog — insights et analyses." multiline rows={3} />
         </StudioField>
-        <StudioSwitch label="Afficher les réseaux sociaux" description="Icônes des réseaux configurés dans Paramètres généraux." checked={cfg.showSocialLinks} onChange={v => patch(c => ({ ...c, showSocialLinks: v }))} />
+        <StudioSwitch label={ts('switchShowSocialLinks')} description={ts('switchShowSocialFooterDesc')} checked={cfg.showSocialLinks} onChange={v => patch(c => ({ ...c, showSocialLinks: v }))} />
       </StudioSection>
 
-      <StudioSection id="nav" title="Navigation footer" defaultOpen>
-        <StudioSwitch label="Afficher les catégories" description="Liste des catégories du blog dans le footer." checked={cfg.showCategories} onChange={v => patch(c => ({ ...c, showCategories: v }))} />
-        <StudioField label="Liens de navigation">
+      <StudioSection id="nav" title={ts('sectionFooterNav')} defaultOpen>
+        <StudioSwitch label={ts('switchShowCategories')} description={ts('switchShowCategoriesFooterDesc')} checked={cfg.showCategories} onChange={v => patch(c => ({ ...c, showCategories: v }))} />
+        <StudioField label={ts('fieldNavLinks')}>
           <div className="space-y-2">
             {cfg.navLinks.map((link, i) => (
               <div key={i} className="flex gap-2">
                 <input
                   value={link.label}
                   onChange={e => updateLink(i, 'label', e.target.value)}
-                  placeholder="Label"
+                  placeholder={ts('linkLabel')}
                   className="flex-1 h-9 px-3 rounded-lg border border-slate-200 bg-slate-50 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
                 />
                 <input
@@ -111,25 +113,25 @@ export default function FooterPage() {
             ))}
           </div>
           <button onClick={addLink} className="mt-2 flex items-center gap-1.5 text-[12px] font-medium text-blue-600 hover:text-blue-700">
-            <Plus className="h-3.5 w-3.5" /> Ajouter un lien
+            <Plus className="h-3.5 w-3.5" /> {ts('addLink')}
           </button>
         </StudioField>
       </StudioSection>
 
-      <StudioSection id="newsletter" title="Newsletter mini" defaultOpen={false}>
-        <StudioSwitch label="Afficher le formulaire newsletter" checked={cfg.showNewsletterMini} onChange={v => patch(c => ({ ...c, showNewsletterMini: v }))} />
+      <StudioSection id="newsletter" title={ts('sectionFooterNewsletter')} defaultOpen={false}>
+        <StudioSwitch label={ts('switchShowNewsletterForm')} checked={cfg.showNewsletterMini} onChange={v => patch(c => ({ ...c, showNewsletterMini: v }))} />
         {cfg.showNewsletterMini && (
-          <StudioField label="Texte d'accroche">
+          <StudioField label={ts('fieldNewsletterTeaser')}>
             <StudioInput value={cfg.newsletterMiniText} onChange={v => patch(c => ({ ...c, newsletterMiniText: v }))} placeholder="Recevez nos meilleurs articles…" />
           </StudioField>
         )}
       </StudioSection>
 
-      <StudioSection id="copyright" title="Copyright & mentions" defaultOpen={false}>
-        <StudioField label="Texte copyright">
+      <StudioSection id="copyright" title={ts('sectionCopyright')} defaultOpen={false}>
+        <StudioField label={ts('fieldCopyright')}>
           <StudioInput value={cfg.copyrightText} onChange={v => patch(c => ({ ...c, copyrightText: v }))} placeholder="Tous droits réservés." />
         </StudioField>
-        <StudioSwitch label='Mention "Propulsé par NexusBlog"' checked={cfg.showPoweredBy} onChange={v => patch(c => ({ ...c, showPoweredBy: v }))} />
+        <StudioSwitch label={ts('switchPoweredBy')} checked={cfg.showPoweredBy} onChange={v => patch(c => ({ ...c, showPoweredBy: v }))} />
       </StudioSection>
     </BlogStudioShell>
   );

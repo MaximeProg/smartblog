@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -38,20 +39,20 @@ const DEFAULT: HomeConfig = {
   categoriesStrip: { enabled: true, label: 'Explorer' },
   newsletter: {
     enabled: true,
-    title: 'Restez toujours informé',
-    description: 'Rejoignez nos abonnés et recevez chaque semaine nos meilleurs articles.',
-    buttonLabel: "S'abonner",
+    title: '',
+    description: '',
+    buttonLabel: '',
     placeholder: 'votre@email.com',
-    disclaimer: 'Pas de spam · Désabonnement en un clic',
+    disclaimer: '',
   },
   latest: { enabled: true, sectionTitle: 'Derniers articles' },
   sidebar: {
     popularArticles: true,
-    popularTitle: 'Articles populaires',
+    popularTitle: '',
     categories: true,
-    categoriesTitle: 'Catégories',
+    categoriesTitle: '',
     tags: true,
-    tagsTitle: 'Tags',
+    tagsTitle: '',
     newsletterMini: true,
   },
 };
@@ -61,6 +62,7 @@ export default function HomePage() {
   const blogId = params.blogId as string;
   const { toast } = useToast();
   const qc = useQueryClient();
+  const ts = useTranslations('studio');
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
@@ -83,90 +85,90 @@ export default function HomePage() {
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tenant', blogId] });
-      toast({ title: 'Page Accueil sauvegardée !' });
+      toast({ title: ts('homeSavedToast') });
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la sauvegarde.' }),
+    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
   return (
     <BlogStudioShell
-      title="Page Accueil"
-      description="Sections À la une, catégories, newsletter, derniers articles et sidebar."
+      title={ts('pageHome')}
+      description={ts('pageHomeDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
       saving={mutation.isPending}
       onSave={() => mutation.mutate()}
     >
-      <StudioSection id="hero" title="Section À la une" defaultOpen>
-        <StudioSwitch label="Afficher la section" checked={cfg.hero.enabled} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, enabled: v } }))} />
+      <StudioSection id="hero" title={ts('sectionFeatured')} defaultOpen>
+        <StudioSwitch label={ts('switchShowSection')} checked={cfg.hero.enabled} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, enabled: v } }))} />
         {cfg.hero.enabled && (
-          <StudioField label="Titre de la section">
+          <StudioField label={ts('fieldSectionTitle')}>
             <StudioInput value={cfg.hero.sectionTitle} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, sectionTitle: v } }))} placeholder="À la une" />
           </StudioField>
         )}
       </StudioSection>
 
-      <StudioSection id="categories-strip" title="Bande de catégories" defaultOpen>
-        <StudioSwitch label="Afficher la bande" checked={cfg.categoriesStrip.enabled} onChange={v => patch(c => ({ ...c, categoriesStrip: { ...c.categoriesStrip, enabled: v } }))} />
+      <StudioSection id="categories-strip" title={ts('sectionCategoriesStrip')} defaultOpen>
+        <StudioSwitch label={ts('switchShowStrip')} checked={cfg.categoriesStrip.enabled} onChange={v => patch(c => ({ ...c, categoriesStrip: { ...c.categoriesStrip, enabled: v } }))} />
         {cfg.categoriesStrip.enabled && (
-          <StudioField label="Label bouton &quot;Tout voir&quot;">
+          <StudioField label={ts('seeAllLabel')}>
             <StudioInput value={cfg.categoriesStrip.label} onChange={v => patch(c => ({ ...c, categoriesStrip: { ...c.categoriesStrip, label: v } }))} placeholder="Explorer" />
           </StudioField>
         )}
       </StudioSection>
 
-      <StudioSection id="newsletter-band" title="Bande Newsletter" defaultOpen>
-        <StudioSwitch label="Afficher la section newsletter" checked={cfg.newsletter.enabled} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, enabled: v } }))} />
+      <StudioSection id="newsletter-band" title={ts('sectionNewsletterBand')} defaultOpen>
+        <StudioSwitch label={ts('switchShowNewsletterSection')} checked={cfg.newsletter.enabled} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, enabled: v } }))} />
         {cfg.newsletter.enabled && (
           <>
-            <StudioField label="Titre">
+            <StudioField label={ts('fieldTitle')}>
               <StudioInput value={cfg.newsletter.title} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, title: v } }))} placeholder="Restez toujours informé" />
             </StudioField>
-            <StudioField label="Description">
+            <StudioField label={ts('fieldDescription')}>
               <StudioInput value={cfg.newsletter.description} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, description: v } }))} multiline rows={2} placeholder="Rejoignez nos abonnés…" />
             </StudioField>
-            <StudioField label="Texte du bouton">
+            <StudioField label={ts('fieldButtonText')}>
               <StudioInput value={cfg.newsletter.buttonLabel} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, buttonLabel: v } }))} placeholder="S'abonner" />
             </StudioField>
-            <StudioField label="Placeholder email">
+            <StudioField label={ts('fieldEmailPlaceholder')}>
               <StudioInput value={cfg.newsletter.placeholder} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, placeholder: v } }))} placeholder="votre@email.com" />
             </StudioField>
-            <StudioField label="Texte de rassurance">
+            <StudioField label={ts('fieldReassuranceText')}>
               <StudioInput value={cfg.newsletter.disclaimer} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, disclaimer: v } }))} placeholder="Pas de spam…" />
             </StudioField>
           </>
         )}
       </StudioSection>
 
-      <StudioSection id="latest" title="Derniers articles" defaultOpen>
-        <StudioSwitch label="Afficher la grille d'articles" checked={cfg.latest.enabled} onChange={v => patch(c => ({ ...c, latest: { ...c.latest, enabled: v } }))} />
+      <StudioSection id="latest" title={ts('sectionLatest')} defaultOpen>
+        <StudioSwitch label={ts('switchShowArticlesGrid')} checked={cfg.latest.enabled} onChange={v => patch(c => ({ ...c, latest: { ...c.latest, enabled: v } }))} />
         {cfg.latest.enabled && (
-          <StudioField label="Titre de la section">
+          <StudioField label={ts('fieldSectionTitle')}>
             <StudioInput value={cfg.latest.sectionTitle} onChange={v => patch(c => ({ ...c, latest: { ...c.latest, sectionTitle: v } }))} placeholder="Derniers articles" />
           </StudioField>
         )}
       </StudioSection>
 
-      <StudioSection id="sidebar" title="Sidebar latérale" defaultOpen={false}>
-        <StudioSwitch label="Articles populaires" checked={cfg.sidebar.popularArticles} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, popularArticles: v } }))} />
+      <StudioSection id="sidebar" title={ts('sectionSidebar')} defaultOpen={false}>
+        <StudioSwitch label={ts('switchPopularArticles')} checked={cfg.sidebar.popularArticles} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, popularArticles: v } }))} />
         {cfg.sidebar.popularArticles && (
-          <StudioField label="Titre du bloc">
+          <StudioField label={ts('fieldBlockTitle')}>
             <StudioInput value={cfg.sidebar.popularTitle} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, popularTitle: v } }))} placeholder="Articles populaires" />
           </StudioField>
         )}
-        <StudioSwitch label="Catégories" checked={cfg.sidebar.categories} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, categories: v } }))} />
+        <StudioSwitch label={ts('switchCategories')} checked={cfg.sidebar.categories} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, categories: v } }))} />
         {cfg.sidebar.categories && (
-          <StudioField label="Titre du bloc">
+          <StudioField label={ts('fieldBlockTitle')}>
             <StudioInput value={cfg.sidebar.categoriesTitle} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, categoriesTitle: v } }))} placeholder="Catégories" />
           </StudioField>
         )}
-        <StudioSwitch label="Tags" checked={cfg.sidebar.tags} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, tags: v } }))} />
+        <StudioSwitch label={ts('switchTags')} checked={cfg.sidebar.tags} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, tags: v } }))} />
         {cfg.sidebar.tags && (
-          <StudioField label="Titre du bloc">
+          <StudioField label={ts('fieldBlockTitle')}>
             <StudioInput value={cfg.sidebar.tagsTitle} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, tagsTitle: v } }))} placeholder="Tags" />
           </StudioField>
         )}
-        <StudioSwitch label="Mini newsletter" checked={cfg.sidebar.newsletterMini} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, newsletterMini: v } }))} />
+        <StudioSwitch label={ts('switchMiniNewsletter')} checked={cfg.sidebar.newsletterMini} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, newsletterMini: v } }))} />
       </StudioSection>
     </BlogStudioShell>
   );
