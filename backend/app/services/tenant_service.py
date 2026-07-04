@@ -239,9 +239,24 @@ async def delete_tenant(db: AsyncSession, tenant_id: uuid.UUID) -> None:
 
 async def get_user_tenants(db: AsyncSession, user_id: uuid.UUID) -> list[dict]:
     """Retourne tous les tenants d'un utilisateur avec son rôle."""
+    from app.models.article import Article
+    from app.models.enums import ArticleStatus
+
+    # Subquery: real published article count per tenant (avoids stale cached counter)
+    published_sq = (
+        select(Article.tenant_id, func.count().label("cnt"))
+        .where(
+            Article.status == ArticleStatus.PUBLISHED,
+            Article.deleted_at.is_(None),
+        )
+        .group_by(Article.tenant_id)
+        .subquery()
+    )
+
     result = await db.execute(
-        select(Tenant, TenantUser.role)
+        select(Tenant, TenantUser.role, func.coalesce(published_sq.c.cnt, 0).label("real_articles_count"))
         .join(TenantUser, TenantUser.tenant_id == Tenant.id)
+        .outerjoin(published_sq, published_sq.c.tenant_id == Tenant.id)
         .where(
             TenantUser.user_id == user_id,
             Tenant.deleted_at.is_(None),
@@ -259,11 +274,11 @@ async def get_user_tenants(db: AsyncSession, user_id: uuid.UUID) -> list[dict]:
             "plan": t.plan,
             "status": t.status,
             "role": role,
-            "articles_count": t.articles_count,
+            "articles_count": real_articles_count,
             "subscribers_count": t.subscribers_count,
             "authors_count": t.authors_count,
         }
-        for t, role in rows
+        for t, role, real_articles_count in rows
     ]
 
 

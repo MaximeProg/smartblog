@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
-import { Loader2, ArrowRight, CheckCircle2, Globe, Palette, ArrowLeft, ImageIcon, Link2, X } from 'lucide-react';
+import {
+  Loader2, ArrowRight, CheckCircle2, Globe, Palette,
+  ArrowLeft, ImageIcon, Link2, X, Upload,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/auth.store';
-import { tenantsApi } from '@/lib/api';
+import { tenantsApi, mediaApi } from '@/lib/api';
 import { slugify } from '@/lib/utils';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
@@ -24,23 +27,34 @@ const COLORS = [
   { hex: '#334155', label: 'Slate'  },
 ];
 
-export default function OnboardingPage() {
+type CoverTab = 'upload' | 'url';
+
+export default function CreateBlogPage() {
   const params = useParams();
   const locale = params.locale as string;
   const router = useRouter();
   const { user, addTenant, setCurrentTenant } = useAuthStore();
   const t = useTranslations('onboarding');
 
+  // ── Form state ─────────────────────────────────────────────────────
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [slugManual, setSlugManual] = useState(false);
   const [color, setColor] = useState('#2563eb');
   const [slugError, setSlugError] = useState('');
   const [description, setDescription] = useState('');
-  const [coverUrl, setCoverUrl] = useState('');
-  const [coverInput, setCoverInput] = useState('');
-  const [coverPreviewError, setCoverPreviewError] = useState(false);
 
+  // ── Cover image state ───────────────────────────────────────────────
+  const [coverTab, setCoverTab] = useState<CoverTab>('upload');
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverFilePreview, setCoverFilePreview] = useState('');   // object URL
+  const [coverUrl, setCoverUrl] = useState('');                   // confirmed URL
+  const [coverUrlInput, setCoverUrlInput] = useState('');
+  const [coverPreviewError, setCoverPreviewError] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // ── Helpers ─────────────────────────────────────────────────────────
   const handleNameChange = (v: string) => {
     setName(v);
     if (!slugManual) setSlug(slugify(v));
@@ -52,71 +66,124 @@ export default function OnboardingPage() {
     setSlugError('');
   };
 
-  function handleCoverConfirm() {
-    const url = coverInput.trim();
-    if (!url) return;
-    setCoverUrl(url);
-    setCoverInput('');
+  function applyFile(file: File) {
+    if (!file.type.startsWith('image/')) return;
+    if (coverFilePreview) URL.revokeObjectURL(coverFilePreview);
+    const preview = URL.createObjectURL(file);
+    setCoverFile(file);
+    setCoverFilePreview(preview);
+    setCoverUrl('');
     setCoverPreviewError(false);
   }
 
+  function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) applyFile(file);
+    e.target.value = '';
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) applyFile(file);
+  }
+
+  function handleUrlConfirm() {
+    const url = coverUrlInput.trim();
+    if (!url) return;
+    setCoverUrl(url);
+    setCoverFile(null);
+    setCoverFilePreview('');
+    setCoverUrlInput('');
+    setCoverPreviewError(false);
+  }
+
+  function clearCover() {
+    if (coverFilePreview) URL.revokeObjectURL(coverFilePreview);
+    setCoverFile(null);
+    setCoverFilePreview('');
+    setCoverUrl('');
+    setCoverPreviewError(false);
+  }
+
+  // Preview source: local object URL (file) or remote URL
+  const previewSrc = coverFilePreview || coverUrl;
+  const hasCover = Boolean(previewSrc) && !coverPreviewError;
+
+  // ── Mutation ─────────────────────────────────────────────────────────
   const mutation = useMutation({
-    mutationFn: () => tenantsApi.create({
-      name: name.trim(),
-      slug: slug.trim(),
-      primary_color: color,
-      description: description.trim() || undefined,
-      cover_image_url: coverUrl || undefined,
-      theme: 'corporate',
-      language: locale,
-      template_config: {
-        header: {
-          topBar: { enabled: true, showDate: true, showSocial: true, showNewsletter: true, showRss: true },
-          subscribe: { enabled: true, label: "S'abonner" },
-          nav: { links: [{ label: 'Accueil', url: '/' }, { label: 'À propos', url: '/about' }, { label: 'Contact', url: '/contact' }] },
-        },
-        footer: {
-          description: `${name} — analyses et insights pour les professionnels.`,
-          showCategories: true,
-          navLinks: [{ label: 'Accueil', url: '/' }, { label: 'À propos', url: '/about' }, { label: 'Contact', url: '/contact' }, { label: 'Flux RSS', url: '/rss.xml' }],
-          showSocialLinks: true,
-          showNewsletterMini: true,
-          newsletterMiniText: 'Recevez nos meilleurs articles chaque semaine.',
-          copyrightText: 'Tous droits réservés.',
-          showPoweredBy: true,
-        },
-        home: {
-          hero: { enabled: true, sectionTitle: 'À la une' },
-          categoriesStrip: { enabled: true, label: 'Explorer' },
-          newsletter: { enabled: true, title: 'Restez toujours informé', description: 'Rejoignez nos abonnés et recevez chaque semaine nos meilleurs articles directement dans votre boîte mail.', buttonLabel: "S'abonner", placeholder: 'votre@email.com', disclaimer: 'Pas de spam · Désabonnement en un clic' },
-          latest: { enabled: true, sectionTitle: 'Derniers articles' },
-          sidebar: { popularArticles: true, popularTitle: 'Articles populaires', categories: true, categoriesTitle: 'Catégories', tags: true, tagsTitle: 'Tags', newsletterMini: true },
-        },
-        about: {
-          hero: { enabled: true, title: `À propos de ${name}`, subtitle: 'À propos', description: 'Découvrez notre histoire, notre mission et notre équipe.' },
-          stats: { enabled: true, items: [{ value: '0', label: 'Articles' }, { value: '0', label: 'Abonnés' }] },
-          mission: { enabled: true, title: 'Notre mission', description: 'Partager des insights de qualité avec nos lecteurs.' },
-          values: { enabled: true, title: 'Nos valeurs', items: [{ icon: '🎯', title: 'Expertise', description: 'Des contenus rédigés par des experts.' }] },
-          team: { enabled: false, title: 'Notre équipe', members: [] },
-          cta: { enabled: true, title: 'Rejoignez notre communauté', description: 'Abonnez-vous pour ne rien manquer.', primaryLabel: "S'abonner", secondaryLabel: 'Nos articles' },
-        },
-        contact: {
-          hero: { enabled: true, title: 'Prenons contact', subtitle: 'Contact', description: 'Une question ? Contactez-nous.' },
-          form: { enabled: true, title: 'Envoyez-nous un message', namePlaceholder: 'Votre nom', emailPlaceholder: 'votre@email.com', subjectPlaceholder: 'Sujet', messagePlaceholder: 'Votre message…', submitLabel: 'Envoyer', successMessage: 'Message envoyé, merci !' },
-          info: { enabled: true, title: 'Contact', email: '', responseTime: 'Réponse sous 48h', showAddress: false, address: '' },
-          faq: { enabled: false, title: 'FAQ', items: [] },
-        },
-        article: {
-          progressBar: { enabled: true },
-          tableOfContents: { enabled: true, title: 'Dans cet article', minHeadings: 3 },
-          share: { enabled: true, title: 'Partager', platforms: { twitter: true, linkedin: true, facebook: true, copyLink: true } },
-          authorBio: { enabled: true, title: "À propos de l'auteur" },
-          comments: { enabled: false, provider: 'none' },
-          relatedArticles: { enabled: true, title: 'Articles similaires', count: 3 },
-        },
-      } as any,
-    } as any),
-    onSuccess: ({ data }) => {
+    mutationFn: async () => {
+      // Step 1: create the blog
+      const { data } = await tenantsApi.create({
+        name: name.trim(),
+        slug: slug.trim(),
+        primary_color: color,
+        description: description.trim() || undefined,
+        cover_image_url: coverUrl || undefined,
+        theme: 'corporate',
+        language: locale,
+        template_config: {
+          header: {
+            topBar: { enabled: true, showDate: true, showSocial: true, showNewsletter: true, showRss: true },
+            subscribe: { enabled: true, label: "S'abonner" },
+            nav: { links: [{ label: 'Accueil', url: '/' }, { label: 'À propos', url: '/about' }, { label: 'Contact', url: '/contact' }] },
+          },
+          footer: {
+            description: `${name} — analyses et insights pour les professionnels.`,
+            showCategories: true,
+            navLinks: [{ label: 'Accueil', url: '/' }, { label: 'À propos', url: '/about' }, { label: 'Contact', url: '/contact' }, { label: 'Flux RSS', url: '/rss.xml' }],
+            showSocialLinks: true,
+            showNewsletterMini: true,
+            newsletterMiniText: 'Recevez nos meilleurs articles chaque semaine.',
+            copyrightText: 'Tous droits réservés.',
+            showPoweredBy: true,
+          },
+          home: {
+            hero: { enabled: true, sectionTitle: 'À la une' },
+            categoriesStrip: { enabled: true, label: 'Explorer' },
+            newsletter: { enabled: true, title: 'Restez toujours informé', description: 'Rejoignez nos abonnés et recevez chaque semaine nos meilleurs articles directement dans votre boîte mail.', buttonLabel: "S'abonner", placeholder: 'votre@email.com', disclaimer: 'Pas de spam · Désabonnement en un clic' },
+            latest: { enabled: true, sectionTitle: 'Derniers articles' },
+            sidebar: { popularArticles: true, popularTitle: 'Articles populaires', categories: true, categoriesTitle: 'Catégories', tags: true, tagsTitle: 'Tags', newsletterMini: true },
+          },
+          about: {
+            hero: { enabled: true, title: `À propos de ${name}`, subtitle: 'À propos', description: 'Découvrez notre histoire, notre mission et notre équipe.' },
+            stats: { enabled: true, items: [{ value: '0', label: 'Articles' }, { value: '0', label: 'Abonnés' }] },
+            mission: { enabled: true, title: 'Notre mission', description: 'Partager des insights de qualité avec nos lecteurs.' },
+            values: { enabled: true, title: 'Nos valeurs', items: [{ icon: '🎯', title: 'Expertise', description: 'Des contenus rédigés par des experts.' }] },
+            team: { enabled: false, title: 'Notre équipe', members: [] },
+            cta: { enabled: true, title: 'Rejoignez notre communauté', description: 'Abonnez-vous pour ne rien manquer.', primaryLabel: "S'abonner", secondaryLabel: 'Nos articles' },
+          },
+          contact: {
+            hero: { enabled: true, title: 'Prenons contact', subtitle: 'Contact', description: 'Une question ? Contactez-nous.' },
+            form: { enabled: true, title: 'Envoyez-nous un message', namePlaceholder: 'Votre nom', emailPlaceholder: 'votre@email.com', subjectPlaceholder: 'Sujet', messagePlaceholder: 'Votre message…', submitLabel: 'Envoyer', successMessage: 'Message envoyé, merci !' },
+            info: { enabled: true, title: 'Contact', email: '', responseTime: 'Réponse sous 48h', showAddress: false, address: '' },
+            faq: { enabled: false, title: 'FAQ', items: [] },
+          },
+          article: {
+            progressBar: { enabled: true },
+            tableOfContents: { enabled: true, title: 'Dans cet article', minHeadings: 3 },
+            share: { enabled: true, title: 'Partager', platforms: { twitter: true, linkedin: true, facebook: true, copyLink: true } },
+            authorBio: { enabled: true, title: "À propos de l'auteur" },
+            comments: { enabled: false, provider: 'none' },
+            relatedArticles: { enabled: true, title: 'Articles similaires', count: 3 },
+          },
+        } as any,
+      } as any);
+
+      // Step 2: if a local file was picked, upload it and patch the tenant
+      if (coverFile) {
+        try {
+          const upload = await mediaApi.upload(data.id, coverFile);
+          await tenantsApi.update(data.id, { cover_image_url: upload.data.cloudinary_secure_url });
+        } catch {
+          // Non-fatal: blog is created, cover can be set later in studio
+        }
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
       const tenant: TenantInfo = { id: data.id, name: data.name, slug: data.slug, plan: data.plan, role: 'tenant_admin' };
       addTenant(tenant);
       setCurrentTenant(data.id);
@@ -131,6 +198,7 @@ export default function OnboardingPage() {
 
   const canSubmit = name.trim().length >= 2 && slug.length >= 3 && !mutation.isPending;
 
+  // ── Render ────────────────────────────────────────────────────────────
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
       <DashboardSidebar />
@@ -148,7 +216,7 @@ export default function OnboardingPage() {
                 className="inline-flex items-center gap-1.5 text-[12px] text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors mb-4"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
-                {t('backToDashboard') || 'Back to dashboard'}
+                {t('backToDashboard')}
               </Link>
               <h1 className="text-[22px] font-black text-slate-900 dark:text-slate-100">{t('quickTitle')}</h1>
               <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1">
@@ -217,52 +285,134 @@ export default function OnboardingPage() {
                 {/* Cover image */}
                 <div>
                   <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                    <ImageIcon className="h-3 w-3" /> {t('quickCoverLabel')} <span className="font-normal normal-case">{t('quickCoverOptional')}</span>
+                    <ImageIcon className="h-3 w-3" />
+                    {t('quickCoverLabel')}
+                    <span className="font-normal normal-case text-slate-400">{t('quickCoverOptional')}</span>
                   </label>
 
-                  {coverUrl && !coverPreviewError ? (
+                  {/* Preview */}
+                  {hasCover ? (
                     <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group" style={{ paddingBottom: '40%' }}>
                       <img
-                        src={coverUrl}
+                        src={previewSrc}
                         alt="Cover"
                         className="absolute inset-0 w-full h-full object-cover"
                         onError={() => setCoverPreviewError(true)}
                       />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors" />
                       <button
                         type="button"
-                        onClick={() => { setCoverUrl(''); setCoverPreviewError(false); }}
-                        className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-colors opacity-0 group-hover:opacity-100"
+                        onClick={clearCover}
+                        className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-black/50 hover:bg-black/80 flex items-center justify-center text-white transition-colors opacity-0 group-hover:opacity-100"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
+                      {coverFile && (
+                        <span className="absolute bottom-2 left-2 text-[10px] font-medium bg-black/50 text-white rounded px-1.5 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity max-w-[80%] truncate">
+                          {coverFile.name}
+                        </span>
+                      )}
                     </div>
                   ) : (
-                    <div className="flex gap-2">
-                      <div className="flex-1 flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 overflow-hidden">
-                        <span className="flex items-center pl-3 shrink-0">
-                          <Link2 className="h-3.5 w-3.5 text-slate-400" />
-                        </span>
-                        <input
-                          type="url"
-                          value={coverInput}
-                          onChange={e => setCoverInput(e.target.value)}
-                          onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleCoverConfirm(); } }}
-                          placeholder={t('quickCoverPlaceholder')}
-                          className="flex-1 h-10 px-2 text-[12px] font-mono bg-transparent outline-none text-slate-800 dark:text-slate-200 placeholder-slate-400"
-                        />
+                    <>
+                      {/* Tabs */}
+                      <div className="flex rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden mb-3">
+                        <button
+                          type="button"
+                          onClick={() => setCoverTab('upload')}
+                          className={`flex-1 flex items-center justify-center gap-1.5 h-8 text-[11px] font-semibold transition-colors ${
+                            coverTab === 'upload'
+                              ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
+                              : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                          }`}
+                        >
+                          <Upload className="h-3 w-3" /> Depuis l'ordinateur
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCoverTab('url')}
+                          className={`flex-1 flex items-center justify-center gap-1.5 h-8 text-[11px] font-semibold transition-colors border-l border-slate-200 dark:border-slate-700 ${
+                            coverTab === 'url'
+                              ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
+                              : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+                          }`}
+                        >
+                          <Link2 className="h-3 w-3" /> URL directe
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={handleCoverConfirm}
-                        disabled={!coverInput.trim()}
-                        className="h-10 px-4 rounded-xl bg-slate-800 dark:bg-slate-200 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[11px] font-bold disabled:opacity-40 transition-colors"
-                      >
-                        OK
-                      </button>
-                    </div>
-                  )}
-                  {coverPreviewError && (
-                    <p className="text-[11px] text-red-500 mt-1.5">{t('quickCoverError')}</p>
+
+                      {/* Upload tab — drag-and-drop zone */}
+                      {coverTab === 'upload' && (
+                        <div>
+                          <input
+                            ref={fileRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileInput}
+                            className="sr-only"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            onDragOver={e => { e.preventDefault(); setDragging(true); }}
+                            onDragLeave={() => setDragging(false)}
+                            onDrop={handleDrop}
+                            className={`w-full rounded-xl border-2 border-dashed transition-all ${
+                              dragging
+                                ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20 scale-[0.99]'
+                                : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-slate-100 dark:hover:bg-slate-800'
+                            }`}
+                            style={{ paddingBottom: '35%', position: 'relative' }}
+                          >
+                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-4">
+                              <div className={`h-11 w-11 rounded-xl flex items-center justify-center transition-colors ${dragging ? 'bg-blue-100 dark:bg-blue-900/40' : 'bg-white dark:bg-slate-700 shadow-sm'}`}>
+                                {dragging
+                                  ? <ImageIcon className="h-5 w-5 text-blue-500" />
+                                  : <Upload className="h-5 w-5 text-slate-400 dark:text-slate-500" />
+                                }
+                              </div>
+                              <div className="text-center">
+                                <p className="text-[12.5px] font-semibold text-slate-700 dark:text-slate-300">
+                                  {dragging ? 'Déposez l'image ici' : 'Cliquez ou glissez une image'}
+                                </p>
+                                <p className="text-[10.5px] text-slate-400 dark:text-slate-500 mt-0.5">
+                                  JPG, PNG, WebP — max 10 Mo
+                                </p>
+                              </div>
+                            </div>
+                          </button>
+                        </div>
+                      )}
+
+                      {/* URL tab */}
+                      {coverTab === 'url' && (
+                        <div className="flex gap-2">
+                          <div className="flex-1 flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 overflow-hidden px-3">
+                            <Link2 className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                            <input
+                              type="url"
+                              value={coverUrlInput}
+                              onChange={e => setCoverUrlInput(e.target.value)}
+                              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleUrlConfirm(); } }}
+                              placeholder={t('quickCoverPlaceholder')}
+                              className="flex-1 h-10 text-[12px] font-mono bg-transparent outline-none text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleUrlConfirm}
+                            disabled={!coverUrlInput.trim()}
+                            className="h-10 px-4 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[11px] font-bold disabled:opacity-40 transition-colors shrink-0"
+                          >
+                            OK
+                          </button>
+                        </div>
+                      )}
+
+                      {coverPreviewError && (
+                        <p className="text-[11px] text-red-500 mt-1.5">{t('quickCoverError')}</p>
+                      )}
+                    </>
                   )}
                 </div>
 
@@ -315,7 +465,7 @@ export default function OnboardingPage() {
                     href={`/${locale}/dashboard`}
                     className="h-11 px-5 rounded-xl text-[13px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center transition-colors"
                   >
-                    Cancel
+                    Annuler
                   </Link>
                 </div>
 
@@ -330,7 +480,7 @@ export default function OnboardingPage() {
             {/* Info box */}
             <div className="mt-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-xl px-4 py-3">
               <p className="text-[12px] text-blue-600 dark:text-blue-400 leading-relaxed">
-                You can customize your blog's appearance, pages, and settings after creation in the Studio.
+                Vous pourrez personnaliser l'apparence, les pages et les paramètres de votre blog dans le Studio après sa création.
               </p>
             </div>
           </div>
