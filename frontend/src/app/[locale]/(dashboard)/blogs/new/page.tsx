@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
-import { Loader2, ArrowRight, CheckCircle2, Globe, Palette, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowRight, CheckCircle2, Globe, Palette, ArrowLeft, ImageIcon, Link2, X } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/auth.store';
@@ -36,6 +36,10 @@ export default function OnboardingPage() {
   const [slugManual, setSlugManual] = useState(false);
   const [color, setColor] = useState('#2563eb');
   const [slugError, setSlugError] = useState('');
+  const [description, setDescription] = useState('');
+  const [coverUrl, setCoverUrl] = useState('');
+  const [coverInput, setCoverInput] = useState('');
+  const [coverPreviewError, setCoverPreviewError] = useState(false);
 
   const handleNameChange = (v: string) => {
     setName(v);
@@ -48,11 +52,21 @@ export default function OnboardingPage() {
     setSlugError('');
   };
 
+  function handleCoverConfirm() {
+    const url = coverInput.trim();
+    if (!url) return;
+    setCoverUrl(url);
+    setCoverInput('');
+    setCoverPreviewError(false);
+  }
+
   const mutation = useMutation({
     mutationFn: () => tenantsApi.create({
       name: name.trim(),
       slug: slug.trim(),
       primary_color: color,
+      description: description.trim() || undefined,
+      cover_image_url: coverUrl || undefined,
       theme: 'corporate',
       language: locale,
       template_config: {
@@ -183,6 +197,72 @@ export default function OnboardingPage() {
                   {slugError && <p className="text-[11px] text-red-500 mt-1.5">{slugError}</p>}
                   {slug && !slugError && (
                     <p className="text-[11px] text-slate-400 mt-1.5 font-mono">nexusblog.io/{slug}</p>
+                  )}
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">
+                    {t('quickDescriptionLabel')} <span className="font-normal normal-case text-slate-400">{t('quickCoverOptional')}</span>
+                  </label>
+                  <textarea
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    placeholder={t('quickDescriptionPlaceholder')}
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors resize-none"
+                  />
+                </div>
+
+                {/* Cover image */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                    <ImageIcon className="h-3 w-3" /> {t('quickCoverLabel')} <span className="font-normal normal-case">{t('quickCoverOptional')}</span>
+                  </label>
+
+                  {coverUrl && !coverPreviewError ? (
+                    <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group" style={{ paddingBottom: '40%' }}>
+                      <img
+                        src={coverUrl}
+                        alt="Cover"
+                        className="absolute inset-0 w-full h-full object-cover"
+                        onError={() => setCoverPreviewError(true)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => { setCoverUrl(''); setCoverPreviewError(false); }}
+                        className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-black/50 hover:bg-black/70 flex items-center justify-center text-white transition-colors opacity-0 group-hover:opacity-100"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <div className="flex-1 flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 overflow-hidden">
+                        <span className="flex items-center pl-3 shrink-0">
+                          <Link2 className="h-3.5 w-3.5 text-slate-400" />
+                        </span>
+                        <input
+                          type="url"
+                          value={coverInput}
+                          onChange={e => setCoverInput(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleCoverConfirm(); } }}
+                          placeholder={t('quickCoverPlaceholder')}
+                          className="flex-1 h-10 px-2 text-[12px] font-mono bg-transparent outline-none text-slate-800 dark:text-slate-200 placeholder-slate-400"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCoverConfirm}
+                        disabled={!coverInput.trim()}
+                        className="h-10 px-4 rounded-xl bg-slate-800 dark:bg-slate-200 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[11px] font-bold disabled:opacity-40 transition-colors"
+                      >
+                        OK
+                      </button>
+                    </div>
+                  )}
+                  {coverPreviewError && (
+                    <p className="text-[11px] text-red-500 mt-1.5">{t('quickCoverError')}</p>
                   )}
                 </div>
 

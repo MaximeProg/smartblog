@@ -43,6 +43,7 @@ import type {
   CommentListItem,
   CommentStats,
   CommentStatus,
+  NotificationItem,
 } from '@/types';
 
 const API_URL =
@@ -159,6 +160,8 @@ export const authApi = {
 
   updateProfile: (data: { display_name?: string; bio?: string }) =>
     api.patch<UserInfo>('/auth/me', data),
+
+  notifications: () => api.get<NotificationItem[]>('/auth/me/notifications'),
 };
 
 // ─── Tenants ──────────────────────────────────────────────────────────────────

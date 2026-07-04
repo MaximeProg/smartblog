@@ -186,7 +186,6 @@
       "viewOnline": "View online"
     },
     "newArticle": "New article",
-    "noArticles": "No articles yet",
     "noArticlesDesc": "Start writing to fill your blog.",
     "noResults": "No results",
     "noResultsDesc": "Try different filters.",
@@ -941,8 +940,6 @@
     "unsavedChanges": "You have unsaved changes.",
     "saveChanges": "Save changes",
     "saving": "Saving...",
-    "saved": "Appearance saved!",
-    "save": "Save",
     "themes": {
       "minimal": "Clean, content-focused",
       "magazine": "Modern editorial style",
@@ -1109,24 +1106,62 @@
       "free": {
         "name": "Free",
         "cta": "Current plan",
-        "features": ["1 blog", "50 articles", "500 newsletter subscribers", "1 author", "1 GB storage", "nexusblog.io subdomain", "Corporate template included"]
+        "features": [
+          "1 blog",
+          "50 articles",
+          "500 newsletter subscribers",
+          "1 author",
+          "1 GB storage",
+          "nexusblog.io subdomain",
+          "Corporate template included"
+        ]
       },
       "starter": {
         "name": "Starter",
         "badge": "Popular",
         "cta": "Switch to Starter",
-        "features": ["3 blogs", "500 articles", "5,000 newsletter subscribers", "3 authors", "5 GB storage", "Custom domain", "Advanced analytics", "Priority support"]
+        "features": [
+          "3 blogs",
+          "500 articles",
+          "5,000 newsletter subscribers",
+          "3 authors",
+          "5 GB storage",
+          "Custom domain",
+          "Advanced analytics",
+          "Priority support"
+        ]
       },
       "pro": {
         "name": "Pro",
         "badge": "Recommended",
         "cta": "Switch to Pro",
-        "features": ["10 blogs", "Unlimited articles", "50,000 newsletter subscribers", "10 authors", "50 GB storage", "Custom domain", "Full analytics + SEO", "API access", "Dedicated support"]
+        "features": [
+          "10 blogs",
+          "Unlimited articles",
+          "50,000 newsletter subscribers",
+          "10 authors",
+          "50 GB storage",
+          "Custom domain",
+          "Full analytics + SEO",
+          "API access",
+          "Dedicated support"
+        ]
       },
       "business": {
         "name": "Business",
         "cta": "Contact us",
-        "features": ["Unlimited blogs", "Unlimited articles", "Unlimited subscribers", "Unlimited authors", "Unlimited storage", "Multi-domain", "White-label", "Guaranteed SLA", "Dedicated onboarding", "24/7 support"]
+        "features": [
+          "Unlimited blogs",
+          "Unlimited articles",
+          "Unlimited subscribers",
+          "Unlimited authors",
+          "Unlimited storage",
+          "Multi-domain",
+          "White-label",
+          "Guaranteed SLA",
+          "Dedicated onboarding",
+          "24/7 support"
+        ]
       }
     }
   },
@@ -1576,7 +1611,9 @@
     "quickCreating": "Creating…",
     "quickCreate": "Create my blog",
     "quickSuccess": "Blog created! Redirecting…",
-    "quickSlugTaken": "This slug is already taken, please choose another."
+    "quickSlugTaken": "This slug is already taken, please choose another.",
+    "quickDescriptionLabel": "Description",
+    "quickDescriptionPlaceholder": "A blog about tech, design and entrepreneurship..."
   },
   "profile": {
     "personalInfo": "Personal information",

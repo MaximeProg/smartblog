@@ -160,7 +160,7 @@
     "subtitle": "Gérez vos articles de blog",
     "createButton": "Nouvel article",
     "searchPlaceholder": "Rechercher des articles...",
-    "noArticles": "Aucun article pour l'instant",
+    "noArticles": "Pas encore d'articles",
     "noArticlesDescription": "Rédigez votre premier article pour commencer",
     "table": {
       "title": "Titre",
@@ -186,7 +186,6 @@
       "viewOnline": "Voir en ligne"
     },
     "newArticle": "Nouvel article",
-    "noArticles": "Pas encore d'articles",
     "noArticlesDesc": "Commencez à écrire pour alimenter votre blog.",
     "noResults": "Aucun résultat",
     "noResultsDesc": "Essayez d'autres filtres.",
@@ -1097,24 +1096,62 @@
       "free": {
         "name": "Gratuit",
         "cta": "Plan actuel",
-        "features": ["1 blog", "50 articles", "500 abonnés newsletter", "1 auteur", "1 Go de stockage", "Sous-domaine nexusblog.io", "Template corporate inclus"]
+        "features": [
+          "1 blog",
+          "50 articles",
+          "500 abonnés newsletter",
+          "1 auteur",
+          "1 Go de stockage",
+          "Sous-domaine nexusblog.io",
+          "Template corporate inclus"
+        ]
       },
       "starter": {
         "name": "Starter",
         "badge": "Populaire",
         "cta": "Passer à Starter",
-        "features": ["3 blogs", "500 articles", "5 000 abonnés newsletter", "3 auteurs", "5 Go de stockage", "Domaine personnalisé", "Analytics avancés", "Support prioritaire"]
+        "features": [
+          "3 blogs",
+          "500 articles",
+          "5 000 abonnés newsletter",
+          "3 auteurs",
+          "5 Go de stockage",
+          "Domaine personnalisé",
+          "Analytics avancés",
+          "Support prioritaire"
+        ]
       },
       "pro": {
         "name": "Pro",
         "badge": "Recommandé",
         "cta": "Passer à Pro",
-        "features": ["10 blogs", "Articles illimités", "50 000 abonnés newsletter", "10 auteurs", "50 Go de stockage", "Domaine personnalisé", "Analytics complets + SEO", "API access", "Support dédié"]
+        "features": [
+          "10 blogs",
+          "Articles illimités",
+          "50 000 abonnés newsletter",
+          "10 auteurs",
+          "50 Go de stockage",
+          "Domaine personnalisé",
+          "Analytics complets + SEO",
+          "API access",
+          "Support dédié"
+        ]
       },
       "business": {
         "name": "Business",
         "cta": "Nous contacter",
-        "features": ["Blogs illimités", "Articles illimités", "Abonnés illimités", "Auteurs illimités", "Stockage illimité", "Multi-domaines", "White-label", "SLA garanti", "Onboarding dédié", "Support 24/7"]
+        "features": [
+          "Blogs illimités",
+          "Articles illimités",
+          "Abonnés illimités",
+          "Auteurs illimités",
+          "Stockage illimité",
+          "Multi-domaines",
+          "White-label",
+          "SLA garanti",
+          "Onboarding dédié",
+          "Support 24/7"
+        ]
       }
     }
   },
@@ -1564,7 +1601,9 @@
     "quickCreating": "Création en cours…",
     "quickCreate": "Créer mon blog",
     "quickSuccess": "Blog créé ! Redirection…",
-    "quickSlugTaken": "Ce slug est déjà utilisé, choisissez-en un autre."
+    "quickSlugTaken": "Ce slug est déjà utilisé, choisissez-en un autre.",
+    "quickDescriptionLabel": "Description",
+    "quickDescriptionPlaceholder": "Un blog sur la tech, le design et l’entrepreneuriat..."
   },
   "profile": {
     "personalInfo": "Informations personnelles",

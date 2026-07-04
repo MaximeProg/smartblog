@@ -177,6 +177,117 @@ async def update_profile(
     return UserInfo.model_validate(user)
 
 
+# ── GET /auth/me/notifications ─────────────────────────────────────
+
+@router.get("/me/notifications")
+async def list_notifications(payload: TokenPayload, db: DBSession):
+    """Aggregate activity across all user tenants as in-app notifications."""
+    import uuid
+    from datetime import datetime, timedelta
+    from sqlalchemy import select, and_
+    from app.models.tenant import Tenant
+    from app.models.tenant_user import TenantUser
+    from app.models.comment import Comment
+    from app.models.newsletter import NewsletterSubscriber
+    from app.models.article import Article
+    from app.models.enums import CommentStatus, ArticleStatus
+
+    user_id = uuid.UUID(payload["sub"])
+
+    # Get all tenant IDs the user belongs to
+    tenant_rows = await db.execute(
+        select(Tenant.id, Tenant.name)
+        .join(TenantUser, TenantUser.tenant_id == Tenant.id)
+        .where(TenantUser.user_id == user_id, Tenant.deleted_at.is_(None))
+    )
+    tenants = {str(r.id): r.name for r in tenant_rows.all()}
+
+    if not tenants:
+        return []
+
+    tenant_ids = [uuid.UUID(tid) for tid in tenants]
+    since_30d = datetime.utcnow() - timedelta(days=30)
+    since_7d = datetime.utcnow() - timedelta(days=7)
+
+    notifications = []
+
+    # Pending comments needing moderation (last 30 days)
+    pending_result = await db.execute(
+        select(Comment)
+        .where(
+            Comment.tenant_id.in_(tenant_ids),
+            Comment.status == CommentStatus.PENDING,
+            Comment.created_at >= since_30d,
+        )
+        .order_by(Comment.created_at.desc())
+        .limit(20)
+    )
+    pending_comments = pending_result.scalars().all()
+    if pending_comments:
+        blog_name = tenants.get(str(pending_comments[0].tenant_id), "")
+        count = len(pending_comments)
+        notifications.append({
+            "id": "pending-comments",
+            "type": "warning",
+            "title": f"{count} comment{'s' if count > 1 else ''} awaiting moderation",
+            "body": f"Review and approve comments on {blog_name}{'and other blogs' if len(tenants) > 1 else ''}.",
+            "time": pending_comments[0].created_at.isoformat(),
+            "read": False,
+            "action_url": None,
+        })
+
+    # New newsletter subscribers (last 7 days)
+    subs_result = await db.execute(
+        select(NewsletterSubscriber)
+        .where(
+            NewsletterSubscriber.tenant_id.in_(tenant_ids),
+            NewsletterSubscriber.created_at >= since_7d,
+        )
+        .order_by(NewsletterSubscriber.created_at.desc())
+        .limit(50)
+    )
+    new_subs = subs_result.scalars().all()
+    if new_subs:
+        count = len(new_subs)
+        notifications.append({
+            "id": "new-subscribers",
+            "type": "success",
+            "title": f"{count} new subscriber{'s' if count > 1 else ''} this week",
+            "body": "Your newsletter is growing! Keep publishing great content.",
+            "time": new_subs[0].created_at.isoformat(),
+            "read": False,
+            "action_url": None,
+        })
+
+    # Recently published articles (last 7 days)
+    articles_result = await db.execute(
+        select(Article)
+        .where(
+            Article.tenant_id.in_(tenant_ids),
+            Article.status == ArticleStatus.PUBLISHED,
+            Article.published_at >= since_7d,
+        )
+        .order_by(Article.published_at.desc())
+        .limit(10)
+    )
+    recent_articles = articles_result.scalars().all()
+    for article in recent_articles[:3]:
+        blog_name = tenants.get(str(article.tenant_id), "")
+        notifications.append({
+            "id": f"article-{article.id}",
+            "type": "info",
+            "title": f"Article published on {blog_name}",
+            "body": article.title,
+            "time": article.published_at.isoformat() if article.published_at else datetime.utcnow().isoformat(),
+            "read": True,
+            "action_url": None,
+        })
+
+    # Sort by time descending
+    notifications.sort(key=lambda n: n["time"], reverse=True)
+    return notifications
+
+
 # ── 2FA ───────────────────────────────────────────────────────────
 
 @router.post("/2fa/setup", response_model=TwoFASetupResponse)
