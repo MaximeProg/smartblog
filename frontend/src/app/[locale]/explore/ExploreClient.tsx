@@ -39,6 +39,8 @@ function BlogCard({ blog, locale }: { blog: Blog; locale: string }) {
   return (
     <a
       href={`/${locale}/${blog.slug}`}
+      target="_blank"
+      rel="noopener noreferrer"
       className="group flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-900 transition-all duration-200"
     >
       {/* Cover */}

@@ -5,7 +5,7 @@ Résout le tenant par slug (path param).
 import uuid
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import Response
-from sqlalchemy import select, and_, update
+from sqlalchemy import select, and_, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel
 from datetime import datetime
@@ -206,8 +206,23 @@ async def track_article_view(slug: str, article_slug: str, db: DBSession):
 @router.get("/categories")
 async def list_public_categories(slug: str, db: DBSession):
     tenant = await _resolve_tenant(db, slug)
+
+    # Live count of published articles per category (avoids stale cached counter)
+    pub_sq = (
+        select(Article.category_id, func.count().label("cnt"))
+        .where(
+            Article.tenant_id == tenant.id,
+            Article.status == ArticleStatus.PUBLISHED,
+            Article.deleted_at.is_(None),
+            Article.category_id.is_not(None),
+        )
+        .group_by(Article.category_id)
+        .subquery()
+    )
+
     result = await db.execute(
-        select(Category)
+        select(Category, func.coalesce(pub_sq.c.cnt, 0).label("real_count"))
+        .outerjoin(pub_sq, pub_sq.c.category_id == Category.id)
         .where(Category.tenant_id == tenant.id)
         .order_by(Category.sort_order, Category.name)
     )
@@ -218,9 +233,9 @@ async def list_public_categories(slug: str, db: DBSession):
             "slug": c.slug,
             "description": c.description,
             "cover_image_url": c.cover_image_url,
-            "articles_count": c.articles_count,
+            "articles_count": real_count,
         }
-        for c in result.scalars().all()
+        for c, real_count in result.all()
     ]
 
 
@@ -364,18 +379,34 @@ async def list_public_blogs(
     limit: int = Query(default=24, le=100),
     offset: int = Query(default=0, ge=0),
 ):
-    """Returns all active public blogs, sorted by article count descending."""
-    query = select(Tenant).where(Tenant.status == TenantStatus.ACTIVE, Tenant.deleted_at.is_(None))
+    """Returns all active public blogs with live article counts, sorted by count descending."""
+    # Live published article count per tenant
+    pub_sq = (
+        select(Article.tenant_id, func.count().label("cnt"))
+        .where(
+            Article.status == ArticleStatus.PUBLISHED,
+            Article.deleted_at.is_(None),
+        )
+        .group_by(Article.tenant_id)
+        .subquery()
+    )
+
+    real_count_col = func.coalesce(pub_sq.c.cnt, 0).label("real_count")
+    query = (
+        select(Tenant, real_count_col)
+        .outerjoin(pub_sq, pub_sq.c.tenant_id == Tenant.id)
+        .where(Tenant.status == TenantStatus.ACTIVE, Tenant.deleted_at.is_(None))
+    )
     if category:
         query = query.where(Tenant.category == category)
     if q:
         query = query.where(
             Tenant.name.ilike(f"%{q}%") | Tenant.description.ilike(f"%{q}%")
         )
-    query = query.order_by(Tenant.articles_count.desc(), Tenant.created_at.desc())
+    query = query.order_by(real_count_col.desc(), Tenant.created_at.desc())
     query = query.offset(offset).limit(limit)
     result = await db.execute(query)
-    tenants = result.scalars().all()
+    rows = result.all()
     return [
         PublicBlogCard(
             name=t.name,
@@ -387,9 +418,9 @@ async def list_public_blogs(
             language=t.language,
             theme=t.theme,
             primary_color=t.primary_color,
-            articles_count=t.articles_count,
+            articles_count=real_count,
         )
-        for t in tenants
+        for t, real_count in rows
     ]
 
 
