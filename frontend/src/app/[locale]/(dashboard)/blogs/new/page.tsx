@@ -373,7 +373,7 @@ export default function CreateBlogPage() {
                               </div>
                               <div className="text-center">
                                 <p className="text-[12.5px] font-semibold text-slate-700 dark:text-slate-300">
-                                  {dragging ? 'Déposez l'image ici' : 'Cliquez ou glissez une image'}
+                                  {dragging ? "Déposez l'image ici" : 'Cliquez ou glissez une image'}
                                 </p>
                                 <p className="text-[10.5px] text-slate-400 dark:text-slate-500 mt-0.5">
                                   JPG, PNG, WebP — max 10 Mo
