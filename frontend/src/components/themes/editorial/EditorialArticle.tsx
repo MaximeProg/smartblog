@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback, type CSSProperties } from 'react';
+import { useState, useEffect, useCallback, useMemo, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -7,6 +7,7 @@ import { Heart, Bookmark, Clock } from 'lucide-react';
 import type { ArticleProps } from '../ThemeRenderer';
 import type { PublicArticle } from '@/lib/public-api';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
+import { renderContent } from '../shared/renderContent';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -103,6 +104,7 @@ export default function EditorialArticle({
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
   const [bookmarked, setBookmarked] = useState(false);
   const [copied, setCopied] = useState(false);
+  const htmlContent = useMemo(() => renderContent(article.content), [article.content]);
 
   useEffect(() => {
     const fn = () => {
@@ -245,7 +247,7 @@ export default function EditorialArticle({
         <div
           className="[&_p]:mb-6 [&_p]:text-zinc-700 [&_p]:leading-[1.85] [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-zinc-900 [&_h2]:mt-12 [&_h2]:mb-4 [&_h2]:pb-2 [&_h2]:border-b [&_h2]:border-zinc-200 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-zinc-900 [&_h3]:mt-8 [&_h3]:mb-3 [&_blockquote]:border-l-4 [&_blockquote]:border-zinc-300 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-zinc-500 [&_blockquote]:my-8 [&_blockquote]:text-lg [&_ul]:mb-6 [&_ul]:space-y-2 [&_ul]:pl-6 [&_li]:text-zinc-700 [&_li]:list-disc [&_code]:bg-zinc-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono [&_a]:underline [&_a]:underline-offset-2"
           style={{ fontSize: '1.125rem' }}
-          dangerouslySetInnerHTML={{ __html: article.content || '<p>No content available.</p>' }}
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       </div>
 

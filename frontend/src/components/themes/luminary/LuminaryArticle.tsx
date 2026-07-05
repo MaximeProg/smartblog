@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback, type CSSProperties } from 'react';
+import { useState, useEffect, useCallback, useMemo, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -7,6 +7,7 @@ import { Heart, Bookmark } from 'lucide-react';
 import type { ArticleProps } from '../ThemeRenderer';
 import type { PublicArticle } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
+import { renderContent } from '../shared/renderContent';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -104,6 +105,7 @@ export default function LuminaryArticle({
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
   const [bookmarked, setBookmarked] = useState(false);
   const [copied, setCopied] = useState(false);
+  const htmlContent = useMemo(() => renderContent(article.content), [article.content]);
 
   useEffect(() => {
     const fn = () => {
@@ -289,7 +291,7 @@ export default function LuminaryArticle({
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
         <div
           className="[&_p]:mb-6 [&_p]:text-lg [&_p]:leading-relaxed [&_p]:text-zinc-700 [&_p:first-child::first-letter]:text-6xl [&_p:first-child::first-letter]:font-serif [&_p:first-child::first-letter]:float-left [&_p:first-child::first-letter]:mr-2 [&_p:first-child::first-letter]:mt-1 [&_p:first-child::first-letter]:leading-none [&_h2]:text-2xl [&_h2]:font-serif [&_h2]:text-zinc-900 [&_h2]:mt-12 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-serif [&_h3]:text-zinc-900 [&_h3]:mt-8 [&_h3]:mb-3 [&_blockquote]:border-l-2 [&_blockquote]:border-zinc-300 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-zinc-600 [&_blockquote]:text-xl [&_blockquote]:my-10 [&_ul]:mb-6 [&_ul]:space-y-2 [&_ul]:pl-6 [&_li]:text-zinc-700 [&_li]:list-disc [&_li]:text-lg [&_ol]:mb-6 [&_ol]:space-y-2 [&_ol]:pl-6 [&_ol>li]:text-zinc-700 [&_ol>li]:list-decimal [&_ol>li]:text-lg [&_code]:bg-zinc-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-sm [&_code]:font-mono [&_a]:underline [&_a]:underline-offset-2 [&_a]:decoration-zinc-300 [&_a:hover]:decoration-zinc-900 [&_img]:w-full [&_img]:my-8 [&_hr]:border-zinc-200 [&_hr]:my-12"
-          dangerouslySetInnerHTML={{ __html: article.content || '<p>No content available.</p>' }}
+          dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
       </div>
 
