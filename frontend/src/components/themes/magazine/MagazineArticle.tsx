@@ -1,186 +1,261 @@
+'use client';
+import { useState, useEffect, useCallback, type CSSProperties, type FormEvent } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import type { ArticleProps } from '../ThemeRenderer';
-import { MagazineHeader, MagazineFooter } from './MagazineHome';
+import { MagazineHeader, MagazineFooter } from './MagazineShared';
 
-function formatDate(iso: string | null, lang = 'fr') {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-US', {
-    day: 'numeric', month: 'long', year: 'numeric',
-  });
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+
+function formatDate(d: string | null) {
+  if (!d) return '';
+  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-export default function MagazineArticle({ blog, article, relatedArticles, getArticleHref }: ArticleProps) {
+function initials(name: string | null) {
+  if (!name) return '?';
+  return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+}
+
+function ReadingProgressBar({ color }: { color: string }) {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? Math.min((window.scrollY / max) * 100, 100) : 0);
+    };
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+    return () => window.removeEventListener('scroll', update);
+  }, []);
   return (
-    <div className="min-h-screen bg-gray-50" style={{ fontFamily: 'var(--blog-font)' }}>
-      <MagazineHeader blog={blog} categories={[]} />
+    <div className="fixed top-0 left-0 right-0 z-[100] h-[3px] pointer-events-none bg-transparent">
+      <div style={{ width: `${progress}%`, backgroundColor: color, height: '100%', transition: 'width 0.1s linear' }} />
+    </div>
+  );
+}
 
-      {/* Cover hero */}
-      {article.cover_image_url && (
-        <div className="w-full h-[40vh] md:h-[52vh] relative bg-gray-900 overflow-hidden">
-          <img
-            src={article.cover_image_url}
-            alt={article.title}
-            className="w-full h-full object-cover opacity-75"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        </div>
-      )}
+export default function MagazineArticle({
+  blog,
+  article,
+  relatedArticles,
+  categories = [],
+  getArticleHref,
+  basePath: _basePath,
+  previewSlug,
+}: ArticleProps) {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  const basePath = _basePath ?? `/${locale}/${blog.slug}`;
+  const primaryColor = blog.primary_color || '#e11d48';
 
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 py-10">
+  const [email, setEmail] = useState('');
+  const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [imgErr, setImgErr] = useState(false);
 
-          {/* Article main */}
-          <article className="lg:col-span-3">
-            {/* Header card — overlaps cover if present */}
-            <div className={`bg-white rounded-2xl shadow-sm p-8 mb-8 ${article.cover_image_url ? '-mt-24 relative z-10' : ''}`}>
-              <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
-                <Link href="/" className="hover:text-[var(--blog-primary)] transition-colors">Accueil</Link>
-                {article.category_name && (
-                  <>
-                    <span>›</span>
-                    <Link href={`?category=${article.category_slug}`} className="hover:text-[var(--blog-primary)] transition-colors capitalize">
-                      {article.category_name}
-                    </Link>
-                  </>
-                )}
-              </div>
+  const aHref = useCallback(
+    (s: string) => {
+      if (getArticleHref) return getArticleHref(s);
+      if (previewSlug) return `/en/template/${s}?preview=${previewSlug}`;
+      return `/${locale}/${blog.slug}/${s}`;
+    },
+    [getArticleHref, previewSlug, locale, blog.slug],
+  );
 
-              {article.category_name && (
-                <span className="inline-block text-[10px] font-black uppercase tracking-widest text-white px-3 py-1 rounded mb-4"
-                  style={{ background: 'var(--blog-primary)' }}>
-                  {article.category_name}
-                </span>
-              )}
+  const handleSubscribe = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubStatus('loading');
+    try {
+      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      setSubStatus(res.ok ? 'ok' : 'error');
+    } catch {
+      setSubStatus('error');
+    }
+  };
 
-              <h1 className="text-2xl md:text-4xl font-black leading-tight mb-4 text-gray-900">
-                {article.title}
-              </h1>
+  return (
+    <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
+      <ReadingProgressBar color={primaryColor} />
+      <MagazineHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
 
-              {article.excerpt && (
-                <p className="text-lg text-gray-500 leading-relaxed mb-6 border-l-4 border-[var(--blog-primary)] pl-4">
-                  {article.excerpt}
-                </p>
-              )}
-
-              <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full flex items-center justify-center text-white font-black text-sm shrink-0"
-                    style={{ background: 'var(--blog-primary)' }}>
-                    {(article.author_name ?? 'A')[0]}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-gray-900">{article.author_name ?? 'Rédaction'}</p>
-                    <p className="text-xs text-gray-400">{formatDate(article.published_at, blog.language)}</p>
-                  </div>
-                </div>
-                {article.reading_time_minutes && (
-                  <span className="ml-auto text-xs text-gray-400 flex items-center gap-1">
-                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                      <path strokeLinecap="round" strokeWidth="2" d="M12 6v6l4 2" />
-                    </svg>
-                    {article.reading_time_minutes} min de lecture
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="bg-white rounded-2xl shadow-sm p-8 mb-8">
-              <div
-                className="prose prose-lg max-w-none
-                  prose-headings:font-black prose-headings:text-gray-900
-                  prose-h2:text-2xl prose-h2:border-l-4 prose-h2:border-[var(--blog-primary)] prose-h2:pl-3
-                  prose-a:text-[var(--blog-primary)] prose-a:no-underline hover:prose-a:underline
-                  prose-blockquote:border-[var(--blog-primary)] prose-blockquote:bg-gray-50 prose-blockquote:rounded-r-xl prose-blockquote:not-italic
-                  prose-img:rounded-xl prose-img:shadow-md
-                  prose-code:text-[var(--blog-primary)] prose-code:bg-gray-50 prose-code:px-1 prose-code:rounded"
-                dangerouslySetInnerHTML={{ __html: article.content ?? '<p>Contenu non disponible.</p>' }}
-              />
-            </div>
-
-            {/* Tags */}
-            {(article.tags?.length ?? 0) > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
-                <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Tags</h4>
-                <div className="flex flex-wrap gap-2">
-                  {article.tags.map((tag) => (
-                    <span key={tag} className="text-sm px-3 py-1 border border-gray-200 rounded-full text-gray-600 hover:border-[var(--blog-primary)] hover:text-[var(--blog-primary)] transition-colors cursor-pointer">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <article className="lg:col-span-2">
+            {article.category_name && (
+              <span
+                className="text-[10px] font-black uppercase px-3 py-1 rounded text-white mb-4 inline-block"
+                style={{ backgroundColor: primaryColor }}
+              >
+                {article.category_name}
+              </span>
             )}
 
-            {/* Related articles */}
-            {relatedArticles.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-4 w-1 rounded-full bg-[var(--blog-primary)]" />
-                  <h2 className="text-sm font-black uppercase tracking-widest text-gray-800">À lire aussi</h2>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                  {relatedArticles.map((a) => (
-                    <Link key={a.id} href={getArticleHref ? getArticleHref(a.slug) : `./${a.slug}`} className="group">
-                      <div className="aspect-[16/9] rounded-xl overflow-hidden bg-gray-100 mb-3">
-                        {a.cover_image_url ? (
-                          <img src={a.cover_image_url} alt={a.title} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        ) : (
-                          <div className="h-full w-full" style={{ background: 'var(--blog-primary)' }} />
-                        )}
-                      </div>
-                      {a.category_name && (
-                        <span className="text-[10px] font-black uppercase tracking-wider text-[var(--blog-primary)]">{a.category_name}</span>
-                      )}
-                      <h4 className="text-sm font-bold leading-snug line-clamp-2 group-hover:text-[var(--blog-primary)] transition-colors mt-0.5">
-                        {a.title}
-                      </h4>
-                    </Link>
-                  ))}
-                </div>
+            <h1 className="text-4xl sm:text-5xl font-black text-zinc-950 leading-tight mb-4">
+              {article.title}
+            </h1>
+
+            {article.excerpt && (
+              <p className="text-xl text-zinc-500 leading-relaxed mb-6">{article.excerpt}</p>
+            )}
+
+            <div className="flex items-center gap-3 py-4 border-y border-zinc-200">
+              <div
+                className="h-10 w-10 rounded-full font-black text-white text-sm flex items-center justify-center shrink-0 bg-zinc-800"
+              >
+                {initials(article.author_name)}
+              </div>
+              <div>
+                <p className="font-bold text-zinc-900 text-sm">{article.author_name || blog.name}</p>
+                <p className="text-xs text-zinc-400">{blog.name}</p>
+              </div>
+              <div className="ml-auto text-xs text-zinc-400 text-right">
+                <p>{formatDate(article.published_at)}</p>
+                {article.reading_time_minutes && (
+                  <p>{article.reading_time_minutes} min read</p>
+                )}
+              </div>
+            </div>
+
+            <div className="relative aspect-video rounded mt-6 mb-8 overflow-hidden">
+              {article.cover_image_url && !imgErr ? (
+                <Image
+                  src={article.cover_image_url}
+                  alt={article.title}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 66vw"
+                  onError={() => setImgErr(true)}
+                />
+              ) : (
+                <div className="h-full w-full" style={{ background: `linear-gradient(135deg, ${primaryColor}22, ${primaryColor}55)` }} />
+              )}
+            </div>
+
+            <div
+              className="[&_p]:mb-5 [&_p]:text-zinc-700 [&_p]:text-[1.05rem] [&_p]:leading-relaxed [&_h2]:text-2xl [&_h2]:font-black [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-zinc-950 [&_h3]:text-xl [&_h3]:font-black [&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-zinc-950 [&_blockquote]:border-l-4 [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-zinc-500 [&_blockquote]:my-6 [&_blockquote]:text-lg [&_ul]:pl-5 [&_ul]:mb-5 [&_ol]:pl-5 [&_ol]:mb-5 [&_li]:mb-2 [&_li]:text-zinc-700 [&_a]:text-[var(--cp)] [&_a]:underline [&_img]:rounded-lg [&_img]:my-6 [&_hr]:border-zinc-100 [&_hr]:my-8 [&_code]:bg-zinc-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono"
+              dangerouslySetInnerHTML={{ __html: article.content || '<p>No content available.</p>' }}
+            />
+
+            {article.tags && article.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-10 pt-6 border-t border-zinc-100">
+                {article.tags.map(tag => (
+                  <span
+                    key={tag}
+                    className="border border-zinc-200 rounded px-3 py-1 text-xs text-zinc-600 hover:bg-zinc-100 transition-colors cursor-default"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             )}
           </article>
 
-          {/* Sidebar */}
           <aside className="lg:col-span-1 space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-5">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[var(--blog-primary)] mb-4">Auteur</h3>
-              <div className="flex items-start gap-3">
-                <div className="h-12 w-12 rounded-full flex items-center justify-center text-white font-black shrink-0"
-                  style={{ background: 'var(--blog-primary)' }}>
-                  {(article.author_name ?? 'A')[0]}
+            {relatedArticles.length > 0 && (
+              <div>
+                <div className="border-b-2 pb-2 mb-4" style={{ borderColor: primaryColor }}>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Related</span>
                 </div>
-                <div>
-                  <p className="font-bold text-sm">{article.author_name ?? 'Rédaction'}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">Contributeur</p>
-                </div>
+                {relatedArticles.slice(0, 5).map(a => (
+                  <Link key={a.id} href={aHref(a.slug)} className="flex gap-3 py-4 border-b border-zinc-100 last:border-0 group">
+                    <div className="relative h-16 w-16 shrink-0 rounded overflow-hidden">
+                      {a.cover_image_url ? (
+                        <Image
+                          src={a.cover_image_url}
+                          alt={a.title}
+                          fill
+                          className="object-cover"
+                          sizes="64px"
+                        />
+                      ) : (
+                        <div className="h-full w-full" style={{ background: `linear-gradient(135deg, ${primaryColor}22, ${primaryColor}44)` }} />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      {a.category_name && (
+                        <span className="text-[10px] font-black uppercase block" style={{ color: primaryColor }}>{a.category_name}</span>
+                      )}
+                      <p className="text-sm font-bold text-zinc-900 leading-snug group-hover:text-[var(--cp)] transition-colors line-clamp-2">{a.title}</p>
+                      <p className="text-xs text-zinc-400 mt-1">{formatDate(a.published_at)}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            <div>
+              <div className="border-b-2 pb-2 mb-3" style={{ borderColor: primaryColor }}>
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Topics</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {([] as { slug: string; name: string }[])
+                  .concat(
+                    relatedArticles
+                      .filter(a => a.category_slug && a.category_name)
+                      .map(a => ({ slug: a.category_slug!, name: a.category_name! }))
+                  )
+                  .filter((v, i, arr) => arr.findIndex(x => x.slug === v.slug) === i)
+                  .map(c => (
+                    <Link
+                      key={c.slug}
+                      href={`${basePath}/categories/${c.slug}`}
+                      className="border border-zinc-200 rounded px-3 py-1.5 text-xs font-bold text-zinc-700 hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-colors"
+                    >
+                      {c.name}
+                    </Link>
+                  ))}
+                <Link
+                  href={`${basePath}/categories`}
+                  className="border border-zinc-200 rounded px-3 py-1.5 text-xs font-bold text-zinc-700 hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-colors"
+                >
+                  All Topics →
+                </Link>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-5">
-              <h3 className="text-xs font-black uppercase tracking-widest text-[var(--blog-primary)] mb-4">Partager</h3>
-              <div className="flex flex-col gap-3">
-                <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-gray-700 hover:text-[var(--blog-primary)] font-medium transition-colors">
-                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-                  X (Twitter)
-                </a>
-                <a href={`https://www.linkedin.com/sharing/share-offsite/?url=https://${blog.slug}.nexusblog.io/${article.slug}`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-gray-700 hover:text-[var(--blog-primary)] font-medium transition-colors">
-                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
-                  LinkedIn
-                </a>
-              </div>
+            <div className="rounded-lg p-5 text-white" style={{ backgroundColor: primaryColor }}>
+              <p className="text-sm font-black mb-2">Get the newsletter</p>
+              <p className="text-xs text-white/70 mb-3">Top stories from {blog.name} in your inbox.</p>
+              {subStatus === 'ok' ? (
+                <p className="text-white font-bold text-xs">You&apos;re subscribed!</p>
+              ) : (
+                <>
+                  <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white text-xs placeholder:text-white/50 focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      disabled={subStatus === 'loading'}
+                      className="w-full bg-white rounded py-2 text-xs font-black hover:opacity-90 disabled:opacity-60 transition-opacity"
+                      style={{ color: primaryColor }}
+                    >
+                      {subStatus === 'loading' ? '…' : 'Subscribe Free'}
+                    </button>
+                  </form>
+                  {subStatus === 'error' && (
+                    <p className="text-white/70 text-xs mt-2">Something went wrong.</p>
+                  )}
+                </>
+              )}
             </div>
           </aside>
         </div>
       </div>
 
-      <MagazineFooter blog={blog} />
+      <MagazineFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
     </div>
   );
 }

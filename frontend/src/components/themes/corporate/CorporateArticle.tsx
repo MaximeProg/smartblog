@@ -18,6 +18,7 @@ import {
   CardMedium, fmtDate, fmtDateShort, grad,
 } from './shared';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
+import { AdRotator } from '../shared/AdRotator';
 
 // ─── Extended props ────────────────────────────────────────────────────────────
 
@@ -484,6 +485,11 @@ export default function CorporateArticle({
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* Ad rotator */}
+            {!previewSlug && (
+              <AdRotator slug={blog.slug} primaryColor={primaryColor} />
             )}
 
             {/* Newsletter mini */}

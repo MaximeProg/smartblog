@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
-import CorporateAboutPage from '@/components/themes/corporate/CorporateAbout';
+import { ThemeAbout } from '@/components/themes/ThemeRenderer';
 import { BlogAnalyticsTracker } from '@/components/themes/shared/BlogAnalyticsTracker';
 
 type Params = Promise<{ locale: string; slug: string }>;
@@ -21,7 +21,7 @@ export default async function PublicAboutPage({ params }: { params: Params }) {
   return (
     <>
       <BlogAnalyticsTracker tenantId={blog.id} />
-      <CorporateAboutPage
+      <ThemeAbout
         blog={blog}
         categories={categories}
         basePath={`/${locale}/${slug}`}

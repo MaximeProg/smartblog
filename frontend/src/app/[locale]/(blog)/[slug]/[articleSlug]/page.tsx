@@ -32,17 +32,17 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 export default async function PublicArticlePage({ params }: { params: Params }) {
   const { locale, slug, articleSlug } = await params;
 
-  let blog, article, relatedArticles;
+  let blog, article, relatedArticles, categories;
   try {
-    [blog, article] = await Promise.all([
+    [blog, article, categories] = await Promise.all([
       publicApi.getBlogInfo(slug),
       publicApi.getArticle(slug, articleSlug),
+      publicApi.getCategories(slug),
     ]);
     relatedArticles = await publicApi.getArticles(slug, {
       category: article.category_slug ?? undefined,
       limit: 3,
     });
-    // Exclude the current article from related
     relatedArticles = relatedArticles.filter((a) => a.slug !== articleSlug);
   } catch {
     notFound();
@@ -55,6 +55,7 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
         blog={blog}
         article={article}
         relatedArticles={relatedArticles}
+        categories={categories}
         basePath={`/${locale}/${slug}`}
       />
     </>

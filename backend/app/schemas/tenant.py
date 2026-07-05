@@ -10,7 +10,7 @@ class CreateTenantRequest(BaseModel):
     category: str | None = None
     language: str = "en"
     timezone: str = "UTC"
-    theme: str = "minimal"
+    theme: str = "editorial"
     primary_color: str = "#3B82F6"
     font_family: str = "Inter"
     cover_image_url: str | None = None

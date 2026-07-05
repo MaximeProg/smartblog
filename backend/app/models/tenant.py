@@ -21,7 +21,7 @@ class Tenant(Base):
     logo_url: Mapped[str | None] = mapped_column(Text)
     cover_image_url: Mapped[str | None] = mapped_column(Text)
     favicon_url: Mapped[str | None] = mapped_column(Text)
-    theme: Mapped[str] = mapped_column(String(50), nullable=False, default="minimal")
+    theme: Mapped[str] = mapped_column(String(50), nullable=False, default="editorial")
     primary_color: Mapped[str] = mapped_column(String(7), nullable=False, default="#3B82F6")
     secondary_color: Mapped[str] = mapped_column(String(7), nullable=False, default="#1E40AF")
     font_family: Mapped[str] = mapped_column(String(100), nullable=False, default="Inter", server_default="Inter")

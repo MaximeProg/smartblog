@@ -1,0 +1,275 @@
+'use client';
+import { useState, type FormEvent } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Search, Menu, X } from 'lucide-react';
+import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+
+interface SharedProps {
+  blog: BlogInfo;
+  categories: PublicCategory[];
+  basePath: string;
+  primaryColor: string;
+}
+
+export function MagazineHeader({ blog, categories, basePath, primaryColor }: SharedProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const twitter = blog.social_links?.twitter || blog.social_links?.x || '';
+  const linkedin = blog.social_links?.linkedin || '';
+
+  return (
+    <header>
+      <div className="hidden sm:flex bg-zinc-950 text-zinc-400 text-[11px] px-4 sm:px-6 py-2 items-center justify-between">
+        <span>{today}</span>
+        <div className="flex items-center gap-4">
+          {twitter && (
+            <a href={twitter} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">
+              <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+              Twitter
+            </a>
+          )}
+          {linkedin && (
+            <a href={linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1">
+              <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+              LinkedIn
+            </a>
+          )}
+        </div>
+      </div>
+
+      <div className="bg-white border-b-2" style={{ borderColor: primaryColor }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+          <Link href={basePath} className="shrink-0">
+            {blog.logo_url ? (
+              <div className="relative h-10 w-32">
+                <Image src={blog.logo_url} alt={blog.name} fill className="object-contain object-left" />
+              </div>
+            ) : (
+              <span
+                className="text-2xl font-black tracking-tight text-zinc-950"
+                style={{ textDecorationColor: primaryColor }}
+              >
+                {blog.name}
+              </span>
+            )}
+          </Link>
+          <div className="flex items-center gap-3">
+            <button className="text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block" aria-label="Search">
+              <Search className="h-5 w-5" />
+            </button>
+            <Link
+              href={`${basePath}#newsletter`}
+              className="hidden sm:inline-flex rounded px-5 py-2 text-sm font-black text-white transition-opacity hover:opacity-90"
+              style={{ backgroundColor: primaryColor }}
+            >
+              Subscribe
+            </Link>
+            <button
+              className="sm:hidden text-zinc-500 hover:text-zinc-900 transition-colors"
+              onClick={() => setMobileOpen(o => !o)}
+              aria-label="Toggle menu"
+            >
+              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <nav className="bg-zinc-950 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 overflow-x-auto flex gap-0 scrollbar-none">
+          <Link
+            href={basePath}
+            className="text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white hover:bg-zinc-800 px-4 py-3 whitespace-nowrap transition-colors shrink-0"
+          >
+            Home
+          </Link>
+          {categories.slice(0, 6).map(c => (
+            <Link
+              key={c.id}
+              href={`${basePath}/categories/${c.slug}`}
+              className="text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white hover:bg-zinc-800 px-4 py-3 whitespace-nowrap transition-colors shrink-0"
+            >
+              {c.name}
+            </Link>
+          ))}
+          <Link
+            href={`${basePath}/categories`}
+            className="text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-white hover:bg-zinc-800 px-4 py-3 whitespace-nowrap transition-colors shrink-0 ml-auto"
+          >
+            More
+          </Link>
+        </div>
+      </nav>
+
+      {mobileOpen && (
+        <div className="sm:hidden bg-zinc-950 border-t border-zinc-800 px-4 py-4 flex flex-col gap-3">
+          <Link href={basePath} onClick={() => setMobileOpen(false)} className="text-sm font-bold text-zinc-300 hover:text-white transition-colors">
+            Home
+          </Link>
+          {categories.map(c => (
+            <Link
+              key={c.id}
+              href={`${basePath}/categories/${c.slug}`}
+              onClick={() => setMobileOpen(false)}
+              className="text-sm text-zinc-400 hover:text-white transition-colors"
+            >
+              {c.name}
+            </Link>
+          ))}
+          <Link
+            href={`${basePath}#newsletter`}
+            onClick={() => setMobileOpen(false)}
+            className="mt-2 rounded px-5 py-2.5 text-sm font-black text-white text-center transition-opacity hover:opacity-90"
+            style={{ backgroundColor: primaryColor }}
+          >
+            Subscribe
+          </Link>
+        </div>
+      )}
+    </header>
+  );
+}
+
+export function MagazineFooter({ blog, categories, basePath, primaryColor }: SharedProps) {
+  const [email, setEmail] = useState('');
+  const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+
+  const handleSubscribe = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setSubStatus('loading');
+    try {
+      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      setSubStatus(res.ok ? 'ok' : 'error');
+    } catch {
+      setSubStatus('error');
+    }
+  };
+
+  return (
+    <footer className="border-t-4 mt-0" style={{ borderColor: primaryColor }}>
+      <div className="bg-zinc-950 text-zinc-300">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-1">
+              <p className="text-white font-bold text-xl">{blog.name}</p>
+              {blog.description && (
+                <p className="text-sm mt-2 text-zinc-400 leading-relaxed">{blog.description}</p>
+              )}
+              <div className="flex gap-4 mt-5">
+                {Object.entries(blog.social_links ?? {}).map(([platform, url]) => (
+                  <a
+                    key={platform}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-zinc-400 hover:text-white transition-colors capitalize text-xs font-semibold"
+                  >
+                    {platform}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-4">Topics</p>
+              <ul className="space-y-2">
+                {categories.slice(0, 8).map(c => (
+                  <li key={c.id}>
+                    <Link
+                      href={`${basePath}/categories/${c.slug}`}
+                      className="text-sm text-zinc-400 hover:text-white transition-colors"
+                    >
+                      {c.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-4">Pages</p>
+              <ul className="space-y-2">
+                {[
+                  { label: 'Home', href: basePath },
+                  { label: 'About', href: `${basePath}/about` },
+                  { label: 'Contact', href: `${basePath}/contact` },
+                  { label: 'Categories', href: `${basePath}/categories` },
+                ].map(link => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-sm text-zinc-400 hover:text-white transition-colors">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-4">Newsletter</p>
+              <p className="text-sm text-zinc-400 mb-4 leading-relaxed">Get the best of {blog.name} delivered weekly.</p>
+              {subStatus === 'ok' ? (
+                <p className="text-sm font-bold" style={{ color: primaryColor }}>You&apos;re subscribed!</p>
+              ) : (
+                <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-sm text-white placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500"
+                  />
+                  <button
+                    type="submit"
+                    disabled={subStatus === 'loading'}
+                    className="w-full rounded py-2 text-sm font-black text-white hover:opacity-90 disabled:opacity-60 transition-opacity"
+                    style={{ backgroundColor: primaryColor }}
+                  >
+                    {subStatus === 'loading' ? '…' : 'Subscribe'}
+                  </button>
+                  {subStatus === 'error' && (
+                    <p className="text-xs text-red-400">Something went wrong.</p>
+                  )}
+                </form>
+              )}
+            </div>
+          </div>
+
+          <div className="border-t border-zinc-800 mt-10 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-zinc-600">
+            <span>© {new Date().getFullYear()} {blog.name}. All rights reserved.</span>
+            <span>
+              Powered by{' '}
+              <a
+                href="https://nexusblog.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+                style={{ color: primaryColor }}
+              >
+                NexusBlog
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

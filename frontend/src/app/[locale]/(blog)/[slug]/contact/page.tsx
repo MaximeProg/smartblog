@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
-import CorporateContactPage from '@/components/themes/corporate/CorporateContact';
+import { ThemeContact } from '@/components/themes/ThemeRenderer';
 import { BlogAnalyticsTracker } from '@/components/themes/shared/BlogAnalyticsTracker';
 
 type Params = Promise<{ locale: string; slug: string }>;
@@ -21,7 +21,7 @@ export default async function PublicContactPage({ params }: { params: Params }) 
   return (
     <>
       <BlogAnalyticsTracker tenantId={blog.id} />
-      <CorporateContactPage
+      <ThemeContact
         blog={blog}
         categories={categories}
         basePath={`/${locale}/${slug}`}

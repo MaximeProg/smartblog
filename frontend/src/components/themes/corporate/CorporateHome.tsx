@@ -11,6 +11,7 @@ import {
   CorporateHeader, CorporateFooter, NewsletterSection,
   CardHero, CardSide, CardMedium, CardCompact,
 } from './shared';
+import { AdRotator } from '../shared/AdRotator';
 
 export default function CorporateHome({
   blog, articles, categories, currentCategory, searchQuery, getArticleHref, previewSlug,
@@ -247,6 +248,11 @@ export default function CorporateHome({
                             ))}
                           </div>
                         </div>
+                      )}
+
+                      {/* Ad rotator */}
+                      {!isPreview && (
+                        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
                       )}
 
                       {/* Newsletter mini */}

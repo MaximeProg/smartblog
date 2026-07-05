@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
-import CorporateCategoryPage from '@/components/themes/corporate/CorporateCategoryPage';
+import { ThemeCategoryPage } from '@/components/themes/ThemeRenderer';
 
 type Params = Promise<{ locale: string; slug: string; categorySlug: string }>;
 
@@ -22,7 +22,7 @@ export default async function PublicCategoryPage({ params }: { params: Params })
   if (!category) notFound();
 
   return (
-    <CorporateCategoryPage
+    <ThemeCategoryPage
       blog={blog}
       categories={categories}
       category={category}

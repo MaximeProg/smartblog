@@ -3,12 +3,13 @@ API publique — blogs en lecture sans authentification.
 Résout le tenant par slug (path param).
 """
 import uuid
+import random
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import Response
-from sqlalchemy import select, and_, update, func
+from sqlalchemy import select, and_, update, func, text as sa_text
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, timezone
 import xml.etree.ElementTree as ET
 
 from sqlalchemy.orm import joinedload
@@ -18,7 +19,11 @@ from app.core.exceptions import NotFoundException, ValidationException
 from app.models.tenant import Tenant
 from app.models.article import Article, Category, Tag
 from app.models.comment import Comment
-from app.models.enums import ArticleStatus, ContentVisibility, TenantStatus, CommentStatus
+from app.models.ad import Ad
+from app.models.enums import (
+    ArticleStatus, ContentVisibility, TenantStatus, CommentStatus,
+    AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus,
+)
 from app.core.dependencies import DBSession
 
 router = APIRouter(prefix="/public/{slug}", tags=["public"])
@@ -429,6 +434,93 @@ async def list_public_blogs(
         )
         for t, real_count in rows
     ]
+
+
+# ── GET /public/{slug}/ads/rotator ───────────────────────────────────────────
+
+class PublicAdCard(BaseModel):
+    id: str
+    title: str
+    description: str | None
+    image_url: str | None
+    click_url: str
+    placement: str | None
+
+
+@router.get("/ads/rotator", response_model=PublicAdCard | None)
+async def get_rotator_ad(slug: str, db: DBSession):
+    """
+    Retourne la publicité à afficher selon l'algorithme de rotation pondérée.
+    Le poids de chaque annonce = total_budget (plus le budget est élevé,
+    plus la pub a de chances d'être sélectionnée). Retourne null si aucune
+    campagne active.
+    """
+    tenant = await _resolve_tenant(db, slug)
+    now = datetime.now(timezone.utc)
+
+    result = await db.execute(
+        select(Ad).where(
+            Ad.tenant_id == tenant.id,
+            Ad.submission_status == AdSubmissionStatus.APPROVED,
+            Ad.campaign_status == AdCampaignStatus.ACTIVE,
+            Ad.link_safety_status != LinkSafetyStatus.DANGEROUS,
+            # Respecter les dates de campagne si définies
+            (Ad.starts_at.is_(None) | (Ad.starts_at <= now)),
+            (Ad.ends_at.is_(None) | (Ad.ends_at >= now)),
+        )
+    )
+    ads = result.scalars().all()
+
+    if not ads:
+        return None
+
+    # Rotation pondérée par budget (total_budget, défaut 1)
+    weights = [float(a.total_budget or 1) for a in ads]
+    selected: Ad = random.choices(ads, weights=weights, k=1)[0]
+
+    return PublicAdCard(
+        id=str(selected.id),
+        title=selected.title,
+        description=selected.description,
+        image_url=selected.image_url,
+        click_url=selected.click_url,
+        placement=selected.placement,
+    )
+
+
+@router.post("/ads/{ad_id}/impression", status_code=204)
+async def track_ad_impression(slug: str, ad_id: uuid.UUID, db: DBSession):
+    """Comptabilise une impression (appelé automatiquement à chaque affichage)."""
+    tenant = await _resolve_tenant(db, slug)
+    await db.execute(
+        sa_text(
+            "UPDATE ads SET impressions_count = impressions_count + 1 "
+            "WHERE id = :id AND tenant_id = :tid AND campaign_status = 'active'"
+        ),
+        {"id": str(ad_id), "tid": str(tenant.id)},
+    )
+    await db.commit()
+
+
+@router.post("/ads/{ad_id}/click", status_code=204)
+async def track_ad_click(slug: str, ad_id: uuid.UUID, db: DBSession):
+    """Comptabilise un clic. Bloque si le lien est dangereux."""
+    tenant = await _resolve_tenant(db, slug)
+    result = await db.execute(
+        select(Ad).where(Ad.id == ad_id, Ad.tenant_id == tenant.id)
+    )
+    ad = result.scalar_one_or_none()
+    if not ad:
+        return
+    if ad.link_safety_status == LinkSafetyStatus.DANGEROUS:
+        raise ValidationException("Ce lien publicitaire a été signalé comme dangereux.")
+    await db.execute(
+        sa_text(
+            "UPDATE ads SET clicks_count = clicks_count + 1 WHERE id = :id AND tenant_id = :tid"
+        ),
+        {"id": str(ad_id), "tid": str(tenant.id)},
+    )
+    await db.commit()
 
 
 # ─── Public comments ──────────────────────────────────────────────────────────
