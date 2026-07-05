@@ -1,10 +1,14 @@
 'use client';
+
 import { useState, type CSSProperties, type FormEvent } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { ArrowRight, Mail } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 interface Props {
   blog: BlogInfo;
@@ -13,10 +17,46 @@ interface Props {
 }
 
 export default function LuminaryAbout({ blog, categories, basePath }: Props) {
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#b8960c';
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
-  const socialEntries = Object.entries(blog.social_links ?? {}).filter(([, v]) => v);
+
+  const aboutConfig = blog.template_config?.about as Record<string, any> | undefined;
+
+  const hero = aboutConfig?.hero ?? {};
+  const heroTitle = hero.title || `${t('aboutHeroSubtitle')} ${blog.name}`;
+  const heroSubtitle = hero.subtitle || t('aboutHeroSubtitle');
+  const heroDesc = hero.description || blog.description || t('aboutHeroDesc');
+  const heroCoverImage: string | undefined = hero.cover_image_url || undefined;
+
+  const missionConfig = aboutConfig?.mission ?? {};
+  const missionEnabled = missionConfig.enabled !== false;
+  const missionTitle = missionConfig.title || t('aboutMissionTitle');
+  const missionDesc = missionConfig.description || t('aboutMissionDesc');
+  const missionImageUrl: string | undefined = missionConfig.image_url || undefined;
+
+  const statsItems: { value: string; label: string }[] = aboutConfig?.stats?.items ?? [];
+  const statsEnabled = aboutConfig?.stats?.enabled !== false && statsItems.length > 0;
+
+  const valuesEnabled = aboutConfig?.values?.enabled !== false;
+  const valuesItems: { icon?: string; title: string; description: string }[] =
+    aboutConfig?.values?.items ?? [
+      { title: t('aboutValue1Title'), description: t('aboutValue1Desc') },
+      { title: t('aboutValue2Title'), description: t('aboutValue2Desc') },
+      { title: t('aboutValue3Title'), description: t('aboutValue3Desc') },
+    ];
+
+  const teamConfig = aboutConfig?.team ?? {};
+  const teamEnabled = teamConfig.enabled === true;
+  const teamTitle = teamConfig.title || t('aboutTeamTitle');
+  const teamMembers: { name: string; role: string; bio: string; avatar_url?: string }[] =
+    teamConfig.members ?? [];
+
+  const ctaConfig = aboutConfig?.cta ?? {};
+  const ctaEnabled = ctaConfig.enabled !== false;
+  const ctaTitle = ctaConfig.title || t('aboutCtaTitle');
+  const ctaDesc = ctaConfig.description || t('aboutCtaDesc');
 
   const handleSubscribe = async (e: FormEvent) => {
     e.preventDefault();
@@ -39,89 +79,132 @@ export default function LuminaryAbout({ blog, categories, basePath }: Props) {
       <LuminaryHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
 
       {/* Hero */}
-      <section className="bg-zinc-950 text-white py-24 text-center px-4 sm:px-6">
-        <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-6">About</p>
-        <h1 className="font-serif italic text-5xl sm:text-6xl lg:text-7xl leading-tight mb-6">{blog.name}</h1>
-        {blog.description && (
-          <p className="font-sans text-zinc-400 text-lg max-w-xl mx-auto leading-relaxed">{blog.description}</p>
+      <section className="bg-zinc-950 text-white py-24 relative overflow-hidden">
+        {heroCoverImage && (
+          <>
+            <img src={heroCoverImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+            <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/60 to-zinc-950/80" />
+          </>
         )}
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-6">{heroSubtitle}</p>
+          <h1 className="font-serif italic text-5xl sm:text-6xl lg:text-7xl leading-tight mb-6">{heroTitle}</h1>
+          <div className="font-sans text-zinc-400 text-lg max-w-xl mx-auto leading-relaxed" dangerouslySetInnerHTML={{ __html: heroDesc }} />
+          <Link href={basePath} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 text-sm font-sans hover:bg-white/5 transition-colors">
+            {t('readArticles')} <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </section>
 
-      {/* Cover image */}
-      {blog.cover_image_url && (
-        <section className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-          <div className="relative aspect-[21/9] overflow-hidden">
-            <img src={blog.cover_image_url} alt={blog.name} className="w-full h-full object-cover" />
+      {/* Stats */}
+      {statsEnabled && (
+        <section className="border-b border-zinc-200 bg-[#faf8f4]">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 grid grid-cols-2 sm:grid-cols-4 gap-8">
+            {statsItems.map((s) => (
+              <div key={s.label} className="text-center">
+                <div className="font-serif italic text-4xl mb-1" style={{ color: primaryColor }}>{s.value}</div>
+                <div className="font-sans text-sm text-zinc-500">{s.label}</div>
+              </div>
+            ))}
           </div>
         </section>
       )}
 
-      {/* Category badge */}
-      {blog.category && (
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 py-10 text-center">
-          <span
-            className="font-sans text-[10px] uppercase tracking-[0.2em] px-5 py-2 border inline-block"
-            style={{ borderColor: primaryColor, color: primaryColor }}
-          >
-            {blog.category}
-          </span>
+      {/* Mission */}
+      {missionEnabled && (
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 py-20">
+          <div className={missionImageUrl ? 'grid grid-cols-1 lg:grid-cols-2 gap-12 items-center' : ''}>
+            <div>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="flex-1 h-px bg-zinc-200" />
+                <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-zinc-400">{missionTitle}</span>
+                <div className="flex-1 h-px bg-zinc-200" />
+              </div>
+              <div className="font-serif text-xl text-zinc-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: missionDesc }} />
+            </div>
+            {missionImageUrl && (
+              <div className="overflow-hidden">
+                <img src={missionImageUrl} alt={missionTitle} className="w-full h-auto object-cover" />
+              </div>
+            )}
+          </div>
         </section>
       )}
 
-      {/* Topics */}
-      {categories.length > 0 && (
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 py-20 border-t border-zinc-200">
-          <div className="flex items-center gap-4 mb-12">
-            <div className="flex-1 h-px bg-zinc-200" />
-            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-zinc-400">
-              Topics We Cover
-            </span>
-            <div className="flex-1 h-px bg-zinc-200" />
-          </div>
-          <div className="space-y-0">
-            {categories.map(c => (
-              <Link
-                key={c.id}
-                href={`${basePath}/categories/${c.slug}`}
-                className="flex items-center justify-between py-4 border-b border-zinc-100 group hover:bg-[#f0ede6] -mx-4 px-4 transition-colors"
-              >
-                <div>
-                  <span className="font-serif text-lg text-zinc-900 group-hover:text-[var(--cp)] transition-colors">
-                    {c.name}
-                  </span>
-                  {c.description && (
-                    <p className="font-sans text-xs text-zinc-400 mt-0.5 line-clamp-1">{c.description}</p>
+      {/* Values */}
+      {valuesEnabled && valuesItems.length > 0 && (
+        <section className="border-t border-zinc-200 py-20 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-4 mb-12">
+              <div className="flex-1 h-px bg-zinc-200" />
+              <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-zinc-400">
+                {aboutConfig?.values?.title || t('aboutValuesTitle')}
+              </span>
+              <div className="flex-1 h-px bg-zinc-200" />
+            </div>
+            <div className="space-y-0">
+              {valuesItems.map((v, i) => (
+                <div key={i} className="flex items-start gap-6 py-6 border-b border-zinc-100 last:border-0">
+                  {v.icon ? (
+                    <span className="text-2xl shrink-0 mt-1">{v.icon}</span>
+                  ) : (
+                    <span className="font-serif italic text-2xl shrink-0 mt-1" style={{ color: primaryColor }}>{String(i + 1).padStart(2, '0')}</span>
                   )}
+                  <div>
+                    <h3 className="font-serif text-lg text-zinc-900 mb-1">{v.title}</h3>
+                    <p className="font-sans text-sm text-zinc-500 leading-relaxed">{v.description}</p>
+                  </div>
                 </div>
-                <span className="font-sans text-xs text-zinc-400 shrink-0 ml-4">
-                  {c.articles_count} article{c.articles_count !== 1 ? 's' : ''}
-                </span>
-              </Link>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
       )}
 
-      {/* Social links */}
-      {socialEntries.length > 0 && (
-        <section className="max-w-3xl mx-auto px-4 sm:px-6 py-16 border-t border-zinc-200">
-          <div className="flex items-center gap-4 mb-8">
-            <div className="flex-1 h-px bg-zinc-200" />
-            <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-zinc-400">Follow</span>
-            <div className="flex-1 h-px bg-zinc-200" />
+      {/* Team */}
+      {teamEnabled && teamMembers.length > 0 && (
+        <section className="border-t border-zinc-200 py-20 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-4 mb-12">
+              <div className="flex-1 h-px bg-zinc-200" />
+              <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-zinc-400">{teamTitle}</span>
+              <div className="flex-1 h-px bg-zinc-200" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+              {teamMembers.map((member, i) => (
+                <div key={i} className="text-center">
+                  <div className="relative w-20 h-20 mx-auto mb-4 overflow-hidden bg-zinc-200">
+                    {member.avatar_url ? (
+                      <Image src={member.avatar_url} alt={member.name} fill className="object-cover" sizes="80px" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center font-serif italic text-xl text-white" style={{ backgroundColor: primaryColor }}>
+                        {member.name[0]?.toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="font-serif text-lg text-zinc-900">{member.name}</h3>
+                  {member.role && <p className="font-sans text-xs uppercase tracking-widest mt-0.5" style={{ color: primaryColor }}>{member.role}</p>}
+                  {member.bio && <p className="font-sans text-sm text-zinc-500 leading-relaxed mt-2">{member.bio}</p>}
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-4">
-            {socialEntries.map(([platform, url]) => (
-              <a
-                key={platform}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-sans text-sm text-zinc-500 hover:text-zinc-900 transition-colors capitalize border-b border-zinc-300 hover:border-zinc-900 pb-px"
-              >
-                {platform}
-              </a>
-            ))}
+        </section>
+      )}
+
+      {/* CTA */}
+      {ctaEnabled && (
+        <section className="bg-zinc-950 py-20 px-4 text-center">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="font-serif italic text-4xl text-white mb-4">{ctaTitle}</h2>
+            <div className="font-sans text-zinc-400 mb-8" dangerouslySetInnerHTML={{ __html: ctaDesc }} />
+            <a
+              href="#newsletter"
+              className="inline-flex items-center gap-2 px-8 py-3 text-sm font-sans text-zinc-950 hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: primaryColor }}
+            >
+              <Mail className="h-4 w-4" /> {ctaConfig.primaryLabel || t('aboutCtaPrimary')}
+            </a>
           </div>
         </section>
       )}
@@ -137,10 +220,7 @@ export default function LuminaryAbout({ blog, categories, basePath }: Props) {
           {subStatus === 'ok' ? (
             <p className="font-serif italic text-xl text-white">Thank you for subscribing.</p>
           ) : (
-            <form
-              onSubmit={handleSubscribe}
-              className="flex items-end gap-0 max-w-sm mx-auto border-b border-zinc-600 pb-px"
-            >
+            <form onSubmit={handleSubscribe} className="flex items-end gap-0 max-w-sm mx-auto border-b border-zinc-600 pb-px">
               <input
                 type="email"
                 required
