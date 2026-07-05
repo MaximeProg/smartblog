@@ -6,6 +6,8 @@ import { useParams } from 'next/navigation';
 import type { ArticleProps } from '../ThemeRenderer';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { renderContent } from '../shared/renderContent';
+import { PublicCommentsSection } from '../shared/PublicCommentsSection';
+import { AdRotator } from '../shared/AdRotator';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -54,6 +56,8 @@ export default function MagazineArticle({
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [imgErr, setImgErr] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
   const htmlContent = useMemo(() => renderContent(article.content), [article.content]);
 
   const aHref = useCallback(
@@ -64,6 +68,15 @@ export default function MagazineArticle({
     },
     [getArticleHref, previewSlug, locale, blog.slug],
   );
+
+  const handleLike = async () => {
+    if (liked) return;
+    setLiked(true);
+    setLikeCount(n => n + 1);
+    try {
+      await fetch(`${API_URL}/api/v1/public/${blog.slug}/articles/${article.slug}/like`, { method: 'POST' });
+    } catch {}
+  };
 
   const handleSubscribe = async (e: FormEvent) => {
     e.preventDefault();
@@ -157,6 +170,39 @@ export default function MagazineArticle({
                 ))}
               </div>
             )}
+            <div className="flex items-center justify-between mt-8 pt-6 border-t border-zinc-100 flex-wrap gap-4">
+              <div className="flex gap-3">
+                <button
+                  onClick={handleLike}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded border text-sm font-bold transition-all ${
+                    liked
+                      ? 'border-red-200 text-red-500 bg-red-50'
+                      : 'border-zinc-200 text-zinc-600 hover:border-zinc-400 hover:bg-zinc-50'
+                  }`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${liked ? 'fill-red-500 text-red-500' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                  {likeCount}
+                </button>
+              </div>
+              <div className="flex items-center gap-4">
+                <a
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&text=${encodeURIComponent(article.title)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
+                >
+                  Share on X
+                </a>
+                <button
+                  onClick={() => navigator.clipboard.writeText(window.location.href)}
+                  className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
+                >
+                  Copy link
+                </button>
+              </div>
+            </div>
           </article>
 
           <aside className="lg:col-span-1 space-y-6">
@@ -222,6 +268,8 @@ export default function MagazineArticle({
               </div>
             </div>
 
+            <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+
             <div className="rounded-lg p-5 text-white" style={{ backgroundColor: primaryColor }}>
               <p className="text-sm font-black mb-2">Get the newsletter</p>
               <p className="text-xs text-white/70 mb-3">Top stories from {blog.name} in your inbox.</p>
@@ -254,6 +302,10 @@ export default function MagazineArticle({
               )}
             </div>
           </aside>
+        </div>
+
+        <div className="mt-12 pt-12 border-t border-zinc-100">
+          <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
         </div>
       </div>
 

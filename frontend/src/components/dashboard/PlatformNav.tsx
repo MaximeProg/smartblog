@@ -4,33 +4,33 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Newspaper, CreditCard, User,
-  Bell, LogOut, Zap, Plus, ChevronDown,
+  Bell, LogOut, Zap, Plus,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn, getInitials } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth.store';
 import { authApi } from '@/lib/api';
 import { firebaseSignOut } from '@/lib/firebase';
 
-const PLAN_LABELS: Record<string, string> = {
-  free: 'Gratuit', starter: 'Starter', pro: 'Pro', business: 'Business',
-};
-
 export function PlatformNav({ locale }: { locale: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, clearAuth } = useAuthStore();
+  const t = useTranslations('nav');
+  const td = useTranslations('dashboardPage');
 
   const plan = user?.plan ?? 'free';
+  const planLabel = td(`plan${plan.charAt(0).toUpperCase() + plan.slice(1)}` as any) ?? plan;
 
   const nav = [
-    { href: `/${locale}/dashboard`, icon: LayoutDashboard, label: 'Dashboard', exact: true },
-    { href: `/${locale}/blogs`,     icon: Newspaper,       label: 'Mes blogs' },
-    { href: `/${locale}/subscription`, icon: CreditCard,   label: 'Abonnement' },
+    { href: `/${locale}/dashboard`, icon: LayoutDashboard, label: t('dashboard'), exact: true },
+    { href: `/${locale}/blogs`,     icon: Newspaper,        label: t('myBlogs') },
+    { href: `/${locale}/subscription`, icon: CreditCard,    label: t('subscription') },
   ];
 
   const bottom = [
-    { href: `/${locale}/notifications`, icon: Bell, label: 'Notifications', soon: true },
-    { href: `/${locale}/profile`,       icon: User, label: 'Profil',         soon: true },
+    { href: `/${locale}/notifications`, icon: Bell, label: t('notifications'), soon: true },
+    { href: `/${locale}/profile`,       icon: User, label: t('profile'),       soon: true },
   ];
 
   const handleSignOut = async () => {
@@ -76,17 +76,17 @@ export function PlatformNav({ locale }: { locale: string }) {
               : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
           )}>
           <Plus className="h-4 w-4 text-slate-400 shrink-0" />
-          Nouveau blog
+          {t('newBlog')}
         </Link>
 
         <div className="pt-3 mt-3 border-t border-slate-100">
-          <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Compte</p>
+          <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400">{t('account')}</p>
           {bottom.map(item => (
             <div key={item.href}
               className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] font-medium text-slate-300 cursor-not-allowed">
               <item.icon className="h-4 w-4 shrink-0 text-slate-200" />
               {item.label}
-              <span className="ml-auto text-[9px] font-bold uppercase tracking-wider border border-slate-200 text-slate-300 px-1.5 py-0.5 rounded">Bientôt</span>
+              <span className="ml-auto text-[9px] font-bold uppercase tracking-wider border border-slate-200 text-slate-300 px-1.5 py-0.5 rounded">{t('soon')}</span>
             </div>
           ))}
         </div>
@@ -97,17 +97,17 @@ export function PlatformNav({ locale }: { locale: string }) {
         <div className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-xl">
           <div className="flex items-center gap-2">
             <Zap className="h-3.5 w-3.5 text-amber-500" />
-            <span className="text-[12px] font-semibold text-slate-700">{PLAN_LABELS[plan] ?? plan}</span>
+            <span className="text-[12px] font-semibold text-slate-700">{planLabel}</span>
           </div>
           <Link href={`/${locale}/subscription`}
             className="text-[10px] font-bold text-blue-600 hover:text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full transition-colors">
-            Améliorer
+            {t('upgrade')}
           </Link>
         </div>
         <button onClick={handleSignOut}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all group">
           <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-[9px] font-bold shrink-0">
-            {user ? getInitials(user.display_name ?? user.email).slice(0, 2) : 'U'}
+            {user ? getInitials(user.display_name ?? user.email).slice(0, 2) : t('user').slice(0, 1).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0 text-left">
             <p className="text-[12px] font-semibold text-slate-700 truncate leading-none group-hover:text-red-600 transition-colors">

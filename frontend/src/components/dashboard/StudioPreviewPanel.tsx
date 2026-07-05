@@ -2,14 +2,9 @@
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Monitor, Tablet, Smartphone, RefreshCw, ExternalLink } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 type Device = 'desktop' | 'tablet' | 'mobile';
-
-const DEVICE_CONFIG: Record<Device, { icon: typeof Monitor; label: string; width: string }> = {
-  desktop: { icon: Monitor,    label: 'Bureau',   width: '100%'  },
-  tablet:  { icon: Tablet,     label: 'Tablette', width: '768px' },
-  mobile:  { icon: Smartphone, label: 'Mobile',   width: '390px' },
-};
 
 interface Props {
   previewUrl:    string;
@@ -17,12 +12,18 @@ interface Props {
 }
 
 export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
+  const t = useTranslations('studio');
   const iframeRef  = useRef<HTMLIFrameElement>(null);
   const mountedUrl = useRef<string | null>(null);
   const [device,    setDevice]    = useState<Device>('desktop');
   const [reloadKey, setReloadKey] = useState(0);
 
-  // Soft-navigate when previewUrl changes (no full reload of the layout)
+  const DEVICE_CONFIG: Record<Device, { icon: typeof Monitor; label: string; width: string }> = {
+    desktop: { icon: Monitor,    label: t('deviceDesktop'), width: '100%'  },
+    tablet:  { icon: Tablet,     label: t('deviceTablet'),  width: '768px' },
+    mobile:  { icon: Smartphone, label: t('deviceMobile'),  width: '390px' },
+  };
+
   useEffect(() => {
     const iframe = iframeRef.current;
     if (!iframe) return;
@@ -40,7 +41,6 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
     }
   }, [previewUrl]);
 
-  // Reload iframe after save
   useEffect(() => {
     if (refreshSignal === 0) return;
     try {
@@ -64,11 +64,10 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
       {/* Toolbar */}
       <div className="shrink-0 h-10 border-b border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-900/80 backdrop-blur flex items-center justify-between px-4 gap-3">
         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
-          Prévisualisation en direct
+          {t('livePreview')}
         </span>
 
         <div className="flex items-center gap-1">
-          {/* Device switcher */}
           <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg p-0.5 mr-1">
             {(Object.entries(DEVICE_CONFIG) as [Device, typeof DEVICE_CONFIG[Device]][]).map(([key, cfg]) => (
               <button
@@ -86,7 +85,7 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
 
           <button
             onClick={handleManualRefresh}
-            title="Actualiser"
+            title={t('refresh')}
             className="h-6 w-6 rounded-md flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <RefreshCw className="h-3 w-3" />
@@ -95,7 +94,7 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
             href={previewUrl}
             target="_blank"
             rel="noopener noreferrer"
-            title="Ouvrir dans un nouvel onglet"
+            title={t('openNewTab')}
             className="h-6 w-6 rounded-md flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <ExternalLink className="h-3 w-3" />
@@ -103,7 +102,7 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
         </div>
       </div>
 
-      {/* Preview area — iframe fills all remaining height, content scrolls inside */}
+      {/* Preview area */}
       <div className="flex-1 overflow-hidden flex items-stretch justify-center p-4 gap-0">
         <div
           className="flex flex-col bg-white rounded-xl shadow-2xl overflow-hidden transition-all duration-300"
@@ -121,13 +120,12 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
             </div>
           </div>
 
-          {/* iframe takes remaining height — content scrolls naturally inside */}
           <iframe
             ref={iframeRef}
             key={reloadKey}
             src={previewUrl}
             className="flex-1 w-full border-0 block min-h-0"
-            title="Aperçu du blog"
+            title={t('blogPreviewIframeTitle')}
           />
         </div>
       </div>

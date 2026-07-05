@@ -8,6 +8,8 @@ import type { ArticleProps } from '../ThemeRenderer';
 import type { PublicArticle } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
 import { renderContent } from '../shared/renderContent';
+import { PublicCommentsSection } from '../shared/PublicCommentsSection';
+import { AdRotator } from '../shared/AdRotator';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -327,6 +329,14 @@ export default function LuminaryArticle({
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 mt-8 mb-8">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 mb-16">
+        <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
       </div>
 
       {relatedArticles.length > 0 && (

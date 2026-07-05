@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
-  FileText, Tag, Mail, MessageSquare,
+  FileText, Tag, Mail, MessageSquare, Megaphone,
   Home, Info, Phone, BookOpen,
   PanelTop, PanelBottom,
   BarChart2, Search, ArrowLeft, ExternalLink,
@@ -110,6 +110,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
     { href: 'categories', icon: Tag,          label: t('categories') },
     { href: 'newsletter', icon: Mail,         label: t('newsletter') },
     { href: 'comments',   icon: MessageSquare, label: t('comments') },
+    { href: 'ads',        icon: Megaphone,    label: t('ads') },
   ];
 
   const growthItems: NavItem[] = [

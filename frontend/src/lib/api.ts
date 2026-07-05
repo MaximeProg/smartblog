@@ -399,3 +399,54 @@ export const publicApi = {
   subscribe: (slug: string, email: string, firstName?: string) =>
     api.post(`/public/${slug}/subscribe`, { email, first_name: firstName }),
 };
+
+// ─── Ads ─────────────────────────────────────────────────────────────────────
+
+export interface AdResponse {
+  id: string;
+  advertiser_name: string;
+  advertiser_company: string | null;
+  title: string;
+  description: string | null;
+  image_url: string | null;
+  click_url: string;
+  placement: string | null;
+  submission_status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  campaign_status: 'ACTIVE' | 'PAUSED' | 'CANCELED' | 'SUSPENDED';
+  link_safety_status: 'SAFE' | 'DANGEROUS' | 'UNKNOWN' | 'SCANNING';
+  starts_at: string | null;
+  ends_at: string | null;
+  impressions_count: number;
+  clicks_count: number;
+  created_at: string;
+}
+
+export interface SubmitAdData {
+  advertiser_name: string;
+  advertiser_email: string;
+  advertiser_company?: string;
+  title: string;
+  description?: string;
+  image_url?: string;
+  click_url: string;
+  starts_at?: string;
+  ends_at?: string;
+  total_budget?: number;
+}
+
+export const adsApi = {
+  list: (tenantId: string, params?: { status?: string; limit?: number }) =>
+    api.get<AdResponse[]>(`/tenants/${tenantId}/ads`, { params }),
+
+  submit: (tenantId: string, data: SubmitAdData) =>
+    api.post<AdResponse>(`/tenants/${tenantId}/ads/submit`, data),
+
+  review: (tenantId: string, adId: string, decision: 'APPROVED' | 'REJECTED', rejection_reason?: string) =>
+    api.post<AdResponse>(`/tenants/${tenantId}/ads/${adId}/review`, { decision, rejection_reason }),
+
+  pause: (tenantId: string, adId: string) =>
+    api.post<AdResponse>(`/tenants/${tenantId}/ads/${adId}/pause`),
+
+  resume: (tenantId: string, adId: string) =>
+    api.post<AdResponse>(`/tenants/${tenantId}/ads/${adId}/resume`),
+};

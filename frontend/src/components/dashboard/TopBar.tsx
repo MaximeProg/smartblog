@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { Bell, LogOut, User, CreditCard } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -14,29 +15,30 @@ import { firebaseSignOut } from '@/lib/firebase';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
 
-const SEG_LABELS: Record<string, string> = {
-  dashboard:     'Dashboard',
-  blogs:         'Mes blogs',
-  subscription:  'Abonnement',
-  profile:       'Profil',
-  notifications: 'Notifications',
-  'blogs/new':   'Créer un blog',
-};
-
 export function TopBar() {
   const params   = useParams();
   const locale   = params.locale as string;
   const pathname = usePathname();
   const router   = useRouter();
   const { user, clearAuth } = useAuthStore();
+  const t = useTranslations('nav');
+
+  const segLabels: Record<string, string> = {
+    dashboard:     t('dashboard'),
+    blogs:         t('myBlogs'),
+    subscription:  t('subscription'),
+    profile:       t('profile'),
+    notifications: t('notifications'),
+    'blogs/new':   t('newBlog'),
+  };
 
   const segments  = pathname.split('/').filter(Boolean);
   const lastTwo   = segments.slice(-2).join('/');
   const lastSeg   = segments[segments.length - 1];
-  const pageTitle = SEG_LABELS[lastTwo] ?? SEG_LABELS[lastSeg] ?? 'Dashboard';
+  const pageTitle = segLabels[lastTwo] ?? segLabels[lastSeg] ?? t('dashboard');
 
-  const initials    = user ? getInitials(user.display_name ?? user.email).slice(0, 2) : 'U';
-  const displayName = user?.display_name ?? user?.email?.split('@')[0] ?? 'Utilisateur';
+  const initials    = user ? getInitials(user.display_name ?? user.email).slice(0, 2) : t('user').slice(0, 1).toUpperCase();
+  const displayName = user?.display_name ?? user?.email?.split('@')[0] ?? t('user');
 
   const handleSignOut = async () => {
     try { await authApi.logout(); } catch {}
@@ -84,13 +86,13 @@ export function TopBar() {
             <DropdownMenuItem asChild>
               <Link href={`/${locale}/profile`} className="gap-2.5 cursor-pointer">
                 <User className="h-3.5 w-3.5 text-slate-500" />
-                Profil
+                {t('profile')}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link href={`/${locale}/subscription`} className="gap-2.5 cursor-pointer">
                 <CreditCard className="h-3.5 w-3.5 text-slate-500" />
-                Abonnement
+                {t('subscription')}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -99,7 +101,7 @@ export function TopBar() {
               className="gap-2.5 cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
             >
               <LogOut className="h-3.5 w-3.5" />
-              Déconnexion
+              {t('signOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

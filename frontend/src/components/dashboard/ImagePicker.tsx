@@ -2,19 +2,20 @@
 
 import { useRef, useState } from 'react';
 import { Upload, Link2, X, ImageIcon, Loader2, Check } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { mediaApi } from '@/lib/api';
 
 interface ImagePickerProps {
   value: string;
   onChange: (url: string) => void;
   tenantId: string;
-  /** Ratio de l'aperçu — '16/9' | '1/1' | '3/2' */
   ratio?: '16/9' | '1/1' | '3/2';
 }
 
 type Tab = 'file' | 'url';
 
 export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: ImagePickerProps) {
+  const t = useTranslations('studio');
   const [tab, setTab] = useState<Tab>('file');
   const [urlInput, setUrlInput] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -27,7 +28,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
 
   async function upload(file: File) {
     if (!file.type.startsWith('image/')) {
-      setUploadError('Fichier invalide. Sélectionnez une image (JPG, PNG, WebP…)');
+      setUploadError(t('imageInvalidFile'));
       return;
     }
     setUploading(true);
@@ -37,7 +38,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
       onChange(data.cloudinary_secure_url);
       setPreviewError(false);
     } catch {
-      setUploadError('Erreur lors de l\'upload. Vérifiez votre connexion et réessayez.');
+      setUploadError(t('imageUploadError'));
     } finally {
       setUploading(false);
     }
@@ -71,14 +72,13 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
     setUploadError('');
   }
 
-  // ── Preview mode (image already set) ──────────────────────────────────────
   if (value && !previewError) {
     return (
       <div className="space-y-2">
         <div className="relative rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 group" style={{ paddingBottom: paddingPct }}>
           <img
             src={value}
-            alt="Aperçu"
+            alt={t('imagePreviewAlt')}
             className="absolute inset-0 w-full h-full object-cover"
             onError={() => setPreviewError(true)}
           />
@@ -88,7 +88,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
               onClick={() => fileRef.current?.click()}
               className="h-8 px-3 rounded-lg bg-white text-[11px] font-bold text-slate-800 flex items-center gap-1.5 hover:bg-slate-100 transition-colors shadow"
             >
-              <Upload className="h-3.5 w-3.5" /> Changer
+              <Upload className="h-3.5 w-3.5" /> {t('imageChange')}
             </button>
             <button
               type="button"
@@ -105,7 +105,6 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
     );
   }
 
-  // ── Upload / URL mode ──────────────────────────────────────────────────────
   return (
     <div className="space-y-2.5">
       {/* Tabs */}
@@ -117,7 +116,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
             tab === 'file' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
           }`}
         >
-          <Upload className="h-3 w-3" /> Depuis l'ordinateur
+          <Upload className="h-3 w-3" /> {t('imageFromComputer')}
         </button>
         <button
           type="button"
@@ -126,7 +125,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
             tab === 'url' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
           }`}
         >
-          <Link2 className="h-3 w-3" /> URL directe
+          <Link2 className="h-3 w-3" /> {t('imageDirectUrl')}
         </button>
       </div>
 
@@ -152,7 +151,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
               {uploading ? (
                 <>
                   <Loader2 className="h-7 w-7 text-blue-500 animate-spin" />
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Upload en cours…</span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{t('articleUploading')}</span>
                 </>
               ) : (
                 <>
@@ -161,9 +160,9 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
                   </div>
                   <div className="text-center">
                     <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">
-                      {dragging ? 'Déposez ici' : 'Cliquez ou glissez une image'}
+                      {dragging ? t('imageDropHere') : t('imageClickOrDrag')}
                     </p>
-                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">JPG, PNG, WebP, GIF • max 10 Mo</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{t('imageFormats')}</p>
                   </div>
                 </>
               )}
@@ -196,7 +195,6 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
         </div>
       )}
 
-      {/* Error */}
       {uploadError && (
         <p className="text-[11px] text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg px-3 py-2">{uploadError}</p>
       )}

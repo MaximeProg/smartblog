@@ -8,6 +8,8 @@ import type { ArticleProps } from '../ThemeRenderer';
 import type { PublicArticle } from '@/lib/public-api';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
 import { renderContent } from '../shared/renderContent';
+import { PublicCommentsSection } from '../shared/PublicCommentsSection';
+import { AdRotator } from '../shared/AdRotator';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -296,6 +298,10 @@ export default function EditorialArticle({
         </div>
       </div>
 
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 mt-8">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
+
       {relatedArticles.length > 0 && (
         <div className="mt-20 max-w-5xl mx-auto px-4 sm:px-6 border-t border-zinc-200 pt-16">
           <h2 className="text-xl font-bold text-zinc-900 mb-8">More to Read</h2>
@@ -313,7 +319,9 @@ export default function EditorialArticle({
         </div>
       )}
 
-      <div className="mt-24" />
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 mt-16 mb-16">
+        <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
+      </div>
 
       <EditorialFooter
         blog={blog}

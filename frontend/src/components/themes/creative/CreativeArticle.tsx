@@ -7,6 +7,10 @@ import { useParams } from 'next/navigation';
 import type { ArticleProps } from '../ThemeRenderer';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
 import { renderContent } from '../shared/renderContent';
+import { PublicCommentsSection } from '../shared/PublicCommentsSection';
+import { AdRotator } from '../shared/AdRotator';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
 const GRADIENTS = [
   'from-violet-900 to-indigo-900',
@@ -59,6 +63,8 @@ export default function CreativeArticle({
   );
 
   const [progress, setProgress] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
   const [copied, setCopied] = useState(false);
   const htmlContent = useMemo(() => renderContent(article.content), [article.content]);
 
@@ -72,6 +78,15 @@ export default function CreativeArticle({
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLike = async () => {
+    if (liked) return;
+    setLiked(true);
+    setLikeCount(n => n + 1);
+    try {
+      await fetch(`${API_URL}/api/v1/public/${blog.slug}/articles/${article.slug}/like`, { method: 'POST' });
+    } catch {}
+  };
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href).then(() => {
@@ -208,9 +223,22 @@ export default function CreativeArticle({
           )}
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <p className="text-sm text-zinc-400">
-              {article.views_count} views · {article.likes_count} likes
-            </p>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleLike}
+                className={`inline-flex items-center gap-2 text-xs font-bold border rounded-full px-4 py-2 transition-all ${
+                  liked
+                    ? 'border-red-200 text-red-500 bg-red-50'
+                    : 'border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:border-zinc-400'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className={`h-3.5 w-3.5 ${liked ? 'fill-red-500 text-red-500' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                {likeCount}
+              </button>
+              <span className="text-sm text-zinc-400">{article.views_count} views</span>
+            </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={twitterShare}
@@ -236,6 +264,14 @@ export default function CreativeArticle({
             ← Back to all articles
           </Link>
         </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-8">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-12 mb-8">
+        <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
       </div>
 
       {relatedArticles.length > 0 && (

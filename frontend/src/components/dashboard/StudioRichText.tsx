@@ -7,6 +7,7 @@ import Link from '@tiptap/extension-link';
 import Image from '@tiptap/extension-image';
 import Placeholder from '@tiptap/extension-placeholder';
 import { useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough,
   Heading2, Heading3, List, ListOrdered, Quote,
@@ -33,10 +34,11 @@ const btnCls = (active = false) =>
 export function StudioRichText({
   value,
   onChange,
-  placeholder = 'Écrivez ici…',
+  placeholder,
   tenantId,
   minHeight = 160,
 }: StudioRichTextProps) {
+  const t = useTranslations('studio');
   const { toast } = useToast();
 
   const editor = useEditor({
@@ -45,7 +47,7 @@ export function StudioRichText({
       Underline,
       Link.configure({ openOnClick: false, autolink: true }),
       Image.configure({ inline: false, allowBase64: false }),
-      Placeholder.configure({ placeholder }),
+      Placeholder.configure({ placeholder: placeholder ?? t('articleContentPlaceholder') }),
     ],
     content: value,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -57,7 +59,6 @@ export function StudioRichText({
     },
   });
 
-  // Sync external value changes without losing cursor
   useEffect(() => {
     if (!editor) return;
     const current = editor.getHTML();
@@ -68,10 +69,10 @@ export function StudioRichText({
 
   const addLink = useCallback(() => {
     if (!editor) return;
-    const url = window.prompt('URL du lien :');
+    const url = window.prompt(t('toolbarLinkPrompt'));
     if (!url) return;
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-  }, [editor]);
+  }, [editor, t]);
 
   const addImage = useCallback(async () => {
     if (!editor) return;
@@ -86,15 +87,15 @@ export function StudioRichText({
           const { data } = await mediaApi.upload(tenantId, file);
           editor.chain().focus().setImage({ src: data.cloudinary_secure_url }).run();
         } catch {
-          toast({ variant: 'destructive', title: 'Erreur lors de l\'upload.' });
+          toast({ variant: 'destructive', title: t('imageUploadError') });
         }
       };
       input.click();
     } else {
-      const url = window.prompt('URL de l\'image :');
+      const url = window.prompt(t('toolbarImagePrompt'));
       if (url) editor.chain().focus().setImage({ src: url }).run();
     }
-  }, [editor, tenantId, toast]);
+  }, [editor, tenantId, toast, t]);
 
   if (!editor) return null;
 
@@ -102,35 +103,34 @@ export function StudioRichText({
     <div className="rounded-xl border border-slate-200 overflow-hidden bg-white">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-slate-100 bg-slate-50">
-        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btnCls(editor.isActive('bold'))} title="Gras"><Bold className="h-3.5 w-3.5" /></button>
-        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btnCls(editor.isActive('italic'))} title="Italique"><Italic className="h-3.5 w-3.5" /></button>
-        <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={btnCls(editor.isActive('underline'))} title="Souligné"><UnderlineIcon className="h-3.5 w-3.5" /></button>
-        <button type="button" onClick={() => editor.chain().focus().toggleStrike().run()} className={btnCls(editor.isActive('strike'))} title="Barré"><Strikethrough className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btnCls(editor.isActive('bold'))} title={t('toolbarBold')}><Bold className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btnCls(editor.isActive('italic'))} title={t('toolbarItalic')}><Italic className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={btnCls(editor.isActive('underline'))} title={t('toolbarUnderline')}><UnderlineIcon className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleStrike().run()} className={btnCls(editor.isActive('strike'))} title={t('toolbarStrikethrough')}><Strikethrough className="h-3.5 w-3.5" /></button>
 
         <div className="w-px h-4 bg-slate-200 mx-0.5" />
 
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btnCls(editor.isActive('heading', { level: 2 }))} title="Titre H2"><Heading2 className="h-3.5 w-3.5" /></button>
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btnCls(editor.isActive('heading', { level: 3 }))} title="Titre H3"><Heading3 className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={btnCls(editor.isActive('heading', { level: 2 }))} title={t('toolbarH2')}><Heading2 className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} className={btnCls(editor.isActive('heading', { level: 3 }))} title={t('toolbarH3')}><Heading3 className="h-3.5 w-3.5" /></button>
 
         <div className="w-px h-4 bg-slate-200 mx-0.5" />
 
-        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btnCls(editor.isActive('bulletList'))} title="Liste à puces"><List className="h-3.5 w-3.5" /></button>
-        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btnCls(editor.isActive('orderedList'))} title="Liste numérotée"><ListOrdered className="h-3.5 w-3.5" /></button>
-        <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()} className={btnCls(editor.isActive('blockquote'))} title="Citation"><Quote className="h-3.5 w-3.5" /></button>
-        <button type="button" onClick={() => editor.chain().focus().setHorizontalRule().run()} className={btnCls()} title="Séparateur"><Minus className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={btnCls(editor.isActive('bulletList'))} title={t('toolbarBulletList')}><List className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={btnCls(editor.isActive('orderedList'))} title={t('toolbarOrderedList')}><ListOrdered className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().toggleBlockquote().run()} className={btnCls(editor.isActive('blockquote'))} title={t('toolbarQuote')}><Quote className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().setHorizontalRule().run()} className={btnCls()} title={t('toolbarRule')}><Minus className="h-3.5 w-3.5" /></button>
 
         <div className="w-px h-4 bg-slate-200 mx-0.5" />
 
-        <button type="button" onClick={addLink} className={btnCls(editor.isActive('link'))} title="Insérer un lien"><Link2 className="h-3.5 w-3.5" /></button>
-        <button type="button" onClick={addImage} className={btnCls()} title="Insérer une image"><ImageIcon className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={addLink} className={btnCls(editor.isActive('link'))} title={t('toolbarLink')}><Link2 className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={addImage} className={btnCls()} title={t('toolbarImage')}><ImageIcon className="h-3.5 w-3.5" /></button>
 
         <div className="w-px h-4 bg-slate-200 mx-0.5 ml-auto" />
 
-        <button type="button" onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} className={btnCls()} title="Annuler"><RotateCcw className="h-3.5 w-3.5" /></button>
-        <button type="button" onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} className={btnCls()} title="Refaire"><RotateCw className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} className={btnCls()} title={t('toolbarUndo')}><RotateCcw className="h-3.5 w-3.5" /></button>
+        <button type="button" onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} className={btnCls()} title={t('toolbarRedo')}><RotateCw className="h-3.5 w-3.5" /></button>
       </div>
 
-      {/* Editor area */}
       <EditorContent editor={editor} />
     </div>
   );
