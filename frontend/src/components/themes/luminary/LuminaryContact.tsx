@@ -79,13 +79,13 @@ export default function LuminaryContact({ blog, categories, basePath }: Props) {
             partnership and advertising inquiries, please mention it in the subject line.
           </p>
 
-          {Object.keys(blog.social_links ?? {}).length > 0 && (
+          {Object.entries(blog.social_links ?? {}).filter(([, v]) => v).length > 0 && (
             <div>
               <p className="font-sans text-[10px] uppercase tracking-widest text-zinc-400 mb-5">
                 Find us online
               </p>
               <div className="space-y-4">
-                {Object.entries(blog.social_links ?? {}).map(([platform, url]) => (
+                {Object.entries(blog.social_links ?? {}).filter(([, v]) => v).map(([platform, url]) => (
                   <a
                     key={platform}
                     href={url}

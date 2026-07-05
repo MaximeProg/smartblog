@@ -1,6 +1,6 @@
 'use client';
 import { useState, type CSSProperties, type FormEvent } from 'react';
-import { Shield, Star, Users } from 'lucide-react';
+import Link from 'next/link';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
 
@@ -14,9 +14,10 @@ interface AboutProps {
 
 export default function EditorialAbout({ blog, categories, basePath }: AboutProps) {
   const primaryColor = blog.primary_color || '#18181b';
-
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+
+  const socialEntries = Object.entries(blog.social_links ?? {}).filter(([, v]) => v);
 
   const handleSubscribe = async (e: FormEvent) => {
     e.preventDefault();
@@ -34,86 +35,88 @@ export default function EditorialAbout({ blog, categories, basePath }: AboutProp
     }
   };
 
-  const values = [
-    {
-      icon: Shield,
-      title: 'Independent',
-      description:
-        'We write for our readers, not for advertisers. Our editorial process is free from outside influence, keeping our voice authentic and honest.',
-    },
-    {
-      icon: Star,
-      title: 'Quality',
-      description:
-        'Every piece is written with care and edited with intention. We publish less, but we publish better — quality over volume, always.',
-    },
-    {
-      icon: Users,
-      title: 'Community',
-      description:
-        'We believe in conversation. Our readers are collaborators in the pursuit of good ideas. Every comment and letter matters to us.',
-    },
-  ];
-
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
-      <EditorialHeader
-        blog={blog}
-        categories={categories}
-        basePath={basePath}
-        primaryColor={primaryColor}
-      />
+      <EditorialHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
 
+      {/* Hero */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-20 pb-16 text-center">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-4">
-          About
-        </p>
-        <h1 className="text-5xl sm:text-6xl font-bold text-zinc-900 mb-6">About {blog.name}</h1>
-        <p className="text-xl text-zinc-500 leading-relaxed max-w-2xl mx-auto">
-          {blog.description ||
-            `${blog.name} is a publication dedicated to thoughtful writing and ideas worth sharing.`}
-        </p>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-4">About</p>
+        <h1 className="text-5xl sm:text-6xl font-bold text-zinc-900 mb-6">{blog.name}</h1>
+        {blog.description && (
+          <p className="text-xl text-zinc-500 leading-relaxed max-w-2xl mx-auto">{blog.description}</p>
+        )}
         <div className="w-16 h-1 bg-zinc-200 mx-auto mt-10" />
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
-        <div className="bg-zinc-50 rounded-3xl p-8 sm:p-12">
-          <p
-            className="text-[10px] font-black uppercase tracking-[0.2em] mb-4"
-            style={{ color: primaryColor }}
+      {/* Cover image */}
+      {blog.cover_image_url && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-16">
+          <div className="relative aspect-[21/9] rounded-2xl overflow-hidden shadow-md">
+            <img src={blog.cover_image_url} alt={blog.name} className="w-full h-full object-cover" />
+          </div>
+        </div>
+      )}
+
+      {/* Category / niche */}
+      {blog.category && (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 mb-16 text-center">
+          <span
+            className="inline-block text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-full text-white"
+            style={{ backgroundColor: primaryColor }}
           >
-            Our Mission
-          </p>
-          <p className="text-lg text-zinc-700 leading-relaxed mb-5">
-            {blog.name} was built with a simple belief: that good writing, given room to breathe,
-            can change the way you think. We stay focused, we stay independent, and we try to say
-            something true rather than something loud.
-          </p>
-          <p className="text-lg text-zinc-700 leading-relaxed">
-            You won&apos;t find click-bait titles or filler content here — just ideas and stories
-            we think are worth your time. Every article is reviewed, every word is considered. We
-            believe the reader&apos;s attention is a gift, and we take that seriously.
-          </p>
+            {blog.category}
+          </span>
         </div>
-      </div>
+      )}
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {values.map(v => (
-            <div
-              key={v.title}
-              className="bg-white border border-zinc-100 rounded-2xl p-6 shadow-sm"
-            >
-              <div className="mb-4" style={{ color: primaryColor }}>
-                <v.icon className="h-6 w-6" />
-              </div>
-              <h3 className="font-bold text-zinc-900 text-lg mb-2">{v.title}</h3>
-              <p className="text-sm text-zinc-500 leading-relaxed">{v.description}</p>
-            </div>
-          ))}
+      {/* Topics — only if real categories exist */}
+      {categories.length > 0 && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 border-t border-zinc-100">
+          <h2 className="text-2xl font-bold text-zinc-900 mb-8">Topics</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {categories.map(c => (
+              <Link
+                key={c.id}
+                href={`${basePath}/categories/${c.slug}`}
+                className="group flex items-center justify-between border border-zinc-100 rounded-xl px-5 py-4 hover:border-zinc-300 hover:shadow-sm transition-all"
+              >
+                <div>
+                  <p className="font-semibold text-zinc-900 group-hover:text-[var(--cp)] transition-colors">{c.name}</p>
+                  {c.description && (
+                    <p className="text-xs text-zinc-400 mt-0.5 line-clamp-1">{c.description}</p>
+                  )}
+                </div>
+                <span className="text-xs text-zinc-400 shrink-0 ml-4">
+                  {c.articles_count} {c.articles_count === 1 ? 'article' : 'articles'}
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
+      {/* Social links */}
+      {socialEntries.length > 0 && (
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 border-t border-zinc-100">
+          <h2 className="text-2xl font-bold text-zinc-900 mb-8">Follow Us</h2>
+          <div className="flex flex-wrap gap-3">
+            {socialEntries.map(([platform, url]) => (
+              <a
+                key={platform}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 border border-zinc-200 rounded-full text-sm font-medium text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 transition-all"
+              >
+                <span className="capitalize">{platform}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Newsletter */}
       <div id="newsletter" className="max-w-6xl mx-auto px-4 sm:px-6 mt-4 mb-16">
         <div className="bg-zinc-950 rounded-3xl px-6 sm:px-16 py-16 text-center">
           <h2 className="text-3xl font-bold text-white mb-3">Never miss a story</h2>
@@ -121,9 +124,7 @@ export default function EditorialAbout({ blog, categories, basePath }: AboutProp
             Get the best of {blog.name} delivered to your inbox every week.
           </p>
           {subStatus === 'ok' ? (
-            <p className="text-sm font-medium text-emerald-400">
-              You&apos;re subscribed. Thank you!
-            </p>
+            <p className="text-sm font-medium text-emerald-400">You&apos;re subscribed. Thank you!</p>
           ) : (
             <form onSubmit={handleSubscribe} className="flex max-w-md mx-auto gap-0">
               <input
@@ -151,12 +152,7 @@ export default function EditorialAbout({ blog, categories, basePath }: AboutProp
         </div>
       </div>
 
-      <EditorialFooter
-        blog={blog}
-        categories={categories}
-        basePath={basePath}
-        primaryColor={primaryColor}
-      />
+      <EditorialFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
     </div>
   );
 }

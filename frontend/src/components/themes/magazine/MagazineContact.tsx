@@ -44,28 +44,14 @@ export default function MagazineContact({ blog, categories, basePath }: ContactP
         <div>
           <h2 className="text-xl font-black text-zinc-950 mb-6">Reach Out</h2>
           <p className="text-zinc-600 text-base leading-relaxed mb-8">
-            Have a tip, a story idea, or feedback? We&apos;d love to hear from you. Our editorial team
-            reads every message and responds to those we can.
+            Use the form to send us a message. We read every submission and reply as quickly as we can.
           </p>
 
-          <div className="space-y-6 mb-10">
-            {[
-              { label: 'Editorial', value: `editorial@${blog.slug}.io`, type: 'email' },
-              { label: 'Tips & Leaks', value: `tips@${blog.slug}.io`, type: 'email' },
-              { label: 'Partnerships', value: `partners@${blog.slug}.io`, type: 'email' },
-            ].map(item => (
-              <div key={item.label} className="border-b border-zinc-100 pb-5">
-                <p className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-1">{item.label}</p>
-                <a href={`mailto:${item.value}`} className="text-zinc-900 font-bold hover:text-[var(--cp)] transition-colors">{item.value}</a>
-              </div>
-            ))}
-          </div>
-
-          {Object.entries(blog.social_links ?? {}).length > 0 && (
+          {Object.entries(blog.social_links ?? {}).filter(([, v]) => v).length > 0 && (
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-4">Follow Us</p>
-              <div className="flex flex-wrap gap-4">
-                {Object.entries(blog.social_links ?? {}).map(([platform, url]) => (
+              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-4">Follow {blog.name}</p>
+              <div className="flex flex-wrap gap-3">
+                {Object.entries(blog.social_links ?? {}).filter(([, v]) => v).map(([platform, url]) => (
                   <a
                     key={platform}
                     href={url}
