@@ -4,7 +4,36 @@
  */
 
 export function markdownToHtml(md: string): string {
-  let html = md
+  // Pre-process: extract video/audio embed lines before HTML escaping
+  const embeds: string[] = [];
+
+  let src = md
+    // YouTube: full URL on its own line
+    .replace(
+      /^https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})[^\s]*$/gm,
+      (_, id) => {
+        const idx = embeds.length;
+        embeds.push(
+          `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin:1.5em 0">` +
+          `<iframe src="https://www.youtube.com/embed/${id}?rel=0" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div>`
+        );
+        return `__EMBED_${idx}__`;
+      }
+    )
+    // Vimeo: full URL on its own line
+    .replace(
+      /^https?:\/\/(?:www\.)?vimeo\.com\/(\d+)[^\s]*$/gm,
+      (_, id) => {
+        const idx = embeds.length;
+        embeds.push(
+          `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;margin:1.5em 0">` +
+          `<iframe src="https://player.vimeo.com/video/${id}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div>`
+        );
+        return `__EMBED_${idx}__`;
+      }
+    );
+
+  let html = src
     // Escape raw HTML special chars (XSS guard for plain-text content)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -44,15 +73,21 @@ export function markdownToHtml(md: string): string {
 
   // Wrap plain-text blocks in <p> (anything not already a block element)
   const BLOCK = /^<(h[1-6]|ul|ol|li|blockquote|hr|img|pre|div|table)/;
+  const EMBED_PLACEHOLDER = /^__EMBED_\d+__$/;
   html = html
     .split(/\n{2,}/)
     .map(block => {
       block = block.trim();
       if (!block) return '';
-      if (BLOCK.test(block)) return block;
+      if (BLOCK.test(block) || EMBED_PLACEHOLDER.test(block)) return block;
       return `<p>${block.replace(/\n/g, '<br>')}</p>`;
     })
     .join('\n');
+
+  // Restore video/audio embeds
+  embeds.forEach((embed, i) => {
+    html = html.replace(`__EMBED_${i}__`, embed);
+  });
 
   return html;
 }

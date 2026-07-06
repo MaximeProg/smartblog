@@ -17,6 +17,7 @@ import {
   CorporateHeader, CorporateFooter, NewsletterSection,
   CardMedium, fmtDate, fmtDateShort, grad,
 } from './shared';
+import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
 
@@ -340,6 +341,9 @@ export default function CorporateArticle({
           {toc.length > 0 && (
             <MobileToc toc={toc} activeId={activeId} primaryColor={primaryColor} />
           )}
+
+          {/* Media block (video/audio/podcast) */}
+          <ArticleMediaBlock article={article} />
 
           {/* Content */}
           {processedContent && (

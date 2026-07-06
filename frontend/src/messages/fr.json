@@ -1596,7 +1596,8 @@
     "articleFieldEpisodeNum": "Numéro d'épisode",
     "articleFieldSeason": "Saison",
     "articleFieldPodcastTitle": "Titre du podcast (série)",
-    "articleTypeLabel": "Type de contenu"
+    "articleTypeLabel": "Type de contenu",
+    "articleTypeHint": "Sélectionne un type pour afficher les champs media correspondants en haut de l'article."
   },
   "common": {
     "loading": "Chargement...",

@@ -80,7 +80,11 @@ export interface PublicArticle {
 
 export interface PublicArticleFull extends PublicArticle {
   content: string | null;
+  article_type: 'article' | 'photo' | 'video' | 'audio' | 'podcast' | 'mixed' | null;
+  video_url: string | null;
   audio_url: string | null;
+  episode_number: number | null;
+  season: number | null;
   seo_title: string | null;
   seo_description: string | null;
   seo_keywords: string[] | null;

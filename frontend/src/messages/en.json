@@ -1606,7 +1606,8 @@
     "articleFieldEpisodeNum": "Episode number",
     "articleFieldSeason": "Season",
     "articleFieldPodcastTitle": "Podcast title (series)",
-    "articleTypeLabel": "Content type"
+    "articleTypeLabel": "Content type",
+    "articleTypeHint": "Select a type to display the matching media fields at the top of your article."
   },
   "common": {
     "loading": "Loading...",

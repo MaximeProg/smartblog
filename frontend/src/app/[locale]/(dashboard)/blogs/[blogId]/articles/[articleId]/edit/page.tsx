@@ -15,6 +15,7 @@ import { articlesApi, categoriesApi, mediaApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useStudioPreview } from '@/contexts/studio-preview';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
+import { MediaFilePicker } from '@/components/dashboard/MediaFilePicker';
 
 // ─── Markdown helpers ─────────────────────────────────────────────────────────
 
@@ -420,6 +421,7 @@ export default function EditArticlePage() {
           {/* Article type */}
           <div>
             <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleTypeLabel')}</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-2">{ts('articleTypeHint')}</p>
             <div className="grid grid-cols-3 gap-1.5">
               {([
                 { type: 'article', icon: FileText, labelKey: 'articleTypeArticle' },
@@ -450,11 +452,11 @@ export default function EditArticlePage() {
           {articleType === 'video' && (
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldVideoUrl')}</label>
-              <input
+              <MediaFilePicker
                 value={videoUrl}
-                onChange={e => { setVideoUrl(e.target.value); mark(); }}
-                placeholder={ts('articleFieldVideoUrlHint')}
-                className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                onChange={url => { setVideoUrl(url); mark(); }}
+                tenantId={blogId}
+                mediaType="video"
               />
             </div>
           )}
@@ -462,11 +464,11 @@ export default function EditArticlePage() {
           {articleType === 'audio' && (
             <div>
               <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldAudioUrl')}</label>
-              <input
+              <MediaFilePicker
                 value={audioUrl}
-                onChange={e => { setAudioUrl(e.target.value); mark(); }}
-                placeholder={ts('articleFieldAudioUrlHint')}
-                className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                onChange={url => { setAudioUrl(url); mark(); }}
+                tenantId={blogId}
+                mediaType="audio"
               />
             </div>
           )}
@@ -475,11 +477,11 @@ export default function EditArticlePage() {
             <div className="space-y-3">
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldAudioUrl')}</label>
-                <input
+                <MediaFilePicker
                   value={audioUrl}
-                  onChange={e => { setAudioUrl(e.target.value); mark(); }}
-                  placeholder={ts('articleFieldAudioUrlHint')}
-                  className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                  onChange={url => { setAudioUrl(url); mark(); }}
+                  tenantId={blogId}
+                  mediaType="audio"
                 />
               </div>
               <div className="grid grid-cols-2 gap-2">
