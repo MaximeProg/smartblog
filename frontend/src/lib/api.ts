@@ -288,11 +288,15 @@ export const mediaApi = {
   list: (tenantId: string, params?: { type?: string; limit?: number; cursor?: string }) =>
     api.get<PaginatedResponse<MediaItem>>(`/tenants/${tenantId}/media`, { params }),
 
-  upload: (tenantId: string, file: File) => {
+  upload: (tenantId: string, file: File, onProgress?: (pct: number) => void) => {
     const form = new FormData();
     form.append('file', file);
     return api.post<MediaItem>(`/tenants/${tenantId}/media/upload`, form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+      // Do NOT set Content-Type — browser must add the multipart boundary automatically
+      timeout: 300_000, // 5 min for large video/audio uploads
+      onUploadProgress: onProgress
+        ? (e) => { if (e.total) onProgress(Math.round((e.loaded / e.total) * 100)); }
+        : undefined,
     });
   },
 

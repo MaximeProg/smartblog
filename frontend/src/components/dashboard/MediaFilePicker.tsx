@@ -41,6 +41,7 @@ export function MediaFilePicker({
   const [tab, setTab] = useState<Tab>('gallery');
   const [urlInput, setUrlInput] = useState(value.startsWith('http') && !isUploadedUrl(value) ? value : '');
   const [uploading, setUploading] = useState(false);
+  const [uploadPct, setUploadPct] = useState(0);
   const [uploadError, setUploadError] = useState('');
   const [dragging, setDragging] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -60,19 +61,24 @@ export function MediaFilePicker({
   });
 
   async function upload(file: File) {
-    if (!file.type.startsWith(mimePrefix)) {
+    if (!file.type.startsWith(mimePrefix) && file.type !== '') {
       setUploadError(mediaType === 'video' ? 'Format vidéo non supporté (MP4, WebM, MOV)' : 'Format audio non supporté (MP3, WAV, OGG, AAC)');
       return;
     }
     setUploading(true);
+    setUploadPct(0);
     setUploadError('');
     try {
-      const { data } = await mediaApi.upload(tenantId, file);
+      const { data } = await mediaApi.upload(tenantId, file, setUploadPct);
       onChange(data.cloudinary_secure_url);
-    } catch {
-      setUploadError('Erreur lors de l\'upload. Réessaie.');
+    } catch (err: any) {
+      const msg = err?.code === 'ECONNABORTED'
+        ? 'Délai dépassé. Essaie avec une connexion plus rapide ou un fichier plus petit.'
+        : 'Erreur lors de l\'upload. Réessaie.';
+      setUploadError(msg);
     } finally {
       setUploading(false);
+      setUploadPct(0);
     }
   }
 
@@ -264,10 +270,20 @@ export function MediaFilePicker({
             }`}
           >
             {uploading ? (
-              <>
+              <div className="flex flex-col items-center gap-2 w-full px-4">
                 <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Upload en cours…</span>
-              </>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                  {uploadPct > 0 ? `Envoi… ${uploadPct}%` : 'Connexion…'}
+                </span>
+                {uploadPct > 0 && (
+                  <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-500 rounded-full transition-all duration-200"
+                      style={{ width: `${uploadPct}%` }}
+                    />
+                  </div>
+                )}
+              </div>
             ) : (
               <>
                 <div className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
