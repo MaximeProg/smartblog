@@ -64,7 +64,11 @@ class PublicArticle(BaseModel):
 
 class PublicArticleFull(PublicArticle):
     content: str | None  # None si payant et non acheté
+    article_type: str | None
+    video_url: str | None
     audio_url: str | None
+    episode_number: int | None
+    season: int | None
     seo_title: str | None
     seo_description: str | None
     seo_keywords: list[str] | None
@@ -174,7 +178,11 @@ async def get_public_article(
     return PublicArticleFull(
         **_to_public(article).__dict__,
         content=article.content if not is_paid else None,
-        audio_url=article.audio_url,
+        article_type=article.article_type.value if getattr(article, 'article_type', None) else None,
+        video_url=getattr(article, 'video_url', None),
+        audio_url=getattr(article, 'audio_url', None),
+        episode_number=getattr(article, 'episode_number', None),
+        season=getattr(article, 'season', None),
         seo_title=article.seo_title,
         seo_description=article.seo_description,
         seo_keywords=article.seo_keywords,
