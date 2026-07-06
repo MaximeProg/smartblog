@@ -6,7 +6,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   ArrowLeft, Save, Send, Loader2,
   Bold, Italic, Link2, Image as ImageIcon, Quote, Heading2, Heading3,
-  Minus, X, Check,
+  Minus, X, Check, FileText, Camera, Video, Mic, Radio, Layers,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -15,6 +15,8 @@ import { slugify } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useStudioPreview } from '@/contexts/studio-preview';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
+import { MediaFilePicker } from '@/components/dashboard/MediaFilePicker';
+import type { ArticleType } from '@/types';
 
 // ─── Markdown toolbar helpers ─────────────────────────────────────────────────
 
@@ -81,6 +83,11 @@ export default function NewArticlePage() {
   const [showLinkInput,  setShowLinkInput]  = useState(false);
   const [linkUrl,        setLinkUrl]        = useState('');
   const [showImgPicker,  setShowImgPicker]  = useState(false);
+  const [articleType,    setArticleType]    = useState<ArticleType>('article');
+  const [videoUrl,       setVideoUrl]       = useState('');
+  const [audioUrl,       setAudioUrl]       = useState('');
+  const [episodeNumber,  setEpisodeNumber]  = useState('');
+  const [season,         setSeason]         = useState('');
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories', blogId],
@@ -101,7 +108,12 @@ export default function NewArticlePage() {
         excerpt,
         category_id:     categoryId    || undefined,
         cover_image_url: coverImageUrl || undefined,
-      });
+        article_type:    articleType,
+        ...(videoUrl       ? { video_url:      videoUrl }                          : {}),
+        ...(audioUrl       ? { audio_url:       audioUrl }                          : {}),
+        ...(episodeNumber  ? { episode_number:  parseInt(episodeNumber, 10) }       : {}),
+        ...(season         ? { season:          parseInt(season, 10) }              : {}),
+      } as any);
       if (publish) await articlesApi.publish(blogId, data.id);
       return data;
     },
@@ -300,6 +312,95 @@ export default function NewArticlePage() {
 
         {/* Right: metadata sidebar */}
         <div className="w-[280px] shrink-0 border-l border-slate-200/70 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto px-5 py-6 space-y-6">
+
+          {/* Article type */}
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">{ts('articleTypeLabel')}</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-2">{ts('articleTypeHint')}</p>
+            <div className="grid grid-cols-3 gap-1.5">
+              {([
+                { type: 'article', icon: FileText, labelKey: 'articleTypeArticle' },
+                { type: 'photo',   icon: Camera,   labelKey: 'articleTypePhoto' },
+                { type: 'video',   icon: Video,    labelKey: 'articleTypeVideo' },
+                { type: 'audio',   icon: Mic,      labelKey: 'articleTypeAudio' },
+                { type: 'podcast', icon: Radio,    labelKey: 'articleTypePodcast' },
+                { type: 'mixed',   icon: Layers,   labelKey: 'articleTypeMixed' },
+              ] as const).map(({ type, icon: Icon, labelKey }) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setArticleType(type as ArticleType)}
+                  className={`flex flex-col items-center gap-1 py-2 px-1 rounded-xl border text-[10px] font-semibold transition-all ${
+                    articleType === type
+                      ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-400'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-750'
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {ts(labelKey as any)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Type-specific media fields */}
+          {articleType === 'video' && (
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldVideoUrl')}</label>
+              <MediaFilePicker
+                value={videoUrl}
+                onChange={setVideoUrl}
+                tenantId={blogId}
+                mediaType="video"
+              />
+            </div>
+          )}
+
+          {articleType === 'audio' && (
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldAudioUrl')}</label>
+              <MediaFilePicker
+                value={audioUrl}
+                onChange={setAudioUrl}
+                tenantId={blogId}
+                mediaType="audio"
+              />
+            </div>
+          )}
+
+          {articleType === 'podcast' && (
+            <div className="space-y-3">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldAudioUrl')}</label>
+                <MediaFilePicker
+                  value={audioUrl}
+                  onChange={setAudioUrl}
+                  tenantId={blogId}
+                  mediaType="audio"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">{ts('articleFieldEpisodeNum')}</label>
+                  <input
+                    type="number" min="1" value={episodeNumber}
+                    onChange={e => setEpisodeNumber(e.target.value)}
+                    placeholder="1"
+                    className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">{ts('articleFieldSeason')}</label>
+                  <input
+                    type="number" min="1" value={season}
+                    onChange={e => setSeason(e.target.value)}
+                    placeholder="1"
+                    className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Cover image */}
           <div>
