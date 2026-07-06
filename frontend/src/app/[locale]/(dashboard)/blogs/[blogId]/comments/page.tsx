@@ -174,9 +174,9 @@ export default function CommentsPage() {
               >
                 <tab.icon className={`h-3.5 w-3.5 shrink-0 ${activeTab === tab.key ? tab.color : ''}`} />
                 {tab.label}
-                {tab.key !== 'all' && stats && (stats as Record<string, number>)[tab.key] > 0 && (
+                {tab.key !== 'all' && stats && (stats as unknown as Record<string, number>)[tab.key] > 0 && (
                   <span className="ml-0.5 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full px-1.5 py-px text-[9px] font-bold">
-                    {(stats as Record<string, number>)[tab.key]}
+                    {(stats as unknown as Record<string, number>)[tab.key]}
                   </span>
                 )}
               </button>
