@@ -321,29 +321,35 @@ export default function CorporateArticle({
             </div>
           </header>
 
-          {/* Cover image */}
-          <div className="relative rounded-3xl overflow-hidden mb-10 aspect-[16/9] bg-slate-100 shadow-xl">
-            {hasImg ? (
-              <Image
-                src={article.cover_image_url!}
-                alt={article.title}
-                fill className="object-cover"
-                priority
-                onError={() => setImgErr(true)}
-                sizes="(max-width:900px) 100vw, 800px"
-              />
-            ) : (
-              <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
-            )}
-          </div>
+          {/* Hero: video takes priority over cover image */}
+          {article.article_type === 'video' && article.video_url ? (
+            <div className="relative rounded-3xl overflow-hidden mb-10 aspect-[16/9] bg-black shadow-xl">
+              <ArticleMediaBlock article={article} hero />
+            </div>
+          ) : (
+            <div className="relative rounded-3xl overflow-hidden mb-10 aspect-[16/9] bg-slate-100 shadow-xl">
+              {hasImg ? (
+                <Image
+                  src={article.cover_image_url!}
+                  alt={article.title}
+                  fill className="object-cover"
+                  priority
+                  onError={() => setImgErr(true)}
+                  sizes="(max-width:900px) 100vw, 800px"
+                />
+              ) : (
+                <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
+              )}
+            </div>
+          )}
 
           {/* Mobile TOC */}
           {toc.length > 0 && (
             <MobileToc toc={toc} activeId={activeId} primaryColor={primaryColor} />
           )}
 
-          {/* Media block (video/audio/podcast) */}
-          <ArticleMediaBlock article={article} />
+          {/* Media block — audio/podcast only; video is already in hero */}
+          {article.article_type !== 'video' && <ArticleMediaBlock article={article} />}
 
           {/* Content */}
           {processedContent && (

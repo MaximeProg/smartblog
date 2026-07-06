@@ -278,7 +278,14 @@ export default function LuminaryArticle({
         </div>
       </div>
 
-      {article.cover_image_url && (
+      {/* Hero: video takes priority */}
+      {article.article_type === 'video' && article.video_url ? (
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8 mb-2">
+          <div className="relative aspect-[21/9] bg-black overflow-hidden">
+            <ArticleMediaBlock article={article} hero />
+          </div>
+        </div>
+      ) : article.cover_image_url ? (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8 mb-2">
           <div className="relative aspect-[21/9]">
             <Image
@@ -291,16 +298,14 @@ export default function LuminaryArticle({
             />
           </div>
         </div>
-      )}
-
-      {!article.cover_image_url && (
+      ) : (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-8 mb-2">
           <div className={`relative aspect-[21/9] bg-gradient-to-br ${grad(article.id)}`} />
         </div>
       )}
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-12">
-        <ArticleMediaBlock article={article} />
+        {article.article_type !== 'video' && <ArticleMediaBlock article={article} />}
         <div
           className="[&_p]:mb-6 [&_p]:text-lg [&_p]:leading-relaxed [&_p]:text-zinc-700 [&_p:first-child::first-letter]:text-6xl [&_p:first-child::first-letter]:font-serif [&_p:first-child::first-letter]:float-left [&_p:first-child::first-letter]:mr-2 [&_p:first-child::first-letter]:mt-1 [&_p:first-child::first-letter]:leading-none [&_h2]:text-2xl [&_h2]:font-serif [&_h2]:text-zinc-900 [&_h2]:mt-12 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-serif [&_h3]:text-zinc-900 [&_h3]:mt-8 [&_h3]:mb-3 [&_blockquote]:border-l-2 [&_blockquote]:border-zinc-300 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-zinc-600 [&_blockquote]:text-xl [&_blockquote]:my-10 [&_ul]:mb-6 [&_ul]:space-y-2 [&_ul]:pl-6 [&_li]:text-zinc-700 [&_li]:list-disc [&_li]:text-lg [&_ol]:mb-6 [&_ol]:space-y-2 [&_ol]:pl-6 [&_ol>li]:text-zinc-700 [&_ol>li]:list-decimal [&_ol>li]:text-lg [&_code]:bg-zinc-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-sm [&_code]:font-mono [&_a]:underline [&_a]:underline-offset-2 [&_a]:decoration-zinc-300 [&_a:hover]:decoration-zinc-900 [&_img]:w-full [&_img]:my-8 [&_hr]:border-zinc-200 [&_hr]:my-12"
           dangerouslySetInnerHTML={{ __html: htmlContent }}

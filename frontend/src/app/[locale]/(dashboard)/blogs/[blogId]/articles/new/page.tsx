@@ -402,16 +402,18 @@ export default function NewArticlePage() {
             </div>
           )}
 
-          {/* Cover image */}
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleCoverImageLabel')}</p>
-            <ImagePicker
-              value={coverImageUrl}
-              onChange={setCoverImageUrl}
-              tenantId={blogId}
-              ratio="16/9"
-            />
-          </div>
+          {/* Cover image — hidden for video (video is the visual hero) */}
+          {articleType !== 'video' && (
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleCoverImageLabel')}</p>
+              <ImagePicker
+                value={coverImageUrl}
+                onChange={setCoverImageUrl}
+                tenantId={blogId}
+                ratio="16/9"
+              />
+            </div>
+          )}
 
           {/* Category */}
           <div>

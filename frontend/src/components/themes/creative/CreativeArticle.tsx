@@ -115,7 +115,43 @@ export default function CreativeArticle({
 
       <CreativeHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
 
-      {article.cover_image_url ? (
+      {/* Hero: video type → show video below dark header; image → classic hero */}
+      {article.article_type === 'video' && article.video_url ? (
+        <>
+          <div className="bg-zinc-950 py-14">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6">
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                {article.category_name && (
+                  <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full text-zinc-950" style={{ backgroundColor: primaryColor }}>
+                    {article.category_name}
+                  </span>
+                )}
+                {article.tags?.slice(0, 3).map((tag) => (
+                  <span key={tag} className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/10 text-white border border-white/20">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <h1 className="text-4xl sm:text-5xl font-black text-white leading-tight mb-4">{article.title}</h1>
+              <div className="flex items-center gap-4 text-white/60 text-sm flex-wrap">
+                {article.author_name && (
+                  <span className="flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black text-white">{initials(article.author_name)}</span>
+                    {article.author_name}
+                  </span>
+                )}
+                {article.published_at && <span>{formatDate(article.published_at)}</span>}
+                {article.reading_time_minutes && <span>{article.reading_time_minutes} min read</span>}
+              </div>
+            </div>
+          </div>
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 mt-8">
+            <div className="relative aspect-video rounded-2xl overflow-hidden shadow-lg bg-black">
+              <ArticleMediaBlock article={article} hero />
+            </div>
+          </div>
+        </>
+      ) : article.cover_image_url ? (
         <div className="relative h-[55vh] sm:h-[70vh] min-h-[350px] w-full">
           <Image
             src={article.cover_image_url}
@@ -208,7 +244,7 @@ export default function CreativeArticle({
       )}
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-        <ArticleMediaBlock article={article} />
+        {article.article_type !== 'video' && <ArticleMediaBlock article={article} />}
         <div
           className="[&_p]:mb-6 [&_p]:text-zinc-700 [&_p]:leading-[1.8] [&_h2]:text-2xl [&_h2]:font-black [&_h2]:text-zinc-950 [&_h2]:mt-12 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-zinc-950 [&_h3]:mt-8 [&_h3]:mb-3 [&_blockquote]:border-l-4 [&_blockquote]:border-zinc-300 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-zinc-500 [&_blockquote]:my-8 [&_blockquote]:text-lg [&_ul]:pl-5 [&_li]:mb-2 [&_li]:text-zinc-700 [&_li]:list-disc [&_code]:bg-zinc-100 [&_code]:px-1.5 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono [&_a]:text-[var(--cp)] [&_a]:underline [&_img]:rounded-xl [&_img]:my-6 [&_img]:w-full"
           style={{ fontSize: '1.0625rem' }}

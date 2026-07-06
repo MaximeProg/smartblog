@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   Upload, Link2, X, Loader2, Check, Grid3X3,
@@ -103,10 +103,61 @@ export function MediaFilePicker({
     { id: 'url',     label: 'URL',     icon: Link2 },
   ];
 
+  const videoEmbed = useMemo(() => {
+    if (!value || mediaType !== 'video') return null;
+    const yt = value.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (yt) return { kind: 'yt' as const, src: `https://www.youtube.com/embed/${yt[1]}?rel=0` };
+    const vm = value.match(/vimeo\.com\/(\d+)/);
+    if (vm) return { kind: 'vm' as const, src: `https://player.vimeo.com/video/${vm[1]}` };
+    if (/\.(mp4|webm|ogg|mov)(\?|$)/i.test(value)) return { kind: 'direct' as const, src: value };
+    return null;
+  }, [value, mediaType]);
+
   return (
     <div className="space-y-3">
-      {/* Current value preview */}
-      {value && (
+      {/* Live video preview */}
+      {videoEmbed && (
+        <div className="relative rounded-xl overflow-hidden bg-black" style={{ aspectRatio: '16/9' }}>
+          {videoEmbed.kind === 'direct' ? (
+            <video src={videoEmbed.src} controls playsInline className="absolute inset-0 w-full h-full" />
+          ) : (
+            <iframe
+              src={videoEmbed.src}
+              className="absolute inset-0 w-full h-full border-0"
+              allowFullScreen
+              loading="lazy"
+              title="Preview"
+            />
+          )}
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="absolute top-2 right-2 h-7 w-7 rounded-lg bg-black/60 hover:bg-red-600 flex items-center justify-center text-white transition-colors"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* Live audio preview */}
+      {value && mediaType === 'audio' && (
+        <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[10px] font-mono text-slate-500 dark:text-slate-400 truncate flex-1 mr-2">{value.split('/').pop()}</p>
+            <button
+              type="button"
+              onClick={() => onChange('')}
+              className="h-6 w-6 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors shrink-0"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <audio controls className="w-full h-8" src={value} />
+        </div>
+      )}
+
+      {/* Fallback URL bar for unrecognized video URLs */}
+      {value && mediaType === 'video' && !videoEmbed && (
         <div className="flex items-center gap-2 p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
           <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
             <PreviewIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" />

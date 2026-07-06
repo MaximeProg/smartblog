@@ -13,18 +13,54 @@ function parseVideoEmbed(url: string): { embedUrl: string; kind: 'youtube' | 'vi
   const vimeo = url.match(/vimeo\.com\/(\d+)/);
   if (vimeo) return { embedUrl: `https://player.vimeo.com/video/${vimeo[1]}`, kind: 'vimeo' };
 
-  if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) return { embedUrl: url, kind: 'direct' };
+  if (/\.(mp4|webm|ogg|mov)(\?|$)/i.test(url)) return { embedUrl: url, kind: 'direct' };
 
   return null;
 }
 
-export function ArticleMediaBlock({ article }: { article: MediaArticle }) {
+interface ArticleMediaBlockProps {
+  article: MediaArticle;
+  /**
+   * hero=true → renders only the media element with absolute inset-0,
+   * suitable for placement inside the theme's own hero container.
+   * hero=false (default) → renders a standalone block with its own wrapper.
+   */
+  hero?: boolean;
+}
+
+export function ArticleMediaBlock({ article, hero = false }: ArticleMediaBlockProps) {
   const type = article.article_type;
 
   if (type === 'video' && article.video_url) {
     const embed = parseVideoEmbed(article.video_url);
     if (!embed) return null;
 
+    if (hero) {
+      if (embed.kind === 'direct') {
+        return (
+          <video
+            controls
+            playsInline
+            className="absolute inset-0 w-full h-full object-contain bg-black"
+            src={embed.embedUrl}
+          >
+            Your browser does not support the video tag.
+          </video>
+        );
+      }
+      return (
+        <iframe
+          src={embed.embedUrl}
+          className="absolute inset-0 w-full h-full border-0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          loading="lazy"
+          title="Video"
+        />
+      );
+    }
+
+    // Standalone block
     if (embed.kind === 'direct') {
       return (
         <div className="w-full my-8">
@@ -36,7 +72,6 @@ export function ArticleMediaBlock({ article }: { article: MediaArticle }) {
         </div>
       );
     }
-
     return (
       <div className="w-full my-8">
         <div className="relative aspect-video rounded-2xl overflow-hidden shadow-lg bg-black">
@@ -46,6 +81,7 @@ export function ArticleMediaBlock({ article }: { article: MediaArticle }) {
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
             loading="lazy"
+            title="Video"
           />
         </div>
       </div>
