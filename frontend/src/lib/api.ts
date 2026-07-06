@@ -405,6 +405,7 @@ export const publicApi = {
 export interface AdResponse {
   id: string;
   advertiser_name: string;
+  advertiser_email?: string | null;
   advertiser_company: string | null;
   title: string;
   description: string | null;
@@ -414,8 +415,10 @@ export interface AdResponse {
   submission_status: 'PENDING' | 'APPROVED' | 'REJECTED';
   campaign_status: 'ACTIVE' | 'PAUSED' | 'CANCELED' | 'SUSPENDED';
   link_safety_status: 'SAFE' | 'DANGEROUS' | 'UNKNOWN' | 'SCANNING';
+  rejection_reason?: string | null;
   starts_at: string | null;
   ends_at: string | null;
+  total_budget?: number | null;
   impressions_count: number;
   clicks_count: number;
   created_at: string;
