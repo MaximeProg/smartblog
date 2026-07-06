@@ -292,7 +292,9 @@ export const mediaApi = {
     const form = new FormData();
     form.append('file', file);
     return api.post<MediaItem>(`/tenants/${tenantId}/media/upload`, form, {
-      // Do NOT set Content-Type — browser must add the multipart boundary automatically
+      // undefined clears the instance-level 'application/json' default so the browser
+      // can generate the correct multipart/form-data header with its own boundary
+      headers: { 'Content-Type': undefined },
       timeout: 300_000, // 5 min for large video/audio uploads
       onUploadProgress: onProgress
         ? (e) => { if (e.total) onProgress(Math.round((e.loaded / e.total) * 100)); }
