@@ -215,7 +215,11 @@ const MOCK_ARTICLE_CONTENT = `<p>The convergence of large language models, compu
 export const MOCK_ARTICLE_FULL: PublicArticleFull = {
   ...MOCK_ARTICLES[0],
   content: MOCK_ARTICLE_CONTENT,
+  article_type: null,
+  video_url: null,
   audio_url: null,
+  episode_number: null,
+  season: null,
   seo_title: 'The Future of AI in Healthcare',
   seo_description: 'Machine learning models are transforming diagnostics, drug discovery, and patient care. Here\'s what the next decade holds.',
   seo_keywords: ['AI healthcare', 'machine learning medicine', 'diagnostic AI', 'drug discovery AI'],
