@@ -36,6 +36,22 @@ function MiniBarChart({ data, viewsUnit }: { data: DailyMetric[]; viewsUnit: str
   );
 }
 
+function StatCard({ label, value, icon: Icon, iconBg, iconBorder, iconColor }: {
+  label: string; value: string | number;
+  icon: React.ElementType;
+  iconBg: string; iconBorder: string; iconColor: string;
+}) {
+  return (
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm px-5 py-5">
+      <div className={`h-9 w-9 rounded-xl border ${iconBorder} ${iconBg} flex items-center justify-center mb-3`}>
+        <Icon className={`h-4 w-4 ${iconColor}`} />
+      </div>
+      <p className="text-[26px] font-black text-slate-900 dark:text-slate-100 leading-none">{value}</p>
+      <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5 font-medium">{label}</p>
+    </div>
+  );
+}
+
 export default function AnalyticsPage() {
   const params = useParams();
   const blogId = params.blogId as string;
@@ -58,12 +74,7 @@ export default function AnalyticsPage() {
     queryFn: async () => { const { data } = await analyticsApi.overview(blogId, days); return data; },
   });
 
-  const stats = [
-    { label: ts('analyticsViews'),    value: analytics?.total_views ?? 0,       icon: Eye,       color: 'text-blue-600 dark:text-blue-400',   bg: 'bg-blue-50 dark:bg-blue-900/30',   border: 'border-blue-100 dark:border-blue-800'   },
-    { label: ts('analyticsSessions'), value: analytics?.unique_sessions ?? 0,    icon: Users,     color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/30', border: 'border-violet-100 dark:border-violet-800' },
-    { label: ts('analyticsDuration'), value: formatDuration(analytics?.avg_duration_seconds ?? 0), icon: Clock, color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/30', border: 'border-emerald-100 dark:border-emerald-800' },
-    { label: ts('analyticsTrend'),    value: analytics ? `+${analytics.total_views}` : '–', icon: TrendingUp, color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/30', border: 'border-amber-100 dark:border-amber-800' },
-  ];
+  void tenant;
 
   const periodSelector = (
     <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
@@ -89,33 +100,54 @@ export default function AnalyticsPage() {
       description={ts('pageAnalyticsDesc')}
       action={periodSelector}
     >
-      <div className="max-w-5xl mx-auto px-6 py-6 space-y-5">
+      <div className="px-6 py-6 space-y-5">
 
         {/* Stats cards */}
         {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[1,2,3,4].map(i => <div key={i} className="h-24 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse" />)}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[1,2,3,4].map(i => <div key={i} className="h-28 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse" />)}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {stats.map(s => (
-              <div key={s.label} className="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700 p-4 flex items-center gap-3">
-                <div className={`h-10 w-10 rounded-xl border ${s.border} ${s.bg} flex items-center justify-center shrink-0`}>
-                  <s.icon className={`h-4 w-4 ${s.color}`} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[22px] font-black text-slate-900 dark:text-slate-100 leading-none">{s.value}</p>
-                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{s.label}</p>
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <StatCard
+              label={ts('analyticsViews')}
+              value={analytics?.total_views ?? 0}
+              icon={Eye}
+              iconBg="bg-blue-50 dark:bg-blue-900/30"
+              iconBorder="border-blue-100 dark:border-blue-800"
+              iconColor="text-blue-600 dark:text-blue-400"
+            />
+            <StatCard
+              label={ts('analyticsSessions')}
+              value={analytics?.unique_sessions ?? 0}
+              icon={Users}
+              iconBg="bg-violet-50 dark:bg-violet-900/30"
+              iconBorder="border-violet-100 dark:border-violet-800"
+              iconColor="text-violet-600 dark:text-violet-400"
+            />
+            <StatCard
+              label={ts('analyticsDuration')}
+              value={formatDuration(analytics?.avg_duration_seconds ?? 0)}
+              icon={Clock}
+              iconBg="bg-emerald-50 dark:bg-emerald-900/30"
+              iconBorder="border-emerald-100 dark:border-emerald-800"
+              iconColor="text-emerald-600 dark:text-emerald-400"
+            />
+            <StatCard
+              label={ts('analyticsTrend')}
+              value={analytics ? `+${analytics.total_views}` : '–'}
+              icon={TrendingUp}
+              iconBg="bg-amber-50 dark:bg-amber-900/30"
+              iconBorder="border-amber-100 dark:border-amber-800"
+              iconColor="text-amber-600 dark:text-amber-400"
+            />
           </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Bar chart */}
           {analytics?.views_by_day && analytics.views_by_day.length > 0 && (
-            <div className="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700 p-5 lg:col-span-2">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm p-5 lg:col-span-2">
               <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">{ts('analyticsViewsByDay')}</p>
               <MiniBarChart data={analytics.views_by_day} viewsUnit={ts('analyticsViewsUnit')} />
               <div className="flex justify-between mt-2">
@@ -127,13 +159,13 @@ export default function AnalyticsPage() {
 
           {/* Top articles */}
           {analytics?.top_articles && analytics.top_articles.length > 0 && (
-            <div className="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
-              <div className="px-5 py-3.5 border-b border-slate-100 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700/60">
                 <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{ts('analyticsTopArticles')}</p>
               </div>
-              <div className="divide-y divide-slate-50 dark:divide-slate-700/50">
+              <div className="divide-y divide-slate-100 dark:divide-slate-700/60">
                 {analytics.top_articles.slice(0, 8).map((art, i) => (
-                  <div key={art.id} className="flex items-center gap-3 px-5 py-3">
+                  <div key={art.id} className="flex items-center gap-3 px-5 py-3.5">
                     <span className="text-[11px] font-bold text-slate-300 dark:text-slate-600 w-5 shrink-0">{i + 1}</span>
                     <p className="flex-1 text-[13px] text-slate-700 dark:text-slate-300 truncate">{art.title}</p>
                     <span className="text-[12px] font-semibold text-slate-400 dark:text-slate-500 shrink-0">{art.views} {ts('analyticsViewsUnit')}</span>
@@ -145,13 +177,13 @@ export default function AnalyticsPage() {
 
           {/* Top referrers */}
           {analytics?.top_referrers && analytics.top_referrers.length > 0 && (
-            <div className="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
-              <div className="px-5 py-3.5 border-b border-slate-100 dark:border-slate-700">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700/60">
                 <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{ts('analyticsSources')}</p>
               </div>
-              <div className="divide-y divide-slate-50 dark:divide-slate-700/50">
+              <div className="divide-y divide-slate-100 dark:divide-slate-700/60">
                 {analytics.top_referrers.slice(0, 8).map(ref => (
-                  <div key={ref.domain} className="flex items-center gap-3 px-5 py-3">
+                  <div key={ref.domain} className="flex items-center gap-3 px-5 py-3.5">
                     <Globe className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
                     <p className="flex-1 text-[13px] text-slate-700 dark:text-slate-300 truncate font-mono">{ref.domain || 'Direct'}</p>
                     <span className="text-[12px] font-semibold text-slate-400 dark:text-slate-500 shrink-0">{ref.visits}</span>
@@ -164,8 +196,8 @@ export default function AnalyticsPage() {
 
         {/* Empty state */}
         {!isLoading && !analytics?.total_views && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col items-center justify-center py-20 text-center">
+            <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center mb-4">
               <TrendingUp className="h-6 w-6 text-slate-400 dark:text-slate-500" />
             </div>
             <p className="text-[15px] font-bold text-slate-700 dark:text-slate-300 mb-1">{ts('analyticsNoDataTitle')}</p>

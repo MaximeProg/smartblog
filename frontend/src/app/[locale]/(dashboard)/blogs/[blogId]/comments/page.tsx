@@ -47,6 +47,22 @@ function StatusBadge({ status }: { status: CommentStatus }) {
   );
 }
 
+function StatCard({ label, value, icon: Icon, iconBg, iconBorder, iconColor }: {
+  label: string; value: number;
+  icon: React.ElementType;
+  iconBg: string; iconBorder: string; iconColor: string;
+}) {
+  return (
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm px-5 py-5">
+      <div className={`h-9 w-9 rounded-xl border ${iconBorder} ${iconBg} flex items-center justify-center mb-3`}>
+        <Icon className={`h-4 w-4 ${iconColor}`} />
+      </div>
+      <p className="text-[26px] font-black text-slate-900 dark:text-slate-100 leading-none">{value}</p>
+      <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5 font-medium">{label}</p>
+    </div>
+  );
+}
+
 export default function CommentsPage() {
   const params = useParams();
   const blogId = params.blogId as string;
@@ -98,28 +114,49 @@ export default function CommentsPage() {
     onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
-  const statCards = [
-    { label: ts('commentStatsTotal'),    value: stats?.total    ?? 0, color: 'text-slate-800 dark:text-slate-200',   bg: 'bg-white dark:bg-slate-800/60',   border: 'border-slate-100 dark:border-slate-700' },
-    { label: ts('commentStatsPending'),  value: stats?.pending  ?? 0, color: 'text-amber-700 dark:text-amber-400',   bg: 'bg-amber-50 dark:bg-amber-900/20',  border: 'border-amber-100 dark:border-amber-800' },
-    { label: ts('commentStatsApproved'), value: stats?.approved ?? 0, color: 'text-emerald-700 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20', border: 'border-emerald-100 dark:border-emerald-800' },
-    { label: ts('commentStatsRejected'), value: stats?.rejected ?? 0, color: 'text-red-700 dark:text-red-400',       bg: 'bg-red-50 dark:bg-red-900/20',    border: 'border-red-100 dark:border-red-800' },
-  ];
+  void tenant;
 
   return (
     <FullPageShell
       title={ts('pageComments')}
       description={ts('pageCommentsDesc')}
     >
-      <div className="max-w-5xl mx-auto px-6 py-6 space-y-5">
+      <div className="px-6 py-6 space-y-5">
 
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {statCards.map(s => (
-            <div key={s.label} className={`rounded-xl border ${s.border} ${s.bg} px-5 py-4`}>
-              <p className={`text-[28px] font-black leading-none ${s.color}`}>{s.value}</p>
-              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">{s.label}</p>
-            </div>
-          ))}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <StatCard
+            label={ts('commentStatsTotal')}
+            value={stats?.total ?? 0}
+            icon={MessageSquare}
+            iconBg="bg-blue-50 dark:bg-blue-900/30"
+            iconBorder="border-blue-100 dark:border-blue-800"
+            iconColor="text-blue-600 dark:text-blue-400"
+          />
+          <StatCard
+            label={ts('commentStatsPending')}
+            value={stats?.pending ?? 0}
+            icon={Clock}
+            iconBg="bg-amber-50 dark:bg-amber-900/30"
+            iconBorder="border-amber-100 dark:border-amber-800"
+            iconColor="text-amber-600 dark:text-amber-400"
+          />
+          <StatCard
+            label={ts('commentStatsApproved')}
+            value={stats?.approved ?? 0}
+            icon={Check}
+            iconBg="bg-emerald-50 dark:bg-emerald-900/30"
+            iconBorder="border-emerald-100 dark:border-emerald-800"
+            iconColor="text-emerald-600 dark:text-emerald-400"
+          />
+          <StatCard
+            label={ts('commentStatsRejected')}
+            value={stats?.rejected ?? 0}
+            icon={X}
+            iconBg="bg-red-50 dark:bg-red-900/30"
+            iconBorder="border-red-100 dark:border-red-800"
+            iconColor="text-red-600 dark:text-red-400"
+          />
         </div>
 
         {/* Tabs + search */}
@@ -137,9 +174,9 @@ export default function CommentsPage() {
               >
                 <tab.icon className={`h-3.5 w-3.5 shrink-0 ${activeTab === tab.key ? tab.color : ''}`} />
                 {tab.label}
-                {tab.key !== 'all' && stats && (stats as any)[tab.key] > 0 && (
+                {tab.key !== 'all' && stats && (stats as Record<string, number>)[tab.key] > 0 && (
                   <span className="ml-0.5 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full px-1.5 py-px text-[9px] font-bold">
-                    {(stats as any)[tab.key]}
+                    {(stats as Record<string, number>)[tab.key]}
                   </span>
                 )}
               </button>
@@ -151,7 +188,7 @@ export default function CommentsPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder={ts('commentSearchPlaceholder')}
-              className="w-full h-10 pl-9 pr-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-400 dark:focus:border-blue-600 transition-colors"
+              className="w-full h-10 pl-9 pr-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-400 dark:focus:border-blue-600 transition-colors"
             />
           </div>
         </div>
@@ -159,19 +196,19 @@ export default function CommentsPage() {
         {/* Comment list */}
         {isLoading ? (
           <div className="space-y-3">
-            {[1, 2, 3].map(i => <div key={i} className="h-28 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse" />)}
+            {[1, 2, 3].map(i => <div key={i} className="h-28 bg-slate-200 dark:bg-slate-800 rounded-2xl animate-pulse" />)}
           </div>
         ) : comments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col items-center justify-center py-20 text-center">
+            <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center mb-4">
               <MessageSquare className="h-6 w-6 text-slate-300 dark:text-slate-600" />
             </div>
             <p className="text-[14px] font-semibold text-slate-500 dark:text-slate-400">{ts('commentEmptyState')}</p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-700 divide-y divide-slate-50 dark:divide-slate-700/50 overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm divide-y divide-slate-100 dark:divide-slate-700/60 overflow-hidden">
             {comments.map(c => (
-              <div key={c.id} className="p-5">
+              <div key={c.id} className="p-5 hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
                 <div className="flex items-start gap-3">
                   <Avatar name={c.author_name ?? '?'} />
                   <div className="flex-1 min-w-0">
@@ -217,7 +254,7 @@ export default function CommentsPage() {
                   )}
                   <button
                     onClick={() => deleteMutation.mutate(c.id)}
-                    className="flex items-center gap-1.5 h-7 px-3 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600 text-[11px] font-semibold hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-800 transition-colors ml-auto"
+                    className="flex items-center gap-1.5 h-7 px-3 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-800 transition-colors ml-auto"
                   >
                     <Trash2 className="h-3 w-3" /> {ts('commentDelete')}
                   </button>
