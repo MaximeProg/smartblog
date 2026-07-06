@@ -49,6 +49,11 @@ export default function CreativeArticle({
   const locale = (params?.locale as string) || 'en';
   const primaryColor = blog.primary_color || '#7c3aed';
 
+  const articleCfg = blog.template_config?.article as Record<string, any> | undefined;
+  const showRelated = articleCfg?.relatedArticles?.enabled !== false;
+  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || 'More';
+  const showComments = articleCfg?.comments?.enabled !== false;
+
   const basePath =
     baseProp ||
     (previewSlug ? `/en/template?preview=${previewSlug}` : `/${locale}/${blog.slug}`);
@@ -270,13 +275,15 @@ export default function CreativeArticle({
         <AdRotator slug={blog.slug} primaryColor={primaryColor} />
       </div>
 
+      {showComments && (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 mt-12 mb-8">
         <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
       </div>
+      )}
 
-      {relatedArticles.length > 0 && (
+      {showRelated && relatedArticles.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 mt-20 pt-16 border-t border-zinc-100 pb-12">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-8">More</p>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-8">{relatedTitle}</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             {relatedArticles.slice(0, 3).map((a, i) => (
               <Link

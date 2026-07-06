@@ -142,10 +142,22 @@ export default function LuminaryHome({
     }
   };
 
+  const homeCfg = blog.template_config?.home;
+  const showHero = homeCfg?.hero?.enabled !== false;
+  const heroTitle = homeCfg?.hero?.sectionTitle || 'Featured';
+  const showNewsletter = homeCfg?.newsletter?.enabled !== false;
+  const newsletterTitle = homeCfg?.newsletter?.title || 'Stay well-read.';
+  const newsletterDesc = homeCfg?.newsletter?.description || `Thoughtful stories from ${blog.name}, delivered to your inbox. No noise, no filler.`;
+  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
+  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
+  const newsletterDisclaimer = homeCfg?.newsletter?.disclaimer || 'No spam. Unsubscribe anytime.';
+  const showLatest = homeCfg?.latest?.enabled !== false;
+  const latestTitle = homeCfg?.latest?.sectionTitle || 'Latest';
+
   const isFiltered = !!(currentCategory || searchQuery);
   const filteredCategory = categories.find(c => c.slug === currentCategory);
-  const coverArticle = !isFiltered && articles.length > 0 ? articles[0] : null;
-  const remainingArticles = isFiltered ? articles : articles.slice(1);
+  const coverArticle = !isFiltered && showHero && articles.length > 0 ? articles[0] : null;
+  const remainingArticles = isFiltered ? articles : (showHero ? articles.slice(1) : articles);
 
   const articlesByCategory: Record<string, { category: PublicCategory; articles: PublicArticle[] }> = {};
   if (!isFiltered) {
@@ -349,47 +361,30 @@ export default function LuminaryHome({
         </>
       )}
 
-      <section id="newsletter" className="bg-zinc-950 py-24">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-4">
-            Newsletter
-          </p>
-          <h2 className="font-serif italic text-4xl sm:text-5xl text-white mb-4">
-            Stay well-read.
-          </h2>
-          <p className="font-sans text-sm text-zinc-400 mb-10 leading-relaxed">
-            Thoughtful stories from {blog.name}, delivered to your inbox. No noise, no filler.
-          </p>
-          {subStatus === 'ok' ? (
-            <p className="font-serif italic text-xl text-white">Thank you for subscribing.</p>
-          ) : (
-            <form
-              onSubmit={handleSubscribe}
-              className="flex items-end gap-0 max-w-sm mx-auto border-b border-zinc-600 pb-px"
-            >
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="flex-1 bg-transparent border-0 px-0 py-3 text-white placeholder:text-zinc-600 focus:outline-none text-sm min-w-0 font-sans"
-              />
-              <button
-                type="submit"
-                disabled={subStatus === 'loading'}
-                className="font-sans text-xs uppercase tracking-widest text-white hover:text-[var(--cp)] transition-colors shrink-0 pl-4 py-3 disabled:opacity-60"
-              >
-                {subStatus === 'loading' ? '…' : 'Subscribe'}
-              </button>
-            </form>
-          )}
-          {subStatus === 'error' && (
-            <p className="font-sans text-xs text-red-400 mt-3">Something went wrong. Please try again.</p>
-          )}
-          <p className="font-sans text-xs text-zinc-600 mt-6">No spam. Unsubscribe anytime.</p>
-        </div>
-      </section>
+      {showNewsletter && (
+        <section id="newsletter" className="bg-zinc-950 py-24">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+            <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-4">Newsletter</p>
+            <h2 className="font-serif italic text-4xl sm:text-5xl text-white mb-4">{newsletterTitle}</h2>
+            <p className="font-sans text-sm text-zinc-400 mb-10 leading-relaxed">{newsletterDesc}</p>
+            {subStatus === 'ok' ? (
+              <p className="font-serif italic text-xl text-white">Thank you for subscribing.</p>
+            ) : (
+              <form onSubmit={handleSubscribe} className="flex items-end gap-0 max-w-sm mx-auto border-b border-zinc-600 pb-px">
+                <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                  placeholder={newsletterPlaceholder}
+                  className="flex-1 bg-transparent border-0 px-0 py-3 text-white placeholder:text-zinc-600 focus:outline-none text-sm min-w-0 font-sans" />
+                <button type="submit" disabled={subStatus === 'loading'}
+                  className="font-sans text-xs uppercase tracking-widest text-white hover:text-[var(--cp)] transition-colors shrink-0 pl-4 py-3 disabled:opacity-60">
+                  {subStatus === 'loading' ? '…' : newsletterBtn}
+                </button>
+              </form>
+            )}
+            {subStatus === 'error' && <p className="font-sans text-xs text-red-400 mt-3">Something went wrong. Please try again.</p>}
+            {newsletterDisclaimer && <p className="font-sans text-xs text-zinc-600 mt-6">{newsletterDisclaimer}</p>}
+          </div>
+        </section>
+      )}
 
       <LuminaryFooter
         blog={blog}

@@ -47,9 +47,20 @@ export default function CreativeHome({
     [getArticleHref, previewSlug, locale, blog.slug]
   );
 
+  const homeCfg = blog.template_config?.home;
+  const showHero = homeCfg?.hero?.enabled !== false;
+  const heroTitle = homeCfg?.hero?.sectionTitle || 'Featured';
+  const showLatest = homeCfg?.latest?.enabled !== false;
+  const latestTitle = homeCfg?.latest?.sectionTitle || 'Latest Work';
+  const showNewsletter = homeCfg?.newsletter?.enabled !== false;
+  const newsletterTitle = homeCfg?.newsletter?.title || blog.name;
+  const newsletterDesc = homeCfg?.newsletter?.description || 'Join the creative community';
+  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
+  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
+
   const isFiltered = !!(currentCategory || searchQuery);
-  const heroArticle = !isFiltered && articles.length > 0 ? articles[0] : null;
-  const gridArticles = !isFiltered && articles.length > 0 ? articles.slice(1) : articles;
+  const heroArticle = !isFiltered && showHero && articles.length > 0 ? articles[0] : null;
+  const gridArticles = !isFiltered && showHero && articles.length > 0 ? articles.slice(1) : articles;
 
   const [email, setEmail] = useState('');
 
@@ -84,7 +95,7 @@ export default function CreativeHome({
                     </span>
                   )}
                   <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white/10 text-white border border-white/20">
-                    Featured
+                    {heroTitle}
                   </span>
                 </div>
                 <h1 className="text-4xl sm:text-6xl font-black text-white leading-tight mt-4 mb-4 max-w-3xl">
@@ -132,7 +143,7 @@ export default function CreativeHome({
             </div>
           ) : (
             <div className="flex items-center justify-between mb-8">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">Latest Work</p>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">{latestTitle}</p>
               <p className="text-xs text-zinc-300">{gridArticles.length} articles</p>
             </div>
           )}
@@ -207,12 +218,12 @@ export default function CreativeHome({
         </section>
       )}
 
-      {!isFiltered && (
+      {!isFiltered && showNewsletter && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="bg-zinc-950 rounded-2xl px-8 sm:px-16 py-16 text-center">
-            <p className="text-4xl font-black text-white mb-2">{blog.name}</p>
+            <p className="text-4xl font-black text-white mb-2">{newsletterTitle}</p>
             <p className="text-zinc-400 text-base mb-8 max-w-md mx-auto">
-              Join the creative community
+              {newsletterDesc}
             </p>
             <form
               className="flex max-w-sm mx-auto gap-2"
@@ -225,7 +236,7 @@ export default function CreativeHome({
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
+                placeholder={newsletterPlaceholder}
                 className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:border-[var(--cp)]"
               />
               <button
@@ -233,7 +244,7 @@ export default function CreativeHome({
                 className="px-5 py-3 rounded-xl font-black text-sm text-zinc-950 hover:opacity-90 transition-opacity shrink-0"
                 style={{ backgroundColor: primaryColor }}
               >
-                Subscribe
+                {newsletterBtn}
               </button>
             </form>
           </div>

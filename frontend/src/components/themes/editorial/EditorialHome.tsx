@@ -75,10 +75,24 @@ export default function EditorialHome({
     }
   };
 
+  const homeCfg = blog.template_config?.home;
+  const showHero = homeCfg?.hero?.enabled !== false;
+  const heroTitle = homeCfg?.hero?.sectionTitle || 'Featured Story';
+  const showLatest = homeCfg?.latest?.enabled !== false;
+  const latestTitle = homeCfg?.latest?.sectionTitle || 'Latest Stories';
+  const showNewsletter = homeCfg?.newsletter?.enabled !== false;
+  const newsletterTitle = homeCfg?.newsletter?.title || 'Never miss a story';
+  const newsletterDesc = homeCfg?.newsletter?.description || `Get the best of ${blog.name} delivered to your inbox every week.`;
+  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
+  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
+  const newsletterDisclaimer = homeCfg?.newsletter?.disclaimer || 'No spam. Unsubscribe anytime.';
+  const showCategoriesStrip = homeCfg?.categoriesStrip?.enabled !== false;
+  const categoriesStripLabel = homeCfg?.categoriesStrip?.label || 'Explore Topics';
+
   const isFiltered = !!(currentCategory || searchQuery);
   const filteredCategory = categories.find(c => c.slug === currentCategory);
-  const featuredArticle = !isFiltered && articles.length > 0 ? articles[0] : null;
-  const gridArticles = isFiltered ? articles : articles.slice(1);
+  const featuredArticle = !isFiltered && showHero && articles.length > 0 ? articles[0] : null;
+  const gridArticles = isFiltered ? articles : (showHero ? articles.slice(1) : articles);
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
@@ -94,7 +108,7 @@ export default function EditorialHome({
           <div className="flex items-center gap-3 mb-5">
             <div className="flex-1 h-px bg-zinc-200" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 whitespace-nowrap">
-              Featured Story
+              {heroTitle}
             </span>
             <div className="flex-1 h-px bg-zinc-200" />
           </div>
@@ -190,10 +204,10 @@ export default function EditorialHome({
         </div>
       )}
 
-      {articles.length > 0 && (
+      {articles.length > 0 && showLatest && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-14 mb-8 flex items-center gap-4">
           <h2 className="text-xs font-black uppercase tracking-widest text-zinc-900 whitespace-nowrap">
-            {isFiltered ? 'Results' : 'Latest Stories'}
+            {isFiltered ? 'Results' : latestTitle}
           </h2>
           <div className="flex-1 h-px bg-zinc-200" />
           <span className="text-xs text-zinc-400">{gridArticles.length} articles</span>
@@ -257,47 +271,35 @@ export default function EditorialHome({
         </div>
       )}
 
-      <div id="newsletter" className="max-w-6xl mx-auto px-4 sm:px-6 mt-16 mb-4">
-        <div className="bg-zinc-950 rounded-3xl px-6 sm:px-16 py-16 text-center">
-          <h2 className="text-3xl font-bold text-white mb-3">Never miss a story</h2>
-          <p className="text-zinc-400 text-base mb-8 max-w-md mx-auto">
-            Get the best of {blog.name} delivered to your inbox every week.
-          </p>
-          {subStatus === 'ok' ? (
-            <p className="text-sm font-medium text-emerald-400">
-              You&apos;re subscribed. Thank you!
-            </p>
-          ) : (
-            <form onSubmit={handleSubscribe} className="flex max-w-md mx-auto gap-0">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="flex-1 bg-zinc-800 border-0 rounded-l-2xl px-5 py-3.5 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 text-sm min-w-0"
-              />
-              <button
-                type="submit"
-                disabled={subStatus === 'loading'}
-                className="px-6 py-3.5 rounded-r-2xl font-bold text-sm bg-white hover:bg-zinc-100 transition-colors disabled:opacity-60 shrink-0"
-                style={{ color: primaryColor }}
-              >
-                {subStatus === 'loading' ? '…' : 'Subscribe'}
-              </button>
-            </form>
-          )}
-          {subStatus === 'error' && (
-            <p className="text-xs text-red-400 mt-3">Something went wrong. Please try again.</p>
-          )}
-          <p className="text-xs text-zinc-600 mt-4">No spam. Unsubscribe anytime.</p>
+      {showNewsletter && (
+        <div id="newsletter" className="max-w-6xl mx-auto px-4 sm:px-6 mt-16 mb-4">
+          <div className="bg-zinc-950 rounded-3xl px-6 sm:px-16 py-16 text-center">
+            <h2 className="text-3xl font-bold text-white mb-3">{newsletterTitle}</h2>
+            <p className="text-zinc-400 text-base mb-8 max-w-md mx-auto">{newsletterDesc}</p>
+            {subStatus === 'ok' ? (
+              <p className="text-sm font-medium text-emerald-400">You&apos;re subscribed. Thank you!</p>
+            ) : (
+              <form onSubmit={handleSubscribe} className="flex max-w-md mx-auto gap-0">
+                <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                  placeholder={newsletterPlaceholder}
+                  className="flex-1 bg-zinc-800 border-0 rounded-l-2xl px-5 py-3.5 text-white placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 text-sm min-w-0" />
+                <button type="submit" disabled={subStatus === 'loading'}
+                  className="px-6 py-3.5 rounded-r-2xl font-bold text-sm bg-white hover:bg-zinc-100 transition-colors disabled:opacity-60 shrink-0"
+                  style={{ color: primaryColor }}>
+                  {subStatus === 'loading' ? '…' : newsletterBtn}
+                </button>
+              </form>
+            )}
+            {subStatus === 'error' && <p className="text-xs text-red-400 mt-3">Something went wrong. Please try again.</p>}
+            {newsletterDisclaimer && <p className="text-xs text-zinc-600 mt-4">{newsletterDisclaimer}</p>}
+          </div>
         </div>
-      </div>
+      )}
 
-      {categories.length > 0 && (
+      {showCategoriesStrip && categories.length > 0 && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-5">
-            Explore Topics
+            {categoriesStripLabel}
           </p>
           <div className="flex flex-wrap gap-3">
             {categories.map(c => (

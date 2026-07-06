@@ -101,6 +101,14 @@ export default function EditorialArticle({
   const basePath = _basePath ?? `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#18181b';
 
+  const articleCfg = blog.template_config?.article as Record<string, any> | undefined;
+  const showProgressBar = articleCfg?.progressBar?.enabled !== false;
+  const showShare = articleCfg?.share?.enabled !== false;
+  const showRelated = articleCfg?.relatedArticles?.enabled !== false;
+  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || 'More to Read';
+  const showComments = articleCfg?.comments?.enabled !== false;
+  const showAuthorBio = articleCfg?.authorBio?.enabled !== false;
+
   const [progress, setProgress] = useState(0);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
@@ -153,10 +161,12 @@ export default function EditorialArticle({
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
-      <div
-        className="fixed top-0 left-0 z-[100] h-[3px] transition-none pointer-events-none"
-        style={{ width: `${progress}%`, backgroundColor: primaryColor }}
-      />
+      {showProgressBar && (
+        <div
+          className="fixed top-0 left-0 z-[100] h-[3px] transition-none pointer-events-none"
+          style={{ width: `${progress}%`, backgroundColor: primaryColor }}
+        />
+      )}
 
       <EditorialHeader
         blog={blog}
@@ -253,6 +263,7 @@ export default function EditorialArticle({
         />
       </div>
 
+      {showShare && (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 mt-12 pt-8 border-t border-zinc-200">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex gap-3">
@@ -297,14 +308,15 @@ export default function EditorialArticle({
           </div>
         </div>
       </div>
+      )}
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 mt-8">
         <AdRotator slug={blog.slug} primaryColor={primaryColor} />
       </div>
 
-      {relatedArticles.length > 0 && (
+      {showRelated && relatedArticles.length > 0 && (
         <div className="mt-20 max-w-5xl mx-auto px-4 sm:px-6 border-t border-zinc-200 pt-16">
-          <h2 className="text-xl font-bold text-zinc-900 mb-8">More to Read</h2>
+          <h2 className="text-xl font-bold text-zinc-900 mb-8">{relatedTitle}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedArticles.slice(0, 3).map((ra, i) => (
               <RelatedCard
@@ -319,9 +331,11 @@ export default function EditorialArticle({
         </div>
       )}
 
+      {showComments && (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 mt-16 mb-16">
         <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
       </div>
+      )}
 
       <EditorialFooter
         blog={blog}

@@ -102,6 +102,12 @@ export default function LuminaryArticle({
   const basePath = _basePath ?? `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#b8960c';
 
+  const articleCfg = blog.template_config?.article as Record<string, any> | undefined;
+  const showProgressBar = articleCfg?.progressBar?.enabled !== false;
+  const showRelated = articleCfg?.relatedArticles?.enabled !== false;
+  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || 'More to Read';
+  const showComments = articleCfg?.comments?.enabled !== false;
+
   const [progress, setProgress] = useState(0);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
@@ -157,10 +163,12 @@ export default function LuminaryArticle({
       className="bg-[#faf8f4] min-h-screen text-zinc-900"
       style={{ '--cp': primaryColor } as CSSProperties}
     >
-      <div
-        className="fixed top-0 left-0 z-[100] h-[2px] transition-none pointer-events-none"
-        style={{ width: `${progress}%`, backgroundColor: primaryColor }}
-      />
+      {showProgressBar && (
+        <div
+          className="fixed top-0 left-0 z-[100] h-[2px] transition-none pointer-events-none"
+          style={{ width: `${progress}%`, backgroundColor: primaryColor }}
+        />
+      )}
 
       <LuminaryHeader
         blog={blog}
@@ -335,17 +343,19 @@ export default function LuminaryArticle({
         <AdRotator slug={blog.slug} primaryColor={primaryColor} />
       </div>
 
+      {showComments && (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 mb-16">
         <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
       </div>
+      )}
 
-      {relatedArticles.length > 0 && (
+      {showRelated && relatedArticles.length > 0 && (
         <section className="border-t border-zinc-200 bg-[#f0ede6] py-16">
           <div className="max-w-5xl mx-auto px-4 sm:px-6">
             <div className="flex items-center gap-4 mb-10">
               <div className="flex-1 h-px bg-zinc-300" />
               <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-zinc-500 whitespace-nowrap">
-                You Might Also Enjoy
+                {relatedTitle}
               </span>
               <div className="flex-1 h-px bg-zinc-300" />
             </div>

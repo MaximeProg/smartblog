@@ -55,9 +55,17 @@ export default function MagazineHome({
     }
   };
 
+  const homeCfg = blog.template_config?.home;
+  const showHero = homeCfg?.hero?.enabled !== false;
+  const showNewsletter = homeCfg?.newsletter?.enabled !== false;
+  const newsletterTitle = homeCfg?.newsletter?.title || 'Stay in the know';
+  const newsletterDesc = homeCfg?.newsletter?.description || `Get ${blog.name} delivered weekly.`;
+  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
+  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
+
   const isFiltered = !!currentCategory || !!searchQuery;
-  const hero = articles[0];
-  const trending = articles.slice(1, 6);
+  const hero = showHero ? articles[0] : null;
+  const trending = articles.slice(showHero ? 1 : 0, showHero ? 6 : 5);
 
   const categoryGroups = categories
     .map(cat => ({
@@ -267,44 +275,36 @@ export default function MagazineHome({
                 );
               })}
 
+              {showNewsletter && (
               <div id="newsletter" className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div
                   className="rounded-lg p-8 flex flex-col sm:flex-row items-center justify-between gap-6"
                   style={{ backgroundColor: primaryColor }}
                 >
                   <div>
-                    <p className="text-xl font-black text-white">Stay in the know</p>
-                    <p className="text-white/80 text-sm mt-1">Get {blog.name} delivered weekly.</p>
+                    <p className="text-xl font-black text-white">{newsletterTitle}</p>
+                    <p className="text-white/80 text-sm mt-1">{newsletterDesc}</p>
                   </div>
                   <div className="w-full sm:max-w-sm">
                     {subStatus === 'ok' ? (
                       <p className="text-white font-bold text-sm">You&apos;re subscribed. Thank you!</p>
                     ) : (
                       <form onSubmit={handleSubscribe} className="flex gap-0 w-full">
-                        <input
-                          type="email"
-                          required
-                          value={email}
-                          onChange={e => setEmail(e.target.value)}
-                          placeholder="your@email.com"
-                          className="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-2.5 text-white placeholder:text-white/50 text-sm focus:outline-none"
-                        />
-                        <button
-                          type="submit"
-                          disabled={subStatus === 'loading'}
+                        <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
+                          placeholder={newsletterPlaceholder}
+                          className="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-2.5 text-white placeholder:text-white/50 text-sm focus:outline-none" />
+                        <button type="submit" disabled={subStatus === 'loading'}
                           className="bg-white rounded-r-lg px-5 py-2.5 font-black text-sm hover:opacity-90 disabled:opacity-60 transition-opacity shrink-0"
-                          style={{ color: primaryColor }}
-                        >
-                          {subStatus === 'loading' ? '…' : 'Subscribe'}
+                          style={{ color: primaryColor }}>
+                          {subStatus === 'loading' ? '…' : newsletterBtn}
                         </button>
                       </form>
                     )}
-                    {subStatus === 'error' && (
-                      <p className="text-white/70 text-xs mt-2">Something went wrong. Please try again.</p>
-                    )}
+                    {subStatus === 'error' && <p className="text-white/70 text-xs mt-2">Something went wrong. Please try again.</p>}
                   </div>
                 </div>
               </div>
+              )}
             </>
           )}
         </>

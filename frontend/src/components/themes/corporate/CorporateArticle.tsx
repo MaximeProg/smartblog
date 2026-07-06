@@ -104,6 +104,13 @@ export default function CorporateArticle({
   const locale = (params?.locale as string) || 'en';
   const t = useTranslations('publicBlog');
   const basePath = baseProp ?? (getArticleHref || blog.slug === 'demo' ? '/en/template' : `/${locale}/${blog.slug}`);
+
+  const articleCfg = blog.template_config?.article as Record<string, any> | undefined;
+  const showProgressBar = articleCfg?.progressBar?.enabled !== false;
+  const showRelated = articleCfg?.relatedArticles?.enabled !== false;
+  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || t('relatedArticles');
+  const showComments = articleCfg?.comments?.enabled !== false;
+
   const [imgErr, setImgErr] = useState(false);
   const hasImg = !!article.cover_image_url && !imgErr;
   const gradient = grad(article.id);
@@ -195,10 +202,12 @@ export default function CorporateArticle({
     <div className="min-h-screen bg-white text-slate-900" style={cpStyle}>
 
       {/* Reading progress */}
+      {showProgressBar && (
       <div
         className="fixed top-0 left-0 z-[100] h-0.5 bg-[var(--cp)] transition-[width] duration-100 ease-linear"
         style={{ width: `${progress}%` }}
       />
+      )}
 
       <CorporateHeader
         blog={blog}
@@ -415,7 +424,7 @@ export default function CorporateArticle({
           )}
 
           {/* Comments */}
-          <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
+          {showComments && <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />}
 
           {/* Back link */}
           <div className="mt-10 pt-8 border-t border-slate-100">
@@ -459,7 +468,7 @@ export default function CorporateArticle({
             )}
 
             {/* Popular / related in sidebar */}
-            {relatedArticles.length > 0 && (
+            {showRelated && relatedArticles.length > 0 && (
               <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">
                 <div className="flex items-center gap-2 mb-4">
                   <TrendingUp className="h-4 w-4 shrink-0" style={{ color: primaryColor }} />
@@ -528,12 +537,12 @@ export default function CorporateArticle({
       </div>
 
       {/* ── RELATED ARTICLES ──────────────────────────────────────────────────── */}
-      {relatedArticles.length > 0 && (
+      {showRelated && relatedArticles.length > 0 && (
         <section className="bg-slate-50 border-t border-slate-100 py-14">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-center gap-3 mb-8">
               <TrendingUp className="h-4 w-4 shrink-0" style={{ color: primaryColor }} />
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-700">{t('youMightAlsoLike')}</h2>
+              <h2 className="text-xs font-black uppercase tracking-widest text-slate-700">{relatedTitle}</h2>
               <div className="flex-1 h-px bg-slate-200" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

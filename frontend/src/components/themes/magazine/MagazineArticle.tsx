@@ -53,6 +53,11 @@ export default function MagazineArticle({
   const basePath = _basePath ?? `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#e11d48';
 
+  const articleCfg = blog.template_config?.article as Record<string, any> | undefined;
+  const showProgressBar = articleCfg?.progressBar?.enabled !== false;
+  const showRelated = articleCfg?.relatedArticles?.enabled !== false;
+  const showComments = articleCfg?.comments?.enabled !== false;
+
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
   const [imgErr, setImgErr] = useState(false);
@@ -96,7 +101,7 @@ export default function MagazineArticle({
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
-      <ReadingProgressBar color={primaryColor} />
+      {showProgressBar && <ReadingProgressBar color={primaryColor} />}
       <MagazineHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
@@ -206,7 +211,7 @@ export default function MagazineArticle({
           </article>
 
           <aside className="lg:col-span-1 space-y-6">
-            {relatedArticles.length > 0 && (
+            {showRelated && relatedArticles.length > 0 && (
               <div>
                 <div className="border-b-2 pb-2 mb-4" style={{ borderColor: primaryColor }}>
                   <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Related</span>
@@ -304,9 +309,11 @@ export default function MagazineArticle({
           </aside>
         </div>
 
+        {showComments && (
         <div className="mt-12 pt-12 border-t border-zinc-100">
           <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
         </div>
+        )}
       </div>
 
       <MagazineFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />

@@ -43,9 +43,14 @@ export default function CorporateHome({
   const newsletterTitle = homeConfig?.newsletter?.title || legacyContent?.newsletterTitle;
   const newsletterDesc = homeConfig?.newsletter?.description || legacyContent?.newsletterDescription;
 
-  const featuredHero = !isFiltered ? articles[0] : undefined;
-  const featuredSide = !isFiltered ? articles.slice(1, 3) : [];
-  const latestArticles = !isFiltered ? articles.slice(3) : articles;
+  const showHero = homeConfig?.hero?.enabled !== false;
+  const showNewsletter = homeConfig?.newsletter?.enabled !== false;
+  const showLatest = homeConfig?.latest?.enabled !== false;
+  const showCategoriesStrip = homeConfig?.categoriesStrip?.enabled !== false;
+
+  const featuredHero = !isFiltered && showHero ? articles[0] : undefined;
+  const featuredSide = !isFiltered && showHero ? articles.slice(1, 3) : [];
+  const latestArticles = !isFiltered && showHero ? articles.slice(3) : articles;
   const sidebarPopular = articles.slice(0, 5);
   const tags = Array.from(new Set(articles.flatMap(a => a.tags ?? []))).slice(0, 16);
 
@@ -148,7 +153,7 @@ export default function CorporateHome({
               )}
 
               {/* ── CATEGORIES STRIP ──────────────────────────────────────── */}
-              {categories.length > 0 && (
+              {showCategoriesStrip && categories.length > 0 && (
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
                   <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 shrink-0 mr-3">{t('explore')}</span>
@@ -164,15 +169,17 @@ export default function CorporateHome({
               )}
 
               {/* ── NEWSLETTER ────────────────────────────────────────────── */}
+              {showNewsletter && (
               <NewsletterSection
                 blog={blog}
                 primaryColor={primaryColor}
                 title={newsletterTitle}
                 description={newsletterDesc}
               />
+              )}
 
               {/* ── LATEST ARTICLES + SIDEBAR ─────────────────────────────── */}
-              {latestArticles.length > 0 && (
+              {showLatest && latestArticles.length > 0 && (
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 

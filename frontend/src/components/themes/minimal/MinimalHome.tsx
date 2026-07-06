@@ -53,6 +53,17 @@ export default function MinimalHome({
     }
   };
 
+  const homeCfg = blog.template_config?.home;
+  const showHero = homeCfg?.hero?.enabled !== false;
+  const showLatest = homeCfg?.latest?.enabled !== false;
+  const latestTitle = homeCfg?.latest?.sectionTitle || '';
+  const showNewsletter = homeCfg?.newsletter?.enabled !== false;
+  const newsletterTitle = homeCfg?.newsletter?.title || 'Subscribe';
+  const newsletterDesc = homeCfg?.newsletter?.description || `Get the best articles from ${blog.name} delivered to your inbox.`;
+  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
+  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
+  const showCategoriesStrip = homeCfg?.categoriesStrip?.enabled !== false;
+
   const isFiltered = !!currentCategory;
   const filteredCategory = categories.find(c => c.slug === currentCategory);
 
@@ -65,30 +76,32 @@ export default function MinimalHome({
         primaryColor={primaryColor}
       />
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-16 pb-12 border-b border-zinc-100">
-        <h1 className="text-3xl font-bold text-zinc-950 mb-3">{blog.name}</h1>
-        {blog.description && (
-          <p className="text-zinc-500 text-base leading-relaxed">{blog.description}</p>
-        )}
-        {categories.length > 0 && (
-          <div className="flex gap-2 mt-6 overflow-x-auto pb-1">
-            {categories.map(c => (
-              <Link
-                key={c.id}
-                href={`?category=${c.slug}`}
-                className="text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border border-zinc-200 text-zinc-500 transition-colors whitespace-nowrap shrink-0"
-                style={
-                  currentCategory === c.slug
-                    ? { borderColor: primaryColor, color: primaryColor }
-                    : {}
-                }
-              >
-                {c.name}
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+      {showHero && (
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-16 pb-12 border-b border-zinc-100">
+          <h1 className="text-3xl font-bold text-zinc-950 mb-3">{blog.name}</h1>
+          {blog.description && (
+            <p className="text-zinc-500 text-base leading-relaxed">{blog.description}</p>
+          )}
+          {showCategoriesStrip && categories.length > 0 && (
+            <div className="flex gap-2 mt-6 overflow-x-auto pb-1">
+              {categories.map(c => (
+                <Link
+                  key={c.id}
+                  href={`?category=${c.slug}`}
+                  className="text-[11px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full border border-zinc-200 text-zinc-500 transition-colors whitespace-nowrap shrink-0"
+                  style={
+                    currentCategory === c.slug
+                      ? { borderColor: primaryColor, color: primaryColor }
+                      : {}
+                  }
+                >
+                  {c.name}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {isFiltered && (
         <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-8">
@@ -106,6 +119,12 @@ export default function MinimalHome({
               {articles.length} article{articles.length !== 1 ? 's' : ''}
             </span>
           </div>
+        </div>
+      )}
+
+      {latestTitle && showLatest && !isFiltered && (
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-8">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">{latestTitle}</p>
         </div>
       )}
 
@@ -170,14 +189,13 @@ export default function MinimalHome({
         )}
       </div>
 
+      {showNewsletter && (
       <div
         id="newsletter"
         className="max-w-2xl mx-auto px-4 sm:px-6 py-14 border-t border-zinc-100 mt-8"
       >
-        <h2 className="text-2xl font-bold text-zinc-950 mb-2">Subscribe</h2>
-        <p className="text-zinc-500 text-sm mb-6">
-          Get the best articles from {blog.name} delivered to your inbox.
-        </p>
+        <h2 className="text-2xl font-bold text-zinc-950 mb-2">{newsletterTitle}</h2>
+        <p className="text-zinc-500 text-sm mb-6">{newsletterDesc}</p>
         {subStatus === 'ok' ? (
           <p className="text-sm font-medium" style={{ color: primaryColor }}>
             You&apos;re subscribed. Thank you!
@@ -189,9 +207,8 @@ export default function MinimalHome({
               required
               value={email}
               onChange={e => setEmail(e.target.value)}
-              placeholder="your@email.com"
+              placeholder={newsletterPlaceholder}
               className="flex-1 border border-zinc-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none transition-colors"
-              style={{ borderColor: email ? undefined : undefined }}
               onFocus={e => (e.currentTarget.style.borderColor = primaryColor)}
               onBlur={e => (e.currentTarget.style.borderColor = '')}
             />
@@ -201,7 +218,7 @@ export default function MinimalHome({
               className="px-5 py-2.5 rounded-lg text-sm font-bold text-white hover:opacity-90 disabled:opacity-60 transition-opacity shrink-0"
               style={{ backgroundColor: primaryColor }}
             >
-              {subStatus === 'loading' ? '…' : 'Subscribe'}
+              {subStatus === 'loading' ? '…' : newsletterBtn}
             </button>
           </form>
         )}
@@ -209,6 +226,7 @@ export default function MinimalHome({
           <p className="text-xs text-red-500 mt-2">Something went wrong. Please try again.</p>
         )}
       </div>
+      )}
 
       <MinimalFooter
         blog={blog}

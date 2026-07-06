@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import type { ArticleProps } from '../ThemeRenderer';
 import type { PublicArticle } from '@/lib/public-api';
 import { MinimalHeader, MinimalFooter } from './MinimalShared';
+import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -97,6 +98,13 @@ export default function MinimalArticle({
   const basePath = _basePath ?? `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#18181b';
 
+  const articleCfg = blog.template_config?.article as Record<string, any> | undefined;
+  const showProgressBar = articleCfg?.progressBar?.enabled !== false;
+  const showShare = articleCfg?.share?.enabled !== false;
+  const showRelated = articleCfg?.relatedArticles?.enabled !== false;
+  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || 'More to read';
+  const showComments = articleCfg?.comments?.enabled !== false;
+
   const [imgErr, setImgErr] = useState(false);
   const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -165,7 +173,7 @@ export default function MinimalArticle({
       className="bg-white min-h-screen"
       style={{ '--cp': primaryColor } as CSSProperties}
     >
-      <ReadingProgressBar color={primaryColor} />
+      {showProgressBar && <ReadingProgressBar color={primaryColor} />}
 
       <MinimalHeader
         blog={blog}
@@ -271,6 +279,7 @@ export default function MinimalArticle({
           </div>
         )}
 
+        {showShare && (
         <div className="flex items-center justify-between mt-6 text-sm text-zinc-400 flex-wrap gap-3">
           <button
             onClick={handleLike}
@@ -298,11 +307,12 @@ export default function MinimalArticle({
             </button>
           </div>
         </div>
+        )}
 
-        {relatedArticles.length > 0 && (
+        {showRelated && relatedArticles.length > 0 && (
           <div className="mt-20 pt-12 border-t border-zinc-100">
             <p className="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-8">
-              More to read
+              {relatedTitle}
             </p>
             {relatedArticles.slice(0, 3).map(ra => (
               <RelatedArticleRow
@@ -312,6 +322,12 @@ export default function MinimalArticle({
                 primaryColor={primaryColor}
               />
             ))}
+          </div>
+        )}
+
+        {showComments && (
+          <div className="mt-16 pt-12 border-t border-zinc-100">
+            <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
           </div>
         )}
 
