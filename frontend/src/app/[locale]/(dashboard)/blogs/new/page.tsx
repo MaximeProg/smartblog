@@ -319,7 +319,7 @@ export default function CreateBlogPage() {
       return data;
     },
     onSuccess: (data) => {
-      const tenant: TenantInfo = { id: data.id, name: data.name, slug: data.slug, plan: data.plan, role: 'tenant_admin' };
+      const tenant: TenantInfo = { id: data.id, name: data.name, slug: data.slug, plan: data.plan, role: 'TENANT_ADMIN' };
       addTenant(tenant);
       setCurrentTenant(data.id);
       router.push(`/${locale}/blogs/${data.id}/general`);

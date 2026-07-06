@@ -11,9 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import type { UserRole } from '@/types';
 
 const ROLES: { value: UserRole; labelKey: string; desc: string; icon: React.ElementType; color: string; bg: string; border: string }[] = [
-  { value: 'editor',  labelKey: 'collabRoleEditor',  desc: 'Crée, édite et publie directement.',          icon: Edit3,   color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/30', border: 'border-violet-200 dark:border-violet-700' },
-  { value: 'author',  labelKey: 'collabRoleAuthor',  desc: 'Rédige et soumet pour approbation.',           icon: Feather,  color: 'text-blue-600 dark:text-blue-400',   bg: 'bg-blue-50 dark:bg-blue-900/30',     border: 'border-blue-200 dark:border-blue-700'   },
-  { value: 'viewer',  labelKey: 'collabRoleViewer',  desc: 'Accès lecture seule au dashboard.',            icon: Eye,      color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-100 dark:bg-slate-700',     border: 'border-slate-200 dark:border-slate-600' },
+  { value: 'EDITOR',  labelKey: 'collabRoleEditor',  desc: 'Crée, édite et publie directement.',          icon: Edit3,   color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/30', border: 'border-violet-200 dark:border-violet-700' },
+  { value: 'AUTHOR',  labelKey: 'collabRoleAuthor',  desc: 'Rédige et soumet pour approbation.',           icon: Feather,  color: 'text-blue-600 dark:text-blue-400',   bg: 'bg-blue-50 dark:bg-blue-900/30',     border: 'border-blue-200 dark:border-blue-700'   },
+  { value: 'VIEWER',  labelKey: 'collabRoleViewer',  desc: 'Accès lecture seule au dashboard.',            icon: Eye,      color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-100 dark:bg-slate-700',     border: 'border-slate-200 dark:border-slate-600' },
 ];
 
 function getInitials(name: string | null, email: string) {
@@ -33,7 +33,7 @@ function RoleBadge({ role, ts }: { role: UserRole; ts: (k: string) => string }) 
   return (
     <span className={`inline-flex items-center gap-1.5 h-5 px-2 rounded-full text-[10px] font-bold border ${r.bg} ${r.color} ${r.border}`}>
       <Icon className="h-2.5 w-2.5" />
-      {role === 'tenant_admin' ? ts('collabRoleAdmin') : ts(r.labelKey)}
+      {role === 'TENANT_ADMIN' ? ts('collabRoleAdmin') : ts(r.labelKey)}
     </span>
   );
 }
@@ -71,9 +71,9 @@ export default function CollaboratorsPage() {
 
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<UserRole>('author');
+  const [inviteRole, setInviteRole] = useState<UserRole>('AUTHOR');
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
-  const [editingRole, setEditingRole] = useState<UserRole>('author');
+  const [editingRole, setEditingRole] = useState<UserRole>('AUTHOR');
 
   const { data: members = [], isLoading: loadingMembers } = useQuery({
     queryKey: ['team-members', blogId],
@@ -116,10 +116,10 @@ export default function CollaboratorsPage() {
     onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
-  const nonAdminMembers = members.filter(m => m.role !== 'tenant_admin');
-  const adminMembers = members.filter(m => m.role === 'tenant_admin');
-  const editorCount = members.filter(m => m.role === 'editor').length;
-  const authorCount = members.filter(m => m.role === 'author').length;
+  const nonAdminMembers = members.filter(m => m.role !== 'TENANT_ADMIN');
+  const adminMembers = members.filter(m => m.role === 'TENANT_ADMIN');
+  const editorCount = members.filter(m => m.role === 'EDITOR').length;
+  const authorCount = members.filter(m => m.role === 'AUTHOR').length;
 
   return (
     <FullPageShell

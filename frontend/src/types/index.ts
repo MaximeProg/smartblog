@@ -339,7 +339,7 @@ export interface UpdateCategoryData {
 
 // ─── Team ─────────────────────────────────────────────────────────────────────
 
-export type UserRole = 'tenant_admin' | 'editor' | 'author' | 'viewer';
+export type UserRole = 'TENANT_ADMIN' | 'EDITOR' | 'AUTHOR' | 'VIEWER';
 
 export interface TeamMember {
   user_id: string;
