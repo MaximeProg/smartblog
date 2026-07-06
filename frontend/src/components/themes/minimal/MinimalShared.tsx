@@ -28,9 +28,8 @@ export function MinimalHeader({ blog, categories, basePath, primaryColor }: Shar
   const navLinks = hCfg?.nav?.links?.length
     ? hCfg.nav.links.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
     : [
-        { label: 'About',     href: `${basePath}/about` },
-        { label: 'Contact',   href: `${basePath}/contact` },
-        { label: 'Advertise', href: `${basePath}/advertise` },
+        { label: 'About',   href: `${basePath}/about` },
+        { label: 'Contact', href: `${basePath}/contact` },
       ];
 
   return (
@@ -51,6 +50,13 @@ export function MinimalHeader({ blog, categories, basePath, primaryColor }: Shar
                 {link.label}
               </Link>
             ))}
+            <Link
+              href={`${basePath}/advertise`}
+              className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-white hover:opacity-80 transition-opacity"
+              style={{ backgroundColor: primaryColor }}
+            >
+              Advertise
+            </Link>
             {showSubscribe && (
               <Link href={`${basePath}#newsletter`} className="text-sm font-medium underline hover:text-zinc-900 transition-colors" style={{ color: primaryColor }}>
                 {subscribeLabel}
@@ -71,6 +77,14 @@ export function MinimalHeader({ blog, categories, basePath, primaryColor }: Shar
               {link.label}
             </Link>
           ))}
+          <Link
+            href={`${basePath}/advertise`}
+            onClick={() => setMenuOpen(false)}
+            className="text-center rounded-full py-2.5 text-sm font-bold text-white hover:opacity-80 transition-opacity"
+            style={{ backgroundColor: primaryColor }}
+          >
+            Advertise
+          </Link>
           {showSubscribe && (
             <Link href={`${basePath}#newsletter`} onClick={() => setMenuOpen(false)} className="text-sm font-medium underline hover:text-zinc-900 transition-colors" style={{ color: primaryColor }}>
               {subscribeLabel}

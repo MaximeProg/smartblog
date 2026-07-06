@@ -88,7 +88,11 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
             <button className="text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block" aria-label="Search">
               <Search className="h-5 w-5" />
             </button>
-            <Link href={`${basePath}/advertise`} className="hidden sm:block text-xs font-medium text-zinc-400 hover:text-zinc-700 transition-colors">
+            <Link
+              href={`${basePath}/advertise`}
+              className="hidden sm:inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-white hover:opacity-80 transition-opacity"
+              style={{ backgroundColor: primaryColor }}
+            >
               Advertise
             </Link>
             {showSubscribeBtn && (
@@ -128,7 +132,12 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
               {l.label}
             </Link>
           ))}
-          <Link href={`${basePath}/advertise`} onClick={() => setMobileOpen(false)} className="text-sm font-bold text-zinc-300 hover:text-white transition-colors">
+          <Link
+            href={`${basePath}/advertise`}
+            onClick={() => setMobileOpen(false)}
+            className="mt-1 rounded px-5 py-2.5 text-sm font-black text-white text-center transition-opacity hover:opacity-90"
+            style={{ backgroundColor: primaryColor }}
+          >
             Advertise
           </Link>
           {showSubscribeBtn && (

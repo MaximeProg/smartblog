@@ -58,7 +58,11 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </Link>
-          <Link href={`${basePath}/advertise`} className="hidden md:block text-xs font-medium text-zinc-500 hover:text-zinc-200 transition-colors">
+          <Link
+            href={`${basePath}/advertise`}
+            className="hidden md:inline-flex items-center rounded px-4 py-1.5 text-xs font-bold text-white hover:opacity-80 transition-opacity border border-white/20 hover:border-white/40"
+            style={{ backgroundColor: `${primaryColor}30`, color: primaryColor }}
+          >
             Advertise
           </Link>
           {showSubscribe && (
@@ -83,8 +87,12 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
               {link.label}
             </Link>
           ))}
-          <Link href={`${basePath}/advertise`} onClick={() => setMenuOpen(false)}
-            className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-white py-2 transition-colors">
+          <Link
+            href={`${basePath}/advertise`}
+            onClick={() => setMenuOpen(false)}
+            className="mt-1 text-center text-xs font-black text-white rounded py-2.5 hover:opacity-80 transition-opacity"
+            style={{ backgroundColor: primaryColor }}
+          >
             Advertise
           </Link>
           {showSubscribe && (

@@ -45,16 +45,16 @@ function Field({
 }: { label: string; hint?: string; required?: boolean; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-[12px] font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+      <label className="block text-[12px] font-semibold text-slate-700 mb-1.5">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-      {hint && <p className="text-[11px] text-slate-400 dark:text-slate-500 mb-2 leading-snug">{hint}</p>}
+      {hint && <p className="text-[11px] text-slate-400 mb-2 leading-snug">{hint}</p>}
       {children}
     </div>
   );
 }
 
-const INPUT_CLS = 'w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-colors';
+const INPUT_CLS = 'w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors';
 
 export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
   const [form, setForm] = useState<FormState>(EMPTY);
@@ -103,20 +103,20 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
 
   if (status === 'success') {
     return (
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-10 text-center">
+      <div className="bg-white rounded-2xl border border-zinc-100 p-10 text-center shadow-sm">
         <div
           className="h-16 w-16 rounded-2xl mx-auto mb-5 flex items-center justify-center"
           style={{ backgroundColor: `${primaryColor}20` }}
         >
           <CheckCircle2 className="h-8 w-8" style={{ color: primaryColor }} />
         </div>
-        <h2 className="text-[20px] font-black text-slate-900 dark:text-slate-100 mb-2">Ad submitted!</h2>
-        <p className="text-[14px] text-slate-500 dark:text-slate-400 max-w-sm mx-auto leading-relaxed mb-6">
+        <h2 className="text-[20px] font-black text-slate-900 mb-2">Ad submitted!</h2>
+        <p className="text-[14px] text-slate-500 max-w-sm mx-auto leading-relaxed mb-6">
           Your ad request has been received. The team at <strong>{blogName}</strong> will review it and get back to you by email.
         </p>
         <button
           onClick={() => { setForm(EMPTY); setStatus('idle'); }}
-          className="text-[13px] font-semibold px-5 h-10 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          className="text-[13px] font-semibold px-5 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
         >
           Submit another ad
         </button>
@@ -127,18 +127,18 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-8 space-y-6"
+      className="bg-white rounded-2xl border border-zinc-100 p-8 space-y-6 shadow-sm"
     >
       <div>
-        <h2 className="text-[18px] font-black text-slate-900 dark:text-slate-100 mb-1">Your ad details</h2>
-        <p className="text-[13px] text-slate-400 dark:text-slate-500">
+        <h2 className="text-[18px] font-black text-slate-900 mb-1">Your ad details</h2>
+        <p className="text-[13px] text-slate-400">
           Fill in the details below. The blog owner will review and approve your ad.
         </p>
       </div>
 
       {/* Contact info */}
       <div className="space-y-4">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Your contact</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Your contact</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Full name" required>
             <input
@@ -172,7 +172,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
 
       {/* Ad content */}
       <div className="space-y-4">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Ad content</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Ad content</p>
         <Field label="Ad headline" required hint="A short, catchy title for your ad (max 80 characters).">
           <input
             required
@@ -190,7 +190,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
             value={form.description}
             onChange={e => set('description', e.target.value)}
             placeholder="Boost your productivity with our award-winning app…"
-            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition-colors resize-none"
+            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors resize-none"
           />
         </Field>
         <Field label="Ad image URL" hint="A direct link to your banner image (recommended: 1200×628 px).">
@@ -216,7 +216,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
 
       {/* Campaign */}
       <div className="space-y-4">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Campaign (optional)</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Campaign (optional)</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Start date">
             <input
@@ -250,20 +250,20 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
       </div>
 
       {/* Notice */}
-      <div className="flex items-start gap-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl px-4 py-3">
+      <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
         <svg className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <p className="text-[12px] text-blue-700 dark:text-blue-300 leading-relaxed">
+        <p className="text-[12px] text-blue-700 leading-relaxed">
           <strong>No payment required today.</strong> Your submission will be reviewed manually. If approved, the blog owner will contact you to finalize the details and payment.
         </p>
       </div>
 
       {/* Error */}
       {status === 'error' && (
-        <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-xl px-4 py-3">
+        <div className="flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
           <AlertCircle className="h-4 w-4 text-red-500 shrink-0" />
-          <p className="text-[12px] text-red-700 dark:text-red-400">{errorMsg}</p>
+          <p className="text-[12px] text-red-700">{errorMsg}</p>
         </div>
       )}
 

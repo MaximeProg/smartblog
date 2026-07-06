@@ -95,7 +95,13 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
         <div className="hidden md:flex flex-1 justify-end">
           <Link href={`${basePath}/about`} className="text-xs font-sans uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors px-3">About</Link>
           <Link href={`${basePath}/contact`} className="text-xs font-sans uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors px-3">Contact</Link>
-          <Link href={`${basePath}/advertise`} className="text-xs font-sans uppercase tracking-widest text-zinc-400 hover:text-zinc-700 transition-colors px-3">Advertise</Link>
+          <Link
+            href={`${basePath}/advertise`}
+            className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-white hover:opacity-80 transition-opacity"
+            style={{ backgroundColor: primaryColor }}
+          >
+            Advertise
+          </Link>
         </div>
 
         <div className="md:hidden w-10" />
@@ -123,8 +129,12 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
               {l.label}
             </Link>
           ))}
-          <Link href={`${basePath}/advertise`} onClick={() => setMobileOpen(false)}
-            className="font-sans text-sm uppercase tracking-widest text-zinc-600 hover:text-zinc-900 transition-colors py-1 border-b border-zinc-100">
+          <Link
+            href={`${basePath}/advertise`}
+            onClick={() => setMobileOpen(false)}
+            className="mt-1 text-center font-sans text-xs uppercase tracking-widest text-white py-3 rounded-full hover:opacity-80 transition-opacity"
+            style={{ backgroundColor: primaryColor }}
+          >
             Advertise
           </Link>
           {showSubscribeCta && (

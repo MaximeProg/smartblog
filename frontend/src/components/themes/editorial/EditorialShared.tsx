@@ -57,7 +57,11 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href={`${basePath}/advertise`} className="hidden md:block text-xs font-medium text-zinc-400 hover:text-zinc-700 transition-colors">
+          <Link
+            href={`${basePath}/advertise`}
+            className="hidden md:inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-white hover:opacity-80 transition-opacity"
+            style={{ backgroundColor: primaryColor }}
+          >
             Advertise
           </Link>
           {showSubscribe && (
@@ -82,7 +86,12 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
               {l.label}
             </Link>
           ))}
-          <Link href={`${basePath}/advertise`} onClick={() => setMobileOpen(false)} className="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors py-2">
+          <Link
+            href={`${basePath}/advertise`}
+            onClick={() => setMobileOpen(false)}
+            className="mt-1 flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-bold text-white hover:opacity-80 transition-opacity"
+            style={{ backgroundColor: primaryColor }}
+          >
             Advertise
           </Link>
           {showSubscribe && (

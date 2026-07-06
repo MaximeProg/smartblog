@@ -225,7 +225,6 @@ export function CorporateHeader({
         { href: basePath + pq, label: t('navHome') },
         { href: `${basePath}/about${pq}`, label: t('navAbout') },
         { href: `${basePath}/contact${pq}`, label: t('navContact') },
-        { href: `${basePath}/advertise${pq}`, label: 'Advertise' },
       ]
     : [];
 
@@ -415,6 +414,12 @@ export function CorporateHeader({
                   <Search className="h-4 w-4" />
                 </button>
               )}
+              {basePath && (
+                <Link href={`${basePath}/advertise${pq}`}
+                  className="hidden lg:inline-flex items-center gap-1.5 h-9 px-4 rounded-xl text-sm font-bold border border-white/20 text-slate-200 hover:border-white/50 hover:text-white transition-all shrink-0">
+                  Advertise
+                </Link>
+              )}
               {subscribeEnabled && (
                 <a href="#newsletter"
                   className="hidden sm:inline-flex items-center gap-2 h-9 px-4 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-opacity shrink-0"
@@ -469,9 +474,15 @@ export function CorporateHeader({
                 </>
               )}
 
+              {basePath && (
+                <Link href={`${basePath}/advertise${pq}`} onClick={() => setMenuOpen(false)}
+                  className="mt-2 flex items-center justify-center h-11 px-4 rounded-xl text-sm font-bold border border-white/20 text-slate-200 hover:bg-white/5 transition-colors">
+                  Advertise
+                </Link>
+              )}
               {subscribeEnabled && (
                 <a href="#newsletter" onClick={() => setMenuOpen(false)}
-                  className="mt-3 flex items-center justify-center gap-2 h-11 px-4 rounded-xl text-sm font-bold text-white"
+                  className="mt-2 flex items-center justify-center gap-2 h-11 px-4 rounded-xl text-sm font-bold text-white"
                   style={{ backgroundColor: primaryColor }}>
                   <Mail className="h-4 w-4" /> {subscribeLabel}
                 </a>

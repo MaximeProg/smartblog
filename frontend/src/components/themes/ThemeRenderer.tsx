@@ -1,5 +1,7 @@
 import type { BlogInfo, PublicArticle, PublicArticleFull, PublicCategory } from '@/lib/public-api';
 
+import AdvertisePage from './shared/AdvertisePage';
+
 import CorporateHome from './corporate/CorporateHome';
 import CorporateArticle from './corporate/CorporateArticle';
 import CorporateAbout from './corporate/CorporateAbout';
@@ -89,6 +91,12 @@ export interface CategoryPageProps {
   basePath: string;
 }
 
+export interface AdvertiseProps {
+  blog: BlogInfo;
+  categories: PublicCategory[];
+  basePath: string;
+}
+
 export function ThemeHome(props: HomeProps) {
   switch (props.blog.theme) {
     case 'magazine':  return <MagazineHome {...props} />;
@@ -147,4 +155,8 @@ export function ThemeCategoryPage(props: CategoryPageProps) {
     case 'corporate': return <CorporateCategoryPage blog={props.blog} categories={props.categories} category={props.category} articles={props.articles} basePath={props.basePath} />;
     default:          return <EditorialCategoryPage {...props} />;
   }
+}
+
+export function ThemeAdvertise(props: AdvertiseProps) {
+  return <AdvertisePage {...props} />;
 }
