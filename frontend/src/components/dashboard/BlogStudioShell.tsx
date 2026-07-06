@@ -5,6 +5,41 @@ import { Save, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useStudioPreview } from '@/contexts/studio-preview';
 
+// ─── Full-width page shell (no preview panel) ─────────────────────────────────
+
+interface FullPageShellProps {
+  title: string;
+  description?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}
+
+export function FullPageShell({ title, description, action, children }: FullPageShellProps) {
+  const { setFullWidth } = useStudioPreview();
+
+  useEffect(() => {
+    setFullWidth(true);
+    return () => setFullWidth(false);
+  }, [setFullWidth]);
+
+  return (
+    <div className="flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-950">
+      <div className="shrink-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-6 py-4 flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-[16px] font-bold text-slate-900 dark:text-slate-100 leading-tight">{title}</h1>
+          {description && (
+            <p className="text-[12px] text-slate-400 dark:text-slate-500 mt-0.5 leading-snug">{description}</p>
+          )}
+        </div>
+        {action && <div className="shrink-0">{action}</div>}
+      </div>
+      <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface BlogStudioShellProps {

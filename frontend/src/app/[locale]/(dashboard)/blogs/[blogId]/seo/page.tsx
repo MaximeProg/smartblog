@@ -68,7 +68,7 @@ export default function SeoPage() {
       onSave={() => mutation.mutate()}
     >
       {/* Google preview */}
-      <div className="mx-5 mt-5 mb-1 rounded-xl border border-slate-200 bg-white p-4">
+      <div className="mx-5 mt-5 mb-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/60 p-4">
         <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-1.5">
           <Eye className="h-3 w-3" /> {ts('seoGooglePreview')}
         </p>
@@ -94,7 +94,7 @@ export default function SeoPage() {
             onChange={v => setForm(f => ({ ...f, seo_title_template: v }))}
             placeholder="{title} | {blog_name}"
           />
-          <p className="text-[11px] text-slate-400 mt-1.5 font-mono bg-slate-50 rounded-lg px-2.5 py-1.5 truncate">
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5 font-mono bg-slate-50 dark:bg-slate-800 rounded-lg px-2.5 py-1.5 truncate">
             → {previewTitle}
           </p>
         </StudioField>
@@ -138,7 +138,7 @@ export default function SeoPage() {
           ].map(item => (
             <div key={item.label} className="flex items-center justify-between gap-3 py-2">
               <div>
-                <p className="text-[12px] font-semibold text-slate-700">{item.label}</p>
+                <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">{item.label}</p>
                 <p className="text-[11px] text-slate-400 font-mono mt-0.5 truncate">{item.url}</p>
               </div>
               <a

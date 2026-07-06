@@ -87,7 +87,7 @@ export default function ArticlePage() {
                 type="number" min={1} max={10}
                 value={cfg.tableOfContents.minHeadings}
                 onChange={e => patch(c => ({ ...c, tableOfContents: { ...c.tableOfContents, minHeadings: Number(e.target.value) } }))}
-                className="w-24 h-9 px-3 rounded-xl border border-slate-200 bg-slate-50 text-[13px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                className="w-24 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
               />
             </StudioField>
           </>
@@ -130,7 +130,7 @@ export default function ArticlePage() {
                 type="number" min={2} max={6}
                 value={cfg.relatedArticles.count}
                 onChange={e => patch(c => ({ ...c, relatedArticles: { ...c.relatedArticles, count: Number(e.target.value) } }))}
-                className="w-24 h-9 px-3 rounded-xl border border-slate-200 bg-slate-50 text-[13px] text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                className="w-24 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
               />
             </StudioField>
           </>

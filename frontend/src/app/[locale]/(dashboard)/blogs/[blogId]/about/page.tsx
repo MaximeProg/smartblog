@@ -118,11 +118,11 @@ export default function AboutPage() {
             {cfg.stats.items.map((s, i) => (
               <div key={i} className="flex gap-2 items-center">
                 <input value={s.value} onChange={e => patch(c => ({ ...c, stats: { ...c.stats, items: c.stats.items.map((x, j) => j === i ? { ...x, value: e.target.value } : x) } }))}
-                  placeholder="0" className="w-20 h-9 px-3 rounded-lg border border-slate-200 bg-slate-50 text-[13px] font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                  placeholder="0" className="w-20 h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
                 <input value={s.label} onChange={e => patch(c => ({ ...c, stats: { ...c.stats, items: c.stats.items.map((x, j) => j === i ? { ...x, label: e.target.value } : x) } }))}
-                  placeholder={ts('statLabel')} className="flex-1 h-9 px-3 rounded-lg border border-slate-200 bg-slate-50 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                  placeholder={ts('statLabel')} className="flex-1 h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
                 <button onClick={() => patch(c => ({ ...c, stats: { ...c.stats, items: c.stats.items.filter((_, j) => j !== i) } }))}
-                  className="h-9 w-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 transition-colors">
+                  className="h-9 w-9 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-red-500 hover:border-red-200 dark:hover:border-red-800 transition-colors">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -174,20 +174,20 @@ export default function AboutPage() {
             </StudioField>
             <div className="space-y-3">
               {cfg.values.items.map((item, i) => (
-                <div key={i} className="p-3 rounded-xl border border-slate-200 bg-slate-50/60 space-y-2">
+                <div key={i} className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/60 dark:bg-slate-800/40 space-y-2">
                   <div className="flex items-center gap-2">
                     <input value={item.icon} onChange={e => patch(c => ({ ...c, values: { ...c.values, items: c.values.items.map((x, j) => j === i ? { ...x, icon: e.target.value } : x) } }))}
-                      placeholder="🎯" className="w-12 h-9 text-center rounded-lg border border-slate-200 bg-white text-[18px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                      placeholder="🎯" className="w-12 h-9 text-center rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-[18px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
                     <input value={item.title} onChange={e => patch(c => ({ ...c, values: { ...c.values, items: c.values.items.map((x, j) => j === i ? { ...x, title: e.target.value } : x) } }))}
-                      placeholder={ts('valueTitle')} className="flex-1 h-9 px-3 rounded-lg border border-slate-200 bg-white text-[13px] font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                      placeholder={ts('valueTitle')} className="flex-1 h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 font-semibold placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
                     <button onClick={() => patch(c => ({ ...c, values: { ...c.values, items: c.values.items.filter((_, j) => j !== i) } }))}
-                      className="h-9 w-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 transition-colors">
+                      className="h-9 w-9 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-red-500 hover:border-red-200 dark:hover:border-red-800 transition-colors">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                   <textarea value={item.description} onChange={e => patch(c => ({ ...c, values: { ...c.values, items: c.values.items.map((x, j) => j === i ? { ...x, description: e.target.value } : x) } }))}
                     placeholder={ts('valueDesc')} rows={2}
-                    className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-[12px] text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none" />
+                    className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-[12px] text-slate-600 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none" />
                 </div>
               ))}
               <button onClick={() => patch(c => ({ ...c, values: { ...c.values, items: [...c.values.items, { icon: '✨', title: '', description: '' }] } }))}

@@ -105,15 +105,15 @@ export default function HeaderPage() {
                   value={link.label}
                   onChange={e => updateLink(i, 'label', e.target.value)}
                   placeholder={ts('linkLabel')}
-                  className="flex-1 h-9 px-3 rounded-lg border border-slate-200 bg-slate-50 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                  className="flex-1 h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
                 />
                 <input
                   value={link.url}
                   onChange={e => updateLink(i, 'url', e.target.value)}
                   placeholder="/page"
-                  className="flex-1 h-9 px-3 rounded-lg border border-slate-200 bg-slate-50 text-[13px] font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                  className="flex-1 h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 font-mono placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
                 />
-                <button onClick={() => removeLink(i)} className="h-9 w-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 hover:text-red-500 hover:border-red-200 transition-colors">
+                <button onClick={() => removeLink(i)} className="h-9 w-9 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-red-500 hover:border-red-200 dark:hover:border-red-800 transition-colors">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
