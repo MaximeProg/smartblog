@@ -225,6 +225,7 @@ export function CorporateHeader({
         { href: basePath + pq, label: t('navHome') },
         { href: `${basePath}/about${pq}`, label: t('navAbout') },
         { href: `${basePath}/contact${pq}`, label: t('navContact') },
+        { href: `${basePath}/advertise${pq}`, label: 'Advertise' },
       ]
     : [];
 
@@ -510,6 +511,7 @@ export function CorporateFooter({
     { href: (basePath ?? '/') + pq, label: t('navHome') },
     { href: basePath ? `${basePath}/about${pq}` : '/a-propos', label: t('navAbout') },
     { href: basePath ? `${basePath}/contact${pq}` : '/contact', label: t('navContact') },
+    { href: basePath ? `${basePath}/advertise${pq}` : '/advertise', label: 'Advertise' },
     { href: '/rss.xml', label: t('navRss') },
   ];
   const navLinks = footerConfig?.navLinks?.length

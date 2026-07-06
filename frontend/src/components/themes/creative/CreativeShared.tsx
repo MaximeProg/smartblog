@@ -58,6 +58,9 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </Link>
+          <Link href={`${basePath}/advertise`} className="hidden md:block text-xs font-medium text-zinc-500 hover:text-zinc-200 transition-colors">
+            Advertise
+          </Link>
           {showSubscribe && (
             <Link href={`${basePath}#newsletter`} className="rounded px-4 py-2 text-xs font-black text-zinc-950 bg-white hover:opacity-90 transition-opacity">
               {subscribeLabel}
@@ -80,6 +83,10 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
               {link.label}
             </Link>
           ))}
+          <Link href={`${basePath}/advertise`} onClick={() => setMenuOpen(false)}
+            className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-white py-2 transition-colors">
+            Advertise
+          </Link>
           {showSubscribe && (
             <Link href={`${basePath}#newsletter`} onClick={() => setMenuOpen(false)}
               className="mt-2 text-center text-xs font-black text-zinc-950 bg-white rounded py-2.5">
@@ -109,6 +116,7 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
         { label: 'About',      href: `${basePath}/about` },
         { label: 'Contact',    href: `${basePath}/contact` },
         { label: 'Categories', href: `${basePath}/categories` },
+        { label: 'Advertise',  href: `${basePath}/advertise` },
       ];
 
   return (

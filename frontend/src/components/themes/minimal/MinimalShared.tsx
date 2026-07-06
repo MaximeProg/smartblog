@@ -28,8 +28,9 @@ export function MinimalHeader({ blog, categories, basePath, primaryColor }: Shar
   const navLinks = hCfg?.nav?.links?.length
     ? hCfg.nav.links.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
     : [
-        { label: 'About',   href: `${basePath}/about` },
-        { label: 'Contact', href: `${basePath}/contact` },
+        { label: 'About',     href: `${basePath}/about` },
+        { label: 'Contact',   href: `${basePath}/contact` },
+        { label: 'Advertise', href: `${basePath}/advertise` },
       ];
 
   return (
@@ -104,8 +105,9 @@ export function MinimalFooter({ blog, basePath, primaryColor }: SharedProps) {
   const navLinks = fCfg?.navLinks?.length
     ? fCfg.navLinks.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
     : [
-        { label: 'About',   href: `${basePath}/about` },
-        { label: 'Contact', href: `${basePath}/contact` },
+        { label: 'About',     href: `${basePath}/about` },
+        { label: 'Contact',   href: `${basePath}/contact` },
+        { label: 'Advertise', href: `${basePath}/advertise` },
       ];
 
   return (

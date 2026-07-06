@@ -95,6 +95,7 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
         <div className="hidden md:flex flex-1 justify-end">
           <Link href={`${basePath}/about`} className="text-xs font-sans uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors px-3">About</Link>
           <Link href={`${basePath}/contact`} className="text-xs font-sans uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors px-3">Contact</Link>
+          <Link href={`${basePath}/advertise`} className="text-xs font-sans uppercase tracking-widest text-zinc-400 hover:text-zinc-700 transition-colors px-3">Advertise</Link>
         </div>
 
         <div className="md:hidden w-10" />
@@ -122,6 +123,10 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
               {l.label}
             </Link>
           ))}
+          <Link href={`${basePath}/advertise`} onClick={() => setMobileOpen(false)}
+            className="font-sans text-sm uppercase tracking-widest text-zinc-600 hover:text-zinc-900 transition-colors py-1 border-b border-zinc-100">
+            Advertise
+          </Link>
           {showSubscribeCta && (
             <Link href={`${basePath}#newsletter`} onClick={() => setMobileOpen(false)}
               className="mt-2 text-center font-sans text-xs uppercase tracking-widest text-zinc-900 border border-zinc-900 py-3 hover:bg-zinc-900 hover:text-white transition-colors">
@@ -154,6 +159,7 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
         { label: 'About',          href: `${basePath}/about` },
         { label: 'Contact',        href: `${basePath}/contact` },
         { label: 'All Categories', href: `${basePath}/categories` },
+        { label: 'Advertise',      href: `${basePath}/advertise` },
       ];
 
   const handleSubscribe = async (e: FormEvent) => {

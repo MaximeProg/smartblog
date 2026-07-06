@@ -57,6 +57,9 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
         </nav>
 
         <div className="flex items-center gap-3">
+          <Link href={`${basePath}/advertise`} className="hidden md:block text-xs font-medium text-zinc-400 hover:text-zinc-700 transition-colors">
+            Advertise
+          </Link>
           {showSubscribe && (
             <Link
               href={`${basePath}#newsletter`}
@@ -79,6 +82,9 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
               {l.label}
             </Link>
           ))}
+          <Link href={`${basePath}/advertise`} onClick={() => setMobileOpen(false)} className="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors py-2">
+            Advertise
+          </Link>
           {showSubscribe && (
             <Link href={`${basePath}#newsletter`} onClick={() => setMobileOpen(false)} className="mt-3 flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-bold text-white" style={{ backgroundColor: primaryColor }}>
               {subscribeLabel}
@@ -106,6 +112,7 @@ export function EditorialFooter({ blog, categories, basePath, primaryColor }: Sh
         { label: 'About',      href: `${basePath}/about` },
         { label: 'Contact',    href: `${basePath}/contact` },
         { label: 'Categories', href: `${basePath}/categories` },
+        { label: 'Advertise',  href: `${basePath}/advertise` },
       ];
 
   const iconFor = (platform: string) => {
