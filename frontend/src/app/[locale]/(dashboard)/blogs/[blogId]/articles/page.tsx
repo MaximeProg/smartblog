@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import {
   Plus, Search, FileText, Eye, Clock, CheckCircle2,
   Archive, MoreVertical, Edit2, Trash2,
+  Camera, Video, Mic, Radio, Layers,
 } from 'lucide-react';
 import { articlesApi, tenantsApi } from '@/lib/api';
 import { formatRelativeTime } from '@/lib/utils';
@@ -41,6 +42,17 @@ function ArticleRow({
 
   const sc = STATUS_CONFIG[article.status] ?? STATUS_CONFIG.draft;
 
+  const TYPE_ICON: Record<string, { icon: typeof FileText; color: string }> = {
+    article: { icon: FileText, color: 'text-slate-400' },
+    photo:   { icon: Camera,   color: 'text-pink-400' },
+    video:   { icon: Video,    color: 'text-violet-400' },
+    audio:   { icon: Mic,      color: 'text-blue-400' },
+    podcast: { icon: Radio,    color: 'text-amber-400' },
+    mixed:   { icon: Layers,   color: 'text-emerald-400' },
+  };
+  const typeKey = (article as any).article_type ?? 'article';
+  const tc = TYPE_ICON[typeKey] ?? TYPE_ICON.article;
+
   return (
     <div className="group flex items-center gap-3 py-3 border-b border-slate-50 dark:border-slate-800 last:border-0 hover:bg-slate-50/60 dark:hover:bg-slate-800/60 rounded-lg px-2 transition-colors">
       {/* Cover thumb */}
@@ -53,7 +65,10 @@ function ArticleRow({
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200 truncate leading-snug">{article.title}</p>
+        <div className="flex items-center gap-1.5 min-w-0">
+          <tc.icon className={`h-3 w-3 shrink-0 ${tc.color}`} />
+          <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200 truncate leading-snug">{article.title}</p>
+        </div>
         <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
           {formatRelativeTime(article.updated_at ?? article.created_at)} · {t('readTime', { n: article.reading_time_minutes ?? 0 })}
         </p>

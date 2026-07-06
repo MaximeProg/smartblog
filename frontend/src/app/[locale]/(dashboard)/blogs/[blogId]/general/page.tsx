@@ -42,6 +42,10 @@ export default function GeneralPage() {
     primary_color: '#2563eb',
     cover_image_url: '',
     social_links: {} as Record<string, string>,
+    ga4_measurement_id: '',
+    matomo_url: '',
+    matomo_site_id: '',
+    facebook_pixel_id: '',
   });
 
   useEffect(() => {
@@ -52,6 +56,10 @@ export default function GeneralPage() {
         primary_color: tenant.primary_color ?? '#2563eb',
         cover_image_url: tenant.cover_image_url ?? '',
         social_links: (tenant as any).social_links ?? {},
+        ga4_measurement_id: (tenant as any).ga4_measurement_id ?? '',
+        matomo_url: (tenant as any).matomo_url ?? '',
+        matomo_site_id: (tenant as any).matomo_site_id ?? '',
+        facebook_pixel_id: (tenant as any).facebook_pixel_id ?? '',
       });
     }
   }, [tenant]);
@@ -63,7 +71,11 @@ export default function GeneralPage() {
       primary_color: form.primary_color,
       cover_image_url: form.cover_image_url || null,
       social_links: form.social_links,
-    }),
+      ga4_measurement_id: form.ga4_measurement_id || null,
+      matomo_url: form.matomo_url || null,
+      matomo_site_id: form.matomo_site_id || null,
+      facebook_pixel_id: form.facebook_pixel_id || null,
+    } as any),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tenant', blogId] });
       toast({ title: ts('saved') });
@@ -138,6 +150,37 @@ export default function GeneralPage() {
             />
           </StudioField>
         ))}
+      </StudioSection>
+
+      <StudioSection id="integrations" title={ts('sectionIntegrations')} defaultOpen={false}>
+        <StudioField label={ts('fieldGa4Id')} hint={ts('fieldGa4IdHint')}>
+          <StudioInput
+            value={form.ga4_measurement_id}
+            onChange={v => setForm(f => ({ ...f, ga4_measurement_id: v }))}
+            placeholder="G-XXXXXXXXXX"
+          />
+        </StudioField>
+        <StudioField label={ts('fieldMatomoUrl')} hint={ts('fieldMatomoUrlHint')}>
+          <StudioInput
+            value={form.matomo_url}
+            onChange={v => setForm(f => ({ ...f, matomo_url: v }))}
+            placeholder="https://analytics.example.com"
+          />
+        </StudioField>
+        <StudioField label={ts('fieldMatomoSiteId')}>
+          <StudioInput
+            value={form.matomo_site_id}
+            onChange={v => setForm(f => ({ ...f, matomo_site_id: v }))}
+            placeholder="1"
+          />
+        </StudioField>
+        <StudioField label={ts('fieldFbPixelId')} hint={ts('fieldFbPixelIdHint')}>
+          <StudioInput
+            value={form.facebook_pixel_id}
+            onChange={v => setForm(f => ({ ...f, facebook_pixel_id: v }))}
+            placeholder="123456789012345"
+          />
+        </StudioField>
       </StudioSection>
     </BlogStudioShell>
   );

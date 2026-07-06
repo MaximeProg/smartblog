@@ -6,8 +6,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   ArrowLeft, Save, Send, Archive, Loader2, CheckCircle2,
   Bold, Italic, Link2, Image as ImageIcon, Quote, Heading2, Heading3,
-  Minus, X, Check,
+  Minus, X, Check, FileText, Camera, Video, Mic, Radio, Layers,
 } from 'lucide-react';
+import type { ArticleType } from '@/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { articlesApi, categoriesApi, mediaApi } from '@/lib/api';
@@ -95,6 +96,11 @@ export default function EditArticlePage() {
   const [showImgPicker, setShowImgPicker] = useState(false);
   const [textareaDragging,  setTextareaDragging]  = useState(false);
   const [textareaUploading, setTextareaUploading] = useState(false);
+  const [articleType,   setArticleType]   = useState<ArticleType>('article');
+  const [videoUrl,      setVideoUrl]      = useState('');
+  const [audioUrl,      setAudioUrl]      = useState('');
+  const [episodeNumber, setEpisodeNumber] = useState('');
+  const [season,        setSeason]        = useState('');
 
   const { data: article, isLoading } = useQuery({
     queryKey: ['article', blogId, articleId],
@@ -113,6 +119,11 @@ export default function EditArticlePage() {
       setExcerpt(article.excerpt ?? '');
       setCategoryId(article.category?.id ?? '');
       setCoverImageUrl((article as any).cover_image_url ?? '');
+      setArticleType((article.article_type as ArticleType) ?? 'article');
+      setVideoUrl(article.video_url ?? '');
+      setAudioUrl(article.audio_url ?? '');
+      setEpisodeNumber((article as any).episode_number?.toString() ?? '');
+      setSeason((article as any).season?.toString() ?? '');
       setDirty(false);
     }
   }, [article]);
@@ -126,7 +137,12 @@ export default function EditArticlePage() {
       excerpt,
       category_id:     categoryId    || undefined,
       cover_image_url: coverImageUrl || undefined,
-    }),
+      article_type:    articleType,
+      video_url:       videoUrl      || undefined,
+      audio_url:       audioUrl      || undefined,
+      episode_number:  episodeNumber ? parseInt(episodeNumber, 10) : undefined,
+      season:          season        ? parseInt(season, 10) : undefined,
+    } as any),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['article', blogId, articleId] });
       setDirty(false);
@@ -400,6 +416,98 @@ export default function EditArticlePage() {
 
         {/* Right: metadata sidebar */}
         <div className="w-[280px] shrink-0 border-l border-slate-200/70 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto px-5 py-6 space-y-6">
+
+          {/* Article type */}
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleTypeLabel')}</p>
+            <div className="grid grid-cols-3 gap-1.5">
+              {([
+                { type: 'article', icon: FileText, labelKey: 'articleTypeArticle' },
+                { type: 'photo',   icon: Camera,   labelKey: 'articleTypePhoto' },
+                { type: 'video',   icon: Video,    labelKey: 'articleTypeVideo' },
+                { type: 'audio',   icon: Mic,      labelKey: 'articleTypeAudio' },
+                { type: 'podcast', icon: Radio,    labelKey: 'articleTypePodcast' },
+                { type: 'mixed',   icon: Layers,   labelKey: 'articleTypeMixed' },
+              ] as const).map(({ type, icon: Icon, labelKey }) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => { setArticleType(type as ArticleType); mark(); }}
+                  className={`flex flex-col items-center gap-1 py-2 px-1 rounded-xl border text-[10px] font-semibold transition-all ${
+                    articleType === type
+                      ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-400'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-750'
+                  }`}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {ts(labelKey as any)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Type-specific fields */}
+          {articleType === 'video' && (
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldVideoUrl')}</label>
+              <input
+                value={videoUrl}
+                onChange={e => { setVideoUrl(e.target.value); mark(); }}
+                placeholder={ts('articleFieldVideoUrlHint')}
+                className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+              />
+            </div>
+          )}
+
+          {articleType === 'audio' && (
+            <div>
+              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldAudioUrl')}</label>
+              <input
+                value={audioUrl}
+                onChange={e => { setAudioUrl(e.target.value); mark(); }}
+                placeholder={ts('articleFieldAudioUrlHint')}
+                className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+              />
+            </div>
+          )}
+
+          {articleType === 'podcast' && (
+            <div className="space-y-3">
+              <div>
+                <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldAudioUrl')}</label>
+                <input
+                  value={audioUrl}
+                  onChange={e => { setAudioUrl(e.target.value); mark(); }}
+                  placeholder={ts('articleFieldAudioUrlHint')}
+                  className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">{ts('articleFieldEpisodeNum')}</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={episodeNumber}
+                    onChange={e => { setEpisodeNumber(e.target.value); mark(); }}
+                    placeholder="1"
+                    className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">{ts('articleFieldSeason')}</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={season}
+                    onChange={e => { setSeason(e.target.value); mark(); }}
+                    placeholder="1"
+                    className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Cover image */}
           <div>

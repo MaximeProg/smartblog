@@ -237,13 +237,17 @@ export const analyticsApi = {
 // ─── Team ─────────────────────────────────────────────────────────────────────
 
 export const teamApi = {
-  list: (tenantId: string) =>
-    api.get<{ members: TeamMember[]; invitations: TeamInvitation[] }>(
-      `/tenants/${tenantId}/team`
-    ),
+  listMembers: (tenantId: string) =>
+    api.get<TeamMember[]>(`/tenants/${tenantId}/team`),
+
+  listInvitations: (tenantId: string) =>
+    api.get<TeamInvitation[]>(`/tenants/${tenantId}/team/invitations`),
 
   invite: (tenantId: string, data: InviteTeamData) =>
     api.post<TeamInvitation>(`/tenants/${tenantId}/team/invite`, data),
+
+  cancelInvitation: (tenantId: string, invitationId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/team/invitations/${invitationId}`),
 
   remove: (tenantId: string, userId: string) =>
     api.delete<void>(`/tenants/${tenantId}/team/${userId}`),

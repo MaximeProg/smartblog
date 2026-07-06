@@ -136,7 +136,7 @@ export interface SlugCheckResponse {
 // ─── Articles ─────────────────────────────────────────────────────────────────
 
 export type ArticleStatus = 'draft' | 'published' | 'scheduled' | 'archived' | 'in_review' | 'unpublished';
-export type ArticleType = 'article' | 'page' | 'newsletter';
+export type ArticleType = 'article' | 'photo' | 'video' | 'audio' | 'podcast' | 'mixed';
 
 export interface ArticleListItem {
   id: string;
@@ -163,6 +163,14 @@ export interface ArticleDetail extends ArticleListItem {
   content_json: Record<string, unknown> | null;
   seo_title: string | null;
   seo_description: string | null;
+  seo_keywords: string[] | null;
+  canonical_url: string | null;
+  og_image_url: string | null;
+  audio_url: string | null;
+  video_url: string | null;
+  audio_duration_seconds: number | null;
+  allow_comments: boolean;
+  is_featured: boolean;
   tags: TagInfo[];
 }
 
@@ -346,9 +354,8 @@ export interface TeamInvitation {
   id: string;
   email: string;
   role: UserRole;
-  invited_at: string;
+  created_at: string;
   expires_at: string;
-  status: 'pending' | 'accepted' | 'expired';
 }
 
 export interface InviteTeamData {

@@ -10,7 +10,7 @@ import {
   PanelTop, PanelBottom,
   BarChart2, Search, ArrowLeft, ExternalLink,
   Zap, Plus, ChevronDown, ChevronRight, Settings,
-  LogOut,
+  LogOut, Users,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useAuthStore, useCurrentTenant } from '@/store/auth.store';
@@ -114,8 +114,12 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
   ];
 
   const growthItems: NavItem[] = [
-    { href: 'analytics', icon: BarChart2, label: t('analytics') },
-    { href: 'seo',       icon: Search,    label: t('seo') },
+    { href: 'analytics',     icon: BarChart2, label: t('analytics') },
+    { href: 'seo',           icon: Search,    label: t('seo') },
+  ];
+
+  const teamItems: NavItem[] = [
+    { href: 'collaborators', icon: Users, label: t('collaborators') },
   ];
 
   const planKey  = (currentTenant?.plan ?? 'free').toLowerCase();
@@ -204,6 +208,9 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
 
         <SectionLabel label={t('sectionGrowth')} />
         {growthItems.map(item => <SidebarItem key={item.href} item={item} base={base} />)}
+
+        <SectionLabel label="Équipe" />
+        {teamItems.map(item => <SidebarItem key={item.href} item={item} base={base} />)}
 
         {/* View blog */}
         {currentTenant && (
