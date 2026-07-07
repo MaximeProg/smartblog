@@ -170,7 +170,9 @@
       "status": "Statut",
       "author": "Auteur",
       "date": "Date",
-      "actions": "Actions"
+      "actions": "Actions",
+      "category": "Catégorie",
+      "views": "Vues"
     },
     "status": {
       "draft": "Brouillon",

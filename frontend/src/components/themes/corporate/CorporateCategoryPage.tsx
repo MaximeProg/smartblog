@@ -10,6 +10,7 @@ import {
   CardMedium, fmtDate, grad,
 } from './shared';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 interface Props {
   blog: BlogInfo;
@@ -120,7 +121,9 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
                   <Link href={`${basePath}/${articles[0].slug}`}
                     className="group flex flex-col sm:flex-row gap-6 rounded-2xl border border-slate-100 bg-white p-5 hover:shadow-xl hover:border-[var(--cp)]/20 transition-all duration-300">
                     <div className="relative sm:w-72 aspect-[16/9] sm:aspect-auto sm:h-48 rounded-xl overflow-hidden bg-slate-100 shrink-0">
-                      {articles[0].cover_image_url ? (
+                      {articles[0].article_type === 'video' ? (
+                        <VideoCardThumb videoUrl={articles[0].video_url} />
+                      ) : articles[0].cover_image_url ? (
                         <Image src={articles[0].cover_image_url} alt={articles[0].title} fill
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
                           sizes="(max-width:640px) 100vw, 288px" />

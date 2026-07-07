@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { type CSSProperties } from 'react';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 interface Props {
   blog: BlogInfo;
@@ -88,7 +89,9 @@ export default function CreativeCategoryPage({
                   href={`${basePath}/${a.slug}`}
                   className={`group relative rounded-xl overflow-hidden cursor-pointer block ${isWide ? 'sm:col-span-2' : ''} ${aspectClass}`}
                 >
-                  {a.cover_image_url ? (
+                  {a.article_type === 'video' ? (
+                    <VideoCardThumb videoUrl={a.video_url} />
+                  ) : a.cover_image_url ? (
                     <Image
                       src={a.cover_image_url}
                       alt={a.title}

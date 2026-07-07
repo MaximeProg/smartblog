@@ -60,6 +60,8 @@ export const MOCK_ARTICLES: PublicArticle[] = [
     likes_count: 892,
     is_paid: false,
     price: null,
+    article_type: 'article' as const,
+    video_url: null,
   },
   {
     id: 'art-002',
@@ -77,6 +79,8 @@ export const MOCK_ARTICLES: PublicArticle[] = [
     likes_count: 614,
     is_paid: false,
     price: null,
+    article_type: 'article' as const,
+    video_url: null,
   },
   {
     id: 'art-003',
@@ -94,6 +98,8 @@ export const MOCK_ARTICLES: PublicArticle[] = [
     likes_count: 481,
     is_paid: false,
     price: null,
+    article_type: 'article' as const,
+    video_url: null,
   },
   {
     id: 'art-004',
@@ -111,6 +117,8 @@ export const MOCK_ARTICLES: PublicArticle[] = [
     likes_count: 728,
     is_paid: false,
     price: null,
+    article_type: 'article' as const,
+    video_url: null,
   },
   {
     id: 'art-005',
@@ -128,6 +136,8 @@ export const MOCK_ARTICLES: PublicArticle[] = [
     likes_count: 392,
     is_paid: false,
     price: null,
+    article_type: 'article' as const,
+    video_url: null,
   },
   {
     id: 'art-006',
@@ -145,6 +155,8 @@ export const MOCK_ARTICLES: PublicArticle[] = [
     likes_count: 347,
     is_paid: false,
     price: null,
+    article_type: 'article' as const,
+    video_url: null,
   },
   {
     id: 'art-007',
@@ -162,6 +174,8 @@ export const MOCK_ARTICLES: PublicArticle[] = [
     likes_count: 291,
     is_paid: false,
     price: null,
+    article_type: 'article' as const,
+    video_url: null,
   },
   {
     id: 'art-008',
@@ -179,6 +193,8 @@ export const MOCK_ARTICLES: PublicArticle[] = [
     likes_count: 563,
     is_paid: false,
     price: null,
+    article_type: 'article' as const,
+    video_url: null,
   },
 ];
 

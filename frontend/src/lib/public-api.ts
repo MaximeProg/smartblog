@@ -66,6 +66,8 @@ export interface PublicArticle {
   slug: string;
   excerpt: string | null;
   cover_image_url: string | null;
+  article_type: 'article' | 'photo' | 'video' | 'audio' | 'podcast' | 'mixed' | null;
+  video_url: string | null;
   author_name: string | null;
   category_slug: string | null;
   category_name: string | null;
@@ -80,8 +82,6 @@ export interface PublicArticle {
 
 export interface PublicArticleFull extends PublicArticle {
   content: string | null;
-  article_type: 'article' | 'photo' | 'video' | 'audio' | 'podcast' | 'mixed' | null;
-  video_url: string | null;
   audio_url: string | null;
   episode_number: number | null;
   season: number | null;

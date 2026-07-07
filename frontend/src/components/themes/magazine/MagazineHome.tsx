@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { HomeProps } from '../ThemeRenderer';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -106,7 +107,9 @@ export default function MagazineHome({
                   className="group border border-zinc-200 rounded overflow-hidden hover:shadow-md transition-shadow"
                 >
                   <div className="relative h-44 overflow-hidden">
-                    {a.cover_image_url ? (
+                    {a.article_type === 'video' ? (
+                      <VideoCardThumb videoUrl={a.video_url} />
+                    ) : a.cover_image_url ? (
                       <Image
                         src={a.cover_image_url}
                         alt={a.title}
@@ -143,7 +146,9 @@ export default function MagazineHome({
                   {hero && (
                     <div className="lg:col-span-2">
                       <Link href={aHref(hero.slug)} className="block group relative h-72 sm:h-[420px] rounded overflow-hidden">
-                        {hero.cover_image_url ? (
+                        {hero.article_type === 'video' ? (
+                          <VideoCardThumb videoUrl={hero.video_url} />
+                        ) : hero.cover_image_url ? (
                           <Image
                             src={hero.cover_image_url}
                             alt={hero.title}
@@ -223,7 +228,9 @@ export default function MagazineHome({
                       {featured && (
                         <Link href={aHref(featured.slug)} className="sm:col-span-2 group flex gap-4">
                           <div className="relative h-40 w-44 shrink-0 rounded overflow-hidden">
-                            {featured.cover_image_url ? (
+                            {featured.article_type === 'video' ? (
+                              <VideoCardThumb videoUrl={featured.video_url} />
+                            ) : featured.cover_image_url ? (
                               <Image
                                 src={featured.cover_image_url}
                                 alt={featured.title}
@@ -250,7 +257,9 @@ export default function MagazineHome({
                         {mini.map((a, idx) => (
                           <Link key={a.id} href={aHref(a.slug)} className={`group flex gap-3 pb-3 ${idx < mini.length - 1 ? 'border-b border-zinc-100 mb-3' : ''}`}>
                             <div className="relative h-14 w-14 rounded shrink-0 overflow-hidden">
-                              {a.cover_image_url ? (
+                              {a.article_type === 'video' ? (
+                                <VideoCardThumb videoUrl={a.video_url} />
+                              ) : a.cover_image_url ? (
                                 <Image
                                   src={a.cover_image_url}
                                   alt={a.title}

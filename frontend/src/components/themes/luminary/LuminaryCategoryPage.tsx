@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const GRADIENTS = [
   'from-zinc-800 to-zinc-950',
@@ -114,7 +115,9 @@ export default function LuminaryCategoryPage({
                 className="group flex flex-col"
               >
                 <div className="relative aspect-[4/3] overflow-hidden mb-4">
-                  {a.cover_image_url ? (
+                  {a.article_type === 'video' ? (
+                    <VideoCardThumb videoUrl={a.video_url} />
+                  ) : a.cover_image_url ? (
                     <Image
                       src={a.cover_image_url}
                       alt={a.title}

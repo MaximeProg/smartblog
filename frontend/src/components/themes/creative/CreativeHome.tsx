@@ -6,6 +6,7 @@ import { useState, useCallback, type CSSProperties } from 'react';
 import { useParams } from 'next/navigation';
 import type { HomeProps } from '../ThemeRenderer';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const GRADIENTS = [
   'from-violet-900 to-indigo-900',
@@ -72,7 +73,9 @@ export default function CreativeHome({
         <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-4">
           <Link href={aHref(heroArticle.slug)} className="block">
             <div className="relative h-[60vh] sm:h-[70vh] min-h-[400px] rounded-2xl overflow-hidden group cursor-pointer">
-              {heroArticle.cover_image_url ? (
+              {heroArticle.article_type === 'video' ? (
+                <VideoCardThumb videoUrl={heroArticle.video_url} />
+              ) : heroArticle.cover_image_url ? (
                 <Image
                   src={heroArticle.cover_image_url}
                   alt={heroArticle.title}
@@ -163,7 +166,9 @@ export default function CreativeHome({
                   href={aHref(a.slug)}
                   className={`group relative rounded-xl overflow-hidden cursor-pointer block ${isWide ? 'sm:col-span-2' : ''} ${aspectClass}`}
                 >
-                  {a.cover_image_url ? (
+                  {a.article_type === 'video' ? (
+                    <VideoCardThumb videoUrl={a.video_url} />
+                  ) : a.cover_image_url ? (
                     <Image
                       src={a.cover_image_url}
                       alt={a.title}

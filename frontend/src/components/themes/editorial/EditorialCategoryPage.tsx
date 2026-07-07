@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { BookOpen, Clock } from 'lucide-react';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const cardGradients = [
   'from-zinc-100 to-zinc-200',
@@ -103,7 +104,9 @@ export default function EditorialCategoryPage({
             {articles.map((a, i) => (
               <Link key={a.id} href={`${basePath}/${a.slug}`} className="group flex flex-col">
                 <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-4 ring-0 group-hover:ring-2 transition-all ring-offset-2 ring-[var(--cp)]">
-                  {a.cover_image_url ? (
+                  {a.article_type === 'video' ? (
+                    <VideoCardThumb videoUrl={a.video_url} />
+                  ) : a.cover_image_url ? (
                     <Image
                       src={a.cover_image_url}
                       alt={a.title}

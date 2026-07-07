@@ -50,6 +50,8 @@ class PublicArticle(BaseModel):
     slug: str
     excerpt: str | None
     cover_image_url: str | None
+    article_type: str | None
+    video_url: str | None
     author_name: str | None
     category_slug: str | None
     category_name: str | None
@@ -360,6 +362,8 @@ def _to_public(a: Article) -> PublicArticle:
         slug=a.slug,
         excerpt=a.excerpt,
         cover_image_url=a.cover_image_url,
+        article_type=a.article_type.value if getattr(a, 'article_type', None) else None,
+        video_url=getattr(a, 'video_url', None),
         author_name=author_name,
         category_slug=category_slug,
         category_name=category_name,

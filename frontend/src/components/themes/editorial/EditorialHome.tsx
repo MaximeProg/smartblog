@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { ArrowRight, BookOpen, Clock } from 'lucide-react';
 import type { HomeProps } from '../ThemeRenderer';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -115,7 +116,9 @@ export default function EditorialHome({
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-0 overflow-hidden rounded-2xl border border-zinc-100 shadow-sm">
             <div className="relative h-72 sm:h-80 lg:h-[420px] lg:col-span-3">
-              {featuredArticle.cover_image_url ? (
+              {featuredArticle.article_type === 'video' ? (
+                <VideoCardThumb videoUrl={featuredArticle.video_url} />
+              ) : featuredArticle.cover_image_url ? (
                 <Image
                   src={featuredArticle.cover_image_url}
                   alt={featuredArticle.title}
@@ -219,7 +222,9 @@ export default function EditorialHome({
           {gridArticles.map((a, i) => (
             <Link key={a.id} href={aHref(a.slug)} className="group flex flex-col">
               <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-4 ring-0 group-hover:ring-2 transition-all ring-offset-2 ring-[var(--cp)]">
-                {a.cover_image_url ? (
+                {a.article_type === 'video' ? (
+                  <VideoCardThumb videoUrl={a.video_url} />
+                ) : a.cover_image_url ? (
                   <Image
                     src={a.cover_image_url}
                     alt={a.title}

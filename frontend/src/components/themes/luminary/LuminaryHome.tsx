@@ -7,6 +7,7 @@ import { ArrowRight, ChevronRight } from 'lucide-react';
 import type { HomeProps } from '../ThemeRenderer';
 import type { PublicArticle, PublicCategory } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -77,7 +78,9 @@ function DepartmentCard({ article, href, primaryColor }: DepartmentCardProps) {
   return (
     <Link href={href} className="group flex flex-col">
       <div className="relative aspect-[4/3] overflow-hidden mb-4">
-        {article.cover_image_url ? (
+        {article.article_type === 'video' ? (
+          <VideoCardThumb videoUrl={article.video_url} />
+        ) : article.cover_image_url ? (
           <Image
             src={article.cover_image_url}
             alt={article.title}
@@ -185,7 +188,9 @@ export default function LuminaryHome({
 
       {coverArticle && (
         <section className="relative w-full h-[70vh] min-h-[420px]">
-          {coverArticle.cover_image_url ? (
+          {coverArticle.article_type === 'video' ? (
+            <VideoCardThumb videoUrl={coverArticle.video_url} />
+          ) : coverArticle.cover_image_url ? (
             <Image
               src={coverArticle.cover_image_url}
               alt={coverArticle.title}

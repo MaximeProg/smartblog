@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 interface CategoryPageProps {
   blog: BlogInfo;
@@ -84,7 +85,9 @@ export default function MagazineCategoryPage({
                 className="group flex flex-col sm:flex-row gap-6 mb-10 border-b border-zinc-100 pb-10"
               >
                 <div className="relative h-56 sm:h-56 sm:w-96 shrink-0 rounded overflow-hidden">
-                  {featured.cover_image_url ? (
+                  {featured.article_type === 'video' ? (
+                    <VideoCardThumb videoUrl={featured.video_url} />
+                  ) : featured.cover_image_url ? (
                     <Image
                       src={featured.cover_image_url}
                       alt={featured.title}
@@ -130,7 +133,9 @@ export default function MagazineCategoryPage({
                     className="group border border-zinc-200 rounded overflow-hidden hover:shadow-md transition-shadow"
                   >
                     <div className="relative h-44 overflow-hidden">
-                      {a.cover_image_url ? (
+                      {a.article_type === 'video' ? (
+                        <VideoCardThumb videoUrl={a.video_url} />
+                      ) : a.cover_image_url ? (
                         <Image
                           src={a.cover_image_url}
                           alt={a.title}

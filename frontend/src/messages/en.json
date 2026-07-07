@@ -170,7 +170,9 @@
       "status": "Status",
       "author": "Author",
       "date": "Date",
-      "actions": "Actions"
+      "actions": "Actions",
+      "category": "Category",
+      "views": "Views"
     },
     "status": {
       "draft": "Draft",

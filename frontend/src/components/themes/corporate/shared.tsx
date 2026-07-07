@@ -9,6 +9,7 @@ import {
   Facebook, Twitter, Instagram, Youtube, Linkedin, Rss, ChevronRight,
 } from 'lucide-react';
 import type { PublicArticle, PublicCategory } from '@/lib/public-api';
+import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
@@ -46,9 +47,12 @@ export function grad(id: string) {
 export function CardHero({ article, href }: { article: PublicArticle; href: string }) {
   const [err, setErr] = useState(false);
   const hasImg = !!article.cover_image_url && !err;
+  const isVideo = article.article_type === 'video';
   return (
     <Link href={href} className="group relative flex flex-col rounded-3xl overflow-hidden bg-slate-900 min-h-[480px] lg:min-h-[540px]">
-      {hasImg ? (
+      {isVideo ? (
+        <VideoCardThumb videoUrl={article.video_url} />
+      ) : hasImg ? (
         <Image src={article.cover_image_url!} alt={article.title} fill
           className="object-cover group-hover:scale-105 transition-transform duration-700"
           onError={() => setErr(true)} sizes="60vw" priority />
@@ -89,9 +93,12 @@ export function CardHero({ article, href }: { article: PublicArticle; href: stri
 export function CardSide({ article, href }: { article: PublicArticle; href: string }) {
   const [err, setErr] = useState(false);
   const hasImg = !!article.cover_image_url && !err;
+  const isVideo = article.article_type === 'video';
   return (
     <Link href={href} className="group relative rounded-2xl overflow-hidden flex flex-col min-h-[220px] bg-slate-800">
-      {hasImg ? (
+      {isVideo ? (
+        <VideoCardThumb videoUrl={article.video_url} />
+      ) : hasImg ? (
         <Image src={article.cover_image_url!} alt={article.title} fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           onError={() => setErr(true)} sizes="30vw" />
@@ -115,10 +122,13 @@ export function CardSide({ article, href }: { article: PublicArticle; href: stri
 export function CardMedium({ article, href }: { article: PublicArticle; href: string }) {
   const [err, setErr] = useState(false);
   const hasImg = !!article.cover_image_url && !err;
+  const isVideo = article.article_type === 'video';
   return (
     <Link href={href} className="group flex flex-col rounded-2xl overflow-hidden border border-slate-100 bg-white hover:shadow-xl hover:border-[var(--cp)]/20 transition-all duration-300">
       <div className="relative aspect-[16/9] overflow-hidden">
-        {hasImg ? (
+        {isVideo ? (
+          <VideoCardThumb videoUrl={article.video_url} />
+        ) : hasImg ? (
           <Image src={article.cover_image_url!} alt={article.title} fill
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             onError={() => setErr(true)} sizes="(max-width:768px) 100vw, 33vw" />
@@ -157,13 +167,16 @@ export function CardMedium({ article, href }: { article: PublicArticle; href: st
 export function CardCompact({ article, href, rank }: { article: PublicArticle; href: string; rank?: number }) {
   const [err, setErr] = useState(false);
   const hasImg = !!article.cover_image_url && !err;
+  const isVideo = article.article_type === 'video';
   return (
     <Link href={href} className="group flex gap-4 py-4 border-b border-slate-100 last:border-0 hover:bg-slate-50/80 -mx-2 px-2 rounded-xl transition-colors">
       {rank !== undefined && (
         <span className="text-2xl font-black text-slate-100 w-7 shrink-0 leading-none mt-1 select-none">{rank}</span>
       )}
       <div className="relative shrink-0 w-20 h-16 rounded-xl overflow-hidden bg-slate-100">
-        {hasImg ? (
+        {isVideo ? (
+          <VideoCardThumb videoUrl={article.video_url} />
+        ) : hasImg ? (
           <Image src={article.cover_image_url!} alt={article.title} fill
             className="object-cover group-hover:scale-110 transition-transform duration-300"
             onError={() => setErr(true)} sizes="80px" />
