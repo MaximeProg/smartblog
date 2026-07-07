@@ -24,6 +24,7 @@ import type {
   TeamInvitation,
   InviteTeamData,
   NewsletterSubscriber,
+  NewsletterCampaign,
   PublicBlog,
   PublicArticle,
   TenantInfo,
@@ -43,8 +44,14 @@ import type {
   CommentListItem,
   CommentStats,
   CommentStatus,
+  CommentBanInfo,
   NotificationItem,
   ArticleVersionResponse,
+  SocialAccountInfo,
+  SocialPostInfo,
+  SocialPlatform,
+  SocialPostStatus,
+  SubscriberStatus,
 } from '@/types';
 
 const API_URL =
@@ -275,14 +282,29 @@ export const teamApi = {
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
 export const newsletterApi = {
-  subscribers: (
-    tenantId: string,
-    params?: { page?: number; limit?: number }
-  ) =>
-    api.get<PaginatedResponse<NewsletterSubscriber>>(
-      `/tenants/${tenantId}/newsletter/subscribers`,
-      { params }
-    ),
+  listSubscribers: (tenantId: string, params?: { status?: SubscriberStatus; q?: string; limit?: number; cursor?: string }) =>
+    api.get<NewsletterSubscriber[]>(`/tenants/${tenantId}/newsletter/subscribers`, { params }),
+
+  exportSubscribers: (tenantId: string, status?: SubscriberStatus) =>
+    api.get(`/tenants/${tenantId}/newsletter/subscribers/export`, {
+      params: status ? { status } : undefined,
+      responseType: 'blob',
+    }),
+
+  listCampaigns: (tenantId: string) =>
+    api.get<NewsletterCampaign[]>(`/tenants/${tenantId}/newsletter/campaigns`),
+
+  createCampaign: (tenantId: string, data: {
+    name: string;
+    subject: string;
+    preview_text?: string;
+    content_html?: string;
+    scheduled_at?: string;
+  }) =>
+    api.post<NewsletterCampaign>(`/tenants/${tenantId}/newsletter/campaigns`, data),
+
+  sendCampaign: (tenantId: string, campaignId: string) =>
+    api.post<NewsletterCampaign>(`/tenants/${tenantId}/newsletter/campaigns/${campaignId}/send`),
 };
 
 // ─── Tags ─────────────────────────────────────────────────────────────────────
@@ -388,6 +410,40 @@ export const moderationApi = {
 
   ban: (tenantId: string, data: { email?: string; ip_address?: string; reason?: string }) =>
     api.post(`/tenants/${tenantId}/moderation/bans`, data),
+
+  listBans: (tenantId: string) =>
+    api.get<CommentBanInfo[]>(`/tenants/${tenantId}/moderation/bans`),
+
+  deleteBan: (tenantId: string, banId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/moderation/bans/${banId}`),
+};
+
+// ─── Social ───────────────────────────────────────────────────────────────────
+
+export const socialApi = {
+  listAccounts: (tenantId: string) =>
+    api.get<SocialAccountInfo[]>(`/tenants/${tenantId}/social/accounts`),
+
+  disconnectAccount: (tenantId: string, accountId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/social/accounts/${accountId}`),
+
+  listPosts: (tenantId: string, params?: { status?: SocialPostStatus; platform?: SocialPlatform; limit?: number }) =>
+    api.get<SocialPostInfo[]>(`/tenants/${tenantId}/social/posts`, { params }),
+
+  createPost: (tenantId: string, data: {
+    social_account_id: string;
+    content: string;
+    article_id?: string;
+    media_urls?: string[];
+    scheduled_at?: string;
+  }) =>
+    api.post<SocialPostInfo>(`/tenants/${tenantId}/social/posts`, data),
+
+  deletePost: (tenantId: string, postId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/social/posts/${postId}`),
+
+  publishNow: (tenantId: string, postId: string) =>
+    api.post<SocialPostInfo>(`/tenants/${tenantId}/social/posts/${postId}/publish`),
 };
 
 // ─── Engagement public (likes, partages, commentaires anonymes) ────────────────

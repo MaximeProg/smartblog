@@ -176,12 +176,47 @@ async def unsubscribe(
 
 # ── Gestion abonnés (admin) ────────────────────────────────────────
 
+@router.get("/subscribers/export")
+async def export_subscribers_csv(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+    status: SubscriberStatus | None = None,
+):
+    """Export subscribers as CSV (UTF-8 BOM so Excel opens correctly)."""
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+    query = select(NewsletterSubscriber).where(NewsletterSubscriber.tenant_id == tenant_id)
+    if status:
+        query = query.where(NewsletterSubscriber.status == status)
+    result = await db.execute(query.order_by(NewsletterSubscriber.created_at.desc()))
+    subs = result.scalars().all()
+
+    import io, csv
+    from fastapi.responses import StreamingResponse
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["email", "first_name", "last_name", "status", "source", "subscribed_at"])
+    for s in subs:
+        writer.writerow([
+            s.email, s.first_name or "", s.last_name or "",
+            s.status.value, s.source or "", s.created_at.isoformat(),
+        ])
+    csv_bytes = output.getvalue().encode("utf-8-sig")
+    return StreamingResponse(
+        io.BytesIO(csv_bytes),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=subscribers.csv"},
+    )
+
+
 @router.get("/subscribers", response_model=list[SubscriberResponse])
 async def list_subscribers(
     tenant_id: uuid.UUID,
     payload: TokenPayload,
     db: DBSession,
     status: SubscriberStatus | None = None,
+    q: str | None = None,
     limit: int = 50,
     cursor: str | None = None,
 ):
@@ -189,6 +224,12 @@ async def list_subscribers(
     query = select(NewsletterSubscriber).where(NewsletterSubscriber.tenant_id == tenant_id)
     if status:
         query = query.where(NewsletterSubscriber.status == status)
+    if q:
+        query = query.where(
+            NewsletterSubscriber.email.ilike(f"%{q}%") |
+            NewsletterSubscriber.first_name.ilike(f"%{q}%") |
+            NewsletterSubscriber.last_name.ilike(f"%{q}%")
+        )
     if cursor:
         query = query.where(NewsletterSubscriber.created_at < datetime.fromisoformat(cursor))
     query = query.order_by(NewsletterSubscriber.created_at.desc()).limit(limit)

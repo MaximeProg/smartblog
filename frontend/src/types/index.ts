@@ -345,6 +345,7 @@ export interface MediaItem {
   width: number | null;
   height: number | null;
   format: string | null;
+  duration_seconds: number | null;
   created_at: string;
 }
 
@@ -424,12 +425,72 @@ export interface DailyMetric {
 
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
+export type SubscriberStatus = 'pending' | 'active' | 'unsubscribed';
+export type CampaignStatus = 'draft' | 'scheduled' | 'sending' | 'sent' | 'canceled';
+
 export interface NewsletterSubscriber {
   id: string;
   email: string;
   first_name: string | null;
-  subscribed_at: string;
-  status: 'active' | 'unsubscribed';
+  last_name: string | null;
+  status: SubscriberStatus;
+  source: string | null;
+  created_at: string;
+}
+
+export interface NewsletterCampaign {
+  id: string;
+  name: string;
+  subject: string;
+  status: CampaignStatus;
+  is_paid: boolean;
+  price: number | null;
+  scheduled_at: string | null;
+  sent_at: string | null;
+  recipients_count: number;
+  opens_count: number;
+  clicks_count: number;
+  created_at: string;
+}
+
+// ─── Social ───────────────────────────────────────────────────────────────────
+
+export type SocialPlatform = 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'pinterest' | 'youtube_community' | 'tiktok' | 'threads' | 'telegram' | 'whatsapp' | 'discord' | 'reddit' | 'upscrolled';
+export type SocialPostStatus = 'pending' | 'scheduled' | 'published' | 'failed' | 'canceled';
+
+export interface SocialAccountInfo {
+  id: string;
+  platform: SocialPlatform;
+  platform_username: string | null;
+  platform_display_name: string | null;
+  platform_avatar_url: string | null;
+  platform_profile_url: string | null;
+  is_active: boolean;
+  token_expires_at: string | null;
+  created_at: string;
+}
+
+export interface SocialPostInfo {
+  id: string;
+  platform: SocialPlatform;
+  content: string;
+  status: SocialPostStatus;
+  article_id: string | null;
+  scheduled_at: string | null;
+  published_at: string | null;
+  platform_post_url: string | null;
+  error_message: string | null;
+  created_at: string;
+}
+
+// ─── Comment Bans ─────────────────────────────────────────────────────────────
+
+export interface CommentBanInfo {
+  id: string;
+  email: string | null;
+  ip_address: string | null;
+  reason: string | null;
+  created_at: string;
 }
 
 // ─── Public blog ──────────────────────────────────────────────────────────────

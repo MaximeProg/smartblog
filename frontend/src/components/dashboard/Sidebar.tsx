@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   FileText, Tag, Tags, Mail, MessageSquare, Megaphone,
-  Home, Info, Phone, BookOpen, Images,
+  Home, Info, Phone, BookOpen, Images, Share2,
   PanelTop, PanelBottom,
   BarChart2, Search, ArrowLeft, ExternalLink,
   Zap, Plus, ChevronDown, ChevronRight, Settings,
@@ -116,8 +116,9 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
   ];
 
   const growthItems: NavItem[] = [
-    { href: 'analytics',     icon: BarChart2, label: t('analytics') },
-    { href: 'seo',           icon: Search,    label: t('seo') },
+    { href: 'analytics', icon: BarChart2, label: t('analytics') },
+    { href: 'seo',       icon: Search,    label: t('seo') },
+    { href: 'social',    icon: Share2,    label: t('social') },
   ];
 
   const teamItems: NavItem[] = [

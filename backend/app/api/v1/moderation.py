@@ -210,3 +210,59 @@ async def ban(
     ))
     await db.commit()
     return {"message": "Banni avec succès."}
+
+
+class BanResponse(BaseModel):
+    id: str
+    email: Optional[str]
+    ip_address: Optional[str]
+    reason: Optional[str]
+    created_at: datetime
+
+
+@router.get("/bans", response_model=list[BanResponse])
+async def list_bans(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+    result = await db.execute(
+        select(CommentBan)
+        .where(CommentBan.tenant_id == tenant_id)
+        .order_by(CommentBan.created_at.desc())
+        .limit(200)
+    )
+    bans = result.scalars().all()
+    return [
+        BanResponse(
+            id=str(b.id),
+            email=b.email,
+            ip_address=b.ip_address,
+            reason=b.reason,
+            created_at=b.created_at,
+        )
+        for b in bans
+    ]
+
+
+@router.delete("/bans/{ban_id}", status_code=204)
+async def delete_ban(
+    tenant_id: uuid.UUID,
+    ban_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+    result = await db.execute(
+        select(CommentBan).where(
+            CommentBan.id == ban_id,
+            CommentBan.tenant_id == tenant_id,
+        )
+    )
+    ban = result.scalar_one_or_none()
+    if not ban:
+        from app.core.exceptions import NotFoundException
+        raise NotFoundException("Bannissement")
+    await db.delete(ban)
+    await db.commit()
