@@ -22,7 +22,7 @@ interface HomeConfig {
     placeholder: string;
     disclaimer: string;
   };
-  latest: { enabled: boolean; sectionTitle: string };
+  latest: { enabled: boolean; sectionTitle: string; postsPerPage: number };
   sidebar: {
     popularArticles: boolean;
     popularTitle: string;
@@ -45,7 +45,7 @@ const DEFAULT: HomeConfig = {
     placeholder: 'votre@email.com',
     disclaimer: '',
   },
-  latest: { enabled: true, sectionTitle: 'Derniers articles' },
+  latest: { enabled: true, sectionTitle: 'Derniers articles', postsPerPage: 12 },
   sidebar: {
     popularArticles: true,
     popularTitle: '',
@@ -143,9 +143,22 @@ export default function HomePage() {
       <StudioSection id="latest" title={ts('sectionLatest')} defaultOpen>
         <StudioSwitch label={ts('switchShowArticlesGrid')} checked={cfg.latest.enabled} onChange={v => patch(c => ({ ...c, latest: { ...c.latest, enabled: v } }))} />
         {cfg.latest.enabled && (
-          <StudioField label={ts('fieldSectionTitle')}>
-            <StudioInput value={cfg.latest.sectionTitle} onChange={v => patch(c => ({ ...c, latest: { ...c.latest, sectionTitle: v } }))} placeholder="Derniers articles" />
-          </StudioField>
+          <>
+            <StudioField label={ts('fieldSectionTitle')}>
+              <StudioInput value={cfg.latest.sectionTitle} onChange={v => patch(c => ({ ...c, latest: { ...c.latest, sectionTitle: v } }))} placeholder="Derniers articles" />
+            </StudioField>
+            <StudioField label={ts('fieldPostsPerPage')}>
+              <select
+                value={cfg.latest.postsPerPage}
+                onChange={e => patch(c => ({ ...c, latest: { ...c.latest, postsPerPage: Number(e.target.value) } }))}
+                className="w-full border border-zinc-200 rounded-lg px-3 py-2 text-sm text-zinc-800 bg-white focus:outline-none focus:ring-2 focus:ring-zinc-900"
+              >
+                {[6, 9, 12, 15, 20, 24].map(n => (
+                  <option key={n} value={n}>{n} articles</option>
+                ))}
+              </select>
+            </StudioField>
+          </>
         )}
       </StudioSection>
 

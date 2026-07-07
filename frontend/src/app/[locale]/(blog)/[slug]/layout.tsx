@@ -1,5 +1,8 @@
 import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
+import { BlogReaderProvider } from '@/components/themes/shared/BlogReaderProvider';
+import { PersistentAudioProvider } from '@/components/themes/shared/PersistentAudioPlayer';
+import '@/components/themes/shared/blogDarkMode.css';
 
 interface Props {
   children: React.ReactNode;
@@ -42,7 +45,11 @@ export default async function BlogSlugLayout({ children, params }: Props) {
           }}
         />
       )}
-      {children}
+      <PersistentAudioProvider>
+        <BlogReaderProvider primaryColor={primary_color}>
+          {children}
+        </BlogReaderProvider>
+      </PersistentAudioProvider>
     </div>
   );
 }

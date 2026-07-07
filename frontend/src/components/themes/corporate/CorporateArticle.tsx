@@ -368,7 +368,8 @@ export default function CorporateArticle({
                 prose-li:marker:text-[var(--cp)] prose-li:mb-1.5
                 prose-strong:text-slate-800 prose-strong:font-bold
                 prose-hr:border-slate-100"
-              style={{ '--tw-prose-links': primaryColor } as CSSProperties}
+              data-article-body
+              style={{ '--tw-prose-links': primaryColor, fontSize: 'var(--reader-fs, 1.0625rem)', fontFamily: 'var(--reader-ff)' } as CSSProperties}
               dangerouslySetInnerHTML={{ __html: processedContent }}
             />
           )}

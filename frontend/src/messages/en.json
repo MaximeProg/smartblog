@@ -1538,6 +1538,7 @@
     "switchShowStrip": "Show strip",
     "switchShowNewsletterSection": "Show newsletter section",
     "switchShowArticlesGrid": "Show articles grid",
+    "fieldPostsPerPage": "Articles per page",
     "switchPopularArticles": "Popular articles",
     "switchCategories": "Categories",
     "switchMiniNewsletter": "Mini newsletter",

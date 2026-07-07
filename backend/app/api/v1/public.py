@@ -127,6 +127,7 @@ async def list_public_articles(
     category: str | None = Query(default=None),
     tag: str | None = Query(default=None),
     q: str | None = Query(default=None),
+    type: str | None = Query(default=None, alias="type"),
     limit: int = Query(default=20, le=50),
     cursor: str | None = Query(default=None),
 ):
@@ -149,6 +150,8 @@ async def list_public_articles(
         query = query.where(
             Article.title.ilike(f"%{q}%") | Article.excerpt.ilike(f"%{q}%")
         )
+    if type:
+        query = query.where(Article.article_type == type)
 
     query = query.order_by(Article.published_at.desc()).limit(limit)
     result = await db.execute(query)
@@ -312,6 +315,79 @@ async def rss_feed(slug: str, db: DBSession):
             ET.SubElement(item, "description").text = a.excerpt
         if a.published_at:
             ET.SubElement(item, "pubDate").text = a.published_at.strftime("%a, %d %b %Y %H:%M:%S +0000")
+
+    xml_str = '<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(rss, encoding="unicode")
+    return Response(content=xml_str, media_type="application/rss+xml; charset=utf-8")
+
+
+# ── GET /public/{slug}/podcast/rss ───────────────────────────────
+
+@router.get("/podcast/rss", response_class=Response)
+async def podcast_rss_feed(slug: str, db: DBSession):
+    """iTunes-compatible podcast RSS feed (type=audio|podcast articles only)."""
+    tenant = await _resolve_tenant(db, slug)
+    result = await db.execute(
+        select(Article).where(
+            Article.tenant_id == tenant.id,
+            Article.status == ArticleStatus.PUBLISHED,
+            Article.deleted_at.is_(None),
+            Article.article_type.in_(["podcast", "audio"]),
+        ).order_by(Article.published_at.desc()).limit(100)
+    )
+    articles = result.scalars().all()
+
+    blog_url = f"https://{tenant.slug}.nexusblog.io"
+
+    rss = ET.Element("rss", version="2.0")
+    rss.set("xmlns:itunes", "http://www.itunes.com/dtds/podcast-1.0.dtd")
+    rss.set("xmlns:atom", "http://www.w3.org/2005/Atom")
+    channel = ET.SubElement(rss, "channel")
+
+    ET.SubElement(channel, "title").text = f"{tenant.name} — Podcast"
+    ET.SubElement(channel, "link").text = f"{blog_url}/podcast"
+    ET.SubElement(channel, "description").text = tenant.description or tenant.name
+    ET.SubElement(channel, "language").text = tenant.language or "fr"
+    ET.SubElement(channel, "lastBuildDate").text = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
+
+    atom_link = ET.SubElement(channel, "atom:link")
+    atom_link.set("href", f"{blog_url}/podcast/rss")
+    atom_link.set("rel", "self")
+    atom_link.set("type", "application/rss+xml")
+
+    if tenant.logo_url:
+        img = ET.SubElement(channel, "image")
+        ET.SubElement(img, "url").text = tenant.logo_url
+        ET.SubElement(img, "title").text = tenant.name
+        ET.SubElement(img, "link").text = blog_url
+        itunes_img = ET.SubElement(channel, "itunes:image")
+        itunes_img.set("href", tenant.logo_url)
+
+    ET.SubElement(channel, "itunes:author").text = tenant.name
+
+    for a in articles:
+        item = ET.SubElement(channel, "item")
+        ET.SubElement(item, "title").text = a.title
+        ET.SubElement(item, "link").text = f"{blog_url}/{a.slug}"
+        ET.SubElement(item, "guid").text = f"{blog_url}/{a.slug}"
+        if a.excerpt:
+            ET.SubElement(item, "description").text = a.excerpt
+        if a.published_at:
+            ET.SubElement(item, "pubDate").text = a.published_at.strftime("%a, %d %b %Y %H:%M:%S +0000")
+        if a.audio_url:
+            enc = ET.SubElement(item, "enclosure")
+            enc.set("url", a.audio_url)
+            enc.set("type", "audio/mpeg")
+            enc.set("length", "0")
+        if a.episode_number:
+            ET.SubElement(item, "itunes:episode").text = str(a.episode_number)
+        if a.season:
+            ET.SubElement(item, "itunes:season").text = str(a.season)
+        if a.audio_duration_seconds:
+            mins, secs = divmod(int(a.audio_duration_seconds), 60)
+            ET.SubElement(item, "itunes:duration").text = f"{mins}:{secs:02d}"
+        if a.cover_image_url:
+            ep_img = ET.SubElement(item, "itunes:image")
+            ep_img.set("href", a.cover_image_url)
 
     xml_str = '<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(rss, encoding="unicode")
     return Response(content=xml_str, media_type="application/rss+xml; charset=utf-8")

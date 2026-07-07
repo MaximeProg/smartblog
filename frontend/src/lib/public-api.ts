@@ -123,6 +123,7 @@ export const publicApi = {
     category?: string;
     tag?: string;
     q?: string;
+    type?: string;
     limit?: number;
     cursor?: string;
   }) => {
@@ -130,6 +131,7 @@ export const publicApi = {
     if (params?.category) qs.set('category', params.category);
     if (params?.tag) qs.set('tag', params.tag);
     if (params?.q) qs.set('q', params.q);
+    if (params?.type) qs.set('type', params.type);
     if (params?.limit) qs.set('limit', String(params.limit));
     if (params?.cursor) qs.set('cursor', params.cursor);
     const query = qs.toString() ? `?${qs}` : '';

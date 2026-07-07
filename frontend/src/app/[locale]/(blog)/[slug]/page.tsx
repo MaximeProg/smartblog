@@ -35,9 +35,10 @@ export default async function PublicBlogPage({
 
   let blog, articles, categories;
   try {
-    [blog, articles, categories] = await Promise.all([
-      publicApi.getBlogInfo(slug),
-      publicApi.getArticles(slug, { category, q, cursor, limit: 20 }),
+    blog = await publicApi.getBlogInfo(slug);
+    const postsPerPage = (blog.template_config?.home as any)?.latest?.postsPerPage ?? 12;
+    [articles, categories] = await Promise.all([
+      publicApi.getArticles(slug, { category, q, cursor, limit: postsPerPage }),
       publicApi.getCategories(slug),
     ]);
   } catch {

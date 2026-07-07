@@ -247,7 +247,8 @@ export default function CreativeArticle({
         {article.article_type !== 'video' && <ArticleMediaBlock article={article} />}
         <div
           className="[&_p]:mb-6 [&_p]:text-zinc-700 [&_p]:leading-[1.8] [&_h2]:text-2xl [&_h2]:font-black [&_h2]:text-zinc-950 [&_h2]:mt-12 [&_h2]:mb-4 [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-zinc-950 [&_h3]:mt-8 [&_h3]:mb-3 [&_blockquote]:border-l-4 [&_blockquote]:border-zinc-300 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-zinc-500 [&_blockquote]:my-8 [&_blockquote]:text-lg [&_ul]:pl-5 [&_li]:mb-2 [&_li]:text-zinc-700 [&_li]:list-disc [&_code]:bg-zinc-100 [&_code]:px-1.5 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono [&_a]:text-[var(--cp)] [&_a]:underline [&_img]:rounded-xl [&_img]:my-6 [&_img]:w-full"
-          style={{ fontSize: '1.0625rem' }}
+          data-article-body
+          style={{ fontSize: 'var(--reader-fs, 1.0625rem)', fontFamily: 'var(--reader-ff)' }}
           dangerouslySetInnerHTML={{ __html: htmlContent }}
         />
 

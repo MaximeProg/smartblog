@@ -1528,6 +1528,7 @@
     "switchShowStrip": "Afficher la bande",
     "switchShowNewsletterSection": "Afficher la section newsletter",
     "switchShowArticlesGrid": "Afficher la grille d'articles",
+    "fieldPostsPerPage": "Articles par page",
     "switchPopularArticles": "Articles populaires",
     "switchCategories": "Catégories",
     "switchMiniNewsletter": "Mini newsletter",

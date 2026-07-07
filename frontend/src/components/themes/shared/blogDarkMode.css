@@ -1,0 +1,116 @@
+/*
+ * Dark mode overrides for public blog.
+ * Applied when .blog-dark is set on the wrapper div by BlogReaderProvider.
+ * Targets the most common Tailwind utility classes used across all 5 themes.
+ */
+
+/* ── Backgrounds ──────────────────────────────────────────────── */
+.blog-dark .bg-white          { background-color: #09090b !important; }
+.blog-dark .bg-zinc-50        { background-color: #18181b !important; }
+.blog-dark .bg-zinc-100       { background-color: #27272a !important; }
+.blog-dark .bg-zinc-200       { background-color: #3f3f46 !important; }
+.blog-dark .bg-zinc-900       { background-color: #fafafa !important; }
+.blog-dark .bg-zinc-950       { background-color: #ffffff !important; }
+.blog-dark .bg-black          { background-color: #09090b !important; }
+.blog-dark .bg-white\/90      { background-color: rgba(9,9,11,0.92) !important; }
+.blog-dark .bg-white\/80      { background-color: rgba(9,9,11,0.82) !important; }
+.blog-dark .bg-zinc-900\/90   { background-color: rgba(250,250,250,0.92) !important; }
+.blog-dark .bg-zinc-100\/80   { background-color: rgba(39,39,42,0.82) !important; }
+.blog-dark .bg-zinc-50\/50    { background-color: rgba(24,24,27,0.5) !important; }
+
+/* gradient stops */
+.blog-dark .from-zinc-50      { --tw-gradient-from: #18181b !important; }
+.blog-dark .from-zinc-100     { --tw-gradient-from: #27272a !important; }
+.blog-dark .from-zinc-200     { --tw-gradient-from: #3f3f46 !important; }
+.blog-dark .from-white        { --tw-gradient-from: #09090b !important; }
+.blog-dark .to-zinc-50        { --tw-gradient-to: #18181b !important; }
+.blog-dark .to-zinc-100       { --tw-gradient-to: #27272a !important; }
+.blog-dark .to-zinc-200       { --tw-gradient-to: #3f3f46 !important; }
+.blog-dark .to-white          { --tw-gradient-to: #09090b !important; }
+.blog-dark .via-zinc-100      { --tw-gradient-via: #27272a !important; }
+
+/* ── Text colors ──────────────────────────────────────────────── */
+.blog-dark .text-zinc-900     { color: #fafafa !important; }
+.blog-dark .text-zinc-800     { color: #f4f4f5 !important; }
+.blog-dark .text-zinc-700     { color: #e4e4e7 !important; }
+.blog-dark .text-zinc-600     { color: #d4d4d8 !important; }
+.blog-dark .text-zinc-500     { color: #a1a1aa !important; }
+.blog-dark .text-zinc-400     { color: #71717a !important; }
+.blog-dark .text-zinc-300     { color: #52525b !important; }
+.blog-dark .text-white        { color: #09090b !important; }
+.blog-dark .text-black        { color: #fafafa !important; }
+
+/* ── Borders ──────────────────────────────────────────────────── */
+.blog-dark .border-zinc-100   { border-color: #27272a !important; }
+.blog-dark .border-zinc-200   { border-color: #3f3f46 !important; }
+.blog-dark .border-zinc-300   { border-color: #52525b !important; }
+.blog-dark .border-zinc-800   { border-color: #d4d4d8 !important; }
+.blog-dark .border-white      { border-color: #27272a !important; }
+.blog-dark .border-white\/20  { border-color: rgba(255,255,255,0.08) !important; }
+
+/* ── Hover backgrounds ────────────────────────────────────────── */
+.blog-dark .hover\:bg-zinc-50:hover   { background-color: #18181b !important; }
+.blog-dark .hover\:bg-zinc-100:hover  { background-color: #27272a !important; }
+.blog-dark .hover\:bg-white:hover     { background-color: #27272a !important; }
+.blog-dark .hover\:text-zinc-900:hover { color: #fafafa !important; }
+.blog-dark .hover\:text-zinc-700:hover { color: #e4e4e7 !important; }
+
+/* ── Divide ───────────────────────────────────────────────────── */
+.blog-dark .divide-zinc-100 > * + * { border-color: #27272a !important; }
+.blog-dark .divide-zinc-200 > * + * { border-color: #3f3f46 !important; }
+
+/* ── Ring ─────────────────────────────────────────────────────── */
+.blog-dark .ring-zinc-200 { --tw-ring-color: #3f3f46 !important; }
+.blog-dark .ring-zinc-300 { --tw-ring-color: #52525b !important; }
+
+/* ── Placeholders ─────────────────────────────────────────────── */
+.blog-dark ::placeholder   { color: #52525b !important; }
+
+/* ── Shadows ──────────────────────────────────────────────────── */
+.blog-dark .shadow-sm  { --tw-shadow: 0 1px 2px 0 rgba(0,0,0,0.5) !important; }
+.blog-dark .shadow     { --tw-shadow: 0 1px 3px 0 rgba(0,0,0,0.6) !important; }
+.blog-dark .shadow-md  { --tw-shadow: 0 4px 6px -1px rgba(0,0,0,0.7) !important; }
+.blog-dark .shadow-lg  { --tw-shadow: 0 10px 15px -3px rgba(0,0,0,0.7) !important; }
+.blog-dark .shadow-xl  { --tw-shadow: 0 20px 25px -5px rgba(0,0,0,0.8) !important; }
+
+/* ── Images — slight dimming ──────────────────────────────────── */
+.blog-dark img { opacity: 0.88; transition: opacity 0.2s; }
+.blog-dark img:hover { opacity: 1; }
+
+/* ── Input / textarea ─────────────────────────────────────────── */
+.blog-dark input, .blog-dark textarea {
+  background-color: #27272a !important;
+  color: #fafafa !important;
+  border-color: #3f3f46 !important;
+}
+
+/* ── Prose / article content ──────────────────────────────────── */
+.blog-dark [data-article-body] { color: #e4e4e7 !important; }
+.blog-dark [data-article-body] p  { color: #d4d4d8 !important; }
+.blog-dark [data-article-body] h1,
+.blog-dark [data-article-body] h2,
+.blog-dark [data-article-body] h3,
+.blog-dark [data-article-body] h4 { color: #fafafa !important; }
+.blog-dark [data-article-body] blockquote { border-color: #3f3f46 !important; color: #a1a1aa !important; }
+.blog-dark [data-article-body] code { background-color: #27272a !important; color: #e4e4e7 !important; }
+.blog-dark [data-article-body] a { color: var(--blog-primary, #6366f1) !important; }
+
+/* ── Reader / focus mode ──────────────────────────────────────── */
+.blog-reader-mode [data-blog-header]  { opacity: 0.3; pointer-events: none; transition: opacity 0.2s; }
+.blog-reader-mode [data-blog-header]:hover { opacity: 1; pointer-events: auto; }
+.blog-reader-mode [data-blog-footer]  { display: none !important; }
+.blog-reader-mode [data-blog-ads]     { display: none !important; }
+.blog-reader-mode [data-blog-sidebar] { display: none !important; }
+.blog-reader-mode [data-article-body] {
+  max-width: 70ch !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  font-size: var(--reader-fs, 1.1875rem) !important;
+  line-height: 1.9 !important;
+}
+
+/* ── CSS variable reader font size/family ─────────────────────── */
+[data-article-body] {
+  font-size: var(--reader-fs, 1.0625rem);
+  font-family: var(--reader-ff, var(--blog-font, system-ui, sans-serif));
+}

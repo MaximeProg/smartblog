@@ -169,6 +169,8 @@ export default function MagazineArticle({
             {article.article_type !== 'video' && <ArticleMediaBlock article={article} />}
             <div
               className="[&_p]:mb-5 [&_p]:text-zinc-700 [&_p]:text-[1.05rem] [&_p]:leading-relaxed [&_h2]:text-2xl [&_h2]:font-black [&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-zinc-950 [&_h3]:text-xl [&_h3]:font-black [&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-zinc-950 [&_blockquote]:border-l-4 [&_blockquote]:pl-5 [&_blockquote]:italic [&_blockquote]:text-zinc-500 [&_blockquote]:my-6 [&_blockquote]:text-lg [&_ul]:pl-5 [&_ul]:mb-5 [&_ol]:pl-5 [&_ol]:mb-5 [&_li]:mb-2 [&_li]:text-zinc-700 [&_a]:text-[var(--cp)] [&_a]:underline [&_img]:rounded-lg [&_img]:my-6 [&_hr]:border-zinc-100 [&_hr]:my-8 [&_code]:bg-zinc-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono"
+              data-article-body
+              style={{ fontSize: 'var(--reader-fs, 1.05rem)', fontFamily: 'var(--reader-ff)' }}
               dangerouslySetInnerHTML={{ __html: htmlContent }}
             />
 
