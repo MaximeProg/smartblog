@@ -56,7 +56,7 @@ export function MediaFilePicker({
     queryKey: ['media', tenantId, mediaType],
     queryFn: async () => {
       const { data } = await mediaApi.list(tenantId, { type: mediaType, limit: 30 });
-      return data.data ?? [];
+      return data ?? [];
     },
   });
 
