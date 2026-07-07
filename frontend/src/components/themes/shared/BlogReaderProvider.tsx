@@ -111,10 +111,7 @@ export function BlogReaderProvider({
     });
   }, []);
 
-  const cls = [
-    dark ? 'blog-dark' : '',
-    readerMode ? 'blog-reader-mode' : '',
-  ].filter(Boolean).join(' ');
+  const cls = readerMode ? 'blog-reader-mode' : '';
 
   const cssVars = {
     '--reader-fs': FONT_SIZE_MAP[fontSize],
@@ -159,21 +156,6 @@ export function BlogReaderProvider({
                 </div>
 
                 <div className="px-4 py-4 space-y-5">
-                  {/* Dark mode */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Dark mode</span>
-                    <button
-                      onClick={toggleDark}
-                      className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-                      style={{ backgroundColor: dark ? primaryColor : '#d4d4d8' }}
-                    >
-                      <span
-                        className="inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200"
-                        style={{ transform: dark ? 'translateX(24px)' : 'translateX(4px)' }}
-                      />
-                    </button>
-                  </div>
-
                   {/* Reader mode */}
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Focus mode</span>

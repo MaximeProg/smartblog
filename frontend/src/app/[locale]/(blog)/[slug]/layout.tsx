@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
 import { BlogReaderProvider } from '@/components/themes/shared/BlogReaderProvider';
 import { PersistentAudioProvider } from '@/components/themes/shared/PersistentAudioPlayer';
-import '@/components/themes/shared/blogDarkMode.css';
 
 interface Props {
   children: React.ReactNode;
