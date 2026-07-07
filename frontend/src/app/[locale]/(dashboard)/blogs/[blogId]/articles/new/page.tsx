@@ -12,7 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useStudioPreview } from '@/contexts/studio-preview';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
 import { MediaFilePicker } from '@/components/dashboard/MediaFilePicker';
-import { RichEditor } from '@/components/editor/RichEditor';
+import dynamic from 'next/dynamic';
+const RichEditor = dynamic(() => import('@/components/editor/RichEditor').then(m => m.RichEditor), { ssr: false });
 import type { ArticleType } from '@/types';
 
 export default function NewArticlePage() {
