@@ -177,11 +177,10 @@ async def get_public_article(
         raise NotFoundException("Article")
 
     is_paid = article.visibility == ContentVisibility.PAID
+    base = _to_public(article).model_dump()
     return PublicArticleFull(
-        **_to_public(article).__dict__,
+        **base,
         content=article.content if not is_paid else None,
-        article_type=article.article_type.value if getattr(article, 'article_type', None) else None,
-        video_url=getattr(article, 'video_url', None),
         audio_url=getattr(article, 'audio_url', None),
         episode_number=getattr(article, 'episode_number', None),
         season=getattr(article, 'season', None),
