@@ -171,13 +171,15 @@ export function RichEditor({
           render: () => {
             let el: HTMLElement | null = null;
             return {
-              onStart: (props: { clientRect?: () => DOMRect | null; items: string[]; command: (item: { id: string }) => void }) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onStart: (props: any) => {
                 el = document.createElement('div');
                 el.className = 'mention-dropdown';
                 document.body.appendChild(el);
                 renderMentionList(el, props);
               },
-              onUpdate: (props: { clientRect?: () => DOMRect | null; items: string[]; command: (item: { id: string }) => void }) => {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onUpdate: (props: any) => {
                 if (el) renderMentionList(el, props);
               },
               onExit: () => {
