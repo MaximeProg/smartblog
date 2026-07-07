@@ -235,7 +235,10 @@ export interface CategoryInfo {
   name: string;
   slug: string;
   color: string | null;
+  description?: string | null;
   cover_image_url?: string | null;
+  parent_id?: string | null;
+  sort_order?: number;
   articles_count?: number;
 }
 
@@ -243,6 +246,7 @@ export interface TagInfo {
   id: string;
   name: string;
   slug: string;
+  articles_count?: number;
 }
 
 export type ArticleVisibility = 'public' | 'private' | 'paid';

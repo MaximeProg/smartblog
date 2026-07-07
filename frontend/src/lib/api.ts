@@ -288,11 +288,17 @@ export const newsletterApi = {
 // ─── Tags ─────────────────────────────────────────────────────────────────────
 
 export const tagsApi = {
-  list: (tenantId: string) =>
-    api.get<TagInfo[]>(`/tenants/${tenantId}/tags`),
+  list: (tenantId: string, q?: string) =>
+    api.get<TagInfo[]>(`/tenants/${tenantId}/tags`, { params: q ? { q } : undefined }),
 
   create: (tenantId: string, name: string) =>
     api.post<TagInfo>(`/tenants/${tenantId}/tags`, { name }),
+
+  update: (tenantId: string, tagId: string, name: string) =>
+    api.patch<TagInfo>(`/tenants/${tenantId}/tags/${tagId}`, { name }),
+
+  merge: (tenantId: string, sourceIds: string[], targetId: string) =>
+    api.post<TagInfo>(`/tenants/${tenantId}/tags/merge`, { source_ids: sourceIds, target_id: targetId }),
 
   delete: (tenantId: string, tagId: string) =>
     api.delete<void>(`/tenants/${tenantId}/tags/${tagId}`),
@@ -301,8 +307,8 @@ export const tagsApi = {
 // ─── Media ────────────────────────────────────────────────────────────────────
 
 export const mediaApi = {
-  list: (tenantId: string, params?: { type?: string; limit?: number; cursor?: string }) =>
-    api.get<PaginatedResponse<MediaItem>>(`/tenants/${tenantId}/media`, { params }),
+  list: (tenantId: string, params?: { type?: string; q?: string; limit?: number; cursor?: string }) =>
+    api.get<MediaItem[]>(`/tenants/${tenantId}/media`, { params }),
 
   upload: (tenantId: string, file: File, onProgress?: (pct: number) => void) => {
     const form = new FormData();

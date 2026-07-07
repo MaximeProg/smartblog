@@ -136,6 +136,7 @@ class Category(Base):
     slug: Mapped[str] = mapped_column(String(200), nullable=False)
     description: Mapped[str | None] = mapped_column(Text)
     cover_image_url: Mapped[str | None] = mapped_column(Text)
+    color: Mapped[str | None] = mapped_column(String(20))
     seo_title: Mapped[str | None] = mapped_column(String(200))
     seo_description: Mapped[str | None] = mapped_column(Text)
     sort_order: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

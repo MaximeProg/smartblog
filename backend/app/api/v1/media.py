@@ -86,13 +86,18 @@ async def list_media(
     payload: TokenPayload,
     db: DBSession,
     media_type: MediaType | None = Query(default=None),
-    limit: int = Query(default=20, le=100),
+    q: str | None = Query(default=None, description="Recherche par nom de fichier ou alt text"),
+    limit: int = Query(default=50, le=200),
     cursor: str | None = Query(default=None),
 ):
     await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
     query = select(Media).where(Media.tenant_id == tenant_id)
     if media_type:
         query = query.where(Media.media_type == media_type)
+    if q:
+        query = query.where(
+            Media.original_filename.ilike(f"%{q}%") | Media.alt_text.ilike(f"%{q}%")
+        )
     if cursor:
         from datetime import datetime
         query = query.where(Media.created_at < datetime.fromisoformat(cursor))

@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
-  FileText, Tag, Mail, MessageSquare, Megaphone,
-  Home, Info, Phone, BookOpen,
+  FileText, Tag, Tags, Mail, MessageSquare, Megaphone,
+  Home, Info, Phone, BookOpen, Images,
   PanelTop, PanelBottom,
   BarChart2, Search, ArrowLeft, ExternalLink,
   Zap, Plus, ChevronDown, ChevronRight, Settings,
@@ -106,11 +106,13 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
   ];
 
   const contentItems: NavItem[] = [
-    { href: 'articles',   icon: FileText,     label: t('articles') },
-    { href: 'categories', icon: Tag,          label: t('categories') },
-    { href: 'newsletter', icon: Mail,         label: t('newsletter') },
+    { href: 'articles',   icon: FileText,      label: t('articles') },
+    { href: 'categories', icon: Tag,           label: t('categories') },
+    { href: 'tags',       icon: Tags,          label: t('tags') },
+    { href: 'media',      icon: Images,        label: t('media') },
+    { href: 'newsletter', icon: Mail,          label: t('newsletter') },
     { href: 'comments',   icon: MessageSquare, label: t('comments') },
-    { href: 'ads',        icon: Megaphone,    label: t('ads') },
+    { href: 'ads',        icon: Megaphone,     label: t('ads') },
   ];
 
   const growthItems: NavItem[] = [

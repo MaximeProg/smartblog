@@ -16,6 +16,7 @@ class CreateCategoryRequest(BaseModel):
     name: str
     slug: str | None = None
     description: str | None = None
+    color: str | None = None
     cover_image_url: str | None = None
     parent_id: str | None = None
     seo_title: str | None = None
@@ -33,6 +34,7 @@ class UpdateCategoryRequest(BaseModel):
     name: str | None = None
     slug: str | None = None
     description: str | None = None
+    color: str | None = None
     cover_image_url: str | None = None
     parent_id: str | None = None
     seo_title: str | None = None
@@ -47,12 +49,24 @@ class CategoryResponse(BaseModel):
     name: str
     slug: str
     description: str | None
+    color: str | None
     cover_image_url: str | None
     seo_title: str | None
     sort_order: int
     articles_count: int
 
     model_config = {"from_attributes": True}
+
+
+def _to_response(c: Category) -> CategoryResponse:
+    return CategoryResponse(
+        id=str(c.id), tenant_id=str(c.tenant_id),
+        parent_id=str(c.parent_id) if c.parent_id else None,
+        name=c.name, slug=c.slug, description=c.description,
+        color=c.color, cover_image_url=c.cover_image_url,
+        seo_title=c.seo_title, sort_order=c.sort_order,
+        articles_count=c.articles_count,
+    )
 
 
 @router.get("", response_model=list[CategoryResponse])
@@ -63,14 +77,7 @@ async def list_categories(tenant_id: uuid.UUID, payload: TokenPayload, db: DBSes
         .where(Category.tenant_id == tenant_id)
         .order_by(Category.sort_order, Category.name)
     )
-    cats = result.scalars().all()
-    return [CategoryResponse(
-        id=str(c.id), tenant_id=str(c.tenant_id),
-        parent_id=str(c.parent_id) if c.parent_id else None,
-        name=c.name, slug=c.slug, description=c.description,
-        cover_image_url=c.cover_image_url, seo_title=c.seo_title,
-        sort_order=c.sort_order, articles_count=c.articles_count,
-    ) for c in cats]
+    return [_to_response(c) for c in result.scalars().all()]
 
 
 @router.post("", response_model=CategoryResponse, status_code=201)
@@ -90,7 +97,7 @@ async def create_category(
     cat = Category(
         tenant_id=tenant_id,
         name=body.name, slug=slug, description=body.description,
-        cover_image_url=body.cover_image_url,
+        color=body.color, cover_image_url=body.cover_image_url,
         parent_id=uuid.UUID(body.parent_id) if body.parent_id else None,
         seo_title=body.seo_title, seo_description=body.seo_description,
         sort_order=body.sort_order,
@@ -98,13 +105,7 @@ async def create_category(
     db.add(cat)
     await db.commit()
     await db.refresh(cat)
-    return CategoryResponse(
-        id=str(cat.id), tenant_id=str(cat.tenant_id),
-        parent_id=str(cat.parent_id) if cat.parent_id else None,
-        name=cat.name, slug=cat.slug, description=cat.description,
-        cover_image_url=cat.cover_image_url, seo_title=cat.seo_title,
-        sort_order=cat.sort_order, articles_count=cat.articles_count,
-    )
+    return _to_response(cat)
 
 
 @router.patch("/{category_id}", response_model=CategoryResponse)
@@ -121,22 +122,19 @@ async def update_category(
         raise NotFoundException("Catégorie")
 
     for field, value in body.model_dump(exclude_unset=True).items():
+        if field == "parent_id" and value is not None:
+            value = uuid.UUID(value)
         setattr(cat, field, value)
     await db.commit()
     await db.refresh(cat)
-    return CategoryResponse(
-        id=str(cat.id), tenant_id=str(cat.tenant_id),
-        parent_id=str(cat.parent_id) if cat.parent_id else None,
-        name=cat.name, slug=cat.slug, description=cat.description,
-        cover_image_url=cat.cover_image_url, seo_title=cat.seo_title,
-        sort_order=cat.sort_order, articles_count=cat.articles_count,
-    )
+    return _to_response(cat)
 
 
 @router.delete("/{category_id}", status_code=204)
 async def delete_category(
     tenant_id: uuid.UUID, category_id: uuid.UUID,
     payload: TokenPayload, db: DBSession,
+    force: bool = False,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
     result = await db.execute(
@@ -145,5 +143,12 @@ async def delete_category(
     cat = result.scalar_one_or_none()
     if not cat:
         raise NotFoundException("Catégorie")
+
+    if not force and cat.articles_count > 0:
+        raise ValidationException(
+            f"Cette catégorie contient {cat.articles_count} article(s) publiés. "
+            "Utilisez force=true pour supprimer quand même."
+        )
+
     await db.delete(cat)
     await db.commit()
