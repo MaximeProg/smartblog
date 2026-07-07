@@ -92,9 +92,14 @@ async def _build_response(db: AsyncSession, article: Article) -> ArticleResponse
         cover_image_url=article.cover_image_url,
         audio_url=article.audio_url,
         video_url=article.video_url,
+        episode_number=article.episode_number,
+        season=article.season,
         seo_title=article.seo_title,
         seo_description=article.seo_description,
         seo_keywords=article.seo_keywords,
+        canonical_url=article.canonical_url,
+        robots_noindex=article.robots_noindex,
+        rejection_reason=article.rejection_reason,
         category_id=str(article.category_id) if article.category_id else None,
         tags=tags,
         price=article.price,
@@ -160,9 +165,13 @@ async def create_article(
         cover_image_alt=data.cover_image_alt,
         audio_url=data.audio_url,
         video_url=data.video_url,
+        episode_number=data.episode_number,
+        season=data.season,
         seo_title=data.seo_title,
         seo_description=data.seo_description,
         seo_keywords=data.seo_keywords,
+        canonical_url=data.canonical_url,
+        robots_noindex=data.robots_noindex,
         category_id=cat_id,
         price=data.price,
         currency=data.currency,
@@ -424,6 +433,55 @@ async def delete_article(
             .values(articles_count=func.greatest(Tenant.articles_count - 1, 0))
         )
     await db.commit()
+
+
+async def approve_article(
+    db: AsyncSession,
+    tenant_id: uuid.UUID,
+    article_id: uuid.UUID,
+) -> ArticleResponse:
+    result = await db.execute(
+        select(Article).where(
+            Article.id == article_id,
+            Article.tenant_id == tenant_id,
+            Article.deleted_at.is_(None),
+        )
+    )
+    article = result.scalar_one_or_none()
+    if not article:
+        raise NotFoundException("Article")
+    if article.status != ArticleStatus.IN_REVIEW:
+        raise ValidationException("Only articles IN_REVIEW can be approved")
+    article.status = ArticleStatus.APPROVED
+    article.rejection_reason = None
+    await db.commit()
+    await db.refresh(article)
+    return await _build_response(db, article)
+
+
+async def reject_article(
+    db: AsyncSession,
+    tenant_id: uuid.UUID,
+    article_id: uuid.UUID,
+    reason: str | None = None,
+) -> ArticleResponse:
+    result = await db.execute(
+        select(Article).where(
+            Article.id == article_id,
+            Article.tenant_id == tenant_id,
+            Article.deleted_at.is_(None),
+        )
+    )
+    article = result.scalar_one_or_none()
+    if not article:
+        raise NotFoundException("Article")
+    if article.status not in (ArticleStatus.IN_REVIEW, ArticleStatus.APPROVED):
+        raise ValidationException("Only articles IN_REVIEW or APPROVED can be rejected")
+    article.status = ArticleStatus.REJECTED
+    article.rejection_reason = reason
+    await db.commit()
+    await db.refresh(article)
+    return await _build_response(db, article)
 
 
 async def list_versions(

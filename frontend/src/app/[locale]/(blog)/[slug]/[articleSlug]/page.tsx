@@ -15,12 +15,20 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       publicApi.getBlogInfo(slug),
       publicApi.getArticle(slug, articleSlug),
     ]);
+
+    const robotsNoindex = (article as any).robots_noindex === true;
+    const canonicalUrl  = (article as any).canonical_url as string | undefined;
+
     return {
-      title: `${article.title} — ${blog.name}`,
+      title: article.seo_title ?? `${article.title} — ${blog.name}`,
       description: article.seo_description ?? article.excerpt ?? undefined,
+      ...(robotsNoindex ? { robots: { index: false, follow: false } } : {}),
+      ...(canonicalUrl  ? { alternates: { canonical: canonicalUrl } } : {}),
       openGraph: {
         title: article.seo_title ?? article.title,
         description: article.seo_description ?? article.excerpt ?? undefined,
+        type: 'article',
+        publishedTime: article.published_at ?? undefined,
         ...(article.cover_image_url ? { images: [{ url: article.cover_image_url }] } : {}),
       },
     };
@@ -32,7 +40,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 export default async function PublicArticlePage({ params }: { params: Params }) {
   const { locale, slug, articleSlug } = await params;
 
-  let blog, article, relatedArticles, categories;
+  let blog: Awaited<ReturnType<typeof publicApi.getBlogInfo>>;
+  let article: Awaited<ReturnType<typeof publicApi.getArticle>>;
+  let relatedArticles: Awaited<ReturnType<typeof publicApi.getArticles>>;
+  let categories: Awaited<ReturnType<typeof publicApi.getCategories>>;
+
   try {
     [blog, article, categories] = await Promise.all([
       publicApi.getBlogInfo(slug),
@@ -40,7 +52,7 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
       publicApi.getCategories(slug),
     ]);
     relatedArticles = await publicApi.getArticles(slug, {
-      category: article.category_slug ?? undefined,
+      category: (article as any).category_slug ?? undefined,
       limit: 3,
     });
     relatedArticles = relatedArticles.filter((a) => a.slug !== articleSlug);
@@ -48,8 +60,31 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
     notFound();
   }
 
+  // JSON-LD structured data
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.excerpt ?? undefined,
+    ...(article.cover_image_url ? { image: article.cover_image_url } : {}),
+    datePublished: article.published_at ?? undefined,
+    author: (article as any).author ? {
+      '@type': 'Person',
+      name: (article as any).author?.display_name ?? 'Unknown',
+    } : undefined,
+    publisher: {
+      '@type': 'Organization',
+      name: blog.name,
+      ...(blog.logo_url ? { logo: { '@type': 'ImageObject', url: blog.logo_url } } : {}),
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <BlogAnalyticsTracker tenantId={blog.id} articleId={article.id} />
       <ThemeArticle
         blog={blog}

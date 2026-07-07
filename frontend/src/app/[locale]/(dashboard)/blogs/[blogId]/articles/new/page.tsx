@@ -2,12 +2,8 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import {
-  ArrowLeft, Save, Send, Loader2,
-  Bold, Italic, Link2, Image as ImageIcon, Quote, Heading2, Heading3,
-  Minus, X, Check, FileText, Camera, Video, Mic, Radio, Layers,
-} from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { ArrowLeft, Save, Send, Loader2, FileText, Camera, Video, Mic, Radio, Layers } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { articlesApi, categoriesApi } from '@/lib/api';
@@ -16,44 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useStudioPreview } from '@/contexts/studio-preview';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
 import { MediaFilePicker } from '@/components/dashboard/MediaFilePicker';
+import { RichEditor } from '@/components/editor/RichEditor';
 import type { ArticleType } from '@/types';
-
-// ─── Markdown toolbar helpers ─────────────────────────────────────────────────
-
-function wrapSelection(
-  ref: { current: HTMLTextAreaElement | null },
-  setter: (v: string) => void,
-  before: string,
-  after: string,
-  placeholder = '',
-) {
-  const el = ref.current;
-  if (!el) return;
-  const start = el.selectionStart;
-  const end   = el.selectionEnd;
-  const sel   = el.value.slice(start, end) || placeholder;
-  const next  = el.value.slice(0, start) + before + sel + after + el.value.slice(end);
-  setter(next);
-  setTimeout(() => {
-    el.focus();
-    el.setSelectionRange(start + before.length, start + before.length + sel.length);
-  }, 0);
-}
-
-function insertAtCursor(
-  ref: { current: HTMLTextAreaElement | null },
-  setter: (v: string) => void,
-  text: string,
-) {
-  const el = ref.current;
-  if (!el) return;
-  const pos  = el.selectionStart;
-  const next = el.value.slice(0, pos) + text + el.value.slice(pos);
-  setter(next);
-  setTimeout(() => { el.focus(); el.setSelectionRange(pos + text.length, pos + text.length); }, 0);
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function NewArticlePage() {
   const params  = useParams();
@@ -63,31 +23,27 @@ export default function NewArticlePage() {
   const { toast } = useToast();
   const { setFullWidth } = useStudioPreview();
   const ts = useTranslations('studio');
+  const te = useTranslations('editor');
 
   useEffect(() => {
     setFullWidth(true);
     return () => setFullWidth(false);
   }, [setFullWidth]);
 
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-
   const [title,         setTitle]         = useState('');
   const [slug,          setSlug]          = useState('');
   const [slugManual,    setSlugManual]    = useState(false);
   const [content,       setContent]       = useState('');
+  const [contentJson,   setContentJson]   = useState<Record<string, unknown> | undefined>();
   const [excerpt,       setExcerpt]       = useState('');
   const [categoryId,    setCategoryId]    = useState('');
   const [coverImageUrl, setCoverImageUrl] = useState('');
   const [publish,       setPublish]       = useState(false);
-
-  const [showLinkInput,  setShowLinkInput]  = useState(false);
-  const [linkUrl,        setLinkUrl]        = useState('');
-  const [showImgPicker,  setShowImgPicker]  = useState(false);
-  const [articleType,    setArticleType]    = useState<ArticleType>('article');
-  const [videoUrl,       setVideoUrl]       = useState('');
-  const [audioUrl,       setAudioUrl]       = useState('');
-  const [episodeNumber,  setEpisodeNumber]  = useState('');
-  const [season,         setSeason]         = useState('');
+  const [articleType,   setArticleType]   = useState<ArticleType>('article');
+  const [videoUrl,      setVideoUrl]      = useState('');
+  const [audioUrl,      setAudioUrl]      = useState('');
+  const [episodeNumber, setEpisodeNumber] = useState('');
+  const [season,        setSeason]        = useState('');
 
   const { data: categories = [] } = useQuery({
     queryKey: ['categories', blogId],
@@ -99,21 +55,27 @@ export default function NewArticlePage() {
     if (!slugManual) setSlug(slugify(v));
   };
 
+  const handleEditorChange = useCallback((html: string, json: Record<string, unknown>) => {
+    setContent(html);
+    setContentJson(json);
+  }, []);
+
   const mutation = useMutation({
     mutationFn: async () => {
       const { data } = await articlesApi.create(blogId, {
         title:           title.trim(),
         slug:            slug.trim() || slugify(title),
         content,
+        content_json:    contentJson,
         excerpt,
         category_id:     categoryId    || undefined,
         cover_image_url: coverImageUrl || undefined,
         article_type:    articleType,
-        ...(videoUrl       ? { video_url:      videoUrl }                          : {}),
-        ...(audioUrl       ? { audio_url:       audioUrl }                          : {}),
-        ...(episodeNumber  ? { episode_number:  parseInt(episodeNumber, 10) }       : {}),
-        ...(season         ? { season:          parseInt(season, 10) }              : {}),
-      } as any);
+        ...(videoUrl      ? { video_url:     videoUrl }                    : {}),
+        ...(audioUrl      ? { audio_url:      audioUrl }                    : {}),
+        ...(episodeNumber ? { episode_number: parseInt(episodeNumber, 10) } : {}),
+        ...(season        ? { season:         parseInt(season, 10) }        : {}),
+      });
       if (publish) await articlesApi.publish(blogId, data.id);
       return data;
     },
@@ -126,72 +88,37 @@ export default function NewArticlePage() {
 
   const canSave = title.trim().length >= 2 && !mutation.isPending;
 
-  const handleBold   = () => wrapSelection(contentRef, setContent, '**', '**', 'bold');
-  const handleItalic = () => wrapSelection(contentRef, setContent, '*',  '*',  'italic');
-  const handleH2     = () => wrapSelection(contentRef, setContent, '## ', '', 'Heading');
-  const handleH3     = () => wrapSelection(contentRef, setContent, '### ', '', 'Subheading');
-  const handleQuote  = () => wrapSelection(contentRef, setContent, '> ', '', 'Quote');
-  const handleRule   = () => insertAtCursor(contentRef, setContent, '\n---\n');
-
-  const handleInsertLink = () => {
-    if (!linkUrl.trim()) return;
-    wrapSelection(contentRef, setContent, '[', `](${linkUrl.trim()})`, 'link text');
-    setLinkUrl('');
-    setShowLinkInput(false);
-  };
-
-  const handleInsertImage = useCallback((url: string) => {
-    insertAtCursor(contentRef, setContent, `\n![image](${url})\n`);
-    setShowImgPicker(false);
-  }, []);
-
-  const toolbarBtnCls = 'h-7 w-7 flex items-center justify-center rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-200 transition-colors';
-
   return (
     <div className="flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-950">
 
-      {/* ── Top bar ──────────────────────────────────────────────────────── */}
+      {/* ── Top bar ── */}
       <div className="shrink-0 h-14 border-b border-slate-200/70 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-between px-6 gap-4 shadow-sm">
-        <div className="flex items-center gap-3 min-w-0">
-          <Link
-            href={`/${locale}/blogs/${blogId}/articles`}
-            className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors shrink-0"
-          >
+        <div className="flex items-center gap-3">
+          <Link href={`/${locale}/blogs/${blogId}/articles`} className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-800 transition-colors">
             <ArrowLeft className="h-3.5 w-3.5" /> Articles
           </Link>
           <span className="text-slate-300 dark:text-slate-600">/</span>
-          <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 truncate">
-            {title || ts('articleNewTitle')}
-          </span>
+          <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">Nouvel article</span>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={() => { setPublish(false); mutation.mutate(); }}
-            disabled={!canSave}
-            className="flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40"
-          >
-            {mutation.isPending && !publish
-              ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              : <Save className="h-3.5 w-3.5" />}
-            {ts('articleSaveDraft')}
+
+        <div className="flex items-center gap-2">
+          <button onClick={() => { setPublish(false); mutation.mutate(); }} disabled={!canSave}
+            className="flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40">
+            {mutation.isPending && !publish ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+            {ts('articleSave')}
           </button>
-          <button
-            onClick={() => { setPublish(true); mutation.mutate(); }}
-            disabled={!canSave}
-            className="flex items-center gap-1.5 h-8 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold transition-colors disabled:opacity-40 shadow-sm"
-          >
-            {mutation.isPending && publish
-              ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              : <Send className="h-3.5 w-3.5" />}
+          <button onClick={() => { setPublish(true); mutation.mutate(); }} disabled={!canSave}
+            className="flex items-center gap-1.5 h-8 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold transition-colors disabled:opacity-60 shadow-sm">
+            {mutation.isPending && publish ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
             {ts('articlePublishAction')}
           </button>
         </div>
       </div>
 
-      {/* ── Editor body ──────────────────────────────────────────────────── */}
+      {/* ── Body ── */}
       <div className="flex-1 overflow-hidden flex">
 
-        {/* Left: main editor */}
+        {/* Main editor */}
         <div className="flex-1 overflow-y-auto px-10 py-8 min-w-0">
 
           {/* Title */}
@@ -199,124 +126,46 @@ export default function NewArticlePage() {
             value={title}
             onChange={e => handleTitleChange(e.target.value)}
             placeholder={ts('articleTitlePlaceholder')}
-            autoFocus
             className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-transparent border-0 outline-none placeholder-slate-200 dark:placeholder-slate-700 mb-2 leading-tight"
           />
 
           {/* Slug */}
-          <div className="flex items-center gap-2 text-[12px] mb-8 pb-6 border-b border-slate-200 dark:border-slate-700">
-            <span className="text-slate-400 dark:text-slate-500 font-mono shrink-0">URL :</span>
-            <div className="flex items-center gap-0 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 font-mono text-[12px]">
-              <span className="text-slate-400 dark:text-slate-500 shrink-0">nexusblog.io/{blogId}/</span>
-              <input
-                value={slug}
-                onChange={e => { setSlugManual(true); setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-')); }}
-                className="bg-transparent outline-none text-slate-700 dark:text-slate-300 min-w-[120px]"
-                placeholder="my-article"
-              />
-            </div>
+          <div className="flex items-center gap-2 mb-6">
+            <span className="text-[11px] text-slate-400">Slug :</span>
+            <input
+              value={slug}
+              onChange={e => { setSlug(e.target.value); setSlugManual(true); }}
+              placeholder="mon-article"
+              className="flex-1 h-7 px-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-mono text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+            />
           </div>
+
+          <div className="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700" />
 
           {/* Excerpt */}
           <div className="mb-6">
             <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleExcerptLabel')}</label>
-            <textarea
-              value={excerpt}
-              onChange={e => setExcerpt(e.target.value)}
-              placeholder={ts('articleExcerptPlaceholder')}
-              rows={3}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[14px] text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none leading-relaxed"
-            />
+            <textarea value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder={ts('articleExcerptPlaceholder')} rows={2}
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[14px] text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none" />
           </div>
 
-          {/* Content editor */}
+          {/* Rich editor */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">{ts('articleContentLabel')}</label>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500">Markdown</span>
-            </div>
-
-            {/* Markdown toolbar */}
-            <div className="flex items-center gap-0.5 px-2 py-1.5 border border-slate-200 dark:border-slate-700 border-b-0 rounded-t-xl bg-slate-50 dark:bg-slate-800 flex-wrap">
-              <button type="button" onClick={handleBold}   title={ts('toolbarBold')}   className={toolbarBtnCls}><Bold      className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleItalic} title={ts('toolbarItalic')} className={toolbarBtnCls}><Italic    className="h-3.5 w-3.5" /></button>
-              <div className="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-1" />
-              <button type="button" onClick={handleH2}     title={ts('toolbarH2')}     className={toolbarBtnCls}><Heading2  className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleH3}     title={ts('toolbarH3')}     className={toolbarBtnCls}><Heading3  className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleQuote}  title={ts('toolbarQuote')}  className={toolbarBtnCls}><Quote     className="h-3.5 w-3.5" /></button>
-              <button type="button" onClick={handleRule}   title={ts('toolbarRule')}   className={toolbarBtnCls}><Minus     className="h-3.5 w-3.5" /></button>
-              <div className="w-px h-4 bg-slate-200 dark:bg-slate-600 mx-1" />
-
-              {/* Link button + inline input */}
-              <div className="relative flex items-center">
-                <button
-                  type="button"
-                  onClick={() => { setShowLinkInput(v => !v); setShowImgPicker(false); }}
-                  title={ts('toolbarLink')}
-                  className={`${toolbarBtnCls} ${showLinkInput ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : ''}`}
-                >
-                  <Link2 className="h-3.5 w-3.5" />
-                </button>
-                {showLinkInput && (
-                  <div className="absolute top-full left-0 mt-1 flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg p-1.5 z-20 whitespace-nowrap">
-                    <input
-                      autoFocus
-                      value={linkUrl}
-                      onChange={e => setLinkUrl(e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Enter') handleInsertLink(); if (e.key === 'Escape') setShowLinkInput(false); }}
-                      placeholder="https://example.com"
-                      className="h-7 w-56 px-2.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 text-[12px] font-mono text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                    />
-                    <button onClick={handleInsertLink} className="h-7 w-7 flex items-center justify-center rounded-lg bg-blue-600 text-white hover:bg-blue-700">
-                      <Check className="h-3.5 w-3.5" />
-                    </button>
-                    <button onClick={() => setShowLinkInput(false)} className="h-7 w-7 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-600 text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700">
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Image button */}
-              <button
-                type="button"
-                onClick={() => { setShowImgPicker(v => !v); setShowLinkInput(false); }}
-                title={ts('toolbarImage')}
-                className={`${toolbarBtnCls} ${showImgPicker ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : ''}`}
-              >
-                <ImageIcon className="h-3.5 w-3.5" />
-              </button>
-            </div>
-
-            {showImgPicker && (
-              <div className="border border-slate-200 dark:border-slate-700 border-t-0 border-b-0 bg-white dark:bg-slate-800 px-4 py-3">
-                <ImagePicker
-                  value=""
-                  onChange={handleInsertImage}
-                  tenantId={blogId}
-                  ratio="16/9"
-                />
-              </div>
-            )}
-
-            <textarea
-              ref={contentRef}
-              value={content}
-              onChange={e => setContent(e.target.value)}
-              placeholder={ts('articleContentPlaceholder')}
-              rows={26}
-              className="w-full px-4 py-4 border border-slate-200 dark:border-slate-700 rounded-b-xl bg-white dark:bg-slate-800 text-[14px] text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 resize-none font-mono leading-relaxed"
+            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleContentLabel')}</label>
+            <RichEditor
+              content=""
+              onChange={handleEditorChange}
+              placeholder={te('placeholder')}
             />
           </div>
         </div>
 
-        {/* Right: metadata sidebar */}
+        {/* Right sidebar */}
         <div className="w-[280px] shrink-0 border-l border-slate-200/70 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-y-auto px-5 py-6 space-y-6">
 
           {/* Article type */}
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">{ts('articleTypeLabel')}</p>
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 mb-2">{ts('articleTypeHint')}</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleTypeLabel')}</p>
             <div className="grid grid-cols-3 gap-1.5">
               {([
                 { type: 'article', icon: FileText, labelKey: 'articleTypeArticle' },
@@ -326,16 +175,8 @@ export default function NewArticlePage() {
                 { type: 'podcast', icon: Radio,    labelKey: 'articleTypePodcast' },
                 { type: 'mixed',   icon: Layers,   labelKey: 'articleTypeMixed' },
               ] as const).map(({ type, icon: Icon, labelKey }) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setArticleType(type as ArticleType)}
-                  className={`flex flex-col items-center gap-1 py-2 px-1 rounded-xl border text-[10px] font-semibold transition-all ${
-                    articleType === type
-                      ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-400'
-                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-750'
-                  }`}
-                >
+                <button key={type} type="button" onClick={() => setArticleType(type as ArticleType)}
+                  className={`flex flex-col items-center gap-1 py-2 px-1 rounded-xl border text-[10px] font-semibold transition-all ${articleType === type ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-700 dark:text-blue-400' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 hover:border-slate-300'}`}>
                   <Icon className="h-3.5 w-3.5" />
                   {ts(labelKey as any)}
                 </button>
@@ -343,125 +184,63 @@ export default function NewArticlePage() {
             </div>
           </div>
 
-          {/* Type-specific media fields */}
+          {/* Media fields */}
           {articleType === 'video' && (
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldVideoUrl')}</label>
-              <MediaFilePicker
-                value={videoUrl}
-                onChange={setVideoUrl}
-                tenantId={blogId}
-                mediaType="video"
-              />
+              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">{ts('articleFieldVideoUrl')}</label>
+              <MediaFilePicker value={videoUrl} onChange={setVideoUrl} tenantId={blogId} mediaType="video" />
             </div>
           )}
-
-          {articleType === 'audio' && (
+          {(articleType === 'audio' || articleType === 'podcast') && (
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldAudioUrl')}</label>
-              <MediaFilePicker
-                value={audioUrl}
-                onChange={setAudioUrl}
-                tenantId={blogId}
-                mediaType="audio"
-              />
+              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">{ts('articleFieldAudioUrl')}</label>
+              <MediaFilePicker value={audioUrl} onChange={setAudioUrl} tenantId={blogId} mediaType="audio" />
             </div>
           )}
-
           {articleType === 'podcast' && (
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleFieldAudioUrl')}</label>
-                <MediaFilePicker
-                  value={audioUrl}
-                  onChange={setAudioUrl}
-                  tenantId={blogId}
-                  mediaType="audio"
-                />
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">{te('episodeNumber')}</label>
+                <input type="number" min="1" value={episodeNumber} onChange={e => setEpisodeNumber(e.target.value)} placeholder="1"
+                  className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] focus:outline-none" />
               </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">{ts('articleFieldEpisodeNum')}</label>
-                  <input
-                    type="number" min="1" value={episodeNumber}
-                    onChange={e => setEpisodeNumber(e.target.value)}
-                    placeholder="1"
-                    className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1.5">{ts('articleFieldSeason')}</label>
-                  <input
-                    type="number" min="1" value={season}
-                    onChange={e => setSeason(e.target.value)}
-                    placeholder="1"
-                    className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-                  />
-                </div>
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">{te('season')}</label>
+                <input type="number" min="1" value={season} onChange={e => setSeason(e.target.value)} placeholder="1"
+                  className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] focus:outline-none" />
               </div>
             </div>
           )}
 
-          {/* Cover image — hidden for video (video is the visual hero) */}
+          {/* Cover image */}
           {articleType !== 'video' && (
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleCoverImageLabel')}</p>
-              <ImagePicker
-                value={coverImageUrl}
-                onChange={setCoverImageUrl}
-                tenantId={blogId}
-                ratio="16/9"
-              />
+              <ImagePicker value={coverImageUrl} onChange={setCoverImageUrl} tenantId={blogId} ratio="16/9" />
             </div>
           )}
 
           {/* Category */}
           <div>
             <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleCategoryLabel')}</label>
-            <select
-              value={categoryId}
-              onChange={e => setCategoryId(e.target.value)}
-              className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-            >
+            <select value={categoryId} onChange={e => setCategoryId(e.target.value)}
+              className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
               <option value="">{ts('articleNoCategory')}</option>
               {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
 
-          {/* Tips */}
-          <div className="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-700">
-            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">{ts('markdownTips')}</p>
-            <div className="space-y-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono">
-              <p><span className="font-bold">**bold**</span></p>
-              <p><span className="italic">*italic*</span></p>
-              <p>## Heading H2</p>
-              <p>[link](https://…)</p>
-              <p>![image](https://…)</p>
-              <p>{'>'} Quote</p>
-            </div>
-          </div>
-
-          {/* Bottom CTA */}
+          {/* Actions */}
           <div className="space-y-2 pt-2">
-            <button
-              onClick={() => { setPublish(true); mutation.mutate(); }}
-              disabled={!canSave}
-              className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold transition-colors disabled:opacity-40 shadow-sm"
-            >
-              {mutation.isPending && publish
-                ? <Loader2 className="h-4 w-4 animate-spin" />
-                : <Send className="h-4 w-4" />}
+            <button onClick={() => { setPublish(true); mutation.mutate(); }} disabled={!canSave}
+              className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold transition-colors disabled:opacity-50 shadow-sm">
+              {mutation.isPending && publish ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               {ts('articlePublishAction')}
             </button>
-            <button
-              onClick={() => { setPublish(false); mutation.mutate(); }}
-              disabled={!canSave}
-              className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-40"
-            >
-              {mutation.isPending && !publish
-                ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                : <Save className="h-3.5 w-3.5" />}
-              {ts('articleSaveDraft')}
+            <button onClick={() => { setPublish(false); mutation.mutate(); }} disabled={!canSave}
+              className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40">
+              {mutation.isPending && !publish ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+              {ts('articleSave')}
             </button>
           </div>
         </div>

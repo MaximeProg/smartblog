@@ -44,6 +44,8 @@ class Article(Base):
     audio_url: Mapped[str | None] = mapped_column(Text)
     video_url: Mapped[str | None] = mapped_column(Text)
     audio_duration_seconds: Mapped[int | None] = mapped_column(Integer)
+    episode_number: Mapped[int | None] = mapped_column(Integer)
+    season: Mapped[int | None] = mapped_column(Integer)
 
     # SEO
     seo_title: Mapped[str | None] = mapped_column(String(200))
@@ -51,6 +53,10 @@ class Article(Base):
     seo_keywords: Mapped[list | None] = mapped_column(ARRAY(String))
     canonical_url: Mapped[str | None] = mapped_column(Text)
     og_image_url: Mapped[str | None] = mapped_column(Text)
+    robots_noindex: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
+    # Workflow
+    rejection_reason: Mapped[str | None] = mapped_column(Text)
 
     # Organisation
     category_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("categories.id", ondelete="SET NULL"))

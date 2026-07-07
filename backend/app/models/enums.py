@@ -40,6 +40,7 @@ class ArticleStatus(str, enum.Enum):
     DRAFT = "draft"
     IN_REVIEW = "in_review"
     APPROVED = "approved"
+    REJECTED = "rejected"
     SCHEDULED = "scheduled"
     PUBLISHED = "published"
     UNPUBLISHED = "unpublished"

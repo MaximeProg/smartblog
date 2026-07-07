@@ -46,6 +46,8 @@ function ArticleRow({
     scheduled:   { label: t('status.scheduled'),   color: 'text-blue-700 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30',               icon: Clock },
     archived:    { label: t('status.archived'),    color: 'text-slate-400 bg-slate-50 dark:text-slate-500 dark:bg-slate-800',              icon: Archive },
     in_review:   { label: t('status.in_review'),   color: 'text-amber-700 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/30',           icon: Clock },
+    approved:    { label: t('status.approved'),    color: 'text-teal-700 bg-teal-50 dark:text-teal-400 dark:bg-teal-900/30',               icon: CheckCircle2 },
+    rejected:    { label: t('status.rejected'),    color: 'text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-900/30',                   icon: Archive },
     unpublished: { label: t('status.unpublished'), color: 'text-slate-400 bg-slate-50 dark:text-slate-500 dark:bg-slate-800',              icon: Archive },
   };
 
@@ -239,7 +241,12 @@ export default function ArticlesPage() {
           >
             <option value="">{t('filterAll')}</option>
             <option value="draft">{t('filterDraft')}</option>
+            <option value="in_review">{t('status.in_review')}</option>
+            <option value="approved">{t('status.approved')}</option>
+            <option value="rejected">{t('status.rejected')}</option>
             <option value="published">{t('filterPublished')}</option>
+            <option value="unpublished">{t('status.unpublished')}</option>
+            <option value="scheduled">{t('status.scheduled')}</option>
             <option value="archived">{t('filterArchived')}</option>
           </select>
         </div>

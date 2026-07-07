@@ -135,7 +135,7 @@ export interface SlugCheckResponse {
 
 // ─── Articles ─────────────────────────────────────────────────────────────────
 
-export type ArticleStatus = 'draft' | 'published' | 'scheduled' | 'archived' | 'in_review' | 'unpublished';
+export type ArticleStatus = 'draft' | 'published' | 'scheduled' | 'archived' | 'in_review' | 'unpublished' | 'approved' | 'rejected';
 export type ArticleType = 'article' | 'photo' | 'video' | 'audio' | 'podcast' | 'mixed';
 
 export interface ArticleListItem {
@@ -168,9 +168,13 @@ export interface ArticleDetail extends ArticleListItem {
   og_image_url: string | null;
   audio_url: string | null;
   video_url: string | null;
+  episode_number: number | null;
+  season: number | null;
   audio_duration_seconds: number | null;
   allow_comments: boolean;
   is_featured: boolean;
+  robots_noindex: boolean;
+  rejection_reason: string | null;
   tags: TagInfo[];
 }
 
@@ -250,17 +254,37 @@ export interface CreateArticleData {
   content_json?: Record<string, unknown>;
   excerpt?: string;
   cover_image_url?: string;
+  cover_image_alt?: string;
   category_id?: string;
-  tag_ids?: string[];
+  tags?: string[];
   seo_title?: string;
   seo_description?: string;
+  seo_keywords?: string[];
+  canonical_url?: string;
+  robots_noindex?: boolean;
   article_type?: ArticleType;
+  audio_url?: string;
+  video_url?: string;
+  episode_number?: number;
+  season?: number;
   scheduled_at?: string;
   visibility?: ArticleVisibility;
-  comments_enabled?: boolean;
+  allow_comments?: boolean;
+  is_featured?: boolean;
+  price?: number;
+  currency?: string;
 }
 
-export interface UpdateArticleData extends CreateArticleData {}
+export interface UpdateArticleData extends Partial<CreateArticleData> {}
+
+export interface ArticleVersionResponse {
+  id: string;
+  version_number: number;
+  title: string;
+  change_summary: string | null;
+  created_by: string;
+  created_at: string;
+}
 
 export interface ArticleListParams {
   page?: number;

@@ -8,9 +8,11 @@ from app.schemas.article import (
     ArticleResponse, ArticleListItem, ArticleVersionResponse,
 )
 from app.schemas.common import PaginatedResponse, PaginationMeta
+from app.schemas.article import RejectArticleRequest
 from app.services.article_service import (
     create_article, get_article, list_articles,
     update_article, change_status, delete_article, list_versions,
+    approve_article, reject_article,
 )
 from app.api.v1.tenants import _assert_role, _assert_member
 
@@ -143,6 +145,33 @@ async def delete(
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
     await delete_article(db, tenant_id, article_id)
+
+
+# ── POST /articles/{article_id}/approve ──────────────────────────
+
+@router.post("/{article_id}/approve", response_model=ArticleResponse)
+async def approve(
+    tenant_id: uuid.UUID,
+    article_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+    return await approve_article(db, tenant_id, article_id)
+
+
+# ── POST /articles/{article_id}/reject ───────────────────────────
+
+@router.post("/{article_id}/reject", response_model=ArticleResponse)
+async def reject(
+    tenant_id: uuid.UUID,
+    article_id: uuid.UUID,
+    body: RejectArticleRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+    return await reject_article(db, tenant_id, article_id, body.reason)
 
 
 # ── GET /articles/{article_id}/versions ───────────────────────────

@@ -23,9 +23,13 @@ class CreateArticleRequest(BaseModel):
     cover_image_alt: str | None = None
     audio_url: str | None = None
     video_url: str | None = None
+    episode_number: int | None = None
+    season: int | None = None
     seo_title: str | None = None
     seo_description: str | None = None
     seo_keywords: list[str] | None = None
+    canonical_url: str | None = None
+    robots_noindex: bool = False
     category_id: str | None = None
     tags: list[str] = []
     price: float | None = None
@@ -49,14 +53,20 @@ class UpdateArticleRequest(BaseModel):
     excerpt: str | None = None
     content: str | None = None
     content_json: dict | None = None
+    article_type: ArticleType | None = None
     visibility: ContentVisibility | None = None
     cover_image_url: str | None = None
     cover_image_alt: str | None = None
     audio_url: str | None = None
     video_url: str | None = None
+    episode_number: int | None = None
+    season: int | None = None
     seo_title: str | None = None
     seo_description: str | None = None
     seo_keywords: list[str] | None = None
+    canonical_url: str | None = None
+    robots_noindex: bool | None = None
+    rejection_reason: str | None = None
     category_id: str | None = None
     tags: list[str] | None = None
     price: float | None = None
@@ -72,6 +82,10 @@ class UpdateArticleRequest(BaseModel):
 
 class PublishRequest(BaseModel):
     scheduled_at: datetime | None = None
+
+
+class RejectArticleRequest(BaseModel):
+    reason: str | None = None
 
 
 class ArticleAuthor(BaseModel):
@@ -94,9 +108,14 @@ class ArticleResponse(BaseModel):
     cover_image_url: str | None
     audio_url: str | None
     video_url: str | None
+    episode_number: int | None = None
+    season: int | None = None
     seo_title: str | None
     seo_description: str | None
     seo_keywords: list[str] | None
+    canonical_url: str | None = None
+    robots_noindex: bool = False
+    rejection_reason: str | None = None
     category_id: str | None
     tags: list[str] = []
     price: float | None

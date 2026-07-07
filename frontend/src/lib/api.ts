@@ -44,6 +44,7 @@ import type {
   CommentStats,
   CommentStatus,
   NotificationItem,
+  ArticleVersionResponse,
 } from '@/types';
 
 const API_URL =
@@ -202,8 +203,23 @@ export const articlesApi = {
   publish: (tenantId: string, articleId: string) =>
     api.post<ArticleDetail>(`/tenants/${tenantId}/articles/${articleId}/publish`),
 
+  unpublish: (tenantId: string, articleId: string) =>
+    api.post<ArticleDetail>(`/tenants/${tenantId}/articles/${articleId}/unpublish`),
+
   archive: (tenantId: string, articleId: string) =>
     api.post<ArticleDetail>(`/tenants/${tenantId}/articles/${articleId}/archive`),
+
+  submitReview: (tenantId: string, articleId: string) =>
+    api.post<ArticleDetail>(`/tenants/${tenantId}/articles/${articleId}/submit-review`),
+
+  approve: (tenantId: string, articleId: string) =>
+    api.post<ArticleDetail>(`/tenants/${tenantId}/articles/${articleId}/approve`),
+
+  reject: (tenantId: string, articleId: string, reason?: string) =>
+    api.post<ArticleDetail>(`/tenants/${tenantId}/articles/${articleId}/reject`, { reason }),
+
+  getVersions: (tenantId: string, articleId: string) =>
+    api.get<ArticleVersionResponse[]>(`/tenants/${tenantId}/articles/${articleId}/versions`),
 
   delete: (tenantId: string, articleId: string) =>
     api.delete<void>(`/tenants/${tenantId}/articles/${articleId}`),

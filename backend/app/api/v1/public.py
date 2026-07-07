@@ -74,6 +74,8 @@ class PublicArticleFull(PublicArticle):
     seo_title: str | None
     seo_description: str | None
     seo_keywords: list[str] | None
+    canonical_url: str | None = None
+    robots_noindex: bool = False
 
 
 class PublicBlogInfo(BaseModel):
@@ -187,6 +189,8 @@ async def get_public_article(
         seo_title=article.seo_title,
         seo_description=article.seo_description,
         seo_keywords=article.seo_keywords,
+        canonical_url=getattr(article, 'canonical_url', None),
+        robots_noindex=getattr(article, 'robots_noindex', False),
     )
 
 
