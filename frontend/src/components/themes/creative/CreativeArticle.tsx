@@ -10,6 +10,7 @@ import { renderContent } from '../shared/renderContent';
 import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
+import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -71,8 +72,11 @@ export default function CreativeArticle({
   const [progress, setProgress] = useState(0);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
-  const [copied, setCopied] = useState(false);
   const htmlContent = useMemo(() => renderContent(article.content), [article.content]);
+
+  const articleUrl = typeof window !== 'undefined'
+    ? window.location.href
+    : `https://${blog.slug}.nexusblog.io/${article.slug}`;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -92,18 +96,6 @@ export default function CreativeArticle({
     try {
       await fetch(`${API_URL}/api/v1/public/${blog.slug}/articles/${article.slug}/like`, { method: 'POST' });
     } catch {}
-  };
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
-
-  const twitterShare = () => {
-    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(window.location.href)}`;
-    window.open(url, '_blank');
   };
 
   return (
@@ -283,20 +275,7 @@ export default function CreativeArticle({
               </button>
               <span className="text-sm text-zinc-400">{article.views_count} views</span>
             </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={twitterShare}
-                className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors border border-zinc-200 rounded-full px-4 py-2"
-              >
-                Share on X
-              </button>
-              <button
-                onClick={copyLink}
-                className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors border border-zinc-200 rounded-full px-4 py-2"
-              >
-                {copied ? 'Copied!' : 'Copy Link'}
-              </button>
-            </div>
+            <ShareButtons url={articleUrl} title={article.title} primaryColor={primaryColor} />
           </div>
         </div>
 
@@ -361,6 +340,7 @@ export default function CreativeArticle({
       )}
 
       <CreativeFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      <FloatingShareBar url={articleUrl} title={article.title} primaryColor={primaryColor} />
     </div>
   );
 }

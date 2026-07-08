@@ -9,6 +9,7 @@ import { renderContent } from '../shared/renderContent';
 import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
+import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -202,22 +203,11 @@ export default function MagazineArticle({
                   {likeCount}
                 </button>
               </div>
-              <div className="flex items-center gap-4">
-                <a
-                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}&text=${encodeURIComponent(article.title)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
-                >
-                  Share on X
-                </a>
-                <button
-                  onClick={() => navigator.clipboard.writeText(window.location.href)}
-                  className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
-                >
-                  Copy link
-                </button>
-              </div>
+              <ShareButtons
+                url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.nexusblog.io/${article.slug}`}
+                title={article.title}
+                primaryColor={primaryColor}
+              />
             </div>
           </article>
 
@@ -328,6 +318,11 @@ export default function MagazineArticle({
       </div>
 
       <MagazineFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      <FloatingShareBar
+        url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.nexusblog.io/${article.slug}`}
+        title={article.title}
+        primaryColor={primaryColor}
+      />
     </div>
   );
 }

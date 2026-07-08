@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+import { ShareButtons } from '../shared/ShareButtons';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -149,16 +150,24 @@ export function MinimalFooter({ blog, basePath, primaryColor }: SharedProps) {
           </div>
         </div>
 
-        <div className="border-t border-zinc-100 mt-8 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-zinc-400">
+        <div className="border-t border-zinc-100 mt-8 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-zinc-400">
           <span>{copyright}</span>
-          {showPoweredBy && (
-            <span>
-              Powered by{' '}
-              <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer" className="font-medium hover:underline" style={{ color: primaryColor }}>
-                NexusBlog
-              </a>
-            </span>
-          )}
+          <div className="flex items-center gap-4 flex-wrap">
+            <ShareButtons
+              url={typeof window !== 'undefined' ? window.location.origin + basePath : basePath}
+              title={blog.name}
+              primaryColor={primaryColor}
+              variant="blog"
+            />
+            {showPoweredBy && (
+              <span>
+                Powered by{' '}
+                <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer" className="font-medium hover:underline" style={{ color: primaryColor }}>
+                  NexusBlog
+                </a>
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </footer>

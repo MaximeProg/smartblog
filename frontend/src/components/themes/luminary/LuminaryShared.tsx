@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Menu, X, Twitter, Linkedin, Github, ExternalLink, Instagram, Youtube } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+import { ShareButtons } from '../shared/ShareButtons';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -267,9 +268,17 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
           </div>
         </div>
 
-        <div className="border-t border-zinc-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-zinc-600 font-sans">
+        <div className="border-t border-zinc-800 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-zinc-600 font-sans">
           <span>{copyright}</span>
-          {showPoweredBy && <span>Powered by NexusBlog</span>}
+          <div className="flex items-center gap-4 flex-wrap">
+            <ShareButtons
+              url={typeof window !== 'undefined' ? window.location.origin + basePath : basePath}
+              title={blog.name}
+              primaryColor={primaryColor}
+              variant="blog"
+            />
+            {showPoweredBy && <span>Powered by NexusBlog</span>}
+          </div>
         </div>
       </div>
     </footer>

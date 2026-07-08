@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Menu, Twitter, Linkedin, Github, ExternalLink } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+import { ShareButtons } from '../shared/ShareButtons';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -180,16 +181,24 @@ export function EditorialFooter({ blog, categories, basePath, primaryColor }: Sh
           </div>
         </div>
 
-        <div className="border-t border-zinc-800 mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-zinc-600">
+        <div className="border-t border-zinc-800 mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-zinc-600">
           <span>{copyright}</span>
-          {showPoweredBy && (
-            <span className="flex items-center gap-1.5">
-              Powered by{' '}
-              <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
-                NexusBlog
-              </a>
-            </span>
-          )}
+          <div className="flex items-center gap-4 flex-wrap">
+            <ShareButtons
+              url={typeof window !== 'undefined' ? window.location.origin + basePath : basePath}
+              title={blog.name}
+              primaryColor={primaryColor}
+              variant="blog"
+            />
+            {showPoweredBy && (
+              <span className="flex items-center gap-1.5">
+                Powered by{' '}
+                <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                  NexusBlog
+                </a>
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </footer>

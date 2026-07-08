@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+import { ShareButtons } from '../shared/ShareButtons';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -177,9 +178,17 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
           </div>
         </div>
 
-        <div className="border-t border-zinc-800 mt-12 pt-6 flex flex-col sm:flex-row justify-between text-xs text-zinc-600 gap-2">
+        <div className="border-t border-zinc-800 mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-zinc-600 gap-3">
           <span>{copyright}</span>
-          {showPoweredBy && <span>Powered by NexusBlog</span>}
+          <div className="flex items-center gap-4 flex-wrap">
+            <ShareButtons
+              url={typeof window !== 'undefined' ? window.location.origin + basePath : basePath}
+              title={blog.name}
+              primaryColor={primaryColor}
+              variant="blog"
+            />
+            {showPoweredBy && <span>Powered by NexusBlog</span>}
+          </div>
         </div>
       </div>
     </footer>

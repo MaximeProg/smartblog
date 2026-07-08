@@ -8,6 +8,7 @@ import type { PublicArticle } from '@/lib/public-api';
 import { MinimalHeader, MinimalFooter } from './MinimalShared';
 import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
+import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -107,7 +108,6 @@ export default function MinimalArticle({
   const showComments = articleCfg?.comments?.enabled !== false;
 
   const [imgErr, setImgErr] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
   const [email, setEmail] = useState('');
@@ -123,17 +123,6 @@ export default function MinimalArticle({
   );
 
   const authorInitial = (article.author_name || blog.name)[0]?.toUpperCase() ?? 'A';
-
-  const copyLink = async () => {
-    const url = typeof window !== 'undefined' ? window.location.href : '';
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // non-critical
-    }
-  };
 
   const handleLike = async () => {
     if (liked) return;
@@ -298,22 +287,7 @@ export default function MinimalArticle({
             <span>· {article.views_count.toLocaleString()} views</span>
           </button>
 
-          <div className="flex items-center gap-4">
-            <a
-              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(article.title)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-zinc-400 hover:text-zinc-900 transition-colors text-xs"
-            >
-              Share on X
-            </a>
-            <button
-              onClick={copyLink}
-              className="text-zinc-400 hover:text-zinc-900 transition-colors text-xs"
-            >
-              {copied ? 'Copied!' : 'Copy link'}
-            </button>
-          </div>
+          <ShareButtons url={articleUrl} title={article.title} primaryColor={primaryColor} />
         </div>
         )}
 
@@ -385,6 +359,7 @@ export default function MinimalArticle({
         basePath={basePath}
         primaryColor={primaryColor}
       />
+      <FloatingShareBar url={articleUrl} title={article.title} primaryColor={primaryColor} />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import type { PublicArticle, PublicCategory } from '@/lib/public-api';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
+import { ShareButtons } from '../shared/ShareButtons';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
@@ -638,14 +639,22 @@ export function CorporateFooter({
 
         <div className="pt-7 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600">
           <span>{copyrightText}</span>
-          {showPoweredBy && (
-            <span>{t('poweredBy')}{' '}
-              <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer"
-                className="font-semibold transition-colors hover:text-white" style={{ color: primaryColor }}>
-                NexusBlog
-              </a>
-            </span>
-          )}
+          <div className="flex items-center gap-4 flex-wrap">
+            <ShareButtons
+              url={typeof window !== 'undefined' ? window.location.origin + (basePath ?? '') : (basePath ?? '')}
+              title={blog.name}
+              primaryColor={primaryColor}
+              variant="blog"
+            />
+            {showPoweredBy && (
+              <span>{t('poweredBy')}{' '}
+                <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer"
+                  className="font-semibold transition-colors hover:text-white" style={{ color: primaryColor }}>
+                  NexusBlog
+                </a>
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </footer>

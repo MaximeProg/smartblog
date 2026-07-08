@@ -4,11 +4,12 @@ Résout le tenant par slug (path param).
 """
 import uuid
 import random
+import secrets
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import Response
 from sqlalchemy import select, and_, update, func, text as sa_text
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from datetime import datetime, timezone
 import xml.etree.ElementTree as ET
 
@@ -20,9 +21,10 @@ from app.models.tenant import Tenant
 from app.models.article import Article, Category, Tag
 from app.models.comment import Comment
 from app.models.ad import Ad
+from app.models.newsletter import NewsletterSubscriber
 from app.models.enums import (
     ArticleStatus, ContentVisibility, TenantStatus, CommentStatus,
-    AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus,
+    AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus, SubscriberStatus,
 )
 from app.core.dependencies import DBSession
 
@@ -274,6 +276,54 @@ async def list_public_tags(slug: str, db: DBSession):
         .order_by(Tag.articles_count.desc()).limit(50)
     )
     return [{"name": t.name, "slug": t.slug, "count": t.articles_count} for t in result.scalars().all()]
+
+
+# ── POST /public/{slug}/subscribe ────────────────────────────────
+
+class PublicSubscribeRequest(BaseModel):
+    email: EmailStr
+    first_name: str | None = None
+    last_name: str | None = None
+
+@router.post("/subscribe", status_code=200)
+async def public_subscribe(slug: str, body: PublicSubscribeRequest, request: Request, db: DBSession):
+    tenant = await _resolve_tenant(db, slug)
+
+    existing = await db.execute(
+        select(NewsletterSubscriber).where(
+            NewsletterSubscriber.tenant_id == tenant.id,
+            NewsletterSubscriber.email == body.email,
+        )
+    )
+    sub = existing.scalar_one_or_none()
+    if sub:
+        if sub.status == SubscriberStatus.UNSUBSCRIBED:
+            sub.status = SubscriberStatus.PENDING
+            sub.confirmation_token = secrets.token_urlsafe(32)
+            await db.commit()
+        return {"message": "ok"}
+
+    ip = request.client.host if request.client else None
+    sub = NewsletterSubscriber(
+        tenant_id=tenant.id,
+        email=body.email,
+        first_name=body.first_name,
+        last_name=body.last_name,
+        source="website",
+        confirmation_token=secrets.token_urlsafe(32),
+        unsubscribe_token=secrets.token_urlsafe(32),
+        ip_address=ip,
+    )
+    db.add(sub)
+    try:
+        await db.execute(
+            sa_text("UPDATE tenants SET subscribers_count = subscribers_count + 1 WHERE id = :tid"),
+            {"tid": str(tenant.id)},
+        )
+    except Exception:
+        pass
+    await db.commit()
+    return {"message": "ok"}
 
 
 # ── GET /public/{slug}/rss ────────────────────────────────────────

@@ -329,8 +329,12 @@ export const tagsApi = {
 // ─── Media ────────────────────────────────────────────────────────────────────
 
 export const mediaApi = {
-  list: (tenantId: string, params?: { type?: string; q?: string; limit?: number; cursor?: string }) =>
-    api.get<MediaItem[]>(`/tenants/${tenantId}/media`, { params }),
+  list: (tenantId: string, params?: { type?: string; q?: string; limit?: number; cursor?: string }) => {
+    const { type, ...rest } = params ?? {};
+    return api.get<MediaItem[]>(`/tenants/${tenantId}/media`, {
+      params: { ...rest, ...(type ? { media_type: type } : {}) },
+    });
+  },
 
   upload: (tenantId: string, file: File, onProgress?: (pct: number) => void) => {
     const form = new FormData();

@@ -11,6 +11,7 @@ import { renderContent } from '../shared/renderContent';
 import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
+import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -113,7 +114,6 @@ export default function LuminaryArticle({
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
   const [bookmarked, setBookmarked] = useState(false);
-  const [copied, setCopied] = useState(false);
   const htmlContent = useMemo(() => renderContent(article.content), [article.content]);
 
   useEffect(() => {
@@ -143,14 +143,6 @@ export default function LuminaryArticle({
       await fetch(`${API_URL}/api/v1/public/${blog.slug}/articles/${article.slug}/like`, {
         method: 'POST',
       });
-    } catch {}
-  };
-
-  const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     } catch {}
   };
 
@@ -259,22 +251,7 @@ export default function LuminaryArticle({
             <Bookmark className={`h-3.5 w-3.5 ${bookmarked ? 'fill-zinc-900' : ''}`} />
             {bookmarked ? 'Saved' : 'Save'}
           </button>
-          <div className="ml-auto flex items-center gap-4">
-            <a
-              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(articleUrl)}&text=${encodeURIComponent(article.title)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-sans text-xs text-zinc-400 hover:text-zinc-900 transition-colors"
-            >
-              Share on X
-            </a>
-            <button
-              onClick={copyLink}
-              className="font-sans text-xs text-zinc-400 hover:text-zinc-900 transition-colors"
-            >
-              {copied ? 'Copied!' : 'Copy link'}
-            </button>
-          </div>
+          <ShareButtons url={articleUrl} title={article.title} primaryColor={primaryColor} />
         </div>
       </div>
 
@@ -387,6 +364,7 @@ export default function LuminaryArticle({
         basePath={basePath}
         primaryColor={primaryColor}
       />
+      <FloatingShareBar url={articleUrl} title={article.title} primaryColor={primaryColor} />
     </div>
   );
 }

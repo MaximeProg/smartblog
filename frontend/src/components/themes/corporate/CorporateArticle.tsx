@@ -20,6 +20,7 @@ import {
 import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
+import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 
 // ─── Extended props ────────────────────────────────────────────────────────────
 
@@ -376,24 +377,11 @@ export default function CorporateArticle({
 
           {/* Share */}
           <div className="flex items-center gap-3 mt-12 pt-8 border-t border-slate-100 flex-wrap">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400 mr-2">{t('shareLabel')}</span>
-            <button onClick={shareTwitter}
-              className="flex items-center gap-2 h-9 px-4 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-sky-50 hover:border-sky-300 hover:text-sky-600 transition-all bg-white">
-              <Twitter className="h-4 w-4" /> Twitter
-            </button>
-            <button onClick={shareLinkedin}
-              className="flex items-center gap-2 h-9 px-4 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-all bg-white">
-              <Linkedin className="h-4 w-4" /> LinkedIn
-            </button>
-            <button onClick={copyLink}
-              className={`flex items-center gap-2 h-9 px-4 rounded-xl border text-sm font-semibold transition-all bg-white ${
-                copied
-                  ? 'border-emerald-300 text-emerald-600 bg-emerald-50'
-                  : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800'
-              }`}>
-              {copied ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
-              {copied ? 'Copié !' : 'Copier le lien'}
-            </button>
+            <ShareButtons
+              url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.nexusblog.io/${article.slug}`}
+              title={article.title}
+              primaryColor={primaryColor}
+            />
             <div className="ml-auto flex items-center gap-2 text-sm text-slate-400">
               <Eye className="h-4 w-4" />
               {(article.views_count ?? 0).toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')} {t('viewsLabel')}
@@ -575,6 +563,11 @@ export default function CorporateArticle({
 
       <NewsletterSection blog={blog} primaryColor={primaryColor} />
       <CorporateFooter blog={blog} categories={[]} primaryColor={primaryColor} basePath={basePath} previewSlug={previewSlug} />
+      <FloatingShareBar
+        url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.nexusblog.io/${article.slug}`}
+        title={article.title}
+        primaryColor={primaryColor}
+      />
     </div>
   );
 }
