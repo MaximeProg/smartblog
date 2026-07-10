@@ -34,7 +34,8 @@ export function ForgotPasswordForm({ locale }: ForgotPasswordFormProps) {
 
   const onSubmit = async ({ email }: FormValues) => {
     try {
-      await sendPasswordReset(email);
+      const continueUrl = `${window.location.origin}/${locale}/reset-password`;
+      await sendPasswordReset(email, continueUrl);
       setSentTo(email);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : '';

@@ -143,4 +143,19 @@ export const publicApi = {
 
   getCategories: (slug: string) =>
     fetchPublic<PublicCategory[]>(`/${slug}/categories`),
+
+  search: (slug: string, params: {
+    q?: string;
+    category_id?: string;
+    page?: number;
+    size?: number;
+  }) => {
+    const qs = new URLSearchParams();
+    if (params.q) qs.set('q', params.q);
+    if (params.category_id) qs.set('category_id', params.category_id);
+    if (params.page) qs.set('page', String(params.page));
+    if (params.size) qs.set('size', String(params.size));
+    const query = qs.toString() ? `?${qs}` : '';
+    return fetchPublic<{ total: number; hits: { id: string; title: string; slug: string; excerpt?: string; cover_image_url?: string; category_name?: string; published_at?: string; highlight?: Record<string, string[]> }[]; query: string | null }>(`/${slug}/search${query}`);
+  },
 };

@@ -15,6 +15,9 @@ from app.services.article_service import (
     approve_article, reject_article,
 )
 from app.api.v1.tenants import _assert_role, _assert_member
+import structlog
+
+logger = structlog.get_logger()
 
 router = APIRouter(prefix="/tenants/{tenant_id}/articles", tags=["articles"])
 
@@ -118,7 +121,41 @@ async def submit_review(
     db: DBSession,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
-    return await change_status(db, tenant_id, article_id, ArticleStatus.IN_REVIEW)
+    result = await change_status(db, tenant_id, article_id, ArticleStatus.IN_REVIEW)
+
+    # Notify editors + admins that a new article needs review
+    try:
+        from sqlalchemy import select
+        from app.models.tenant_user import TenantUser
+        from app.models.user import User
+        from app.models.enums import UserRole as UR
+        from app.core.config import settings as _cfg
+        from app.services.email_service import send_article_submitted_notification
+
+        submitter_res = await db.execute(select(User).where(User.id == uuid.UUID(payload["sub"])))
+        submitter = submitter_res.scalar_one_or_none()
+        author_name = submitter.display_name or submitter.email if submitter else "Un auteur"
+
+        editors_res = await db.execute(
+            select(User).join(TenantUser, TenantUser.user_id == User.id).where(
+                TenantUser.tenant_id == tenant_id,
+                TenantUser.role.in_([UR.EDITOR, UR.TENANT_ADMIN]),
+                User.id != uuid.UUID(payload["sub"]),
+            )
+        )
+        editor_emails = [u.email for u in editors_res.scalars().all()]
+        if editor_emails:
+            review_url = f"{_cfg.FRONTEND_URL}/blogs/{tenant_id}/articles/{article_id}/edit"
+            await send_article_submitted_notification(
+                to=editor_emails,
+                article_title=result.title,
+                author_name=author_name,
+                review_url=review_url,
+            )
+    except Exception as exc:
+        logger.warning("submit_review: email notification failed", error=str(exc))
+
+    return result
 
 
 # ── POST /articles/{article_id}/archive ───────────────────────────
@@ -171,7 +208,30 @@ async def reject(
     db: DBSession,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
-    return await reject_article(db, tenant_id, article_id, body.reason)
+    result = await reject_article(db, tenant_id, article_id, body.reason)
+
+    # Notify the article author
+    try:
+        from sqlalchemy import select
+        from app.models.user import User
+        from app.core.config import settings as _cfg
+        from app.services.email_service import send_article_rejected_notification
+
+        if result.author and result.author.id:
+            author_res = await db.execute(select(User).where(User.id == uuid.UUID(result.author.id)))
+            author = author_res.scalar_one_or_none()
+            if author:
+                dashboard_url = f"{_cfg.FRONTEND_URL}/blogs/{tenant_id}/articles/{article_id}/edit"
+                await send_article_rejected_notification(
+                    to=author.email,
+                    article_title=result.title,
+                    reason=body.reason,
+                    dashboard_url=dashboard_url,
+                )
+    except Exception as exc:
+        logger.warning("reject: email notification failed", error=str(exc))
+
+    return result
 
 
 # ── GET /articles/{article_id}/versions ───────────────────────────

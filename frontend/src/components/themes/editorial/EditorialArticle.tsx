@@ -12,6 +12,7 @@ import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
+import { useBookmark } from '@/hooks/useBookmark';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -114,7 +115,7 @@ export default function EditorialArticle({
   const [progress, setProgress] = useState(0);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
-  const [bookmarked, setBookmarked] = useState(false);
+  const { bookmarked, toggle: toggleBookmark } = useBookmark(article.slug, article.title, blog.slug);
   const htmlContent = useMemo(() => renderContent(article.content), [article.content]);
 
   useEffect(() => {
@@ -281,7 +282,7 @@ export default function EditorialArticle({
               {likeCount}
             </button>
             <button
-              onClick={() => setBookmarked(v => !v)}
+              onClick={toggleBookmark}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium transition-all ${
                 bookmarked
                   ? 'border-zinc-800 text-zinc-900 bg-zinc-100'

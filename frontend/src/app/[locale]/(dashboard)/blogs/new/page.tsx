@@ -298,6 +298,7 @@ export default function CreateBlogPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
+      const refCode = typeof window !== 'undefined' ? localStorage.getItem('nexusblog_ref') : null;
       const { data } = await tenantsApi.create({
         name: name.trim(),
         slug: slug.trim(),
@@ -307,6 +308,7 @@ export default function CreateBlogPage() {
         theme: selectedTheme,
         language: 'en',
         template_config: {},
+        ...(refCode ? { referral_code: refCode } : {}),
       } as any);
 
       if (coverFile) {
@@ -319,6 +321,7 @@ export default function CreateBlogPage() {
       return data;
     },
     onSuccess: (data) => {
+      if (typeof window !== 'undefined') localStorage.removeItem('nexusblog_ref');
       const tenant: TenantInfo = { id: data.id, name: data.name, slug: data.slug, plan: data.plan, role: 'TENANT_ADMIN' };
       addTenant(tenant);
       setCurrentTenant(data.id);

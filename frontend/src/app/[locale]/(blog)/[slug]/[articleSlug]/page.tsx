@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
 import { ThemeArticle } from '@/components/themes/ThemeRenderer';
 import { BlogAnalyticsTracker } from '@/components/themes/shared/BlogAnalyticsTracker';
+import ArticlePaywall from '@/components/themes/shared/ArticlePaywall';
+import ArticleListenBanner from '@/components/themes/shared/ArticleListenBanner';
 
 export const revalidate = 60;
 
@@ -60,6 +62,20 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
     notFound();
   }
 
+  const basePath = `/${locale}/${slug}`;
+
+  // ── Paywall: article payant — renvoyer la page de déverrouillage ──
+  if (article.is_paid) {
+    return (
+      <ArticlePaywall
+        blog={blog}
+        article={article}
+        basePath={basePath}
+        locale={locale}
+      />
+    );
+  }
+
   // JSON-LD structured data
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -86,12 +102,24 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <BlogAnalyticsTracker tenantId={blog.id} articleId={article.id} />
+
+      {/* Listen banner — affiché si un audio TTS est disponible */}
+      {article.audio_url && (
+        <ArticleListenBanner
+          audioUrl={article.audio_url}
+          title={article.title}
+          authorName={(article as any).author_name ?? null}
+          coverUrl={article.cover_image_url}
+          primaryColor={blog.primary_color}
+        />
+      )}
+
       <ThemeArticle
         blog={blog}
         article={article}
         relatedArticles={relatedArticles}
         categories={categories}
-        basePath={`/${locale}/${slug}`}
+        basePath={basePath}
       />
     </>
   );

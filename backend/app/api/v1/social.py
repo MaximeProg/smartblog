@@ -37,8 +37,13 @@ class SocialAccountResponse(BaseModel):
     platform_avatar_url: str | None
     platform_profile_url: str | None
     is_active: bool
+    auto_post_enabled: bool
     token_expires_at: datetime | None
     created_at: datetime
+
+
+class ToggleAutoPostRequest(BaseModel):
+    auto_post_enabled: bool
 
 
 class CreatePostRequest(BaseModel):
@@ -116,6 +121,30 @@ async def connect_account(
         scopes=body.scopes,
     )
     db.add(account)
+    await db.commit()
+    await db.refresh(account)
+    return _account_response(account)
+
+
+@router.patch("/accounts/{account_id}/auto-post", response_model=SocialAccountResponse)
+async def toggle_auto_post(
+    tenant_id: uuid.UUID,
+    account_id: uuid.UUID,
+    body: ToggleAutoPostRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+    result = await db.execute(
+        select(SocialAccount).where(
+            SocialAccount.id == account_id,
+            SocialAccount.tenant_id == tenant_id,
+        )
+    )
+    account = result.scalar_one_or_none()
+    if not account:
+        raise NotFoundException("Compte social")
+    account.auto_post_enabled = body.auto_post_enabled
     await db.commit()
     await db.refresh(account)
     return _account_response(account)
@@ -254,11 +283,18 @@ async def publish_now(
     if post.status == SocialPostStatus.PUBLISHED:
         raise ValidationException("Ce post est déjà publié.")
 
-    # TODO: enqueue ARQ task pour publication réelle via API plateforme (sprint 4)
     post.status = SocialPostStatus.PENDING
     post.scheduled_at = None
     await db.commit()
     await db.refresh(post)
+
+    try:
+        from app.core.arq_pool import get_arq_pool
+        pool = await get_arq_pool()
+        await pool.enqueue_job("publish_to_social", post_id=str(post.id))
+    except Exception:
+        pass
+
     return _post_response(post)
 
 
@@ -283,6 +319,7 @@ def _account_response(a: SocialAccount) -> SocialAccountResponse:
         platform_avatar_url=a.platform_avatar_url,
         platform_profile_url=a.platform_profile_url,
         is_active=a.is_active,
+        auto_post_enabled=a.auto_post_enabled,
         token_expires_at=a.token_expires_at,
         created_at=a.created_at,
     )

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Response, Depends, Cookie
+from fastapi import APIRouter, Request, Response, Depends, Cookie, UploadFile, File
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,7 +9,7 @@ from app.core.database import get_db
 from app.schemas.auth import (
     FirebaseLoginRequest, LoginResponse, RefreshResponse,
     TwoFASetupResponse, TwoFAVerifyRequest, TwoFADisableRequest,
-    UpdateProfileRequest,
+    TwoFALoginRequest, UpdateProfileRequest,
 )
 from app.services.firebase_service import verify_firebase_id_token
 from app.services.auth_service import (
@@ -171,8 +171,44 @@ async def update_profile(
         user.display_name = body.display_name
     if body.bio is not None:
         user.bio = body.bio
+    if body.phone is not None:
+        user.phone = body.phone or None
+    if body.country is not None:
+        user.country = body.country or None
+    if body.continent is not None:
+        user.continent = body.continent or None
+    # Genre immuable : ignoré si déjà défini
+    if body.gender is not None and user.gender is None:
+        user.gender = body.gender
 
     await db.commit()
+    from app.schemas.auth import UserInfo
+    return UserInfo.model_validate(user)
+
+
+# ── POST /auth/me/avatar ───────────────────────────────────────────
+
+@router.post("/me/avatar")
+async def upload_avatar(
+    payload: TokenPayload,
+    db: DBSession,
+    file: UploadFile = File(...),
+):
+    from sqlalchemy import select
+    from app.models.user import User
+    from app.services.cloudinary_service import upload_avatar_image
+    import uuid
+
+    user_id = uuid.UUID(payload["sub"])
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise UnauthorizedException("Utilisateur introuvable.")
+
+    upload_result = await upload_avatar_image(file, str(user_id))
+    user.avatar_url = upload_result["secure_url"]
+    await db.commit()
+
     from app.schemas.auth import UserInfo
     return UserInfo.model_validate(user)
 
@@ -288,6 +324,190 @@ async def list_notifications(payload: TokenPayload, db: DBSession):
     return notifications
 
 
+# ── GET /auth/me/notifications/count ──────────────────────────────
+
+@router.get("/me/notifications/count")
+async def notifications_count(payload: TokenPayload, db: DBSession):
+    """Retourne le nombre de notifications non lues (léger, pour le badge TopBar)."""
+    notifs = await list_notifications(payload, db)
+    unread = sum(1 for n in notifs if not n.get("read", True))
+    return {"unread": unread, "total": len(notifs)}
+
+
+# ── Push subscriptions ─────────────────────────────────────────────
+
+@router.post("/me/push-subscription", status_code=201)
+async def save_push_subscription(
+    payload: TokenPayload,
+    db: DBSession,
+    body: dict,
+):
+    from fastapi import HTTPException
+    try:
+        import uuid
+        from sqlalchemy import select, delete
+        from app.models.push_subscription import PushSubscription
+
+        user_id  = uuid.UUID(payload["sub"])
+        endpoint = body.get("endpoint", "")
+        keys     = body.get("keys", {})
+
+        if not endpoint or not keys.get("p256dh") or not keys.get("auth"):
+            raise HTTPException(status_code=422, detail="Invalid subscription payload")
+
+        await db.execute(
+            delete(PushSubscription).where(
+                PushSubscription.endpoint == endpoint,
+                PushSubscription.user_id  != user_id,
+            )
+        )
+        existing = await db.execute(
+            select(PushSubscription).where(
+                PushSubscription.endpoint == endpoint,
+                PushSubscription.user_id  == user_id,
+            )
+        )
+        if not existing.scalar_one_or_none():
+            db.add(PushSubscription(
+                user_id  = user_id,
+                endpoint = endpoint,
+                p256dh   = keys["p256dh"],
+                auth     = keys["auth"],
+            ))
+            await db.commit()
+        return {"ok": True}
+
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"{type(exc).__name__}: {exc}",
+        )
+
+
+@router.delete("/me/push-subscription", status_code=204)
+async def delete_push_subscription(payload: TokenPayload, db: DBSession, body: dict):
+    import uuid
+    from fastapi import HTTPException
+    from sqlalchemy import delete as sa_delete
+    from app.models.push_subscription import PushSubscription
+
+    user_id  = uuid.UUID(payload["sub"])
+    endpoint = body.get("endpoint", "")
+    if endpoint:
+        try:
+            await db.execute(
+                sa_delete(PushSubscription).where(
+                    PushSubscription.user_id  == user_id,
+                    PushSubscription.endpoint == endpoint,
+                )
+            )
+            await db.commit()
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"Push unsubscribe error: {exc}")
+
+
+@router.get("/me/push-vapid-public-key")
+async def get_vapid_public_key():
+    """Retourne la clé VAPID publique en base64url (format attendu par pushManager.subscribe)."""
+    if not settings.VAPID_PUBLIC_KEY:
+        return {"public_key": ""}
+    import base64
+    from cryptography.hazmat.primitives.serialization import (
+        load_pem_public_key, Encoding, PublicFormat,
+    )
+    key = load_pem_public_key(settings.VAPID_PUBLIC_KEY.encode())
+    raw = key.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)
+    return {"public_key": base64.urlsafe_b64encode(raw).rstrip(b"=").decode()}
+
+
+# ── Test endpoints (dev/staging uniquement) ────────────────────────
+
+@router.post("/me/test-email", status_code=200)
+async def test_email(payload: TokenPayload, db: DBSession):
+    """Envoie un email de test à l'utilisateur connecté (Resend)."""
+    import uuid
+    from datetime import datetime
+    from fastapi import HTTPException
+    from sqlalchemy import select
+    from app.models.user import User
+    from app.services.email_service import _send
+
+    user_id = uuid.UUID(payload["sub"])
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise UnauthorizedException("Utilisateur introuvable.")
+
+    # Sans domaine Resend vérifié, le TO doit être l'email du compte Resend
+    recipient = settings.RESEND_TEST_RECIPIENT or user.email
+
+    try:
+        await _send(
+            to=recipient,
+            subject="✅ Test email NexusBlog — Resend fonctionne !",
+            html=f"""
+            <div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;">
+              <h2 style="color:#1e293b;">Test email — NexusBlog</h2>
+              <p style="color:#475569;">Bonjour <strong>{user.display_name or user.email}</strong>,</p>
+              <p style="color:#475569;">
+                Cet email confirme que l'intégration <strong>Resend</strong> fonctionne correctement.
+              </p>
+              <p style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;
+                         padding:12px 16px;color:#15803d;font-weight:600;">
+                ✅ Configuration email opérationnelle
+              </p>
+              <p style="color:#94a3b8;font-size:12px;">Envoyé le {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}</p>
+            </div>
+            """,
+        )
+        return {"ok": True, "sent_to": recipient}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Resend error: {exc}")
+
+
+@router.post("/me/test-push", status_code=200)
+async def test_push(payload: TokenPayload, db: DBSession):
+    """Envoie une notification push de test à tous les abonnements de l'utilisateur."""
+    from fastapi import HTTPException
+    try:
+        import uuid
+        from sqlalchemy import select
+        from app.models.push_subscription import PushSubscription
+        from app.services.push_service import send_push_to_user
+
+        user_id = uuid.UUID(payload["sub"])
+
+        result = await db.execute(
+            select(PushSubscription).where(PushSubscription.user_id == user_id)
+        )
+        subs = result.scalars().all()
+
+        if not subs:
+            raise HTTPException(
+                status_code=400,
+                detail="Aucun abonnement push. Active les push sur la page /notifications d'abord.",
+            )
+
+        await send_push_to_user(
+            db=db,
+            user_id=user_id,
+            title="🔔 Test push NexusBlog",
+            body="Les notifications push fonctionnent correctement !",
+            url="/notifications",
+        )
+        return {"ok": True, "subscriptions": len(subs)}
+
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"{type(exc).__name__}: {exc}",
+        )
+
+
 # ── 2FA ───────────────────────────────────────────────────────────
 
 @router.post("/2fa/setup", response_model=TwoFASetupResponse)
@@ -332,3 +552,65 @@ async def disable_2fa_route(body: TwoFADisableRequest, payload: TokenPayload, db
     if not success:
         raise ValidationException("Code TOTP invalide.")
     return {"message": "2FA désactivé."}
+
+
+@router.post("/2fa/login", response_model=LoginResponse)
+async def login_with_2fa(
+    body: TwoFALoginRequest,
+    request: Request,
+    response: Response,
+    db: DBSession,
+):
+    """Complète la connexion pour un compte avec 2FA activé."""
+    from sqlalchemy import select
+    from app.models.user import User
+    from app.core.security import decrypt_value, verify_totp
+    from app.services.auth_service import _issue_tokens
+
+    try:
+        firebase_data = await verify_firebase_id_token(body.firebase_id_token)
+    except Exception:
+        raise UnauthorizedException("Firebase token invalide.")
+
+    result = await db.execute(
+        select(User).where(User.firebase_uid == firebase_data["uid"])
+    )
+    user = result.scalar_one_or_none()
+
+    if not user or not user.two_fa_enabled or not user.two_fa_secret_enc:
+        raise UnauthorizedException("Compte introuvable ou 2FA non activé.")
+
+    # Vérifie le code TOTP
+    secret = decrypt_value(user.two_fa_secret_enc)
+    if not verify_totp(secret, body.code.strip()):
+        # Tentative sur les backup codes
+        if not _check_backup_code(user, body.code.strip()):
+            raise ValidationException("Code 2FA invalide.")
+
+    tenant_id = str(request.state.tenant_id) if getattr(request.state, "tenant_id", None) else None
+    issued = await _issue_tokens(db, user, preferred_tenant_id=tenant_id)
+    refresh_plain = getattr(issued, "_refresh_token", None)
+    if refresh_plain:
+        _set_refresh_cookie(response, refresh_plain)
+    return issued
+
+
+def _check_backup_code(user, submitted: str) -> bool:
+    """Vérifie et consume un backup code (supprime après usage)."""
+    from app.core.security import decrypt_value
+    backup = user.two_fa_backup_codes
+    if not backup or not backup.get("confirmed"):
+        return False
+    codes = backup.get("codes", [])
+    norm = submitted.upper().replace(" ", "").replace("-", "")
+    for i, enc_code in enumerate(codes):
+        try:
+            plain = decrypt_value(enc_code)
+            plain_norm = plain.upper().replace("-", "")
+            if plain_norm == norm:
+                new_codes = [c for j, c in enumerate(codes) if j != i]
+                user.two_fa_backup_codes = {**backup, "codes": new_codes}
+                return True
+        except Exception:
+            continue
+    return False

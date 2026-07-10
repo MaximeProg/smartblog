@@ -46,7 +46,9 @@ async def login_with_firebase(
             # Associe le nouveau firebase_uid à ce compte existant
             user.firebase_uid = firebase_uid
 
+    is_new_user = False
     if not user:
+        is_new_user = True
         user = User(
             firebase_uid=firebase_uid,
             email=email,
@@ -67,6 +69,20 @@ async def login_with_firebase(
         if sign_in_provider:
             user.sign_in_provider = sign_in_provider
         user.email_verified = email_verified
+
+    # Email de bienvenue pour les nouveaux inscrits
+    if is_new_user:
+        try:
+            from app.services.email_service import send_welcome_email
+            from app.core.config import settings as _cfg
+            dashboard_url = f"{_cfg.FRONTEND_URL}/dashboard"
+            await send_welcome_email(
+                to=email,
+                display_name=display_name or "",
+                dashboard_url=dashboard_url,
+            )
+        except Exception:
+            pass  # L'email de bienvenue ne doit jamais bloquer la connexion
 
     # Si 2FA activé → retour sans tokens (client doit valider le code)
     if user.two_fa_enabled:
@@ -196,7 +212,8 @@ async def refresh_access_token(
 
 
 async def setup_2fa(db: AsyncSession, user_id: uuid.UUID) -> dict:
-    """Génère un secret TOTP, retourne URI + backup codes (non confirmé)."""
+    """Génère un secret TOTP, retourne URI + backup codes (non confirmé).
+    Idempotent : si un secret pending existe déjà, le réutilise sans écraser."""
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
@@ -205,14 +222,19 @@ async def setup_2fa(db: AsyncSession, user_id: uuid.UUID) -> dict:
     if user.two_fa_enabled:
         raise ValidationException("Le 2FA est déjà activé.")
 
-    secret = generate_totp_secret()
-    backup_codes = generate_backup_codes()
-    backup_hashes = [encrypt_value(c) for c in backup_codes]
-
-    # Stockage temporaire chiffré (confirmé seulement après verify)
-    user.two_fa_secret_enc = encrypt_value(secret)
-    user.two_fa_backup_codes = {"codes": backup_hashes, "confirmed": False}
-    await db.commit()
+    # Réutilise le secret pending si déjà initié (évite race conditions client)
+    if user.two_fa_secret_enc and user.two_fa_backup_codes and not user.two_fa_backup_codes.get("confirmed"):
+        secret = decrypt_value(user.two_fa_secret_enc)
+        # Déchiffre les backup codes existants pour les renvoyer en clair
+        existing_codes = user.two_fa_backup_codes.get("codes", [])
+        backup_codes = [decrypt_value(c) for c in existing_codes]
+    else:
+        secret = generate_totp_secret()
+        backup_codes = generate_backup_codes()
+        backup_hashes = [encrypt_value(c) for c in backup_codes]
+        user.two_fa_secret_enc = encrypt_value(secret)
+        user.two_fa_backup_codes = {"codes": backup_hashes, "confirmed": False}
+        await db.commit()
 
     uri = generate_totp_uri(secret, user.email)
     return {"uri": uri, "backup_codes": backup_codes, "secret": secret}

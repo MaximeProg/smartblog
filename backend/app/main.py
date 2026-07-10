@@ -84,6 +84,21 @@ app.add_middleware(TenantMiddleware)
 app.add_middleware(DynamicCORSMiddleware)
 
 
+# ── Helper CORS pour les exception handlers ────────────────────────
+# BaseHTTPMiddleware ne rattrape pas les exceptions qui remontent de
+# call_next, donc les réponses d'erreur n'ont pas de headers CORS.
+# On les injecte manuellement dans chaque handler.
+
+def _cors_headers(request: Request) -> dict[str, str]:
+    origin = request.headers.get("origin", "")
+    if _origin_allowed(origin):
+        return {
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Credentials": "true",
+        }
+    return {}
+
+
 # ── Gestionnaires d'erreurs ────────────────────────────────────────
 
 @app.exception_handler(NexusBlogException)
@@ -98,6 +113,7 @@ async def nexusblog_exception_handler(request: Request, exc: NexusBlogException)
     )
     return JSONResponse(
         status_code=exc.status_code,
+        headers=_cors_headers(request),
         content={**exc.detail, "trace_id": trace_id} if isinstance(exc.detail, dict) else {
             "error": "ERROR",
             "message": str(exc.detail),
@@ -112,6 +128,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     first = errors[0] if errors else {}
     return JSONResponse(
         status_code=422,
+        headers=_cors_headers(request),
         content={
             "error": "VALIDATION_ERROR",
             "message": first.get("msg", "Données invalides."),
@@ -126,6 +143,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
     logger.error("Unhandled exception", exc_info=exc, path=request.url.path, trace_id=trace_id)
     return JSONResponse(
         status_code=500,
+        headers=_cors_headers(request),
         content={
             "error": "INTERNAL_SERVER_ERROR",
             "message": "Une erreur interne est survenue.",

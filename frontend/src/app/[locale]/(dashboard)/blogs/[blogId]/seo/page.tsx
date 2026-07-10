@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { Search, Globe, Share2, Eye } from 'lucide-react';
+import { Search, Globe, Share2, Eye, Bot } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
@@ -28,6 +28,7 @@ export default function SeoPage() {
     seo_title_template:   '',
     seo_meta_description: '',
     og_image_url:         '',
+    robots_txt:           '',
   });
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function SeoPage() {
         seo_title_template:   tenant.seo_title_template ?? '{title} | {blog_name}',
         seo_meta_description: tenant.seo_meta_description ?? '',
         og_image_url:         (tenant as any).og_image_url ?? '',
+        robots_txt:           tenant.robots_txt ?? '',
       });
     }
   }, [tenant]);
@@ -44,6 +46,7 @@ export default function SeoPage() {
     mutationFn: () => tenantsApi.update(blogId, {
       seo_title_template:   form.seo_title_template   || undefined,
       seo_meta_description: form.seo_meta_description || undefined,
+      robots_txt:           form.robots_txt           || undefined,
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['tenant', blogId] });
@@ -152,6 +155,29 @@ export default function SeoPage() {
             </div>
           ))}
         </div>
+      </StudioSection>
+
+      <StudioSection id="robots" title={ts('seoRobotsTitle')} icon={<Bot className="h-3.5 w-3.5" />} defaultOpen={false}>
+        <StudioField label={ts('seoRobotsLabel')} hint={ts('seoRobotsHint')}>
+          <StudioInput
+            value={form.robots_txt}
+            onChange={v => setForm(f => ({ ...f, robots_txt: v }))}
+            placeholder={`User-agent: *\nAllow: /\nSitemap: https://${tenant?.slug ?? 'blog'}.nexusblog.io/sitemap.xml`}
+            multiline
+            rows={8}
+          />
+          <div className="flex items-center justify-between mt-1.5">
+            <p className="text-[11px] text-slate-400">{ts('seoRobotsViewHint')}</p>
+            <a
+              href={`https://${tenant?.slug ?? ''}.nexusblog.io/robots.txt`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] font-semibold text-blue-600 hover:underline"
+            >
+              {ts('seoView')} robots.txt ↗
+            </a>
+          </div>
+        </StudioField>
       </StudioSection>
     </BlogStudioShell>
   );

@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Loader2, CheckCircle2 } from 'lucide-react';
+import { Loader2, CheckCircle2, Gift } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,12 +33,26 @@ interface RegisterFormProps {
 export function RegisterForm({ locale }: RegisterFormProps) {
   const t = useTranslations('auth.register');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
   const setAuth = useAuthStore((s) => s.setAuth);
 
   const [googleLoading, setGoogleLoading] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [refCode, setRefCode] = useState<string | null>(null);
+
+  // Capture le code de parrainage depuis ?ref= et le persiste en localStorage
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      localStorage.setItem('nexusblog_ref', ref.toUpperCase());
+      setRefCode(ref.toUpperCase());
+    } else {
+      const stored = localStorage.getItem('nexusblog_ref');
+      if (stored) setRefCode(stored);
+    }
+  }, [searchParams]);
 
   const {
     register,
@@ -60,6 +74,7 @@ export function RegisterForm({ locale }: RegisterFormProps) {
       console.log('[Register] starting for', email);
       await registerWithEmail(email, password, name);
       console.log('[Register] success, showing verification screen');
+      // Le code ref reste en localStorage — il sera utilisé à la création du premier blog
       setVerificationEmail(email);
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code ?? '';
@@ -127,6 +142,16 @@ export function RegisterForm({ locale }: RegisterFormProps) {
 
   return (
     <div className="w-full space-y-6">
+      {/* Badge parrainage */}
+      {refCode && (
+        <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
+          <Gift className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <p className="text-[12px] text-emerald-700 dark:text-emerald-300 font-medium">
+            Code de parrainage actif : <strong className="font-bold">{refCode}</strong>
+          </p>
+        </div>
+      )}
+
       {/* Google */}
       <Button
         type="button"

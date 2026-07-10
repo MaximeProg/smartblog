@@ -3,6 +3,7 @@ import math
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_, update
+import structlog
 
 from app.models.article import Article, ArticleVersion, Category, Tag, ArticleTag
 from app.models.tenant import Tenant
@@ -17,6 +18,8 @@ from app.schemas.article import (
     CreateArticleRequest, UpdateArticleRequest,
     ArticleResponse, ArticleListItem, ArticleAuthor, ArticleVersionResponse,
 )
+
+logger = structlog.get_logger()
 
 
 def _estimate_reading_time(content: str | None) -> tuple[int, int]:
@@ -403,6 +406,13 @@ async def change_status(
 
     await db.commit()
     await db.refresh(article)
+
+    # Post-publish hooks: ES indexing + push FCM
+    if old_status != ArticleStatus.PUBLISHED and new_status == ArticleStatus.PUBLISHED:
+        await _on_article_published(db, tenant_id, article)
+    elif old_status == ArticleStatus.PUBLISHED and new_status != ArticleStatus.PUBLISHED:
+        await _on_article_unpublished(db, tenant_id, article)
+
     return await _build_response(db, article)
 
 
@@ -506,3 +516,159 @@ async def list_versions(
         )
         for v in result.scalars().all()
     ]
+
+
+# ── Post-publish hooks ─────────────────────────────────────────────────────────
+
+async def _on_article_published(
+    db: AsyncSession,
+    tenant_id: uuid.UUID,
+    article: Article,
+) -> None:
+    """Indexation ES + notification push FCM — ne bloque jamais la réponse API."""
+    try:
+        tenant_res = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
+        tenant = tenant_res.scalar_one_or_none()
+        if not tenant:
+            return
+
+        # 1. Elasticsearch indexation
+        try:
+            from app.services.search_service import index_article
+            await index_article(tenant.slug, {
+                "id": str(article.id),
+                "tenant_id": str(article.tenant_id),
+                "title": article.title,
+                "slug": article.slug,
+                "excerpt": article.excerpt or "",
+                "content": article.content or "",
+                "article_type": article.article_type.value if article.article_type else None,
+                "status": article.status.value,
+                "visibility": article.visibility.value if article.visibility else None,
+                "category_id": str(article.category_id) if article.category_id else None,
+                "author_id": str(article.author_id) if article.author_id else None,
+                "cover_image_url": article.cover_image_url,
+                "reading_time_minutes": article.reading_time_minutes or 0,
+                "views_count": article.views_count or 0,
+                "likes_count": article.likes_count or 0,
+                "published_at": article.published_at.isoformat() if article.published_at else None,
+            })
+        except Exception as exc:
+            logger.warning("ES indexing failed", article_id=str(article.id), error=str(exc))
+
+        # 2. Email de notification à l'auteur (si différent du publisher)
+        try:
+            from app.models.user import User
+            from app.core.config import settings
+            from app.services.email_service import send_article_published_notification
+
+            if article.author_id:
+                author_res = await db.execute(select(User).where(User.id == article.author_id))
+                author = author_res.scalar_one_or_none()
+                if author and author.email:
+                    article_url = (
+                        f"https://{tenant.slug}.{settings.PLATFORM_DOMAIN}/{article.slug}"
+                    )
+                    await send_article_published_notification(
+                        to=author.email,
+                        article_title=article.title,
+                        article_url=article_url,
+                    )
+        except Exception as exc:
+            logger.warning("Article published email failed", article_id=str(article.id), error=str(exc))
+
+        # 3. Push FCM à tous les abonnés du tenant
+        try:
+            from app.models.push import PushToken
+            from app.api.v1.push import _send_fcm, SendNotificationRequest
+            from app.core.config import settings
+
+            tokens_res = await db.execute(
+                select(PushToken).where(
+                    PushToken.tenant_id == tenant_id,
+                    PushToken.is_active == True,
+                )
+            )
+            tokens = [pt.token for pt in tokens_res.scalars().all()]
+
+            if tokens:
+                article_url = (
+                    f"https://{tenant.slug}.{settings.PLATFORM_DOMAIN}"
+                    f"/articles/{article.slug}"
+                )
+                notif_req = SendNotificationRequest(
+                    title=article.title,
+                    body=article.excerpt or "Nouvel article publié",
+                    image_url=article.cover_image_url,
+                    click_url=article_url,
+                    article_id=str(article.id),
+                )
+                await _send_fcm(tokens, notif_req, "auto-publish")
+        except Exception as exc:
+            logger.warning("Push FCM failed", article_id=str(article.id), error=str(exc))
+
+        # 3. Auto-post to connected social accounts
+        try:
+            from app.models.social import SocialAccount, SocialPost
+            from app.models.enums import SocialPostStatus
+            from app.core.arq_pool import get_arq_pool
+            from app.core.config import settings as _cfg
+
+            accts_res = await db.execute(
+                select(SocialAccount).where(
+                    SocialAccount.tenant_id == tenant_id,
+                    SocialAccount.is_active == True,
+                    SocialAccount.auto_post_enabled == True,
+                )
+            )
+            social_accounts = accts_res.scalars().all()
+
+            if social_accounts:
+                article_url = (
+                    f"https://{tenant.slug}.{_cfg.PLATFORM_DOMAIN}/{article.slug}"
+                )
+                content = f"{article.title}\n\n{article.excerpt or ''}\n\n{article_url}".strip()
+                pool = await get_arq_pool()
+
+                for acct in social_accounts:
+                    post = SocialPost(
+                        tenant_id=tenant_id,
+                        social_account_id=acct.id,
+                        article_id=article.id,
+                        created_by=article.author_id,
+                        platform=acct.platform,
+                        content=content,
+                        status=SocialPostStatus.PENDING,
+                        extra={
+                            "article_url": article_url,
+                            "title": article.title,
+                            "excerpt": article.excerpt,
+                            "cover_url": article.cover_image_url,
+                        },
+                    )
+                    db.add(post)
+                    await db.flush()
+                    await pool.enqueue_job("publish_to_social", post_id=str(post.id))
+
+                await db.commit()
+        except Exception as exc:
+            logger.warning("Auto-social-post failed", article_id=str(article.id), error=str(exc))
+
+    except Exception as exc:
+        logger.warning("_on_article_published hooks failed", article_id=str(article.id), error=str(exc))
+
+
+async def _on_article_unpublished(
+    db: AsyncSession,
+    tenant_id: uuid.UUID,
+    article: Article,
+) -> None:
+    """Désindexe l'article d'Elasticsearch quand il est dépublié/archivé."""
+    try:
+        tenant_res = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
+        tenant = tenant_res.scalar_one_or_none()
+        if tenant:
+            from app.services.search_service import delete_article
+            await delete_article(tenant.slug, str(article.id))
+    except Exception as exc:
+        logger.warning("ES deindex failed", article_id=str(article.id), error=str(exc))

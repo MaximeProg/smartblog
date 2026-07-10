@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useAuthStore } from '@/store/auth.store';
-import { authApi } from '@/lib/api';
+import { authApi, twoFactorApi } from '@/lib/api';
 import { signInWithEmail, signInWithGoogle, resendVerificationEmail } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
@@ -36,10 +36,15 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
   const { toast } = useToast();
   const setAuth = useAuthStore((s) => s.setAuth);
 
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-  const [showResend, setShowResend] = useState(false);
-  const [resendLoading, setResendLoading] = useState(false);
+  const [googleLoading, setGoogleLoading]   = useState(false);
+  const [formError, setFormError]           = useState<string | null>(null);
+  const [showResend, setShowResend]         = useState(false);
+  const [resendLoading, setResendLoading]   = useState(false);
+  // 2FA
+  const [needs2FA, setNeeds2FA]             = useState(false);
+  const [firebaseToken, setFirebaseToken]   = useState('');
+  const [twoFACode, setTwoFACode]           = useState('');
+  const [twoFALoading, setTwoFALoading]     = useState(false);
 
   const {
     register,
@@ -50,12 +55,28 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
 
   async function handleBackendLogin(idToken: string) {
     const { data } = await authApi.login(idToken);
+    if (data.requires_2fa) {
+      setFirebaseToken(idToken);
+      setNeeds2FA(true);
+      return;
+    }
     const tenants = data.tenants ?? [];
     setAuth(data.user, tenants, data.access_token);
-    if (callbackUrl) {
-      router.push(callbackUrl);
-    } else {
-      router.push(`/${locale}/dashboard`);
+    router.push(callbackUrl ?? `/${locale}/dashboard`);
+  }
+
+  async function handle2FASubmit() {
+    setFormError(null);
+    setTwoFALoading(true);
+    try {
+      const { data } = await twoFactorApi.login(firebaseToken, twoFACode.replace(/\s/g, ''));
+      const tenants = data.tenants ?? [];
+      setAuth(data.user, tenants, data.access_token);
+      router.push(callbackUrl ?? `/${locale}/dashboard`);
+    } catch {
+      setFormError(t('errors.invalid2FA'));
+    } finally {
+      setTwoFALoading(false);
     }
   }
 
@@ -123,6 +144,59 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
       setGoogleLoading(false);
     }
   };
+
+  // ── Écran 2FA ────────────────────────────────────────────────────────
+  if (needs2FA) {
+    return (
+      <div className="w-full space-y-5">
+        <div className="text-center space-y-1">
+          <div className="mx-auto h-12 w-12 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-3">
+            <svg className="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+            </svg>
+          </div>
+          <p className="text-[14px] font-bold text-slate-900 dark:text-slate-100">{t('twoFATitle')}</p>
+          <p className="text-[12px] text-slate-500 dark:text-slate-400">{t('twoFADesc')}</p>
+        </div>
+
+        <div>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={twoFACode}
+            onChange={e => setTwoFACode(e.target.value.replace(/[^0-9 ]/g, '').slice(0, 7))}
+            placeholder="000 000"
+            maxLength={7}
+            autoFocus
+            className="w-full h-14 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[26px] font-mono tracking-[0.4em] text-center text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
+          />
+        </div>
+
+        {formError && (
+          <div className="rounded-md bg-destructive/10 border border-destructive/30 px-3 py-2 text-sm text-destructive">
+            {formError}
+          </div>
+        )}
+
+        <Button
+          onClick={handle2FASubmit}
+          disabled={twoFACode.replace(/\s/g,'').length < 6 || twoFALoading}
+          className="w-full"
+        >
+          {twoFALoading && <Loader2 className="h-4 w-4 animate-spin" />}
+          {t('twoFAVerify')}
+        </Button>
+
+        <button
+          type="button"
+          onClick={() => { setNeeds2FA(false); setFirebaseToken(''); setTwoFACode(''); setFormError(null); }}
+          className="w-full text-[12px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+        >
+          ← {t('twoFABack')}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-6">

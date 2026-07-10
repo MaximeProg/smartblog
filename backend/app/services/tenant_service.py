@@ -175,6 +175,14 @@ async def create_tenant(
     # Seed pages + menus par défaut selon le template choisi
     await seed_blog(db, tenant.id, data.name, data.theme or "minimal")
 
+    # Enregistre le parrainage si un code de référence est fourni
+    if data.referral_code:
+        try:
+            from app.api.v1.affiliate import register_referral
+            await register_referral(db, tenant.id, data.referral_code)
+        except Exception:
+            pass  # Le referral ne doit jamais bloquer la création
+
     # Invalide le cache slug si existait (Redis optionnel)
     try:
         await redis.delete(key_tenant_slug(data.slug))
@@ -313,6 +321,11 @@ def build_tenant_response(tenant: Tenant, include_limits: bool = False, include_
         pwa_enabled=tenant.pwa_enabled,
         social_links=tenant.social_links or {},
         template_config=tenant.template_config,
+        seo_title_template=tenant.seo_title_template,
+        seo_meta_description=tenant.seo_meta_description,
+        robots_txt=tenant.robots_txt,
+        trial_ends_at=tenant.trial_ends_at,
+        plan_expires_at=tenant.plan_expires_at,
         limits=limits,
         usage=usage,
     )

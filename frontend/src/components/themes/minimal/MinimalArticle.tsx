@@ -9,6 +9,7 @@ import { MinimalHeader, MinimalFooter } from './MinimalShared';
 import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
+import { useBookmark } from '@/hooks/useBookmark';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -110,6 +111,7 @@ export default function MinimalArticle({
   const [imgErr, setImgErr] = useState(false);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
+  const { bookmarked, toggle: toggleBookmark } = useBookmark(article.slug, article.title, blog.slug);
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
 
@@ -278,14 +280,23 @@ export default function MinimalArticle({
 
         {showShare && (
         <div className="flex items-center justify-between mt-6 text-sm text-zinc-400 flex-wrap gap-3">
-          <button
-            onClick={handleLike}
-            className={`flex items-center gap-1.5 transition-colors ${liked ? 'text-red-500' : 'hover:text-zinc-700'}`}
-          >
-            <span>{liked ? '♥' : '♡'}</span>
-            <span>{likeCount}</span>
-            <span>· {article.views_count.toLocaleString()} views</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleLike}
+              className={`flex items-center gap-1.5 transition-colors ${liked ? 'text-red-500' : 'hover:text-zinc-700'}`}
+            >
+              <span>{liked ? '♥' : '♡'}</span>
+              <span>{likeCount}</span>
+              <span>· {article.views_count.toLocaleString()} views</span>
+            </button>
+            <button
+              onClick={toggleBookmark}
+              className={`flex items-center gap-1 transition-colors ${bookmarked ? 'text-zinc-900' : 'hover:text-zinc-700'}`}
+            >
+              <span>{bookmarked ? '🔖' : '☆'}</span>
+              <span>{bookmarked ? 'Saved' : 'Save'}</span>
+            </button>
+          </div>
 
           <ShareButtons url={articleUrl} title={article.title} primaryColor={primaryColor} />
         </div>

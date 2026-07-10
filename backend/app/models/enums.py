@@ -170,3 +170,55 @@ class DomainVerificationStatus(str, enum.Enum):
     PENDING = "pending"
     VERIFIED = "verified"
     FAILED = "failed"
+
+
+# ── M23 — Affiliate Program ───────────────────────────────────────
+
+class AffiliateCommissionSource(str, enum.Enum):
+    SUBSCRIPTION = "subscription"
+    AD_SLOT = "ad_slot"
+
+
+class AffiliateCommissionStatus(str, enum.Enum):
+    PENDING = "pending"
+    READY = "ready"
+    PAID = "paid"
+    CANCELLED = "cancelled"
+
+
+class CashoutStatus(str, enum.Enum):
+    REQUESTED = "requested"
+    PROCESSING = "processing"
+    PAID = "paid"
+    FAILED = "failed"
+    REJECTED = "rejected"
+
+
+# ── M24 — Accounting (Singapore SFRS) ────────────────────────────
+
+class AccountType(str, enum.Enum):
+    ASSET = "asset"
+    LIABILITY = "liability"
+    EQUITY = "equity"
+    REVENUE = "revenue"
+    EXPENSE = "expense"
+
+
+class JournalType(str, enum.Enum):
+    SALES = "sales"
+    PURCHASES = "purchases"
+    BANK = "bank"
+    OD = "od"
+
+
+class JournalEntryStatus(str, enum.Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REVERSED = "reversed"
+
+
+class JournalEntrySource(str, enum.Enum):
+    STRIPE_WEBHOOK = "stripe_webhook"
+    PAYPAL_WEBHOOK = "paypal_webhook"
+    AFFILIATE = "affiliate"
+    MANUAL = "manual"

@@ -56,10 +56,18 @@ class Settings(BaseSettings):
     PAYPAL_CLIENT_SECRET: str = ""
     PAYPAL_MODE: Literal["sandbox", "live"] = "sandbox"
 
-    # Email
+    # Email (Resend)
     RESEND_API_KEY: str = ""
     EMAIL_FROM_NAME: str = "NexusBlog"
     EMAIL_FROM_ADDRESS: str = "noreply@nexusblog.io"
+    # Adresse autorisée par Resend sans domaine vérifié (= email du compte Resend)
+    RESEND_TEST_RECIPIENT: str = ""
+
+    # Web Push (VAPID)
+    # Génération : python -c "from pywebpush import Vapid; v=Vapid(); v.generate_keys(); print('PRIV:', v.private_key_pem.decode()); print('PUB:', v.public_key_pem.decode())"
+    VAPID_PRIVATE_KEY: str = ""
+    VAPID_PUBLIC_KEY: str = ""
+    VAPID_CLAIMS_EMAIL: str = "mailto:admin@nexusblog.io"
 
     # AI
     OPENAI_API_KEY: str = ""
@@ -71,6 +79,17 @@ class Settings(BaseSettings):
     # Sécurité liens pub
     GOOGLE_SAFE_BROWSING_API_KEY: str = ""
     VIRUSTOTAL_API_KEY: str = ""
+
+    # Social OAuth
+    FRONTEND_URL: str = "http://localhost:3000"
+    FACEBOOK_APP_ID: str = ""
+    FACEBOOK_APP_SECRET: str = ""
+    LINKEDIN_CLIENT_ID: str = ""
+    LINKEDIN_CLIENT_SECRET: str = ""
+    TWITTER_CLIENT_ID: str = ""
+    TWITTER_CLIENT_SECRET: str = ""
+    TIKTOK_CLIENT_KEY: str = ""
+    TIKTOK_CLIENT_SECRET: str = ""
 
     # Plateforme
     PLATFORM_DOMAIN: str = "nexusblog.io"

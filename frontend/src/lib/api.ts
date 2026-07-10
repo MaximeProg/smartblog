@@ -170,6 +170,57 @@ export const authApi = {
     api.patch<UserInfo>('/auth/me', data),
 
   notifications: () => api.get<NotificationItem[]>('/auth/me/notifications'),
+
+  notificationsCount: () =>
+    api.get<{ unread: number; total: number }>('/auth/me/notifications/count'),
+
+  savePushSubscription: (sub: { endpoint: string; keys: { p256dh: string; auth: string } }) =>
+    api.post('/auth/me/push-subscription', sub),
+
+  deletePushSubscription: (endpoint: string) =>
+    api.delete('/auth/me/push-subscription', { data: { endpoint } }),
+
+  getVapidPublicKey: () =>
+    api.get<{ public_key: string }>('/auth/me/push-vapid-public-key'),
+
+  testEmail: () =>
+    api.post<{ ok: boolean; sent_to: string }>('/auth/me/test-email'),
+
+  testPush: () =>
+    api.post<{ ok: boolean; subscriptions: number }>('/auth/me/test-push'),
+
+  uploadAvatar: (file: File) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    return api.post<UserInfo>('/auth/me/avatar', fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+};
+
+// ─── Two-Factor Authentication ─────────────────────────────────────────────────
+
+export interface TwoFASetupResponse {
+  otpauth_uri: string;
+  qr_code_svg: string;
+  backup_codes: string[];
+}
+
+export const twoFactorApi = {
+  /** Génère le secret TOTP + QR code SVG (utilisateur connecté) */
+  setup: () => api.post<TwoFASetupResponse>('/auth/2fa/setup'),
+
+  /** Active le 2FA après vérification du premier code (utilisateur connecté) */
+  enable: (code: string) =>
+    api.post<{ message: string }>('/auth/2fa/verify', { code }),
+
+  /** Désactive le 2FA (utilisateur connecté, code requis) */
+  disable: (code: string) =>
+    api.delete<{ message: string }>('/auth/2fa', { data: { code } }),
+
+  /** Finalise la connexion quand requires_2fa = true */
+  login: (firebase_id_token: string, code: string) =>
+    api.post<LoginResponse>('/auth/2fa/login', { firebase_id_token, code }),
 };
 
 // ─── Tenants ──────────────────────────────────────────────────────────────────
@@ -305,6 +356,18 @@ export const newsletterApi = {
 
   sendCampaign: (tenantId: string, campaignId: string) =>
     api.post<NewsletterCampaign>(`/tenants/${tenantId}/newsletter/campaigns/${campaignId}/send`),
+
+  testCampaign: (tenantId: string, campaignId: string, toEmail: string) =>
+    api.post<void>(`/tenants/${tenantId}/newsletter/campaigns/${campaignId}/test`, { to_email: toEmail }),
+
+  importSubscribers: (tenantId: string, file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    return api.post<{ imported: number; skipped: number; errors: number }>(
+      `/tenants/${tenantId}/newsletter/subscribers/import`,
+      form,
+    );
+  },
 };
 
 // ─── Tags ─────────────────────────────────────────────────────────────────────
@@ -448,6 +511,14 @@ export const socialApi = {
 
   publishNow: (tenantId: string, postId: string) =>
     api.post<SocialPostInfo>(`/tenants/${tenantId}/social/posts/${postId}/publish`),
+
+  getOAuthConnectUrl: (tenantId: string, platform: string) =>
+    api.get<{ url: string }>(`/tenants/${tenantId}/social/oauth/${platform}/connect`),
+
+  toggleAutoPost: (tenantId: string, accountId: string, enabled: boolean) =>
+    api.patch<SocialAccountInfo>(`/tenants/${tenantId}/social/accounts/${accountId}/auto-post`, {
+      auto_post_enabled: enabled,
+    }),
 };
 
 // ─── Engagement public (likes, partages, commentaires anonymes) ────────────────
@@ -544,4 +615,156 @@ export const adsApi = {
 
   resume: (tenantId: string, adId: string) =>
     api.post<AdResponse>(`/tenants/${tenantId}/ads/${adId}/resume`),
+};
+
+// ── M23 — Affiliate API ───────────────────────────────────────────────────────
+
+export interface AffiliateDashboard {
+  affiliate_code: string;
+  referral_url: string;
+  balance: number;
+  cashout_threshold: number;
+  can_cashout: boolean;
+  total_earned: number;
+  total_paid_out: number;
+  total_referrals: number;
+  pending_commissions: number;
+}
+
+export interface AffiliateCommission {
+  id: string;
+  source_type: string;
+  source_transaction_id: string;
+  level: number;
+  gross_amount: number;
+  commission_amount: number;
+  status: string;
+  created_at: string;
+  paid_at: string | null;
+}
+
+export interface CashoutRequest {
+  id: string;
+  gross_amount: number;
+  fee: number;
+  net_amount: number;
+  status: string;
+  payout_method: string | null;
+  requested_at: string;
+  processed_at: string | null;
+}
+
+export const affiliateApi = {
+  getDashboard: (tenantId: string) =>
+    api.get<AffiliateDashboard>(`/tenants/${tenantId}/affiliate`),
+
+  listCommissions: (tenantId: string, params?: { status?: string; limit?: number; offset?: number }) =>
+    api.get<AffiliateCommission[]>(`/tenants/${tenantId}/affiliate/commissions`, { params }),
+
+  listCashouts: (tenantId: string) =>
+    api.get<CashoutRequest[]>(`/tenants/${tenantId}/affiliate/cashouts`),
+
+  requestCashout: (tenantId: string, payout_method: string = 'stripe') =>
+    api.post<CashoutRequest>(`/tenants/${tenantId}/affiliate/cashout`, { payout_method }),
+};
+
+// ── M24 — Accounting API ──────────────────────────────────────────────────────
+
+export interface ChartAccount {
+  code: string;
+  name: string;
+  account_class: number;
+  account_type: string;
+  parent_code: string | null;
+  is_active: boolean;
+  is_system: boolean;
+  description: string | null;
+}
+
+export interface JournalLine {
+  id: string;
+  line_number: number;
+  account_code: string;
+  account_name: string;
+  debit: number;
+  credit: number;
+  description: string | null;
+}
+
+export interface JournalEntry {
+  id: string;
+  entry_number: number;
+  journal_type: string;
+  reference: string | null;
+  description: string;
+  entry_date: string;
+  status: string;
+  source_type: string | null;
+  source_id: string | null;
+  created_by: string;
+  approved_by: string | null;
+  created_at: string;
+  approved_at: string | null;
+  lines: JournalLine[];
+  total_debit: number;
+  total_credit: number;
+}
+
+export const accountingApi = {
+  listAccounts: (params?: { account_class?: number; active_only?: boolean }) =>
+    api.get<ChartAccount[]>('/accounting/chart-of-accounts', { params }),
+
+  createAccount: (data: { code: string; name: string; account_class: number; account_type: string; parent_code?: string; description?: string }) =>
+    api.post<ChartAccount>('/accounting/chart-of-accounts', data),
+
+  toggleAccount: (code: string) =>
+    api.patch<{ code: string; is_active: boolean }>(`/accounting/chart-of-accounts/${code}/toggle`),
+
+  listEntries: (params?: { status?: string; journal_type?: string; date_from?: string; date_to?: string; limit?: number; offset?: number }) =>
+    api.get<JournalEntry[]>('/accounting/entries', { params }),
+
+  getEntry: (entryId: string) =>
+    api.get<JournalEntry>(`/accounting/entries/${entryId}`),
+
+  createEntry: (data: { journal_type: string; description: string; entry_date: string; reference?: string; lines: Array<{ account_code: string; debit: number; credit: number; description?: string }> }) =>
+    api.post<JournalEntry>('/accounting/entries', data),
+
+  approveEntry: (entryId: string) =>
+    api.post<{ status: string; entry_number: number }>(`/accounting/entries/${entryId}/approve`),
+
+  reverseEntry: (entryId: string, reason: string) =>
+    api.post<JournalEntry>(`/accounting/entries/${entryId}/reverse`, null, { params: { reason } }),
+};
+
+// ── Domains API ───────────────────────────────────────────────────────────────
+
+export interface CustomDomainInfo {
+  id: string;
+  domain: string;
+  verification_status: 'pending' | 'verified' | 'failed';
+  ssl_enabled: boolean;
+  created_at: string;
+  verified_at: string | null;
+  verification_token: string;
+}
+
+export const domainsApi = {
+  list: (tenantId: string) =>
+    api.get<CustomDomainInfo[]>(`/tenants/${tenantId}/domains`),
+
+  add: (tenantId: string, domain: string) =>
+    api.post<CustomDomainInfo>(`/tenants/${tenantId}/domains`, { domain }),
+
+  verify: (tenantId: string, domainId: string) =>
+    api.post<CustomDomainInfo>(`/tenants/${tenantId}/domains/${domainId}/verify`),
+
+  remove: (tenantId: string, domainId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/domains/${domainId}`),
+};
+
+// ─── AI ───────────────────────────────────────────────────────────────────────
+
+export const aiApi = {
+  tts: (tenantId: string, data: { text: string; article_id?: string; voice_id?: string }) =>
+    api.post<{ audio_url: string }>(`/tenants/${tenantId}/ai/tts`, data),
 };

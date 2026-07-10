@@ -30,6 +30,7 @@ class SocialAccount(Base):
     token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    auto_post_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     scopes: Mapped[list | None] = mapped_column(JSONB)
     extra: Mapped[dict | None] = mapped_column(JSONB)
 

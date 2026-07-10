@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Eye, Users, Clock, TrendingUp, Globe } from 'lucide-react';
+import { Eye, Users, Clock, TrendingUp, Globe, MapPin } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { analyticsApi, tenantsApi } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
@@ -189,6 +189,82 @@ export default function AnalyticsPage() {
                     <span className="text-[12px] font-semibold text-slate-400 dark:text-slate-500 shrink-0">{ref.visits}</span>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Country breakdown */}
+          {analytics?.countries && Object.keys(analytics.countries).length > 0 && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700/60">
+                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{ts('analyticsCountries')}</p>
+              </div>
+              <div className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                {(() => {
+                  const entries = Object.entries(analytics.countries as Record<string, number>)
+                    .sort(([, a], [, b]) => b - a);
+                  const maxVal = entries[0]?.[1] ?? 1;
+                  return entries.slice(0, 8).map(([code, count]) => (
+                    <div key={code} className="flex items-center gap-3 px-5 py-3">
+                      <MapPin className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                      <span className="text-[12px] font-semibold text-slate-700 dark:text-slate-300 w-8 shrink-0 uppercase">{code}</span>
+                      <div className="flex-1 h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-blue-400 dark:bg-blue-500 rounded-full"
+                          style={{ width: `${(count / maxVal) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-[12px] font-semibold text-slate-400 dark:text-slate-500 shrink-0 w-12 text-right">{count}</span>
+                    </div>
+                  ));
+                })()}
+              </div>
+            </div>
+          )}
+
+          {/* Device breakdown */}
+          {analytics?.devices && Object.keys(analytics.devices).length > 0 && (
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden lg:col-span-2">
+              <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700/60">
+                <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{ts('analyticsDevices')}</p>
+              </div>
+              <div className="px-5 py-5">
+                {(() => {
+                  const entries = Object.entries(analytics.devices as Record<string, number>)
+                    .sort(([, a], [, b]) => b - a);
+                  const total = entries.reduce((s, [, v]) => s + v, 0);
+                  const COLORS: Record<string, string> = {
+                    desktop: 'bg-blue-500',
+                    mobile:  'bg-violet-500',
+                    tablet:  'bg-emerald-500',
+                  };
+                  return (
+                    <div className="space-y-3">
+                      {/* Stacked bar */}
+                      <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
+                        {entries.map(([type, count]) => (
+                          <div
+                            key={type}
+                            className={`${COLORS[type] ?? 'bg-slate-400'} transition-all`}
+                            style={{ width: `${(count / total) * 100}%` }}
+                            title={`${type}: ${count}`}
+                          />
+                        ))}
+                      </div>
+                      {/* Legend */}
+                      <div className="flex flex-wrap gap-4 mt-3">
+                        {entries.map(([type, count]) => (
+                          <div key={type} className="flex items-center gap-2">
+                            <div className={`h-2.5 w-2.5 rounded-full ${COLORS[type] ?? 'bg-slate-400'}`} />
+                            <span className="text-[12px] text-slate-600 dark:text-slate-400 capitalize">{type}</span>
+                            <span className="text-[12px] font-semibold text-slate-800 dark:text-slate-200">{count}</span>
+                            <span className="text-[11px] text-slate-400">({Math.round((count / total) * 100)}%)</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           )}

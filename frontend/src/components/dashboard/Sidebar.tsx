@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -10,11 +9,11 @@ import {
   PanelTop, PanelBottom,
   BarChart2, Search, ArrowLeft, ExternalLink,
   Zap, Plus, ChevronDown, ChevronRight, Settings,
-  LogOut, Users,
+  LogOut, Users, Globe, X,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useAuthStore, useCurrentTenant } from '@/store/auth.store';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useUIStore } from '@/store/ui.store';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -85,10 +84,22 @@ function SectionLabel({ label }: { label: string }) {
   );
 }
 
+function UserAvatar({ avatarUrl, initials }: { avatarUrl?: string | null; initials: string }) {
+  if (avatarUrl) {
+    return <img src={avatarUrl} alt="avatar" className="h-6 w-6 rounded-full object-cover shrink-0" />;
+  }
+  return (
+    <div className="h-6 w-6 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-[9px] font-bold shrink-0">
+      {initials}
+    </div>
+  );
+}
+
 export function Sidebar({ locale, blogId }: SidebarProps) {
   const router = useRouter();
   const { tenants, setCurrentTenant, user, clearAuth } = useAuthStore();
   const currentTenant = useCurrentTenant();
+  const { mobileBlogSidebarOpen, closeBlogSidebar } = useUIStore();
   const t = useTranslations('blogNav');
 
   const base = `/${locale}/blogs/${blogId}`;
@@ -123,6 +134,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
 
   const teamItems: NavItem[] = [
     { href: 'collaborators', icon: Users, label: t('collaborators') },
+    { href: 'domains',       icon: Globe, label: t('domains') },
   ];
 
   const planKey  = (currentTenant?.plan ?? 'free').toLowerCase();
@@ -132,22 +144,30 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
     try { await authApi.logout(); } catch {}
     try { await firebaseSignOut(); } catch {}
     clearAuth();
+    closeBlogSidebar();
     router.push(`/${locale}/login`);
   };
 
-  return (
-    <aside className="h-screen w-[260px] shrink-0 flex flex-col border-r border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden z-30">
+  const handleNavClick = () => closeBlogSidebar();
+
+  const sidebarContent = (
+    <aside className="h-full w-[260px] flex flex-col border-r border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
 
       {/* Logo + retour */}
       <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-100 dark:border-slate-700 px-4">
-        <Link href={`/${locale}/dashboard`} className="flex items-center gap-2.5 group min-w-0">
+        <Link href={`/${locale}/dashboard`} onClick={handleNavClick} className="flex items-center gap-2.5 group min-w-0">
           <div className="h-7 w-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm font-black shadow-sm shrink-0">N</div>
           <span className="font-extrabold text-sm tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition-colors truncate">NexusBlog</span>
         </Link>
-        <Link href={`/${locale}/dashboard`} className="shrink-0 flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
-          <ArrowLeft className="h-3 w-3" />
-          {t('back')}
-        </Link>
+        <div className="flex items-center gap-2 shrink-0">
+          <Link href={`/${locale}/dashboard`} onClick={handleNavClick} className="hidden lg:flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+            <ArrowLeft className="h-3 w-3" />
+            {t('back')}
+          </Link>
+          <button onClick={closeBlogSidebar} className="lg:hidden h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
       {/* Blog selector */}
@@ -248,11 +268,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
           onClick={handleSignOut}
           className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 transition-all group"
         >
-          <Avatar className="h-6 w-6 shrink-0">
-            <AvatarFallback className="text-[9px] bg-gradient-to-br from-blue-500 to-violet-500 text-white font-bold">
-              {user ? getInitials(user.display_name ?? user.email) : 'U'}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar avatarUrl={user?.avatar_url} initials={user ? getInitials(user.display_name ?? user.email) : 'U'} />
           <div className="flex-1 min-w-0 text-left">
             <p className="text-[12px] font-semibold truncate text-slate-700 dark:text-slate-300 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors leading-none">
               {user?.display_name ?? user?.email?.split('@')[0] ?? 'User'}
@@ -263,5 +279,20 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
         </button>
       </div>
     </aside>
+  );
+
+  return (
+    <>
+      {mobileBlogSidebarOpen && (
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] lg:hidden" onClick={closeBlogSidebar} />
+      )}
+      <div className={cn(
+        'shrink-0 h-full z-50',
+        'hidden lg:flex',
+        mobileBlogSidebarOpen && 'fixed inset-y-0 left-0 !flex',
+      )}>
+        {sidebarContent}
+      </div>
+    </>
   );
 }

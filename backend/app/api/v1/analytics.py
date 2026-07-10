@@ -23,6 +23,7 @@ class TrackRequest(BaseModel):
     duration_seconds: int | None = None
     scroll_depth_pct: int | None = None
     device_type: str | None = None
+    country_code: str | None = None
 
 
 class OverviewResponse(BaseModel):
@@ -34,6 +35,7 @@ class OverviewResponse(BaseModel):
     top_articles: list[dict]
     top_referrers: list[dict]
     devices: dict
+    countries: dict
 
 
 # ── POST /analytics/track (public) ───────────────────────────────
@@ -56,6 +58,17 @@ async def track(
         except Exception:
             pass
 
+    # Country code: prioritise CDN headers (Cloudflare / Vercel / AWS) then request body
+    country_code = (
+        request.headers.get("CF-IPCountry")         # Cloudflare
+        or request.headers.get("X-Vercel-IP-Country")  # Vercel Edge
+        or request.headers.get("CloudFront-Viewer-Country")  # AWS CloudFront
+        or (body.country_code[:2].upper() if body.country_code else None)
+    )
+    # Cloudflare sends "XX" for unknown, filter it out
+    if country_code in ("XX", "T1", "--", "A1", "A2"):
+        country_code = None
+
     pv = PageView(
         tenant_id=tenant_id,
         article_id=uuid.UUID(body.article_id) if body.article_id else None,
@@ -69,6 +82,7 @@ async def track(
         duration_seconds=body.duration_seconds,
         scroll_depth_pct=body.scroll_depth_pct,
         device_type=body.device_type,
+        country_code=country_code,
     )
     db.add(pv)
 
@@ -162,6 +176,16 @@ async def get_overview(
     """), {"tid": str(tenant_id), "since": since})
     devices = {r.device_type: r.count for r in devs}
 
+    # Pays
+    ctrs = await db.execute(text("""
+        SELECT country_code, COUNT(*) as count
+        FROM page_views
+        WHERE tenant_id = :tid AND created_at >= :since AND country_code IS NOT NULL
+        GROUP BY country_code
+        ORDER BY count DESC LIMIT 15
+    """), {"tid": str(tenant_id), "since": since})
+    countries = {r.country_code: r.count for r in ctrs}
+
     return OverviewResponse(
         period_days=days,
         total_views=total_views,
@@ -171,6 +195,7 @@ async def get_overview(
         top_articles=top_articles,
         top_referrers=top_referrers,
         devices=devices,
+        countries=countries,
     )
 
 

@@ -109,6 +109,30 @@ async def upload_file(
     }
 
 
+async def upload_avatar_image(file: UploadFile, user_id: str) -> dict:
+    """Upload user avatar to Cloudinary (max 5 MB, images only, face-cropped to 256×256)."""
+    from app.core.exceptions import ValidationException
+    _configure()
+
+    content_type = file.content_type or ""
+    if content_type not in ALLOWED_IMAGE_TYPES:
+        raise ValidationException("Seuls les fichiers image sont acceptés pour l'avatar.")
+
+    contents = await file.read()
+    if len(contents) > 5 * 1024 * 1024:
+        raise ValidationException("L'avatar ne doit pas dépasser 5 MB.")
+
+    result = cloudinary.uploader.upload(
+        contents,
+        folder="nexusblog/avatars",
+        public_id=f"user_{user_id}",
+        overwrite=True,
+        resource_type="image",
+        transformation=[{"width": 256, "height": 256, "crop": "fill", "gravity": "face", "quality": "auto", "fetch_format": "auto"}],
+    )
+    return {"secure_url": result.get("secure_url", "")}
+
+
 async def delete_file(public_id: str, resource_type: str = "image") -> None:
     _configure()
     cloudinary.uploader.destroy(public_id, resource_type=resource_type)

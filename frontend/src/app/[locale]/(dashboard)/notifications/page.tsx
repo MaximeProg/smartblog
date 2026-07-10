@@ -1,11 +1,13 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Bell, CheckCheck, Info, AlertTriangle, Zap, Loader2 } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Bell, CheckCheck, Info, AlertTriangle, Zap, Loader2, BellRing, BellOff } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useState, useEffect, useCallback } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { authApi } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 import type { NotificationItem } from '@/types';
 
 const TYPE_CONFIG = {
@@ -26,25 +28,128 @@ function timeAgo(iso: string): string {
   return `${d}d ago`;
 }
 
+// ── Web Push helper ───────────────────────────────────────────────
+
+function urlB64ToUint8Array(base64String: string): ArrayBuffer {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw     = atob(base64);
+  const bytes   = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+  return bytes.buffer as ArrayBuffer;
+}
+
+async function registerPush(vapidKey: string) {
+  const reg = await navigator.serviceWorker.register('/sw.js');
+  await navigator.serviceWorker.ready;
+  const sub = await reg.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlB64ToUint8Array(vapidKey),
+  });
+  const json = sub.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } };
+  await authApi.savePushSubscription(json);
+  return sub;
+}
+
+// ── Read-state persistence (localStorage) ─────────────────────────
+
+const STORAGE_KEY = 'nexusblog:notif-read';
+
+function getReadIds(): Set<string> {
+  if (typeof window === 'undefined') return new Set();
+  try {
+    return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as string[]);
+  } catch {
+    return new Set();
+  }
+}
+
+function persistReadIds(ids: Set<string>) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]));
+  } catch { /* quota exceeded — ignore */ }
+}
+
+// ── Page ──────────────────────────────────────────────────────────
+
 export default function NotificationsPage() {
   const t = useTranslations('notifications');
+  const { toast } = useToast();
   const qc = useQueryClient();
+  const [pushState, setPushState] = useState<'unknown' | 'granted' | 'denied' | 'loading'>('unknown');
+  const [readIds, setReadIds] = useState<Set<string>>(() => getReadIds());
 
-  const { data: notifications = [], isLoading } = useQuery({
+  const { data: rawNotifications = [], isLoading } = useQuery({
     queryKey: ['notifications'],
     queryFn: async () => {
       const { data } = await authApi.notifications();
       return data;
     },
-    staleTime: 60_000,
+    staleTime: 30_000,
+    refetchInterval: 30_000,
   });
+
+  // Merge API data with persisted local read state
+  const notifications = rawNotifications.map(n => ({
+    ...n,
+    read: n.read || readIds.has(n.id),
+  }));
 
   const unread = notifications.filter(n => !n.read).length;
 
+  // Sync badge count cache avec la liste complète
+  useEffect(() => {
+    qc.setQueryData(['notifications-count'], { unread, total: notifications.length });
+  }, [unread, notifications.length, qc]);
+
+  // Détecte l'état push actuel
+  useEffect(() => {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+    setPushState(Notification.permission === 'granted' ? 'granted' : 'unknown');
+  }, []);
+
+  const enablePush = useCallback(async () => {
+    if (!('Notification' in window)) {
+      toast({ variant: 'destructive', title: 'Notifications non supportées dans ce navigateur.' });
+      return;
+    }
+    setPushState('loading');
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') { setPushState('denied'); return; }
+
+      const { data } = await authApi.getVapidPublicKey();
+      if (!data.public_key) throw new Error('No VAPID key');
+
+      await registerPush(data.public_key);
+      setPushState('granted');
+      toast({ title: 'Notifications push activées !' });
+    } catch {
+      setPushState('unknown');
+      toast({ variant: 'destructive', title: 'Impossible d\'activer les notifications push.' });
+    }
+  }, [toast]);
+
+  const disablePush = useCallback(async () => {
+    try {
+      const reg = await navigator.serviceWorker.getRegistration('/sw.js');
+      const sub = await reg?.pushManager.getSubscription();
+      if (sub) {
+        await authApi.deletePushSubscription(sub.endpoint);
+        await sub.unsubscribe();
+      }
+      setPushState('unknown');
+      toast({ title: 'Notifications push désactivées.' });
+    } catch {
+      toast({ variant: 'destructive', title: 'Erreur lors de la désactivation.' });
+    }
+  }, [toast]);
+
   function markAllRead() {
-    qc.setQueryData<NotificationItem[]>(['notifications'], prev =>
-      prev?.map(n => ({ ...n, read: true })) ?? []
-    );
+    const newReadIds = new Set([...readIds, ...notifications.map(n => n.id)]);
+    setReadIds(newReadIds);
+    persistReadIds(newReadIds);
+    qc.setQueryData(['notifications-count'], { unread: 0, total: notifications.length });
   }
 
   return (
@@ -55,25 +160,55 @@ export default function NotificationsPage() {
         <TopBar />
 
         <main className="flex-1 overflow-y-auto">
-          <div className="px-8 py-8 max-w-2xl">
+          <div className="px-8 py-8">
 
             {/* Header */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
               <div>
                 <h2 className="text-[20px] font-black text-slate-900 dark:text-slate-100">{t('title')}</h2>
                 <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-0.5">
                   {unread > 0 ? t('unreadCount', { n: unread }) : t('allRead')}
                 </p>
               </div>
-              {unread > 0 && (
-                <button
-                  onClick={markAllRead}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[12px] font-medium text-slate-600 dark:text-slate-400 transition-colors"
-                >
-                  <CheckCheck className="h-3.5 w-3.5" />
-                  {t('markAllRead')}
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                {/* Bouton Push */}
+                {'Notification' in window && 'serviceWorker' in navigator && (
+                  pushState === 'granted' ? (
+                    <button
+                      onClick={disablePush}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[12px] font-medium text-slate-600 dark:text-slate-400 transition-colors"
+                    >
+                      <BellOff className="h-3.5 w-3.5" />
+                      Désactiver push
+                    </button>
+                  ) : pushState === 'denied' ? (
+                    <span className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                      <BellOff className="h-3 w-3" /> Push bloqué par le navigateur
+                    </span>
+                  ) : (
+                    <button
+                      onClick={enablePush}
+                      disabled={pushState === 'loading'}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-semibold transition-colors disabled:opacity-60"
+                    >
+                      {pushState === 'loading'
+                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        : <BellRing className="h-3.5 w-3.5" />}
+                      Activer les push
+                    </button>
+                  )
+                )}
+
+                {unread > 0 && (
+                  <button
+                    onClick={markAllRead}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[12px] font-medium text-slate-600 dark:text-slate-400 transition-colors"
+                  >
+                    <CheckCheck className="h-3.5 w-3.5" />
+                    {t('markAllRead')}
+                  </button>
+                )}
+              </div>
             </div>
 
             {isLoading ? (

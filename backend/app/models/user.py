@@ -22,6 +22,10 @@ class User(Base):
     display_name: Mapped[str | None] = mapped_column(String(255))
     avatar_url: Mapped[str | None] = mapped_column(Text)
     bio: Mapped[str | None] = mapped_column(Text)
+    phone: Mapped[str | None] = mapped_column(String(30))
+    country: Mapped[str | None] = mapped_column(String(2))   # ISO 3166-1 alpha-2
+    continent: Mapped[str | None] = mapped_column(String(2)) # AF AS EU NA OC SA AN
+    gender: Mapped[str | None] = mapped_column(String(20))   # immuable après saisie
 
     # Abonnement SaaS — le plan est sur le compte utilisateur, pas sur chaque blog
     plan: Mapped[PlanTier] = mapped_column(

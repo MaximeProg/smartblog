@@ -213,19 +213,19 @@ export default function DashboardPage() {
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
       <DashboardSidebar />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         <TopBar />
 
         <main className="flex-1 overflow-y-auto">
-          <div className="px-8 py-8 space-y-8 max-w-[1400px]">
+          <div className="px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8 space-y-6 lg:space-y-8 max-w-[1400px]">
 
             {/* Welcome */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-start sm:items-center justify-between gap-3">
               <div>
-                <h2 className="text-[22px] font-black text-slate-900 dark:text-slate-100 leading-tight">
+                <h2 className="text-[18px] sm:text-[22px] font-black text-slate-900 dark:text-slate-100 leading-tight">
                   {t('greeting', { name: firstName })} 👋
                 </h2>
-                <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-[12px] sm:text-[13px] text-slate-500 dark:text-slate-400 mt-1">
                   {blogsLoading
                     ? t('loadingBlogs')
                     : blogs.length === 0
@@ -237,17 +237,18 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => router.push(`/${locale}/blogs/new`)}
-                className="flex items-center gap-2 h-9 px-5 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors shadow-sm"
+                className="shrink-0 flex items-center gap-2 h-9 px-4 sm:px-5 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[12px] sm:text-[13px] font-semibold transition-colors shadow-sm"
               >
                 <Plus className="h-3.5 w-3.5" />
-                {t('newBlog')}
+                <span className="hidden sm:inline">{t('newBlog')}</span>
+                <span className="sm:hidden">New</span>
               </button>
             </div>
 
             {!blogsLoading && blogs.length > 0 && (
               <>
                 {/* Global stats */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                   {[
                     {
                       label: 'Total views (30d)',
@@ -342,7 +343,7 @@ export default function DashboardPage() {
 
             {/* Blog grid */}
             {blogsLoading ? (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {[1, 2, 3, 4].map(i => <SkeletonCard key={i} />)}
               </div>
             ) : blogs.length === 0 ? (
@@ -361,7 +362,7 @@ export default function DashboardPage() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 {blogs.map((blog, i) => (
                   <BlogCard
                     key={blog.id}

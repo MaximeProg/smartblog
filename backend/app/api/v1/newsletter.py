@@ -1,7 +1,9 @@
 import uuid
 import secrets
+import io
+import csv
 from datetime import datetime, timezone
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, UploadFile, File
 from sqlalchemy import select, func
 from pydantic import BaseModel, EmailStr
 
@@ -22,6 +24,10 @@ class SubscribeRequest(BaseModel):
     first_name: str | None = None
     last_name: str | None = None
     source: str | None = None
+
+
+class TestEmailRequest(BaseModel):
+    to_email: EmailStr
 
 
 class SubscriberResponse(BaseModel):
@@ -210,6 +216,64 @@ async def export_subscribers_csv(
     )
 
 
+@router.post("/subscribers/import")
+async def import_subscribers_csv(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+    file: UploadFile = File(...),
+):
+    """Importe des abonnés depuis un CSV (colonnes : email, first_name?, last_name?)."""
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+
+    content = await file.read()
+    # Support BOM UTF-8
+    text_content = content.decode("utf-8-sig", errors="replace")
+    reader = csv.DictReader(io.StringIO(text_content))
+
+    imported = 0
+    skipped = 0
+    errors = 0
+
+    for row in reader:
+        email = (row.get("email") or "").strip().lower()
+        if not email or "@" not in email:
+            errors += 1
+            continue
+
+        existing = await db.execute(
+            select(NewsletterSubscriber).where(
+                NewsletterSubscriber.tenant_id == tenant_id,
+                NewsletterSubscriber.email == email,
+            )
+        )
+        if existing.scalar_one_or_none():
+            skipped += 1
+            continue
+
+        sub = NewsletterSubscriber(
+            tenant_id=tenant_id,
+            email=email,
+            first_name=(row.get("first_name") or "").strip() or None,
+            last_name=(row.get("last_name") or "").strip() or None,
+            source="import",
+            status=SubscriberStatus.ACTIVE,
+            confirmed_at=datetime.now(timezone.utc),
+            unsubscribe_token=secrets.token_urlsafe(32),
+        )
+        db.add(sub)
+        imported += 1
+
+    if imported > 0:
+        from sqlalchemy import text
+        await db.execute(
+            text("UPDATE tenants SET subscribers_count = subscribers_count + :n WHERE id = :tid"),
+            {"n": imported, "tid": str(tenant_id)},
+        )
+    await db.commit()
+    return {"imported": imported, "skipped": skipped, "errors": errors}
+
+
 @router.get("/subscribers", response_model=list[SubscriberResponse])
 async def list_subscribers(
     tenant_id: uuid.UUID,
@@ -312,8 +376,48 @@ async def send_campaign(
     await db.commit()
     await db.refresh(campaign)
 
-    # TODO: enqueue tâche ARQ pour envoi email batch (sprint 3)
+    # Enqueue tâche ARQ — envoi réel en arrière-plan
+    try:
+        from app.core.arq_pool import get_arq_pool
+        pool = await get_arq_pool()
+        await pool.enqueue_job("send_newsletter_campaign", campaign_id=str(campaign.id))
+    except Exception:
+        pass  # Le statut SENDING permettra un réessai manuel si Redis est indisponible
+
     return _campaign_response(campaign)
+
+
+@router.post("/campaigns/{campaign_id}/test", status_code=204)
+async def test_campaign(
+    tenant_id: uuid.UUID,
+    campaign_id: uuid.UUID,
+    body: TestEmailRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Send a single test email for a campaign without changing its status."""
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+    result = await db.execute(
+        select(NewsletterCampaign).where(
+            NewsletterCampaign.id == campaign_id,
+            NewsletterCampaign.tenant_id == tenant_id,
+        )
+    )
+    campaign = result.scalar_one_or_none()
+    if not campaign:
+        raise NotFoundException("Campagne")
+
+    from app.services.tenant_service import get_tenant
+    from app.services.email_service import send_newsletter_campaign
+    tenant = await get_tenant(db, tenant_id)
+    unsubscribe_url = f"https://{tenant.slug}.nexusblog.io/unsubscribe"
+    await send_newsletter_campaign(
+        to=[body.to_email],
+        from_name=tenant.name,
+        subject=f"[TEST] {campaign.subject}",
+        html=campaign.content_html or f"<p>{campaign.name}</p>",
+        unsubscribe_url=unsubscribe_url,
+    )
 
 
 # ── Helpers ───────────────────────────────────────────────────────

@@ -7,12 +7,12 @@ import {
   ArrowLeft, Save, Send, Archive, Loader2, CheckCircle2,
   Camera, Video, Mic, Radio, Layers, FileText,
   Eye, EyeOff, History, Monitor, Tablet, Smartphone,
-  ThumbsUp, ThumbsDown, Clock,
+  ThumbsUp, ThumbsDown, Clock, Headphones,
 } from 'lucide-react';
 import type { ArticleType, ArticleVersionResponse } from '@/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { articlesApi, categoriesApi } from '@/lib/api';
+import { articlesApi, categoriesApi, aiApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useStudioPreview } from '@/contexts/studio-preview';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
@@ -79,6 +79,7 @@ export default function EditArticlePage() {
   const [sidebarTab,     setSidebarTab]     = useState<'meta' | 'seo' | 'workflow'>('meta');
 
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [ttsLoading, setTtsLoading] = useState(false);
 
   // ── Load article ─────────────────────────────────────────────────
   const { data: article, isLoading } = useQuery({
@@ -199,6 +200,22 @@ export default function EditArticlePage() {
     setContentJson(json);
     mark();
   }, [mark]);
+
+  const handleGenerateTts = useCallback(async () => {
+    const plainText = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!plainText) return;
+    setTtsLoading(true);
+    try {
+      const { data } = await aiApi.tts(blogId, { text: plainText.slice(0, 5000), article_id: articleId });
+      setAudioUrl(data.audio_url);
+      mark();
+      toast({ title: te('ttsGenerated') });
+    } catch {
+      toast({ variant: 'destructive', title: te('ttsError') });
+    } finally {
+      setTtsLoading(false);
+    }
+  }, [content, blogId, articleId, mark, toast, te]);
 
   if (isLoading) {
     return (
@@ -411,6 +428,25 @@ export default function EditArticlePage() {
                       <MediaFilePicker value={audioUrl} onChange={url => { setAudioUrl(url); mark(); }} tenantId={blogId} mediaType="audio" />
                     </div>
                   )}
+
+                  {/* TTS — générer audio depuis le contenu (tous types d'articles) */}
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{te('ttsLabel')}</p>
+                    {audioUrl && (
+                      <p className="text-[10px] text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-1">
+                        <CheckCircle2 className="h-3 w-3" /> {te('ttsReady')}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handleGenerateTts}
+                      disabled={ttsLoading || !content}
+                      className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40"
+                    >
+                      {ttsLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Headphones className="h-3.5 w-3.5" />}
+                      {ttsLoading ? te('ttsGenerating') : te('ttsGenerate')}
+                    </button>
+                  </div>
                   {articleType === 'podcast' && (
                     <div className="grid grid-cols-2 gap-2">
                       <div>

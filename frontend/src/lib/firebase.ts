@@ -5,6 +5,8 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   sendPasswordResetEmail,
+  confirmPasswordReset,
+  verifyPasswordResetCode,
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
@@ -55,8 +57,17 @@ export async function registerWithEmail(
   return credential.user.getIdToken();
 }
 
-export async function sendPasswordReset(email: string): Promise<void> {
-  await sendPasswordResetEmail(getFirebaseAuth(), email);
+export async function sendPasswordReset(email: string, continueUrl?: string): Promise<void> {
+  const settings = continueUrl ? { url: continueUrl, handleCodeInApp: false } : undefined;
+  await sendPasswordResetEmail(getFirebaseAuth(), email, settings);
+}
+
+export async function verifyResetCode(oobCode: string): Promise<string> {
+  return verifyPasswordResetCode(getFirebaseAuth(), oobCode);
+}
+
+export async function confirmPasswordResetWithCode(oobCode: string, newPassword: string): Promise<void> {
+  await confirmPasswordReset(getFirebaseAuth(), oobCode, newPassword);
 }
 
 export async function resendVerificationEmail(email: string, password: string): Promise<void> {

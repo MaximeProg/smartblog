@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from pydantic import BaseModel, field_validator
 from app.models.enums import PlanTier, TenantStatus, CommentsMode
 
@@ -17,6 +18,7 @@ class CreateTenantRequest(BaseModel):
     logo_url: str | None = None
     social_links: dict | None = None
     template_config: dict | None = None
+    referral_code: str | None = None
 
     @field_validator("slug")
     @classmethod
@@ -52,6 +54,7 @@ class UpdateTenantRequest(BaseModel):
     social_links: dict | None = None
     sidebar_config: list | None = None
     template_config: dict | None = None
+    robots_txt: str | None = None
 
 
 class TenantLimits(BaseModel):
@@ -92,6 +95,11 @@ class TenantResponse(BaseModel):
     pwa_enabled: bool
     social_links: dict
     template_config: dict | None = None
+    seo_title_template: str | None = None
+    seo_meta_description: str | None = None
+    robots_txt: str | None = None
+    trial_ends_at: datetime | None = None
+    plan_expires_at: datetime | None = None
     limits: TenantLimits | None = None
     usage: TenantUsage | None = None
 

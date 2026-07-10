@@ -11,6 +11,7 @@ import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
+import { useBookmark } from '@/hooks/useBookmark';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -72,6 +73,7 @@ export default function CreativeArticle({
   const [progress, setProgress] = useState(0);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
+  const { bookmarked, toggle: toggleBookmark } = useBookmark(article.slug, article.title, blog.slug);
   const htmlContent = useMemo(() => renderContent(article.content), [article.content]);
 
   const articleUrl = typeof window !== 'undefined'
@@ -272,6 +274,19 @@ export default function CreativeArticle({
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
                 {likeCount}
+              </button>
+              <button
+                onClick={toggleBookmark}
+                className={`inline-flex items-center gap-2 text-xs font-bold border rounded-full px-4 py-2 transition-all ${
+                  bookmarked
+                    ? 'border-zinc-800 text-zinc-900 bg-zinc-100'
+                    : 'border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:border-zinc-400'
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className={`h-3.5 w-3.5 ${bookmarked ? 'fill-zinc-900' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+                {bookmarked ? 'Saved' : 'Save'}
               </button>
               <span className="text-sm text-zinc-400">{article.views_count} views</span>
             </div>

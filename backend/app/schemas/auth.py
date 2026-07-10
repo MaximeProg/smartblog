@@ -26,6 +26,11 @@ class UserInfo(BaseModel):
     email: str
     display_name: str | None
     avatar_url: str | None
+    bio: str | None = None
+    phone: str | None = None
+    country: str | None = None
+    continent: str | None = None
+    gender: str | None = None
     plan: PlanTier = PlanTier.FREE
     is_super_admin: bool
     two_fa_enabled: bool
@@ -69,6 +74,15 @@ class TwoFADisableRequest(BaseModel):
     code: str
 
 
+class TwoFALoginRequest(BaseModel):
+    firebase_id_token: str
+    code: str
+
+
 class UpdateProfileRequest(BaseModel):
     display_name: str | None = None
     bio: str | None = None
+    phone: str | None = None
+    country: str | None = None
+    continent: str | None = None
+    gender: str | None = None

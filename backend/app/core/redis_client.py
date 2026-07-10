@@ -51,3 +51,9 @@ def key_ad_scan(url_hash: str) -> str:
 
 def key_social_token(tenant_id: str, platform: str) -> str:
     return f"social:tokens:{tenant_id}:{platform}"
+
+def key_oauth_state(state_hash: str) -> str:
+    return f"oauth:state:{state_hash}"
+
+def key_oauth_pkce(state_hash: str) -> str:
+    return f"oauth:pkce:{state_hash}"

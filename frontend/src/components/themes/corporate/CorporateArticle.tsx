@@ -7,10 +7,11 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import {
   Clock, Calendar, ChevronRight, Hash,
-  ArrowLeft, BookOpen, TrendingUp, Heart, Eye,
+  ArrowLeft, BookOpen, TrendingUp, Heart, Eye, Bookmark,
   Twitter, Linkedin, Link2, Check,
   ChevronDown, ChevronUp, List,
 } from 'lucide-react';
+import { useBookmark } from '@/hooks/useBookmark';
 
 import type { ArticleProps } from '../ThemeRenderer';
 import {
@@ -158,6 +159,7 @@ export default function CorporateArticle({
   // Likes
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(article.likes_count ?? 0);
+  const { bookmarked, toggle: toggleBookmark } = useBookmark(article.slug, article.title, blog.slug);
   const toggleLike = () => {
     setLiked(l => !l);
     setLikeCount(c => liked ? c - 1 : c + 1);
@@ -306,19 +308,32 @@ export default function CorporateArticle({
                 </div>
               )}
 
-              {/* Likes */}
-              <button
-                onClick={toggleLike}
-                className={`ml-auto flex items-center gap-2 h-9 px-4 rounded-xl border-2 text-sm font-bold transition-all duration-200 ${
-                  liked
-                    ? 'text-white border-[var(--cp)]'
-                    : 'text-slate-500 border-slate-200 hover:border-[var(--cp)] hover:text-[var(--cp)]'
-                }`}
-                style={liked ? { backgroundColor: primaryColor, borderColor: primaryColor } : {}}
-              >
-                <Heart className={`h-4 w-4 ${liked ? 'fill-white' : ''}`} />
-                <span>{likeCount.toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')}</span>
-              </button>
+              {/* Likes + Bookmark */}
+              <div className="ml-auto flex items-center gap-2">
+                <button
+                  onClick={toggleLike}
+                  className={`flex items-center gap-2 h-9 px-4 rounded-xl border-2 text-sm font-bold transition-all duration-200 ${
+                    liked
+                      ? 'text-white border-[var(--cp)]'
+                      : 'text-slate-500 border-slate-200 hover:border-[var(--cp)] hover:text-[var(--cp)]'
+                  }`}
+                  style={liked ? { backgroundColor: primaryColor, borderColor: primaryColor } : {}}
+                >
+                  <Heart className={`h-4 w-4 ${liked ? 'fill-white' : ''}`} />
+                  <span>{likeCount.toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')}</span>
+                </button>
+                <button
+                  onClick={toggleBookmark}
+                  className={`flex items-center gap-2 h-9 px-4 rounded-xl border-2 text-sm font-bold transition-all duration-200 ${
+                    bookmarked
+                      ? 'text-white border-slate-800'
+                      : 'text-slate-500 border-slate-200 hover:border-slate-800 hover:text-slate-800'
+                  }`}
+                  style={bookmarked ? { backgroundColor: '#1e293b' } : {}}
+                >
+                  <Bookmark className={`h-4 w-4 ${bookmarked ? 'fill-white' : ''}`} />
+                </button>
+              </div>
             </div>
           </header>
 
@@ -530,6 +545,20 @@ export default function CorporateArticle({
             >
               <Heart className={`h-5 w-5 ${liked ? 'fill-white' : ''}`} />
               {liked ? 'Vous aimez cet article !' : `J'aime cet article (${likeCount})`}
+            </button>
+
+            {/* Bookmark CTA */}
+            <button
+              onClick={toggleBookmark}
+              className={`w-full flex items-center justify-center gap-2.5 h-10 rounded-2xl border-2 text-sm font-bold transition-all duration-200 ${
+                bookmarked
+                  ? 'text-white border-slate-800'
+                  : 'border-slate-200 text-slate-500 hover:border-slate-800 hover:text-slate-800'
+              }`}
+              style={bookmarked ? { backgroundColor: '#1e293b' } : {}}
+            >
+              <Bookmark className={`h-4 w-4 ${bookmarked ? 'fill-white' : ''}`} />
+              {bookmarked ? 'Article sauvegardé' : 'Sauvegarder'}
             </button>
           </div>
         </aside>

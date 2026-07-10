@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Link2, Link2Off, Clock, Send, AlertCircle, CheckCircle2,
-  Plus, Trash2, Loader2, ExternalLink, X,
+  Plus, Trash2, Loader2, ExternalLink, X, Zap,
 } from 'lucide-react';
 import { socialApi } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
@@ -68,15 +68,33 @@ function PlatformIcon({ platform, size = 'md' }: { platform: SocialPlatform; siz
 function AccountCard({
   platform,
   account,
+  blogId,
   onDisconnect,
+  onToggleAutoPost,
 }: {
   platform: SocialPlatform;
   account: SocialAccountInfo | undefined;
+  blogId: string;
   onDisconnect: (id: string) => void;
+  onToggleAutoPost: (id: string, enabled: boolean) => void;
 }) {
   const t = useTranslations('social');
   const meta = PLATFORMS[platform] ?? PLATFORM_FALLBACK;
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
+  const [connecting, setConnecting] = useState(false);
+  const { toast } = useToast();
+
+  const handleConnect = async () => {
+    setConnecting(true);
+    try {
+      const { data } = await socialApi.getOAuthConnectUrl(blogId, platform);
+      window.location.href = data.url;
+    } catch (err: any) {
+      const msg = err?.response?.data?.detail || t('connectError');
+      toast({ variant: 'destructive', title: msg });
+      setConnecting(false);
+    }
+  };
 
   return (
     <div className={`rounded-2xl border p-4 transition-all ${account ? 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900' : 'border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30'}`}>
@@ -100,32 +118,49 @@ function AccountCard({
         </div>
       </div>
 
-      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
         {account ? (
-          confirmDisconnect ? (
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-red-500 flex-1">{t('disconnectConfirm')}</span>
-              <button onClick={() => { onDisconnect(account.id); setConfirmDisconnect(false); }}
-                className="h-6 px-2 rounded bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold">
-                {t('yes')}
-              </button>
-              <button onClick={() => setConfirmDisconnect(false)}
-                className="h-6 px-2 rounded border border-slate-200 dark:border-slate-700 text-[10px] text-slate-500">
-                {t('no')}
-              </button>
-            </div>
-          ) : (
-            <button onClick={() => setConfirmDisconnect(true)}
-              className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
-              <Link2Off className="h-3 w-3" /> {t('disconnect')}
+          <>
+            {/* Auto-post toggle */}
+            <button
+              onClick={() => onToggleAutoPost(account.id, !account.auto_post_enabled)}
+              className={`flex items-center gap-1.5 w-full h-7 px-2.5 rounded-lg border text-[11px] font-medium transition-all ${
+                account.auto_post_enabled
+                  ? 'border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20'
+                  : 'border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500 hover:border-slate-300'
+              }`}
+            >
+              <Zap className={`h-3 w-3 ${account.auto_post_enabled ? 'fill-blue-500' : ''}`} />
+              {account.auto_post_enabled ? t('autoPostOn') : t('autoPostOff')}
             </button>
-          )
+
+            {confirmDisconnect ? (
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] text-red-500 flex-1">{t('disconnectConfirm')}</span>
+                <button onClick={() => { onDisconnect(account.id); setConfirmDisconnect(false); }}
+                  className="h-6 px-2 rounded bg-red-500 hover:bg-red-600 text-white text-[10px] font-bold">
+                  {t('yes')}
+                </button>
+                <button onClick={() => setConfirmDisconnect(false)}
+                  className="h-6 px-2 rounded border border-slate-200 dark:border-slate-700 text-[10px] text-slate-500">
+                  {t('no')}
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmDisconnect(true)}
+                className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 hover:border-red-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                <Link2Off className="h-3 w-3" /> {t('disconnect')}
+              </button>
+            )}
+          </>
         ) : (
           <button
-            onClick={() => alert(t('oauthNotice'))}
-            className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+            onClick={handleConnect}
+            disabled={connecting}
+            className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] text-slate-500 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all disabled:opacity-50"
           >
-            <Link2 className="h-3 w-3" /> {t('connect')}
+            {connecting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Link2 className="h-3 w-3" />}
+            {connecting ? t('connecting') : t('connect')}
           </button>
         )}
       </div>
@@ -238,6 +273,13 @@ export default function SocialPage() {
     onError: () => toast({ variant: 'destructive', title: t('disconnectError') }),
   });
 
+  const autoPostMut = useMutation({
+    mutationFn: ({ id, enabled }: { id: string; enabled: boolean }) =>
+      socialApi.toggleAutoPost(blogId, id, enabled),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['social-accounts', blogId] }),
+    onError: () => toast({ variant: 'destructive', title: t('disconnectError') }),
+  });
+
   const deletePostMut = useMutation({
     mutationFn: (id: string) => socialApi.deletePost(blogId, id),
     onSuccess: () => {
@@ -281,8 +323,8 @@ export default function SocialPage() {
           <>
             {/* Info banner */}
             <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
-              <AlertCircle className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
-              <p className="text-[12px] text-blue-700 dark:text-blue-300">{t('oauthNotice')}</p>
+              <Zap className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
+              <p className="text-[12px] text-blue-700 dark:text-blue-300">{t('autoPostBanner')}</p>
             </div>
 
             {/* Platform grid */}
@@ -297,7 +339,9 @@ export default function SocialPage() {
                     key={platform}
                     platform={platform}
                     account={accounts.find((a: SocialAccountInfo) => a.platform === platform)}
+                    blogId={blogId}
                     onDisconnect={(id) => disconnectMut.mutate(id)}
+                    onToggleAutoPost={(id, enabled) => autoPostMut.mutate({ id, enabled })}
                   />
                 ))}
               </div>

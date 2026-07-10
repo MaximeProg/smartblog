@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import {
   Plus, Search, FileText, Eye, CheckCircle2,
   Archive, Edit2, Trash2, MoreVertical, Clock,
-  Camera, Video, Mic, Radio, Layers, Hash,
+  Camera, Video, Mic, Radio, Layers, Hash, Mail,
 } from 'lucide-react';
 import { articlesApi } from '@/lib/api';
 import { formatRelativeTime } from '@/lib/utils';
@@ -145,6 +145,12 @@ function ArticleRow({
                   <Archive className="h-3.5 w-3.5 text-slate-400" /> {t('archiveAction')}
                 </button>
               )}
+              <button
+                onClick={() => { router.push(`/${locale}/blogs/${blogId}/newsletter?from_article=${article.id}`); setMenuOpen(false); }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
+              >
+                <Mail className="h-3.5 w-3.5 text-violet-500" /> {t('sendAsNewsletter')}
+              </button>
               <button onClick={() => { onDelete(article.id); setMenuOpen(false); }}
                 className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
                 <Trash2 className="h-3.5 w-3.5" /> {t('deleteAction')}

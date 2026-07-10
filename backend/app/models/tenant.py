@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import String, Boolean, Integer, BigInteger, Text, DateTime, Enum as SAEnum, JSON, CheckConstraint
+from sqlalchemy import String, Boolean, Integer, BigInteger, Text, DateTime, Enum as SAEnum, JSON, CheckConstraint, Numeric, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
 from app.models.base import Base
@@ -88,6 +88,14 @@ class Tenant(Base):
 
     # PWA
     pwa_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+    # M23 — Affiliate program
+    affiliate_code: Mapped[str | None] = mapped_column(String(8), unique=True, nullable=True)
+    referred_by_tenant_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("tenants.id", use_alter=True, name="fk_tenant_referred_by"), nullable=True
+    )
+    affiliate_balance: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
+    affiliate_cashout_threshold: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=50)
 
     # Timestamps
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)

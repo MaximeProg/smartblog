@@ -2,14 +2,15 @@ import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
 import { BlogReaderProvider } from '@/components/themes/shared/BlogReaderProvider';
 import { PersistentAudioProvider } from '@/components/themes/shared/PersistentAudioPlayer';
+import FloatingSearch from '@/components/themes/shared/FloatingSearch';
 
 interface Props {
   children: React.ReactNode;
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }
 
 export default async function BlogSlugLayout({ children, params }: Props) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   let blog;
   try {
     blog = await publicApi.getBlogInfo(slug);
@@ -49,6 +50,7 @@ export default async function BlogSlugLayout({ children, params }: Props) {
           {children}
         </BlogReaderProvider>
       </PersistentAudioProvider>
+      <FloatingSearch basePath={`/${locale}/${slug}`} locale={locale} />
     </div>
   );
 }

@@ -5,6 +5,11 @@ export interface UserInfo {
   email: string;
   display_name: string | null;
   avatar_url: string | null;
+  bio: string | null;
+  phone: string | null;
+  country: string | null;
+  continent: string | null;
+  gender: string | null;
   plan: PlanTier;
   is_super_admin: boolean;
   two_fa_enabled: boolean;
@@ -22,6 +27,8 @@ export interface TenantInfo {
   articles_count?: number;
   subscribers_count?: number;
   authors_count?: number;
+  trial_ends_at?: string | null;
+  plan_expires_at?: string | null;
 }
 
 export interface LoginResponse {
@@ -64,6 +71,9 @@ export interface TenantResponse {
   seo_title_template?: string | null;
   seo_meta_description?: string | null;
   template_config?: Record<string, unknown> | null;
+  robots_txt?: string | null;
+  trial_ends_at?: string | null;
+  plan_expires_at?: string | null;
   limits?: PlanLimits;
   usage?: PlanUsage;
 }
@@ -126,6 +136,7 @@ export interface UpdateTenantData {
   seo_title_template?: string;
   seo_meta_description?: string;
   template_config?: Record<string, unknown>;
+  robots_txt?: string;
 }
 
 export interface SlugCheckResponse {
@@ -404,6 +415,7 @@ export interface AnalyticsOverview {
   top_referrers: TopReferrer[];
   views_by_day: DailyMetric[];
   devices: Record<string, number>;
+  countries: Record<string, number>;
 }
 
 export interface TopArticle {
@@ -425,7 +437,7 @@ export interface DailyMetric {
 
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
-export type SubscriberStatus = 'pending' | 'active' | 'unsubscribed';
+export type SubscriberStatus = 'pending' | 'active' | 'unsubscribed' | 'bounced';
 export type CampaignStatus = 'draft' | 'scheduled' | 'sending' | 'sent' | 'canceled';
 
 export interface NewsletterSubscriber {
@@ -466,6 +478,7 @@ export interface SocialAccountInfo {
   platform_avatar_url: string | null;
   platform_profile_url: string | null;
   is_active: boolean;
+  auto_post_enabled: boolean;
   token_expires_at: string | null;
   created_at: string;
 }

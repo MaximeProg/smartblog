@@ -6,7 +6,7 @@ import uuid
 import random
 import secrets
 from fastapi import APIRouter, Query, Request
-from fastapi.responses import Response
+from fastapi.responses import Response, PlainTextResponse
 from sqlalchemy import select, and_, update, func, text as sa_text
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel, EmailStr
@@ -732,6 +732,33 @@ async def list_public_comments(slug: str, article_slug: str, db: DBSession):
     ]
 
 
+@router.get("/articles/{article_slug}/comments/{comment_id}/replies", response_model=list[PublicCommentResponse])
+async def list_public_replies(slug: str, article_slug: str, comment_id: str, db: DBSession):
+    tenant = await _resolve_tenant(db, slug)
+    article = await _resolve_public_article(db, tenant, article_slug)
+
+    result = await db.execute(
+        select(Comment).where(
+            Comment.tenant_id == tenant.id,
+            Comment.article_id == article.id,
+            Comment.parent_id == uuid.UUID(comment_id),
+            Comment.status == CommentStatus.APPROVED,
+        ).order_by(Comment.created_at.asc()).limit(50)
+    )
+    replies = result.scalars().all()
+    return [
+        PublicCommentResponse(
+            id=str(r.id),
+            content=r.content,
+            author=PublicCommentAuthor(display_name=r.author_name or "Anonymous"),
+            parent_id=str(r.parent_id) if r.parent_id else None,
+            replies_count=r.replies_count,
+            created_at=r.created_at,
+        )
+        for r in replies
+    ]
+
+
 @router.post("/articles/{article_slug}/comments", response_model=PublicCommentResponse, status_code=201)
 async def create_public_comment(
     slug: str,
@@ -788,3 +815,48 @@ async def create_public_comment(
         replies_count=comment.replies_count,
         created_at=comment.created_at,
     )
+
+
+# ── GET /public/{slug}/robots.txt ────────────────────────────────
+
+@router.get("/robots.txt", response_class=PlainTextResponse)
+async def robots_txt(slug: str, db: DBSession):
+    tenant = await _resolve_tenant(db, slug)
+    if tenant.robots_txt:
+        return tenant.robots_txt
+    blog_url = f"https://{tenant.slug}.nexusblog.io"
+    return (
+        f"User-agent: *\n"
+        f"Allow: /\n"
+        f"Sitemap: {blog_url}/sitemap.xml\n"
+    )
+
+
+# ── GET /public/{slug}/search ─────────────────────────────────────
+
+class PublicSearchResult(BaseModel):
+    total: int
+    hits: list[dict]
+    query: str | None
+
+
+@router.get("/search", response_model=PublicSearchResult)
+async def public_blog_search(
+    slug: str,
+    db: DBSession,
+    q: str | None = Query(default=None, min_length=1, max_length=200),
+    category_id: str | None = Query(default=None),
+    page: int = Query(default=1, ge=1),
+    size: int = Query(default=10, le=20),
+):
+    from app.services.search_service import search_articles
+    tenant = await _resolve_tenant(db, slug)
+    result = await search_articles(
+        tenant_slug=tenant.slug,
+        q=q,
+        category_id=category_id,
+        status="published",
+        from_=(page - 1) * size,
+        size=size,
+    )
+    return PublicSearchResult(total=result["total"], hits=result["hits"], query=q)
