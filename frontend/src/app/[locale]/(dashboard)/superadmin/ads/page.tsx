@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ElementType, type ReactNode } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Megaphone, Check, X, Clock, ExternalLink, Shield, AlertTriangle,
@@ -233,7 +233,7 @@ function AdRow({
   );
 }
 
-function DetailItem({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: React.ReactNode }) {
+function DetailItem({ icon: Icon, label, value }: { icon: ElementType; label: string; value: ReactNode }) {
   return (
     <div className="flex items-start gap-2">
       <Icon className="h-3.5 w-3.5 text-slate-500 mt-0.5 shrink-0" />

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ElementType } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import {
@@ -22,7 +22,7 @@ function fmtCurrency(n: number) {
   return `$${n.toFixed(2)}`;
 }
 
-const STATUS_BADGE: Record<string, { label: string; cls: string; icon: React.ElementType }> = {
+const STATUS_BADGE: Record<string, { label: string; cls: string; icon: ElementType }> = {
   pending:    { label: 'Pending',    cls: 'bg-amber-50 text-amber-700 border-amber-200',  icon: Clock },
   ready:      { label: 'Ready',      cls: 'bg-blue-50 text-blue-700 border-blue-200',     icon: CheckCircle2 },
   paid:       { label: 'Paid',       cls: 'bg-green-50 text-green-700 border-green-200',  icon: CheckCircle2 },

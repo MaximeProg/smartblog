@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ElementType } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   BookOpen, Plus, Loader2, ChevronDown, ChevronRight,
@@ -17,7 +17,7 @@ const STATUS_CLS: Record<string, string> = {
   reversed: 'bg-slate-700 text-slate-400 border border-slate-600',
 };
 
-const STATUS_ICON: Record<string, React.ElementType> = {
+const STATUS_ICON: Record<string, ElementType> = {
   pending:  Clock,
   approved: CheckCircle2,
   reversed: RotateCcw,
@@ -493,7 +493,7 @@ export default function AccountingPage() {
         {([
           { key: 'entries',  label: 'Écritures comptables', icon: BookOpen },
           { key: 'accounts', label: 'Plan comptable',       icon: BookOpen },
-        ] as { key: Tab; label: string; icon: React.ElementType }[]).map(t => (
+        ] as { key: Tab; label: string; icon: ElementType }[]).map(t => (
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
