@@ -183,7 +183,7 @@ export default function ArticlesPage() {
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const articlesMax = tenant?.limits?.articles_max ?? null;
+  const articlesMax = tenant?.limits?.max_articles ?? null;
   const articlesUsed = tenant?.usage?.articles_count ?? 0;
   const usagePct = articlesMax != null ? articlesUsed / articlesMax : 0;
   const atLimit = articlesMax != null && articlesUsed >= articlesMax;
