@@ -8,6 +8,7 @@ import {
   Plus, LogOut, Zap, X, ShieldCheck,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
 import { authApi } from '@/lib/api';
@@ -36,6 +37,7 @@ export function DashboardSidebar() {
   const locale   = params.locale as string;
   const pathname = usePathname();
   const router   = useRouter();
+  const queryClient = useQueryClient();
   const { user, clearAuth } = useAuthStore();
   const { mobileSidebarOpen, closeSidebar } = useUIStore();
   const t  = useTranslations('nav');
@@ -85,6 +87,7 @@ export function DashboardSidebar() {
     try { await authApi.logout(); } catch {}
     try { await firebaseSignOut(); } catch {}
     clearAuth();
+    queryClient.clear();
     closeSidebar();
     router.push(`/${locale}/login`);
   };

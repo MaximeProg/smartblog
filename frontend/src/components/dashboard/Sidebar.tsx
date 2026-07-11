@@ -18,6 +18,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useQueryClient } from '@tanstack/react-query';
 import { authApi } from '@/lib/api';
 import { firebaseSignOut } from '@/lib/firebase';
 
@@ -97,6 +98,7 @@ function UserAvatar({ avatarUrl, initials }: { avatarUrl?: string | null; initia
 
 export function Sidebar({ locale, blogId }: SidebarProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { tenants, setCurrentTenant, user, clearAuth } = useAuthStore();
   const currentTenant = useCurrentTenant();
   const { mobileBlogSidebarOpen, closeBlogSidebar } = useUIStore();
@@ -144,6 +146,7 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
     try { await authApi.logout(); } catch {}
     try { await firebaseSignOut(); } catch {}
     clearAuth();
+    queryClient.clear();
     closeBlogSidebar();
     router.push(`/${locale}/login`);
   };
