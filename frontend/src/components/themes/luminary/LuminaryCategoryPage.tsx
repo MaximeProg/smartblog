@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -158,7 +158,7 @@ export default function LuminaryCategoryPage({
       <div className="pb-20" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
-        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
       </div>
 
       <LuminaryFooter

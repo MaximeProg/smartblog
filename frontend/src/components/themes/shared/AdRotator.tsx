@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, ChevronDown, ChevronUp, Info } from 'lucide-react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 const ROTATE_INTERVAL_MS = 30_000;
@@ -18,20 +18,27 @@ interface AdData {
 interface Props {
   slug: string;
   primaryColor?: string;
+  /**
+   * inline  – carte avec grande image à gauche, texte à droite (position haute)
+   * strip   – barre horizontale compacte avec logo + titre + bouton (position basse)
+   */
+  variant?: 'inline' | 'strip';
 }
 
-export function AdRotator({ slug, primaryColor = '#2563eb' }: Props) {
+function getDomain(url: string): string {
+  try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
+}
+
+export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline' }: Props) {
   const [ad, setAd] = useState<AdData | null>(null);
   const [dismissed, setDismissed] = useState(false);
-  const [imgError, setImgError] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const trackedRef = useRef<string | null>(null);
 
   async function fetchAd() {
     try {
-      const res = await fetch(`${API_BASE}/api/v1/public/${slug}/ads/rotator`, {
-        cache: 'no-store',
-      });
+      const res = await fetch(`${API_BASE}/api/v1/public/${slug}/ads/rotator`, { cache: 'no-store' });
       if (!res.ok) return;
       const data: AdData | null = await res.json();
       if (data && data.id !== trackedRef.current) {
@@ -40,22 +47,16 @@ export function AdRotator({ slug, primaryColor = '#2563eb' }: Props) {
         trackImpression(data.id);
         trackedRef.current = data.id;
       }
-    } catch {
-      // Silent — no ads is fine
-    }
+    } catch { /* silent */ }
   }
 
   function trackImpression(adId: string) {
-    fetch(`${API_BASE}/api/v1/public/${slug}/ads/${adId}/impression`, {
-      method: 'POST',
-    }).catch(() => {});
+    fetch(`${API_BASE}/api/v1/public/${slug}/ads/${adId}/impression`, { method: 'POST' }).catch(() => {});
   }
 
   function handleClick() {
     if (!ad) return;
-    fetch(`${API_BASE}/api/v1/public/${slug}/ads/${ad.id}/click`, {
-      method: 'POST',
-    }).catch(() => {});
+    fetch(`${API_BASE}/api/v1/public/${slug}/ads/${ad.id}/click`, { method: 'POST' }).catch(() => {});
     window.open(ad.click_url, '_blank', 'noopener,noreferrer');
   }
 
@@ -67,93 +68,156 @@ export function AdRotator({ slug, primaryColor = '#2563eb' }: Props) {
 
   if (!ad || dismissed) return null;
 
-  /* ── Collapsed state — thin bar like Google ── */
-  if (collapsed) {
+  const domain = getDomain(ad.click_url);
+
+  /* ─────────────────────────────────────────────────────────────────
+   * STRIP — barre basse (comme deuxième capture Google)
+   * ───────────────────────────────────────────────────────────────── */
+  if (variant === 'strip') {
     return (
-      <div className="w-full flex items-center justify-between px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-400 gap-3">
-        <span className="font-black uppercase tracking-widest text-[9px]">Annonce masquée</span>
+      <div className="w-full bg-white border-t border-slate-200 relative"
+        style={{ boxShadow: '0 -4px 24px rgba(0,0,0,0.07)' }}>
+
+        {/* Onglet collapse centré en haut */}
         <button
-          onClick={() => setCollapsed(false)}
-          className="text-[11px] font-semibold underline hover:text-slate-600 transition-colors"
+          onClick={() => setCollapsed(c => !c)}
+          className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white border border-b-white border-slate-200 rounded-t-xl px-6 py-1.5 flex items-center gap-2 text-[11px] font-semibold text-slate-500 hover:text-slate-800 transition-colors shadow-sm"
+          style={{ borderBottomColor: 'white' }}
         >
-          Afficher
+          {collapsed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          {collapsed ? 'Afficher l\'annonce' : 'Réduire'}
         </button>
-        <button
-          onClick={() => setDismissed(true)}
-          className="ml-auto w-5 h-5 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
-          aria-label="Fermer définitivement"
-        >
-          <X className="w-3 h-3" />
-        </button>
+
+        {!collapsed && (
+          <div className="flex items-center gap-5 px-6 py-4 max-w-7xl mx-auto">
+
+            {/* Miniature image ou icône */}
+            {ad.image_url && !imgError ? (
+              <div className="shrink-0 w-[60px] h-[60px] rounded-xl overflow-hidden bg-slate-100">
+                <img
+                  src={ad.image_url} alt=""
+                  className="w-full h-full object-cover"
+                  onError={() => setImgError(true)}
+                />
+              </div>
+            ) : (
+              <div className="shrink-0 w-[60px] h-[60px] rounded-xl bg-slate-100 flex items-center justify-center text-2xl">
+                📢
+              </div>
+            )}
+
+            {/* Texte */}
+            <div className="flex-1 min-w-0">
+              <p className="text-[17px] font-bold text-slate-900 leading-tight line-clamp-1">
+                {ad.title}
+              </p>
+              {ad.description && (
+                <p className="text-sm text-slate-500 line-clamp-1 mt-0.5 leading-relaxed">
+                  {ad.description}
+                </p>
+              )}
+              {domain && (
+                <p className="text-xs text-slate-400 mt-0.5">{domain}</p>
+              )}
+            </div>
+
+            {/* Bouton Ouvrir */}
+            <button
+              onClick={handleClick}
+              className="shrink-0 flex items-center gap-2 bg-slate-900 hover:bg-slate-700 text-white text-sm font-bold px-6 py-2.5 rounded-full transition-colors whitespace-nowrap"
+            >
+              Ouvrir <ExternalLink className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Fermer */}
+            <button
+              onClick={() => setDismissed(true)}
+              className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+              aria-label="Fermer l'annonce"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     );
   }
 
+  /* ─────────────────────────────────────────────────────────────────
+   * INLINE — carte avec grande image (comme première capture Google)
+   * ───────────────────────────────────────────────────────────────── */
   return (
-    <div className="w-full rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
-      <div className="flex items-stretch" style={{ maxHeight: 88 }}>
+    <div className="w-full bg-white rounded-xl border border-slate-200 overflow-hidden"
+      style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}>
+      <div className="flex">
 
-        {/* Image thumbnail — fixed width, full height */}
+        {/* Image grande à gauche */}
         {ad.image_url && !imgError && (
           <button
             onClick={handleClick}
-            className="shrink-0 w-20 overflow-hidden cursor-pointer"
-            tabIndex={-1}
-            aria-hidden
+            className="shrink-0 overflow-hidden cursor-pointer"
+            style={{ width: 'clamp(180px, 38%, 300px)', minHeight: 160 }}
+            aria-label={ad.title}
           >
             <img
               src={ad.image_url}
-              alt=""
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              alt={ad.title}
+              className="w-full h-full object-cover hover:opacity-95 transition-opacity"
+              style={{ minHeight: 160 }}
               onError={() => setImgError(true)}
             />
           </button>
         )}
 
-        {/* Text area — clickable */}
-        <button
-          onClick={handleClick}
-          className="flex-1 min-w-0 flex flex-col justify-center gap-0.5 px-4 py-3 text-left hover:bg-slate-50 transition-colors"
-        >
-          <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">
-            Annonce
-          </span>
-          <p className="text-sm font-bold text-slate-800 leading-snug line-clamp-1">
-            {ad.title}
-          </p>
-          {ad.description && (
-            <p className="text-xs text-slate-500 leading-relaxed line-clamp-1">
-              {ad.description}
-            </p>
-          )}
-          <span
-            className="text-[11px] font-semibold mt-1 inline-flex items-center gap-1"
-            style={{ color: primaryColor }}
-          >
-            En savoir plus
-            <ExternalLink className="w-2.5 h-2.5" />
-          </span>
-        </button>
+        {/* Panneau texte */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between p-5 gap-4">
 
-        {/* Actions: minimize + close */}
-        <div className="shrink-0 flex flex-col items-center justify-start gap-1 pt-2.5 pr-2.5">
-          <button
-            onClick={() => setCollapsed(true)}
-            className="w-5 h-5 flex items-center justify-center rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors text-xs font-bold leading-none"
-            aria-label="Réduire l'annonce"
-            title="Réduire"
-          >
-            −
-          </button>
-          <button
-            onClick={() => setDismissed(true)}
-            className="w-5 h-5 flex items-center justify-center rounded text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-            aria-label="Fermer l'annonce"
-          >
-            <X className="w-3 h-3" />
-          </button>
+          {/* Ligne haute : texte + icônes */}
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-[18px] font-bold text-slate-900 leading-snug line-clamp-2 mb-1.5">
+                {ad.title}
+              </p>
+              {ad.description && (
+                <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">
+                  {ad.description}
+                </p>
+              )}
+            </div>
+
+            {/* Icônes ⓘ × */}
+            <div className="flex items-center gap-0.5 text-slate-400 shrink-0 mt-0.5">
+              <span className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-100 cursor-default transition-colors">
+                <Info className="w-4 h-4" />
+              </span>
+              <button
+                onClick={() => setDismissed(true)}
+                className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
+                aria-label="Fermer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Ligne basse : badge + bouton Ouvrir */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide bg-slate-100 text-slate-500 px-2 py-1 rounded">
+                Annonce
+              </span>
+              {domain && (
+                <span className="text-xs text-slate-400 truncate">{domain}</span>
+              )}
+            </div>
+            <button
+              onClick={handleClick}
+              className="shrink-0 px-5 py-2 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+            >
+              Ouvrir
+            </button>
+          </div>
         </div>
-
       </div>
     </div>
   );

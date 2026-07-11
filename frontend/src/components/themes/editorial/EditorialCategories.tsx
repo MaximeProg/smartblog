@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -113,7 +113,7 @@ export default function EditorialCategories({
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
       </div>
 
       <EditorialFooter

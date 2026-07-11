@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
@@ -235,7 +235,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
 
       {!previewSlug && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
         </div>
       )}
 

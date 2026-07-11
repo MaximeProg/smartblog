@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useCallback, type CSSProperties } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -118,7 +118,7 @@ export default function MinimalCategoryPage({
       </div>
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
-        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
       </div>
 
       <MinimalFooter

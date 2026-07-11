@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -98,7 +98,7 @@ export default function CreativeCategories({ blog, categories, articles: _articl
       <div className="py-4" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
       </div>
 
       <CreativeFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />

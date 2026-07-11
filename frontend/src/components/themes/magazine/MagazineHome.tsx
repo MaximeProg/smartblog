@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useCallback, type CSSProperties, type FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -80,6 +80,12 @@ export default function MagazineHome({
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
       <MagazineHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+
+      {!previewSlug && (
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        </div>
+      )}
 
       {isFiltered ? (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
@@ -322,7 +328,7 @@ export default function MagazineHome({
 
       {!previewSlug && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
         </div>
       )}
 

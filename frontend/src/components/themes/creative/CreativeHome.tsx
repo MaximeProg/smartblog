@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -119,6 +119,12 @@ export default function CreativeHome({
             </div>
           </Link>
         </section>
+      )}
+
+      {!previewSlug && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        </div>
       )}
 
       {articles.length === 0 ? (
@@ -261,7 +267,7 @@ export default function CreativeHome({
 
       {!previewSlug && (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
         </div>
       )}
 

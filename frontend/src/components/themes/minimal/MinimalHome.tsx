@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useCallback, type CSSProperties, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -101,6 +101,12 @@ export default function MinimalHome({
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {!previewSlug && (
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
         </div>
       )}
 
@@ -231,7 +237,7 @@ export default function MinimalHome({
 
       {!previewSlug && (
         <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
-          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
         </div>
       )}
 
