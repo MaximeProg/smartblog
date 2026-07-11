@@ -83,7 +83,7 @@ class JournalEntryResponse(BaseModel):
 # ── Helpers ───────────────────────────────────────────────────────
 
 def _require_super_admin(payload: dict):
-    if not payload.get("is_super_admin"):
+    if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
         raise ForbiddenException("Super admin requis pour l'accès comptable.")
 
 

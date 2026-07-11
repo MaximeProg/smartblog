@@ -429,38 +429,109 @@ async def register_referral(db, new_tenant_id: uuid.UUID, referral_code: str):
 
 # ── Super Admin routes ────────────────────────────────────────────
 
+@superadmin_router.get("/list")
+async def admin_list_affiliates(
+    payload: TokenPayload,
+    db: DBSession,
+    limit: int = Query(15, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+):
+    """List all tenants with an active affiliate code and their stats."""
+    if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
+        raise ForbiddenException("Super admin requis.")
+
+    from sqlalchemy import text as _text
+    rows = await db.execute(_text("""
+        SELECT
+            t.id, t.name, t.slug, t.affiliate_code, t.plan,
+            CAST(COALESCE(t.affiliate_balance, 0) AS FLOAT) AS balance,
+            COUNT(DISTINCT ar.descendant_id) AS referral_count,
+            CAST(COALESCE(SUM(ac.commission_amount) FILTER (
+                WHERE ac.status IN ('pending','ready','paid')
+            ), 0) AS FLOAT) AS total_earned,
+            CAST(COALESCE(SUM(ac.commission_amount) FILTER (
+                WHERE ac.status = 'paid'
+            ), 0) AS FLOAT) AS total_paid,
+            BOOL_OR(CASE WHEN acr.status IN ('requested','processing') THEN TRUE ELSE FALSE END) AS cashout_pending
+        FROM tenants t
+        LEFT JOIN affiliate_relationships ar ON ar.ancestor_id = t.id AND ar.level = 1
+        LEFT JOIN affiliate_commissions ac ON ac.affiliate_tenant_id = t.id
+        LEFT JOIN affiliate_cashout_requests acr ON acr.tenant_id = t.id
+        WHERE t.affiliate_code IS NOT NULL AND t.status != 'deleted'
+        GROUP BY t.id
+        ORDER BY balance DESC
+        LIMIT :limit OFFSET :offset
+    """), {"limit": limit, "offset": offset})
+
+    total_row = await db.execute(_text(
+        "SELECT COUNT(*) FROM tenants WHERE affiliate_code IS NOT NULL AND status != 'deleted'"
+    ))
+    total = total_row.scalar_one() or 0
+
+    affiliates = []
+    for r in rows:
+        affiliates.append({
+            "id": str(r.id),
+            "name": r.name,
+            "slug": r.slug,
+            "affiliate_code": r.affiliate_code,
+            "plan": r.plan,
+            "affiliate_balance": r.balance,
+            "referral_count": int(r.referral_count or 0),
+            "total_earned": float(r.total_earned or 0),
+            "total_paid_out": float(r.total_paid or 0),
+            "cashout_pending": bool(r.cashout_pending),
+        })
+    return {"affiliates": affiliates, "total": total}
+
+
 @superadmin_router.get("/cashouts")
 async def admin_list_cashouts(
     payload: TokenPayload,
     db: DBSession,
     status: str | None = Query(None),
-    limit: int = Query(50, ge=1, le=200),
+    limit: int = Query(15, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ):
-    if not payload.get("is_super_admin"):
+    if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
         raise ForbiddenException("Super admin requis.")
 
-    q = select(AffiliateCashoutRequest)
-    if status:
-        q = q.where(AffiliateCashoutRequest.status == status)
-    q = q.order_by(AffiliateCashoutRequest.requested_at.desc()).limit(limit).offset(offset)
-
-    result = await db.execute(q)
-    cashouts = result.scalars().all()
-
-    return [
-        CashoutResponse(
-            id=str(c.id),
-            gross_amount=float(c.gross_amount),
-            fee=float(c.fee),
-            net_amount=float(c.net_amount),
-            status=c.status.value,
-            payout_method=c.payout_method,
-            requested_at=c.requested_at,
-            processed_at=c.processed_at,
+    base = (
+        select(
+            AffiliateCashoutRequest,
+            Tenant.name.label("tenant_name"),
+            Tenant.slug.label("tenant_slug"),
         )
-        for c in cashouts
-    ]
+        .join(Tenant, Tenant.id == AffiliateCashoutRequest.tenant_id)
+    )
+    if status:
+        base = base.where(AffiliateCashoutRequest.status == status)
+
+    total = (await db.execute(select(func.count()).select_from(base.subquery()))).scalar_one()
+    result = await db.execute(base.order_by(AffiliateCashoutRequest.requested_at.desc()).limit(limit).offset(offset))
+    rows = result.all()
+
+    return {
+        "cashouts": [
+            {
+                "id": str(r.AffiliateCashoutRequest.id),
+                "tenant_id": str(r.AffiliateCashoutRequest.tenant_id),
+                "tenant_name": r.tenant_name,
+                "tenant_slug": r.tenant_slug,
+                "amount": float(r.AffiliateCashoutRequest.gross_amount),
+                "fee": float(r.AffiliateCashoutRequest.fee),
+                "net_amount": float(r.AffiliateCashoutRequest.net_amount),
+                "status": r.AffiliateCashoutRequest.status.value,
+                "payout_method": r.AffiliateCashoutRequest.payout_method,
+                "payout_reference": r.AffiliateCashoutRequest.payout_reference,
+                "notes": r.AffiliateCashoutRequest.notes,
+                "requested_at": r.AffiliateCashoutRequest.requested_at.isoformat(),
+                "processed_at": r.AffiliateCashoutRequest.processed_at.isoformat() if r.AffiliateCashoutRequest.processed_at else None,
+            }
+            for r in rows
+        ],
+        "total": total,
+    }
 
 
 class ProcessCashoutRequest(BaseModel):
@@ -476,7 +547,7 @@ async def admin_process_cashout(
     payload: TokenPayload,
     db: DBSession,
 ):
-    if not payload.get("is_super_admin"):
+    if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
         raise ForbiddenException("Super admin requis.")
 
     cashout = await db.get(AffiliateCashoutRequest, cashout_id)

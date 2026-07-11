@@ -15,6 +15,7 @@ def create_access_token(
     tenant_id: str,
     role: str,
     email: str,
+    is_super_admin: bool = False,
 ) -> tuple[str, str, datetime]:
     """
     Crée un JWT signé.
@@ -29,6 +30,7 @@ def create_access_token(
         "tenant_id": tenant_id,
         "role": role,
         "email": email,
+        "is_super_admin": is_super_admin,
         "jti": jti,
         "iat": datetime.now(timezone.utc),
         "exp": expire,

@@ -68,7 +68,7 @@ def require_role(*roles: UserRole):
 
 def require_super_admin():
     async def _check(payload: TokenPayload):
-        if not payload.get("is_super_admin"):
+        if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
             raise ForbiddenException("Accès Super Admin requis.")
         return payload
     return _check

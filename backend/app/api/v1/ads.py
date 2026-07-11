@@ -137,7 +137,7 @@ async def review_ad(
     db: DBSession,
 ):
     # Seul le super admin valide les pubs — la plateforme doit être configurée avant activation
-    if not payload.get("is_super_admin"):
+    if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
         raise ForbiddenException("La validation des publicités est réservée au super admin.")
 
     if body.decision not in (AdSubmissionStatus.APPROVED, AdSubmissionStatus.REJECTED):

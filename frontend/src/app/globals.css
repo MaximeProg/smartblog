@@ -11,6 +11,40 @@
   }
 }
 
+/* ── Super Admin palette — switches with .dark class ─────────────────── */
+:root {
+  --sa-bg:             #f1f5f9;
+  --sa-sidebar:        #ffffff;
+  --sa-card:           #ffffff;
+  --sa-topbar:         #ffffff;
+  --sa-border:         rgba(15,23,42,0.08);
+  --sa-border-subtle:  rgba(15,23,42,0.05);
+  --sa-surface:        rgba(15,23,42,0.04);
+  --sa-surface-hover:  rgba(15,23,42,0.07);
+  --sa-text:           #0f172a;
+  --sa-text-2:         #334155;
+  --sa-text-3:         #64748b;
+  --sa-divider:        rgba(15,23,42,0.05);
+  --sa-accent:         #6366f1;
+  --sa-accent-bg:      rgba(99,102,241,0.08);
+}
+.dark {
+  --sa-bg:             #0f172a;
+  --sa-sidebar:        #0f172a;
+  --sa-card:           #1e293b;
+  --sa-topbar:         #0f172a;
+  --sa-border:         rgba(148,163,184,0.12);
+  --sa-border-subtle:  rgba(148,163,184,0.06);
+  --sa-surface:        rgba(148,163,184,0.06);
+  --sa-surface-hover:  rgba(148,163,184,0.10);
+  --sa-text:           #f1f5f9;
+  --sa-text-2:         #cbd5e1;
+  --sa-text-3:         #94a3b8;
+  --sa-divider:        rgba(148,163,184,0.06);
+  --sa-accent:         #818cf8;
+  --sa-accent-bg:      rgba(99,102,241,0.14);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

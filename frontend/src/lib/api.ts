@@ -821,12 +821,19 @@ export const paymentsApi = {
 // ── Super Admin API ───────────────────────────────────────────────────────────
 
 export interface SuperAdminStats {
-  total_tenants: number;
-  active_tenants: number;
-  new_tenants_24h: number;
-  total_users: number;
-  plan_distribution: Record<string, number>;
-  total_revenue: number;
+  tenants: {
+    total: number;
+    active: number;
+    new_today: number;
+    by_plan: Record<string, number>;
+  };
+  users: {
+    total: number;
+  };
+  revenue: {
+    total_usd: number;
+    transactions: number;
+  };
 }
 
 export interface TenantAdminView {
@@ -838,17 +845,31 @@ export interface TenantAdminView {
   created_at: string;
   articles_count: number;
   subscribers_count: number;
-  owner_email?: string;
+  storage_used_bytes: number;
 }
 
 export interface UserAdminView {
   id: string;
   email: string;
   display_name: string | null;
-  plan: string;
+  sign_in_provider: string;
   is_super_admin: boolean;
+  two_fa_enabled: boolean;
+  last_login_at: string | null;
   created_at: string;
-  tenants_count: number;
+}
+
+export interface CashoutAdminView {
+  id: string;
+  tenant_id: string;
+  tenant_name: string;
+  tenant_slug: string;
+  amount: number;
+  status: string;
+  requested_at: string;
+  processed_at: string | null;
+  payout_reference: string | null;
+  notes: string | null;
 }
 
 export interface SuperAdminAdView {
@@ -878,12 +899,202 @@ export interface SuperAdminAdView {
   created_at: string;
 }
 
+// ── Superadmin additional types ───────────────────────────────────
+
+export interface SATransaction {
+  id: string;
+  tenant_name: string;
+  tenant_slug: string;
+  user_email: string | null;
+  user_name: string | null;
+  type: string;
+  status: string;
+  amount: number;
+  currency: string;
+  platform_fee: number;
+  gateway: string;
+  stripe_payment_intent_id: string | null;
+  created_at: string;
+}
+
+export interface SATransactionsResponse {
+  kpi: { total_revenue: number; rev_24h: number; pending: number; failed: number };
+  total: number;
+  transactions: SATransaction[];
+}
+
+export interface SAPlanStat {
+  id: string;
+  count: number;
+  mrr: number;
+  arpu: number;
+}
+
+export interface SAPlansStatsResponse {
+  plans: SAPlanStat[];
+  total_mrr: number;
+  total_tenants: number;
+  paid_tenants: number;
+  arpu: number;
+}
+
+export interface SASystemService {
+  name: string;
+  status: 'operational' | 'degraded' | 'outage';
+  latency_ms: number | null;
+}
+
+export interface SASystemResponse {
+  uptime: { hours: number; minutes: number; seconds: number };
+  database: { size: string; size_bytes: number; tenants: number; users: number; articles: number; media: number };
+  services: SASystemService[];
+  env: string;
+}
+
+export interface SALogEntry {
+  ts: string;
+  level: 'info' | 'success' | 'warning' | 'error';
+  action: string;
+  actor: string;
+  details: string;
+}
+
+export interface SALogsResponse {
+  logs: SALogEntry[];
+  total: number;
+}
+
+export interface SAMediaItem {
+  id: string;
+  tenant_name: string;
+  tenant_slug: string;
+  uploader_email: string | null;
+  type: string;
+  url: string;
+  filename: string | null;
+  size_bytes: number | null;
+  width: number | null;
+  height: number | null;
+  created_at: string;
+}
+
+export interface SAMediaResponse {
+  stats: { total: number; total_size_bytes: number };
+  total: number;
+  media: SAMediaItem[];
+}
+
+export interface SARoleItem {
+  id: string;
+  label: string;
+  description: string;
+  user_count: number;
+}
+
+export interface SARolesResponse {
+  roles: SARoleItem[];
+  super_admins: number;
+}
+
+export interface SAPlatformSettings {
+  general: {
+    platform_name: string;
+    support_email: string;
+    max_blogs_per_user: number;
+    maintenance_mode: boolean;
+    registrations_open: boolean;
+  };
+  stripe: { configured: boolean; publishable_key: string; platform_fee_percent: number };
+  cloudinary: { configured: boolean; cloud_name: string };
+  ai: { configured: boolean; model: string };
+  env: string;
+}
+
+export interface SAPlanConfig {
+  id: string;
+  name: string;
+  description: string;
+  price_monthly: number;
+  price_yearly: number;
+  max_articles: number;
+  max_storage_mb: number;
+  max_members: number;
+  max_ai_requests: number;
+  max_custom_domains: number;
+  features: string[];
+  is_active: boolean;
+  is_default: boolean;
+  sort_order: number;
+  tenant_count: number;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface SAPlanCreateBody {
+  id?: string;
+  name: string;
+  description?: string;
+  price_monthly?: number;
+  price_yearly?: number;
+  max_articles?: number;
+  max_storage_mb?: number;
+  max_members?: number;
+  max_ai_requests?: number;
+  max_custom_domains?: number;
+  features?: string[];
+  is_active?: boolean;
+  sort_order?: number;
+}
+
+export interface SATemplate {
+  id: string;
+  name: string;
+  description: string | null;
+  accent: string | null;
+  theme: string;
+  is_builtin: boolean;
+  is_active: boolean;
+  is_featured: boolean;
+  thumbnail_url: string | null;
+  created_at: string | null;
+}
+
+export interface SATemplateCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  is_active: boolean;
+  sort_order: number;
+  template_count: number;
+}
+
+export interface SATemplateCategoryCreateBody {
+  name: string;
+  slug: string;
+  description?: string;
+  sort_order?: number;
+}
+
+export interface SAAffiliateItem {
+  id: string;
+  name: string;
+  slug: string;
+  affiliate_code: string;
+  plan: string;
+  affiliate_balance: number;
+  referral_count: number;
+  total_earned: number;
+  total_paid_out: number;
+  cashout_pending: boolean;
+}
+
 export const superadminApi = {
   stats: () =>
     api.get<SuperAdminStats>('/superadmin/stats'),
 
   listTenants: (params?: { status?: string; plan?: string; limit?: number; offset?: number; q?: string }) =>
-    api.get<TenantAdminView[]>('/superadmin/tenants', { params }),
+    api.get<{ items: TenantAdminView[]; total: number }>('/superadmin/tenants', { params }),
 
   suspendTenant: (tenantId: string) =>
     api.post<{ status: string }>(`/superadmin/tenants/${tenantId}/suspend`),
@@ -898,7 +1109,7 @@ export const superadminApi = {
     api.delete<void>(`/superadmin/tenants/${tenantId}`),
 
   listUsers: (params?: { q?: string; limit?: number; offset?: number }) =>
-    api.get<UserAdminView[]>('/superadmin/users', { params }),
+    api.get<{ items: UserAdminView[]; total: number }>('/superadmin/users', { params }),
 
   makeSuperAdmin: (userId: string) =>
     api.post<{ is_super_admin: boolean }>(`/superadmin/users/${userId}/make-super-admin`),
@@ -907,11 +1118,102 @@ export const superadminApi = {
     api.post<{ is_super_admin: boolean }>(`/superadmin/users/${userId}/revoke-super-admin`),
 
   listAllAds: (params?: { status?: string; limit?: number; offset?: number }) =>
-    api.get<SuperAdminAdView[]>('/superadmin/ads', { params }),
+    api.get<{ items: SuperAdminAdView[]; total: number }>('/superadmin/ads', { params }),
 
   reviewAd: (tenantId: string, adId: string, decision: 'approved' | 'rejected', rejectionReason?: string) =>
     api.post<AdResponse>(`/tenants/${tenantId}/ads/${adId}/review`, {
       decision,
       rejection_reason: rejectionReason ?? null,
     }),
+
+  listCashouts: (params?: { status?: string; limit?: number; offset?: number }) =>
+    api.get<{ cashouts: CashoutAdminView[]; total: number }>('/superadmin/affiliate/cashouts', { params }),
+
+  processCashout: (cashoutId: string, action: 'approve' | 'reject', notes?: string, payoutReference?: string) =>
+    api.patch<CashoutAdminView>(`/superadmin/affiliate/cashouts/${cashoutId}`, {
+      action,
+      notes: notes ?? null,
+      payout_reference: payoutReference ?? null,
+    }),
+
+  // ── New real-API routes ─────────────────────────────────────────
+  listTransactions: (params?: { status?: string; tx_type?: string; limit?: number; offset?: number }) =>
+    api.get<SATransactionsResponse>('/superadmin/transactions', { params }),
+
+  plansStats: () =>
+    api.get<SAPlansStatsResponse>('/superadmin/plans/stats'),
+
+  getSystem: () =>
+    api.get<SASystemResponse>('/superadmin/system'),
+
+  listLogs: (params?: { level?: string; limit?: number; offset?: number }) =>
+    api.get<SALogsResponse>('/superadmin/logs', { params }),
+
+  listMedia: (params?: { media_type?: string; limit?: number; offset?: number }) =>
+    api.get<SAMediaResponse>('/superadmin/media', { params }),
+
+  listRoles: () =>
+    api.get<SARolesResponse>('/superadmin/roles'),
+
+  getSettings: () =>
+    api.get<SAPlatformSettings>('/superadmin/settings'),
+
+  updateSettings: (body: Record<string, unknown>) =>
+    api.patch<{ ok: boolean }>('/superadmin/settings', body),
+
+  listSupportTickets: () =>
+    api.get<{ tickets: unknown[]; total: number }>('/superadmin/support/tickets'),
+
+  listNotifications: () =>
+    api.get<{ notifications: unknown[]; total: number }>('/superadmin/notifications'),
+
+  sendNotification: (body: { title: string; message: string; audience: string }) =>
+    api.post<{ ok: boolean }>('/superadmin/notifications', body),
+
+  getAiConfig: () =>
+    api.get<{ configured: boolean; model: string; available_models: string[]; usage: { tokens_used: number; requests: number } }>('/superadmin/ai/config'),
+
+  listEmailTemplates: () =>
+    api.get<{ templates: { id: string; name: string; active: boolean }[] }>('/superadmin/emails/templates'),
+
+  listPlans: () =>
+    api.get<{ plans: SAPlanConfig[] }>('/superadmin/plans/list'),
+
+  createPlan: (body: SAPlanCreateBody) =>
+    api.post<{ ok: boolean; id: string }>('/superadmin/plans', body),
+
+  updatePlan: (planId: string, body: Partial<SAPlanCreateBody>) =>
+    api.patch<{ ok: boolean }>(`/superadmin/plans/${planId}`, body),
+
+  deactivatePlan: (planId: string) =>
+    api.delete<void>(`/superadmin/plans/${planId}`),
+
+  // ── Templates ─────────────────────────────────────────────────
+  listTemplates: () =>
+    api.get<{ templates: SATemplate[]; total: number }>('/superadmin/templates'),
+
+  toggleTemplate: (templateId: string) =>
+    api.patch<{ ok: boolean }>(`/superadmin/templates/${templateId}/toggle`),
+
+  uploadTemplate: (file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    return api.post<{ ok: boolean; id: string; name: string }>('/superadmin/templates/upload', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  // ── Template categories ────────────────────────────────────────
+  listTemplateCategories: () =>
+    api.get<{ categories: SATemplateCategory[]; total: number }>('/superadmin/template-categories'),
+
+  createTemplateCategory: (body: SATemplateCategoryCreateBody) =>
+    api.post<{ ok: boolean; id: string }>('/superadmin/template-categories', body),
+
+  toggleTemplateCategory: (categoryId: string) =>
+    api.patch<{ ok: boolean }>(`/superadmin/template-categories/${categoryId}/toggle`),
+
+  // ── Affiliates ─────────────────────────────────────────────────
+  listAffiliates: (params?: { limit?: number; offset?: number }) =>
+    api.get<{ affiliates: SAAffiliateItem[]; total: number }>('/superadmin/affiliate/list', { params }),
 };

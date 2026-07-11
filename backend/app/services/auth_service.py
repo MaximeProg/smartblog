@@ -151,6 +151,7 @@ async def _issue_tokens(
         tenant_id=jwt_tenant_id,
         role=role,
         email=user.email,
+        is_super_admin=user.is_super_admin,
     )
 
     refresh_plain, refresh_hash = generate_refresh_token()
