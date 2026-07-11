@@ -6,6 +6,7 @@ import { useState, useCallback, type CSSProperties } from 'react';
 import { useParams } from 'next/navigation';
 import type { HomeProps } from '../ThemeRenderer';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
+import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const GRADIENTS = [
@@ -257,6 +258,12 @@ export default function CreativeHome({
       )}
 
       <div className="py-6" />
+
+      {!previewSlug && (
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        </div>
+      )}
 
       <CreativeFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
     </div>

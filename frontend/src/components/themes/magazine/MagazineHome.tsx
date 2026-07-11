@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { HomeProps } from '../ThemeRenderer';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
+import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
@@ -317,6 +318,12 @@ export default function MagazineHome({
             </>
           )}
         </>
+      )}
+
+      {!previewSlug && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        </div>
       )}
 
       <MagazineFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
