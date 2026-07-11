@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { type CSSProperties } from 'react';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
+import { AdRotator } from '../shared/AdRotator';
 
 interface Props {
   blog: BlogInfo;
@@ -28,6 +29,10 @@ export default function CreativeCategories({ blog, categories, articles: _articl
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
       <CreativeHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <section className="bg-zinc-950 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -91,6 +96,10 @@ export default function CreativeCategories({ blog, categories, articles: _articl
       </section>
 
       <div className="py-4" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <CreativeFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
     </div>

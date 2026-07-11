@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { BookOpen } from 'lucide-react';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
+import { AdRotator } from '../shared/AdRotator';
 
 const catGradients = [
   'from-zinc-600 to-zinc-800',
@@ -38,6 +39,10 @@ export default function EditorialCategories({
         basePath={basePath}
         primaryColor={primaryColor}
       />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 pb-8">
         <h1 className="text-5xl font-bold text-zinc-900 mb-3">Explore Topics</h1>
@@ -105,6 +110,10 @@ export default function EditorialCategories({
             ))}
           </div>
         )}
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
       </div>
 
       <EditorialFooter

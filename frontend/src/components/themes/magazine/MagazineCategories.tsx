@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
+import { AdRotator } from '../shared/AdRotator';
 
 interface CategoriesProps {
   blog: BlogInfo;
@@ -18,6 +19,10 @@ export default function MagazineCategories({ blog, categories, articles, basePat
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
       <MagazineHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <div className="border-t-4" style={{ borderColor: primaryColor }}>
         <div className="bg-zinc-950 py-12">
@@ -74,6 +79,10 @@ export default function MagazineCategories({ blog, categories, articles, basePat
             })}
           </div>
         )}
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
       </div>
 
       <MagazineFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />

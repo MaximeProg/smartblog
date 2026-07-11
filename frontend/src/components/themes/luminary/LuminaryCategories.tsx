@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
+import { AdRotator } from '../shared/AdRotator';
 
 const GRADIENTS = [
   'from-zinc-800 to-zinc-950',
@@ -38,6 +39,10 @@ export default function LuminaryCategories({ blog, categories, articles, basePat
         basePath={basePath}
         primaryColor={primaryColor}
       />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-8">
         <Link
@@ -119,6 +124,10 @@ export default function LuminaryCategories({ blog, categories, articles, basePat
       </div>
 
       <div className="pb-20" />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <LuminaryFooter
         blog={blog}

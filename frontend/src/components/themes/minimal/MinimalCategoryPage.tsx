@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { MinimalHeader, MinimalFooter } from './MinimalShared';
+import { AdRotator } from '../shared/AdRotator';
 
 interface CategoryPageProps {
   blog: BlogInfo;
@@ -42,6 +43,10 @@ export default function MinimalCategoryPage({
         basePath={basePath}
         primaryColor={primaryColor}
       />
+
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-12 pb-24">
         <Link
@@ -110,6 +115,10 @@ export default function MinimalCategoryPage({
             </div>
           )}
         </div>
+      </div>
+
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
       </div>
 
       <MinimalFooter

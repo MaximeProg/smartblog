@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
+import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const GRADIENTS = [
@@ -51,6 +52,10 @@ export default function LuminaryCategoryPage({
         basePath={basePath}
         primaryColor={primaryColor}
       />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <div className="relative w-full h-[40vh] min-h-[280px]">
         {category.cover_image_url ? (
@@ -151,6 +156,10 @@ export default function LuminaryCategoryPage({
       </div>
 
       <div className="pb-20" />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <LuminaryFooter
         blog={blog}

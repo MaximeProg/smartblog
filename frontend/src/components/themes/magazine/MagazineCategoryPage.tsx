@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
+import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 interface CategoryPageProps {
@@ -42,6 +43,10 @@ export default function MagazineCategoryPage({
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
       <MagazineHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+      </div>
 
       <div className="border-t-4" style={{ borderColor: primaryColor }}>
         <div className="bg-zinc-950 py-10">
@@ -174,6 +179,10 @@ export default function MagazineCategoryPage({
             )}
           </>
         )}
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        <AdRotator slug={blog.slug} primaryColor={primaryColor} />
       </div>
 
       <MagazineFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />

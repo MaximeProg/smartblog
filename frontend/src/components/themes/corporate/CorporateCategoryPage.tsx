@@ -11,6 +11,7 @@ import {
 } from './shared';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
+import { AdRotator } from '../shared/AdRotator';
 
 interface Props {
   blog: BlogInfo;
@@ -39,6 +40,12 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
         basePath={basePath}
         previewSlug={previewSlug}
       />
+
+      {!previewSlug && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        </div>
+      )}
 
       {/* Category hero */}
       <section className="relative overflow-hidden bg-slate-950 text-white">
@@ -225,6 +232,12 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
           </aside>
         </div>
       </section>
+
+      {!previewSlug && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        </div>
+      )}
 
       <NewsletterSection blog={blog} primaryColor={primaryColor} />
       <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} previewSlug={previewSlug} />
