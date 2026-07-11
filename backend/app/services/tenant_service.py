@@ -1,4 +1,6 @@
 import uuid
+import random
+import string
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, text
@@ -139,6 +141,8 @@ async def create_tenant(
             raise PlanLimitReachedException("blogs", max_blogs)
 
     # Le blog hérite du plan de l'utilisateur
+    affiliate_code = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+
     tenant = Tenant(
         name=data.name,
         slug=data.slug,
@@ -155,6 +159,7 @@ async def create_tenant(
         template_config=data.template_config,
         plan=user_plan,
         trial_ends_at=datetime.now(timezone.utc) + timedelta(days=14),
+        affiliate_code=affiliate_code,
     )
     db.add(tenant)
     await db.flush()  # tenant.id is now set
