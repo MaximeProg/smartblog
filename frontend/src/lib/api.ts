@@ -655,6 +655,16 @@ export interface CashoutRequest {
   processed_at: string | null;
 }
 
+export interface AffiliateReferral {
+  tenant_id: string;
+  name: string;
+  slug: string;
+  plan: string;
+  status: string;
+  joined_at: string | null;
+  total_commission: number;
+}
+
 export const affiliateApi = {
   getDashboard: (tenantId: string) =>
     api.get<AffiliateDashboard>(`/tenants/${tenantId}/affiliate`),
@@ -664,6 +674,9 @@ export const affiliateApi = {
 
   listCashouts: (tenantId: string) =>
     api.get<CashoutRequest[]>(`/tenants/${tenantId}/affiliate/cashouts`),
+
+  listReferrals: (tenantId: string, params?: { limit?: number; offset?: number }) =>
+    api.get<{ referrals: AffiliateReferral[]; total: number }>(`/tenants/${tenantId}/affiliate/referrals`, { params }),
 
   requestCashout: (tenantId: string, payout_method: string = 'stripe') =>
     api.post<CashoutRequest>(`/tenants/${tenantId}/affiliate/cashout`, { payout_method }),

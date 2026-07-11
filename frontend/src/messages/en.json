@@ -2053,7 +2053,22 @@
     "step1": "Share your unique referral link with other bloggers",
     "step2": "When they subscribe, you earn 10% of their subscription fee",
     "step3": "Commissions accumulate until you reach the $50 minimum threshold",
-    "step4": "Request a cashout — a $20 fee applies per withdrawal"
+    "step4": "Request a cashout — a $20 fee applies per withdrawal",
+    "noBlog": "Create a blog first to access the affiliate program.",
+    "cashoutRequested": "Cashout request submitted!",
+    "error": "Error",
+    "cashoutError": "Could not submit cashout request.",
+    "referralsTab": "My affiliates",
+    "noReferrals": "No referrals yet. Share your link to start earning!",
+    "refBlog": "Blog",
+    "refPlan": "Plan",
+    "refStatus": "Status",
+    "refJoined": "Joined",
+    "refCommissions": "Commissions earned",
+    "statusActive": "Active",
+    "statusTrial": "Trial",
+    "statusSuspended": "Suspended",
+    "statusDeleted": "Deleted"
   },
   "accounting": {
     "title": "Accounting",

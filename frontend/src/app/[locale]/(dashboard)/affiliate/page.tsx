@@ -8,7 +8,7 @@ import {
   ArrowDownToLine, Share2, Wallet, Gift, AlertCircle,
   CheckCircle2, XCircle,
 } from 'lucide-react';
-import { affiliateApi, tenantsApi, type AffiliateDashboard, type AffiliateCommission, type CashoutRequest } from '@/lib/api';
+import { affiliateApi, type AffiliateDashboard, type AffiliateCommission, type CashoutRequest, type AffiliateReferral } from '@/lib/api';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { useAuthStore } from '@/store/auth.store';
@@ -50,7 +50,7 @@ export default function AffiliatePage() {
   const qc = useQueryClient();
   const { tenants } = useAuthStore();
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<'commissions' | 'cashouts'>('commissions');
+  const [activeTab, setActiveTab] = useState<'commissions' | 'cashouts' | 'referrals'>('referrals');
   const [commissionFilter, setCommissionFilter] = useState<string>('all');
 
   // Use the first tenant as the account holder — affiliate is user-level UX,
@@ -80,6 +80,13 @@ export default function AffiliatePage() {
     queryFn: async () => { const { data } = await affiliateApi.listCashouts(tenantId); return data; },
     enabled: !!tenantId,
   });
+
+  const { data: referralsData } = useQuery<{ referrals: AffiliateReferral[]; total: number }>({
+    queryKey: ['affiliate-referrals', tenantId],
+    queryFn: async () => { const { data } = await affiliateApi.listReferrals(tenantId, { limit: 100 }); return data; },
+    enabled: !!tenantId,
+  });
+  const referrals = referralsData?.referrals ?? [];
 
   const cashoutMutation = useMutation({
     mutationFn: async () => { const { data } = await affiliateApi.requestCashout(tenantId, 'stripe'); return data; },
@@ -237,23 +244,103 @@ export default function AffiliatePage() {
                   </div>
                 </div>
 
-                {/* Tabs — commissions & cashouts */}
+                {/* Tabs — affiliés, commissions & cashouts */}
                 <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-hidden">
                   <div className="flex border-b border-slate-200 dark:border-slate-700">
-                    {(['commissions', 'cashouts'] as const).map(tab => (
+                    {([
+                      { id: 'referrals',    label: t('referralsTab') },
+                      { id: 'commissions',  label: t('commissionsTitle') },
+                      { id: 'cashouts',     label: t('cashoutsTitle') },
+                    ] as const).map(tab => (
                       <button
-                        key={tab}
-                        onClick={() => setActiveTab(tab)}
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
                         className={`flex-1 px-4 py-3 text-sm font-semibold transition-colors ${
-                          activeTab === tab
+                          activeTab === tab.id
                             ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border-b-2 border-blue-600'
                             : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                         }`}
                       >
-                        {tab === 'commissions' ? t('commissionsTitle') : t('cashoutsTitle')}
+                        {tab.label}
+                        {tab.id === 'referrals' && referrals.length > 0 && (
+                          <span className="ml-1.5 inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 text-[10px] font-bold">
+                            {referrals.length}
+                          </span>
+                        )}
                       </button>
                     ))}
                   </div>
+
+                  {activeTab === 'referrals' && (
+                    <div>
+                      {referrals.length === 0 ? (
+                        <div className="py-14 text-center">
+                          <Users className="h-8 w-8 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                          <p className="text-slate-400 dark:text-slate-500 text-sm">{t('noReferrals')}</p>
+                        </div>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
+                              <tr>
+                                {[t('refBlog'), t('refPlan'), t('refStatus'), t('refJoined'), t('refCommissions')].map(h => (
+                                  <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                              {referrals.map(r => {
+                                const planColors: Record<string, string> = {
+                                  free:     'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300',
+                                  starter:  'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400',
+                                  pro:      'bg-violet-50 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400',
+                                  business: 'bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400',
+                                };
+                                const statusColors: Record<string, string> = {
+                                  active:    'bg-green-50 dark:bg-green-900/40 text-green-700 dark:text-green-400',
+                                  trial:     'bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400',
+                                  suspended: 'bg-red-50 dark:bg-red-900/40 text-red-600 dark:text-red-400',
+                                  deleted:   'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400',
+                                };
+                                const statusLabels: Record<string, string> = {
+                                  active:    t('statusActive'),
+                                  trial:     t('statusTrial'),
+                                  suspended: t('statusSuspended'),
+                                  deleted:   t('statusDeleted'),
+                                };
+                                return (
+                                  <tr key={r.tenant_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                    <td className="px-4 py-3">
+                                      <div>
+                                        <p className="font-semibold text-slate-900 dark:text-slate-100">{r.name}</p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-500 font-mono">{r.slug}</p>
+                                      </div>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${planColors[r.plan] ?? planColors.free}`}>
+                                        {r.plan}
+                                      </span>
+                                    </td>
+                                    <td className="px-4 py-3">
+                                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${statusColors[r.status] ?? statusColors.active}`}>
+                                        {statusLabels[r.status] ?? r.status}
+                                      </span>
+                                    </td>
+                                    <td className="px-4 py-3 text-slate-400 dark:text-slate-500">
+                                      {r.joined_at ? fmtDate(r.joined_at) : '—'}
+                                    </td>
+                                    <td className="px-4 py-3 font-semibold text-green-700 dark:text-green-400">
+                                      {fmtCurrency(r.total_commission)}
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {activeTab === 'commissions' && (
                     <div>

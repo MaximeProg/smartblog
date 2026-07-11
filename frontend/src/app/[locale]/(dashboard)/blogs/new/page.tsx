@@ -338,7 +338,7 @@ export default function CreateBlogPage() {
   const activeTemplate = TEMPLATE_OPTIONS.find(t => t.id === selectedTheme)!;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+    <div className="flex h-screen overflow-hidden bg-white dark:bg-slate-950">
       <DashboardSidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">

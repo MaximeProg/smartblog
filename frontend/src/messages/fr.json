@@ -2032,7 +2032,22 @@
     "step1": "Partagez votre lien unique avec d'autres blogueurs",
     "step2": "À leur inscription, vous gagnez 10% de leur abonnement",
     "step3": "Les commissions s'accumulent jusqu'au seuil minimum de 50$",
-    "step4": "Demandez un retrait — frais de 20$ par retrait"
+    "step4": "Demandez un retrait — frais de 20$ par retrait",
+    "noBlog": "Créez un blog pour accéder au programme d'affiliation.",
+    "cashoutRequested": "Demande de retrait soumise !",
+    "error": "Erreur",
+    "cashoutError": "Impossible de soumettre la demande de retrait.",
+    "referralsTab": "Mes affiliés",
+    "noReferrals": "Aucun affilié pour l'instant. Partagez votre lien pour commencer !",
+    "refBlog": "Blog",
+    "refPlan": "Plan",
+    "refStatus": "Statut",
+    "refJoined": "Inscrit le",
+    "refCommissions": "Commissions générées",
+    "statusActive": "Actif",
+    "statusTrial": "Essai",
+    "statusSuspended": "Suspendu",
+    "statusDeleted": "Supprimé"
   },
   "accounting": {
     "title": "Comptabilité",

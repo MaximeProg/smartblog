@@ -67,6 +67,16 @@ class RegisterReferralRequest(BaseModel):
     referral_code: str
 
 
+class ReferralItem(BaseModel):
+    tenant_id: str
+    name: str
+    slug: str
+    plan: str
+    status: str
+    joined_at: str | None
+    total_commission: float
+
+
 # ── Helpers ───────────────────────────────────────────────────────
 
 def _generate_affiliate_code() -> str:
@@ -379,6 +389,68 @@ async def _accrue_commission(db, affiliate_tenant_id, source_tenant_id, source_t
         commission.status = AffiliateCommissionStatus.READY
 
 
+@router.get("/referrals")
+async def list_referrals(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    """List direct referrals (level=1) for this affiliate tenant."""
+    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+
+    result = await db.execute(
+        select(
+            AffiliateRelationship.descendant_id,
+            AffiliateRelationship.created_at.label("referred_at"),
+            Tenant.name,
+            Tenant.slug,
+            Tenant.plan,
+            Tenant.status,
+        )
+        .join(Tenant, Tenant.id == AffiliateRelationship.descendant_id)
+        .where(
+            AffiliateRelationship.ancestor_id == tenant_id,
+            AffiliateRelationship.level == 1,
+            Tenant.deleted_at.is_(None),
+        )
+        .order_by(AffiliateRelationship.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    rows = result.all()
+
+    total_q = await db.execute(
+        select(func.count()).where(
+            AffiliateRelationship.ancestor_id == tenant_id,
+            AffiliateRelationship.level == 1,
+        )
+    )
+    total = total_q.scalar_one() or 0
+
+    referrals = []
+    for row in rows:
+        comm_q = await db.execute(
+            select(func.coalesce(func.sum(AffiliateCommission.commission_amount), 0)).where(
+                AffiliateCommission.affiliate_tenant_id == tenant_id,
+                AffiliateCommission.source_tenant_id == row.descendant_id,
+            )
+        )
+        total_commission = float(comm_q.scalar() or 0)
+        referrals.append(ReferralItem(
+            tenant_id=str(row.descendant_id),
+            name=row.name,
+            slug=row.slug,
+            plan=row.plan.value if hasattr(row.plan, "value") else str(row.plan),
+            status=row.status.value if hasattr(row.status, "value") else str(row.status),
+            joined_at=row.referred_at.isoformat() if row.referred_at else None,
+            total_commission=total_commission,
+        ))
+
+    return {"referrals": referrals, "total": total}
+
+
 # ── Register referral (called at tenant creation) ─────────────────
 
 async def register_referral(db, new_tenant_id: uuid.UUID, referral_code: str):
@@ -426,6 +498,8 @@ async def register_referral(db, new_tenant_id: uuid.UUID, referral_code: str):
     new_tenant = await db.get(Tenant, new_tenant_id)
     if new_tenant:
         new_tenant.referred_by_tenant_id = referrer.id
+
+    await db.commit()
 
 
 # ── Super Admin routes ────────────────────────────────────────────
