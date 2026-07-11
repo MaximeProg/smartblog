@@ -120,6 +120,7 @@ export default function LuminaryHome({
 
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [topAdId, setTopAdId] = useState<string | null>(null);
 
   const aHref = useCallback(
     (articleSlug: string) => {
@@ -239,7 +240,7 @@ export default function LuminaryHome({
 
       {!previewSlug && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} onAdLoaded={setTopAdId} />
         </div>
       )}
 
@@ -400,7 +401,7 @@ export default function LuminaryHome({
 
       {!previewSlug && (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" excludeId={topAdId ?? undefined} />
         </div>
       )}
 

@@ -23,22 +23,31 @@ interface Props {
    * strip   – barre horizontale compacte avec logo + titre + bouton (position basse)
    */
   variant?: 'inline' | 'strip';
+  /** ID d'une annonce déjà affichée à exclure (évite le doublon haut/bas) */
+  excludeId?: string;
+  /** Callback appelé quand une nouvelle annonce est chargée */
+  onAdLoaded?: (id: string) => void;
 }
 
 function getDomain(url: string): string {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; }
 }
 
-export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline' }: Props) {
+export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', excludeId, onAdLoaded }: Props) {
   const [ad, setAd] = useState<AdData | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [imgError, setImgError] = useState(false);
   const trackedRef = useRef<string | null>(null);
+  const onAdLoadedRef = useRef(onAdLoaded);
+  onAdLoadedRef.current = onAdLoaded;
 
-  async function fetchAd() {
+  async function fetchAd(currentExcludeId?: string) {
     try {
-      const res = await fetch(`${API_BASE}/api/v1/public/${slug}/ads/rotator`, { cache: 'no-store' });
+      const url = currentExcludeId
+        ? `${API_BASE}/api/v1/public/${slug}/ads/rotator?exclude=${encodeURIComponent(currentExcludeId)}`
+        : `${API_BASE}/api/v1/public/${slug}/ads/rotator`;
+      const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) return;
       const data: AdData | null = await res.json();
       if (data && data.id !== trackedRef.current) {
@@ -46,6 +55,7 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline' }
         setImgError(false);
         trackImpression(data.id);
         trackedRef.current = data.id;
+        onAdLoadedRef.current?.(data.id);
       }
     } catch { /* silent */ }
   }
@@ -61,10 +71,10 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline' }
   }
 
   useEffect(() => {
-    fetchAd();
-    const timer = setInterval(fetchAd, ROTATE_INTERVAL_MS);
+    fetchAd(excludeId);
+    const timer = setInterval(() => fetchAd(excludeId), ROTATE_INTERVAL_MS);
     return () => clearInterval(timer);
-  }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [slug, excludeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!ad || dismissed) return null;
 

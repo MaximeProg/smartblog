@@ -65,6 +65,7 @@ export default function CreativeHome({
   const gridArticles = !isFiltered && showHero && articles.length > 0 ? articles.slice(1) : articles;
 
   const [email, setEmail] = useState('');
+  const [topAdId, setTopAdId] = useState<string | null>(null);
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
@@ -123,7 +124,7 @@ export default function CreativeHome({
 
       {!previewSlug && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} onAdLoaded={setTopAdId} />
         </div>
       )}
 
@@ -267,7 +268,7 @@ export default function CreativeHome({
 
       {!previewSlug && (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-          <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" />
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" excludeId={topAdId ?? undefined} />
         </div>
       )}
 

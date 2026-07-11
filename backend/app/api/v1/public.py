@@ -589,27 +589,34 @@ class PublicAdCard(BaseModel):
 
 
 @router.get("/ads/rotator", response_model=PublicAdCard | None)
-async def get_rotator_ad(slug: str, db: DBSession):
+async def get_rotator_ad(slug: str, db: DBSession, exclude: str | None = Query(None)):
     """
     Retourne la publicité à afficher selon l'algorithme de rotation pondérée.
     Le poids de chaque annonce = total_budget (plus le budget est élevé,
     plus la pub a de chances d'être sélectionnée). Retourne null si aucune
     campagne active.
+    Le paramètre ?exclude=<uuid> permet d'exclure une annonce déjà affichée
+    (ex : l'annonce du haut ne doit pas être la même que celle du bas).
     """
     tenant = await _resolve_tenant(db, slug)
     now = datetime.now(timezone.utc)
 
-    result = await db.execute(
-        select(Ad).where(
-            Ad.tenant_id == tenant.id,
-            Ad.submission_status == AdSubmissionStatus.APPROVED,
-            Ad.campaign_status == AdCampaignStatus.ACTIVE,
-            Ad.link_safety_status != LinkSafetyStatus.DANGEROUS,
-            # Respecter les dates de campagne si définies
-            (Ad.starts_at.is_(None) | (Ad.starts_at <= now)),
-            (Ad.ends_at.is_(None) | (Ad.ends_at >= now)),
-        )
-    )
+    conditions = [
+        Ad.tenant_id == tenant.id,
+        Ad.submission_status == AdSubmissionStatus.APPROVED,
+        Ad.campaign_status == AdCampaignStatus.ACTIVE,
+        Ad.link_safety_status != LinkSafetyStatus.DANGEROUS,
+        (Ad.starts_at.is_(None) | (Ad.starts_at <= now)),
+        (Ad.ends_at.is_(None) | (Ad.ends_at >= now)),
+    ]
+    if exclude:
+        try:
+            exclude_id = uuid.UUID(exclude)
+            conditions.append(Ad.id != exclude_id)
+        except ValueError:
+            pass
+
+    result = await db.execute(select(Ad).where(*conditions))
     ads = result.scalars().all()
 
     if not ads:
