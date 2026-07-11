@@ -20,7 +20,10 @@ export async function generateMetadata({
   return {
     title: { default: t('appName'), template: `%s | ${t('appName')}` },
     description: t('tagline'),
-    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_APP_URL ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    ),
   };
 }
 

@@ -12,7 +12,23 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'auth.register' });
-  return { title: `${t('title')} — NexusBlog` };
+  const title = `${t('title')} — NexusBlog`;
+  const description = t('subtitle');
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      siteName: 'NexusBlog',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+  };
 }
 
 export default async function RegisterPage({
