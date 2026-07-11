@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import type { ArticleProps } from '../ThemeRenderer';
 import type { PublicArticle } from '@/lib/public-api';
 import { MinimalHeader, MinimalFooter } from './MinimalShared';
+import { AdRotator } from '../shared/AdRotator';
 import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
@@ -321,6 +322,12 @@ export default function MinimalArticle({
         {showComments && (
           <div className="mt-16 pt-12 border-t border-zinc-100">
             <PublicCommentsSection blogSlug={blog.slug} articleSlug={article.slug} primaryColor={primaryColor} />
+          </div>
+        )}
+
+        {!previewSlug && (
+          <div className="mt-12">
+            <AdRotator slug={blog.slug} primaryColor={primaryColor} />
           </div>
         )}
 

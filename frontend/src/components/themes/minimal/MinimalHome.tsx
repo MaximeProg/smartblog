@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { HomeProps } from '../ThemeRenderer';
 import { MinimalHeader, MinimalFooter } from './MinimalShared';
+import { AdRotator } from '../shared/AdRotator';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -226,6 +227,12 @@ export default function MinimalHome({
           <p className="text-xs text-red-500 mt-2">Something went wrong. Please try again.</p>
         )}
       </div>
+      )}
+
+      {!previewSlug && (
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-6">
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        </div>
       )}
 
       <MinimalFooter

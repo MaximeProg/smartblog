@@ -7,6 +7,7 @@ import { ArrowRight, ChevronRight } from 'lucide-react';
 import type { HomeProps } from '../ThemeRenderer';
 import type { PublicArticle, PublicCategory } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
+import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
@@ -389,6 +390,12 @@ export default function LuminaryHome({
             {newsletterDisclaimer && <p className="font-sans text-xs text-zinc-600 mt-6">{newsletterDisclaimer}</p>}
           </div>
         </section>
+      )}
+
+      {!previewSlug && (
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <AdRotator slug={blog.slug} primaryColor={primaryColor} />
+        </div>
       )}
 
       <LuminaryFooter
