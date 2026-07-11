@@ -37,6 +37,7 @@ class SubscriberResponse(BaseModel):
     last_name: str | None
     status: SubscriberStatus
     source: str | None
+    tags: list[str] = []
     created_at: datetime
 
 
@@ -281,6 +282,7 @@ async def list_subscribers(
     db: DBSession,
     status: SubscriberStatus | None = None,
     q: str | None = None,
+    tag: str | None = None,
     limit: int = 50,
     cursor: str | None = None,
 ):
@@ -294,6 +296,8 @@ async def list_subscribers(
             NewsletterSubscriber.first_name.ilike(f"%{q}%") |
             NewsletterSubscriber.last_name.ilike(f"%{q}%")
         )
+    if tag:
+        query = query.where(NewsletterSubscriber.tags.contains([tag]))
     if cursor:
         query = query.where(NewsletterSubscriber.created_at < datetime.fromisoformat(cursor))
     query = query.order_by(NewsletterSubscriber.created_at.desc()).limit(limit)
@@ -426,7 +430,7 @@ def _sub_response(s: NewsletterSubscriber) -> SubscriberResponse:
     return SubscriberResponse(
         id=str(s.id), email=s.email, first_name=s.first_name,
         last_name=s.last_name, status=s.status,
-        source=s.source, created_at=s.created_at,
+        source=s.source, tags=s.tags or [], created_at=s.created_at,
     )
 
 

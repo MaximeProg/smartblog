@@ -251,7 +251,13 @@
         "createFirst": "Create an article",
         "countSingular": "{n} article",
         "countPlural": "{n} articles",
-        "sendAsNewsletter": "Send as newsletter"
+        "sendAsNewsletter": "Send as newsletter",
+        "upgrade": "Upgrade",
+        "limitReachedTitle": "Article limit reached ({max}/{max})",
+        "limitReachedDesc": "You've reached your plan's article limit. Upgrade to publish more.",
+        "limitNearTitle": "Approaching your limit ({used}/{max} articles)",
+        "limitNearDesc": "You're at 80%+ of your plan's article allowance.",
+        "limitReachedTooltip": "Article limit reached — upgrade to create more"
     },
     "pages": {
         "title": "Pages",
@@ -1161,7 +1167,9 @@
         "sentAt": "Sent",
         "import": "Import CSV",
         "importSuccess": "Imported {imported} subscribers ({skipped} skipped)",
-        "importError": "Import failed"
+        "importError": "Import failed",
+        "filterByTag": "Tag",
+        "allTags": "All"
     },
     "tags": {
         "title": "Tags",
@@ -1326,6 +1334,7 @@
         "yourPlan": "Your plan",
         "currentPlanButton": "Current plan",
         "footerNote": "Secure payment · Cancel anytime · No hidden fees",
+        "checkoutError": "Checkout failed. Please try again.",
         "upgradeNow": "Upgrade now",
         "trialExpiredTitle": "Your trial has expired",
         "trialExpiredDesc": "Choose a plan to keep publishing and growing your blog.",

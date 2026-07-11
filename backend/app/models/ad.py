@@ -55,6 +55,10 @@ class Ad(Base):
     total_budget: Mapped[float | None] = mapped_column(Numeric(10, 2))
     amount_paid: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
 
+    # Paiement annonceur
+    payment_link_url: Mapped[str | None] = mapped_column(Text)
+    payment_session_id: Mapped[str | None] = mapped_column(String(255))
+
     # Stats
     impressions_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     clicks_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

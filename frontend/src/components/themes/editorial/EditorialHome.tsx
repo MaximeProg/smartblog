@@ -7,6 +7,7 @@ import { ArrowRight, BookOpen, Clock } from 'lucide-react';
 import type { HomeProps } from '../ThemeRenderer';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
+import { ThemeSidebar } from '../shared/ThemeSidebar';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
 
@@ -89,6 +90,8 @@ export default function EditorialHome({
   const newsletterDisclaimer = homeCfg?.newsletter?.disclaimer || 'No spam. Unsubscribe anytime.';
   const showCategoriesStrip = homeCfg?.categoriesStrip?.enabled !== false;
   const categoriesStripLabel = homeCfg?.categoriesStrip?.label || 'Explore Topics';
+
+  const sidebarCfg = homeCfg?.sidebar;
 
   const isFiltered = !!(currentCategory || searchQuery);
   const filteredCategory = categories.find(c => c.slug === currentCategory);
@@ -218,7 +221,10 @@ export default function EditorialHome({
       )}
 
       {gridArticles.length > 0 && (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex gap-10 items-start">
+            {/* Article grid */}
+            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-8">
           {gridArticles.map((a, i) => (
             <Link key={a.id} href={aHref(a.slug)} className="group flex flex-col">
               <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-4 ring-0 group-hover:ring-2 transition-all ring-offset-2 ring-[var(--cp)]">
@@ -273,6 +279,20 @@ export default function EditorialHome({
               </div>
             </Link>
           ))}
+            </div>
+            {/* Sidebar */}
+            <div className="hidden lg:block w-72 shrink-0">
+              <ThemeSidebar
+                blog={blog}
+                articles={articles}
+                categories={categories}
+                config={sidebarCfg}
+                getArticleHref={aHref}
+                isPreview={!!previewSlug}
+                locale={locale}
+              />
+            </div>
+          </div>
         </div>
       )}
 

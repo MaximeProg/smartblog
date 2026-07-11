@@ -1,11 +1,14 @@
 'use client';
 
-import { Check, Zap, Star, Building2, Sparkles, Clock, Mail, ArrowRight, X } from 'lucide-react';
+import { Check, Zap, Star, Building2, Sparkles, Clock, ArrowRight, Loader2, CreditCard } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
+import { useLocale } from 'next-intl';
 import { useAuthStore, useCurrentTenant } from '@/store/auth.store';
+import { paymentsApi } from '@/lib/api';
+import { useToast } from '@/hooks/use-toast';
 
 // ── Plan config ───────────────────────────────────────────────────
 
@@ -22,41 +25,39 @@ function daysLeft(iso: string): number {
   return Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 86400000));
 }
 
-// ── Contact modal (Stripe deferred) ──────────────────────────────
-
-function ContactModal({ plan, onClose }: { plan: string; onClose: () => void }) {
-  const t = useTranslations('subscription');
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl w-full max-w-md p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[15px] font-black text-slate-900 dark:text-slate-100">{t('contactModalTitle', { plan: plan.charAt(0).toUpperCase() + plan.slice(1) })}</h2>
-          <button onClick={onClose} className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        <p className="text-[13px] text-slate-500 dark:text-slate-400 mb-5">{t('contactModalDesc')}</p>
-        <a
-          href={`mailto:contact@nexusblog.io?subject=Upgrade to ${plan}&body=Hello, I would like to upgrade my NexusBlog plan to ${plan}.`}
-          className="flex items-center justify-center gap-2 w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold transition-colors"
-          onClick={onClose}
-        >
-          <Mail className="h-4 w-4" /> {t('contactModalCta')}
-        </a>
-        <p className="text-[11px] text-slate-400 text-center mt-3">{t('contactModalNote')}</p>
-      </div>
-    </div>
-  );
-}
-
 // ── Main page ─────────────────────────────────────────────────────
 
 export default function SubscriptionPage() {
   const { user } = useAuthStore();
   const tenant = useCurrentTenant();
+  const locale = useLocale();
   const t = useTranslations('subscription');
-  const [contactPlan, setContactPlan] = useState<string | null>(null);
+  const { toast } = useToast();
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const currentPlan = user?.plan ?? 'free';
+
+  async function handleCheckout(planId: string) {
+    if (planId === 'free' || planId === currentPlan || !tenant?.id) return;
+    setCheckoutLoading(planId);
+    try {
+      const origin = window.location.origin;
+      const { data } = await paymentsApi.createSubscriptionCheckout(tenant.id, {
+        plan: planId,
+        billing: 'monthly',
+        success_url: `${origin}/${locale}/subscription?success=1&plan=${planId}`,
+        cancel_url: `${origin}/${locale}/subscription`,
+      });
+      window.location.href = data.checkout_url;
+    } catch (e: any) {
+      const detail = e?.response?.data?.detail;
+      toast({
+        variant: 'destructive',
+        title: t('checkoutError'),
+        description: typeof detail === 'string' ? detail : undefined,
+      });
+      setCheckoutLoading(null);
+    }
+  }
 
   const trialDays = tenant?.trial_ends_at ? daysLeft(tenant.trial_ends_at) : null;
   const trialExpired = trialDays === 0 && tenant?.trial_ends_at != null;
@@ -91,10 +92,11 @@ export default function SubscriptionPage() {
                   </p>
                 </div>
                 <button
-                  onClick={() => setContactPlan('pro')}
-                  className="flex items-center gap-1.5 h-9 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold shrink-0 transition-colors"
+                  onClick={() => handleCheckout('pro')}
+                  disabled={checkoutLoading !== null}
+                  className="flex items-center gap-1.5 h-9 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold shrink-0 transition-colors disabled:opacity-60"
                 >
-                  {t('upgradeNow')} <ArrowRight className="h-3.5 w-3.5" />
+                  {checkoutLoading === 'pro' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <>{t('upgradeNow')} <ArrowRight className="h-3.5 w-3.5" /></>}
                 </button>
               </div>
             )}
@@ -153,21 +155,27 @@ export default function SubscriptionPage() {
                     </ul>
 
                     <button
-                      onClick={() => !isCurrent && planId !== 'free' && setContactPlan(planId)}
-                      disabled={isCurrent || planId === 'free'}
-                      className={`w-full h-10 rounded-xl text-[13px] font-bold transition-colors ${
+                      onClick={() => handleCheckout(planId)}
+                      disabled={isCurrent || planId === 'free' || checkoutLoading !== null}
+                      className={`w-full h-10 rounded-xl text-[13px] font-bold transition-colors flex items-center justify-center gap-2 ${
                         isCurrent
                           ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-default'
                           : planId === 'free'
                             ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 cursor-default'
                             : planId === 'starter'
-                              ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                              ? 'bg-indigo-600 hover:bg-indigo-700 text-white disabled:opacity-60'
                               : planId === 'pro'
-                                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                                : 'bg-amber-600 hover:bg-amber-700 text-white'
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-60'
+                                : 'bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-60'
                       }`}
                     >
-                      {isCurrent ? t('currentPlanButton') : planId === 'free' ? t('currentPlanButton') : planData.cta}
+                      {checkoutLoading === planId ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Redirection…</>
+                      ) : isCurrent || planId === 'free' ? (
+                        t('currentPlanButton')
+                      ) : (
+                        <><CreditCard className="h-4 w-4" /> {planData.cta}</>
+                      )}
                     </button>
                   </div>
                 );
@@ -179,7 +187,6 @@ export default function SubscriptionPage() {
         </main>
       </div>
 
-      {contactPlan && <ContactModal plan={contactPlan} onClose={() => setContactPlan(null)} />}
     </div>
   );
 }

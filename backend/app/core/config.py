@@ -51,6 +51,26 @@ class Settings(BaseSettings):
     STRIPE_WEBHOOK_SECRET: str = ""
     STRIPE_PLATFORM_FEE_PERCENT: int = 5
 
+    # Stripe Price IDs — créer dans Dashboard Stripe > Products > Add product
+    # Format : price_XXXXXXXXXXXXXXXXXXXXXXXX
+    STRIPE_PRICE_STARTER_MONTHLY: str = ""
+    STRIPE_PRICE_STARTER_ANNUAL: str = ""
+    STRIPE_PRICE_PRO_MONTHLY: str = ""
+    STRIPE_PRICE_PRO_ANNUAL: str = ""
+    STRIPE_PRICE_BUSINESS_MONTHLY: str = ""
+    STRIPE_PRICE_BUSINESS_ANNUAL: str = ""
+
+    @property
+    def stripe_price_map(self) -> dict[str, str]:
+        return {
+            "starter_monthly": self.STRIPE_PRICE_STARTER_MONTHLY,
+            "starter_annual":  self.STRIPE_PRICE_STARTER_ANNUAL,
+            "pro_monthly":     self.STRIPE_PRICE_PRO_MONTHLY,
+            "pro_annual":      self.STRIPE_PRICE_PRO_ANNUAL,
+            "business_monthly": self.STRIPE_PRICE_BUSINESS_MONTHLY,
+            "business_annual":  self.STRIPE_PRICE_BUSINESS_ANNUAL,
+        }
+
     # PayPal
     PAYPAL_CLIENT_ID: str = ""
     PAYPAL_CLIENT_SECRET: str = ""

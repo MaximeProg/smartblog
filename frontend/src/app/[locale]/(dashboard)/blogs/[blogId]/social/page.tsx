@@ -1,8 +1,8 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Link2, Link2Off, Clock, Send, AlertCircle, CheckCircle2,
@@ -244,14 +244,38 @@ function PostModal({ blogId, accounts, onClose }: { blogId: string; accounts: So
 
 type Tab = 'accounts' | 'posts';
 
-export default function SocialPage() {
+function SocialPageInner() {
   const params = useParams();
   const blogId = params.blogId as string;
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>('accounts');
   const [showPostForm, setShowPostForm] = useState(false);
   const t = useTranslations('social');
   const { toast } = useToast();
   const qc = useQueryClient();
+
+  // Handle OAuth callback: ?connected=platform
+  useEffect(() => {
+    const connected = searchParams.get('connected');
+    const error     = searchParams.get('error');
+    if (connected) {
+      const meta = PLATFORMS[connected as SocialPlatform] ?? PLATFORM_FALLBACK;
+      toast({ title: `${meta.label} connecté avec succès !` });
+      qc.invalidateQueries({ queryKey: ['social-accounts', blogId] });
+      // Remove query params from URL without reloading
+      const url = new URL(window.location.href);
+      url.searchParams.delete('connected');
+      router.replace(url.pathname);
+    }
+    if (error) {
+      toast({ variant: 'destructive', title: `Erreur OAuth : ${error}` });
+      const url = new URL(window.location.href);
+      url.searchParams.delete('error');
+      router.replace(url.pathname);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { data: accounts = [], isLoading: accountsLoading } = useQuery({
     queryKey: ['social-accounts', blogId],
@@ -414,5 +438,13 @@ export default function SocialPage() {
         <PostModal blogId={blogId} accounts={accounts} onClose={() => setShowPostForm(false)} />
       )}
     </FullPageShell>
+  );
+}
+
+export default function SocialPage() {
+  return (
+    <Suspense>
+      <SocialPageInner />
+    </Suspense>
   );
 }

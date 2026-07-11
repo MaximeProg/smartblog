@@ -447,6 +447,7 @@ export interface NewsletterSubscriber {
   last_name: string | null;
   status: SubscriberStatus;
   source: string | null;
+  tags: string[];
   created_at: string;
 }
 

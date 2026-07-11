@@ -10,22 +10,23 @@ interface UseVoiceSearchOptions {
 export function useVoiceSearch({ lang = 'fr-FR', onResult }: UseVoiceSearchOptions) {
   const [listening, setListening] = useState(false);
   const [supported, setSupported] = useState(false);
-  const recogRef = useRef<InstanceType<typeof window.SpeechRecognition> | null>(null);
+  type SR = new () => SpeechRecognition;
+  const recogRef = useRef<SpeechRecognition | null>(null);
   const onResultRef = useRef(onResult);
 
   useEffect(() => { onResultRef.current = onResult; }, [onResult]);
 
+  function getSR(): SR | undefined {
+    const w = window as unknown as Record<string, unknown>;
+    return (w['SpeechRecognition'] ?? w['webkitSpeechRecognition']) as SR | undefined;
+  }
+
   useEffect(() => {
-    const SR =
-      (window as unknown as { SpeechRecognition?: typeof window.SpeechRecognition }).SpeechRecognition ??
-      (window as unknown as { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition;
-    setSupported(!!SR);
+    setSupported(!!getSR());
   }, []);
 
   const start = useCallback(() => {
-    const SR =
-      (window as unknown as { SpeechRecognition?: typeof window.SpeechRecognition }).SpeechRecognition ??
-      (window as unknown as { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition;
+    const SR = getSR();
     if (!SR) return;
 
     // Stop any ongoing recognition before starting a new one
@@ -53,7 +54,7 @@ export function useVoiceSearch({ lang = 'fr-FR', onResult }: UseVoiceSearchOptio
     recog.onerror = () => setListening(false);
     recog.onend = () => setListening(false);
 
-    recogRef.current = recog;
+    recogRef.current = recog as unknown as SpeechRecognition;
     recog.start();
   }, [lang]);
 

@@ -8,7 +8,7 @@ import {
   Megaphone, Check, X, Clock, Pause, Play,
   ExternalLink, Shield, AlertTriangle, Eye, MousePointer, TrendingUp,
   Link2, Copy, ChevronRight, Mail, Building2, Globe, MapPin,
-  Calendar, DollarSign, BarChart2, Info, FileText,
+  Calendar, DollarSign, BarChart2, Info, FileText, CreditCard,
 } from 'lucide-react';
 import { adsApi, tenantsApi, type AdResponse } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
@@ -18,10 +18,11 @@ type SubmissionStatus = AdResponse['submission_status'];
 type SafetyStatus     = AdResponse['link_safety_status'];
 
 const STATUS_TABS: { key: SubmissionStatus | 'all'; label: string; icon: React.ElementType }[] = [
-  { key: 'all',      label: 'All',      icon: Megaphone },
-  { key: 'PENDING',  label: 'Pending',  icon: Clock },
-  { key: 'APPROVED', label: 'Active',   icon: Check },
-  { key: 'REJECTED', label: 'Rejected', icon: X },
+  { key: 'all',             label: 'All',             icon: Megaphone },
+  { key: 'pending',         label: 'Pending',         icon: Clock },
+  { key: 'payment_pending', label: 'Awaiting payment', icon: DollarSign },
+  { key: 'approved',        label: 'Active',          icon: Check },
+  { key: 'rejected',        label: 'Rejected',        icon: X },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -47,13 +48,14 @@ function parseDescription(raw: string | null): { desc: string; targeting: string
 // ── Badges ────────────────────────────────────────────────────────────────────
 
 function SafetyBadge({ status }: { status: SafetyStatus }) {
-  const map: Record<SafetyStatus, { label: string; cls: string; icon: React.ElementType }> = {
-    SAFE:      { label: 'Safe',     cls: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800', icon: Shield },
-    DANGEROUS: { label: 'Unsafe',   cls: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',                        icon: AlertTriangle },
-    UNKNOWN:   { label: 'Unknown',  cls: 'bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600',               icon: Shield },
-    SCANNING:  { label: 'Scanning', cls: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',                  icon: Shield },
+  const map: Partial<Record<SafetyStatus, { label: string; cls: string; icon: React.ElementType }>> = {
+    safe:      { label: 'Safe',     cls: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800', icon: Shield },
+    dangerous: { label: 'Unsafe',   cls: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',                        icon: AlertTriangle },
+    unknown:   { label: 'Unknown',  cls: 'bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600',               icon: Shield },
+    unchecked: { label: 'Pending',  cls: 'bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600',               icon: Shield },
+    scanning:  { label: 'Scanning', cls: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',                  icon: Shield },
   };
-  const { label, cls, icon: Icon } = map[status] ?? map.UNKNOWN;
+  const { label, cls, icon: Icon } = map[status] ?? map.unknown!;
   return (
     <span className={`inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold border ${cls}`}>
       <Icon className="h-2.5 w-2.5" /> {label}
@@ -62,25 +64,28 @@ function SafetyBadge({ status }: { status: SafetyStatus }) {
 }
 
 function StatusBadge({ status }: { status: SubmissionStatus }) {
-  const map: Record<SubmissionStatus, { label: string; cls: string }> = {
-    PENDING:  { label: 'Platform review', cls: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800' },
-    APPROVED: { label: 'Approved',        cls: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' },
-    REJECTED: { label: 'Rejected',        cls: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800' },
+  const map: Partial<Record<SubmissionStatus, { label: string; cls: string }>> = {
+    pending:         { label: 'Platform review',   cls: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800' },
+    approved:        { label: 'Approved',           cls: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' },
+    rejected:        { label: 'Rejected',           cls: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800' },
+    payment_pending: { label: 'Awaiting payment',  cls: 'bg-violet-50 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 border-violet-200 dark:border-violet-800' },
+    paid:            { label: 'Paid',              cls: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' },
+    expired:         { label: 'Expired',           cls: 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600' },
   };
   const { label, cls } = map[status] ?? { label: status, cls: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-600' };
   return <span className={`inline-flex items-center h-5 px-2 rounded-full text-[10px] font-bold border ${cls}`}>{label}</span>;
 }
 
 function CampaignBadge({ status }: { status: AdResponse['campaign_status'] }) {
-  const map = {
-    ACTIVE:    'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
-    PAUSED:    'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',
-    CANCELED:  'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600',
-    SUSPENDED: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',
+  const map: Record<string, string> = {
+    active:    'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
+    paused:    'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',
+    canceled:  'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600',
+    suspended: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',
   };
   return (
-    <span className={`inline-flex items-center h-5 px-2 rounded-full text-[10px] font-bold border capitalize ${map[status] ?? map.CANCELED}`}>
-      {status.toLowerCase()}
+    <span className={`inline-flex items-center h-5 px-2 rounded-full text-[10px] font-bold border capitalize ${map[status] ?? map.canceled}`}>
+      {status}
     </span>
   );
 }
@@ -164,7 +169,7 @@ function AdDetailDrawer({ ad, onClose, onPause, onResume, isPending }: DrawerPro
             <div className="flex items-center gap-1.5 flex-wrap">
               <StatusBadge status={ad.submission_status} />
               <SafetyBadge status={ad.link_safety_status} />
-              {ad.submission_status === 'APPROVED' && <CampaignBadge status={ad.campaign_status} />}
+              {ad.submission_status === 'approved' && <CampaignBadge status={ad.campaign_status} />}
             </div>
           </div>
           <button onClick={onClose} className="h-7 w-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors shrink-0">
@@ -219,7 +224,32 @@ function AdDetailDrawer({ ad, onClose, onPause, onResume, isPending }: DrawerPro
             )}
           </DrawerSection>
 
-          {ad.submission_status === 'APPROVED' && (
+          {ad.submission_status === 'payment_pending' && ad.payment_link_url && (
+            <DrawerSection title="Payment">
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                <CreditCard className="h-4 w-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12px] font-bold text-blue-800 dark:text-blue-200 mb-1">Awaiting advertiser payment</p>
+                  <p className="text-[11px] text-blue-700 dark:text-blue-400 mb-2 leading-relaxed">Share this checkout link with the advertiser to collect payment before activating the campaign.</p>
+                  <div className="flex items-center gap-2">
+                    <input
+                      readOnly
+                      value={ad.payment_link_url}
+                      className="flex-1 min-w-0 text-[11px] font-mono bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-700 rounded-lg px-2 py-1.5 text-slate-700 dark:text-slate-300 truncate"
+                    />
+                    <button
+                      onClick={() => navigator.clipboard.writeText(ad.payment_link_url!)}
+                      className="shrink-0 h-7 px-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold transition-colors"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </DrawerSection>
+          )}
+
+          {(ad.submission_status === 'approved' || ad.submission_status === 'paid') && (
             <DrawerSection title="Performance">
               <DetailRow icon={Eye}          label="Impressions"     value={ad.impressions_count.toLocaleString()} />
               <DetailRow icon={MousePointer} label="Clicks"          value={ad.clicks_count.toLocaleString()} />
@@ -228,7 +258,7 @@ function AdDetailDrawer({ ad, onClose, onPause, onResume, isPending }: DrawerPro
             </DrawerSection>
           )}
 
-          {ad.submission_status === 'REJECTED' && ad.rejection_reason && (
+          {ad.submission_status === 'rejected' && ad.rejection_reason && (
             <DrawerSection title="Rejection">
               <DetailRow icon={Info} label="Reason" value={ad.rejection_reason} />
             </DrawerSection>
@@ -242,7 +272,7 @@ function AdDetailDrawer({ ad, onClose, onPause, onResume, isPending }: DrawerPro
 
         {/* Action bar */}
         <div className="sticky bottom-0 bg-slate-50 dark:bg-slate-950 border-t border-slate-200/80 dark:border-slate-800 px-5 py-4 flex gap-2 flex-wrap">
-          {ad.submission_status === 'PENDING' && (
+          {ad.submission_status === 'pending' && (
             <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 w-full">
               <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
               <div>
@@ -251,7 +281,7 @@ function AdDetailDrawer({ ad, onClose, onPause, onResume, isPending }: DrawerPro
               </div>
             </div>
           )}
-          {ad.submission_status === 'REJECTED' && (
+          {ad.submission_status === 'rejected' && (
             <div className="flex items-start gap-3 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 w-full">
               <X className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
               <div>
@@ -260,7 +290,7 @@ function AdDetailDrawer({ ad, onClose, onPause, onResume, isPending }: DrawerPro
               </div>
             </div>
           )}
-          {ad.submission_status === 'APPROVED' && ad.campaign_status === 'ACTIVE' && (
+          {ad.submission_status === 'approved' && ad.campaign_status === 'active' && (
             <button
               onClick={onPause}
               disabled={isPending}
@@ -269,16 +299,16 @@ function AdDetailDrawer({ ad, onClose, onPause, onResume, isPending }: DrawerPro
               <Pause className="h-3.5 w-3.5" /> Pause campaign
             </button>
           )}
-          {ad.submission_status === 'APPROVED' && ad.campaign_status === 'PAUSED' && (
+          {ad.submission_status === 'approved' && ad.campaign_status === 'paused' && (
             <button
               onClick={onResume}
-              disabled={ad.link_safety_status === 'DANGEROUS' || isPending}
+              disabled={ad.link_safety_status === 'dangerous' || isPending}
               className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-bold transition-colors disabled:opacity-40"
             >
               <Play className="h-3.5 w-3.5" /> Resume campaign
             </button>
           )}
-          {ad.link_safety_status === 'DANGEROUS' && ad.submission_status === 'APPROVED' && (
+          {ad.link_safety_status === 'dangerous' && ad.submission_status === 'approved' && (
             <p className="w-full text-center text-[11px] text-red-600 dark:text-red-400 flex items-center justify-center gap-1">
               <AlertTriangle className="h-3 w-3" /> Unsafe link — campaign suspended
             </p>
@@ -343,8 +373,8 @@ export default function AdsPage() {
 
   const totalImpressions = ads.reduce((s, a) => s + a.impressions_count, 0);
   const totalClicks      = ads.reduce((s, a) => s + a.clicks_count, 0);
-  const pendingCount     = ads.filter(a => a.submission_status === 'PENDING').length;
-  const approvedCount    = ads.filter(a => a.submission_status === 'APPROVED').length;
+  const pendingCount     = ads.filter(a => a.submission_status === 'pending').length;
+  const approvedCount    = ads.filter(a => a.submission_status === 'approved').length;
 
   return (
     <FullPageShell
@@ -451,7 +481,7 @@ export default function AdsPage() {
                         <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200 leading-tight">{ad.title}</p>
                         <StatusBadge status={ad.submission_status} />
                         <SafetyBadge status={ad.link_safety_status} />
-                        {ad.submission_status === 'APPROVED' && <CampaignBadge status={ad.campaign_status} />}
+                        {ad.submission_status === 'approved' && <CampaignBadge status={ad.campaign_status} />}
                       </div>
                       {desc && (
                         <p className="text-[12px] text-slate-500 dark:text-slate-400 mb-1 line-clamp-1">{desc}</p>
@@ -493,12 +523,12 @@ export default function AdsPage() {
                       <ChevronRight className="h-3 w-3" /> View details
                     </button>
 
-                    {ad.submission_status === 'PENDING' && (
+                    {ad.submission_status === 'pending' && (
                       <span className="flex items-center gap-1.5 text-[11px] text-amber-600 dark:text-amber-400 font-medium">
                         <Clock className="h-3 w-3" /> Under platform review
                       </span>
                     )}
-                    {ad.submission_status === 'APPROVED' && ad.campaign_status === 'ACTIVE' && (
+                    {ad.submission_status === 'approved' && ad.campaign_status === 'active' && (
                       <button
                         onClick={() => pauseMutation.mutate(ad.id)}
                         disabled={isMutating}
@@ -507,16 +537,16 @@ export default function AdsPage() {
                         <Pause className="h-3 w-3" /> Pause
                       </button>
                     )}
-                    {ad.submission_status === 'APPROVED' && ad.campaign_status === 'PAUSED' && (
+                    {ad.submission_status === 'approved' && ad.campaign_status === 'paused' && (
                       <button
                         onClick={() => resumeMutation.mutate(ad.id)}
-                        disabled={ad.link_safety_status === 'DANGEROUS' || isMutating}
+                        disabled={ad.link_safety_status === 'dangerous' || isMutating}
                         className="flex items-center gap-1.5 h-7 px-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 text-[11px] font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors disabled:opacity-40"
                       >
                         <Play className="h-3 w-3" /> Resume
                       </button>
                     )}
-                    {ad.link_safety_status === 'DANGEROUS' && (
+                    {ad.link_safety_status === 'dangerous' && (
                       <span className="flex items-center gap-1 text-[11px] text-red-600 dark:text-red-400 font-medium ml-auto">
                         <AlertTriangle className="h-3 w-3" /> Unsafe link
                       </span>

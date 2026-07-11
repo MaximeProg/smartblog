@@ -1,4 +1,4 @@
-{
+﻿{
     "meta": {
         "appName": "NexusBlog",
         "tagline": "La plateforme de blog multi-tenant professionnelle"
@@ -251,7 +251,13 @@
         "createFirst": "CrÃ©er un article",
         "countSingular": "{n} article",
         "countPlural": "{n} articles",
-        "sendAsNewsletter": "Envoyer en newsletter"
+        "sendAsNewsletter": "Envoyer en newsletter",
+        "upgrade": "Upgrader",
+        "limitReachedTitle": "Limite d'articles atteinte ({max}/{max})",
+        "limitReachedDesc": "Vous avez atteint la limite d'articles de votre plan. Passez à un plan supérieur.",
+        "limitNearTitle": "Limite approchante ({used}/{max} articles)",
+        "limitNearDesc": "Vous avez utilisé plus de 80% de votre quota d'articles.",
+        "limitReachedTooltip": "Limite atteinte — passez à un plan supérieur"
     },
     "pages": {
         "title": "Pages",
@@ -1149,8 +1155,10 @@
         "campaignScheduled": "Campagne planifiée",
         "sentAt": "EnvoyÃ©",
         "import": "Importer CSV",
-        "importSuccess": "{imported} abonnÃ©s importÃ©s ({skipped} ignorÃ©s)",
-        "importError": "Erreur lors de l'importation"
+        "importSuccess": "{imported} abonnés importés ({skipped} ignorés)",
+        "importError": "Erreur lors de l'importation",
+        "filterByTag": "Tag",
+        "allTags": "Tous"
     },
     "tags": {
         "title": "Tags",
@@ -1314,7 +1322,8 @@
         "perMonth": "/mois",
         "yourPlan": "Votre plan",
         "currentPlanButton": "Plan actuel",
-        "footerNote": "Paiement sÃ©curisÃ© Â· Annulation possible Ã  tout moment Â· Pas de frais cachÃ©s",
+        "footerNote": "Paiement sécurisé · Annulation possible à tout moment · Pas de frais cachés",
+        "checkoutError": "Erreur lors du paiement. Veuillez réessayer.",
         "plans": {
             "free": {
                 "name": "Gratuit",

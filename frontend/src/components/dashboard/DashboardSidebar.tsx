@@ -5,7 +5,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard, Newspaper, User, Bell, CreditCard, Gift,
-  Plus, LogOut, Zap, X,
+  Plus, LogOut, Zap, X, ShieldCheck,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth.store';
@@ -130,6 +130,28 @@ export function DashboardSidebar() {
             </Link>
           ))}
         </div>
+
+        {/* Admin Console entry — visible seulement pour is_super_admin */}
+        {user?.is_super_admin && (
+          <div className="pt-5">
+            <Link
+              href={`/${locale}/superadmin`}
+              onClick={handleNavClick}
+              className="mx-0.5 flex items-center gap-3 px-3 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white shadow-lg shadow-rose-600/20 transition-all group"
+            >
+              <div className="h-7 w-7 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+                <ShieldCheck className="h-4 w-4 text-white" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] font-black text-white leading-none">Admin Console</p>
+                <p className="text-[10px] text-rose-200 mt-0.5 leading-none">Plateforme NexusBlog</p>
+              </div>
+              <div className="h-5 w-5 rounded-full bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
+                <span className="text-[10px] font-black text-white">→</span>
+              </div>
+            </Link>
+          </div>
+        )}
       </nav>
 
       {/* Footer */}

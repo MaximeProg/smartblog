@@ -79,6 +79,8 @@ async def handle_stripe_webhook(db: AsyncSession, payload: bytes, sig_header: st
         await _on_payment_succeeded(db, event["data"]["object"])
     elif event["type"] == "payment_intent.payment_failed":
         await _on_payment_failed(db, event["data"]["object"])
+    elif event["type"] == "checkout.session.completed":
+        await _on_checkout_session_completed(db, event["data"]["object"])
     elif event["type"] == "customer.subscription.updated":
         await _on_subscription_updated(db, event["data"]["object"])
     elif event["type"] == "customer.subscription.deleted":
@@ -159,6 +161,84 @@ async def _on_refund(db: AsyncSession, charge: dict) -> None:
         tx.status = TransactionStatus.REFUNDED
         tx.refunded_at = datetime.now(timezone.utc)
         await db.commit()
+
+
+async def _on_checkout_session_completed(db: AsyncSession, session: dict) -> None:
+    """
+    Déclenché quand un Stripe Checkout est payé.
+    Gère deux cas selon session.metadata :
+      - ad_id présent → paiement d'un espace pub → active la campagne + commissions d'affiliation
+      - tenant_id + plan présents → abonnement SaaS → met à jour le plan du tenant
+    """
+    metadata = session.get("metadata") or {}
+    ad_id = metadata.get("ad_id")
+    tenant_id_str = metadata.get("tenant_id")
+
+    # ── Cas 1 : paiement d'une publicité ──────────────────────────────
+    if ad_id:
+        from app.models.ad import Ad
+        from app.models.enums import AdSubmissionStatus, AdCampaignStatus
+        from app.api.v1.affiliate import compute_and_accrue_commissions
+
+        result = await db.execute(select(Ad).where(Ad.id == uuid.UUID(ad_id)))
+        ad = result.scalar_one_or_none()
+        if not ad:
+            return
+
+        ad.submission_status = AdSubmissionStatus.PAID
+        ad.campaign_status = AdCampaignStatus.ACTIVE
+        await db.flush()
+
+        # Commissions d'affiliation sur le slot pub (10% du budget)
+        gross = float(ad.total_budget or 0)
+        if gross > 0 and tenant_id_str:
+            await compute_and_accrue_commissions(
+                db,
+                source_tenant_id=uuid.UUID(tenant_id_str),
+                source_type="ad_slot",
+                source_transaction_id=session["id"],
+                gross_amount=gross,
+            )
+
+        await db.commit()
+        return
+
+    # ── Cas 2 : abonnement SaaS ───────────────────────────────────────
+    plan = metadata.get("plan")
+    billing = metadata.get("billing", "monthly")
+    if not tenant_id_str or not plan:
+        return
+
+    tenant_id = uuid.UUID(tenant_id_str)
+
+    from app.models.tenant import Tenant
+    from app.models.enums import PlanTier
+    from app.api.v1.affiliate import compute_and_accrue_commissions
+
+    tenant = await db.get(Tenant, tenant_id)
+    if not tenant:
+        return
+
+    # Mise à jour du plan
+    try:
+        tenant.plan = PlanTier(plan)
+    except ValueError:
+        pass
+    tenant.trial_ends_at = None  # Fin du trial dès souscription payante
+
+    # Commissions d'affiliation sur l'abonnement (20% du montant)
+    amount_total = session.get("amount_total") or 0
+    gross = round(amount_total / 100, 2)
+    if gross > 0:
+        await compute_and_accrue_commissions(
+            db,
+            source_tenant_id=tenant_id,
+            source_type="subscription",
+            source_transaction_id=session["id"],
+            gross_amount=gross,
+        )
+
+    await db.commit()
 
 
 # ─── PayPal — article payant ───────────────────────────────────────

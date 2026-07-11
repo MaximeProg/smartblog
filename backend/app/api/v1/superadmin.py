@@ -230,3 +230,66 @@ async def revoke_super_admin(
     user.is_super_admin = False
     await db.commit()
     return {"message": f"Droits super-admin révoqués pour {user.email}."}
+
+
+# ── Validation publicités (cross-tenant) ──────────────────────────
+
+@router.get("/ads")
+async def list_all_ads(
+    payload: TokenPayload,
+    db: DBSession,
+    status: str | None = None,
+    limit: int = 50,
+    offset: int = 0,
+):
+    """Liste toutes les pubs de tous les blogs — super admin seulement."""
+    await _require_super_admin(payload, db)
+
+    from app.models.ad import Ad
+
+    q = (
+        select(
+            Ad,
+            Tenant.name.label("tenant_name"),
+            Tenant.slug.label("tenant_slug"),
+        )
+        .join(Tenant, Tenant.id == Ad.tenant_id)
+        .order_by(Ad.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    if status:
+        q = q.where(Ad.submission_status == status)
+
+    result = await db.execute(q)
+    rows = result.all()
+
+    return [
+        {
+            "id": str(r.Ad.id),
+            "tenant_id": str(r.Ad.tenant_id),
+            "tenant_name": r.tenant_name,
+            "tenant_slug": r.tenant_slug,
+            "advertiser_name": r.Ad.advertiser_name,
+            "advertiser_email": r.Ad.advertiser_email,
+            "advertiser_company": r.Ad.advertiser_company,
+            "title": r.Ad.title,
+            "description": r.Ad.description,
+            "click_url": r.Ad.click_url,
+            "image_url": r.Ad.image_url,
+            "placement": r.Ad.placement,
+            "submission_status": r.Ad.submission_status.value,
+            "campaign_status": r.Ad.campaign_status.value,
+            "link_safety_status": r.Ad.link_safety_status.value,
+            "total_budget": float(r.Ad.total_budget) if r.Ad.total_budget else None,
+            "price_per_day": float(r.Ad.price_per_day) if r.Ad.price_per_day else None,
+            "payment_link_url": r.Ad.payment_link_url,
+            "rejection_reason": r.Ad.rejection_reason,
+            "impressions_count": r.Ad.impressions_count,
+            "clicks_count": r.Ad.clicks_count,
+            "starts_at": r.Ad.starts_at.isoformat() if r.Ad.starts_at else None,
+            "ends_at": r.Ad.ends_at.isoformat() if r.Ad.ends_at else None,
+            "created_at": r.Ad.created_at.isoformat(),
+        }
+        for r in rows
+    ]

@@ -333,7 +333,7 @@ export const teamApi = {
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
 export const newsletterApi = {
-  listSubscribers: (tenantId: string, params?: { status?: SubscriberStatus; q?: string; limit?: number; cursor?: string }) =>
+  listSubscribers: (tenantId: string, params?: { status?: SubscriberStatus; q?: string; tag?: string; limit?: number; cursor?: string }) =>
     api.get<NewsletterSubscriber[]>(`/tenants/${tenantId}/newsletter/subscribers`, { params }),
 
   exportSubscribers: (tenantId: string, status?: SubscriberStatus) =>
@@ -575,15 +575,16 @@ export interface AdResponse {
   image_url: string | null;
   click_url: string;
   placement: string | null;
-  submission_status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  campaign_status: 'ACTIVE' | 'PAUSED' | 'CANCELED' | 'SUSPENDED';
-  link_safety_status: 'SAFE' | 'DANGEROUS' | 'UNKNOWN' | 'SCANNING';
+  submission_status: 'pending' | 'approved' | 'rejected' | 'payment_pending' | 'paid' | 'expired';
+  campaign_status: 'active' | 'paused' | 'canceled' | 'suspended';
+  link_safety_status: 'safe' | 'dangerous' | 'unknown' | 'unchecked' | 'scanning';
   rejection_reason?: string | null;
   starts_at: string | null;
   ends_at: string | null;
   total_budget?: number | null;
   impressions_count: number;
   clicks_count: number;
+  payment_link_url: string | null;
   created_at: string;
 }
 
@@ -767,4 +768,150 @@ export const domainsApi = {
 export const aiApi = {
   tts: (tenantId: string, data: { text: string; article_id?: string; voice_id?: string }) =>
     api.post<{ audio_url: string }>(`/tenants/${tenantId}/ai/tts`, data),
+
+  seo: (tenantId: string, data: { title: string; content: string; keywords?: string }) =>
+    api.post<{ seo_title: string; seo_description: string; keywords: string[]; score: number; suggestions: string[] }>(`/tenants/${tenantId}/ai/seo`, data),
+
+  generate: (tenantId: string, data: { prompt: string; tone?: string; language?: string; max_tokens?: number }) =>
+    api.post<{ result: string }>(`/tenants/${tenantId}/ai/generate`, data),
+
+  translate: (tenantId: string, data: { text: string; target_language: string; source_language?: string }) =>
+    api.post<{ translated_text: string; detected_language?: string }>(`/tenants/${tenantId}/ai/translate`, data),
+};
+
+// ── Articles scheduling ───────────────────────────────────────────────────────
+
+// Add schedule method to articlesApi via augmentation
+export const articleScheduleApi = {
+  schedule: (tenantId: string, articleId: string, scheduled_at: string) =>
+    api.post<{ id: string; status: string; scheduled_at: string }>(
+      `/tenants/${tenantId}/articles/${articleId}/schedule`,
+      { scheduled_at },
+    ),
+  cancelSchedule: (tenantId: string, articleId: string) =>
+    api.post<{ id: string; status: string }>(`/tenants/${tenantId}/articles/${articleId}/unschedule`),
+};
+
+// ── Payments API ──────────────────────────────────────────────────────────────
+
+export interface CheckoutResponse {
+  checkout_url: string;
+  session_id?: string;
+}
+
+export const paymentsApi = {
+  getSubscription: (tenantId: string) =>
+    api.get<{ plan: string; status: string; expires_at: string | null; trial_ends_at: string | null }>(`/tenants/${tenantId}/payments/subscription`),
+
+  // Checkout article payant (PaymentIntent Stripe)
+  createArticleCheckout: (tenantId: string, data: { article_id: string; gateway?: 'stripe' | 'paypal'; currency?: string; success_url?: string; cancel_url?: string }) =>
+    api.post<CheckoutResponse>(`/tenants/${tenantId}/payments/checkout`, data),
+
+  // Checkout abonnement SaaS (Stripe Checkout Session → redirect)
+  createSubscriptionCheckout: (tenantId: string, data: { plan: string; billing?: 'monthly' | 'annual'; success_url?: string; cancel_url?: string }) =>
+    api.post<{ checkout_url: string; session_id: string }>(`/tenants/${tenantId}/payments/checkout-subscription`, data),
+
+  createPaypalOrder: (tenantId: string, data: { article_id: string }) =>
+    api.post<{ order_id: string; approve_url: string }>(`/tenants/${tenantId}/payments/paypal/capture`, data),
+
+  capturePaypal: (tenantId: string, orderId: string) =>
+    api.post<{ status: string }>(`/tenants/${tenantId}/payments/paypal/capture`, { order_id: orderId }),
+};
+
+// ── Super Admin API ───────────────────────────────────────────────────────────
+
+export interface SuperAdminStats {
+  total_tenants: number;
+  active_tenants: number;
+  new_tenants_24h: number;
+  total_users: number;
+  plan_distribution: Record<string, number>;
+  total_revenue: number;
+}
+
+export interface TenantAdminView {
+  id: string;
+  name: string;
+  slug: string;
+  plan: string;
+  status: string;
+  created_at: string;
+  articles_count: number;
+  subscribers_count: number;
+  owner_email?: string;
+}
+
+export interface UserAdminView {
+  id: string;
+  email: string;
+  display_name: string | null;
+  plan: string;
+  is_super_admin: boolean;
+  created_at: string;
+  tenants_count: number;
+}
+
+export interface SuperAdminAdView {
+  id: string;
+  tenant_id: string;
+  tenant_name: string;
+  tenant_slug: string;
+  advertiser_name: string;
+  advertiser_email: string;
+  advertiser_company: string | null;
+  title: string;
+  description: string | null;
+  click_url: string;
+  image_url: string | null;
+  placement: string | null;
+  submission_status: string;
+  campaign_status: string;
+  link_safety_status: string;
+  total_budget: number | null;
+  price_per_day: number | null;
+  payment_link_url: string | null;
+  rejection_reason: string | null;
+  impressions_count: number;
+  clicks_count: number;
+  starts_at: string | null;
+  ends_at: string | null;
+  created_at: string;
+}
+
+export const superadminApi = {
+  stats: () =>
+    api.get<SuperAdminStats>('/superadmin/stats'),
+
+  listTenants: (params?: { status?: string; plan?: string; limit?: number; offset?: number; q?: string }) =>
+    api.get<TenantAdminView[]>('/superadmin/tenants', { params }),
+
+  suspendTenant: (tenantId: string) =>
+    api.post<{ status: string }>(`/superadmin/tenants/${tenantId}/suspend`),
+
+  activateTenant: (tenantId: string) =>
+    api.post<{ status: string }>(`/superadmin/tenants/${tenantId}/activate`),
+
+  changePlan: (tenantId: string, plan: string) =>
+    api.patch<{ plan: string }>(`/superadmin/tenants/${tenantId}/plan`, { plan }),
+
+  deleteTenant: (tenantId: string) =>
+    api.delete<void>(`/superadmin/tenants/${tenantId}`),
+
+  listUsers: (params?: { q?: string; limit?: number; offset?: number }) =>
+    api.get<UserAdminView[]>('/superadmin/users', { params }),
+
+  makeSuperAdmin: (userId: string) =>
+    api.post<{ is_super_admin: boolean }>(`/superadmin/users/${userId}/make-super-admin`),
+
+  revokeSuperAdmin: (userId: string) =>
+    api.post<{ is_super_admin: boolean }>(`/superadmin/users/${userId}/revoke-super-admin`),
+
+  listAllAds: (params?: { status?: string; limit?: number; offset?: number }) =>
+    api.get<SuperAdminAdView[]>('/superadmin/ads', { params }),
+
+  reviewAd: (tenantId: string, adId: string, decision: 'approved' | 'rejected', rejectionReason?: string) =>
+    api.post<AdResponse>(`/tenants/${tenantId}/ads/${adId}/review`, {
+      decision,
+      rejection_reason: rejectionReason ?? null,
+    }),
 };

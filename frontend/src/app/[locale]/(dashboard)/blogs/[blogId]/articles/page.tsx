@@ -8,8 +8,10 @@ import {
   Plus, Search, FileText, Eye, CheckCircle2,
   Archive, Edit2, Trash2, MoreVertical, Clock,
   Camera, Video, Mic, Radio, Layers, Hash, Mail,
+  AlertTriangle, Zap,
 } from 'lucide-react';
-import { articlesApi } from '@/lib/api';
+import { articlesApi, tenantsApi } from '@/lib/api';
+import Link from 'next/link';
 import { formatRelativeTime } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import type { ArticleListItem, ArticleStatus } from '@/types';
@@ -176,6 +178,17 @@ export default function ArticlesPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<ArticleStatus | ''>('');
 
+  const { data: tenant } = useQuery({
+    queryKey: ['tenant', blogId],
+    queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
+  });
+
+  const articlesMax = tenant?.limits?.articles_max ?? null;
+  const articlesUsed = tenant?.usage?.articles_count ?? 0;
+  const usagePct = articlesMax != null ? articlesUsed / articlesMax : 0;
+  const atLimit = articlesMax != null && articlesUsed >= articlesMax;
+  const nearLimit = !atLimit && usagePct >= 0.8;
+
   const { data, isLoading } = useQuery({
     queryKey: ['articles', blogId, status],
     queryFn: async () => {
@@ -218,8 +231,10 @@ export default function ArticlesPage() {
 
   const createAction = (
     <button
-      onClick={() => router.push(`/${locale}/blogs/${blogId}/articles/new`)}
-      className="flex items-center gap-2 h-9 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold transition-colors"
+      onClick={() => !atLimit && router.push(`/${locale}/blogs/${blogId}/articles/new`)}
+      disabled={atLimit}
+      className={`flex items-center gap-2 h-9 px-4 rounded-xl text-[13px] font-bold transition-colors ${atLimit ? 'bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+      title={atLimit ? t('limitReachedTooltip') : undefined}
     >
       <Plus className="h-4 w-4" /> {t('createShort')}
     </button>
@@ -228,6 +243,42 @@ export default function ArticlesPage() {
   return (
     <FullPageShell title={t('title')} description={t('subtitle')} action={createAction}>
       <div className="p-6 space-y-4">
+
+        {/* Plan usage banner */}
+        {(atLimit || nearLimit) && articlesMax !== null && (
+          <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
+            atLimit
+              ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800'
+              : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
+          }`}>
+            <AlertTriangle className={`h-4 w-4 shrink-0 ${atLimit ? 'text-red-500' : 'text-amber-500'}`} />
+            <div className="flex-1 min-w-0">
+              <p className={`text-[13px] font-bold ${atLimit ? 'text-red-700 dark:text-red-400' : 'text-amber-700 dark:text-amber-400'}`}>
+                {atLimit ? t('limitReachedTitle', { max: articlesMax }) : t('limitNearTitle', { used: articlesUsed, max: articlesMax })}
+              </p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                {atLimit ? t('limitReachedDesc') : t('limitNearDesc')}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <div className={`w-24 h-1.5 rounded-full ${atLimit ? 'bg-red-200 dark:bg-red-800' : 'bg-amber-200 dark:bg-amber-800'} overflow-hidden`}>
+                <div
+                  className={`h-full rounded-full ${atLimit ? 'bg-red-500' : 'bg-amber-500'}`}
+                  style={{ width: `${Math.min(100, Math.round(usagePct * 100))}%` }}
+                />
+              </div>
+              <span className={`text-[11px] font-mono font-bold ${atLimit ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                {articlesUsed}/{articlesMax}
+              </span>
+              <Link
+                href={`/${locale}/subscription`}
+                className="flex items-center gap-1 h-7 px-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold transition-colors"
+              >
+                <Zap className="h-3 w-3" /> {t('upgrade')}
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Toolbar */}
         <div className="flex items-center gap-3">

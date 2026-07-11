@@ -179,6 +179,7 @@ function NewsletterPageInner() {
   const blogId = params.blogId as string;
   const [tab, setTab] = useState<Tab>('subscribers');
   const [subFilter, setSubFilter] = useState<SubscriberStatus | 'all'>('all');
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [showCampaignForm, setShowCampaignForm] = useState(false);
   const [modalPrefill, setModalPrefill] = useState<ModalPrefill | undefined>();
@@ -214,10 +215,11 @@ function NewsletterPageInner() {
   });
 
   const { data: subscribers = [], isLoading: subsLoading } = useQuery({
-    queryKey: ['subscribers', blogId, subFilter, search],
+    queryKey: ['subscribers', blogId, subFilter, tagFilter, search],
     queryFn: async () => {
       const { data } = await newsletterApi.listSubscribers(blogId, {
         status: subFilter === 'all' ? undefined : subFilter,
+        tag: tagFilter || undefined,
         q: search || undefined,
         limit: 100,
       });
@@ -288,6 +290,10 @@ function NewsletterPageInner() {
   const totalSubs = tenant?.subscribers_count ?? 0;
   const totalActive = subscribers.filter((s: NewsletterSubscriber) => s.status === 'active').length;
 
+  const allTags = Array.from(new Set(
+    subscribers.flatMap((s: NewsletterSubscriber) => s.tags ?? [])
+  )).sort();
+
   return (
     <FullPageShell
       title={t('title')}
@@ -339,20 +345,42 @@ function NewsletterPageInner() {
         {/* Subscribers tab */}
         {tab === 'subscribers' && (
           <>
-            <div className="flex items-center gap-2 flex-wrap">
-              <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
-                {SUB_FILTERS.map(f => (
-                  <button key={f.key} onClick={() => setSubFilter(f.key)}
-                    className={`h-7 px-3 rounded-lg text-[11px] font-semibold transition-all ${subFilter === f.key ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}>
-                    {f.label}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
+                  {SUB_FILTERS.map(f => (
+                    <button key={f.key} onClick={() => setSubFilter(f.key)}
+                      className={`h-7 px-3 rounded-lg text-[11px] font-semibold transition-all ${subFilter === f.key ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}>
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex-1 min-w-[200px] flex items-center gap-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                  <Search className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                  <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('searchPlaceholder')}
+                    className="flex-1 bg-transparent text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 outline-none" />
+                </div>
+              </div>
+              {allTags.length > 0 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 shrink-0">{t('filterByTag')}</span>
+                  <button
+                    onClick={() => setTagFilter(null)}
+                    className={`h-6 px-2.5 rounded-full text-[10px] font-semibold border transition-colors ${tagFilter === null ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 border-transparent' : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-400'}`}
+                  >
+                    {t('allTags')}
                   </button>
-                ))}
-              </div>
-              <div className="flex-1 min-w-[200px] flex items-center gap-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-                <Search className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('searchPlaceholder')}
-                  className="flex-1 bg-transparent text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 outline-none" />
-              </div>
+                  {allTags.map(tag => (
+                    <button
+                      key={tag}
+                      onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
+                      className={`h-6 px-2.5 rounded-full text-[10px] font-semibold border transition-colors ${tagFilter === tag ? 'bg-blue-600 text-white border-transparent' : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-blue-300 hover:text-blue-600'}`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden">

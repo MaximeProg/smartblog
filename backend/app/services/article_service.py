@@ -431,18 +431,30 @@ async def delete_article(
     article = result.scalar_one_or_none()
     if not article:
         raise NotFoundException("Article")
+    was_published = article.status == ArticleStatus.PUBLISHED
     article.deleted_at = datetime.now(timezone.utc)
     if article.category_id:
         await db.execute(
             update(Category).where(Category.id == article.category_id)
             .values(articles_count=func.greatest(Category.articles_count - 1, 0))
         )
-    if article.status == ArticleStatus.PUBLISHED:
+    if was_published:
         await db.execute(
             update(Tenant).where(Tenant.id == tenant_id)
             .values(articles_count=func.greatest(Tenant.articles_count - 1, 0))
         )
     await db.commit()
+
+    # Désindexer de l'ES si l'article était publié
+    if was_published:
+        try:
+            tenant_res = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
+            tenant = tenant_res.scalar_one_or_none()
+            if tenant:
+                from app.services.search_service import delete_article as es_delete
+                await es_delete(tenant.slug, str(article_id))
+        except Exception as exc:
+            logger.warning("ES deindex on delete failed", article_id=str(article_id), error=str(exc))
 
 
 async def approve_article(
@@ -535,6 +547,29 @@ async def _on_article_published(
         # 1. Elasticsearch indexation
         try:
             from app.services.search_service import index_article
+
+            # Enrichir le payload avec tags, catégorie et auteur
+            tags_q = await db.execute(
+                select(Tag.name)
+                .join(ArticleTag, ArticleTag.tag_id == Tag.id)
+                .where(ArticleTag.article_id == article.id)
+            )
+            tag_names = [row[0] for row in tags_q.all()]
+
+            category_name: str | None = None
+            if article.category_id:
+                cat_q = await db.execute(select(Category).where(Category.id == article.category_id))
+                cat = cat_q.scalar_one_or_none()
+                if cat:
+                    category_name = cat.name
+
+            author_name: str | None = None
+            if article.author_id:
+                auth_q = await db.execute(select(User).where(User.id == article.author_id))
+                auth = auth_q.scalar_one_or_none()
+                if auth:
+                    author_name = auth.display_name or auth.email
+
             await index_article(tenant.slug, {
                 "id": str(article.id),
                 "tenant_id": str(article.tenant_id),
@@ -546,7 +581,10 @@ async def _on_article_published(
                 "status": article.status.value,
                 "visibility": article.visibility.value if article.visibility else None,
                 "category_id": str(article.category_id) if article.category_id else None,
+                "category_name": category_name,
+                "tags": tag_names,
                 "author_id": str(article.author_id) if article.author_id else None,
+                "author_name": author_name,
                 "cover_image_url": article.cover_image_url,
                 "reading_time_minutes": article.reading_time_minutes or 0,
                 "views_count": article.views_count or 0,

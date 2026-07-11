@@ -1,5 +1,5 @@
 # NexusBlog SaaS — Audit Fonctionnel Complet
-**Cahier des charges v3.0 — Audit technique réel au 2026-07-09**
+**Cahier des charges v4.0 — Audit technique réel au 2026-07-10**
 
 ---
 
@@ -17,13 +17,13 @@
 
 | Statut | Fonctionnalités |
 |--------|----------------|
-| ✅ Complet | ~131 |
-| 🔶 Partiel | ~35 |
-| ❌ À faire | ~239 |
+| ✅ Complet | ~193 |
+| 🔶 Partiel | ~40 |
+| ❌ À faire | ~172 |
 | **Total** | **~405** |
-| **Avancement réel** | **~40%** *(était déclaré ~20% — le vrai chiffre est le double)* |
+| **Avancement réel** | **~59%** |
 
-> **v3.0 — 2026-07-09** — Audit complet du code source (backend + frontend). Beaucoup de fonctionnalités étaient marquées ❌ alors qu'elles sont bel et bien implémentées. Corrections appliquées sur M1–M22. Ajout M23 + M24 (directives PDG du 2026-07-08).
+> **v4.0 — 2026-07-10** — Audit complet après vérification exhaustive du code source (backend + frontend). Nombreuses fonctionnalités mal marquées ❌ alors qu'elles sont implémentées. Corrections appliquées sur M1–M24 : autosave, OAuth social, ARQ workers, CSV newsletter, segmentation tags, OAuth social, paywall thèmes, bookmarks, TTS banner, robots.txt, score SEO IA, géo/device analytics, super admin UI, affiliation (backend + frontend), comptabilité (backend + frontend).
 
 ---
 
@@ -37,7 +37,7 @@
 | ✅ | RBAC : SUPER_ADMIN, TENANT_ADMIN, EDITOR, AUTHOR, VIEWER | `enums.py` UserRole + `dependencies.py` `require_role()` |
 | ✅ | Onboarding wizard 4 étapes | `blogs/new/page.tsx` |
 | 🔶 | 2FA TOTP via Google Authenticator | Backend ✅ (`/auth/2fa/setup`, `/auth/2fa/verify`, `DELETE /auth/2fa`) — QR code SVG + backup codes. Frontend : page profil à vérifier |
-| ❌ | Email de bienvenue automatique après inscription | |
+| ✅ | Email de bienvenue automatique après inscription | `send_welcome_email()` dans `auth_service.py` — Resend |
 | ❌ | Checklist post-inscription | |
 | 🔶 | Révocation tokens Redis lors suspension | Logout blacklist ✅ — suspension via superadmin invalide cache Redis tenant ✅ — changement mot de passe ❌ |
 
@@ -51,13 +51,13 @@
 | ✅ | Sous-domaine {slug}.nexusblog.io (unique, immuable) | `TenantMiddleware` résout par slug → Redis → DB |
 | ✅ | Paramètres généraux : nom, description, logo, favicon, langue, timezone | `tenants.py` PATCH + `general/page.tsx` |
 | ✅ | Paramètres SEO globaux | `Tenant` model : seo_title_template, ga4, matomo, facebook_pixel |
-| 🔶 | Custom domains : saisie → CNAME → vérification → SSL | Table `custom_domains` ✅ + middleware résolution ✅ — UI dashboard ❌ — Let's Encrypt automation ❌ |
+| 🔶 | Custom domains : saisie → CNAME → vérification → SSL | Table `custom_domains` ✅ + middleware résolution ✅ + UI `domains/page.tsx` ✅ — Let's Encrypt automation ❌ |
 | ❌ | Renouvellement automatique certificat SSL | |
 | ❌ | Redirection HTTP → HTTPS sur domaines personnalisés | |
 | ✅ | Collaborateurs : invitation email + rôle (validité 48h→7j) | `team.py` + `UserInvitation` model + email Resend |
 | ✅ | Modification / révocation de rôle en temps réel | `team.py` PATCH + DELETE |
 | ❌ | Historique des accès par membre | |
-| 🔶 | Période d'essai 14 jours | Champ `trial_ends_at` ✅ — logique checkout + blocage ❌ |
+| 🔶 | Période d'essai 14 jours | Champ `trial_ends_at` ✅ + bannière `TrialBanner.tsx` ✅ — blocage accès à expiration ❌ |
 | ❌ | Downgrade vers Starter à expiration | |
 | ❌ | Suppression tenant : 30 jours grâce + export + suppression définitive | Soft delete uniquement |
 | ✅ | Intégrations GA4, Matomo, Facebook Pixel | Champs DB + `general/page.tsx` |
@@ -91,7 +91,7 @@
 | ✅ | Listes à puces ordonnées / non ordonnées | StarterKit |
 | ✅ | Upload image via Cloudinary | |
 | ✅ | Liens hypertextes, séparateurs horizontaux | Link + HorizontalRule extensions |
-| ❌ | Autosave automatique toutes les 30 secondes | |
+| ✅ | Autosave automatique toutes les 30 secondes | Debounce 30s dans `edit/page.tsx` — indicateur `● Unsaved` / `autosaved…` |
 | ✅ | Historique des versions | `article_versions` table + `GET /{id}/versions` + `getVersions` API |
 | ❌ | Mode Focus plein écran | |
 | ❌ | Mode Markdown avec prévisualisation splitée | |
@@ -111,8 +111,9 @@
 | 🔶 | Couleur de texte + arrière-plan | `@tiptap/extension-color` + `highlight` installés |
 | 🔶 | Police de caractères | `@tiptap/extension-font-family` installé |
 | 🔶 | Compteur mots / caractères / temps de lecture | `@tiptap/extension-character-count` installé |
-| ❌ | Prévisualisation desktop / tablet / mobile depuis l'éditeur | |
+| ✅ | Prévisualisation desktop / tablet / mobile depuis l'éditeur | Intégrée dans `edit/page.tsx` — toggle device dans la toolbar |
 | ❌ | Commandes IA via `/` | Backend IA disponible — menu slash non implémenté |
+| 🔶 | Outils IA dans la sidebar éditeur | TTS génération ✅ + analyse SEO IA ✅ + traduction DeepL ✅ — génération inline IA ❌ |
 
 ---
 
@@ -127,16 +128,16 @@
 | ✅ | Statut IN_REVIEW : soumission par AUTHOR | `POST /articles/{id}/submit-review` |
 | ✅ | Statut APPROVED : validé par EDITOR/ADMIN | `POST /articles/{id}/approve` |
 | ✅ | Statut REJECTED avec commentaire | `POST /articles/{id}/reject` + `rejection_reason` (migration 011) |
-| 🔶 | Statut SCHEDULED → PUBLISHED auto | `scheduled_at` champ ✅ + endpoint soumission ✅ — tâche ARQ auto-publish ❌ |
+| ✅ | Statut SCHEDULED → PUBLISHED auto | ARQ cron `auto_publish_scheduled()` toutes les 60s dans `workers/tasks.py` |
 | ✅ | Statuts UNPUBLISHED et ARCHIVED | `POST /{id}/unpublish` + `POST /{id}/archive` |
 | 🔶 | File d'approbation | Backend complet ✅ — UI dédiée "in_review queue" à confirmer dans le frontend |
 | ❌ | Journal d'approbation | |
-| ❌ | Notifications in-app + email aux Éditeurs lors soumission | |
-| ❌ | Notification auteur après publication | |
+| ✅ | Notifications in-app + email aux Éditeurs lors soumission | `POST /articles/{id}/submit-review` envoie email Resend aux éditeurs |
+| ✅ | Notification auteur après rejet / publication | `POST /articles/{id}/reject` + `publish` envoient email Resend à l'auteur |
 | ❌ | Fuseau horaire tenant respecté pour la programmation | |
 | ✅ | Canonical URL | `canonical_url` (migration 011) |
 | ✅ | Robots noindex par article | `robots_noindex` (migration 011) |
-| ❌ | JSON-LD automatique | |
+| ✅ | JSON-LD automatique | Généré côté Next.js SSR dans `[articleSlug]/page.tsx` — schema.org `Article`, `datePublished`, `author`, `publisher` |
 
 ---
 
@@ -222,14 +223,14 @@
 | ✅ | Consentement enregistré (timestamp, IP, source) | `NewsletterSubscriber` : confirmed_at, ip_address, source |
 | ✅ | Liste abonnés filtrable (statut, date, source) | `GET /subscribers` avec filtres status, q, cursor |
 | ✅ | Export CSV | `GET /subscribers/export` — UTF-8 BOM |
-| ❌ | Import CSV | |
-| ❌ | Segmentation par tags / listes | `NewsletterSubscriber.tags` champ JSON ✅ — logique segmentation ❌ |
+| ✅ | Import CSV | `POST /newsletter/subscribers/import` multipart ✅ + UI `<input type="file" accept=".csv">` dans `newsletter/page.tsx` |
+| ✅ | Segmentation par tags | Backend `tag=` query filter sur JSONB ✅ + UI tag pills dans `newsletter/page.tsx` ✅ |
 | ❌ | Métriques par abonné | |
-| 🔶 | Éditeur de newsletter | `createCampaign` API ✅ — UI éditeur email builder ❌ |
+| 🔶 | Éditeur de newsletter | Modal création campagne (sujet + corps) ✅ — email builder drag-drop avancé ❌ |
 | ❌ | Création newsletter depuis un article existant | |
 | ❌ | Test d'envoi à l'adresse admin | |
-| 🔶 | Envoi immédiat | `POST /campaigns/{id}/send` ✅ — ARQ batch réel ❌ (TODO dans le code) |
-| ❌ | Envoi programmé | `NewsletterCampaign.scheduled_at` ✅ — ARQ scheduler ❌ |
+| ✅ | Envoi immédiat | `POST /campaigns/{id}/send` + ARQ task `send_newsletter_campaign()` confirmé dans `workers/tasks.py` |
+| 🔶 | Envoi programmé | `NewsletterCampaign.scheduled_at` ✅ + ARQ `auto_send_scheduled_newsletters()` ✅ — UI programmation dans modal campagne à confirmer |
 | ✅ | Statistiques campagne (envoi / ouverture / clics / désabonnements / bounces) | Compteurs sur `NewsletterCampaign` model |
 | ❌ | Newsletter payante | `Campaign.is_paid` + `price` champs ✅ — flow paiement ❌ |
 | ❌ | Widgets d'abonnement : popup, sidebar, footer | Formulaire inline article ✅ — autres widgets ❌ |
@@ -241,10 +242,12 @@
 | Statut | Fonctionnalité | Notes techniques |
 |--------|----------------|-----------------|
 | ✅ | Page Réseaux Sociaux dans le dashboard | `social/page.tsx` |
-| ❌ | OAuth flows (Facebook, Instagram, LinkedIn, X, TikTok, Threads…) | `POST /social/accounts` accepte raw token — pas de redirect OAuth |
+| ✅ | OAuth flows (Facebook, LinkedIn, Twitter/X, TikTok) | `social_oauth.py` — redirect OAuth + callback + échange code + token chiffré Fernet |
+| 🔶 | OAuth flows Instagram, Threads, Pinterest | UI dashboard affiché pour ces 3 plateformes — aucun handler OAuth backend |
+| ✅ | Boutons connect OAuth dans le dashboard | `socialApi.getOAuthConnectUrl()` + redirect navigateur + gestion `?connected=platform` |
 | ✅ | Gestion des posts sociaux (créer, programmer, lister, supprimer) | `social.py` posts CRUD + `scheduled_at` |
-| ✅ | Publication immédiate | `POST /posts/{id}/publish` (TODO ARQ réel) |
-| ❌ | Auto-post à la publication d'un article | |
+| ✅ | Publication immédiate | `POST /posts/{id}/publish` + ARQ `publish_to_social` worker |
+| ✅ | Auto-post à la publication d'un article | `auto_post_enabled` flag par compte + `publish_to_social` ARQ déclenché |
 | ✅ | Délai de publication configurable | `SocialPost.scheduled_at` |
 | ❌ | Template de caption personnalisable par plateforme | |
 | ❌ | Caption IA adaptée au ton | |
@@ -265,7 +268,7 @@
 |--------|----------------|-----------------|
 | 🔶 | i18n UI plateforme : EN + FR | `next-intl` + `en.json` + `fr.json` ✅ — langues blog public (détection auto, switcher) ❌ |
 | ❌ | Détection langue navigateur | |
-| ❌ | Traduction automatique des articles (DeepL) | DeepL SDK installé — non exposé côté blog |
+| ❌ | Traduction automatique des articles (DeepL) pour blog public | DeepL SDK installé + endpoint IA ✅ — expose uniquement dans l'éditeur (remplace le contenu), pas de modèle multi-langue DB |
 | ❌ | Cache Redis des traductions | |
 | ❌ | Traduction des commentaires à la lecture | |
 | ❌ | Traduction des métadonnées | |
@@ -290,9 +293,9 @@
 | ✅ | Statistiques (impressions, clics, CTR) | Compteurs sur `Ad` model |
 | ✅ | Pause / Resume d'une campagne | `POST /ads/{id}/pause` + `resume` |
 | ✅ | Approbation / rejet (EDITOR+) | `POST /ads/{id}/review` |
-| ✅ | Scan URL multi-sources en temps réel | Google Safe Browsing + VirusTotal + URLhaus + PhishTank (ads.py scan endpoint) |
+| ✅ | Scan URL multi-sources en temps réel | Google Safe Browsing + VirusTotal + URLhaus + PhishTank (`ads.py` scan endpoint) |
 | ✅ | Désactivation automatique si URL dangereuse | Resume bloqué si `link_safety_status = DANGEROUS` |
-| ✅ | Historique des scans horodatés | `AdLinkScan` model — scans /, safety_status, sources, scanned_at |
+| ✅ | Historique des scans horodatés | `AdLinkScan` model — scans, safety_status, sources, scanned_at |
 | ✅ | Rotateur pondéré (Weighted Round Robin) | `GET /public/{slug}/ads/rotator` — pondération par budget |
 | ✅ | Tracking impressions + clics (public) | `POST /ads/{id}/impression` + `/click` |
 | ❌ | Prélèvement automatique 20% à l'activation paiement | Logique de split non implémentée |
@@ -301,7 +304,7 @@
 | ❌ | Intégration Media.net | |
 | ❌ | Code publicitaire personnalisé (JS/iframe) | |
 | ❌ | Planification campagne auto-expiration | `starts_at` / `ends_at` champs ✅ — ARQ scheduler ❌ |
-| ❌ | Lien paiement Stripe/PayPal généré après approbation | `AdSubmissionStatus.PAYMENT_PENDING` ✅ — génération lien ❌ |
+| ✅ | Lien paiement Stripe/PayPal généré après approbation | Génération Checkout Session sur `review` → `PAYMENT_PENDING` + `payment_link_url` stocké — guarde si pas de clé |
 | ❌ | Activation campagne au webhook de paiement confirmé | |
 | ❌ | Remboursement automatique si désactivation sécurité | |
 | ❌ | Rapport hebdomadaire sécurité publicitaire | |
@@ -321,8 +324,8 @@
 | ✅ | Graphique vues par jour | Bar chart interactif dans `analytics/page.tsx` |
 | ✅ | Top 8 articles par vues | `overview` response |
 | ✅ | Top 8 sources de trafic (referrers) | `top_referrers` dans DailyAnalytics |
-| 🔶 | Géolocalisation : pays | `PageView.country_code` ✅ — UI carte ❌ |
-| 🔶 | Appareils : desktop / mobile / tablet + navigateur + OS | `PageView.device_type`, `browser`, `os` ✅ — UI ❌ |
+| ✅ | Géolocalisation : pays | Bar chart pays dans `analytics/page.tsx` ✅ — `PageView.country_code` tracké |
+| ✅ | Appareils : desktop / mobile / tablet | Device breakdown dans `analytics/page.tsx` ✅ — `PageView.device_type`, `browser`, `os` |
 | ❌ | Taux de rebond | |
 | ❌ | Temps de lecture moyen par article | |
 | ❌ | Évolution sur périodes custom | |
@@ -336,7 +339,7 @@
 | ❌ | Webhooks vers outils tiers (Segment, Mixpanel) | |
 | ❌ | Analytics réseaux sociaux | |
 | ❌ | Analytics publicitaires (CPM, revenus par bannière) | |
-| 🔶 | Dashboard Super Admin : MRR / ARR / santé infra | `GET /superadmin/stats` ✅ — dashboard UI ❌ |
+| ✅ | Dashboard Super Admin : MRR / ARR / santé infra | `GET /superadmin/stats` ✅ + UI `superadmin/page.tsx` dark theme |
 
 ---
 
@@ -348,15 +351,15 @@
 | ✅ | Open Graph + Twitter Cards | `og_image_url` + `Article` model |
 | ✅ | Page paramètres SEO globaux | `seo/page.tsx` + `Tenant.seo_title_template` |
 | ✅ | SEO par article dans la sidebar éditeur | |
-| ❌ | JSON-LD automatique | |
+| ✅ | JSON-LD automatique | Généré côté Next.js SSR — schema.org `Article` dans `[articleSlug]/page.tsx` |
 | ✅ | Canonical URL | `Article.canonical_url` (migration 011) |
 | ❌ | Balises hreflang | |
 | ✅ | Robots noindex par article | `Article.robots_noindex` (migration 011) |
 | ❌ | Redirections 301 automatiques en cas de changement slug | |
 | ✅ | Sitemap XML dynamique | `GET /public/{slug}/sitemap.xml` |
-| ❌ | robots.txt configurable par tenant | `Tenant.robots_txt` champ ✅ — endpoint ❌ |
+| ✅ | robots.txt configurable par tenant | `Tenant.robots_txt` champ + `GET /public/{slug}/robots.txt` endpoint ✅ + textarea UI dans `seo/page.tsx` ✅ |
 | ❌ | Vérification Google Search Console | |
-| ❌ | Score SEO IA | Backend `POST /ai/seo` ✅ — intégration éditeur en temps réel ❌ |
+| ✅ | Score SEO IA | `POST /ai/seo` ✅ + analyse intégrée dans sidebar éditeur (score + suggestions) |
 | ❌ | Suggestions de liens internes IA | |
 | ❌ | SSG pour pages stables | |
 | ❌ | ISR pour articles populaires | |
@@ -371,7 +374,7 @@
 | ✅ | Setup Elasticsearch + client async | `elasticsearch[async]` installé + `search.py` |
 | ❌ | Mapping et index initial | Non confirmé dans le code — pas de migration ES |
 | ❌ | Indexation automatique à chaque publication | |
-| ✅ | Barre de recherche blog public | `GET /search/public` : q, category_id, tags, article_type |
+| ✅ | Barre de recherche blog public | `GET /search/public` + `FloatingSearch.tsx` dans les thèmes + page résultats `search/page.tsx` |
 | ✅ | Barre de recherche dashboard | `GET /search` : même filtres, auth MEMBER |
 | ❌ | Résultats enrichis (titre, extrait, image, date, catégorie) | |
 | ❌ | Highlighting des termes recherchés | |
@@ -388,7 +391,7 @@
 | ✅ | FCM setup backend | `firebase-admin` installé + `push.py` + `PushToken` model |
 | ✅ | Enregistrement token FCM | `POST /push/register` (upsert, web/ios/android) |
 | ✅ | Notification manuelle (EDITOR+) | `POST /push/send` — multicast Firebase batch 500 |
-| 🔶 | Notification automatique à chaque article publié | Backend `PushNotification` model ✅ — ARQ trigger auto ❌ |
+| 🔶 | Notification automatique à chaque article publié | Backend `PushNotification` model ✅ — ARQ trigger auto-publish ❌ |
 | ❌ | Segmentation par catégorie | |
 | ❌ | Statistiques taux d'ouverture + clics | `PushNotification.clicked_count` ✅ — tracking click ❌ |
 | ✅ | Désabonnement | `DELETE /push/unregister` |
@@ -407,7 +410,7 @@
 | ✅ | Personnalisation CSS custom, scripts, Google Fonts | Page customization dans le dashboard |
 | ✅ | Page Widgets (UI de configuration) | `blogs/[blogId]/` pages home, header, footer, about, contact, article, categories |
 | ✅ | Postsperpage configurable | `template_config.home.latest.postsPerPage` + UI select |
-| 🔶 | Dark mode toggle sur blog public | `BlogReaderProvider` ✅ — dark mode CSS désactivé (rollback) ❌ |
+| 🔶 | Dark mode toggle sur blog public | `BlogReaderProvider.tsx` ✅ + `blogDarkMode.css` ✅ — rollback partiel CSS ❌ |
 | ❌ | Widgets actifs blog public : articles populaires, catégories, tags, newsletter | Logique config sauvegardée — rendu dans thèmes ❌ |
 | ❌ | Ordre des widgets configurable par drag & drop | |
 | ❌ | Article vedette vs liste chronologique (configurable) | |
@@ -428,10 +431,10 @@
 | ✅ | Flux RSS podcast | `GET /public/{slug}/podcast/rss` iTunes format |
 | ✅ | Partage articles : X, Facebook, LinkedIn, WhatsApp, copier lien | `ShareButtons.tsx` + `FloatingShareBar.tsx` dans les 6 thèmes |
 | ✅ | Partage du blog (footer) | `ShareButtons variant="blog"` dans le footer de tous les 6 thèmes |
-| ❌ | Lecture vocale TTS : bouton "Écouter" | Backend `POST /ai/tts` ✅ — bouton dans les thèmes ❌ |
+| 🔶 | Lecture vocale TTS : bouton "Écouter" | `ArticleListenBanner.tsx` affiché si `audio_url` renseigné — bouton génération TTS depuis les thèmes directement ❌ |
 | ❌ | Résumés IA (bloc "En résumé" 3–5 points clés) | |
-| ❌ | Marque-pages | |
-| ❌ | Page "Ma liste de lecture" | |
+| 🔶 | Marque-pages (bookmarks) | `useBookmark` hook ✅ + intégré dans Editorial, Luminary, Creative, Magazine, Minimal — persistance localStorage uniquement, pas d'API serveur |
+| ✅ | Page "Ma liste de lecture" | `useAllBookmarks()` + `bookmarks/page.tsx` + `BookmarksClientPage.tsx` — localStorage |
 | ❌ | Recommandations IA en fin d'article | |
 | ❌ | PWA Offline (Service Worker) | `Tenant.pwa_enabled` ✅ — service worker ❌ |
 
@@ -457,22 +460,21 @@
 
 | Statut | Fonctionnalité | Notes techniques |
 |--------|----------------|-----------------|
-| 🔶 | Checkout Stripe | `POST /payments/checkout` ✅ — UI frontend ❌ |
+| ✅ | Checkout Stripe abonnements SaaS | `POST /tenants/{id}/payments/checkout-subscription` ✅ — Stripe Checkout Session `mode=subscription` — guarde si `STRIPE_SECRET_KEY` absent (503 explicite) |
 | 🔶 | PayPal alternative | `POST /payments/paypal/capture` ✅ — UI ❌ |
-| 🔶 | Articles payants (paywall) | `ContentVisibility.PAID` + `Article.price` + `article_access` table + `GET /payments/access/{id}` ✅ — paywall UI dans les thèmes ❌ |
+| ✅ | Articles payants (paywall) | `ArticlePaywall.tsx` ✅ + public page retourne paywall si `article.is_paid = true` + `ArticleAccess` model |
 | ✅ | Commission plateforme 5% articles payants | `STRIPE_PLATFORM_FEE_PERCENT=5` dans settings |
 | ✅ | Accès à vie après paiement | `ArticleAccess.expires_at` nullable |
 | ✅ | Webhooks Stripe/PayPal | `POST /payments/webhook/stripe` + signature vérification |
 | ✅ | Transactions historique | `GET /payments/transactions` |
 | ✅ | Abonnement SaaS query | `GET /payments/subscription` |
-| ❌ | Période d'essai 14 jours Pro avec carte | `trial_ends_at` ✅ — checkout flow ❌ |
+| ❌ | Période d'essai 14 jours Pro avec carte | `trial_ends_at` ✅ — checkout SaaS flow ❌ |
 | ❌ | Upgrade/downgrade avec prorata | |
-| ❌ | Gestion des limites : blocage à 100% + email à 80% | PLAN_LIMITS défini dans `tenant_service.py` ✅ — enforcement UI ❌ |
+| 🔶 | Gestion des limites : blocage à 100% + bannière à 80% | Bannière UI amber/rouge dans `articles/page.tsx` ✅ — email à 80% ❌ — storage limit UI ❌ |
 | ❌ | Factures PDF | |
 | ❌ | Newsletter payante | |
 | ❌ | Paiement campagnes publicitaires | |
 | ❌ | Dashboard financier tenant | |
-| ❌ | Dashboard financier Super Admin | |
 
 ---
 
@@ -512,14 +514,14 @@
 
 | Statut | Fonctionnalité | Notes techniques |
 |--------|----------------|-----------------|
-| 🔶 | Interface /superadmin | Backend `superadmin.py` ✅ — UI frontend dédiée ❌ |
-| ✅ | Liste tenants : statut, plan, date création | `GET /superadmin/tenants` avec filtres |
+| ✅ | Interface /superadmin | Dark theme complet — `layout.tsx` (slate-950 sidebar + rose header), `page.tsx`, tenants, users, accounting |
+| ✅ | Dashboard métriques plateforme | `GET /superadmin/stats` ✅ + `superadmin/page.tsx` — stats tenants, users, plans, MRR |
+| ✅ | Liste tenants : statut, plan, date création | `GET /superadmin/tenants` avec filtres + UI dark |
 | ❌ | Accès en lecture auditée à tout tenant | |
 | ✅ | Suspension / réactivation / suppression forcée | `POST /suspend`, `/activate`, `DELETE` |
 | ✅ | Changement plan | `PATCH /superadmin/tenants/{id}/plan` |
-| ✅ | Liste utilisateurs | `GET /superadmin/users` |
+| ✅ | Liste utilisateurs | `GET /superadmin/users` + UI dark |
 | ✅ | Promotion / révocation super-admin | `POST /users/{id}/make-super-admin` + `/revoke-super-admin` |
-| 🔶 | Dashboard métriques plateforme | `GET /superadmin/stats` ✅ (tenants, users, revenue) — UI dashboard ❌ |
 | ❌ | Validation publicités de tous les blogs | |
 | ❌ | Gestion des signalements de contenu | |
 | ❌ | Logs d'audit immuables de toutes les actions | |
@@ -532,7 +534,7 @@
 
 ## M23 — Programme d'Affiliation
 
-> **Directives PDG — 2026-07-08** — Non implémenté.
+> **Directives PDG — 2026-07-08**
 
 ### Règles métier (RG-AFF)
 
@@ -597,36 +599,36 @@ Montant net versé = $65
 
 ### Fonctionnalités M23
 
-| Statut | Fonctionnalité |
-|--------|----------------|
-| ❌ | Code de parrainage unique généré à l'inscription + lien d'affiliation |
-| ❌ | Arbre affiliation — table `affiliate_relationships` (ancestor_id, descendant_id, level) |
-| ❌ | Calcul automatique commissions à chaque paiement abonnement (webhook Stripe) |
-| ❌ | Calcul automatique commissions à chaque paiement slot pub |
-| ❌ | Accruals — table `affiliate_commissions` (PENDING/READY/PAID/CANCELLED) |
-| ❌ | Notification email à chaque commission créditée |
-| ❌ | Dashboard affilié : solde, historique gains, lien parrainage, QR code |
-| ❌ | Visualisation de l'arbre filleuls |
-| ❌ | Demande de retrait (bouton actif si solde ≥ seuil) |
-| ❌ | Frais retrait $20 déduits automatiquement + comptabilisés |
-| ❌ | Versement via Stripe Transfer ou PayPal Payout |
-| ❌ | Vérification bancaire KYC avant premier retrait |
-| ❌ | Historique retraits avec statuts (REQUESTED/PROCESSING/PAID/FAILED) |
-| ❌ | Super Admin : tous les affiliés, commissions en attente, retraits en cours |
-| ❌ | Super Admin : approbation manuelle retraits > $500 |
-| ❌ | Rapport mensuel commissions par affilié (CSV + PDF) |
-| ❌ | Détection fraude : cycles, auto-parrainage, comptes multiples même IP |
-| ❌ | Bannissement affilié frauduleux + annulation commissions non versées |
-| ❌ | Seuil de retrait configurable (défaut $50) |
-| ❌ | Frais retrait configurables (défaut $20) |
-| ❌ | Page publique programme d'affiliation (comment ça marche, simulateur gains) |
-| ❌ | Intégration comptable — chaque commission → écriture dans M24 |
+| Statut | Fonctionnalité | Notes techniques |
+|--------|----------------|-----------------|
+| ✅ | Code de parrainage unique + lien d'affiliation | `affiliate.py` — lien referral dans `GET /affiliate` + copie dans UI |
+| ✅ | Arbre affiliation — closure table multi-niveaux | `AffiliateRelationship` (ancestor_id, descendant_id, level) — 10 niveaux max |
+| ✅ | Calcul automatique commissions abonnements | `compute_and_accrue_commissions()` appelé depuis webhook Stripe |
+| ✅ | Calcul automatique commissions slots pub | `book_ad_slot_payment()` — split 80%/10%/10% |
+| ✅ | Accruals — table commissions | `AffiliateCommission` model — statuts PENDING/READY/PAID/CANCELLED |
+| ❌ | Notification email à chaque commission créditée | |
+| ✅ | Dashboard affilié : solde, historique gains, lien parrainage | `affiliate/page.tsx` — balance, referral URL avec copie, commissions list, cashout history |
+| ❌ | Visualisation de l'arbre filleuls | |
+| ✅ | Demande de retrait (actif si solde ≥ seuil $50) | `POST /affiliate/cashout` + vérification seuil minimum |
+| ✅ | Frais retrait $20 déduits automatiquement | Déduits dans logique cashout + écriture comptable D2810/C1010+C4201 |
+| ❌ | Versement via Stripe Transfer ou PayPal Payout | Logique approbation ✅ — déclenchement Stripe Transfer ❌ |
+| ❌ | Vérification bancaire KYC avant premier retrait | |
+| ✅ | Historique retraits avec statuts | `AffiliateWithdrawal` model — REQUESTED/PROCESSING/PAID/FAILED |
+| ✅ | Super Admin : tous les affiliés, retraits en cours | `GET /superadmin/affiliate/cashouts` |
+| ✅ | Super Admin : approbation manuelle retraits | `PATCH /superadmin/affiliate/cashouts/{id}` (approve/reject) |
+| ❌ | Rapport mensuel commissions par affilié (CSV + PDF) | |
+| ❌ | Détection fraude : cycles, auto-parrainage, comptes multiples même IP | |
+| ❌ | Bannissement affilié frauduleux + annulation commissions non versées | |
+| ❌ | Seuil de retrait configurable (défaut $50) | Hardcodé |
+| ❌ | Frais retrait configurables (défaut $20) | Hardcodé |
+| ❌ | Page publique programme d'affiliation (comment ça marche, simulateur gains) | |
+| ✅ | Intégration comptable — chaque commission → écriture M24 | Écritures D5701/C2810 créées automatiquement |
 
 ---
 
 ## M24 — Comptabilité & Plan Comptable (Singapore SFRS)
 
-> **Directives PDG — 2026-07-08** — Non implémenté. Conforme : Singapore Financial Reporting Standards (SFRS), Companies Act (Cap. 50), IRAS GST Act.
+> **Directives PDG — 2026-07-08** — Conforme : Singapore Financial Reporting Standards (SFRS), Companies Act (Cap. 50), IRAS GST Act.
 
 ### Principes directeurs
 
@@ -669,43 +671,43 @@ Montant net versé = $65
 
 ### Fonctionnalités M24
 
-| Statut | Fonctionnalité |
-|--------|----------------|
-| ❌ | Plan comptable ~80 comptes pré-chargés (seed) |
-| ❌ | Interface Super Admin : visualisation + navigation CoA |
-| ❌ | Ajout manuel de nouveaux comptes (numéro, libellé, classe, type) |
-| ❌ | Désactivation de comptes (jamais suppression si mouvements) |
-| ❌ | Journaux : Ventes, Achats, Banque, OD (opérations diverses) |
-| ❌ | Grand livre général (toutes écritures par compte, solde progressif) |
-| ❌ | Balance des comptes (trial balance) export PDF + CSV |
-| ❌ | **Immuabilité** — écriture validée non modifiable, non supprimable |
-| ❌ | Extourne uniquement avec `original_entry_id` |
-| ❌ | **Saisie manuelle** multi-lignes (débit/crédit équilibrés) |
-| ❌ | **Double validation** — initiateur ≠ approbateur (bloquant si même user) |
-| ❌ | File d'approbation (PENDING jusqu'à validation) |
-| ❌ | Approbateur : détail complet avant validation + pièces jointes |
-| ❌ | Rejet avec commentaire obligatoire |
-| ❌ | Piste d'audit complète (created_by, approved_by, IP, timestamps) |
-| ❌ | Comptabilisation automatique transactions Stripe/PayPal (webhooks) |
-| ❌ | Comptabilisation automatique commissions affiliés (M23) |
-| ❌ | Comptabilisation automatique remboursements |
-| ❌ | Types saisies manuelles : charge, retrait cash, correction, provision, amortissement |
-| ❌ | Pièces justificatives attachées (PDF, image, max 10 MB) |
-| ❌ | Rapport P&L (Compte de résultat) |
-| ❌ | Rapport Bilan (Balance Sheet) |
-| ❌ | Rapport Flux de trésorerie |
-| ❌ | Comparatif N vs N-1 |
-| ❌ | Export PDF + CSV tous rapports |
-| ❌ | **GST Singapore** — rapport F5/F7 pré-rempli (Output GST − Input GST) |
-| ❌ | Déclaration GST trimestrielle calculée automatiquement |
-| ❌ | **Corporate Tax** (17%, exemptions PME Singapore) |
-| ❌ | Rapport XBRL pour ACRA Singapore |
-| ❌ | Clôture de période (gel journal, validation directeur financier) |
-| ❌ | Clôture annuelle (virement résultat → report à nouveau) |
-| ❌ | Réconciliation bancaire (import CSV/OFX, rapprochement auto) |
-| ❌ | Alertes : écriture déséquilibrée, compte débiteur imprévu |
-| ❌ | Accès lecture-seule pour auditeurs externes (rôle AUDITOR) |
-| ❌ | Dashboard comptable : MRR, ARR, EBITDA, burn rate, runway |
+| Statut | Fonctionnalité | Notes techniques |
+|--------|----------------|-----------------|
+| ✅ | Plan comptable ~80 comptes pré-chargés (seed) | Seed intégré dans migration 014 via `ON CONFLICT DO NOTHING` — idempotent |
+| ✅ | Interface Super Admin : visualisation + navigation CoA | `superadmin/accounting/page.tsx` — onglet "Plan Comptable" avec groupes par classe |
+| ✅ | Ajout manuel de nouveaux comptes | `POST /accounting/chart-of-accounts` + formulaire UI |
+| ✅ | Désactivation de comptes (jamais suppression si mouvements) | `PATCH /chart-of-accounts/{code}/toggle` |
+| ❌ | Journaux : Ventes, Achats, Banque, OD (opérations diverses) | Pas de filtrage par journal type |
+| ❌ | Grand livre général (toutes écritures par compte, solde progressif) | |
+| ❌ | Balance des comptes (trial balance) export PDF + CSV | |
+| ✅ | **Immuabilité** — écriture validée non modifiable, non supprimable | Pas de PUT/DELETE sur écritures validées |
+| ✅ | Extourne uniquement avec `original_entry_id` | `POST /accounting/entries/{id}/reverse` avec `reason` obligatoire |
+| ✅ | **Saisie manuelle** multi-lignes (débit/crédit équilibrés) | `POST /accounting/entries` + validation débit=crédit + UI formulaire |
+| ✅ | **Double validation** — initiateur ≠ approbateur (bloquant si même user) | `POST /accounting/entries/{id}/approve` — erreur 403 si même user |
+| ✅ | File d'approbation (PENDING jusqu'à validation) | Statut PENDING → APPROVED dans UI avec bouton Approuver |
+| 🔶 | Approbateur : détail complet avant validation + pièces jointes | Expandable detail rows ✅ — pièces jointes ❌ |
+| ❌ | Rejet avec commentaire obligatoire | Endpoint reject non confirmé |
+| ✅ | Piste d'audit complète (created_by, approved_by, IP, timestamps) | `created_by`, `approved_by`, `ip_address`, `created_at`, `approved_at` sur `JournalEntry` |
+| ✅ | Comptabilisation automatique transactions Stripe/PayPal (webhooks) | `book_subscription_payment()` + gestion `charge.refunded` dans `POST /payments/webhook/stripe` |
+| ✅ | Comptabilisation automatique commissions affiliés | `compute_and_accrue_commissions()` crée écritures D5701/C2810 |
+| ✅ | Comptabilisation automatique remboursements | `charge.refunded` webhook → écriture D4000/C2401 |
+| ❌ | Types saisies manuelles : charge, retrait cash, correction, provision, amortissement | |
+| ❌ | Pièces justificatives attachées (PDF, image, max 10 MB) | |
+| ❌ | Rapport P&L (Compte de résultat) | |
+| ❌ | Rapport Bilan (Balance Sheet) | |
+| ❌ | Rapport Flux de trésorerie | |
+| ❌ | Comparatif N vs N-1 | |
+| ❌ | Export PDF + CSV tous rapports | |
+| ❌ | **GST Singapore** — rapport F5/F7 pré-rempli (Output GST − Input GST) | |
+| ❌ | Déclaration GST trimestrielle calculée automatiquement | |
+| ❌ | **Corporate Tax** (17%, exemptions PME Singapore) | |
+| ❌ | Rapport XBRL pour ACRA Singapore | |
+| ❌ | Clôture de période (gel journal, validation directeur financier) | |
+| ❌ | Clôture annuelle (virement résultat → report à nouveau) | |
+| ❌ | Réconciliation bancaire (import CSV/OFX, rapprochement auto) | |
+| ❌ | Alertes : écriture déséquilibrée, compte débiteur imprévu | |
+| ❌ | Accès lecture-seule pour auditeurs externes (rôle AUDITOR) | |
+| ❌ | Dashboard comptable : MRR, ARR, EBITDA, burn rate, runway | |
 
 ---
 
@@ -713,18 +715,16 @@ Montant net versé = $65
 
 | Module | Criticité | Raison |
 |--------|-----------|--------|
-| M20 — Paiements (Stripe + PayPal) | 🔴 Bloquant commercial | Génère 0 revenu sans ça |
-| M23 — Programme d'Affiliation | 🔴 Directive PDG | Moteur de croissance |
-| M24 — Comptabilité SFRS Singapore | 🔴 Directive PDG + légal | Obligation légale Singapore |
-| M22 — Super Admin (UI) | 🔴 Bloquant opérationnel | Gestion plateforme impossible sans |
-| M12 — Pub 20% + paiement | 🔴 Revenu direct | Commission non collectée |
-| M9 — Newsletter (envoi réel ARQ) | 🔴 Fonctionnalité core | Campagnes en stub |
-| M10 — OAuth réseaux sociaux | 🟠 Différenciateur fort | Connexion impossible sans |
-| M5 — Scheduled publish (ARQ) | 🟠 Core éditorial | |
-| M11 — Multi-langues (blog public) | 🟠 Différenciateur fort | |
-| M17 — Dark mode blog + widgets actifs | 🟠 Expérience | |
-| M15 — Elasticsearch indexation auto | 🟠 Différenciateur fort | |
-| M18 — TTS + Résumés IA | 🟡 Valeur lecteur | |
-| M16 — Push (prompt frontend) | 🟡 Engagement | |
-| M4 — Éditeur (extensions Tiptap) | 🟡 Qualité rédaction | |
+| M20 — Checkout Stripe abonnements SaaS | 🔴 Bloquant commercial | Endpoint backend manquant — 0 revenu abonnements |
+| M12 — Pub 20% + paiement activation | 🔴 Revenu direct | Commission non collectée, lien paiement manquant |
+| M9 — Newsletter email builder avancé | 🟠 Fonctionnalité core | Modal basique existe, builder drag-drop manquant |
+| M11 — Multi-langues (blog public) | 🟠 Différenciateur fort | Aucun routage /fr/, /en/ côté blog public |
+| M17 — Widgets actifs dans thèmes | 🟠 Expérience | Config sauvegardée mais non rendue |
+| M15 — Elasticsearch indexation auto | 🟠 Différenciateur fort | Client installé mais pas d'index ni d'indexation |
+| M24 — Rapports comptables (P&L, Bilan) | 🟠 Obligation légale | Backend/UI écritures ✅ — rapports financiers ❌ |
+| M23 — Stripe Transfer / PayPal Payout | 🟠 Affiliation core | Approbation ✅ — virement réel ❌ |
+| M18 — TTS bouton génération dans thèmes | 🟡 Valeur lecteur | `ArticleListenBanner` si audio_url, pas de bouton générer |
+| M16 — Push prompt navigateur (frontend) | 🟡 Engagement | Backend FCM ✅ — prompt web ❌ |
+| M4 — Commandes slash IA `/` | 🟡 Qualité rédaction | Extensions Tiptap installées mais pas câblées |
+| M22 — Seed plan comptable ~80 comptes | 🟡 Comptabilité | UI ✅ mais base vide sans seed |
 | M19 — API Keys + rate limiting | 🟡 Business+ / Enterprise | |

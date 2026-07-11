@@ -1,13 +1,16 @@
+import asyncio
 import uuid
 from datetime import datetime
-from fastapi import APIRouter, Request, Header
+from fastapi import APIRouter, Request, Header, HTTPException
 from sqlalchemy import select
 from pydantic import BaseModel
 
+from app.core.config import settings
 from app.core.dependencies import TokenPayload, DBSession
 from app.core.exceptions import NotFoundException, ValidationException
 from app.models.payment import Transaction, ArticleAccess, TenantSubscription
 from app.models.article import Article
+from app.models.user import User
 from app.models.enums import PaymentGateway, TransactionStatus, UserRole
 from app.services.payment_service import (
     create_article_payment_intent, handle_stripe_webhook,
@@ -34,6 +37,18 @@ class CheckoutResponse(BaseModel):
     # PayPal
     order_id: str | None = None
     approve_url: str | None = None
+
+
+class SubscriptionCheckoutRequest(BaseModel):
+    plan: str           # starter | pro | business
+    billing: str = "monthly"   # monthly | annual
+    success_url: str | None = None
+    cancel_url: str | None = None
+
+
+class SubscriptionCheckoutResponse(BaseModel):
+    checkout_url: str
+    session_id: str
 
 
 class TransactionResponse(BaseModel):
@@ -106,6 +121,64 @@ async def checkout(
             order_id=result["order_id"],
             approve_url=result["approve_url"],
         )
+
+
+# ── Checkout abonnement SaaS ─────────────────────────────────────
+
+@router.post("/checkout-subscription", response_model=SubscriptionCheckoutResponse, status_code=201)
+async def checkout_subscription(
+    tenant_id: uuid.UUID,
+    body: SubscriptionCheckoutRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Crée une Stripe Checkout Session pour mettre à niveau le plan SaaS."""
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+
+    if not settings.STRIPE_SECRET_KEY:
+        raise HTTPException(
+            status_code=503,
+            detail="Stripe non configuré. Ajoutez STRIPE_SECRET_KEY dans .env puis relancez le serveur.",
+        )
+
+    plan_key = f"{body.plan.lower()}_{body.billing.lower()}"
+    price_id = settings.stripe_price_map.get(plan_key, "")
+    if not price_id:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                f"Price ID Stripe manquant pour {body.plan}/{body.billing}. "
+                f"Ajoutez STRIPE_PRICE_{body.plan.upper()}_{body.billing.upper()} dans .env"
+            ),
+        )
+
+    try:
+        import stripe as _stripe
+    except ImportError:
+        raise HTTPException(status_code=503, detail="Package stripe non installé (pip install stripe).")
+
+    _stripe.api_key = settings.STRIPE_SECRET_KEY
+
+    user_result = await db.execute(select(User).where(User.id == uuid.UUID(payload["sub"])))
+    user = user_result.scalar_one_or_none()
+
+    frontend_url = settings.FRONTEND_URL
+    success_url = body.success_url or f"{frontend_url}/subscription?success=1&plan={body.plan}&session_id={{CHECKOUT_SESSION_ID}}"
+    cancel_url = body.cancel_url or f"{frontend_url}/subscription"
+
+    session = await asyncio.to_thread(
+        _stripe.checkout.Session.create,
+        mode="subscription",
+        line_items=[{"price": price_id, "quantity": 1}],
+        success_url=success_url,
+        cancel_url=cancel_url,
+        customer_email=user.email if user else None,
+        allow_promotion_codes=True,
+        metadata={"tenant_id": str(tenant_id), "plan": body.plan, "billing": body.billing},
+        subscription_data={"metadata": {"tenant_id": str(tenant_id), "plan": body.plan}},
+    )
+
+    return SubscriptionCheckoutResponse(checkout_url=session.url, session_id=session.id)
 
 
 # ── PayPal capture (retour après approbation) ─────────────────────

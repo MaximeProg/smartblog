@@ -1,9 +1,11 @@
+import asyncio
 import uuid
 from datetime import datetime, timezone
 from fastapi import APIRouter, Query, BackgroundTasks
 from sqlalchemy import select
 from pydantic import BaseModel, HttpUrl
 
+from app.core.config import settings
 from app.core.dependencies import TokenPayload, DBSession
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
 from app.models.ad import Ad, AdLinkScan
@@ -52,6 +54,7 @@ class AdResponse(BaseModel):
     ends_at: datetime | None
     impressions_count: int
     clicks_count: int
+    payment_link_url: str | None
     created_at: datetime
 
 
@@ -133,7 +136,9 @@ async def review_ad(
     payload: TokenPayload,
     db: DBSession,
 ):
-    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+    # Seul le super admin valide les pubs — la plateforme doit être configurée avant activation
+    if not payload.get("is_super_admin"):
+        raise ForbiddenException("La validation des publicités est réservée au super admin.")
 
     if body.decision not in (AdSubmissionStatus.APPROVED, AdSubmissionStatus.REJECTED):
         raise ValidationException("La décision doit être APPROVED ou REJECTED.")
@@ -147,8 +152,42 @@ async def review_ad(
 
     ad.submission_status = body.decision
     ad.reviewed_by = uuid.UUID(payload["sub"])
+
     if body.decision == AdSubmissionStatus.APPROVED:
-        ad.campaign_status = AdCampaignStatus.ACTIVE
+        if settings.STRIPE_SECRET_KEY and ad.total_budget and float(ad.total_budget) > 0:
+            # Stripe configuré → passe en PAYMENT_PENDING et génère un lien de paiement
+            try:
+                import stripe as _stripe
+                _stripe.api_key = settings.STRIPE_SECRET_KEY
+                amount_cents = int(float(ad.total_budget) * 100)
+                frontend_url = settings.FRONTEND_URL
+                session = await asyncio.to_thread(
+                    _stripe.checkout.Session.create,
+                    mode="payment",
+                    line_items=[{
+                        "price_data": {
+                            "currency": "usd",
+                            "unit_amount": amount_cents,
+                            "product_data": {"name": f"Campagne publicitaire : {ad.title}"},
+                        },
+                        "quantity": 1,
+                    }],
+                    customer_email=ad.advertiser_email,
+                    success_url=f"{frontend_url}/blog/{{CHECKOUT_SESSION_ID}}?ad_paid=1",
+                    cancel_url=f"{frontend_url}",
+                    metadata={"ad_id": str(ad.id), "tenant_id": str(tenant_id)},
+                )
+                ad.payment_link_url = session.url
+                ad.payment_session_id = session.id
+                ad.submission_status = AdSubmissionStatus.PAYMENT_PENDING
+                ad.campaign_status = AdCampaignStatus.PAUSED
+            except Exception:
+                # Si la génération échoue, approuver sans lien (ne bloque pas)
+                ad.campaign_status = AdCampaignStatus.ACTIVE
+        else:
+            # Pas de Stripe ou budget non défini → activation immédiate
+            ad.campaign_status = AdCampaignStatus.ACTIVE
+
     elif body.decision == AdSubmissionStatus.REJECTED:
         ad.rejection_reason = body.rejection_reason
         ad.campaign_status = AdCampaignStatus.CANCELED
@@ -314,5 +353,6 @@ def _ad_response(a: Ad) -> AdResponse:
         ends_at=a.ends_at,
         impressions_count=a.impressions_count,
         clicks_count=a.clicks_count,
+        payment_link_url=a.payment_link_url,
         created_at=a.created_at,
     )
