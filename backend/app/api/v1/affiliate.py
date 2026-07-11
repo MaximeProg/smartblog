@@ -7,6 +7,7 @@ from fastapi import APIRouter, Query
 from sqlalchemy import select, func, update
 from pydantic import BaseModel
 
+from app.core.config import settings
 from app.core.dependencies import TokenPayload, DBSession
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
 from app.models.affiliate import AffiliateRelationship, AffiliateCommission, AffiliateCashoutRequest
@@ -135,7 +136,7 @@ async def get_affiliate_dashboard(
 
     return AffiliateDashboardResponse(
         affiliate_code=tenant.affiliate_code,
-        referral_url=f"https://nexusblog.io/register?ref={tenant.affiliate_code}",
+        referral_url=f"{settings.FRONTEND_URL}/register?ref={tenant.affiliate_code}",
         balance=balance,
         cashout_threshold=threshold,
         can_cashout=balance >= threshold,
