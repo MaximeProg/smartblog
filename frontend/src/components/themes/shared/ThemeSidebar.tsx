@@ -11,7 +11,7 @@ interface ThemeSidebarProps {
   blog: BlogInfo;
   articles: PublicArticle[];
   categories: PublicCategory[];
-  config?: TemplateConfig['home']['sidebar'];
+  config?: NonNullable<TemplateConfig['home']>['sidebar'];
   getArticleHref: (slug: string) => string;
   isPreview?: boolean;
   locale: string;
