@@ -45,36 +45,14 @@ class Settings(BaseSettings):
     CLOUDINARY_API_KEY: str = ""
     CLOUDINARY_API_SECRET: str = ""
 
-    # Stripe
-    STRIPE_SECRET_KEY: str = ""
-    STRIPE_PUBLISHABLE_KEY: str = ""
-    STRIPE_WEBHOOK_SECRET: str = ""
-    STRIPE_PLATFORM_FEE_PERCENT: int = 5
-
-    # Stripe Price IDs — créer dans Dashboard Stripe > Products > Add product
-    # Format : price_XXXXXXXXXXXXXXXXXXXXXXXX
-    STRIPE_PRICE_STARTER_MONTHLY: str = ""
-    STRIPE_PRICE_STARTER_ANNUAL: str = ""
-    STRIPE_PRICE_PRO_MONTHLY: str = ""
-    STRIPE_PRICE_PRO_ANNUAL: str = ""
-    STRIPE_PRICE_BUSINESS_MONTHLY: str = ""
-    STRIPE_PRICE_BUSINESS_ANNUAL: str = ""
-
-    @property
-    def stripe_price_map(self) -> dict[str, str]:
-        return {
-            "starter_monthly": self.STRIPE_PRICE_STARTER_MONTHLY,
-            "starter_annual":  self.STRIPE_PRICE_STARTER_ANNUAL,
-            "pro_monthly":     self.STRIPE_PRICE_PRO_MONTHLY,
-            "pro_annual":      self.STRIPE_PRICE_PRO_ANNUAL,
-            "business_monthly": self.STRIPE_PRICE_BUSINESS_MONTHLY,
-            "business_annual":  self.STRIPE_PRICE_BUSINESS_ANNUAL,
-        }
-
-    # PayPal
-    PAYPAL_CLIENT_ID: str = ""
-    PAYPAL_CLIENT_SECRET: str = ""
-    PAYPAL_MODE: Literal["sandbox", "live"] = "sandbox"
+    # NowPayments (crypto — USDT TRC20)
+    # Dashboard : https://account.nowpayments.io/
+    NOWPAYMENTS_API_KEY: str = ""           # Clé principale (créer invoices)
+    NOWPAYMENTS_IPN_SECRET: str = ""        # Secret HMAC-SHA512 pour vérifier webhooks IPN
+    NOWPAYMENTS_PAYOUT_API_KEY: str = ""    # Clé Payouts (envoyer USDT aux affiliés)
+    NOWPAYMENTS_WALLET_USDT: str = ""       # Wallet USDT TRC20 de la plateforme NexusBlog
+    NOWPAYMENTS_PLATFORM_FEE_PERCENT: int = 5  # Commission plateforme articles payants
+    NOWPAYMENTS_SANDBOX: bool = True        # False en production
 
     # Email (Resend)
     RESEND_API_KEY: str = ""

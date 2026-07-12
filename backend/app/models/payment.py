@@ -28,15 +28,13 @@ class Transaction(Base):
     )
 
     amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
-    currency: Mapped[str] = mapped_column(String(3), nullable=False, default="USD")
+    currency: Mapped[str] = mapped_column(String(10), nullable=False, default="USDT")
     platform_fee: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
     net_amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
 
-    # Référence externe
-    stripe_payment_intent_id: Mapped[str | None] = mapped_column(String(255))
-    stripe_charge_id: Mapped[str | None] = mapped_column(String(255))
-    paypal_order_id: Mapped[str | None] = mapped_column(String(255))
-    paypal_capture_id: Mapped[str | None] = mapped_column(String(255))
+    # Référence NowPayments
+    nowpayments_invoice_id: Mapped[str | None] = mapped_column(String(255))
+    nowpayments_order_id: Mapped[str | None] = mapped_column(String(255))
 
     # Objet acheté
     article_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("articles.id", ondelete="SET NULL"))
@@ -58,8 +56,7 @@ class TenantSubscription(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     tenant_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, unique=True)
 
-    stripe_customer_id: Mapped[str | None] = mapped_column(String(255))
-    stripe_subscription_id: Mapped[str | None] = mapped_column(String(255))
+    nowpayments_payment_id: Mapped[str | None] = mapped_column(String(255))
 
     status: Mapped[SubscriptionStatus] = mapped_column(
         SAEnum(SubscriptionStatus, name="subscription_status", create_type=False, values_callable=ENUM_VALUES),

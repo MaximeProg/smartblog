@@ -213,6 +213,148 @@ async def upload_avatar(
     return UserInfo.model_validate(user)
 
 
+# ── PATCH /auth/me/wallet ─────────────────────────────────────────
+# Exige que la 2FA soit activée (RG-AFF-10)
+
+@router.patch("/me/wallet")
+async def update_wallet(
+    body: dict,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """
+    Enregistre ou met à jour l'adresse USDT TRC20 de l'utilisateur.
+    Requis : 2FA activé + code TOTP valide.
+    Déclenche le paiement des commissions PENDING si wallet était absent.
+    """
+    from sqlalchemy import select
+    from app.models.user import User
+    import uuid, re
+
+    totp_code: str = body.get("totp_code", "")
+    wallet_address: str = (body.get("usdt_wallet_address") or "").strip()
+
+    if not wallet_address:
+        raise ValidationException("Adresse USDT requise.")
+
+    # Validation basique format TRC20 (T + 33 alphanum)
+    if not re.match(r"^T[a-zA-Z0-9]{33}$", wallet_address):
+        raise ValidationException("Adresse USDT TRC20 invalide. Elle doit commencer par T et comporter 34 caractères.")
+
+    user_id = uuid.UUID(payload["sub"])
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise UnauthorizedException("Utilisateur introuvable.")
+
+    # 2FA obligatoire
+    if not user.two_fa_enabled:
+        raise ValidationException("Vous devez activer la double authentification (2FA) avant d'enregistrer votre adresse wallet.")
+
+    # Vérifier le code TOTP
+    if not totp_code:
+        raise ValidationException("Code 2FA requis pour modifier l'adresse wallet.")
+
+    import pyotp, base64
+    from cryptography.fernet import Fernet
+    from app.core.config import settings as _cfg
+    try:
+        fernet = Fernet(base64.urlsafe_b64encode(_cfg.APP_SECRET_KEY[:32].encode().ljust(32)[:32]))
+        secret = fernet.decrypt(user.two_fa_secret_enc.encode()).decode()
+        totp = pyotp.TOTP(secret)
+        if not totp.verify(totp_code, valid_window=1):
+            raise ValidationException("Code 2FA invalide ou expiré.")
+    except ValidationException:
+        raise
+    except Exception:
+        raise ValidationException("Impossible de vérifier le code 2FA.")
+
+    had_wallet = bool(user.usdt_wallet_address)
+    user.usdt_wallet_address = wallet_address
+    await db.commit()
+
+    # Si l'utilisateur n'avait pas de wallet, payer les commissions PENDING
+    if not had_wallet:
+        await _pay_pending_commissions_for_user(db, user_id, wallet_address)
+
+    from app.schemas.auth import UserInfo
+    return UserInfo.model_validate(user)
+
+
+async def _pay_pending_commissions_for_user(db, user_id, wallet_address: str):
+    """Paie automatiquement toutes les commissions PENDING de l'utilisateur après ajout du wallet."""
+    from sqlalchemy import select
+    from app.models.tenant import TenantMember
+    from app.models.affiliate import AffiliateCommission, AffiliateCashoutRequest
+    from app.models.enums import AffiliateCommissionStatus, CashoutStatus, UserRole
+    from app.models.tenant import Tenant
+    from app.services.nowpayments_service import send_single_payout
+    from app.core.config import settings as _cfg
+    from datetime import datetime, timezone
+
+    # Trouver tous les tenants dont l'utilisateur est admin
+    tenant_rows = await db.execute(
+        select(TenantMember.tenant_id).where(
+            TenantMember.user_id == user_id,
+            TenantMember.role == UserRole.TENANT_ADMIN,
+        )
+    )
+    tenant_ids = [r.tenant_id for r in tenant_rows.all()]
+    if not tenant_ids:
+        return
+
+    for tenant_id in tenant_ids:
+        # Récupérer toutes les commissions PENDING
+        pending_q = await db.execute(
+            select(AffiliateCommission).where(
+                AffiliateCommission.affiliate_tenant_id == tenant_id,
+                AffiliateCommission.status == AffiliateCommissionStatus.PENDING,
+            )
+        )
+        pending = pending_q.scalars().all()
+        if not pending:
+            continue
+
+        total = sum(float(c.commission_amount) for c in pending)
+        if total <= 0 or not _cfg.NOWPAYMENTS_PAYOUT_API_KEY:
+            # Marquer READY sans payer
+            for c in pending:
+                c.status = AffiliateCommissionStatus.READY
+            continue
+
+        try:
+            result = await send_single_payout(
+                wallet_address=wallet_address,
+                amount_usd=total,
+                extra_id=f"bulk_{tenant_id}",
+            )
+            payout_ref = str(result.get("id", ""))
+            cashout = AffiliateCashoutRequest(
+                tenant_id=tenant_id,
+                gross_amount=total,
+                fee=0.00,
+                net_amount=total,
+                payout_method="nowpayments_crypto",
+                payout_reference=payout_ref,
+                usdt_wallet_snapshot=wallet_address,
+                status=CashoutStatus.PROCESSING,
+            )
+            db.add(cashout)
+            await db.flush()
+            for c in pending:
+                c.status = AffiliateCommissionStatus.PAID
+                c.paid_at = datetime.now(timezone.utc)
+                c.cashout_request_id = cashout.id
+            tenant = await db.get(Tenant, tenant_id)
+            if tenant:
+                tenant.affiliate_balance = 0
+        except Exception:
+            for c in pending:
+                c.status = AffiliateCommissionStatus.READY
+
+    await db.commit()
+
+
 # ── GET /auth/me/notifications ─────────────────────────────────────
 
 @router.get("/me/notifications")

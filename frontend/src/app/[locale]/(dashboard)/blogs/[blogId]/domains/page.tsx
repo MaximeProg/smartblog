@@ -89,7 +89,7 @@ export default function DomainsPage() {
         </button>
       }
     >
-      <div className="px-6 py-6 space-y-5 max-w-3xl">
+      <div className="px-6 py-6 space-y-5">
 
         {/* Add domain form */}
         {showAdd && (

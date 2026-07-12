@@ -131,8 +131,8 @@ class AdSubmissionStatus(str, enum.Enum):
 
 
 class PaymentGateway(str, enum.Enum):
-    STRIPE = "stripe"
-    PAYPAL = "paypal"
+    NOWPAYMENTS = "nowpayments"
+    CRYPTO = "crypto"
 
 
 class TransactionType(str, enum.Enum):
@@ -218,7 +218,6 @@ class JournalEntryStatus(str, enum.Enum):
 
 
 class JournalEntrySource(str, enum.Enum):
-    STRIPE_WEBHOOK = "stripe_webhook"
-    PAYPAL_WEBHOOK = "paypal_webhook"
+    NOWPAYMENTS_WEBHOOK = "nowpayments_webhook"
     AFFILIATE = "affiliate"
     MANUAL = "manual"

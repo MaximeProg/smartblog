@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { Save, Loader2, User, Mail, Shield, Key, Eye, EyeOff, Phone, Globe, Lock, ShieldCheck, ShieldOff, Camera } from 'lucide-react';
+import { Save, Loader2, User, Mail, Shield, Key, Eye, EyeOff, Phone, Globe, Lock, ShieldCheck, ShieldOff, Camera, Wallet, CheckCircle2 } from 'lucide-react';
 import { useTranslations, useLocale } from 'next-intl';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
@@ -144,6 +144,35 @@ export default function ProfilePage() {
   const [disableError, setDisableError]       = useState('');
   const [twoFAEnabled, setTwoFAEnabled]       = useState(user?.two_fa_enabled ?? false);
 
+  // Wallet USDT
+  const [walletAddress, setWalletAddress]       = useState(user?.usdt_wallet_address ?? '');
+  const [showWalletForm, setShowWalletForm]     = useState(false);
+  const [walletInput, setWalletInput]           = useState('');
+  const [walletTotp, setWalletTotp]             = useState('');
+  const [walletError, setWalletError]           = useState('');
+
+  const walletMut = useMutation({
+    mutationFn: () => authApi.updateWallet({
+      usdt_wallet_address: walletInput.trim(),
+      totp_code: walletTotp.replace(/\s/g, ''),
+    }),
+    onSuccess: (res) => {
+      const newAddress = res.data.usdt_wallet_address ?? walletInput.trim();
+      setWalletAddress(newAddress);
+      setShowWalletForm(false);
+      setWalletInput('');
+      setWalletTotp('');
+      setWalletError('');
+      useAuthStore.setState(s => ({ user: s.user ? { ...s.user, usdt_wallet_address: newAddress } : null }));
+      toast({ title: t('walletSavedToast') });
+    },
+    onError: (err: unknown) => {
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      if (status === 422) setWalletError(t('walletInvalidAddress'));
+      else setWalletError(t('walletInvalidTotp'));
+    },
+  });
+
   const disable2FAMut = useMutation({
     mutationFn: () => twoFactorApi.disable(disableCode.replace(/\s/g, '')),
     onSuccess: () => {
@@ -173,6 +202,7 @@ export default function ProfilePage() {
     setContinent(user.continent ?? '');
     setGender(user.gender ?? '');
     setTwoFAEnabled(user.two_fa_enabled ?? false);
+    setWalletAddress(user.usdt_wallet_address ?? '');
     const dc = savedCountry ? (getDialCode(savedCountry) ?? '') : '';
     setDialCode(dc);
     const fullPhone = user.phone ?? '';
@@ -552,6 +582,82 @@ export default function ProfilePage() {
                         >
                           {disable2FAMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
                           {t('twoFAConfirmDisable')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* ── Wallet USDT TRC20 ──────────────────────────── */}
+                <div className={`rounded-xl border px-4 py-3.5 ${walletAddress ? 'border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/10' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}`}>
+                  <div className="flex items-start sm:items-center justify-between gap-3 flex-col sm:flex-row">
+                    <div className="flex items-center gap-2.5">
+                      <Wallet className={`h-5 w-5 shrink-0 ${walletAddress ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`} />
+                      <div>
+                        <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">{t('walletSection')}</p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                          {walletAddress
+                            ? `${walletAddress.slice(0, 6)}•••${walletAddress.slice(-4)}`
+                            : t('walletNotSet')
+                          }
+                        </p>
+                      </div>
+                    </div>
+                    {twoFAEnabled ? (
+                      <button
+                        onClick={() => { setShowWalletForm(v => !v); setWalletInput(walletAddress); setWalletTotp(''); setWalletError(''); }}
+                        className="self-start sm:self-auto flex items-center gap-1.5 h-8 px-3 rounded-lg border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400 text-[12px] font-semibold hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+                      >
+                        <Wallet className="h-3.5 w-3.5" />
+                        {walletAddress ? t('walletEditButton') : t('walletAddButton')}
+                      </button>
+                    ) : (
+                      <span className="self-start sm:self-auto text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2.5 py-1 rounded-lg">
+                        {t('walletRequires2FA')}
+                      </span>
+                    )}
+                  </div>
+
+                  {showWalletForm && twoFAEnabled && (
+                    <div className="mt-3 pt-3 border-t border-amber-100 dark:border-amber-800/50 space-y-3">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{t('walletDescription')}</p>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('walletAddressLabel')}</label>
+                        <input
+                          type="text"
+                          value={walletInput}
+                          onChange={e => { setWalletInput(e.target.value.trim()); setWalletError(''); }}
+                          placeholder={t('walletAddressPlaceholder')}
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] font-mono text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-colors"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('walletTotpLabel')}</label>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={walletTotp}
+                          onChange={e => { setWalletTotp(e.target.value.replace(/[^0-9 ]/g, '').slice(0, 7)); setWalletError(''); }}
+                          placeholder={t('walletTotpPlaceholder')}
+                          maxLength={7}
+                          className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[16px] font-mono tracking-[0.3em] text-center text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-colors"
+                        />
+                      </div>
+                      {walletError && <p className="text-[11px] text-red-500">{walletError}</p>}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => { setShowWalletForm(false); setWalletInput(''); setWalletTotp(''); setWalletError(''); }}
+                          className="flex-1 h-8 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[12px] font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                        >
+                          {t('cancelButton')}
+                        </button>
+                        <button
+                          onClick={() => walletMut.mutate()}
+                          disabled={walletInput.length !== 34 || !walletInput.startsWith('T') || walletTotp.replace(/\s/g,'').length < 6 || walletMut.isPending}
+                          className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[12px] font-semibold transition-colors disabled:opacity-50"
+                        >
+                          {walletMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
+                          {t('walletSaveButton')}
                         </button>
                       </div>
                     </div>

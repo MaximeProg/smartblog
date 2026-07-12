@@ -1,4 +1,7 @@
-import asyncio
+"""
+M20 — Paiements via NowPayments (crypto USDT TRC20)
+Stripe et PayPal retirés suite à décision PDG 2026-07-12.
+"""
 import uuid
 from datetime import datetime
 from fastapi import APIRouter, Request, Header, HTTPException
@@ -11,44 +14,46 @@ from app.core.exceptions import NotFoundException, ValidationException
 from app.models.payment import Transaction, ArticleAccess, TenantSubscription
 from app.models.article import Article
 from app.models.user import User
-from app.models.enums import PaymentGateway, TransactionStatus, UserRole
-from app.services.payment_service import (
-    create_article_payment_intent, handle_stripe_webhook,
-    create_paypal_order, capture_paypal_order,
+from app.models.tenant import Tenant
+from app.models.enums import PaymentGateway, TransactionType, TransactionStatus, SubscriptionStatus
+from app.services.nowpayments_service import (
+    create_invoice, verify_ipn_signature, get_plan_price,
 )
 from app.api.v1.tenants import _assert_member, _assert_role
+from app.models.enums import UserRole
 
 router = APIRouter(prefix="/tenants/{tenant_id}/payments", tags=["payments"])
 
-
-class ArticleCheckoutRequest(BaseModel):
-    article_id: str
-    gateway: PaymentGateway = PaymentGateway.STRIPE
-    currency: str = "USD"
-    success_url: str | None = None
-    cancel_url: str | None = None
+_PLAN_TIERS = {"starter", "pro", "business", "enterprise"}
 
 
-class CheckoutResponse(BaseModel):
-    gateway: PaymentGateway
-    transaction_id: str
-    # Stripe
-    client_secret: str | None = None
-    # PayPal
-    order_id: str | None = None
-    approve_url: str | None = None
-
+# ── Schemas ───────────────────────────────────────────────────────
 
 class SubscriptionCheckoutRequest(BaseModel):
-    plan: str           # starter | pro | business
+    plan: str           # starter | pro | business | enterprise
     billing: str = "monthly"   # monthly | annual
     success_url: str | None = None
     cancel_url: str | None = None
 
 
 class SubscriptionCheckoutResponse(BaseModel):
-    checkout_url: str
-    session_id: str
+    invoice_url: str
+    invoice_id: str
+    order_id: str
+    amount_usd: float
+
+
+class ArticleCheckoutRequest(BaseModel):
+    article_id: str
+    success_url: str | None = None
+    cancel_url: str | None = None
+
+
+class ArticleCheckoutResponse(BaseModel):
+    invoice_url: str
+    invoice_id: str
+    transaction_id: str
+    amount_usd: float
 
 
 class TransactionResponse(BaseModel):
@@ -64,15 +69,65 @@ class TransactionResponse(BaseModel):
     created_at: datetime
 
 
-# ── Checkout article payant ────────────────────────────────────────
+# ── Checkout abonnement SaaS ──────────────────────────────────────
 
-@router.post("/checkout", response_model=CheckoutResponse, status_code=201)
-async def checkout(
+@router.post("/checkout-subscription", response_model=SubscriptionCheckoutResponse, status_code=201)
+async def checkout_subscription(
+    tenant_id: uuid.UUID,
+    body: SubscriptionCheckoutRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Crée une invoice NowPayments pour mettre à niveau le plan SaaS."""
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+
+    if not settings.NOWPAYMENTS_API_KEY:
+        raise HTTPException(
+            status_code=503,
+            detail="NowPayments non configuré. Ajoutez NOWPAYMENTS_API_KEY dans .env.",
+        )
+
+    plan = body.plan.lower()
+    billing = body.billing.lower()
+    if plan not in _PLAN_TIERS:
+        raise ValidationException(f"Plan invalide : {plan}")
+
+    try:
+        amount_usd = get_plan_price(plan, billing)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    order_id = f"sub_{tenant_id}_{plan}_{billing}_{uuid.uuid4().hex[:8]}"
+    frontend_url = settings.FRONTEND_URL
+
+    invoice = await create_invoice(
+        price_amount=amount_usd,
+        price_currency="usd",
+        order_id=order_id,
+        order_description=f"NexusBlog {plan.title()} — {billing}",
+        success_url=body.success_url or f"{frontend_url}/subscription?success=1&plan={plan}",
+        cancel_url=body.cancel_url or f"{frontend_url}/subscription",
+        ipn_callback_url=f"{settings.PLATFORM_API_DOMAIN or frontend_url}/api/v1/tenants/{tenant_id}/payments/webhook/nowpayments",
+    )
+
+    return SubscriptionCheckoutResponse(
+        invoice_url=invoice["invoice_url"],
+        invoice_id=str(invoice["id"]),
+        order_id=order_id,
+        amount_usd=amount_usd,
+    )
+
+
+# ── Checkout article payant ───────────────────────────────────────
+
+@router.post("/checkout", response_model=ArticleCheckoutResponse, status_code=201)
+async def checkout_article(
     tenant_id: uuid.UUID,
     body: ArticleCheckoutRequest,
     payload: TokenPayload,
     db: DBSession,
 ):
+    """Crée une invoice NowPayments pour acheter un article payant."""
     await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
 
     article_result = await db.execute(
@@ -89,8 +144,6 @@ async def checkout(
         raise ValidationException("Cet article n'est pas payant.")
 
     user_id = uuid.UUID(payload["sub"])
-
-    # Vérifier si l'accès existe déjà
     access = await db.execute(
         select(ArticleAccess).where(
             ArticleAccess.user_id == user_id,
@@ -100,112 +153,218 @@ async def checkout(
     if access.scalar_one_or_none():
         raise ValidationException("Vous avez déjà accès à cet article.")
 
-    amount_cents = int(article.price * 100)
-
-    if body.gateway == PaymentGateway.STRIPE:
-        result = await create_article_payment_intent(
-            db, tenant_id, user_id, article.id, amount_cents, body.currency.lower()
-        )
-        return CheckoutResponse(
-            gateway=PaymentGateway.STRIPE,
-            transaction_id=result["transaction_id"],
-            client_secret=result["client_secret"],
-        )
-    else:
-        result = await create_paypal_order(
-            db, tenant_id, user_id, article.id, article.price, body.currency.upper()
-        )
-        return CheckoutResponse(
-            gateway=PaymentGateway.PAYPAL,
-            transaction_id=result["transaction_id"],
-            order_id=result["order_id"],
-            approve_url=result["approve_url"],
-        )
-
-
-# ── Checkout abonnement SaaS ─────────────────────────────────────
-
-@router.post("/checkout-subscription", response_model=SubscriptionCheckoutResponse, status_code=201)
-async def checkout_subscription(
-    tenant_id: uuid.UUID,
-    body: SubscriptionCheckoutRequest,
-    payload: TokenPayload,
-    db: DBSession,
-):
-    """Crée une Stripe Checkout Session pour mettre à niveau le plan SaaS."""
-    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
-
-    if not settings.STRIPE_SECRET_KEY:
-        raise HTTPException(
-            status_code=503,
-            detail="Stripe non configuré. Ajoutez STRIPE_SECRET_KEY dans .env puis relancez le serveur.",
-        )
-
-    plan_key = f"{body.plan.lower()}_{body.billing.lower()}"
-    price_id = settings.stripe_price_map.get(plan_key, "")
-    if not price_id:
-        raise HTTPException(
-            status_code=503,
-            detail=(
-                f"Price ID Stripe manquant pour {body.plan}/{body.billing}. "
-                f"Ajoutez STRIPE_PRICE_{body.plan.upper()}_{body.billing.upper()} dans .env"
-            ),
-        )
-
-    try:
-        import stripe as _stripe
-    except ImportError:
-        raise HTTPException(status_code=503, detail="Package stripe non installé (pip install stripe).")
-
-    _stripe.api_key = settings.STRIPE_SECRET_KEY
-
-    user_result = await db.execute(select(User).where(User.id == uuid.UUID(payload["sub"])))
-    user = user_result.scalar_one_or_none()
-
+    platform_fee = round(article.price * settings.NOWPAYMENTS_PLATFORM_FEE_PERCENT / 100, 2)
+    net_amount = round(article.price - platform_fee, 2)
+    order_id = f"art_{tenant_id}_{article.id}_{uuid.uuid4().hex[:8]}"
     frontend_url = settings.FRONTEND_URL
-    success_url = body.success_url or f"{frontend_url}/subscription?success=1&plan={body.plan}&session_id={{CHECKOUT_SESSION_ID}}"
-    cancel_url = body.cancel_url or f"{frontend_url}/subscription"
 
-    session = await asyncio.to_thread(
-        _stripe.checkout.Session.create,
-        mode="subscription",
-        line_items=[{"price": price_id, "quantity": 1}],
-        success_url=success_url,
-        cancel_url=cancel_url,
-        customer_email=user.email if user else None,
-        allow_promotion_codes=True,
-        metadata={"tenant_id": str(tenant_id), "plan": body.plan, "billing": body.billing},
-        subscription_data={"metadata": {"tenant_id": str(tenant_id), "plan": body.plan}},
+    invoice = await create_invoice(
+        price_amount=article.price,
+        price_currency="usd",
+        order_id=order_id,
+        order_description=article.title[:100],
+        success_url=body.success_url or f"{frontend_url}/{tenant_id}/articles/{article.slug}?unlocked=1",
+        cancel_url=body.cancel_url or f"{frontend_url}/{tenant_id}/articles/{article.slug}",
+        ipn_callback_url=f"{settings.PLATFORM_API_DOMAIN or frontend_url}/api/v1/tenants/{tenant_id}/payments/webhook/nowpayments",
     )
 
-    return SubscriptionCheckoutResponse(checkout_url=session.url, session_id=session.id)
+    tx = Transaction(
+        tenant_id=tenant_id,
+        user_id=user_id,
+        transaction_type=TransactionType.PAID_ARTICLE,
+        payment_gateway=PaymentGateway.NOWPAYMENTS,
+        amount=article.price,
+        currency="USDT",
+        platform_fee=platform_fee,
+        net_amount=net_amount,
+        nowpayments_invoice_id=str(invoice["id"]),
+        nowpayments_order_id=order_id,
+        article_id=article.id,
+    )
+    db.add(tx)
+    await db.commit()
+
+    return ArticleCheckoutResponse(
+        invoice_url=invoice["invoice_url"],
+        invoice_id=str(invoice["id"]),
+        transaction_id=str(tx.id),
+        amount_usd=article.price,
+    )
 
 
-# ── PayPal capture (retour après approbation) ─────────────────────
+# ── Webhook IPN NowPayments ───────────────────────────────────────
 
-@router.post("/paypal/capture")
-async def paypal_capture(
-    tenant_id: uuid.UUID,
-    order_id: str,
-    payload: TokenPayload,
-    db: DBSession,
-):
-    capture = await capture_paypal_order(db, order_id)
-    return {"status": capture.get("status"), "order_id": order_id}
-
-
-# ── Stripe webhook ─────────────────────────────────────────────────
-
-@router.post("/webhook/stripe", status_code=200)
-async def stripe_webhook(
+@router.post("/webhook/nowpayments", status_code=200)
+async def nowpayments_webhook(
     tenant_id: uuid.UUID,
     request: Request,
     db: DBSession,
-    stripe_signature: str = Header(default=None, alias="stripe-signature"),
+    x_nowpayments_sig: str = Header(default="", alias="x-nowpayments-sig"),
 ):
-    payload = await request.body()
-    await handle_stripe_webhook(db, payload, stripe_signature)
-    return {"received": True}
+    """
+    Webhook IPN NowPayments. Déclenché quand un paiement est confirmé.
+    payment_status == "finished" → activer abonnement ou débloquer article.
+    """
+    raw = await request.body()
+
+    # En sandbox, on skip la vérification si le secret n'est pas configuré
+    if not settings.NOWPAYMENTS_SANDBOX:
+        if not verify_ipn_signature(raw, x_nowpayments_sig):
+            raise HTTPException(status_code=400, detail="Signature IPN invalide.")
+
+    import json as _json
+    data = _json.loads(raw)
+
+    payment_status = data.get("payment_status", "")
+    order_id: str = data.get("order_id", "")
+    nowpayments_payment_id = str(data.get("payment_id", ""))
+    actually_paid = float(data.get("actually_paid", 0))
+
+    if payment_status != "finished":
+        return {"received": True, "action": "ignored", "status": payment_status}
+
+    # ── Abonnement SaaS ───────────────────────────────────────────
+    if order_id.startswith("sub_"):
+        parts = order_id.split("_")
+        # order_id = sub_{tenant_id}_{plan}_{billing}_{nonce}
+        if len(parts) >= 5:
+            sub_tenant_id = uuid.UUID(parts[1])
+            plan = parts[2]
+            billing = parts[3]
+            await _activate_subscription(db, sub_tenant_id, plan, billing, nowpayments_payment_id, actually_paid)
+            # Déclencher commissions affiliés
+            from app.api.v1.affiliate import compute_and_accrue_commissions
+            await compute_and_accrue_commissions(
+                db=db,
+                source_tenant_id=sub_tenant_id,
+                source_type="subscription",
+                source_transaction_id=nowpayments_payment_id,
+                gross_amount=actually_paid,
+            )
+            await db.commit()
+
+    # ── Article payant ────────────────────────────────────────────
+    elif order_id.startswith("art_"):
+        await _activate_article_access(db, order_id, nowpayments_payment_id)
+        await db.commit()
+
+    # ── Slot publicitaire ─────────────────────────────────────────
+    elif order_id.startswith("ad_"):
+        # order_id = ad_{tenant_id}_{ad_id}_{nonce}
+        parts = order_id.split("_")
+        if len(parts) >= 4:
+            try:
+                ad_id = uuid.UUID(parts[2])
+                from app.models.ad import Ad as AdModel
+                from app.models.enums import AdSubmissionStatus as ADS
+                ad_q = await db.execute(select(AdModel).where(AdModel.id == ad_id))
+                ad_obj = ad_q.scalar_one_or_none()
+                if ad_obj and ad_obj.submission_status == ADS.PAYMENT_PENDING:
+                    ad_obj.submission_status = ADS.PENDING
+                    ad_obj.amount_paid = actually_paid
+                    await db.commit()
+            except (ValueError, Exception):
+                pass
+
+    return {"received": True, "action": "processed"}
+
+
+async def _activate_subscription(
+    db, tenant_id: uuid.UUID, plan: str, billing: str,
+    payment_id: str, amount: float,
+) -> None:
+    from datetime import timedelta
+    from app.models.enums import PlanTier
+
+    plan_map = {
+        "starter": PlanTier.STARTER,
+        "pro": PlanTier.PRO,
+        "business": PlanTier.BUSINESS,
+        "enterprise": PlanTier.ENTERPRISE,
+    }
+    plan_tier = plan_map.get(plan, PlanTier.STARTER)
+
+    tenant = await db.get(Tenant, tenant_id)
+    if tenant:
+        # Update plan on the tenant's admin user
+        from sqlalchemy import update
+        from app.models.user import User as UserModel
+        from app.models.tenant import TenantMember
+        admin_q = await db.execute(
+            select(TenantMember).where(
+                TenantMember.tenant_id == tenant_id,
+                TenantMember.role == UserRole.TENANT_ADMIN,
+            )
+        )
+        admin_member = admin_q.scalar_one_or_none()
+        if admin_member:
+            user = await db.get(UserModel, admin_member.user_id)
+            if user:
+                user.plan = plan_tier
+
+    # Upsert TenantSubscription
+    sub_q = await db.execute(
+        select(TenantSubscription).where(TenantSubscription.tenant_id == tenant_id)
+    )
+    sub = sub_q.scalar_one_or_none()
+    now = datetime.utcnow()
+    from datetime import timedelta
+    period_end = now + timedelta(days=365 if billing == "annual" else 30)
+
+    if sub:
+        sub.status = SubscriptionStatus.ACTIVE
+        sub.current_period_end = period_end
+    else:
+        sub = TenantSubscription(
+            tenant_id=tenant_id,
+            status=SubscriptionStatus.ACTIVE,
+            current_period_end=period_end,
+        )
+        db.add(sub)
+
+    # Record transaction
+    tx = Transaction(
+        tenant_id=tenant_id,
+        transaction_type=TransactionType.SUBSCRIPTION,
+        payment_gateway=PaymentGateway.NOWPAYMENTS,
+        amount=amount,
+        currency="USDT",
+        platform_fee=0,
+        net_amount=amount,
+        nowpayments_invoice_id=payment_id,
+        nowpayments_order_id=payment_id,
+        status=TransactionStatus.COMPLETED,
+    )
+    db.add(tx)
+
+
+async def _activate_article_access(db, order_id: str, payment_id: str) -> None:
+    # Find transaction by order_id
+    tx_q = await db.execute(
+        select(Transaction).where(Transaction.nowpayments_order_id == order_id)
+    )
+    tx = tx_q.scalar_one_or_none()
+    if not tx:
+        return
+
+    tx.status = TransactionStatus.COMPLETED
+    tx.nowpayments_invoice_id = payment_id
+
+    # Grant article access
+    existing = await db.execute(
+        select(ArticleAccess).where(
+            ArticleAccess.user_id == tx.user_id,
+            ArticleAccess.article_id == tx.article_id,
+        )
+    )
+    if not existing.scalar_one_or_none():
+        access = ArticleAccess(
+            tenant_id=tx.tenant_id,
+            user_id=tx.user_id,
+            article_id=tx.article_id,
+            transaction_id=tx.id,
+        )
+        db.add(access)
 
 
 # ── Transactions ──────────────────────────────────────────────────
@@ -227,8 +386,6 @@ async def list_transactions(
     return [_tx_response(t) for t in result.scalars().all()]
 
 
-# ── Vérifier accès article ────────────────────────────────────────
-
 @router.get("/access/{article_id}")
 async def check_access(
     tenant_id: uuid.UUID,
@@ -244,11 +401,8 @@ async def check_access(
             ArticleAccess.tenant_id == tenant_id,
         )
     )
-    access = result.scalar_one_or_none()
-    return {"has_access": access is not None}
+    return {"has_access": result.scalar_one_or_none() is not None}
 
-
-# ── Abonnement SaaS du tenant ─────────────────────────────────────
 
 @router.get("/subscription")
 async def get_subscription(
@@ -268,8 +422,6 @@ async def get_subscription(
         "trial_ends_at": sub.trial_ends_at,
     }
 
-
-# ── Helper ────────────────────────────────────────────────────────
 
 def _tx_response(t: Transaction) -> TransactionResponse:
     return TransactionResponse(

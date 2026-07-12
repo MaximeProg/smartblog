@@ -66,7 +66,8 @@ class AffiliateCashoutRequest(Base):
         nullable=False, default=CashoutStatus.REQUESTED,
     )
 
-    payout_method: Mapped[str | None] = mapped_column(String(20))  # 'stripe' | 'paypal'
+    payout_method: Mapped[str | None] = mapped_column(String(30))  # 'nowpayments_crypto'
+    usdt_wallet_snapshot: Mapped[str | None] = mapped_column(String(100))  # wallet au moment du payout
     payout_reference: Mapped[str | None] = mapped_column(String(255))
     notes: Mapped[str | None] = mapped_column(Text)
 

@@ -196,6 +196,9 @@ export const authApi = {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },
+
+  updateWallet: (data: { usdt_wallet_address: string; totp_code: string }) =>
+    api.patch<UserInfo>('/auth/me/wallet', data),
 };
 
 // ─── Two-Factor Authentication ─────────────────────────────────────────────────

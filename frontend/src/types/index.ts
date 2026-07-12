@@ -13,6 +13,7 @@ export interface UserInfo {
   plan: PlanTier;
   is_super_admin: boolean;
   two_fa_enabled: boolean;
+  usdt_wallet_address: string | null;
 }
 
 export interface TenantInfo {

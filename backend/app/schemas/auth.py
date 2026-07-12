@@ -34,6 +34,7 @@ class UserInfo(BaseModel):
     plan: PlanTier = PlanTier.FREE
     is_super_admin: bool
     two_fa_enabled: bool
+    usdt_wallet_address: str | None = None
 
     model_config = {"from_attributes": True}
 

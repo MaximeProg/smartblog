@@ -43,6 +43,10 @@ class User(Base):
     two_fa_secret_enc: Mapped[str | None] = mapped_column(Text)
     two_fa_backup_codes: Mapped[dict | None] = mapped_column(JSONB)
 
+    # Crypto wallet — USDT TRC20 obligatoire pour recevoir commissions affiliés
+    # 2FA doit être activé avant de pouvoir renseigner/modifier cette adresse
+    usdt_wallet_address: Mapped[str | None] = mapped_column(String(100))
+
     # Activité
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_login_ip: Mapped[str | None] = mapped_column(String(45))

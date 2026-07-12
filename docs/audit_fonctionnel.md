@@ -454,26 +454,47 @@
 
 ---
 
-## M20 — Facturation & Paiements (Stripe + PayPal)
+## M20 — Facturation & Paiements (NowPayments — Crypto USDT)
 
-> Note: APIs de paiement disponibles dans le code mais non configurées en production.
+> **Décision PDG — 2026-07-12** : Stripe et PayPal retirés. Tous les paiements transitent via **NowPayments** en crypto USDT. Les fonds arrivent directement dans le wallet USDT de la plateforme NexusBlog. Les commissions affiliés sont distribuées automatiquement et immédiatement en USDT vers les wallets des membres. Aucun seuil minimum d'attente. Les membres doivent obligatoirement avoir un wallet USDT pour recevoir des commissions.
+
+### Flux de paiement (abonnement / slot pub)
+
+```
+1. Utilisateur clique "S'abonner"
+2. Backend crée une invoice NowPayments → retourne invoice_url
+3. Utilisateur paie en USDT (ou autre crypto) sur la page NowPayments
+4. NowPayments envoie un webhook IPN signé (HMAC-SHA512)
+5. Backend vérifie signature → active abonnement / campagne pub
+6. Backend déclenche compute_and_accrue_commissions()
+7. Commissions envoyées immédiatement en USDT via NowPayments Payout API
+```
+
+### Variables d'environnement NowPayments
+
+```
+NOWPAYMENTS_API_KEY=...          # Clé principale (créer invoice)
+NOWPAYMENTS_IPN_SECRET=...       # Secret HMAC pour vérification webhooks
+NOWPAYMENTS_PAYOUT_API_KEY=...   # Clé Payouts (envoyer USDT aux affiliés)
+NOWPAYMENTS_WALLET_USDT=...      # Wallet USDT TRC20 de NexusBlog (destination fonds entrants)
+NOWPAYMENTS_PLATFORM_FEE_PERCENT=5  # Commission plateforme articles payants
+```
 
 | Statut | Fonctionnalité | Notes techniques |
 |--------|----------------|-----------------|
-| ✅ | Checkout Stripe abonnements SaaS | `POST /tenants/{id}/payments/checkout-subscription` ✅ — Stripe Checkout Session `mode=subscription` — guarde si `STRIPE_SECRET_KEY` absent (503 explicite) |
-| 🔶 | PayPal alternative | `POST /payments/paypal/capture` ✅ — UI ❌ |
+| ❌ | Checkout NowPayments — abonnements SaaS | `POST /tenants/{id}/payments/checkout-subscription` → invoice NowPayments → `invoice_url` retourné |
+| ❌ | Checkout NowPayments — slots publicitaires | `POST /tenants/{id}/payments/checkout-ad` → même flow |
 | ✅ | Articles payants (paywall) | `ArticlePaywall.tsx` ✅ + public page retourne paywall si `article.is_paid = true` + `ArticleAccess` model |
-| ✅ | Commission plateforme 5% articles payants | `STRIPE_PLATFORM_FEE_PERCENT=5` dans settings |
+| ❌ | Articles payants via NowPayments | Ancienne logique Stripe retirée — NowPayments invoice à implémenter |
 | ✅ | Accès à vie après paiement | `ArticleAccess.expires_at` nullable |
-| ✅ | Webhooks Stripe/PayPal | `POST /payments/webhook/stripe` + signature vérification |
+| ❌ | Webhook IPN NowPayments | `POST /payments/webhook/nowpayments` — vérification HMAC-SHA512 sur `x-nowpayments-sig` |
 | ✅ | Transactions historique | `GET /payments/transactions` |
 | ✅ | Abonnement SaaS query | `GET /payments/subscription` |
-| ❌ | Période d'essai 14 jours Pro avec carte | `trial_ends_at` ✅ — checkout SaaS flow ❌ |
-| ❌ | Upgrade/downgrade avec prorata | |
-| 🔶 | Gestion des limites : blocage à 100% + bannière à 80% | Bannière UI amber/rouge dans `articles/page.tsx` ✅ — email à 80% ❌ — storage limit UI ❌ |
+| ❌ | Activation subscription au webhook confirmé | `payment_status == "finished"` → activer plan |
+| ❌ | Upgrade/downgrade plan | |
+| 🔶 | Gestion des limites : blocage à 100% + bannière à 80% | Bannière UI amber/rouge dans `articles/page.tsx` ✅ — email à 80% ❌ |
 | ❌ | Factures PDF | |
 | ❌ | Newsletter payante | |
-| ❌ | Paiement campagnes publicitaires | |
 | ❌ | Dashboard financier tenant | |
 
 ---
@@ -534,7 +555,7 @@
 
 ## M23 — Programme d'Affiliation
 
-> **Directives PDG — 2026-07-08**
+> **Directives PDG — 2026-07-08, mis à jour 2026-07-12 (migration NowPayments)**
 
 ### Règles métier (RG-AFF)
 
@@ -543,11 +564,13 @@
 | RG-AFF-01 | Code de parrainage unique (alphanumérique 8 chars) + lien d'affiliation par membre |
 | RG-AFF-02 | Arbre limité à 10 niveaux (L1 = parrain direct, L2–L10 = remontée hiérarchique) |
 | RG-AFF-03 | Pas de compression — si un niveau est absent, sa part revient à NexusBlog |
-| RG-AFF-04 | Commissions cumulées (accruals) jusqu'au seuil minimum de retrait ($50 défaut) |
-| RG-AFF-05 | Frais de retrait fixes : **$20** déduits du montant retiré |
-| RG-AFF-06 | Retrait net minimum après frais : $30 (soit $50 brut − $20 frais) |
-| RG-AFF-07 | Paiements via Stripe Transfer / PayPal Payout |
+| RG-AFF-04 | **Paiement immédiat** — plus de seuil minimum d'attente. Dès qu'une commission est créée, elle est versée automatiquement si le membre a un wallet USDT enregistré |
+| RG-AFF-05 | **Aucun frais de retrait** — la blockchain TRC20 (USDT Tron) a des frais négligeables couverts par la plateforme |
+| RG-AFF-06 | ~~Retrait net minimum après frais~~ — **supprimé** |
+| RG-AFF-07 | **Paiements en USDT TRC20 via NowPayments Payout API** — directs vers le wallet crypto du membre |
 | RG-AFF-08 | Auto-parrainage interdit — détection des cycles dans l'arbre |
+| RG-AFF-09 | **Wallet USDT TRC20 obligatoire** pour recevoir des commissions. Sans wallet enregistré, les commissions restent en état PENDING jusqu'à l'ajout du wallet (paiement déclenché alors automatiquement) |
+| RG-AFF-10 | **2FA obligatoire** avant d'ajouter ou modifier l'adresse wallet USDT — protection contre le vol de commissions |
 
 ### Distribution — Abonnements SaaS
 
@@ -609,18 +632,16 @@ Montant net versé = $65
 | ❌ | Notification email à chaque commission créditée | |
 | ✅ | Dashboard affilié : solde, historique gains, lien parrainage | `affiliate/page.tsx` — balance, referral URL avec copie, commissions list, cashout history |
 | ❌ | Visualisation de l'arbre filleuls | |
-| ✅ | Demande de retrait (actif si solde ≥ seuil $50) | `POST /affiliate/cashout` + vérification seuil minimum |
-| ✅ | Frais retrait $20 déduits automatiquement | Déduits dans logique cashout + écriture comptable D2810/C1010+C4201 |
-| ❌ | Versement via Stripe Transfer ou PayPal Payout | Logique approbation ✅ — déclenchement Stripe Transfer ❌ |
-| ❌ | Vérification bancaire KYC avant premier retrait | |
-| ✅ | Historique retraits avec statuts | `AffiliateWithdrawal` model — REQUESTED/PROCESSING/PAID/FAILED |
+| ❌ | Paiement immédiat automatique (pas de seuil minimum) | Commission créée → NowPayments Payout déclenché si wallet USDT enregistré |
+| ❌ | Wallet USDT TRC20 — ajout dashboard (2FA obligatoire) | `User.usdt_wallet_address` + `PATCH /users/me/wallet` + vérification TOTP avant sauvegarde |
+| ❌ | Paiement auto-différé — membres sans wallet | Commissions PENDING auto-payées dès que le wallet est ajouté |
+| ❌ | Versement automatique USDT via NowPayments Payout | Appel `POST /v1/payout` NowPayments → référence payout stockée dans `AffiliateCashoutRequest.payout_reference` |
+| ✅ | Historique retraits avec statuts | `AffiliateCashoutRequest` model — REQUESTED/PROCESSING/PAID/FAILED |
 | ✅ | Super Admin : tous les affiliés, retraits en cours | `GET /superadmin/affiliate/cashouts` |
-| ✅ | Super Admin : approbation manuelle retraits | `PATCH /superadmin/affiliate/cashouts/{id}` (approve/reject) |
+| ❌ | Super Admin : approbation manuelle remplacée par auto-payout | Ancien flow manuel → NowPayments Payout auto. Super Admin peut voir les payout references |
 | ❌ | Rapport mensuel commissions par affilié (CSV + PDF) | |
 | ❌ | Détection fraude : cycles, auto-parrainage, comptes multiples même IP | |
 | ❌ | Bannissement affilié frauduleux + annulation commissions non versées | |
-| ❌ | Seuil de retrait configurable (défaut $50) | Hardcodé |
-| ❌ | Frais retrait configurables (défaut $20) | Hardcodé |
 | ❌ | Page publique programme d'affiliation (comment ça marche, simulateur gains) | |
 | ✅ | Intégration comptable — chaque commission → écriture M24 | Écritures D5701/C2810 créées automatiquement |
 

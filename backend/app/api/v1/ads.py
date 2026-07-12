@@ -29,7 +29,18 @@ class SubmitAdRequest(BaseModel):
     starts_at: datetime | None = None
     ends_at: datetime | None = None
     price_per_day: float | None = None
-    total_budget: float | None = None
+    total_budget: float
+    currency: str = "USD"
+    success_url: str | None = None
+    cancel_url: str | None = None
+
+
+class SubmitAdCheckoutResponse(BaseModel):
+    ad_id: str
+    invoice_url: str
+    invoice_id: str
+    amount: float
+    currency: str
 
 
 class ReviewAdRequest(BaseModel):
@@ -71,14 +82,17 @@ class AdScanResponse(BaseModel):
 
 # ── Soumission publicité (public / annonceur) ─────────────────────
 
-@router.post("/submit", response_model=AdResponse, status_code=201)
+@router.post("/submit", response_model=SubmitAdCheckoutResponse, status_code=201)
 async def submit_ad(
     tenant_id: uuid.UUID,
     body: SubmitAdRequest,
     background: BackgroundTasks,
     db: DBSession,
 ):
-    """Soumission d'une publicité par un annonceur (sans auth requise)."""
+    """Soumission d'une publicité + création invoice NowPayments. Sans auth requise."""
+    if body.total_budget <= 0:
+        raise ValidationException("Le budget doit être supérieur à 0.")
+
     ad = Ad(
         tenant_id=tenant_id,
         advertiser_name=body.advertiser_name,
@@ -93,15 +107,40 @@ async def submit_ad(
         ends_at=body.ends_at,
         price_per_day=body.price_per_day,
         total_budget=body.total_budget,
+        submission_status=AdSubmissionStatus.PAYMENT_PENDING,
     )
     db.add(ad)
     await db.commit()
     await db.refresh(ad)
 
-    # Scan de sécurité en arrière-plan dès la soumission
     background.add_task(_scan_ad_link, str(ad.id), ad.click_url)
 
-    return _ad_response(ad)
+    from app.services.nowpayments_service import create_invoice
+
+    order_id = f"ad_{tenant_id}_{ad.id}_{uuid.uuid4().hex[:8]}"
+    frontend_url = settings.FRONTEND_URL or ""
+
+    invoice = await create_invoice(
+        price_amount=body.total_budget,
+        price_currency=body.currency.lower(),
+        order_id=order_id,
+        order_description=f"Ad slot: {body.title[:80]}",
+        success_url=body.success_url or f"{frontend_url}/advertise?payment=success&ad_id={ad.id}",
+        cancel_url=body.cancel_url or f"{frontend_url}/advertise?payment=cancelled",
+        ipn_callback_url=f"{settings.PLATFORM_API_DOMAIN or frontend_url}/api/v1/tenants/{tenant_id}/payments/webhook/nowpayments",
+    )
+
+    ad.payment_link_url = invoice["invoice_url"]
+    ad.payment_session_id = str(invoice["id"])
+    await db.commit()
+
+    return SubmitAdCheckoutResponse(
+        ad_id=str(ad.id),
+        invoice_url=invoice["invoice_url"],
+        invoice_id=str(invoice["id"]),
+        amount=body.total_budget,
+        currency=body.currency,
+    )
 
 
 # ── Listing ads (admin) ───────────────────────────────────────────

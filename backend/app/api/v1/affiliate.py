@@ -18,8 +18,9 @@ from app.api.v1.tenants import _assert_member, _assert_role
 router = APIRouter(prefix="/tenants/{tenant_id}/affiliate", tags=["affiliate"])
 superadmin_router = APIRouter(prefix="/superadmin/affiliate", tags=["affiliate-admin"])
 
-CASHOUT_FEE = 20.00
-MIN_CASHOUT = 50.00
+# Plus de seuil minimum ni de frais — paiement immédiat en USDT (décision PDG 2026-07-12)
+CASHOUT_FEE = 0.00
+MIN_CASHOUT = 0.00
 
 
 # ── Schemas ───────────────────────────────────────────────────────
@@ -60,7 +61,7 @@ class CashoutResponse(BaseModel):
 
 
 class CashoutRequest(BaseModel):
-    payout_method: str = "stripe"
+    payout_method: str = "nowpayments_crypto"
 
 
 class RegisterReferralRequest(BaseModel):
@@ -362,6 +363,8 @@ async def compute_and_accrue_commissions(
 
 async def _accrue_commission(db, affiliate_tenant_id, source_tenant_id, source_type, source_transaction_id, level, gross_amount, commission_amount):
     from app.models.enums import AffiliateCommissionStatus
+    from app.models.tenant import TenantMember
+    from app.models.user import User as UserModel
 
     tenant = await db.get(Tenant, affiliate_tenant_id)
     if not tenant:
@@ -383,10 +386,35 @@ async def _accrue_commission(db, affiliate_tenant_id, source_tenant_id, source_t
     new_balance = float(tenant.affiliate_balance or 0) + float(commission_amount)
     tenant.affiliate_balance = new_balance
 
-    # Mark ready if above threshold
-    threshold = float(tenant.affiliate_cashout_threshold or 50)
-    if new_balance >= threshold:
+    # Récupérer le wallet USDT de l'admin du tenant affilié
+    admin_q = await db.execute(
+        select(TenantMember).where(
+            TenantMember.tenant_id == affiliate_tenant_id,
+            TenantMember.role == AffiliateCommissionStatus.PENDING.__class__.__mro__[0].__mro__[0].__subclasses__,  # noqa
+        )
+    )
+    # Chercher le TENANT_ADMIN
+    from sqlalchemy import select as _select
+    from app.models.enums import UserRole
+    admin_row = await db.execute(
+        _select(TenantMember).where(
+            TenantMember.tenant_id == affiliate_tenant_id,
+            TenantMember.role == UserRole.TENANT_ADMIN,
+        )
+    )
+    admin_member = admin_row.scalar_one_or_none()
+    wallet_address = None
+    if admin_member:
+        user = await db.get(UserModel, admin_member.user_id)
+        if user:
+            wallet_address = user.usdt_wallet_address
+
+    # Paiement immédiat si wallet disponible
+    if wallet_address and float(commission_amount) > 0:
         commission.status = AffiliateCommissionStatus.READY
+        await db.flush()
+        await _trigger_auto_payout(db, tenant, commission, wallet_address)
+    # Sinon reste PENDING jusqu'à ce que l'affilié ajoute son wallet
 
 
 @router.get("/referrals")
@@ -449,6 +477,48 @@ async def list_referrals(
         ))
 
     return {"referrals": referrals, "total": total}
+
+
+async def _trigger_auto_payout(db, tenant: Tenant, commission: AffiliateCommission, wallet_address: str):
+    """
+    Déclenche un payout NowPayments immédiat pour une commission.
+    Si NowPayments n'est pas configuré, passe silencieusement.
+    """
+    from datetime import timezone as _tz
+    from app.services.nowpayments_service import send_single_payout
+    from app.core.config import settings
+
+    if not settings.NOWPAYMENTS_PAYOUT_API_KEY:
+        return
+
+    try:
+        result = await send_single_payout(
+            wallet_address=wallet_address,
+            amount_usd=float(commission.commission_amount),
+            extra_id=str(commission.id),
+        )
+        payout_ref = str(result.get("id", ""))
+
+        # Créer un AffiliateCashoutRequest auto pour le tracking
+        cashout = AffiliateCashoutRequest(
+            tenant_id=tenant.id,
+            gross_amount=float(commission.commission_amount),
+            fee=0.00,
+            net_amount=float(commission.commission_amount),
+            payout_method="nowpayments_crypto",
+            payout_reference=payout_ref,
+            usdt_wallet_snapshot=wallet_address,
+            status=CashoutStatus.PROCESSING,
+        )
+        db.add(cashout)
+        commission.cashout_request_id = None  # sera mis à jour après flush
+        commission.status = AffiliateCommissionStatus.PAID
+        commission.paid_at = datetime.now(_tz.utc)
+
+        # Déduire du solde
+        tenant.affiliate_balance = max(0, float(tenant.affiliate_balance or 0) - float(commission.commission_amount))
+    except Exception:
+        pass  # Échec NowPayments — commission reste READY, retry possible
 
 
 # ── Register referral (called at tenant creation) ─────────────────

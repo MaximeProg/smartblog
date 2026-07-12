@@ -212,7 +212,7 @@ export default function TagsPage() {
       title={t('title')}
       description={`${tags.length} ${t('tagsCount')} · ${totalArticles} articles`}
     >
-      <div className="p-6 space-y-5 max-w-2xl">
+      <div className="p-6 space-y-5">
 
         {/* Create tag */}
         <div className="flex gap-2">
