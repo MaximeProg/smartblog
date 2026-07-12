@@ -47,7 +47,7 @@ export default function SubscriptionPage() {
         success_url: `${origin}/${locale}/subscription?success=1&plan=${planId}`,
         cancel_url: `${origin}/${locale}/subscription`,
       });
-      window.location.href = data.checkout_url;
+      window.location.href = data.invoice_url;
     } catch (e: any) {
       const detail = e?.response?.data?.detail;
       toast({

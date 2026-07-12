@@ -681,7 +681,7 @@ export const affiliateApi = {
   listReferrals: (tenantId: string, params?: { limit?: number; offset?: number }) =>
     api.get<{ referrals: AffiliateReferral[]; total: number }>(`/tenants/${tenantId}/affiliate/referrals`, { params }),
 
-  requestCashout: (tenantId: string, payout_method: string = 'stripe') =>
+  requestCashout: (tenantId: string, payout_method: string = 'nowpayments_crypto') =>
     api.post<CashoutRequest>(`/tenants/${tenantId}/affiliate/cashout`, { payout_method }),
 };
 
@@ -810,28 +810,22 @@ export const articleScheduleApi = {
 
 // ── Payments API ──────────────────────────────────────────────────────────────
 
-export interface CheckoutResponse {
-  checkout_url: string;
-  session_id?: string;
+export interface NowPaymentsCheckoutResponse {
+  invoice_url: string;
+  invoice_id: string;
+  order_id: string;
+  amount_usd: number;
 }
 
 export const paymentsApi = {
   getSubscription: (tenantId: string) =>
     api.get<{ plan: string; status: string; expires_at: string | null; trial_ends_at: string | null }>(`/tenants/${tenantId}/payments/subscription`),
 
-  // Checkout article payant (PaymentIntent Stripe)
-  createArticleCheckout: (tenantId: string, data: { article_id: string; gateway?: 'stripe' | 'paypal'; currency?: string; success_url?: string; cancel_url?: string }) =>
-    api.post<CheckoutResponse>(`/tenants/${tenantId}/payments/checkout`, data),
+  createArticleCheckout: (tenantId: string, data: { article_id: string; success_url?: string; cancel_url?: string }) =>
+    api.post<NowPaymentsCheckoutResponse>(`/tenants/${tenantId}/payments/checkout`, data),
 
-  // Checkout abonnement SaaS (Stripe Checkout Session → redirect)
   createSubscriptionCheckout: (tenantId: string, data: { plan: string; billing?: 'monthly' | 'annual'; success_url?: string; cancel_url?: string }) =>
-    api.post<{ checkout_url: string; session_id: string }>(`/tenants/${tenantId}/payments/checkout-subscription`, data),
-
-  createPaypalOrder: (tenantId: string, data: { article_id: string }) =>
-    api.post<{ order_id: string; approve_url: string }>(`/tenants/${tenantId}/payments/paypal/capture`, data),
-
-  capturePaypal: (tenantId: string, orderId: string) =>
-    api.post<{ status: string }>(`/tenants/${tenantId}/payments/paypal/capture`, { order_id: orderId }),
+    api.post<NowPaymentsCheckoutResponse>(`/tenants/${tenantId}/payments/checkout-subscription`, data),
 };
 
 // ── Super Admin API ───────────────────────────────────────────────────────────

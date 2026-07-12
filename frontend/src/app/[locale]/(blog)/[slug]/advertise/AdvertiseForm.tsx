@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect } from 'react';
 import {
   CheckCircle2, AlertCircle, Loader2, ChevronLeft, ChevronRight,
   Globe, MapPin, CreditCard, FileText,
@@ -315,7 +315,7 @@ function Step2({ form, set, primaryColor }: {
             {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
           </select>
         </Field>
-        <Field label="Total budget (optional)">
+        <Field label="Total budget" required hint="This is the amount you'll pay to run your ad.">
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
               {form.currency}
@@ -336,36 +336,43 @@ function Step2({ form, set, primaryColor }: {
 
 // ── Step 3 — Payment ─────────────────────────────────────────────────────────
 
-function Step3({ primaryColor }: { primaryColor: string }) {
+function Step3({ form, primaryColor }: { form: FormState; primaryColor: string }) {
+  const budget = parseFloat(form.total_budget || '0');
+  const hasBudget = budget > 0;
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-[18px] font-black text-slate-900 mb-1">Payment</h2>
-        <p className="text-[13px] text-slate-400">How billing works for your ad campaign.</p>
+        <p className="text-[13px] text-slate-400">Your ad slot is paid securely via NowPayments — crypto or card.</p>
       </div>
 
-      {/* Coming soon notice */}
-      <div className="rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center">
-        <div
-          className="h-14 w-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-          style={{ backgroundColor: `${primaryColor}15` }}
-        >
-          <CreditCard className="h-7 w-7" style={{ color: primaryColor }} />
-        </div>
-        <p className="text-sm font-bold text-slate-700 mb-1">Online payment coming soon</p>
-        <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
-          We&apos;re working on integrated billing. For now, payment is handled manually after your ad is reviewed and approved.
-        </p>
+      {/* Budget summary */}
+      <div
+        className="rounded-2xl p-5 text-center"
+        style={{ backgroundColor: `${primaryColor}10`, border: `2px solid ${primaryColor}30` }}
+      >
+        <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Total to pay</p>
+        {hasBudget ? (
+          <p className="text-[32px] font-black" style={{ color: primaryColor }}>
+            {budget.toLocaleString()} <span className="text-[18px]">{form.currency}</span>
+          </p>
+        ) : (
+          <p className="text-sm font-semibold text-red-500">
+            ⚠ Please go back and enter your budget to continue.
+          </p>
+        )}
       </div>
 
-      {/* Process explanation */}
+      {/* How it works */}
       <div className="space-y-3">
-        <SectionTitle>How it works</SectionTitle>
+        <SectionTitle>What happens next</SectionTitle>
         {[
-          { step: '1', text: 'You submit this form — no payment required today.' },
-          { step: '2', text: 'The blog owner reviews your ad within 2–3 business days.' },
-          { step: '3', text: 'If approved, they\'ll contact you by email to confirm details and arrange payment.' },
-          { step: '4', text: 'Once payment is confirmed, your ad goes live.' },
+          { step: '1', text: 'Click "Review & Pay" below — you\'ll see your ad summary.' },
+          { step: '2', text: 'Click "Pay Now" — you\'re redirected to NowPayments\' secure page.' },
+          { step: '3', text: 'Pay by crypto (USDT, BTC, ETH…) or by card via their platform.' },
+          { step: '4', text: 'Payment confirmed → your ad is sent to the blog owner for review.' },
+          { step: '5', text: 'Once approved, your ad goes live automatically.' },
         ].map(s => (
           <div key={s.step} className="flex items-start gap-3">
             <div
@@ -379,13 +386,12 @@ function Step3({ primaryColor }: { primaryColor: string }) {
         ))}
       </div>
 
-      {/* Info banner */}
       <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
         <svg className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <p className="text-[12px] text-blue-700 leading-relaxed">
-          <strong>No commitment.</strong> Submitting this form is free and non-binding. You only pay after the ad is approved and you confirm the arrangement with the blog owner.
+          <strong>Secure payment.</strong> Your ad slot is reserved only after payment is confirmed. NowPayments accepts 150+ cryptocurrencies and major cards.
         </p>
       </div>
     </div>
@@ -450,9 +456,15 @@ function Step4({ form, blogName, primaryColor }: { form: FormState; blogName: st
 export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(EMPTY);
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'cancelled'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [touched, setTouched] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') setStatus('success');
+    else if (params.get('payment') === 'cancelled') setStatus('cancelled');
+  }, []);
 
   const set = (key: keyof FormState, value: string) =>
     setForm(f => ({ ...f, [key]: value }));
@@ -463,12 +475,14 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
   const validateStep2 = () => {
     if (form.targeting_scope !== 'global' && !form.targeting_country) return false;
     if (form.targeting_scope === 'city' && !form.targeting_city) return false;
+    if (!form.total_budget || parseFloat(form.total_budget) <= 0) return false;
     return true;
   };
 
   const canAdvance = () => {
     if (step === 1) return validateStep1();
     if (step === 2) return validateStep2();
+    if (step === 3) return !!(form.total_budget && parseFloat(form.total_budget) > 0);
     return true;
   };
 
@@ -498,6 +512,10 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
         advertiser_email: form.advertiser_email.trim(),
         title: form.title.trim(),
         click_url: form.click_url.trim(),
+        total_budget: parseFloat(form.total_budget),
+        currency: form.currency,
+        success_url: `${window.location.origin}${window.location.pathname}?payment=success`,
+        cancel_url: `${window.location.origin}${window.location.pathname}?payment=cancelled`,
       };
       if (form.advertiser_company.trim()) body.advertiser_company = form.advertiser_company.trim();
       const descParts = [form.description.trim(), buildTargetingNote()].filter(Boolean);
@@ -505,7 +523,6 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
       if (form.image_url.trim()) body.image_url = form.image_url.trim();
       if (form.starts_at) body.starts_at = new Date(form.starts_at).toISOString();
       if (form.ends_at) body.ends_at = new Date(form.ends_at).toISOString();
-      if (form.total_budget) body.total_budget = parseFloat(form.total_budget);
 
       const res = await fetch(`${API_URL}/api/v1/tenants/${tenantId}/ads/submit`, {
         method: 'POST',
@@ -516,7 +533,8 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.detail ?? `Server error ${res.status}`);
       }
-      setStatus('success');
+      const data = await res.json();
+      window.location.href = data.invoice_url;
     } catch (err: unknown) {
       setStatus('error');
       setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
@@ -533,15 +551,39 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
         >
           <CheckCircle2 className="h-8 w-8" style={{ color: primaryColor }} />
         </div>
-        <h2 className="text-xl font-black text-slate-900 mb-2">Ad request sent!</h2>
-        <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed mb-6">
-          Your request has been received. <strong>{blogName}</strong> will review it and contact you by email within 2–3 business days.
+        <h2 className="text-xl font-black text-slate-900 mb-2">Payment received!</h2>
+        <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed mb-2">
+          Your payment was confirmed. Your ad has been submitted to <strong>{blogName}</strong> for review.
+        </p>
+        <p className="text-sm text-slate-400 max-w-sm mx-auto leading-relaxed mb-6">
+          Once approved, your ad will go live automatically. You&apos;ll hear from the blog owner if any changes are needed.
         </p>
         <button
-          onClick={() => { setForm(EMPTY); setStep(1); setStatus('idle'); }}
+          onClick={() => { setForm(EMPTY); setStep(1); window.history.replaceState(null, '', window.location.pathname); setStatus('idle'); }}
           className="text-[13px] font-semibold px-5 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
         >
           Submit another ad
+        </button>
+      </div>
+    );
+  }
+
+  // ── Cancelled screen ─────────────────────────────────────────────────────────
+  if (status === 'cancelled') {
+    return (
+      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm p-10 text-center">
+        <div className="h-16 w-16 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-slate-100">
+          <AlertCircle className="h-8 w-8 text-slate-400" />
+        </div>
+        <h2 className="text-xl font-black text-slate-900 mb-2">Payment cancelled</h2>
+        <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed mb-6">
+          Your payment was not completed. Your ad was not submitted. You can try again below.
+        </p>
+        <button
+          onClick={() => { window.history.replaceState(null, '', window.location.pathname); setStatus('idle'); setStep(3); }}
+          className="text-[13px] font-semibold px-5 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+        >
+          Try again
         </button>
       </div>
     );
@@ -558,7 +600,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
       <div className="p-6 sm:p-8">
         {step === 1 && <Step1 form={form} set={set} />}
         {step === 2 && <Step2 form={form} set={set} primaryColor={primaryColor} />}
-        {step === 3 && <Step3 primaryColor={primaryColor} />}
+        {step === 3 && <Step3 form={form} primaryColor={primaryColor} />}
         {step === 4 && <Step4 form={form} blogName={blogName} primaryColor={primaryColor} />}
       </div>
 
@@ -614,8 +656,8 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
             style={{ backgroundColor: primaryColor }}
           >
             {status === 'loading'
-              ? <><Loader2 className="h-4 w-4 animate-spin" /> Submitting…</>
-              : <>Submit ad request <ChevronRight className="h-4 w-4" /></>
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> Redirecting to payment…</>
+              : <><CreditCard className="h-4 w-4" /> Pay now — {form.total_budget} {form.currency}</>
             }
           </button>
         )}

@@ -167,9 +167,9 @@ export default function ProfilePage() {
       toast({ title: t('walletSavedToast') });
     },
     onError: (err: unknown) => {
-      const status = (err as { response?: { status?: number } })?.response?.status;
-      if (status === 422) setWalletError(t('walletInvalidAddress'));
-      else setWalletError(t('walletInvalidTotp'));
+      const detail: string = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? '';
+      const isAddressError = /usdt|trc20|adresse|address|34|commenc/i.test(detail);
+      setWalletError(isAddressError ? t('walletInvalidAddress') : t('walletInvalidTotp'));
     },
   });
 
