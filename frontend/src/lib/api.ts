@@ -197,7 +197,7 @@ export const authApi = {
     });
   },
 
-  updateWallet: (data: { usdt_wallet_address: string; totp_code: string }) =>
+  updateWallet: (data: { usdt_wallet_address: string }) =>
     api.patch<UserInfo>('/auth/me/wallet', data),
 };
 

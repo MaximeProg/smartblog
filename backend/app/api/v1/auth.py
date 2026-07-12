@@ -231,7 +231,6 @@ async def update_wallet(
     from app.models.user import User
     import uuid, re
 
-    totp_code: str = body.get("totp_code", "")
     wallet_address: str = (body.get("usdt_wallet_address") or "").strip()
 
     if not wallet_address:
@@ -247,27 +246,10 @@ async def update_wallet(
     if not user:
         raise UnauthorizedException("Utilisateur introuvable.")
 
-    # 2FA obligatoire
+    # 2FA obligatoire — l'utilisateur doit avoir activé la 2FA
+    # (la vérification du code a déjà eu lieu à la connexion)
     if not user.two_fa_enabled:
         raise ValidationException("Vous devez activer la double authentification (2FA) avant d'enregistrer votre adresse wallet.")
-
-    # Vérifier le code TOTP
-    if not totp_code:
-        raise ValidationException("Code 2FA requis pour modifier l'adresse wallet.")
-
-    import pyotp, base64
-    from cryptography.fernet import Fernet
-    from app.core.config import settings as _cfg
-    try:
-        fernet = Fernet(base64.urlsafe_b64encode(_cfg.APP_SECRET_KEY[:32].encode().ljust(32)[:32]))
-        secret = fernet.decrypt(user.two_fa_secret_enc.encode()).decode()
-        totp = pyotp.TOTP(secret)
-        if not totp.verify(totp_code, valid_window=1):
-            raise ValidationException("Code 2FA invalide ou expiré.")
-    except ValidationException:
-        raise
-    except Exception:
-        raise ValidationException("Impossible de vérifier le code 2FA.")
 
     had_wallet = bool(user.usdt_wallet_address)
     user.usdt_wallet_address = wallet_address
