@@ -1,7 +1,5 @@
 """026 — Support tickets & messages"""
 from alembic import op
-import sqlalchemy as sa
-from sqlalchemy.dialects.postgresql import UUID
 
 revision = "026"
 down_revision = "025"
@@ -10,44 +8,57 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute("CREATE TYPE ticket_status AS ENUM ('open', 'in_progress', 'resolved', 'closed')")
-    op.execute("CREATE TYPE ticket_priority AS ENUM ('low', 'normal', 'high', 'urgent')")
+    # Create enum types — idempotent (handles partial migration state)
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE ticket_status AS ENUM ('open', 'in_progress', 'resolved', 'closed');
+        EXCEPTION WHEN duplicate_object THEN null;
+        END $$
+    """)
+    op.execute("""
+        DO $$ BEGIN
+            CREATE TYPE ticket_priority AS ENUM ('low', 'normal', 'high', 'urgent');
+        EXCEPTION WHEN duplicate_object THEN null;
+        END $$
+    """)
 
-    op.create_table(
-        "support_tickets",
-        sa.Column("id", UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("tenant_id", UUID(as_uuid=True), sa.ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("opened_by", UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
-        sa.Column("subject", sa.String(255), nullable=False),
-        sa.Column("status", sa.Enum("open", "in_progress", "resolved", "closed", name="ticket_status", create_type=False), nullable=False, server_default="open"),
-        sa.Column("priority", sa.Enum("low", "normal", "high", "urgent", name="ticket_priority", create_type=False), nullable=False, server_default="normal"),
-        sa.Column("tenant_language", sa.String(10), nullable=False, server_default="en"),
-        sa.Column("resolved_at", sa.DateTime(timezone=True), nullable=True),
-        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("NOW()")),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("NOW()")),
-    )
-    op.create_index("ix_support_tickets_tenant", "support_tickets", ["tenant_id"])
-    op.create_index("ix_support_tickets_status", "support_tickets", ["status"])
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS support_tickets (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+            opened_by UUID REFERENCES users(id) ON DELETE SET NULL,
+            subject VARCHAR(255) NOT NULL,
+            status ticket_status NOT NULL DEFAULT 'open',
+            priority ticket_priority NOT NULL DEFAULT 'normal',
+            tenant_language VARCHAR(10) NOT NULL DEFAULT 'en',
+            resolved_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    """)
+    op.execute("CREATE INDEX IF NOT EXISTS ix_support_tickets_tenant ON support_tickets (tenant_id)")
+    op.execute("CREATE INDEX IF NOT EXISTS ix_support_tickets_status ON support_tickets (status)")
 
-    op.create_table(
-        "support_messages",
-        sa.Column("id", UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
-        sa.Column("ticket_id", UUID(as_uuid=True), sa.ForeignKey("support_tickets.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("sender_id", UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="SET NULL"), nullable=True),
-        sa.Column("is_from_admin", sa.Boolean, nullable=False, server_default=sa.text("false")),
-        sa.Column("body_original", sa.Text, nullable=False),
-        sa.Column("body_translated", sa.Text, nullable=False, server_default=""),
-        sa.Column("push_sent", sa.Boolean, nullable=False, server_default=sa.text("false")),
-        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False, server_default=sa.text("NOW()")),
-    )
-    op.create_index("ix_support_messages_ticket", "support_messages", ["ticket_id"])
+    op.execute("""
+        CREATE TABLE IF NOT EXISTS support_messages (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            ticket_id UUID NOT NULL REFERENCES support_tickets(id) ON DELETE CASCADE,
+            sender_id UUID REFERENCES users(id) ON DELETE SET NULL,
+            is_from_admin BOOLEAN NOT NULL DEFAULT false,
+            body_original TEXT NOT NULL,
+            body_translated TEXT NOT NULL DEFAULT '',
+            push_sent BOOLEAN NOT NULL DEFAULT false,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    """)
+    op.execute("CREATE INDEX IF NOT EXISTS ix_support_messages_ticket ON support_messages (ticket_id)")
 
 
 def downgrade() -> None:
-    op.drop_index("ix_support_messages_ticket", table_name="support_messages")
-    op.drop_table("support_messages")
-    op.drop_index("ix_support_tickets_status", table_name="support_tickets")
-    op.drop_index("ix_support_tickets_tenant", table_name="support_tickets")
-    op.drop_table("support_tickets")
-    op.execute("DROP TYPE IF EXISTS ticket_status")
+    op.execute("DROP INDEX IF EXISTS ix_support_messages_ticket")
+    op.execute("DROP TABLE IF EXISTS support_messages")
+    op.execute("DROP INDEX IF EXISTS ix_support_tickets_status")
+    op.execute("DROP INDEX IF EXISTS ix_support_tickets_tenant")
+    op.execute("DROP TABLE IF EXISTS support_tickets")
     op.execute("DROP TYPE IF EXISTS ticket_priority")
+    op.execute("DROP TYPE IF EXISTS ticket_status")

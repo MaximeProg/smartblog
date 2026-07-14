@@ -63,27 +63,18 @@ async def generate_article(
 
 async def translate_text(text: str, target_lang: str) -> str:
     """
-    Translates `text` to `target_lang` (e.g. "en", "fr", "es").
-    Returns the original text unchanged if empty or OpenAI is not configured.
+    Translates `text` to `target_lang` using DeepL (primary) or falls back
+    to the original text if DeepL is not configured or fails.
+    Never raises — callers always succeed regardless of translation status.
     """
-    if not text.strip() or not settings.OPENAI_API_KEY:
+    if not text.strip():
         return text
-    resp = await _oai().chat.completions.create(
-        model=settings.OPENAI_DEFAULT_MODEL,
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    f"Translate the following text to {target_lang}. "
-                    "Return ONLY the translated text — no explanation, no commentary, no quotes."
-                ),
-            },
-            {"role": "user", "content": text},
-        ],
-        temperature=0,
-        max_tokens=2048,
-    )
-    return resp.choices[0].message.content.strip()
+    try:
+        result = await translate(text, target_lang)
+        return result["result"]
+    except Exception:
+        # DeepL not configured, quota exceeded, network error — return original
+        return text
 
 
 # ─── Amélioration contenu ─────────────────────────────────────────
