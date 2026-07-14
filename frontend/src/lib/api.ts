@@ -1292,7 +1292,7 @@ export const supportApi = {
 
   uploadFile: (tenantId: string, file: File) => {
     const form = new FormData(); form.append('file', file);
-    return api.post<{ url: string; name: string; type: string }>(`/tenants/${tenantId}/support/upload`, form);
+    return api.post<{ url: string; name: string; type: string }>(`/tenants/${tenantId}/support/upload`, form, { headers: { 'Content-Type': undefined } });
   },
 
   sendMessage: (tenantId: string, ticketId: string, body: string, fileUrl?: string, fileName?: string, fileType?: string) =>
@@ -1387,7 +1387,7 @@ export const superadminApi = {
 
   uploadSupportFile: (file: File) => {
     const form = new FormData(); form.append('file', file);
-    return api.post<{ url: string; name: string; type: string }>('/superadmin/support/upload', form);
+    return api.post<{ url: string; name: string; type: string }>('/superadmin/support/upload', form, { headers: { 'Content-Type': undefined } });
   },
 
   replySupportTicket: (ticketId: string, body: string, fileUrl?: string, fileName?: string, fileType?: string) =>
