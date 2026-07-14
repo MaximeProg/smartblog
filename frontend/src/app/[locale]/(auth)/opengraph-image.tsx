@@ -1,7 +1,7 @@
-import { ImageResponse } from 'next/og';
+﻿import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'NexusBlog — The professional multi-tenant blog platform';
+export const alt = 'SmarterBloggers — The professional multi-tenant blog platform';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -101,7 +101,7 @@ export default function Image() {
               marginBottom: 24,
             }}
           >
-            NexusBlog
+            SmarterBloggers
           </div>
 
           {/* Tagline */}

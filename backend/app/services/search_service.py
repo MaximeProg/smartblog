@@ -1,6 +1,6 @@
-"""
+﻿"""
 Service Elasticsearch pour l'indexation et la recherche d'articles.
-Index : nexusblog_articles_{tenant_slug}
+Index : smarterbloggers_articles_{tenant_slug}
 """
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from app.core.config import settings
@@ -19,7 +19,7 @@ def get_es() -> AsyncElasticsearch:
 
 
 def _index_name(tenant_slug: str) -> str:
-    return f"nexusblog_{tenant_slug.replace('-', '_')}"
+    return f"smarterbloggers_{tenant_slug.replace('-', '_')}"
 
 
 ARTICLE_MAPPING = {

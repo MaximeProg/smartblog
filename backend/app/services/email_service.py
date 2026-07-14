@@ -1,8 +1,11 @@
+﻿"""
+Service email via Resend API — templates professionnels SmarterBloggers.
 """
-Service email via Resend API — templates professionnels NexusBlog.
-"""
+import structlog
 import resend
 from app.core.config import settings
+
+logger = structlog.get_logger()
 
 BRAND_BLUE   = "#3B82F6"
 BRAND_DARK   = "#0F172A"
@@ -19,7 +22,7 @@ def _from() -> str:
 
 
 def _base(title: str, preview: str, body_html: str) -> str:
-    """Template de base commun à tous les emails NexusBlog."""
+    """Template de base commun à tous les emails SmarterBloggers."""
     return f"""<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -40,7 +43,7 @@ def _base(title: str, preview: str, body_html: str) -> str:
         <tr>
           <td style="background:{BRAND_BLUE};border-radius:16px 16px 0 0;padding:28px 40px;text-align:center;">
             <span style="display:inline-block;background:rgba(255,255,255,0.15);border-radius:12px;padding:8px 16px;">
-              <span style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">Nexus<span style="color:rgba(255,255,255,0.7);">Blog</span></span>
+              <span style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">Smarter<span style="color:rgba(255,255,255,0.7);">Bloggers</span></span>
             </span>
           </td>
         </tr>
@@ -56,10 +59,10 @@ def _base(title: str, preview: str, body_html: str) -> str:
         <tr>
           <td style="background:#F8FAFC;border:1px solid #E2E8F0;border-top:none;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;">
             <p style="margin:0 0 4px;font-size:12px;color:{BRAND_MUTED};">
-              © 2026 NexusBlog · Plateforme SaaS de blogging multi-tenant
+              © 2026 SmarterBloggers · Plateforme SaaS de blogging multi-tenant
             </p>
             <p style="margin:0;font-size:12px;color:{BRAND_MUTED};">
-              Vous recevez cet email car vous avez un compte NexusBlog.
+              Vous recevez cet email car vous avez un compte SmarterBloggers.
             </p>
           </td>
         </tr>
@@ -100,14 +103,23 @@ def _divider() -> str:
 
 async def _send(to: str | list[str], subject: str, html: str) -> None:
     if not settings.RESEND_API_KEY:
+        logger.warning("email._send: RESEND_API_KEY not configured, skipping")
         return
     _client()
-    resend.Emails.send({
-        "from": _from(),
-        "to": [to] if isinstance(to, str) else to,
-        "subject": subject,
-        "html": html,
-    })
+    recipients = [to] if isinstance(to, str) else to
+    sender = _from()
+    logger.info("email._send: sending", to=recipients, subject=subject, sender=sender)
+    try:
+        result = resend.Emails.send({
+            "from": sender,
+            "to": recipients,
+            "subject": subject,
+            "html": html,
+        })
+        logger.info("email._send: sent", result=str(result))
+    except Exception as exc:
+        logger.error("email._send: resend API error", error=str(exc), to=recipients, subject=subject)
+        raise
 
 
 # ─── Invitations équipe ────────────────────────────────────────────
@@ -130,9 +142,9 @@ async def send_team_invitation(
     )
     await _send(
         to=to,
-        subject=f"Invitation à rejoindre {tenant_name} sur NexusBlog",
+        subject=f"Invitation à rejoindre {tenant_name} sur SmarterBloggers",
         html=_base(
-            title="Invitation NexusBlog",
+            title="Invitation SmarterBloggers",
             preview=f"{inviter_name} vous invite à rejoindre {tenant_name}",
             body_html=body,
         ),
@@ -289,7 +301,7 @@ async def send_welcome_email(
 ) -> None:
     name = display_name or "là"
     body = (
-        _h1(f"Bienvenue sur NexusBlog, {name} ! 👋") +
+        _h1(f"Bienvenue sur SmarterBloggers, {name} ! 👋") +
         _p("Votre compte est prêt. Vous pouvez dès maintenant créer votre premier blog, "
            "publier des articles et développer votre audience.") +
         f'<table cellpadding="0" cellspacing="0" width="100%" style="margin:20px 0;">'
@@ -318,10 +330,10 @@ async def send_welcome_email(
     )
     await _send(
         to=to,
-        subject="Bienvenue sur NexusBlog 🎉",
+        subject="Bienvenue sur SmarterBloggers 🎉",
         html=_base(
-            title="Bienvenue sur NexusBlog",
-            preview=f"Bonjour {name} ! Votre compte NexusBlog est prêt.",
+            title="Bienvenue sur SmarterBloggers",
+            preview=f"Bonjour {name} ! Votre compte SmarterBloggers est prêt.",
             body_html=body,
         ),
     )
@@ -342,7 +354,7 @@ async def send_login_notification(
     body = (
         _h1("New sign-in detected on your account") +
         _p(f"Hello <strong>{name}</strong>,") +
-        _p("We detected a new sign-in to your NexusBlog account. If this was you, no action is needed.") +
+        _p("We detected a new sign-in to your SmarterBloggers account. If this was you, no action is needed.") +
         f'<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:16px 20px;margin:20px 0;">'
         f'<table cellpadding="0" cellspacing="0" width="100%">'
         f'<tr><td style="font-size:12px;color:{BRAND_MUTED};padding:5px 0;width:110px;">Date &amp; time</td>'
@@ -356,11 +368,11 @@ async def send_login_notification(
         f'If this wasn\'t you, secure your account immediately by changing your password and enabling 2FA.'
         f'</p>'
         f'</div>' +
-        _note("This notification is sent automatically for every sign-in to keep your account secure. NexusBlog will never ask for your password.")
+        _note("This notification is sent automatically for every sign-in to keep your account secure. SmarterBloggers will never ask for your password.")
     )
     await _send(
         to=to,
-        subject="New sign-in detected — NexusBlog",
+        subject="New sign-in detected — SmarterBloggers",
         html=_base(
             title="Sign-in notification",
             preview=f"A new sign-in was detected from IP {ip_text}",
@@ -407,11 +419,11 @@ async def send_superadmin_event(
         f'<td style="font-size:13px;color:{BRAND_DARK};">{details}</td></tr>'
         f'</table>'
         f'</div>' +
-        _note("You receive this notification because you are a NexusBlog super administrator.")
+        _note("You receive this notification because you are a SmarterBloggers super administrator.")
     )
     await _send(
         to=to,
-        subject=f"[NexusBlog] {title}",
+        subject=f"[SmarterBloggers] {title}",
         html=_base(
             title=f"Platform event: {event_type}",
             preview=title,
@@ -439,13 +451,13 @@ async def send_2fa_backup_codes_email(
         f'<table cellpadding="0" cellspacing="0" width="100%">{codes_html}</table>'
         f'</div>' +
         f'<div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:12px 16px;margin:16px 0;">'
-        f'<p style="margin:0;font-size:13px;color:#92400E;font-weight:600;">⚠️ Ne partagez jamais ces codes. NexusBlog ne vous les demandera jamais.</p>'
+        f'<p style="margin:0;font-size:13px;color:#92400E;font-weight:600;">⚠️ Ne partagez jamais ces codes. SmarterBloggers ne vous les demandera jamais.</p>'
         f'</div>' +
         _note("Si vous n'avez pas activé la 2FA, contactez immédiatement notre support.")
     )
     await _send(
         to=to,
-        subject="🔐 Vos codes de secours NexusBlog (2FA)",
+        subject="🔐 Vos codes de secours SmarterBloggers (2FA)",
         html=_base(
             title="Codes de secours 2FA",
             preview="Conservez ces codes en lieu sûr — ils vous permettent d'accéder à votre compte sans votre téléphone",

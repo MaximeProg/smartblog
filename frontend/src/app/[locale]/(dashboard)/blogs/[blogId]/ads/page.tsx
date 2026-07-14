@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -277,7 +277,7 @@ function AdDetailDrawer({ ad, onClose, onPause, onResume, isPending }: DrawerPro
               <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
               <div>
                 <p className="text-[13px] font-bold text-amber-800 dark:text-amber-200">Awaiting platform review</p>
-                <p className="text-[12px] text-amber-700 dark:text-amber-400 mt-0.5 leading-relaxed">The NexusBlog team is reviewing this submission. You'll be notified once a decision is made.</p>
+                <p className="text-[12px] text-amber-700 dark:text-amber-400 mt-0.5 leading-relaxed">The SmarterBloggers team is reviewing this submission. You'll be notified once a decision is made.</p>
               </div>
             </div>
           )}
@@ -286,7 +286,7 @@ function AdDetailDrawer({ ad, onClose, onPause, onResume, isPending }: DrawerPro
               <X className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
               <div>
                 <p className="text-[13px] font-bold text-red-800 dark:text-red-200">Not approved by platform</p>
-                <p className="text-[12px] text-red-700 dark:text-red-400 mt-0.5 leading-relaxed">{ad.rejection_reason || 'The NexusBlog team declined this ad submission.'}</p>
+                <p className="text-[12px] text-red-700 dark:text-red-400 mt-0.5 leading-relaxed">{ad.rejection_reason || 'The SmarterBloggers team declined this ad submission.'}</p>
               </div>
             </div>
           )}

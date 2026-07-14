@@ -1,4 +1,4 @@
-import { Zap, Shield, Bot, BarChart2, Globe2, Wrench } from 'lucide-react';
+﻿import { Zap, Shield, Bot, BarChart2, Globe2, Wrench } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
@@ -31,8 +31,8 @@ const RELEASES = [
     type: 'major',
     icon: Zap,
     color: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-    title: 'NexusBlog 2.0 — Multi-tenant Platform',
-    titleFr: 'NexusBlog 2.0 — Plateforme Multi-tenant',
+    title: 'SmarterBloggers 2.0 — Multi-tenant Platform',
+    titleFr: 'SmarterBloggers 2.0 — Plateforme Multi-tenant',
     changes: [
       'Complete platform rebuild with Next.js 15 and FastAPI',
       'Multi-tenant architecture supporting unlimited blogs',
@@ -154,8 +154,8 @@ export default async function ChangelogPage({ params }: { params: Promise<{ loca
         image="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1920&q=85"
         title={isFr ? 'Journal des modifications' : 'Changelog'}
         subtitle={isFr
-          ? 'Toutes les nouveautés, améliorations et corrections de NexusBlog.'
-          : 'All new features, improvements, and fixes to NexusBlog.'}
+          ? 'Toutes les nouveautés, améliorations et corrections de SmarterBloggers.'
+          : 'All new features, improvements, and fixes to SmarterBloggers.'}
       />
 
       <div className="max-w-3xl mx-auto px-6 py-12">

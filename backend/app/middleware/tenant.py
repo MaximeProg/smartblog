@@ -1,4 +1,4 @@
-import json
+﻿import json
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
@@ -32,7 +32,7 @@ class TenantMiddleware(BaseHTTPMiddleware):
         tenant_id = None
 
         if host.endswith(f".{platform_domain}"):
-            # Sous-domaine : monblog.nexusblog.io → slug = "monblog"
+            # Sous-domaine : monblog.smarterbloggers.com → slug = "monblog"
             slug = host.replace(f".{platform_domain}", "")
             if slug not in ("www", "api", "app"):
                 tenant_id = await self._resolve_by_slug(slug)

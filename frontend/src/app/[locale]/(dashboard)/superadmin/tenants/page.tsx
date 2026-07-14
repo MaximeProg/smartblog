@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
@@ -259,7 +259,7 @@ export default function TenantsPage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-3 mt-0.5 text-[9px]" style={{ color: 'var(--sa-text-3)' }}>
-                      <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> {tenant.slug}.nexusblog.io</span>
+                      <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> {tenant.slug}.smarterbloggers.com</span>
                     </div>
                   </div>
 
@@ -315,7 +315,7 @@ export default function TenantsPage() {
                       {tt('actions.changePlan')}
                     </button>
 
-                    <a href={`https://${tenant.slug}.nexusblog.io`} target="_blank" rel="noreferrer"
+                    <a href={`https://${tenant.slug}.smarterbloggers.com`} target="_blank" rel="noreferrer"
                       className="h-7 w-7 flex items-center justify-center rounded-lg transition-colors hover:bg-[var(--sa-surface)]"
                       style={{ border: '1px solid var(--sa-border)', color: 'var(--sa-text-3)' }}>
                       <ExternalLink className="h-3.5 w-3.5" />

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, type FormEvent, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,7 +6,7 @@ import { Menu, X, Twitter, Linkedin, Github, ExternalLink, Instagram, Youtube } 
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { ShareButtons } from '../shared/ShareButtons';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -277,7 +277,7 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
               primaryColor={primaryColor}
               variant="blog"
             />
-            {showPoweredBy && <span>Powered by NexusBlog</span>}
+            {showPoweredBy && <span>Powered by SmarterBloggers</span>}
           </div>
         </div>
       </div>

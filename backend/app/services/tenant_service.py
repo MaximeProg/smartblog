@@ -1,4 +1,4 @@
-import uuid
+﻿import uuid
 import random
 import string
 from datetime import datetime, timezone, timedelta
@@ -40,7 +40,7 @@ PLAN_LIMITS: dict[PlanTier, dict] = {
         "authors_max": 1,
         "storage_gb": 2.0,
         "subscribers_max": 0,     # no newsletter
-        "domains_max": 0,         # nexusblog.io subdomain only
+        "domains_max": 0,         # smarterbloggers.com subdomain only
         "api_requests_monthly": 0,
     },
     PlanTier.STARTER: {

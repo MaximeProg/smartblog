@@ -1,4 +1,4 @@
-import uuid
+﻿import uuid
 import hashlib
 import socket
 from datetime import datetime, timezone
@@ -14,7 +14,7 @@ from app.api.v1.tenants import _assert_member, _assert_role
 
 router = APIRouter(prefix="/tenants/{tenant_id}/domains", tags=["domains"])
 
-_TXT_PREFIX = "nexusblog-verify="
+_TXT_PREFIX = "smarterbloggers-verify="
 
 
 def _verification_token(tenant_id: uuid.UUID, domain: str) -> str:

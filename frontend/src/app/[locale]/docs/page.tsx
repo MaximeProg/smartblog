@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { ArrowRight, BookOpen, Code2, Webhook, Key, Users, FileText } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
@@ -28,8 +28,8 @@ const SECTIONS = [
     color: 'bg-orange-500/10 text-orange-500',
     title: 'Webhooks',
     titleFr: 'Webhooks',
-    desc: 'Integrate NexusBlog events into your own systems and workflows.',
-    descFr: "Intégrez les événements NexusBlog dans vos propres systèmes.",
+    desc: 'Integrate SmarterBloggers events into your own systems and workflows.',
+    descFr: "Intégrez les événements SmarterBloggers dans vos propres systèmes.",
     href: '#',
   },
   {
@@ -37,8 +37,8 @@ const SECTIONS = [
     color: 'bg-emerald-500/10 text-emerald-500',
     title: 'Authentication',
     titleFr: 'Authentification',
-    desc: 'Learn how to authenticate with the NexusBlog API using JWT.',
-    descFr: "Apprenez à vous authentifier avec l'API NexusBlog via JWT.",
+    desc: 'Learn how to authenticate with the SmarterBloggers API using JWT.',
+    descFr: "Apprenez à vous authentifier avec l'API SmarterBloggers via JWT.",
     href: '#',
   },
   {
@@ -73,15 +73,15 @@ export default async function DocsPage({ params }: { params: Promise<{ locale: s
         image="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1920&q=85"
         title={isFr ? 'Documentation' : 'Documentation'}
         subtitle={isFr
-          ? "Guides, références d'API et ressources pour construire avec NexusBlog."
-          : 'Guides, API references, and resources for building with NexusBlog.'}
+          ? "Guides, références d'API et ressources pour construire avec SmarterBloggers."
+          : 'Guides, API references, and resources for building with SmarterBloggers.'}
       />
 
       <div className="max-w-6xl mx-auto px-6 py-16">
         {/* Quick start terminal */}
         <div className="bg-slate-900 rounded-2xl p-6 mb-14 font-mono text-sm">
           <p className="text-slate-500 mb-2 text-xs"># {isFr ? 'Vérification de l\'état de l\'API' : 'Check API status'}</p>
-          <p className="text-emerald-400">{'$ curl https://api.nexusblog.com/v1/health'}</p>
+          <p className="text-emerald-400">{'$ curl https://api.smarterbloggers.com/v1/health'}</p>
           <p className="text-slate-300 mt-2">{'→ { "status": "ok", "version": "2.1.0" }'}</p>
         </div>
 

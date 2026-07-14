@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -13,7 +13,7 @@ import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 import { useBookmark } from '@/hooks/useBookmark';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 const GRADIENTS = [
   'from-violet-900 to-indigo-900',
@@ -78,7 +78,7 @@ export default function CreativeArticle({
 
   const articleUrl = typeof window !== 'undefined'
     ? window.location.href
-    : `https://${blog.slug}.nexusblog.io/${article.slug}`;
+    : `https://${blog.slug}.smarterbloggers.com/${article.slug}`;
 
   useEffect(() => {
     const handleScroll = () => {

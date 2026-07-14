@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
@@ -109,7 +109,7 @@ export default function SettingsPage() {
                 <Toggle value={registrationsValue} onChange={v => { setRegistrations(v); save({ registrations_open: v }); }} />
               </Field>
               <Field label={ts('field.platformName')} hint={ts('field.platformNameHint')}>
-                <input defaultValue={data?.general.platform_name ?? 'NexusBlog'}
+                <input defaultValue={data?.general.platform_name ?? 'SmarterBloggers'}
                   onBlur={e => save({ platform_name: e.target.value })}
                   className="h-9 w-56 px-3 rounded-xl border bg-transparent text-[12px] focus:outline-none"
                   style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text)' }} />

@@ -63,9 +63,17 @@ export function TopBar() {
 
   const { data: notifCount } = useQuery<{ unread: number; total: number }>({
     queryKey: ['notifications-count'],
-    queryFn:  async () => { const { data } = await authApi.notificationsCount(); return data; },
-    refetchInterval: 30_000,
-    staleTime:       15_000,
+    queryFn: async () => {
+      const { data } = await authApi.notifications();
+      let readIds: Set<string> = new Set();
+      try {
+        readIds = new Set(JSON.parse(localStorage.getItem('smarterbloggers:notif-read') ?? '[]') as string[]);
+      } catch { /* ignore */ }
+      const unread = data.filter((n: { id: string; read: boolean }) => !n.read && !readIds.has(n.id)).length;
+      return { unread, total: data.length };
+    },
+    refetchInterval: 60_000,
+    staleTime: 30_000,
   });
 
   const unread = notifCount?.unread ?? 0;

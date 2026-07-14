@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -49,7 +49,7 @@ export function PlatformNav({ locale }: { locale: string }) {
       {/* Logo */}
       <div className="flex h-14 items-center gap-2.5 px-5 border-b border-slate-100">
         <div className="h-7 w-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm font-black shadow-sm shrink-0">N</div>
-        <span className="font-extrabold text-sm tracking-tight text-slate-900">NexusBlog</span>
+        <span className="font-extrabold text-sm tracking-tight text-slate-900">SmarterBloggers</span>
       </div>
 
       {/* Nav */}

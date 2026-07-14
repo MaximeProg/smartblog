@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import type { HomeProps } from '../ThemeRenderer';
 
 function formatDate(iso: string | null, lang = 'fr') {
@@ -69,7 +69,7 @@ export function TechFooter({ blog }: { blog: { name: string; social_links?: Reco
         <div>
           <p className="font-black text-white mb-1">{blog.name}</p>
           <p className="text-xs text-gray-500">
-            Propulsé par <a href="https://nexusblog.io" className="hover:text-[var(--blog-primary)] transition-colors">NexusBlog</a>
+            Propulsé par <a href="https://smarterbloggers.com" className="hover:text-[var(--blog-primary)] transition-colors">SmarterBloggers</a>
           </p>
         </div>
         <div className="flex items-center gap-4">

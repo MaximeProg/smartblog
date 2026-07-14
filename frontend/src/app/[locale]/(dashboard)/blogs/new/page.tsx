@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -298,7 +298,7 @@ export default function CreateBlogPage() {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const refCode = typeof window !== 'undefined' ? localStorage.getItem('nexusblog_ref') : null;
+      const refCode = typeof window !== 'undefined' ? localStorage.getItem('smarterbloggers_ref') : null;
       const { data } = await tenantsApi.create({
         name: name.trim(),
         slug: slug.trim(),
@@ -321,7 +321,7 @@ export default function CreateBlogPage() {
       return data;
     },
     onSuccess: (data) => {
-      if (typeof window !== 'undefined') localStorage.removeItem('nexusblog_ref');
+      if (typeof window !== 'undefined') localStorage.removeItem('smarterbloggers_ref');
       const tenant: TenantInfo = { id: data.id, name: data.name, slug: data.slug, plan: data.plan, role: 'TENANT_ADMIN' };
       addTenant(tenant);
       setCurrentTenant(data.id);
@@ -463,7 +463,7 @@ export default function CreateBlogPage() {
                     </label>
                     <div className="flex rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-400 transition-all">
                       <span className="flex items-center px-3 text-[11px] text-slate-400 bg-slate-100 dark:bg-slate-700 border-r border-slate-200 dark:border-slate-600 shrink-0 select-none font-mono">
-                        nexusblog.io/
+                        smarterbloggers.com/
                       </span>
                       <input
                         value={slug}
@@ -474,7 +474,7 @@ export default function CreateBlogPage() {
                     </div>
                     {slugError && <p className="text-[11px] text-red-500 mt-1.5">{slugError}</p>}
                     {slug && !slugError && (
-                      <p className="text-[11px] text-slate-400 mt-1.5 font-mono">nexusblog.io/{slug}</p>
+                      <p className="text-[11px] text-slate-400 mt-1.5 font-mono">smarterbloggers.com/{slug}</p>
                     )}
                   </div>
 

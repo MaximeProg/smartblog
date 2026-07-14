@@ -1,4 +1,4 @@
-"""
+﻿"""
 Module SuperAdmin — accès global à toute la plateforme.
 Nécessite is_super_admin = True sur l'utilisateur.
 """
@@ -990,7 +990,7 @@ async def get_platform_settings(payload: TokenPayload, db: DBSession):
 
     return {
         "general": {
-            "platform_name": overrides.get("platform_name", "NexusBlog"),
+            "platform_name": overrides.get("platform_name", "SmarterBloggers"),
             "support_email": overrides.get("support_email", cfg.SENDGRID_FROM_EMAIL if hasattr(cfg, "SENDGRID_FROM_EMAIL") else ""),
             "max_blogs_per_user": overrides.get("max_blogs_per_user", 10),
             "maintenance_mode": overrides.get("maintenance_mode", False),

@@ -10,7 +10,7 @@ import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
 import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 const GRADIENTS = [
   'from-zinc-800 to-zinc-950',

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -46,10 +46,10 @@ export function RegisterForm({ locale }: RegisterFormProps) {
   useEffect(() => {
     const ref = searchParams.get('ref');
     if (ref) {
-      localStorage.setItem('nexusblog_ref', ref.toUpperCase());
+      localStorage.setItem('smarterbloggers_ref', ref.toUpperCase());
       setRefCode(ref.toUpperCase());
     } else {
-      const stored = localStorage.getItem('nexusblog_ref');
+      const stored = localStorage.getItem('smarterbloggers_ref');
       if (stored) setRefCode(stored);
     }
   }, [searchParams]);

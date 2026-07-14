@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import { MapPin, Clock, ArrowRight, Heart, Globe2, Zap, Coffee } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
@@ -12,8 +12,8 @@ const JOBS = [
     location: 'Remote (Europe/Americas)',
     type: 'Full-time',
     typeFr: 'Temps plein',
-    desc: "Join our core platform team to build the next generation of NexusBlog's multi-tenant infrastructure.",
-    descFr: "Rejoignez notre équipe plateforme pour construire la prochaine génération de l'infrastructure multi-tenant de NexusBlog.",
+    desc: "Join our core platform team to build the next generation of SmarterBloggers's multi-tenant infrastructure.",
+    descFr: "Rejoignez notre équipe plateforme pour construire la prochaine génération de l'infrastructure multi-tenant de SmarterBloggers.",
   },
   {
     title: 'Product Designer (UX/UI)',
@@ -23,8 +23,8 @@ const JOBS = [
     location: 'Remote (Worldwide)',
     type: 'Full-time',
     typeFr: 'Temps plein',
-    desc: "Help shape the user experience for thousands of content creators using NexusBlog's editor and dashboard.",
-    descFr: "Contribuez à façonner l'expérience utilisateur pour des milliers de créateurs de contenu utilisant l'éditeur et le tableau de bord NexusBlog.",
+    desc: "Help shape the user experience for thousands of content creators using SmarterBloggers's editor and dashboard.",
+    descFr: "Contribuez à façonner l'expérience utilisateur pour des milliers de créateurs de contenu utilisant l'éditeur et le tableau de bord SmarterBloggers.",
   },
   {
     title: 'Growth Marketing Manager',
@@ -45,8 +45,8 @@ const JOBS = [
     location: 'Remote (Europe)',
     type: 'Full-time',
     typeFr: 'Temps plein',
-    desc: 'Help our users succeed with NexusBlog by providing world-class onboarding and support.',
-    descFr: "Aidez nos utilisateurs à réussir avec NexusBlog en fournissant un onboarding et un support de premier ordre.",
+    desc: 'Help our users succeed with SmarterBloggers by providing world-class onboarding and support.',
+    descFr: "Aidez nos utilisateurs à réussir avec SmarterBloggers en fournissant un onboarding et un support de premier ordre.",
   },
 ];
 

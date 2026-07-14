@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import { Download, ExternalLink, Newspaper, Camera, Package, Users } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
@@ -8,16 +8,16 @@ const COVERAGE = [
   {
     outlet: 'TechCrunch',
     logo: 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&w=200&q=80',
-    title: 'NexusBlog raises $5M to bring enterprise blogging to the masses',
-    titleFr: "NexusBlog lève 5M$ pour démocratiser le blogging d'entreprise",
+    title: 'SmarterBloggers raises $5M to bring enterprise blogging to the masses',
+    titleFr: "SmarterBloggers lève 5M$ pour démocratiser le blogging d'entreprise",
     date: 'March 2025',
     href: '#',
   },
   {
     outlet: 'Product Hunt',
     logo: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=200&q=80',
-    title: '#1 Product of the Day — NexusBlog 2.0',
-    titleFr: '#1 Produit du Jour — NexusBlog 2.0',
+    title: '#1 Product of the Day — SmarterBloggers 2.0',
+    titleFr: '#1 Produit du Jour — SmarterBloggers 2.0',
     date: 'May 2025',
     href: '#',
   },
@@ -32,7 +32,7 @@ const COVERAGE = [
 ];
 
 const BRAND_ASSETS = [
-  { icon: Package, label: 'NexusBlog Logo (SVG, PNG)', labelFr: 'Logo NexusBlog (SVG, PNG)', size: '2.4 MB' },
+  { icon: Package, label: 'SmarterBloggers Logo (SVG, PNG)', labelFr: 'Logo SmarterBloggers (SVG, PNG)', size: '2.4 MB' },
   { icon: Newspaper, label: 'Full Press Kit', labelFr: 'Kit presse complet', size: '12 MB' },
   { icon: Camera, label: 'Product Screenshots', labelFr: "Captures d'écran produit", size: '8.1 MB' },
   { icon: Users, label: 'Team Photos', labelFr: "Photos de l'équipe", size: '5.3 MB' },
@@ -68,10 +68,10 @@ export default async function PressPage({ params }: { params: Promise<{ locale: 
             </p>
           </div>
           <a
-            href="mailto:press@nexusblog.com"
+            href="mailto:press@smarterbloggers.com"
             className="shrink-0 px-6 py-3 rounded-xl bg-white text-blue-600 font-bold text-sm hover:bg-blue-50 transition-colors"
           >
-            press@nexusblog.com
+            press@smarterbloggers.com
           </a>
         </div>
 

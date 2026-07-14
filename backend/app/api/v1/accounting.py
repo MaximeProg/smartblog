@@ -1,4 +1,4 @@
-"""M24 — Accounting System (Singapore SFRS)"""
+﻿"""M24 — Accounting System (Singapore SFRS)"""
 import uuid
 from datetime import datetime, date, timezone
 from fastapi import APIRouter, Query
@@ -506,11 +506,11 @@ async def book_ad_slot_payment(
     """
     Books an ad slot payment:
     Dr 1020 (amount)
-    Cr 4101 (10% — NexusBlog commission)
+    Cr 4101 (10% — SmarterBloggers commission)
     Cr 2810 (10% — Affiliate pool)
     Cr 4102 (80% — Blog owner net revenue)
     """
-    nexusblog_commission = round(amount * 0.10, 4)
+    smarterbloggers_commission = round(amount * 0.10, 4)
     affiliate_pool = round(amount * 0.10, 4)
     blog_owner_net = round(amount * 0.80, 4)
 
@@ -534,7 +534,7 @@ async def book_ad_slot_payment(
 
     lines = [
         JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1020", debit=round(amount, 4), credit=0),
-        JournalEntryLine(entry_id=entry.id, line_number=2, account_code="4101", debit=0, credit=nexusblog_commission),
+        JournalEntryLine(entry_id=entry.id, line_number=2, account_code="4101", debit=0, credit=smarterbloggers_commission),
         JournalEntryLine(entry_id=entry.id, line_number=3, account_code="2810", debit=0, credit=affiliate_pool),
         JournalEntryLine(entry_id=entry.id, line_number=4, account_code="4102", debit=0, credit=blog_owner_net),
     ]

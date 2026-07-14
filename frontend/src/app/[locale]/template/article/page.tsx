@@ -1,7 +1,7 @@
-import CorporateArticle from '@/components/themes/corporate/CorporateArticle';
+﻿import CorporateArticle from '@/components/themes/corporate/CorporateArticle';
 
 const BLOG = {
-  name: 'NexusBlog Insights',
+  name: 'SmarterBloggers Insights',
   slug: 'demo',
   description: "Analyses approfondies, stratégies et insights pour les professionnels ambitieux.",
   category: 'Business',

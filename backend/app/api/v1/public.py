@@ -1,4 +1,4 @@
-"""
+﻿"""
 API publique — blogs en lecture sans authentification.
 Résout le tenant par slug (path param).
 """
@@ -344,7 +344,7 @@ async def rss_feed(slug: str, db: DBSession):
     rss.set("xmlns:atom", "http://www.w3.org/2005/Atom")
     channel = ET.SubElement(rss, "channel")
 
-    blog_url = f"https://{tenant.slug}.nexusblog.io"
+    blog_url = f"https://{tenant.slug}.smarterbloggers.com"
     ET.SubElement(channel, "title").text = tenant.name
     ET.SubElement(channel, "link").text = blog_url
     ET.SubElement(channel, "description").text = tenant.description or tenant.name
@@ -386,7 +386,7 @@ async def podcast_rss_feed(slug: str, db: DBSession):
     )
     articles = result.scalars().all()
 
-    blog_url = f"https://{tenant.slug}.nexusblog.io"
+    blog_url = f"https://{tenant.slug}.smarterbloggers.com"
 
     rss = ET.Element("rss", version="2.0")
     rss.set("xmlns:itunes", "http://www.itunes.com/dtds/podcast-1.0.dtd")
@@ -457,7 +457,7 @@ async def sitemap(slug: str, db: DBSession):
     )
     articles = result.scalars().all()
 
-    blog_url = f"https://{tenant.slug}.nexusblog.io"
+    blog_url = f"https://{tenant.slug}.smarterbloggers.com"
     urlset = ET.Element("urlset")
     urlset.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
 
@@ -831,7 +831,7 @@ async def robots_txt(slug: str, db: DBSession):
     tenant = await _resolve_tenant(db, slug)
     if tenant.robots_txt:
         return tenant.robots_txt
-    blog_url = f"https://{tenant.slug}.nexusblog.io"
+    blog_url = f"https://{tenant.slug}.smarterbloggers.com"
     return (
         f"User-agent: *\n"
         f"Allow: /\n"

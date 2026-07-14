@@ -1,4 +1,4 @@
-"""
+﻿"""
 Service de scanning de liens publicitaires.
 Consulte 4 sources : Google Safe Browsing, VirusTotal, URLhaus, PhishTank.
 Retourne un statut consolidé : SAFE | SUSPECT | DANGEROUS.
@@ -55,7 +55,7 @@ async def _google_safe_browsing(client: httpx.AsyncClient, url: str) -> dict:
     if not settings.GOOGLE_SAFE_BROWSING_API_KEY:
         return {"skipped": True}
     payload = {
-        "client": {"clientId": "nexusblog", "clientVersion": "1.0"},
+        "client": {"clientId": "smarterbloggers", "clientVersion": "1.0"},
         "threatInfo": {
             "threatTypes": ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE", "POTENTIALLY_HARMFUL_APPLICATION"],
             "platformTypes": ["ANY_PLATFORM"],
@@ -125,7 +125,7 @@ async def _phishtank(client: httpx.AsyncClient, url: str) -> dict:
     resp = await client.post(
         "https://checkurl.phishtank.com/checkurl/",
         data={"url": url, "format": "json"},
-        headers={"User-Agent": "nexusblog-safescan/1.0"},
+        headers={"User-Agent": "smarterbloggers-safescan/1.0"},
     )
     data = resp.json()
     results = data.get("results", {})

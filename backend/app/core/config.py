@@ -50,14 +50,14 @@ class Settings(BaseSettings):
     NOWPAYMENTS_API_KEY: str = ""           # Clé principale (créer invoices)
     NOWPAYMENTS_IPN_SECRET: str = ""        # Secret HMAC-SHA512 pour vérifier webhooks IPN
     NOWPAYMENTS_PAYOUT_API_KEY: str = ""    # Clé Payouts (envoyer USDT aux affiliés)
-    NOWPAYMENTS_WALLET_USDT: str = ""       # Wallet USDT TRC20 de la plateforme NexusBlog
+    NOWPAYMENTS_WALLET_USDT: str = ""       # Wallet USDT TRC20 de la plateforme SmarterBloggers
     NOWPAYMENTS_PLATFORM_FEE_PERCENT: int = 5  # Commission plateforme articles payants
     NOWPAYMENTS_SANDBOX: bool = True        # False en production
 
     # Email (Resend)
     RESEND_API_KEY: str = ""
-    EMAIL_FROM_NAME: str = "NexusBlog"
-    EMAIL_FROM_ADDRESS: str = "noreply@nexusblog.io"
+    EMAIL_FROM_NAME: str = "SmarterBloggers"
+    EMAIL_FROM_ADDRESS: str = "noreply@smarterbloggers.com"
     # Adresse autorisée par Resend sans domaine vérifié (= email du compte Resend)
     RESEND_TEST_RECIPIENT: str = ""
 
@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     # Génération : python -c "from pywebpush import Vapid; v=Vapid(); v.generate_keys(); print('PRIV:', v.private_key_pem.decode()); print('PUB:', v.public_key_pem.decode())"
     VAPID_PRIVATE_KEY: str = ""
     VAPID_PUBLIC_KEY: str = ""
-    VAPID_CLAIMS_EMAIL: str = "mailto:admin@nexusblog.io"
+    VAPID_CLAIMS_EMAIL: str = "mailto:admin@smarterbloggers.com"
 
     # AI
     OPENAI_API_KEY: str = ""
@@ -90,11 +90,11 @@ class Settings(BaseSettings):
     TIKTOK_CLIENT_SECRET: str = ""
 
     # Plateforme
-    PLATFORM_DOMAIN: str = "nexusblog.io"
-    PLATFORM_API_DOMAIN: str = "api.nexusblog.io"
+    PLATFORM_DOMAIN: str = "smarterbloggers.com"
+    PLATFORM_API_DOMAIN: str = "api.smarterbloggers.com"
 
     # URLs frontend supplémentaires autorisées (séparées par des virgules)
-    # Ex: EXTRA_CORS_ORIGINS=https://nexusblog.vercel.app,https://staging.nexusblog.io
+    # Ex: EXTRA_CORS_ORIGINS=https://smarterbloggers.vercel.app,https://staging.smarterbloggers.com
     EXTRA_CORS_ORIGINS: str = ""
 
     # Exiger la vérification email avant connexion (mettre "true" en prod quand email configuré)

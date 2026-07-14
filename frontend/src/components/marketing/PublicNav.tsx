@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -70,7 +70,7 @@ export function PublicNav({ locale, transparent = false }: PublicNavProps) {
               <PenLine className="h-4 w-4 text-white" />
             </div>
             <span className="font-black text-white tracking-widest uppercase text-sm">
-              NexusBlog
+              SmarterBloggers
             </span>
           </Link>
 

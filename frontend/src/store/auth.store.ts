@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -36,7 +36,7 @@ export const useAuthStore = create<AuthState>()(
         setAccessToken(token);
         // Cookie de session lisible par le middleware Next.js (même origine que le frontend)
         if (typeof document !== 'undefined') {
-          document.cookie = 'nexusblog_session=1; path=/; samesite=lax; max-age=604800';
+          document.cookie = 'smarterbloggers_session=1; path=/; samesite=lax; max-age=604800';
         }
         set({
           user,
@@ -64,7 +64,7 @@ export const useAuthStore = create<AuthState>()(
       clearAuth: () => {
         setAccessToken(null);
         if (typeof document !== 'undefined') {
-          document.cookie = 'nexusblog_session=; path=/; max-age=0';
+          document.cookie = 'smarterbloggers_session=; path=/; max-age=0';
         }
         set({
           user: null,
@@ -78,7 +78,7 @@ export const useAuthStore = create<AuthState>()(
       setHydrated: () => set({ isHydrated: true }),
     }),
     {
-      name: 'nexusblog-auth',
+      name: 'smarterbloggers-auth',
       partialize: (state) => ({
         user: state.user,
         tenants: state.tenants,

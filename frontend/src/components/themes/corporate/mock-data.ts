@@ -1,4 +1,4 @@
-// ─── Types ────────────────────────────────────────────────────────────────────
+﻿// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface MockComment {
   id: string;
@@ -14,7 +14,7 @@ export interface MockComment {
 // ─── Blog ─────────────────────────────────────────────────────────────────────
 
 export const MOCK_BLOG = {
-  name: 'NexusBlog Insights',
+  name: 'SmarterBloggers Insights',
   slug: 'demo',
   description: "Analyses approfondies, stratégies et insights pour les professionnels ambitieux qui veulent garder une longueur d'avance.",
   category: 'Business',

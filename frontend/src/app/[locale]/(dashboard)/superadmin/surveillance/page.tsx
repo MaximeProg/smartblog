@@ -27,9 +27,6 @@ const LEVEL_DOT: Record<string, string> = {
 function fmtTime(s: string) {
   return new Date(s).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
-function fmtDate(s: string) {
-  return new Date(s).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-}
 function timeSince(s: string) {
   const diff = Math.floor((Date.now() - new Date(s).getTime()) / 1000);
   if (diff < 60) return `${diff}s ago`;
@@ -116,7 +113,6 @@ function EventRow({ event }: { event: SASurveillanceEvent }) {
 }
 
 export default function SurveillancePage() {
-  const t  = useTranslations('superAdmin');
   const ts = useTranslations('superAdmin.surveillance');
   const [now, setNow] = useState('');
 

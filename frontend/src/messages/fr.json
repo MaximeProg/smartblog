@@ -1,6 +1,6 @@
-{
+﻿{
   "meta": {
-    "appName": "NexusBlog",
+    "appName": "SmarterBloggers",
     "tagline": "La plateforme de blog multi-tenant professionnelle"
   },
   "nav": {
@@ -25,7 +25,7 @@
   "auth": {
     "login": {
       "title": "Content de vous revoir",
-      "subtitle": "Connectez-vous à votre compte NexusBlog",
+      "subtitle": "Connectez-vous à votre compte SmarterBloggers",
       "emailLabel": "Adresse e-mail",
       "emailPlaceholder": "vous@exemple.com",
       "passwordLabel": "Mot de passe",
@@ -129,7 +129,7 @@
       "namePlaceholder": "Mon Super Blog",
       "slugLabel": "Identifiant URL",
       "slugPlaceholder": "mon-super-blog",
-      "slugHint": "Votre blog sera disponible sur {slug}.nexusblog.io",
+      "slugHint": "Votre blog sera disponible sur {slug}.smarterbloggers.com",
       "slugAvailable": "Disponible",
       "slugTaken": "Déjà pris",
       "slugChecking": "Vérification...",
@@ -725,7 +725,7 @@
     },
     "cta": {
       "title": "Prêt à lancer votre blog ?",
-      "subtitle": "Rejoignez des milliers de créateurs de contenu qui font confiance à NexusBlog.",
+      "subtitle": "Rejoignez des milliers de créateurs de contenu qui font confiance à SmarterBloggers.",
       "button": "Commencer gratuitement — sans carte bancaire"
     },
     "footer": {
@@ -740,7 +740,7 @@
       "careersLink": "Carrières",
       "privacyLink": "Politique de confidentialité",
       "termsLink": "Conditions d'utilisation",
-      "copyright": "© {year} NexusBlog. Tous droits réservés."
+      "copyright": "© {year} SmarterBloggers. Tous droits réservés."
     }
   },
   "platformNav": {
@@ -1334,7 +1334,7 @@
           "500 abonnés newsletter",
           "1 auteur",
           "1 Go de stockage",
-          "Sous-domaine nexusblog.io",
+          "Sous-domaine smarterbloggers.com",
           "Template corporate inclus"
         ]
       },
@@ -1606,7 +1606,7 @@
     "switchShowCategories": "Afficher les catégories",
     "switchShowCategoriesFooterDesc": "Liste des catégories du blog dans le footer.",
     "switchShowNewsletterForm": "Afficher le formulaire newsletter",
-    "switchPoweredBy": "Mention \"Propulsé par NexusBlog\"",
+    "switchPoweredBy": "Mention \"Propulsé par SmarterBloggers\"",
     "seeAll": "Voir tout",
     "seeAllLabel": "Label bouton \"Tout voir\"",
     "linkLabel": "Libellé",
@@ -1926,7 +1926,7 @@
     "quickGreeting": "Bonjour {name} 👋 — donnez un nom et une URL à votre blog.",
     "backToDashboard": "Retour au tableau de bord",
     "quickNameLabel": "Nom du blog",
-    "quickNamePlaceholder": "Ex: NexusBlog Insights",
+    "quickNamePlaceholder": "Ex: SmarterBloggers Insights",
     "quickUrlLabel": "URL du blog",
     "quickColorLabel": "Couleur principale",
     "quickCoverLabel": "Miniature du blog",
@@ -2015,7 +2015,7 @@
   },
   "affiliate": {
     "title": "Programme d'affiliation",
-    "subtitle": "Gagnez des commissions en recommandant NexusBlog",
+    "subtitle": "Gagnez des commissions en recommandant SmarterBloggers",
     "yourCode": "Votre code de parrainage",
     "yourLink": "Votre lien de parrainage",
     "copyLink": "Copier le lien",
@@ -2104,6 +2104,38 @@
     "removeLine": "Supprimer",
     "submitEntry": "Soumettre l'écriture",
     "reverseReason": "Motif d'extourne"
+  },
+  "domains": {
+    "pageTitle": "Domaines personnalisés",
+    "pageDesc": "Connectez votre propre nom de domaine à votre blog.",
+    "addDomain": "Ajouter un domaine",
+    "addTitle": "Ajouter un domaine",
+    "addButton": "Ajouter",
+    "addHint": "Saisissez le domaine sans https:// (ex : blog.monsite.com)",
+    "addSuccess": "Domaine ajouté ! Ajoutez maintenant les 2 enregistrements DNS affichés ci-dessous.",
+    "addError": "Erreur lors de l'ajout du domaine.",
+    "verifyButton": "Vérifier",
+    "verifySuccess": "Domaine vérifié ! Votre blog est maintenant accessible à cette adresse.",
+    "verifyFailed": "Vérification échouée — vérifiez que les 2 enregistrements DNS sont correctement configurés.",
+    "verifyError": "Erreur lors de la vérification.",
+    "deleteSuccess": "Domaine supprimé.",
+    "deleteError": "Erreur lors de la suppression.",
+    "deleteConfirm": "Supprimer ce domaine ?",
+    "emptyTitle": "Aucun domaine personnalisé",
+    "emptyDesc": "Connectez votre propre domaine pour donner une identité professionnelle à votre blog.",
+    "addedOn": "Ajouté le {date}",
+    "setupTitle": "Comment connecter votre domaine (3 étapes)",
+    "step1Title": "Ajoutez votre domaine",
+    "step1Desc": "Cliquez sur \"Ajouter un domaine\" et saisissez le domaine que vous avez acheté (ex : blog.monsite.com).",
+    "step2Title": "Ajoutez 2 enregistrements DNS chez votre registrar",
+    "step2Desc": "Allez dans votre gestionnaire DNS (Cloudflare, OVH, GoDaddy…) et ajoutez ces 2 enregistrements :",
+    "step2TxtNote": "La valeur du TXT est unique par domaine — copiez-la depuis la carte du domaine qui apparaît ci-dessous.",
+    "step3Title": "Cliquez sur Vérifier",
+    "step3Desc": "Une fois vos enregistrements DNS propagés (quelques minutes sur Cloudflare, jusqu'à 48h ailleurs), cliquez sur le bouton d'actualisation à côté de votre domaine.",
+    "cloudflareTip": "Vous utilisez Cloudflare ? Activez le proxy (nuage orange) sur votre enregistrement CNAME — le SSL est alors géré automatiquement, aucune configuration supplémentaire.",
+    "recordCname": "Enregistrement 1 — CNAME (routage)",
+    "recordTxt": "Enregistrement 2 — TXT (vérification)",
+    "verifiedDesc": "Votre blog est en ligne à ce domaine. Les visiteurs peuvent y accéder directement."
   },
   "twoFA": {
     "setupTitle": "Configurer l'authentification à deux facteurs",
@@ -2494,7 +2526,7 @@
     "settings": {
       "title": "Paramètres plateforme",
       "breadcrumb": "Administration",
-      "subtitle": "Configuration globale de NexusBlog SaaS",
+      "subtitle": "Configuration globale de SmarterBloggers SaaS",
       "saved": "Paramètres sauvegardés",
       "configured": "Configuré",
       "notConfigured": "Non configuré",

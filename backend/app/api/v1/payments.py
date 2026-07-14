@@ -1,4 +1,4 @@
-"""
+﻿"""
 M20 — Paiements via NowPayments (crypto USDT TRC20)
 Stripe et PayPal retirés suite à décision PDG 2026-07-12.
 """
@@ -104,7 +104,7 @@ async def checkout_subscription(
         price_amount=amount_usd,
         price_currency="usd",
         order_id=order_id,
-        order_description=f"NexusBlog {plan.title()} — {billing}",
+        order_description=f"SmarterBloggers {plan.title()} — {billing}",
         success_url=body.success_url or f"{frontend_url}/subscription?success=1&plan={plan}",
         cancel_url=body.cancel_url or f"{frontend_url}/subscription",
         ipn_callback_url=f"{settings.PLATFORM_API_DOMAIN or frontend_url}/api/v1/tenants/{tenant_id}/payments/webhook/nowpayments",

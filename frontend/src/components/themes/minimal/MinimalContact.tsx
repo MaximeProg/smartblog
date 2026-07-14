@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 import { useState, type CSSProperties, type FormEvent, type ChangeEvent } from 'react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { MinimalHeader, MinimalFooter } from './MinimalShared';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 interface ContactProps {
   blog: BlogInfo;

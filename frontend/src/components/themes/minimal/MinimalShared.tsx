@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -162,8 +162,8 @@ export function MinimalFooter({ blog, basePath, primaryColor }: SharedProps) {
             {showPoweredBy && (
               <span>
                 Powered by{' '}
-                <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer" className="font-medium hover:underline" style={{ color: primaryColor }}>
-                  NexusBlog
+                <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="font-medium hover:underline" style={{ color: primaryColor }}>
+                  SmarterBloggers
                 </a>
               </span>
             )}

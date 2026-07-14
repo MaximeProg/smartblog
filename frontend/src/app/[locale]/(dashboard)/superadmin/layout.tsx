@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useRef, type ElementType } from 'react';
 import { useRouter, useParams, usePathname } from 'next/navigation';
@@ -150,7 +150,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
                 <ShieldCheck className="h-4 w-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-black leading-none truncate" style={{ color: 'var(--sa-text)' }}>NexusBlog</p>
+                <p className="text-[13px] font-black leading-none truncate" style={{ color: 'var(--sa-text)' }}>SmarterBloggers</p>
                 <p className="text-[10px] font-bold leading-none mt-0.5 tracking-widest uppercase" style={{ color: 'var(--sa-accent)' }}>Console</p>
               </div>
             </div>

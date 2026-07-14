@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useEffect, useRef, type ReactNode } from 'react';
@@ -40,7 +40,7 @@ function AuthBootstrap() {
         setAccessToken(data.access_token);
         useAuthStore.setState({ accessToken: data.access_token });
         // Renew the session sentinel for another 7 days
-        document.cookie = 'nexusblog_session=1; path=/; samesite=lax; max-age=604800';
+        document.cookie = 'smarterbloggers_session=1; path=/; samesite=lax; max-age=604800';
       } catch {
         // If refresh fails the 401 interceptor will handle the next real request
       }

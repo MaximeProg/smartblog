@@ -1,20 +1,20 @@
-export const siteConfig = {
-  name: 'NexusBlog',
-  domain: 'nexusblog.com',
+﻿export const siteConfig = {
+  name: 'SmarterBloggers',
+  domain: 'smarterbloggers.com',
 
   contact: {
-    general: 'hello@nexusblog.com',
-    support: 'support@nexusblog.com',
-    sales: 'sales@nexusblog.com',
-    press: 'press@nexusblog.com',
-    security: 'security@nexusblog.com',
-    privacy: 'privacy@nexusblog.com',
+    general: 'hello@smarterbloggers.com',
+    support: 'support@smarterbloggers.com',
+    sales: 'sales@smarterbloggers.com',
+    press: 'press@smarterbloggers.com',
+    security: 'security@smarterbloggers.com',
+    privacy: 'privacy@smarterbloggers.com',
   },
 
   social: {
-    twitter: 'https://twitter.com/nexusblog',
-    github: 'https://github.com/nexusblog',
-    linkedin: 'https://linkedin.com/company/nexusblog',
+    twitter: 'https://twitter.com/smarterbloggers',
+    github: 'https://github.com/smarterbloggers',
+    linkedin: 'https://linkedin.com/company/smarterbloggers',
   },
 
   hours: {

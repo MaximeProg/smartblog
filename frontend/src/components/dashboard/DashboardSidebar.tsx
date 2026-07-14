@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
@@ -101,7 +101,7 @@ export function DashboardSidebar() {
       <div className="h-[57px] shrink-0 flex items-center justify-between px-5 border-b border-slate-200/70 dark:border-slate-700">
         <div className="flex items-center gap-2.5">
           <div className="h-7 w-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm font-black shadow-sm shrink-0">N</div>
-          <span className="font-extrabold text-[14px] tracking-tight text-slate-900 dark:text-slate-100">NexusBlog</span>
+          <span className="font-extrabold text-[14px] tracking-tight text-slate-900 dark:text-slate-100">SmarterBloggers</span>
         </div>
         <button
           onClick={closeSidebar}
@@ -147,7 +147,7 @@ export function DashboardSidebar() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[12px] font-black text-white leading-none">Admin Console</p>
-                <p className="text-[10px] text-rose-200 mt-0.5 leading-none">Plateforme NexusBlog</p>
+                <p className="text-[10px] text-rose-200 mt-0.5 leading-none">Plateforme SmarterBloggers</p>
               </div>
               <div className="h-5 w-5 rounded-full bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
                 <span className="text-[10px] font-black text-white">→</span>

@@ -1,4 +1,4 @@
-from contextlib import asynccontextmanager
+﻿from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -9,7 +9,7 @@ import structlog
 import uuid
 
 from app.core.config import settings
-from app.core.exceptions import NexusBlogException
+from app.core.exceptions import SmarterBloggersException
 from app.middleware.tenant import TenantMiddleware
 from app.api.v1 import api_router
 
@@ -18,7 +18,7 @@ logger = structlog.get_logger()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("NexusBlog API starting", env=settings.APP_ENV)
+    logger.info("SmarterBloggers API starting", env=settings.APP_ENV)
     # Pre-initialize Firebase Admin so the first login doesn't pay the cold-start cost
     # (fetching Google public keys for token verification)
     try:
@@ -28,11 +28,11 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning("Firebase Admin init failed", error=str(e))
     yield
-    logger.info("NexusBlog API shutting down")
+    logger.info("SmarterBloggers API shutting down")
 
 
 app = FastAPI(
-    title="NexusBlog API",
+    title="SmarterBloggers API",
     version="1.0.0",
     description="Multi-Tenant SaaS Blog Platform",
     docs_url="/docs" if not settings.is_production else None,
@@ -46,7 +46,7 @@ app = FastAPI(
 def _origin_allowed(origin: str) -> bool:
     if origin in settings.cors_origins:
         return True
-    # Support wildcard subdomains: *.nexusblog.io
+    # Support wildcard subdomains: *.smarterbloggers.com
     platform = settings.PLATFORM_DOMAIN
     if origin.startswith("https://") and origin.endswith(f".{platform}"):
         return True
@@ -101,8 +101,8 @@ def _cors_headers(request: Request) -> dict[str, str]:
 
 # ── Gestionnaires d'erreurs ────────────────────────────────────────
 
-@app.exception_handler(NexusBlogException)
-async def nexusblog_exception_handler(request: Request, exc: NexusBlogException):
+@app.exception_handler(SmarterBloggersException)
+async def smarterbloggers_exception_handler(request: Request, exc: SmarterBloggersException):
     trace_id = str(uuid.uuid4())[:8]
     logger.warning(
         "API error",
@@ -159,7 +159,7 @@ app.include_router(api_router)
 
 @app.get("/", tags=["infra"])
 async def root():
-    return {"status": "ok", "name": "NexusBlog API", "version": "1.0.0"}
+    return {"status": "ok", "name": "SmarterBloggers API", "version": "1.0.0"}
 
 
 @app.get("/health", tags=["infra"])

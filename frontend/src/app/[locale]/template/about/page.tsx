@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
@@ -14,7 +14,7 @@ const TEAM = [
   {
     name: 'Sophie Martin',
     role: 'Directrice éditoriale',
-    bio: "Ancienne journaliste au Monde, Sophie dirige la stratégie éditoriale de NexusBlog depuis 2022. Elle veille à ce que chaque article apporte une valeur réelle aux professionnels.",
+    bio: "Ancienne journaliste au Monde, Sophie dirige la stratégie éditoriale de SmarterBloggers depuis 2022. Elle veille à ce que chaque article apporte une valeur réelle aux professionnels.",
     image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&auto=format',
     linkedin: 'https://linkedin.com',
     twitter: 'https://twitter.com',
@@ -117,7 +117,7 @@ export default function AboutPage() {
             <span style={{ color: primaryColor }}>vraiment la différence</span>
           </h1>
           <p className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto mb-10">
-            NexusBlog Insights est le média de référence pour les professionnels ambitieux. Analyses approfondies, stratégies éprouvées, perspectives d'experts — sans le bruit.
+            SmarterBloggers Insights est le média de référence pour les professionnels ambitieux. Analyses approfondies, stratégies éprouvées, perspectives d'experts — sans le bruit.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <a href="#team"
@@ -155,7 +155,7 @@ export default function AboutPage() {
             Les grandes entreprises ont des équipes entières dédiées à la veille, la formation et la stratégie. Les professionnels indépendants et les PME n'ont pas toujours accès à ces ressources.
           </p>
           <p className="text-lg text-slate-500 leading-relaxed mb-8">
-            NexusBlog Insights comble ce fossé. Nous synthétisons les meilleures recherches, les expériences terrain de nos experts et les tendances émergentes pour vous donner un avantage concurrentiel réel.
+            SmarterBloggers Insights comble ce fossé. Nous synthétisons les meilleures recherches, les expériences terrain de nos experts et les tendances émergentes pour vous donner un avantage concurrentiel réel.
           </p>
           <div className="space-y-3">
             {["Contenu rédigé par des experts reconnus dans leur domaine",

@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+﻿import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { publicApi } from '@/lib/public-api';
 
@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   try {
     const blog = await publicApi.getBlogInfo(slug);
     return {
-      metadataBase: new URL(`https://${blog.slug}.nexusblog.io`),
+      metadataBase: new URL(`https://${blog.slug}.smarterbloggers.com`),
       title: { default: blog.name, template: `%s — ${blog.name}` },
       description: blog.description ?? undefined,
       icons: { icon: blog.favicon_url ?? '/favicon.ico' },

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -193,8 +193,8 @@ export function EditorialFooter({ blog, categories, basePath, primaryColor }: Sh
             {showPoweredBy && (
               <span className="flex items-center gap-1.5">
                 Powered by{' '}
-                <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
-                  NexusBlog
+                <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                  SmarterBloggers
                 </a>
               </span>
             )}

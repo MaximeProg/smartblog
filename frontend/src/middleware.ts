@@ -1,15 +1,15 @@
-import createMiddleware from 'next-intl/middleware';
+﻿import createMiddleware from 'next-intl/middleware';
 import { type NextRequest, NextResponse } from 'next/server';
 import { routing } from './i18n/routing';
 
 const intlMiddleware = createMiddleware(routing);
 
-const PROTECTED_PATHS = ['/dashboard', '/blogs'];
+const PROTECTED_PATHS = ['/dashboard', '/blogs', '/superadmin'];
 const SYSTEM_SUBDOMAINS = new Set(['app', 'www', 'api', 'admin', 'mail', 'cdn', 'static', 'assets']);
-const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'nexusblog.io';
+const ROOT_DOMAIN = process.env.NEXT_PUBLIC_ROOT_DOMAIN || 'smarterbloggers.com';
 
 function getBlogSlug(hostname: string): string | null {
-  // Production: football.nexusblog.io
+  // Production: football.smarterbloggers.com
   if (hostname.endsWith(`.${ROOT_DOMAIN}`)) {
     const sub = hostname.slice(0, -(ROOT_DOMAIN.length + 1));
     if (!SYSTEM_SUBDOMAINS.has(sub) && !sub.includes('.')) return sub;
@@ -46,8 +46,8 @@ export function middleware(request: NextRequest) {
   // ── Dashboard auth guard ────────────────────────────────────────
   if (isProtectedPath(pathname)) {
     const hasSession =
-      request.cookies.has('nexusblog_refresh') ||
-      request.cookies.has('nexusblog_session');
+      request.cookies.has('smarterbloggers_refresh') ||
+      request.cookies.has('smarterbloggers_session');
     if (!hasSession) {
       const locale = pathname.split('/')[1] || 'en';
       const loginUrl = new URL(`/${locale}/login`, request.url);

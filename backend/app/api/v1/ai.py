@@ -1,4 +1,4 @@
-import uuid
+﻿import uuid
 from fastapi import APIRouter
 from fastapi.responses import Response
 from sqlalchemy import select, text
@@ -186,7 +186,7 @@ async def ai_tts(
             _configure()
             upload_result = cloudinary.uploader.upload(
                 audio_bytes,
-                folder=f"nexusblog/{tenant_id}/audio",
+                folder=f"smarterbloggers/{tenant_id}/audio",
                 resource_type="video",
                 format="mp3",
             )

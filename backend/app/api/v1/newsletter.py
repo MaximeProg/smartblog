@@ -1,4 +1,4 @@
-import uuid
+﻿import uuid
 import secrets
 import io
 import csv
@@ -414,7 +414,7 @@ async def test_campaign(
     from app.services.tenant_service import get_tenant
     from app.services.email_service import send_newsletter_campaign
     tenant = await get_tenant(db, tenant_id)
-    unsubscribe_url = f"https://{tenant.slug}.nexusblog.io/unsubscribe"
+    unsubscribe_url = f"https://{tenant.slug}.smarterbloggers.com/unsubscribe"
     await send_newsletter_campaign(
         to=[body.to_email],
         from_name=tenant.name,

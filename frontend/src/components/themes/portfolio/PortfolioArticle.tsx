@@ -1,10 +1,10 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import type { ArticleProps } from '../ThemeRenderer';
 import { SocialShare } from '../shared/SocialShare';
 import { PortfolioHeader, PortfolioFooter } from './PortfolioHome';
 
 export default function PortfolioArticle({ blog, article, relatedArticles, getArticleHref }: ArticleProps) {
-  const url = `https://${blog.slug}.nexusblog.io/${article.slug}`;
+  const url = `https://${blog.slug}.smarterbloggers.com/${article.slug}`;
 
   return (
     <div className="min-h-screen bg-white text-gray-900" style={{ fontFamily: 'var(--blog-font)' }}>

@@ -1,5 +1,5 @@
-"""
-Endpoints publics de la plateforme NexusBlog (sans auth).
+﻿"""
+Endpoints publics de la plateforme SmarterBloggers (sans auth).
 Sert les données gérées par l'admin super: tarifs, config, etc.
 """
 from fastapi import APIRouter

@@ -1,5 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
-const BLOG_SLUG = process.env.PLATFORM_BLOG_SLUG ?? 'nexusblog-official';
+﻿const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
+const BLOG_SLUG = process.env.PLATFORM_BLOG_SLUG ?? 'smarterbloggers-official';
 
 // ── Types ─────────────────────────────────────────────────────────────
 

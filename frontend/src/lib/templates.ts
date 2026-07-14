@@ -1,4 +1,4 @@
-// ─── Types ───────────────────────────────────────────────────────────────────
+﻿// ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface TemplateColors {
   primary: string;
@@ -234,7 +234,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     longDescription: 'Un design professionnel et structuré, idéal pour les entreprises, consultants et professionnels B2B. Header clair, mise en page propre, autorité immédiate.',
     category: 'Entreprise',
     tags: ['B2B', 'Corporate', 'Consulting', 'Professionnel'],
-    defaultContent: { ...DEFAULT_TEMPLATE_CONTENT, blogName: 'NexusBlog Insights', tagline: 'Expertise · Stratégie · Innovation', heroHeadline: 'Les insights qui font la différence', heroSubheadline: 'Analyses approfondies, études de cas et stratégies pour les professionnels ambitieux.', heroCta: 'Explorer le blog', newsletterTitle: 'Insights hebdomadaires', newsletterDescription: 'Rejoignez 10 000+ professionnels qui reçoivent nos analyses chaque semaine.' },
+    defaultContent: { ...DEFAULT_TEMPLATE_CONTENT, blogName: 'SmarterBloggers Insights', tagline: 'Expertise · Stratégie · Innovation', heroHeadline: 'Les insights qui font la différence', heroSubheadline: 'Analyses approfondies, études de cas et stratégies pour les professionnels ambitieux.', heroCta: 'Explorer le blog', newsletterTitle: 'Insights hebdomadaires', newsletterDescription: 'Rejoignez 10 000+ professionnels qui reçoivent nos analyses chaque semaine.' },
     defaultConfig: {
       primaryColor: '#1D4ED8',
       secondaryColor: '#93C5FD',

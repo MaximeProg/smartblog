@@ -1,4 +1,4 @@
-import hashlib
+﻿import hashlib
 import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -166,7 +166,7 @@ def verify_totp(secret: str, code: str) -> bool:
 def generate_totp_uri(secret: str, email: str) -> str:
     import pyotp
     totp = pyotp.TOTP(secret)
-    return totp.provisioning_uri(name=email, issuer_name="NexusBlog")
+    return totp.provisioning_uri(name=email, issuer_name="SmarterBloggers")
 
 
 def generate_backup_codes(count: int = 8) -> list[str]:

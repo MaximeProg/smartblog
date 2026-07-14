@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -648,9 +648,9 @@ export function CorporateFooter({
             />
             {showPoweredBy && (
               <span>{t('poweredBy')}{' '}
-                <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer"
+                <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer"
                   className="font-semibold transition-colors hover:text-white" style={{ color: primaryColor }}>
-                  NexusBlog
+                  SmarterBloggers
                 </a>
               </span>
             )}

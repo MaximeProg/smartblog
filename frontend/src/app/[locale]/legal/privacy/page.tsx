@@ -1,4 +1,4 @@
-import { Shield, Eye, Lock, Users, Globe2, Mail } from 'lucide-react';
+﻿import { Shield, Eye, Lock, Users, Globe2, Mail } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
@@ -42,7 +42,7 @@ const SECTIONS_EN = [
     items: [
       'With service providers who help us operate our platform (hosting, payments, analytics)',
       'When required by law or in response to valid legal process',
-      'To protect the rights, property, or safety of NexusBlog and our users',
+      'To protect the rights, property, or safety of SmarterBloggers and our users',
       'In connection with a merger, acquisition, or sale of assets (you will be notified)',
     ],
   },
@@ -65,7 +65,7 @@ const SECTIONS_EN = [
     num: '05',
     title: 'Your Rights (GDPR)',
     color: 'bg-cyan-500/10 text-cyan-500',
-    body: 'If you are based in the EEA, you have the following rights regarding your personal data. To exercise any of these rights, contact us at privacy@nexusblog.com.',
+    body: 'If you are based in the EEA, you have the following rights regarding your personal data. To exercise any of these rights, contact us at privacy@smarterbloggers.com.',
     items: [
       'Right to access your personal data',
       'Right to rectification of inaccurate data',
@@ -80,9 +80,9 @@ const SECTIONS_EN = [
     num: '06',
     title: 'Contact & Updates',
     color: 'bg-pink-500/10 text-pink-500',
-    body: 'For questions about this Privacy Policy, contact our Data Protection Officer at privacy@nexusblog.com. We will update this policy as needed and notify you of significant changes via email or an in-app notice.',
+    body: 'For questions about this Privacy Policy, contact our Data Protection Officer at privacy@smarterbloggers.com. We will update this policy as needed and notify you of significant changes via email or an in-app notice.',
     items: [
-      'DPO email: privacy@nexusblog.com',
+      'DPO email: privacy@smarterbloggers.com',
       'Last updated: January 1, 2025',
       'Effective date: January 1, 2025',
     ],
@@ -128,7 +128,7 @@ const SECTIONS_FR = [
     items: [
       "Avec des prestataires de services qui nous aident à exploiter notre plateforme",
       "Lorsque la loi l'exige ou en réponse à une procédure judiciaire valide",
-      "Pour protéger les droits, la propriété ou la sécurité de NexusBlog",
+      "Pour protéger les droits, la propriété ou la sécurité de SmarterBloggers",
       "Dans le cadre d'une fusion, acquisition ou vente d'actifs (vous serez notifié)",
     ],
   },
@@ -151,7 +151,7 @@ const SECTIONS_FR = [
     num: '05',
     title: 'Vos droits (RGPD)',
     color: 'bg-cyan-500/10 text-cyan-500',
-    body: "Si vous êtes basé dans l'EEE, vous disposez des droits suivants concernant vos données personnelles. Pour exercer ces droits, contactez-nous à privacy@nexusblog.com.",
+    body: "Si vous êtes basé dans l'EEE, vous disposez des droits suivants concernant vos données personnelles. Pour exercer ces droits, contactez-nous à privacy@smarterbloggers.com.",
     items: [
       "Droit d'accès à vos données personnelles",
       "Droit de rectification des données inexactes",
@@ -166,9 +166,9 @@ const SECTIONS_FR = [
     num: '06',
     title: 'Contact et mises à jour',
     color: 'bg-pink-500/10 text-pink-500',
-    body: "Pour toute question concernant cette Politique de confidentialité, contactez notre DPO à privacy@nexusblog.com. Nous mettrons à jour cette politique si nécessaire et vous informerons des changements importants.",
+    body: "Pour toute question concernant cette Politique de confidentialité, contactez notre DPO à privacy@smarterbloggers.com. Nous mettrons à jour cette politique si nécessaire et vous informerons des changements importants.",
     items: [
-      "DPO : privacy@nexusblog.com",
+      "DPO : privacy@smarterbloggers.com",
       "Dernière mise à jour : 1er janvier 2025",
       "Date d'entrée en vigueur : 1er janvier 2025",
     ],

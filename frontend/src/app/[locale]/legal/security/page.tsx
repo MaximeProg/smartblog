@@ -1,4 +1,4 @@
-import { Shield, Lock, Eye, Server, CheckCircle2, AlertTriangle, Key, Zap } from 'lucide-react';
+﻿import { Shield, Lock, Eye, Server, CheckCircle2, AlertTriangle, Key, Zap } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
@@ -10,8 +10,8 @@ const buildSections = (isFr: boolean) => [
     title: isFr ? 'Chiffrement des données' : 'Data Encryption',
     color: 'bg-blue-500/10 text-blue-500',
     body: isFr
-      ? "Toutes les données échangées avec NexusBlog sont chiffrées en transit via TLS 1.3. Les données stockées sont chiffrées au repos via AES-256. Les mots de passe ne sont jamais stockés en clair."
-      : 'All data exchanged with NexusBlog is encrypted in transit via TLS 1.3. Stored data is encrypted at rest using AES-256. Passwords are never stored in plaintext.',
+      ? "Toutes les données échangées avec SmarterBloggers sont chiffrées en transit via TLS 1.3. Les données stockées sont chiffrées au repos via AES-256. Les mots de passe ne sont jamais stockés en clair."
+      : 'All data exchanged with SmarterBloggers is encrypted in transit via TLS 1.3. Stored data is encrypted at rest using AES-256. Passwords are never stored in plaintext.',
     items: [
       isFr ? 'TLS 1.3 pour toutes les communications client-serveur' : 'TLS 1.3 for all client-server communications',
       isFr ? 'AES-256 pour les données au repos' : 'AES-256 for data at rest',
@@ -40,8 +40,8 @@ const buildSections = (isFr: boolean) => [
     title: isFr ? "Journaux d'audit" : 'Audit Logs',
     color: 'bg-violet-500/10 text-violet-500',
     body: isFr
-      ? "NexusBlog maintient des journaux d'audit complets pour tous les événements liés à la sécurité et les accès aux données. Ces journaux sont conservés 90 jours pour les plans Pro et 1 an pour Business."
-      : 'NexusBlog maintains comprehensive audit logs for all security-relevant events and data access. Logs are retained for 90 days on Pro plans and 1 year on Business.',
+      ? "SmarterBloggers maintient des journaux d'audit complets pour tous les événements liés à la sécurité et les accès aux données. Ces journaux sont conservés 90 jours pour les plans Pro et 1 an pour Business."
+      : 'SmarterBloggers maintains comprehensive audit logs for all security-relevant events and data access. Logs are retained for 90 days on Pro plans and 1 year on Business.',
     items: [
       isFr ? 'Enregistrement de toutes les connexions et déconnexions' : 'All login and logout events recorded',
       isFr ? 'Suivi des modifications de contenu' : 'Content modification tracking',
@@ -55,8 +55,8 @@ const buildSections = (isFr: boolean) => [
     title: isFr ? "Sécurité de l'infrastructure" : 'Infrastructure Security',
     color: 'bg-amber-500/10 text-amber-500',
     body: isFr
-      ? "NexusBlog est hébergé sur une infrastructure cloud certifiée SOC 2 Type II avec sauvegardes automatiques, redondance géographique et disponibilité de 99,9%."
-      : 'NexusBlog is hosted on SOC 2 Type II certified cloud infrastructure with automated backups, geographic redundancy, and 99.9% uptime.',
+      ? "SmarterBloggers est hébergé sur une infrastructure cloud certifiée SOC 2 Type II avec sauvegardes automatiques, redondance géographique et disponibilité de 99,9%."
+      : 'SmarterBloggers is hosted on SOC 2 Type II certified cloud infrastructure with automated backups, geographic redundancy, and 99.9% uptime.',
     items: [
       isFr ? 'Infrastructure cloud certifiée SOC 2 Type II' : 'SOC 2 Type II certified cloud infrastructure',
       isFr ? 'Sauvegardes automatiques chiffrées toutes les heures' : 'Automated encrypted backups every hour',
@@ -152,10 +152,10 @@ export default async function SecurityPage({ params }: { params: Promise<{ local
                   : "If you discover a security vulnerability, please report it to us responsibly. We commit to responding within 24 hours and acknowledging your contribution."}
               </p>
               <a
-                href="mailto:security@nexusblog.com"
+                href="mailto:security@smarterbloggers.com"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
               >
-                security@nexusblog.com
+                security@smarterbloggers.com
               </a>
             </div>
           </div>

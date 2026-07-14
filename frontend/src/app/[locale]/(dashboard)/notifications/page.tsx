@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bell, CheckCheck, Info, AlertTriangle, Zap, Loader2, BellRing, BellOff } from 'lucide-react';
@@ -53,7 +53,7 @@ async function registerPush(vapidKey: string) {
 
 // ── Read-state persistence (localStorage) ─────────────────────────
 
-const STORAGE_KEY = 'nexusblog:notif-read';
+const STORAGE_KEY = 'smarterbloggers:notif-read';
 
 function getReadIds(): Set<string> {
   if (typeof window === 'undefined') return new Set();

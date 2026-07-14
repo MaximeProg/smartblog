@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -80,7 +80,7 @@ export default function SeoPage() {
             <div className="h-3.5 w-3.5 rounded-sm bg-slate-200 flex items-center justify-center">
               <span className="text-[7px] font-black text-slate-500">N</span>
             </div>
-            <span className="font-mono">{tenant?.slug ?? 'blog'}.nexusblog.io</span>
+            <span className="font-mono">{tenant?.slug ?? 'blog'}.smarterbloggers.com</span>
           </div>
           <p className="text-[14px] text-blue-700 font-medium leading-tight truncate">{previewTitle}</p>
           <p className="text-[12px] text-slate-600 line-clamp-2 leading-relaxed">{previewDesc}</p>
@@ -136,8 +136,8 @@ export default function SeoPage() {
       <StudioSection id="sitemap" title={ts('sectionIndexing')} icon={<Globe className="h-3.5 w-3.5" />} defaultOpen={false}>
         <div className="space-y-3">
           {[
-            { label: ts('seoSitemap'), url: `https://${tenant?.slug ?? '…'}.nexusblog.io/sitemap.xml` },
-            { label: ts('seoRssFeed'), url: `https://${tenant?.slug ?? '…'}.nexusblog.io/rss.xml`    },
+            { label: ts('seoSitemap'), url: `https://${tenant?.slug ?? '…'}.smarterbloggers.com/sitemap.xml` },
+            { label: ts('seoRssFeed'), url: `https://${tenant?.slug ?? '…'}.smarterbloggers.com/rss.xml`    },
           ].map(item => (
             <div key={item.label} className="flex items-center justify-between gap-3 py-2">
               <div>
@@ -162,14 +162,14 @@ export default function SeoPage() {
           <StudioInput
             value={form.robots_txt}
             onChange={v => setForm(f => ({ ...f, robots_txt: v }))}
-            placeholder={`User-agent: *\nAllow: /\nSitemap: https://${tenant?.slug ?? 'blog'}.nexusblog.io/sitemap.xml`}
+            placeholder={`User-agent: *\nAllow: /\nSitemap: https://${tenant?.slug ?? 'blog'}.smarterbloggers.com/sitemap.xml`}
             multiline
             rows={8}
           />
           <div className="flex items-center justify-between mt-1.5">
             <p className="text-[11px] text-slate-400">{ts('seoRobotsViewHint')}</p>
             <a
-              href={`https://${tenant?.slug ?? ''}.nexusblog.io/robots.txt`}
+              href={`https://${tenant?.slug ?? ''}.smarterbloggers.com/robots.txt`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[11px] font-semibold text-blue-600 hover:underline"

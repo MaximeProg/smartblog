@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import type { HomeProps } from '../ThemeRenderer';
 import { ArticleCard, HeroCard } from '../shared/ArticleCard';
 
@@ -59,7 +59,7 @@ export function NewsFooter({ blog }: { blog: { name: string } }) {
         <div className="text-2xl font-black uppercase mb-4">{blog.name}</div>
         <div className="border-t border-gray-700 pt-4 flex items-center justify-between text-xs text-gray-500">
           <span>© {new Date().getFullYear()} {blog.name}. Tous droits réservés.</span>
-          <span>Propulsé par <a href="https://nexusblog.io" className="underline hover:text-gray-300">NexusBlog</a></span>
+          <span>Propulsé par <a href="https://smarterbloggers.com" className="underline hover:text-gray-300">SmarterBloggers</a></span>
         </div>
       </div>
     </footer>

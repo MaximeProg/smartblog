@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { ArrowLeft } from 'lucide-react';
@@ -12,7 +12,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'auth.forgotPassword' });
-  return { title: `${t('title')} — NexusBlog` };
+  return { title: `${t('title')} — SmarterBloggers` };
 }
 
 export default async function ForgotPasswordPage({

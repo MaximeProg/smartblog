@@ -3,17 +3,22 @@
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Globe, Plus, Trash2, RefreshCw, CheckCircle2, XCircle, Clock, Copy, Check, Loader2 } from 'lucide-react';
+import {
+  Globe, Plus, Trash2, RefreshCw, CheckCircle2, XCircle,
+  Clock, Copy, Check, Loader2, ExternalLink, ChevronDown, ChevronUp,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { domainsApi, type CustomDomainInfo } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
 
 const STATUS_CONFIG = {
-  pending:  { icon: Clock,          cls: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',  label: 'Pending'  },
-  verified: { icon: CheckCircle2,   cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800', label: 'Verified' },
-  failed:   { icon: XCircle,        cls: 'text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',            label: 'Failed'   },
+  pending:  { icon: Clock,        cls: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',       label: 'Pending'  },
+  verified: { icon: CheckCircle2, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800', label: 'Verified' },
+  failed:   { icon: XCircle,      cls: 'text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',                 label: 'Failed'   },
 };
+
+const PLATFORM_CNAME = 'smarterbloggers.com';
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -21,10 +26,20 @@ function CopyButton({ text }: { text: string }) {
     <button
       onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
       className="shrink-0 h-7 w-7 rounded-lg flex items-center justify-center border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
-      title="Copier"
+      title="Copy"
     >
       {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
     </button>
+  );
+}
+
+function DnsRow({ label, value, copyable }: { label: string; value: string; copyable?: boolean }) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-[10px] font-mono text-slate-400 w-12 shrink-0">{label}</span>
+      <span className="text-[12px] font-mono text-slate-700 dark:text-slate-300 flex-1 break-all">{value}</span>
+      {copyable && <CopyButton text={value} />}
+    </div>
   );
 }
 
@@ -36,6 +51,7 @@ export default function DomainsPage() {
   const t = useTranslations('domains');
   const [newDomain, setNewDomain] = useState('');
   const [showAdd, setShowAdd] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(true);
 
   const { data: domains = [], isLoading } = useQuery({
     queryKey: ['domains', blogId],
@@ -58,11 +74,8 @@ export default function DomainsPage() {
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ['domains', blogId] });
       const status = res.data.verification_status;
-      if (status === 'verified') {
-        toast({ title: t('verifySuccess') });
-      } else {
-        toast({ variant: 'destructive', title: t('verifyFailed') });
-      }
+      if (status === 'verified') toast({ title: t('verifySuccess') });
+      else toast({ variant: 'destructive', title: t('verifyFailed') });
     },
     onError: () => toast({ variant: 'destructive', title: t('verifyError') }),
   });
@@ -91,7 +104,84 @@ export default function DomainsPage() {
     >
       <div className="px-6 py-6 space-y-5">
 
-        {/* Add domain form */}
+        {/* ── Step-by-step guide ──────────────────────────────────── */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+          <button
+            onClick={() => setGuideOpen(v => !v)}
+            className="w-full px-5 py-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-blue-500" />
+              <span className="text-[13px] font-bold text-slate-800 dark:text-slate-200">{t('setupTitle')}</span>
+            </div>
+            {guideOpen
+              ? <ChevronUp className="h-4 w-4 text-slate-400" />
+              : <ChevronDown className="h-4 w-4 text-slate-400" />}
+          </button>
+
+          {guideOpen && (
+            <div className="border-t border-slate-100 dark:border-slate-800 divide-y divide-slate-100 dark:divide-slate-800">
+
+              {/* Step 1 */}
+              <div className="px-5 py-4 flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-blue-600 text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</div>
+                <div>
+                  <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">{t('step1Title')}</p>
+                  <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">{t('step1Desc')}</p>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="px-5 py-4 flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-blue-600 text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">{t('step2Title')}</p>
+                  <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5 mb-3">{t('step2Desc')}</p>
+
+                  {/* CNAME record */}
+                  <div className="rounded-xl border border-blue-100 dark:border-blue-900/50 overflow-hidden mb-2">
+                    <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20">
+                      <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCname')}</p>
+                    </div>
+                    <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
+                      <DnsRow label="Type"  value="CNAME" />
+                      <DnsRow label="Name"  value="@" />
+                      <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
+                    </div>
+                  </div>
+
+                  {/* TXT record placeholder */}
+                  <div className="rounded-xl border border-violet-100 dark:border-violet-900/50 overflow-hidden">
+                    <div className="px-3 py-1.5 bg-violet-50 dark:bg-violet-900/20">
+                      <p className="text-[10px] font-bold text-violet-700 dark:text-violet-400 uppercase tracking-wider">{t('recordTxt')}</p>
+                    </div>
+                    <div className="p-3 bg-white dark:bg-slate-900">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">{t('step2TxtNote')}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="px-5 py-4 flex items-start gap-3">
+                <div className="h-6 w-6 rounded-full bg-blue-600 text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</div>
+                <div>
+                  <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">{t('step3Title')}</p>
+                  <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">{t('step3Desc')}</p>
+                </div>
+              </div>
+
+              {/* Cloudflare tip */}
+              <div className="px-5 py-3 bg-orange-50 dark:bg-orange-950/30 flex items-start gap-2">
+                <span className="text-[15px] shrink-0 mt-0.5">🟠</span>
+                <p className="text-[11.5px] text-orange-700 dark:text-orange-400 leading-relaxed">{t('cloudflareTip')}</p>
+              </div>
+
+            </div>
+          )}
+        </div>
+
+        {/* ── Add domain form ────────────────────────────────────── */}
         {showAdd && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
             <h3 className="text-[13px] font-bold text-slate-800 dark:text-slate-200 mb-3">{t('addTitle')}</h3>
@@ -116,17 +206,7 @@ export default function DomainsPage() {
           </div>
         )}
 
-        {/* DNS instruction banner */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl p-4">
-          <h3 className="text-[12px] font-bold text-blue-700 dark:text-blue-400 mb-2">{t('dnsTitle')}</h3>
-          <ol className="space-y-1.5 text-[12px] text-blue-700 dark:text-blue-300">
-            <li className="flex items-start gap-2"><span className="font-bold shrink-0">1.</span>{t('dnsStep1')}</li>
-            <li className="flex items-start gap-2"><span className="font-bold shrink-0">2.</span>{t('dnsStep2')}</li>
-            <li className="flex items-start gap-2"><span className="font-bold shrink-0">3.</span>{t('dnsStep3')}</li>
-          </ol>
-        </div>
-
-        {/* Domain list */}
+        {/* ── Domain list ────────────────────────────────────────── */}
         {isLoading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-6 w-6 text-slate-300 animate-spin" />
@@ -146,10 +226,24 @@ export default function DomainsPage() {
               const StatusIcon = cfg.icon;
               return (
                 <div key={d.id} className="px-5 py-4">
+
+                  {/* Domain header row */}
                   <div className="flex items-center gap-3">
                     <Globe className="h-4 w-4 text-slate-400 shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200 truncate">{d.domain}</p>
+                      {d.verification_status === 'verified' ? (
+                        <a
+                          href={`https://${d.domain}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-[14px] font-bold text-blue-600 dark:text-blue-400 hover:underline w-fit"
+                        >
+                          {d.domain}
+                          <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
+                        </a>
+                      ) : (
+                        <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200 truncate">{d.domain}</p>
+                      )}
                       <p className="text-[11px] text-slate-400 mt-0.5">
                         {t('addedOn', { date: new Date(d.created_at).toLocaleDateString() })}
                         {d.ssl_enabled && <span className="ml-2 text-emerald-500 font-semibold">· SSL ✓</span>}
@@ -176,27 +270,52 @@ export default function DomainsPage() {
                     </button>
                   </div>
 
-                  {/* TXT verification record */}
+                  {/* DNS records (only for unverified) */}
                   {d.verification_status !== 'verified' && (
-                    <div className="mt-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-3">
-                      <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">{t('dnsRecord')}</p>
-                      <div className="space-y-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono text-slate-400 w-10 shrink-0">Type</span>
-                          <span className="text-[12px] font-mono text-slate-700 dark:text-slate-300">TXT</span>
+                    <div className="mt-4 space-y-2">
+
+                      {/* CNAME */}
+                      <div className="rounded-xl border border-blue-100 dark:border-blue-900/50 overflow-hidden">
+                        <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20">
+                          <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCname')}</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono text-slate-400 w-10 shrink-0">Name</span>
-                          <span className="text-[12px] font-mono text-slate-700 dark:text-slate-300 flex-1 truncate">@</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-mono text-slate-400 w-10 shrink-0">Value</span>
-                          <span className="text-[11px] font-mono text-slate-700 dark:text-slate-300 flex-1 break-all">{d.verification_token}</span>
-                          <CopyButton text={d.verification_token} />
+                        <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
+                          <DnsRow label="Type"  value="CNAME" />
+                          <DnsRow label="Name"  value="@" />
+                          <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
                         </div>
                       </div>
+
+                      {/* TXT verification */}
+                      <div className="rounded-xl border border-violet-100 dark:border-violet-900/50 overflow-hidden">
+                        <div className="px-3 py-1.5 bg-violet-50 dark:bg-violet-900/20">
+                          <p className="text-[10px] font-bold text-violet-700 dark:text-violet-400 uppercase tracking-wider">{t('recordTxt')}</p>
+                        </div>
+                        <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
+                          <DnsRow label="Type"  value="TXT" />
+                          <DnsRow label="Name"  value="@" />
+                          <DnsRow label="Value" value={d.verification_token} copyable />
+                        </div>
+                      </div>
+
+                      {d.verification_status === 'failed' && (
+                        <p className="text-[11px] text-red-500 dark:text-red-400 flex items-center gap-1.5 mt-1">
+                          <XCircle className="h-3.5 w-3.5 shrink-0" />
+                          {t('verifyFailed')}
+                        </p>
+                      )}
+
                     </div>
                   )}
+
+                  {/* Verified success state */}
+                  {d.verification_status === 'verified' && (
+                    <div className="mt-3 flex items-center gap-2 text-[11.5px] text-emerald-600 dark:text-emerald-400">
+                      <CheckCircle2 className="h-4 w-4 shrink-0" />
+                      {t('verifiedDesc')}
+                    </div>
+                  )}
+
                 </div>
               );
             })}

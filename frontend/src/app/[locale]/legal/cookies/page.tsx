@@ -1,4 +1,4 @@
-import { Cookie, Settings, BarChart2, Star, Globe2, Mail } from 'lucide-react';
+﻿import { Cookie, Settings, BarChart2, Star, Globe2, Mail } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
@@ -10,7 +10,7 @@ const COOKIE_TYPES_EN = [
     name: 'Essential Cookies',
     color: 'bg-blue-500/10 text-blue-500',
     desc: 'These cookies are necessary for the site to function and cannot be disabled. They are set in response to your actions such as logging in, filling out forms, or setting your privacy preferences.',
-    examples: ['nexusblog-auth — Session authentication token (7 days)', 'nexusblog-theme — Your dark/light theme preference (persistent)', 'CSRF token — Security protection for form submissions'],
+    examples: ['smarterbloggers-auth — Session authentication token (7 days)', 'smarterbloggers-theme — Your dark/light theme preference (persistent)', 'CSRF token — Security protection for form submissions'],
   },
   {
     icon: BarChart2,
@@ -49,7 +49,7 @@ const COOKIE_TYPES_EN = [
     num: '06',
     name: 'Questions?',
     color: 'bg-pink-500/10 text-pink-500',
-    desc: 'For questions about our use of cookies, please contact us at privacy@nexusblog.com. Last updated: January 1, 2025.',
+    desc: 'For questions about our use of cookies, please contact us at privacy@smarterbloggers.com. Last updated: January 1, 2025.',
     examples: [],
   },
 ];
@@ -61,7 +61,7 @@ const COOKIE_TYPES_FR = [
     name: 'Cookies essentiels',
     color: 'bg-blue-500/10 text-blue-500',
     desc: "Ces cookies sont nécessaires au fonctionnement du site et ne peuvent pas être désactivés. Ils sont généralement définis en réponse à vos actions : connexion, remplissage de formulaires ou définition de vos préférences de confidentialité.",
-    examples: ['nexusblog-auth — Jeton d\'authentification de session (7 jours)', 'nexusblog-theme — Votre préférence de thème sombre/clair (permanent)', 'Jeton CSRF — Protection de sécurité pour les envois de formulaires'],
+    examples: ['smarterbloggers-auth — Jeton d\'authentification de session (7 jours)', 'smarterbloggers-theme — Votre préférence de thème sombre/clair (permanent)', 'Jeton CSRF — Protection de sécurité pour les envois de formulaires'],
   },
   {
     icon: BarChart2,
@@ -100,7 +100,7 @@ const COOKIE_TYPES_FR = [
     num: '06',
     name: 'Des questions ?',
     color: 'bg-pink-500/10 text-pink-500',
-    desc: "Pour toute question concernant notre utilisation des cookies, contactez-nous à privacy@nexusblog.com. Dernière mise à jour : 1er janvier 2025.",
+    desc: "Pour toute question concernant notre utilisation des cookies, contactez-nous à privacy@smarterbloggers.com. Dernière mise à jour : 1er janvier 2025.",
     examples: [],
   },
 ];
@@ -118,8 +118,8 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
         image="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=85"
         title={isFr ? 'Politique de cookies' : 'Cookie Policy'}
         subtitle={isFr
-          ? "Comment et pourquoi nous utilisons des cookies sur NexusBlog."
-          : 'How and why we use cookies on NexusBlog.'}
+          ? "Comment et pourquoi nous utilisons des cookies sur SmarterBloggers."
+          : 'How and why we use cookies on SmarterBloggers.'}
       />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 md:py-16 space-y-10 md:space-y-14">

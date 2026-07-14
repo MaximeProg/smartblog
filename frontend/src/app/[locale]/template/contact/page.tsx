@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, type FormEvent, type CSSProperties } from 'react';
 import Link from 'next/link';
@@ -14,8 +14,8 @@ import { publicApi, type BlogInfo } from '@/lib/public-api';
 
 const FAQS = [
   {
-    q: "Comment puis-je proposer un article pour NexusBlog Insights ?",
-    a: "Nous accueillons les contributions d'experts avec au moins 5 ans d'expérience dans leur domaine. Envoyez-nous un sujet + un plan + 2-3 références à contributors@nexusblog.io. Notre comité éditorial vous répond sous 5 jours ouvrés.",
+    q: "Comment puis-je proposer un article pour SmarterBloggers Insights ?",
+    a: "Nous accueillons les contributions d'experts avec au moins 5 ans d'expérience dans leur domaine. Envoyez-nous un sujet + un plan + 2-3 références à contributors@smarterbloggers.com. Notre comité éditorial vous répond sous 5 jours ouvrés.",
   },
   {
     q: "Est-il possible de reprendre vos articles sur d'autres médias ?",
@@ -182,7 +182,7 @@ export default function ContactPage() {
                   onChange={e => setForm(f => ({ ...f, newsletter: e.target.checked }))}
                   className="mt-0.5 h-4 w-4 rounded border-slate-300"
                 />
-                <span className="text-sm text-slate-500">Je souhaite recevoir la newsletter NexusBlog Insights (1 email par semaine, désinscription en 1 clic)</span>
+                <span className="text-sm text-slate-500">Je souhaite recevoir la newsletter SmarterBloggers Insights (1 email par semaine, désinscription en 1 clic)</span>
               </label>
 
               <div className="pt-2">
@@ -220,7 +220,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">Email</p>
-                  <a href="mailto:hello@nexusblog.io" className="text-sm font-semibold text-slate-800 hover:text-[var(--cp)] transition-colors">hello@nexusblog.io</a>
+                  <a href="mailto:hello@smarterbloggers.com" className="text-sm font-semibold text-slate-800 hover:text-[var(--cp)] transition-colors">hello@smarterbloggers.com</a>
                   <p className="text-xs text-slate-400 mt-0.5">Réponse sous 2 jours ouvrés</p>
                 </div>
               </div>

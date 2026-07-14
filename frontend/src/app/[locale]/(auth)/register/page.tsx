@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { ArrowLeft } from 'lucide-react';
@@ -12,7 +12,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'auth.register' });
-  const title = `${t('title')} — NexusBlog`;
+  const title = `${t('title')} — SmarterBloggers`;
   const description = t('subtitle');
   return {
     title,
@@ -21,7 +21,7 @@ export async function generateMetadata({
       title,
       description,
       type: 'website',
-      siteName: 'NexusBlog',
+      siteName: 'SmarterBloggers',
     },
     twitter: {
       card: 'summary_large_image',
@@ -48,7 +48,7 @@ export default async function RegisterPage({
           className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          NexusBlog
+          SmarterBloggers
         </Link>
         <LanguageSwitcher locale={locale} />
       </div>

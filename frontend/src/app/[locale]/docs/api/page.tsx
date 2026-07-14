@@ -1,4 +1,4 @@
-import { PublicNav } from '@/components/marketing/PublicNav';
+﻿import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
 
@@ -91,7 +91,7 @@ export default async function ApiReferencePage({ params }: { params: Promise<{ l
               <p className="text-slate-500 text-xs">{isFr ? '# Lister les articles d\'un tenant' : '# List articles for a tenant'}</p>
               <p className="text-emerald-400">{'curl \\'}</p>
               <p className="text-emerald-400 pl-4">{'-H "Authorization: Bearer $TOKEN" \\'}</p>
-              <p className="text-emerald-400 pl-4">{'https://api.nexusblog.com/v1/tenants/{id}/articles'}</p>
+              <p className="text-emerald-400 pl-4">{'https://api.smarterbloggers.com/v1/tenants/{id}/articles'}</p>
             </div>
           </div>
         </div>

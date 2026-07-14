@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -124,7 +124,7 @@ export default function GeneralPage() {
       <StudioSection id="url" title={ts('sectionUrl')}>
         <StudioField label={ts('fieldAddress')}>
           <div className="flex items-center gap-2 h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800">
-            <span className="text-[11px] text-slate-400 dark:text-slate-500 font-mono shrink-0">nexusblog.io/</span>
+            <span className="text-[11px] text-slate-400 dark:text-slate-500 font-mono shrink-0">smarterbloggers.com/</span>
             <span className="text-[13px] text-slate-800 dark:text-slate-200 font-mono">{tenant?.slug}</span>
           </div>
           <p className="text-[11px] text-slate-400 mt-1">{ts('fieldSlugHint')}</p>

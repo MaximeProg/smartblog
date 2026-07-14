@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useEffect, useCallback, type CSSProperties, type FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 import { useBookmark } from '@/hooks/useBookmark';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 function formatDate(d: string | null) {
   if (!d) return '';
@@ -159,7 +159,7 @@ export default function MinimalArticle({
   const articleUrl =
     typeof window !== 'undefined'
       ? window.location.href
-      : `https://${blog.slug}.nexusblog.io/${article.slug}`;
+      : `https://${blog.slug}.smarterbloggers.com/${article.slug}`;
 
   return (
     <div

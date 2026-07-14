@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import type { HomeProps } from '../ThemeRenderer';
 
 export function PortfolioHeader({ blog, categories, current }: {
@@ -41,7 +41,7 @@ export function PortfolioHeader({ blog, categories, current }: {
 export function PortfolioFooter({ blog }: { blog: { name: string } }) {
   return (
     <footer className="border-t border-gray-100 py-8 text-center text-xs text-gray-300 mt-20">
-      <p>© {new Date().getFullYear()} {blog.name} · <a href="https://nexusblog.io" className="hover:text-[var(--blog-primary)]">NexusBlog</a></p>
+      <p>© {new Date().getFullYear()} {blog.name} · <a href="https://smarterbloggers.com" className="hover:text-[var(--blog-primary)]">SmarterBloggers</a></p>
     </footer>
   );
 }

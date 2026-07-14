@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useEffect, useCallback } from 'react';
 
 interface BookmarkItem {
   slug: string;
@@ -7,7 +7,7 @@ interface BookmarkItem {
   savedAt: string;
 }
 
-const STORAGE_KEY = 'nexusblog_bookmarks';
+const STORAGE_KEY = 'smarterbloggers_bookmarks';
 
 function loadBookmarks(): BookmarkItem[] {
   if (typeof window === 'undefined') return [];

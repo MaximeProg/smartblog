@@ -1,4 +1,4 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import {
@@ -38,8 +38,8 @@ export default async function HomePage({
       period: undefined,
       desc: isFr ? 'Parfait pour commencer à bloguer.' : 'Perfect to start blogging.',
       features: isFr
-        ? ['1 blog', '10 articles / mois', '1 auteur', 'Sous-domaine nexusblog.io']
-        : ['1 blog', '10 articles / month', '1 author', 'nexusblog.io subdomain'],
+        ? ['1 blog', '10 articles / mois', '1 auteur', 'Sous-domaine smarterbloggers.com']
+        : ['1 blog', '10 articles / month', '1 author', 'smarterbloggers.com subdomain'],
       cta: t('pricing.ctaFree'),
       highlight: false,
       badge: null,

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { ArrowLeft } from 'lucide-react';
@@ -12,7 +12,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'auth.login' });
-  return { title: `${t('title')} — NexusBlog` };
+  return { title: `${t('title')} — SmarterBloggers` };
 }
 
 export default async function LoginPage({
@@ -35,7 +35,7 @@ export default async function LoginPage({
           className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
-          NexusBlog
+          SmarterBloggers
         </Link>
         <LanguageSwitcher locale={locale} />
       </div>

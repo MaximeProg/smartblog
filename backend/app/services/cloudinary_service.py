@@ -1,4 +1,4 @@
-import uuid
+﻿import uuid
 import cloudinary
 import cloudinary.uploader
 from fastapi import UploadFile
@@ -56,7 +56,7 @@ def get_max_size(media_type: MediaType) -> int:
 async def upload_file(
     file: UploadFile,
     tenant_id: str,
-    folder_prefix: str = "nexusblog",
+    folder_prefix: str = "smarterbloggers",
 ) -> dict:
     """
     Upload un fichier vers Cloudinary et retourne les métadonnées.
@@ -124,7 +124,7 @@ async def upload_avatar_image(file: UploadFile, user_id: str) -> dict:
 
     result = cloudinary.uploader.upload(
         contents,
-        folder="nexusblog/avatars",
+        folder="smarterbloggers/avatars",
         public_id=f"user_{user_id}",
         overwrite=True,
         resource_type="image",

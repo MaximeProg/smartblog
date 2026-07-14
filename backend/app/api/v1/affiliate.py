@@ -1,4 +1,4 @@
-"""M23 — Affiliate Program API"""
+﻿"""M23 — Affiliate Program API"""
 import uuid
 import random
 import string
@@ -313,9 +313,9 @@ async def compute_and_accrue_commissions(
 
     For subscriptions: 20% pool
       - L1: 50% of pool
-      - L2-L10: 50% / 9 each (missing levels go to NexusBlog)
+      - L2-L10: 50% / 9 each (missing levels go to SmarterBloggers)
 
-    For ad slots: 10% of gross (the other 10% goes to NexusBlog account 4101)
+    For ad slots: 10% of gross (the other 10% goes to SmarterBloggers account 4101)
       - Same L1/L2-L10 split on this 10%
     """
     from app.models.enums import AffiliateCommissionSource

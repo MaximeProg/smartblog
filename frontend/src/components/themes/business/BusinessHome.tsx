@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import type { HomeProps } from '../ThemeRenderer';
 import { ArticleCard } from '../shared/ArticleCard';
 
@@ -68,7 +68,7 @@ export function BusinessFooter({ blog }: { blog: { name: string } }) {
         </div>
         <div>
           <div className="font-bold text-sm uppercase tracking-wider mb-3 text-gray-400">Info</div>
-          <p className="text-xs text-gray-500">Propulsé par <a href="https://nexusblog.io" className="text-gray-400 hover:text-white underline">NexusBlog</a></p>
+          <p className="text-xs text-gray-500">Propulsé par <a href="https://smarterbloggers.com" className="text-gray-400 hover:text-white underline">SmarterBloggers</a></p>
         </div>
       </div>
       <div className="border-t border-gray-800 py-4 text-center text-xs text-gray-600">

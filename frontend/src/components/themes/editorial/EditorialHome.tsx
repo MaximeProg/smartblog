@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useCallback, type CSSProperties, type FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +9,7 @@ import { EditorialHeader, EditorialFooter } from './EditorialShared';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 import { ThemeSidebar } from '../shared/ThemeSidebar';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 const cardGradients = [
   'from-zinc-100 to-zinc-200',

@@ -1,38 +1,38 @@
-from fastapi import HTTPException, status
+﻿from fastapi import HTTPException, status
 
 
-class NexusBlogException(HTTPException):
+class SmarterBloggersException(HTTPException):
     def __init__(self, error: str, message: str, status_code: int):
         super().__init__(status_code=status_code, detail={"error": error, "message": message})
 
 
 # ── 401 ───────────────────────────────────────────────────────────
 
-class UnauthorizedException(NexusBlogException):
+class UnauthorizedException(SmarterBloggersException):
     def __init__(self, message: str = "Authentification requise."):
         super().__init__("UNAUTHORIZED", message, status.HTTP_401_UNAUTHORIZED)
 
 
-class InvalidTokenException(NexusBlogException):
+class InvalidTokenException(SmarterBloggersException):
     def __init__(self):
         super().__init__("INVALID_TOKEN", "Token invalide ou expiré.", status.HTTP_401_UNAUTHORIZED)
 
 
-class TokenRevokedException(NexusBlogException):
+class TokenRevokedException(SmarterBloggersException):
     def __init__(self):
         super().__init__("TOKEN_REVOKED", "Ce token a été révoqué.", status.HTTP_401_UNAUTHORIZED)
 
 
 # ── 403 ───────────────────────────────────────────────────────────
 
-class ForbiddenException(NexusBlogException):
+class ForbiddenException(SmarterBloggersException):
     def __init__(self, message: str = "Vous n'avez pas les permissions nécessaires."):
         super().__init__("FORBIDDEN", message, status.HTTP_403_FORBIDDEN)
 
 
 # ── 404 ───────────────────────────────────────────────────────────
 
-class NotFoundException(NexusBlogException):
+class NotFoundException(SmarterBloggersException):
     def __init__(self, resource: str = "Ressource"):
         super().__init__(
             f"{resource.upper()}_NOT_FOUND",
@@ -41,14 +41,14 @@ class NotFoundException(NexusBlogException):
         )
 
 
-class TenantNotFoundException(NexusBlogException):
+class TenantNotFoundException(SmarterBloggersException):
     def __init__(self):
         super().__init__("TENANT_NOT_FOUND", "Blog introuvable.", status.HTTP_404_NOT_FOUND)
 
 
 # ── 409 ───────────────────────────────────────────────────────────
 
-class SlugAlreadyExistsException(NexusBlogException):
+class SlugAlreadyExistsException(SmarterBloggersException):
     def __init__(self, slug: str):
         super().__init__(
             "SLUG_ALREADY_EXISTS",
@@ -57,7 +57,7 @@ class SlugAlreadyExistsException(NexusBlogException):
         )
 
 
-class EmailAlreadyExistsException(NexusBlogException):
+class EmailAlreadyExistsException(SmarterBloggersException):
     def __init__(self):
         super().__init__(
             "EMAIL_ALREADY_EXISTS",
@@ -68,7 +68,7 @@ class EmailAlreadyExistsException(NexusBlogException):
 
 # ── 402 ───────────────────────────────────────────────────────────
 
-class PlanLimitReachedException(NexusBlogException):
+class PlanLimitReachedException(SmarterBloggersException):
     def __init__(self, resource: str, limit: int):
         super().__init__(
             "PLAN_LIMIT_REACHED",
@@ -77,7 +77,7 @@ class PlanLimitReachedException(NexusBlogException):
         )
 
 
-class AIQuotaExceededException(NexusBlogException):
+class AIQuotaExceededException(SmarterBloggersException):
     def __init__(self):
         super().__init__(
             "AI_QUOTA_EXCEEDED",
@@ -88,7 +88,7 @@ class AIQuotaExceededException(NexusBlogException):
 
 # ── 429 ───────────────────────────────────────────────────────────
 
-class RateLimitExceededException(NexusBlogException):
+class RateLimitExceededException(SmarterBloggersException):
     def __init__(self):
         super().__init__(
             "RATE_LIMIT_EXCEEDED",
@@ -99,6 +99,6 @@ class RateLimitExceededException(NexusBlogException):
 
 # ── 422 ───────────────────────────────────────────────────────────
 
-class ValidationException(NexusBlogException):
+class ValidationException(SmarterBloggersException):
     def __init__(self, message: str):
         super().__init__("VALIDATION_ERROR", message, status.HTTP_422_UNPROCESSABLE_ENTITY)

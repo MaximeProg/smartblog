@@ -1,4 +1,4 @@
-"""
+﻿"""
 Service webhooks — envoi signé HMAC-SHA256, retry 3x avec backoff.
 """
 import hashlib
@@ -75,10 +75,10 @@ async def _deliver(
     signature = _sign_payload(ep.secret, payload_bytes)
     headers = {
         "Content-Type": "application/json",
-        "X-NexusBlog-Event": event,
-        "X-NexusBlog-Signature": signature,
-        "X-NexusBlog-Delivery": str(uuid.uuid4()),
-        "User-Agent": "NexusBlog-Webhooks/1.0",
+        "X-SmarterBloggers-Event": event,
+        "X-SmarterBloggers-Signature": signature,
+        "X-SmarterBloggers-Delivery": str(uuid.uuid4()),
+        "User-Agent": "SmarterBloggers-Webhooks/1.0",
     }
 
     success = False

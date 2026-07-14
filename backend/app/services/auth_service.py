@@ -1,7 +1,10 @@
 import uuid
+import structlog
 from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+
+logger = structlog.get_logger()
 
 from app.models.user import User
 from app.models.tenant import Tenant
@@ -97,23 +100,22 @@ async def login_with_firebase(
                     details=f"Email: {email}",
                     actor_email=email,
                 )
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("login: new user emails failed", error=str(exc), email=email)
 
     # Login notification for existing users
     if not is_new_user:
         try:
             from app.services.email_service import send_login_notification
-            from datetime import timezone as _tz
-            ts = datetime.now(_tz.utc).strftime("%Y-%m-%d %H:%M UTC")
+            ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
             await send_login_notification(
                 to=email,
                 display_name=user.display_name or "",
                 ip=ip_address,
                 timestamp=ts,
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("login: login_notification email failed", error=str(exc), email=email)
 
     # Si 2FA activé → retour sans tokens (client doit valider le code)
     if user.two_fa_enabled:

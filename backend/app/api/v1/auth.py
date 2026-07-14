@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Response, Depends, Cookie, UploadFile, File
+﻿from fastapi import APIRouter, Request, Response, Depends, Cookie, UploadFile, File
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,7 +19,7 @@ from app.services.auth_service import (
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-REFRESH_COOKIE = "nexusblog_refresh"
+REFRESH_COOKIE = "smarterbloggers_refresh"
 COOKIE_CONFIG = {
     "httponly": True,
     "secure": settings.is_production,
@@ -89,13 +89,13 @@ async def login(
 async def refresh(
     response: Response,
     db: DBSession,
-    nexusblog_refresh: str | None = Cookie(default=None, alias=REFRESH_COOKIE),
+    smarterbloggers_refresh: str | None = Cookie(default=None, alias=REFRESH_COOKIE),
 ):
     """Rotation du refresh token (HttpOnly cookie → nouveau JWT + cookie)."""
-    if not nexusblog_refresh:
+    if not smarterbloggers_refresh:
         raise UnauthorizedException("Refresh token manquant.")
 
-    new_access, new_refresh = await refresh_access_token(db, nexusblog_refresh)
+    new_access, new_refresh = await refresh_access_token(db, smarterbloggers_refresh)
     _set_refresh_cookie(response, new_refresh)
 
     return RefreshResponse(
@@ -110,7 +110,7 @@ async def refresh(
 async def logout(
     response: Response,
     payload: TokenPayload,
-    nexusblog_refresh: str | None = Cookie(default=None, alias=REFRESH_COOKIE),
+    smarterbloggers_refresh: str | None = Cookie(default=None, alias=REFRESH_COOKIE),
 ):
     """Invalide le JWT (blacklist) et révoque le refresh token."""
     from app.core.security import blacklist_token
@@ -122,9 +122,9 @@ async def logout(
         expire = datetime.fromtimestamp(exp, tz=timezone.utc)
         await blacklist_token(jti, expire)
 
-    if nexusblog_refresh:
+    if smarterbloggers_refresh:
         from app.core.security import revoke_refresh_token
-        await revoke_refresh_token(nexusblog_refresh)
+        await revoke_refresh_token(smarterbloggers_refresh)
 
     _clear_refresh_cookie(response)
 
@@ -570,10 +570,10 @@ async def test_email(payload: TokenPayload, db: DBSession):
     try:
         await _send(
             to=recipient,
-            subject="✅ Test email NexusBlog — Resend fonctionne !",
+            subject="✅ Test email SmarterBloggers — Resend fonctionne !",
             html=f"""
             <div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;">
-              <h2 style="color:#1e293b;">Test email — NexusBlog</h2>
+              <h2 style="color:#1e293b;">Test email — SmarterBloggers</h2>
               <p style="color:#475569;">Bonjour <strong>{user.display_name or user.email}</strong>,</p>
               <p style="color:#475569;">
                 Cet email confirme que l'intégration <strong>Resend</strong> fonctionne correctement.
@@ -617,7 +617,7 @@ async def test_push(payload: TokenPayload, db: DBSession):
         await send_push_to_user(
             db=db,
             user_id=user_id,
-            title="🔔 Test push NexusBlog",
+            title="🔔 Test push SmarterBloggers",
             body="Les notifications push fonctionnent correctement !",
             url="/notifications",
         )

@@ -8,7 +8,7 @@ import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 function formatDate(d: string | null) {
   if (!d) return '';

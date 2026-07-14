@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useTransition } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -82,7 +82,7 @@ function BlogCard({ blog, locale }: { blog: Blog; locale: string }) {
             <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
               {blog.name}
             </h3>
-            <p className="text-[11px] text-slate-400 truncate">{blog.slug}.nexusblog.io</p>
+            <p className="text-[11px] text-slate-400 truncate">{blog.slug}.smarterbloggers.com</p>
           </div>
         </div>
 

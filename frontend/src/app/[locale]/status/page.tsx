@@ -1,4 +1,4 @@
-import { CheckCircle2, AlertTriangle, XCircle, Clock } from 'lucide-react';
+﻿import { CheckCircle2, AlertTriangle, XCircle, Clock } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
@@ -53,8 +53,8 @@ export default async function StatusPage({ params }: { params: Promise<{ locale:
         image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1920&q=85"
         title={isFr ? 'Statut des systèmes' : 'System Status'}
         subtitle={isFr
-          ? 'Disponibilité et performance de NexusBlog en temps réel.'
-          : 'Real-time availability and performance of NexusBlog.'}
+          ? 'Disponibilité et performance de SmarterBloggers en temps réel.'
+          : 'Real-time availability and performance of SmarterBloggers.'}
       />
 
       <div className="max-w-5xl mx-auto px-6 py-16 space-y-12">

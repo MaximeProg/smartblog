@@ -1,11 +1,11 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import type { ArticleProps } from '../ThemeRenderer';
 import { SocialShare } from '../shared/SocialShare';
 import { ArticleCard } from '../shared/ArticleCard';
 import { BusinessHeader, BusinessFooter } from './BusinessHome';
 
 export default function BusinessArticle({ blog, article, relatedArticles }: ArticleProps) {
-  const url = `https://${blog.slug}.nexusblog.io/${article.slug}`;
+  const url = `https://${blog.slug}.smarterbloggers.com/${article.slug}`;
 
   return (
     <div className="min-h-screen bg-gray-50" style={{ fontFamily: 'var(--blog-font)' }}>

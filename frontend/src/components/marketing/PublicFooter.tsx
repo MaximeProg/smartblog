@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { PenLine, Twitter, Github, Linkedin, Mail } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 
@@ -50,7 +50,7 @@ export function PublicFooter({ locale }: PublicFooterProps) {
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-md">
                 <PenLine className="h-4 w-4 text-white" />
               </div>
-              <span className="font-black text-slate-900 dark:text-white tracking-widest uppercase text-sm">NexusBlog</span>
+              <span className="font-black text-slate-900 dark:text-white tracking-widest uppercase text-sm">SmarterBloggers</span>
             </Link>
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-5 max-w-xs">
               {isFr
@@ -172,7 +172,7 @@ export function PublicFooter({ locale }: PublicFooterProps) {
       <div className="border-t border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
           <p className="text-xs text-slate-400 dark:text-slate-500">
-            © {year} NexusBlog. {isFr ? 'Tous droits réservés.' : 'All rights reserved.'}
+            © {year} SmarterBloggers. {isFr ? 'Tous droits réservés.' : 'All rights reserved.'}
           </p>
           <div className="flex items-center gap-2">
             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />

@@ -1,4 +1,4 @@
-import { Clock, ArrowRight, BookOpen, Rocket, Users, BarChart2, Globe2, Palette } from 'lucide-react';
+﻿import { Clock, ArrowRight, BookOpen, Rocket, Users, BarChart2, Globe2, Palette } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
@@ -84,8 +84,8 @@ export default async function GuidesPage({ params }: { params: Promise<{ locale:
         image="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=1920&q=85"
         title={isFr ? 'Guides pratiques' : 'Guides'}
         subtitle={isFr
-          ? 'Tout ce dont vous avez besoin pour tirer le meilleur parti de NexusBlog.'
-          : 'Everything you need to get the most out of NexusBlog.'}
+          ? 'Tout ce dont vous avez besoin pour tirer le meilleur parti de SmarterBloggers.'
+          : 'Everything you need to get the most out of SmarterBloggers.'}
       />
 
       <div className="max-w-6xl mx-auto px-6 py-16">

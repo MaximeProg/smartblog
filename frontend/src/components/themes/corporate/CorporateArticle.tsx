@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useMemo, useCallback, type CSSProperties } from 'react';
 import { useParams } from 'next/navigation';
@@ -393,7 +393,7 @@ export default function CorporateArticle({
           {/* Share */}
           <div className="flex items-center gap-3 mt-12 pt-8 border-t border-slate-100 flex-wrap">
             <ShareButtons
-              url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.nexusblog.io/${article.slug}`}
+              url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.smarterbloggers.com/${article.slug}`}
               title={article.title}
               primaryColor={primaryColor}
             />
@@ -593,7 +593,7 @@ export default function CorporateArticle({
       <NewsletterSection blog={blog} primaryColor={primaryColor} />
       <CorporateFooter blog={blog} categories={[]} primaryColor={primaryColor} basePath={basePath} previewSlug={previewSlug} />
       <FloatingShareBar
-        url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.nexusblog.io/${article.slug}`}
+        url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.smarterbloggers.com/${article.slug}`}
         title={article.title}
         primaryColor={primaryColor}
       />

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
@@ -15,7 +15,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('dark');
 
   useEffect(() => {
-    const stored = (localStorage.getItem('nexusblog-theme') as Theme) ?? 'dark';
+    const stored = (localStorage.getItem('smarterbloggers-theme') as Theme) ?? 'dark';
     setTheme(stored);
     applyTheme(stored);
   }, []);
@@ -23,7 +23,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggle = () => {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
-    localStorage.setItem('nexusblog-theme', next);
+    localStorage.setItem('smarterbloggers-theme', next);
     applyTheme(next);
   };
 
@@ -55,7 +55,7 @@ export function ThemeScript() {
         __html: `
 (function(){
   try{
-    var t=localStorage.getItem('nexusblog-theme')||'dark';
+    var t=localStorage.getItem('smarterbloggers-theme')||'dark';
     document.documentElement.classList.add(t);
   }catch(e){}
 })();

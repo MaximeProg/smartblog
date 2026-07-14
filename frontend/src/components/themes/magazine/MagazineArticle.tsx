@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useEffect, useCallback, useMemo, type CSSProperties, type FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 import { useBookmark } from '@/hooks/useBookmark';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 function formatDate(d: string | null) {
   if (!d) return '';
@@ -219,7 +219,7 @@ export default function MagazineArticle({
                 </button>
               </div>
               <ShareButtons
-                url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.nexusblog.io/${article.slug}`}
+                url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.smarterbloggers.com/${article.slug}`}
                 title={article.title}
                 primaryColor={primaryColor}
               />
@@ -334,7 +334,7 @@ export default function MagazineArticle({
 
       <MagazineFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
       <FloatingShareBar
-        url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.nexusblog.io/${article.slug}`}
+        url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.smarterbloggers.com/${article.slug}`}
         title={article.title}
         primaryColor={primaryColor}
       />

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -48,7 +48,7 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
       <div className="flex flex-col flex-1 p-4 gap-3">
         <div className="min-w-0">
           <h3 className="font-bold text-slate-900 dark:text-slate-100 text-[14px] leading-tight truncate">{blog.name}</h3>
-          <p className="text-[11px] text-slate-400 dark:text-slate-500 font-mono mt-0.5 truncate">{blog.slug}.nexusblog.io</p>
+          <p className="text-[11px] text-slate-400 dark:text-slate-500 font-mono mt-0.5 truncate">{blog.slug}.smarterbloggers.com</p>
         </div>
 
         <div className="grid grid-cols-3 gap-2">

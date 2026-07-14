@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -187,7 +187,7 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
               primaryColor={primaryColor}
               variant="blog"
             />
-            {showPoweredBy && <span>Powered by NexusBlog</span>}
+            {showPoweredBy && <span>Powered by SmarterBloggers</span>}
           </div>
         </div>
       </div>

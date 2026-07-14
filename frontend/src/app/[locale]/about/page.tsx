@@ -1,11 +1,11 @@
-import Image from 'next/image';
+﻿import Image from 'next/image';
 import { Metadata } from 'next';
 import { Shield, Globe2, Zap, BarChart2, FileText, Bot, Check } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 
 export const metadata: Metadata = {
-  title: 'About — NexusBlog',
+  title: 'About — SmarterBloggers',
   description: 'A next-generation blogging platform built for creators who demand excellence.',
 };
 
@@ -140,8 +140,8 @@ export default async function AboutPage({
             </h2>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
               {isFr
-                ? 'Nous croyons que les grandes idées méritent une grande plateforme. NexusBlog a été conçu pour donner aux écrivains, journalistes et créateurs de contenu les outils dont ils ont besoin pour atteindre efficacement leur audience.'
-                : 'We believe that great ideas deserve a great platform. NexusBlog was built to empower writers, journalists, and content creators with the tools they need to reach their audience effectively.'}
+                ? 'Nous croyons que les grandes idées méritent une grande plateforme. SmarterBloggers a été conçu pour donner aux écrivains, journalistes et créateurs de contenu les outils dont ils ont besoin pour atteindre efficacement leur audience.'
+                : 'We believe that great ideas deserve a great platform. SmarterBloggers was built to empower writers, journalists, and content creators with the tools they need to reach their audience effectively.'}
             </p>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
               {isFr
@@ -222,7 +222,7 @@ export default async function AboutPage({
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10 md:mb-14">
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
-              {isFr ? 'Les personnes derrière NexusBlog' : 'The people behind NexusBlog'}
+              {isFr ? 'Les personnes derrière SmarterBloggers' : 'The people behind SmarterBloggers'}
             </h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">

@@ -6,7 +6,7 @@ import type { HomeProps } from '../ThemeRenderer';
 import { MinimalHeader, MinimalFooter } from './MinimalShared';
 import { AdRotator } from '../shared/AdRotator';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 function formatDate(d: string | null) {
   if (!d) return '';

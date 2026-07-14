@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+﻿import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -106,7 +106,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
 
   const basePath = `/${locale}/${slug}`;
   const primaryColor = blog.primary_color || '#18181b';
-  const rssUrl = `${process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io'}/api/v1/public/${slug}/podcast/rss`;
+  const rssUrl = `${process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com'}/api/v1/public/${slug}/podcast/rss`;
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as React.CSSProperties}>

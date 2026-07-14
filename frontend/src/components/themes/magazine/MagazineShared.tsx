@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, type FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,7 +6,7 @@ import { Search, Menu, X } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { ShareButtons } from '../shared/ShareButtons';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.nexusblog.io';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -272,8 +272,8 @@ export function MagazineFooter({ blog, categories, basePath, primaryColor }: Sha
               {showPoweredBy && (
                 <span>
                   Powered by{' '}
-                  <a href="https://nexusblog.io" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
-                    NexusBlog
+                  <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                    SmarterBloggers
                   </a>
                 </span>
               )}
