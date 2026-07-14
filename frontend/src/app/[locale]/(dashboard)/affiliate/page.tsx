@@ -89,7 +89,7 @@ export default function AffiliatePage() {
   const referrals = referralsData?.referrals ?? [];
 
   const cashoutMutation = useMutation({
-    mutationFn: async () => { const { data } = await affiliateApi.requestCashout(tenantId, 'stripe'); return data; },
+    mutationFn: async () => { const { data } = await affiliateApi.requestCashout(tenantId, 'nowpayments_crypto'); return data; },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['affiliate-dashboard', tenantId] });
       qc.invalidateQueries({ queryKey: ['affiliate-cashouts', tenantId] });

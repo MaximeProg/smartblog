@@ -304,7 +304,7 @@ async def _activate_subscription(
         # Update plan on the tenant's admin user
         from sqlalchemy import update
         from app.models.user import User as UserModel
-        from app.models.tenant import TenantMember
+        from app.models.tenant_user import TenantUser as TenantMember
         admin_q = await db.execute(
             select(TenantMember).where(
                 TenantMember.tenant_id == tenant_id,

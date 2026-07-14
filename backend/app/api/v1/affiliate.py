@@ -363,7 +363,7 @@ async def compute_and_accrue_commissions(
 
 async def _accrue_commission(db, affiliate_tenant_id, source_tenant_id, source_type, source_transaction_id, level, gross_amount, commission_amount):
     from app.models.enums import AffiliateCommissionStatus
-    from app.models.tenant import TenantMember
+    from app.models.tenant_user import TenantUser as TenantMember
     from app.models.user import User as UserModel
 
     tenant = await db.get(Tenant, affiliate_tenant_id)
@@ -387,13 +387,6 @@ async def _accrue_commission(db, affiliate_tenant_id, source_tenant_id, source_t
     tenant.affiliate_balance = new_balance
 
     # Récupérer le wallet USDT de l'admin du tenant affilié
-    admin_q = await db.execute(
-        select(TenantMember).where(
-            TenantMember.tenant_id == affiliate_tenant_id,
-            TenantMember.role == AffiliateCommissionStatus.PENDING.__class__.__mro__[0].__mro__[0].__subclasses__,  # noqa
-        )
-    )
-    # Chercher le TENANT_ADMIN
     from sqlalchemy import select as _select
     from app.models.enums import UserRole
     admin_row = await db.execute(

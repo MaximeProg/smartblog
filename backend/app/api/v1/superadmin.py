@@ -383,7 +383,7 @@ async def list_all_transactions(
                 "currency": r.Transaction.currency,
                 "platform_fee": float(r.Transaction.platform_fee),
                 "gateway": r.Transaction.payment_gateway.value,
-                "stripe_payment_intent_id": r.Transaction.stripe_payment_intent_id,
+                "nowpayments_order_id": r.Transaction.nowpayments_order_id,
                 "created_at": r.Transaction.created_at.isoformat(),
             }
             for r in rows
@@ -735,7 +735,7 @@ async def activity_logs(
             "ts": r.created_at.isoformat(),
             "level": lvl,
             "action": f"payment.{r.status}",
-            "actor": r.email or "stripe-webhook",
+            "actor": r.email or "nowpayments-webhook",
             "details": f"{r.amount} {r.currency}",
         })
 
@@ -996,10 +996,10 @@ async def get_platform_settings(payload: TokenPayload, db: DBSession):
             "maintenance_mode": overrides.get("maintenance_mode", False),
             "registrations_open": overrides.get("registrations_open", True),
         },
-        "stripe": {
-            "configured": bool(cfg.STRIPE_SECRET_KEY),
-            "publishable_key": cfg.STRIPE_PUBLISHABLE_KEY or "",
-            "platform_fee_percent": cfg.STRIPE_PLATFORM_FEE_PERCENT,
+        "nowpayments": {
+            "configured": bool(getattr(cfg, "NOWPAYMENTS_API_KEY", "")),
+            "sandbox": bool(getattr(cfg, "NOWPAYMENTS_SANDBOX", True)),
+            "platform_fee_percent": getattr(cfg, "NOWPAYMENTS_PLATFORM_FEE_PERCENT", 20),
         },
         "cloudinary": {
             "configured": bool(cfg.CLOUDINARY_CLOUD_NAME),

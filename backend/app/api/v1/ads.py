@@ -1,4 +1,3 @@
-import asyncio
 import uuid
 from datetime import datetime, timezone
 from fastapi import APIRouter, Query, BackgroundTasks
@@ -212,39 +211,25 @@ async def review_ad(
     ad.reviewed_by = uuid.UUID(payload["sub"])
 
     if body.decision == AdSubmissionStatus.APPROVED:
-        if settings.STRIPE_SECRET_KEY and ad.total_budget and float(ad.total_budget) > 0:
-            # Stripe configuré → passe en PAYMENT_PENDING et génère un lien de paiement
-            try:
-                import stripe as _stripe
-                _stripe.api_key = settings.STRIPE_SECRET_KEY
-                amount_cents = int(float(ad.total_budget) * 100)
-                frontend_url = settings.FRONTEND_URL
-                session = await asyncio.to_thread(
-                    _stripe.checkout.Session.create,
-                    mode="payment",
-                    line_items=[{
-                        "price_data": {
-                            "currency": "usd",
-                            "unit_amount": amount_cents,
-                            "product_data": {"name": f"Campagne publicitaire : {ad.title}"},
-                        },
-                        "quantity": 1,
-                    }],
-                    customer_email=ad.advertiser_email,
-                    success_url=f"{frontend_url}/blog/{{CHECKOUT_SESSION_ID}}?ad_paid=1",
-                    cancel_url=f"{frontend_url}",
-                    metadata={"ad_id": str(ad.id), "tenant_id": str(tenant_id)},
-                )
-                ad.payment_link_url = session.url
-                ad.payment_session_id = session.id
-                ad.submission_status = AdSubmissionStatus.PAYMENT_PENDING
-                ad.campaign_status = AdCampaignStatus.PAUSED
-            except Exception:
-                # Si la génération échoue, approuver sans lien (ne bloque pas)
-                ad.campaign_status = AdCampaignStatus.ACTIVE
-        else:
-            # Pas de Stripe ou budget non défini → activation immédiate
+        # Le paiement NowPayments est collecté à la soumission.
+        # Si le webhook a déjà confirmé le paiement (amount_paid > 0) → activer + commissions.
+        # Sinon → approuver mais laisser en pause jusqu'à la confirmation de paiement.
+        if ad.amount_paid and float(ad.amount_paid) > 0:
             ad.campaign_status = AdCampaignStatus.ACTIVE
+            try:
+                from app.api.v1.affiliate import compute_and_accrue_commissions
+                await compute_and_accrue_commissions(
+                    db=db,
+                    source_tenant_id=tenant_id,
+                    source_type="ad_slot",
+                    source_transaction_id=str(ad.payment_session_id or ad.id),
+                    gross_amount=float(ad.amount_paid),
+                )
+            except Exception:
+                pass
+        else:
+            # Paiement non encore confirmé — campagne activée automatiquement par le webhook
+            ad.campaign_status = AdCampaignStatus.PAUSED
 
     elif body.decision == AdSubmissionStatus.REJECTED:
         ad.rejection_reason = body.rejection_reason

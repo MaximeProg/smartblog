@@ -266,7 +266,7 @@ async def update_wallet(
 async def _pay_pending_commissions_for_user(db, user_id, wallet_address: str):
     """Paie automatiquement toutes les commissions PENDING de l'utilisateur après ajout du wallet."""
     from sqlalchemy import select
-    from app.models.tenant import TenantMember
+    from app.models.tenant_user import TenantUser as TenantMember
     from app.models.affiliate import AffiliateCommission, AffiliateCashoutRequest
     from app.models.enums import AffiliateCommissionStatus, CashoutStatus, UserRole
     from app.models.tenant import Tenant

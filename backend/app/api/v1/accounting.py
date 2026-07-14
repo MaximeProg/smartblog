@@ -436,12 +436,11 @@ async def book_subscription_payment(
     plan_code: str,
     transaction_id: str,
     is_annual: bool,
-    stripe_fee: float,
     created_by_system_user_id: uuid.UUID,
 ):
     """
-    Automatically books a subscription payment.
-    Dr 1020 (Stripe Settlement) / Cr 4000-4031 (Subscription Revenue) [+ Cr 2200 GST if applicable]
+    Books a subscription payment received via NowPayments.
+    Dr 1010 (NowPayments Settlement) / Cr 4000-4031 (Subscription Revenue)
     """
     revenue_account = _plan_to_account(plan_code, is_annual)
     entry_number = await _get_next_entry_number(db)
@@ -453,7 +452,7 @@ async def book_subscription_payment(
         entry_date=date.today(),
         reference=transaction_id,
         status=JournalEntryStatus.APPROVED,
-        source_type=JournalEntrySource.STRIPE_WEBHOOK,
+        source_type=JournalEntrySource.NOWPAYMENTS_WEBHOOK,
         source_id=transaction_id,
         created_by=created_by_system_user_id,
         approved_by=created_by_system_user_id,
@@ -462,21 +461,9 @@ async def book_subscription_payment(
     db.add(entry)
     await db.flush()
 
-    net_revenue = round(amount - stripe_fee, 4)
-
     lines = [
-        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1020", debit=round(amount, 4), credit=0),
-        JournalEntryLine(entry_id=entry.id, line_number=2, account_code=revenue_account, debit=0, credit=round(net_revenue, 4)),
-        JournalEntryLine(entry_id=entry.id, line_number=3, account_code="5102", debit=round(stripe_fee, 4), credit=0),
-    ]
-    # Balance: need a credit for stripe fee
-    # Dr 1020 (amount) / Cr revenue_account (net) / Cr 5102? No — Dr 5102 / Cr 1020 net
-    # Simplified: Dr 1020 net / Cr revenue
-    # Let's simplify to: Dr 1020 (net) / Cr 4xxx (net)
-    lines = [
-        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1020", debit=round(net_revenue, 4), credit=0),
-        JournalEntryLine(entry_id=entry.id, line_number=2, account_code="5102", debit=round(stripe_fee, 4), credit=0),
-        JournalEntryLine(entry_id=entry.id, line_number=3, account_code=revenue_account, debit=0, credit=round(amount, 4)),
+        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1010", debit=round(amount, 4), credit=0),
+        JournalEntryLine(entry_id=entry.id, line_number=2, account_code=revenue_account, debit=0, credit=round(amount, 4)),
     ]
     for ln in lines:
         db.add(ln)
@@ -523,7 +510,7 @@ async def book_ad_slot_payment(
         entry_date=date.today(),
         reference=transaction_id,
         status=JournalEntryStatus.APPROVED,
-        source_type=JournalEntrySource.STRIPE_WEBHOOK,
+        source_type=JournalEntrySource.NOWPAYMENTS_WEBHOOK,
         source_id=transaction_id,
         created_by=created_by_system_user_id,
         approved_by=created_by_system_user_id,
@@ -533,7 +520,7 @@ async def book_ad_slot_payment(
     await db.flush()
 
     lines = [
-        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1020", debit=round(amount, 4), credit=0),
+        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1010", debit=round(amount, 4), credit=0),
         JournalEntryLine(entry_id=entry.id, line_number=2, account_code="4101", debit=0, credit=smarterbloggers_commission),
         JournalEntryLine(entry_id=entry.id, line_number=3, account_code="2810", debit=0, credit=affiliate_pool),
         JournalEntryLine(entry_id=entry.id, line_number=4, account_code="4102", debit=0, credit=blog_owner_net),

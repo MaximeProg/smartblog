@@ -23,13 +23,6 @@ import MagazineContact from './magazine/MagazineContact';
 import MagazineCategories from './magazine/MagazineCategories';
 import MagazineCategoryPage from './magazine/MagazineCategoryPage';
 
-import MinimalHome from './minimal/MinimalHome';
-import MinimalArticle from './minimal/MinimalArticle';
-import MinimalAbout from './minimal/MinimalAbout';
-import MinimalContact from './minimal/MinimalContact';
-import MinimalCategories from './minimal/MinimalCategories';
-import MinimalCategoryPage from './minimal/MinimalCategoryPage';
-
 import CreativeHome from './creative/CreativeHome';
 import CreativeArticle from './creative/CreativeArticle';
 import CreativeAbout from './creative/CreativeAbout';
