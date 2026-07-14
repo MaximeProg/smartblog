@@ -18,7 +18,7 @@ const STATUS_CONFIG = {
   failed:   { icon: XCircle,      cls: 'text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',                 label: 'Failed'   },
 };
 
-const PLATFORM_CNAME = 'smarterbloggers.com';
+const PLATFORM_CNAME = 'cname.vercel-dns.com';
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -138,7 +138,7 @@ export default function DomainsPage() {
                   <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200">{t('step2Title')}</p>
                   <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5 mb-3">{t('step2Desc')}</p>
 
-                  {/* CNAME record */}
+                  {/* CNAME record — root */}
                   <div className="rounded-xl border border-blue-100 dark:border-blue-900/50 overflow-hidden mb-2">
                     <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20">
                       <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCname')}</p>
@@ -146,6 +146,18 @@ export default function DomainsPage() {
                     <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
                       <DnsRow label="Type"  value="CNAME" />
                       <DnsRow label="Name"  value="@" />
+                      <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
+                    </div>
+                  </div>
+
+                  {/* CNAME record — www */}
+                  <div className="rounded-xl border border-blue-100 dark:border-blue-900/50 overflow-hidden mb-2">
+                    <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20">
+                      <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCnameWww')}</p>
+                    </div>
+                    <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
+                      <DnsRow label="Type"  value="CNAME" />
+                      <DnsRow label="Name"  value="www" />
                       <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
                     </div>
                   </div>
@@ -274,7 +286,7 @@ export default function DomainsPage() {
                   {d.verification_status !== 'verified' && (
                     <div className="mt-4 space-y-2">
 
-                      {/* CNAME */}
+                      {/* CNAME root */}
                       <div className="rounded-xl border border-blue-100 dark:border-blue-900/50 overflow-hidden">
                         <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20">
                           <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCname')}</p>
@@ -282,6 +294,18 @@ export default function DomainsPage() {
                         <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
                           <DnsRow label="Type"  value="CNAME" />
                           <DnsRow label="Name"  value="@" />
+                          <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
+                        </div>
+                      </div>
+
+                      {/* CNAME www */}
+                      <div className="rounded-xl border border-blue-100 dark:border-blue-900/50 overflow-hidden">
+                        <div className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20">
+                          <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCnameWww')}</p>
+                        </div>
+                        <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
+                          <DnsRow label="Type"  value="CNAME" />
+                          <DnsRow label="Name"  value="www" />
                           <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
                         </div>
                       </div>

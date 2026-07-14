@@ -521,6 +521,33 @@ class PublicBlogCard(BaseModel):
     articles_count: int
 
 
+@explore_router.get("/resolve-domain")
+async def resolve_domain(hostname: str, db: DBSession):
+    """Resolve a custom domain to its tenant slug. Called by Next.js middleware."""
+    from app.models.domain import CustomDomain
+    from app.models.enums import DomainVerificationStatus
+    from fastapi import HTTPException
+
+    clean = hostname.removeprefix("www.")
+
+    result = await db.execute(
+        select(CustomDomain, Tenant)
+        .join(Tenant, CustomDomain.tenant_id == Tenant.id)
+        .where(
+            CustomDomain.domain.in_([hostname, clean]),
+            CustomDomain.verification_status == DomainVerificationStatus.VERIFIED,
+            Tenant.status == TenantStatus.ACTIVE,
+            Tenant.deleted_at.is_(None),
+        )
+    )
+    row = result.first()
+    if not row:
+        raise HTTPException(status_code=404, detail="Domain not found")
+
+    _, tenant = row
+    return {"slug": tenant.slug}
+
+
 @explore_router.get("", response_model=list[PublicBlogCard])
 async def list_public_blogs(
     db: DBSession,

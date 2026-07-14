@@ -2133,8 +2133,9 @@
     "step3Title": "Cliquez sur Vérifier",
     "step3Desc": "Une fois vos enregistrements DNS propagés (quelques minutes sur Cloudflare, jusqu'à 48h ailleurs), cliquez sur le bouton d'actualisation à côté de votre domaine.",
     "cloudflareTip": "Vous utilisez Cloudflare ? Activez le proxy (nuage orange) sur votre enregistrement CNAME — le SSL est alors géré automatiquement, aucune configuration supplémentaire.",
-    "recordCname": "Enregistrement 1 — CNAME (routage)",
-    "recordTxt": "Enregistrement 2 — TXT (vérification)",
+    "recordCname": "Enregistrement 1 — CNAME domaine principal (gemticash.com)",
+    "recordCnameWww": "Enregistrement 2 — CNAME www (www.gemticash.com)",
+    "recordTxt": "Enregistrement 3 — TXT (vérification)",
     "verifiedDesc": "Votre blog est en ligne à ce domaine. Les visiteurs peuvent y accéder directement."
   },
   "twoFA": {

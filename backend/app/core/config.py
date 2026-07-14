@@ -93,6 +93,10 @@ class Settings(BaseSettings):
     PLATFORM_DOMAIN: str = "smarterbloggers.com"
     PLATFORM_API_DOMAIN: str = "api.smarterbloggers.com"
 
+    # Vercel (custom domain registration)
+    VERCEL_TOKEN: str = ""
+    VERCEL_PROJECT_ID: str = ""
+
     # URLs frontend supplémentaires autorisées (séparées par des virgules)
     # Ex: EXTRA_CORS_ORIGINS=https://smarterbloggers.vercel.app,https://staging.smarterbloggers.com
     EXTRA_CORS_ORIGINS: str = ""

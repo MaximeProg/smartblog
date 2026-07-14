@@ -2161,8 +2161,9 @@
     "step3Title": "Click Verify",
     "step3Desc": "Once your DNS records have propagated (usually a few minutes on Cloudflare, up to 48h elsewhere), click the refresh button next to your domain.",
     "cloudflareTip": "Using Cloudflare? Enable the orange cloud proxy on your CNAME record — SSL is then handled automatically, no extra configuration needed.",
-    "recordCname": "Record 1 — CNAME (routing)",
-    "recordTxt": "Record 2 — TXT (verification)",
+    "recordCname": "Record 1 — CNAME root domain (gemticash.com)",
+    "recordCnameWww": "Record 2 — CNAME www (www.gemticash.com)",
+    "recordTxt": "Record 3 — TXT (verification)",
     "verifiedDesc": "Your blog is live at this domain. Visitors can reach it directly."
   },
   "twoFA": {

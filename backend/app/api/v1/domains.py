@@ -17,6 +17,24 @@ router = APIRouter(prefix="/tenants/{tenant_id}/domains", tags=["domains"])
 _TXT_PREFIX = "smarterbloggers-verify="
 
 
+async def _register_with_vercel(domain: str) -> None:
+    """Add a domain to the Vercel project so it can serve traffic for it."""
+    from app.core.config import settings
+    if not settings.VERCEL_TOKEN or not settings.VERCEL_PROJECT_ID:
+        return
+    try:
+        import httpx
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            await client.post(
+                f"https://api.vercel.com/v10/projects/{settings.VERCEL_PROJECT_ID}/domains",
+                headers={"Authorization": f"Bearer {settings.VERCEL_TOKEN}"},
+                json={"name": domain},
+            )
+            # 200 = added, 409 = already exists — both are fine
+    except Exception:
+        pass  # non-blocking — domain verified, Vercel registration is best-effort
+
+
 def _verification_token(tenant_id: uuid.UUID, domain: str) -> str:
     raw = f"{tenant_id}:{domain}"
     return _TXT_PREFIX + hashlib.sha256(raw.encode()).hexdigest()[:32]
@@ -134,6 +152,11 @@ async def verify_domain(
     if verified:
         d.verification_status = DomainVerificationStatus.VERIFIED
         d.verified_at = datetime.now(timezone.utc)
+        d.ssl_enabled = True
+        # Register with Vercel so it serves our app for this hostname
+        await _register_with_vercel(d.domain)
+        if not d.domain.startswith("www."):
+            await _register_with_vercel(f"www.{d.domain}")
     else:
         d.verification_status = DomainVerificationStatus.FAILED
 
