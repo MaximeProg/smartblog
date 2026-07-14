@@ -961,6 +961,34 @@ export interface SASystemResponse {
   env: string;
 }
 
+export interface SASurveillanceEvent {
+  ts: string;
+  type: 'login' | 'registration' | 'payment' | 'article';
+  level: 'info' | 'success' | 'warning' | 'error';
+  actor: string;
+  details: string;
+}
+
+export interface SASurveillanceOnlineUser {
+  email: string;
+  display_name: string | null;
+  last_seen: string;
+  ip: string;
+  plan: string;
+}
+
+export interface SASurveillanceResponse {
+  online_users: SASurveillanceOnlineUser[];
+  online_count: number;
+  events: SASurveillanceEvent[];
+  stats: {
+    total_users: number;
+    users_today: number;
+    logins_today: number;
+    revenue_today: number;
+  };
+}
+
 export interface SALogEntry {
   ts: string;
   level: 'info' | 'success' | 'warning' | 'error';
@@ -1158,6 +1186,9 @@ export const superadminApi = {
 
   listLogs: (params?: { level?: string; limit?: number; offset?: number }) =>
     api.get<SALogsResponse>('/superadmin/logs', { params }),
+
+  getSurveillance: () =>
+    api.get<SASurveillanceResponse>('/superadmin/surveillance'),
 
   listMedia: (params?: { media_type?: string; limit?: number; offset?: number }) =>
     api.get<SAMediaResponse>('/superadmin/media', { params }),

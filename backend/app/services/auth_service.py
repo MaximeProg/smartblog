@@ -20,6 +20,12 @@ from app.core.exceptions import (
 from app.schemas.auth import LoginResponse, UserInfo, TenantInfo, RefreshResponse
 
 
+async def _get_super_admin_emails(db: AsyncSession) -> list[str]:
+    """Returns email addresses of all super admins."""
+    result = await db.execute(select(User).where(User.is_super_admin == True))  # noqa: E712
+    return [u.email for u in result.scalars().all()]
+
+
 async def login_with_firebase(
     db: AsyncSession,
     firebase_uid: str,
@@ -70,10 +76,10 @@ async def login_with_firebase(
             user.sign_in_provider = sign_in_provider
         user.email_verified = email_verified
 
-    # Email de bienvenue pour les nouveaux inscrits
+    # Email de bienvenue pour les nouveaux inscrits + alerte super admins
     if is_new_user:
         try:
-            from app.services.email_service import send_welcome_email
+            from app.services.email_service import send_welcome_email, send_superadmin_event
             from app.core.config import settings as _cfg
             dashboard_url = f"{_cfg.FRONTEND_URL}/dashboard"
             await send_welcome_email(
@@ -81,8 +87,33 @@ async def login_with_firebase(
                 display_name=display_name or "",
                 dashboard_url=dashboard_url,
             )
+            # Notify super admins of new registration
+            sa_emails = await _get_super_admin_emails(db)
+            if sa_emails:
+                await send_superadmin_event(
+                    to=sa_emails,
+                    event_type="user.register",
+                    title="New user registered",
+                    details=f"Email: {email}",
+                    actor_email=email,
+                )
         except Exception:
-            pass  # L'email de bienvenue ne doit jamais bloquer la connexion
+            pass
+
+    # Login notification for existing users
+    if not is_new_user:
+        try:
+            from app.services.email_service import send_login_notification
+            from datetime import timezone as _tz
+            ts = datetime.now(_tz.utc).strftime("%Y-%m-%d %H:%M UTC")
+            await send_login_notification(
+                to=email,
+                display_name=user.display_name or "",
+                ip=ip_address,
+                timestamp=ts,
+            )
+        except Exception:
+            pass
 
     # Si 2FA activé → retour sans tokens (client doit valider le code)
     if user.two_fa_enabled:

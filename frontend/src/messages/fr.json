@@ -2155,7 +2155,8 @@
       "settings": "Paramètres",
       "logs": "Journal d'activité",
       "roles": "Rôles & Permissions",
-      "support": "Support"
+      "support": "Support",
+      "surveillance": "Surveillance"
     },
     "status": {
       "active": "Actif",
@@ -2588,6 +2589,31 @@
         "actor": "Acteur",
         "details": "Détails",
         "ip": "IP"
+      }
+    },
+    "surveillance": {
+      "title": "Surveillance directe",
+      "breadcrumb": "Infrastructure",
+      "subtitle": "{online} utilisateurs actifs · 15 dernières min",
+      "autoRefresh": "Actualisation auto toutes les 15s",
+      "lastUpdated": "Mis à jour {time}",
+      "stats": {
+        "online": "En ligne maintenant",
+        "logins": "Connexions aujourd'hui",
+        "newUsers": "Nouveaux utilisateurs",
+        "revenue": "Revenus aujourd'hui"
+      },
+      "onlineUsers": "Utilisateurs actifs",
+      "onlineUsersDesc": "Utilisateurs vus au cours des 15 dernières minutes",
+      "noOnlineUsers": "Aucun utilisateur actif au cours des 15 dernières minutes",
+      "activity": "Activité de la plateforme",
+      "activityDesc": "Tous les événements des dernières 24 heures",
+      "noActivity": "Aucune activité récente",
+      "types": {
+        "login": "Connexion",
+        "registration": "Inscription",
+        "payment": "Paiement",
+        "article": "Article"
       }
     },
     "system": {

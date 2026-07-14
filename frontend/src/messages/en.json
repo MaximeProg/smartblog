@@ -2208,7 +2208,8 @@
       "settings": "Settings",
       "logs": "Activity Log",
       "roles": "Roles & Permissions",
-      "support": "Support"
+      "support": "Support",
+      "surveillance": "Surveillance"
     },
     "status": {
       "active": "Active",
@@ -2641,6 +2642,31 @@
         "actor": "Actor",
         "details": "Details",
         "ip": "IP"
+      }
+    },
+    "surveillance": {
+      "title": "Direct Surveillance",
+      "breadcrumb": "Infrastructure",
+      "subtitle": "{online} active users · last 15 min",
+      "autoRefresh": "Auto-refresh every 15s",
+      "lastUpdated": "Updated {time}",
+      "stats": {
+        "online": "Online now",
+        "logins": "Logins today",
+        "newUsers": "New users today",
+        "revenue": "Revenue today"
+      },
+      "onlineUsers": "Active users",
+      "onlineUsersDesc": "Users seen in the last 15 minutes",
+      "noOnlineUsers": "No active users in the last 15 minutes",
+      "activity": "Platform activity",
+      "activityDesc": "All events in the last 24 hours",
+      "noActivity": "No recent activity",
+      "types": {
+        "login": "Sign-in",
+        "registration": "Registration",
+        "payment": "Payment",
+        "article": "Article"
       }
     },
     "system": {

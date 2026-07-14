@@ -749,6 +749,129 @@ async def activity_logs(
     return {"logs": events[offset:offset + limit], "total": total}
 
 
+# ── Surveillance en temps réel ────────────────────────────────────
+
+@router.get("/surveillance")
+async def surveillance_dashboard(payload: TokenPayload, db: DBSession):
+    """Real-time surveillance dashboard: active users, recent events, platform stats."""
+    from datetime import timedelta
+    await _require_super_admin(payload, db)
+
+    fifteen_min_ago = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(minutes=15)
+
+    # Users seen in the last 15 minutes
+    online_q = await db.execute(text("""
+        SELECT email, display_name, last_login_at, last_login_ip, plan
+        FROM users
+        WHERE last_login_at > :cutoff
+        ORDER BY last_login_at DESC
+        LIMIT 30
+    """), {"cutoff": fifteen_min_ago})
+    online_users = [
+        {
+            "email": r.email,
+            "display_name": r.display_name,
+            "last_seen": r.last_login_at.isoformat(),
+            "ip": r.last_login_ip or "—",
+            "plan": r.plan,
+        }
+        for r in online_q
+    ]
+
+    # Recent events (last 24 hours, all types)
+    events: list[dict] = []
+
+    logins_q = await db.execute(text("""
+        SELECT email, display_name, last_login_at, last_login_ip
+        FROM users
+        WHERE last_login_at > NOW() - INTERVAL '24 hours'
+        ORDER BY last_login_at DESC
+        LIMIT 40
+    """))
+    for r in logins_q:
+        events.append({
+            "ts": r.last_login_at.isoformat(),
+            "type": "login",
+            "level": "info",
+            "actor": r.email,
+            "details": f"IP {r.last_login_ip or '—'}",
+        })
+
+    registrations_q = await db.execute(text("""
+        SELECT email, display_name, created_at
+        FROM users
+        WHERE created_at > NOW() - INTERVAL '24 hours'
+        ORDER BY created_at DESC
+        LIMIT 20
+    """))
+    for r in registrations_q:
+        events.append({
+            "ts": r.created_at.isoformat(),
+            "type": "registration",
+            "level": "success",
+            "actor": r.email,
+            "details": "New account created",
+        })
+
+    payments_q = await db.execute(text("""
+        SELECT t.status, t.amount, t.currency, t.transaction_type, t.created_at, u.email
+        FROM transactions t
+        LEFT JOIN users u ON u.id = t.user_id
+        WHERE t.created_at > NOW() - INTERVAL '24 hours'
+        ORDER BY t.created_at DESC
+        LIMIT 20
+    """))
+    for r in payments_q:
+        events.append({
+            "ts": r.created_at.isoformat(),
+            "type": "payment",
+            "level": "success" if r.status == "completed" else "info",
+            "actor": r.email or "—",
+            "details": f"{r.transaction_type} · {r.amount} {r.currency}",
+        })
+
+    articles_q = await db.execute(text("""
+        SELECT a.title, a.published_at, u.email, tn.slug AS tenant_slug
+        FROM articles a
+        LEFT JOIN users u ON u.id = a.author_id
+        LEFT JOIN tenants tn ON tn.id = a.tenant_id
+        WHERE a.status = 'published' AND a.published_at > NOW() - INTERVAL '24 hours'
+        ORDER BY a.published_at DESC
+        LIMIT 20
+    """))
+    for r in articles_q:
+        if r.published_at:
+            events.append({
+                "ts": r.published_at.isoformat(),
+                "type": "article",
+                "level": "info",
+                "actor": r.email or "—",
+                "details": f"Published: {r.title[:60]}",
+            })
+
+    events.sort(key=lambda e: e["ts"], reverse=True)
+
+    # Platform stats
+    total_users = (await db.execute(text("SELECT COUNT(*) FROM users"))).scalar_one()
+    users_today = (await db.execute(text("SELECT COUNT(*) FROM users WHERE created_at >= CURRENT_DATE"))).scalar_one()
+    logins_today = (await db.execute(text("SELECT COUNT(*) FROM users WHERE last_login_at >= CURRENT_DATE"))).scalar_one()
+    revenue_today = (await db.execute(text(
+        "SELECT COALESCE(SUM(amount),0) FROM transactions WHERE status='completed' AND created_at >= CURRENT_DATE"
+    ))).scalar_one()
+
+    return {
+        "online_users": online_users,
+        "online_count": len(online_users),
+        "events": events[:100],
+        "stats": {
+            "total_users": int(total_users),
+            "users_today": int(users_today),
+            "logins_today": int(logins_today),
+            "revenue_today": float(revenue_today),
+        },
+    }
+
+
 # ── Médias globaux ────────────────────────────────────────────────
 
 @router.get("/media")

@@ -327,6 +327,99 @@ async def send_welcome_email(
     )
 
 
+# ─── Security & platform notifications ─────────────────────────────
+
+
+async def send_login_notification(
+    to: str,
+    display_name: str,
+    ip: str | None,
+    timestamp: str,
+) -> None:
+    """Sent to a user each time they sign in successfully."""
+    name = display_name or "there"
+    ip_text = ip or "unknown"
+    body = (
+        _h1("New sign-in detected on your account") +
+        _p(f"Hello <strong>{name}</strong>,") +
+        _p("We detected a new sign-in to your NexusBlog account. If this was you, no action is needed.") +
+        f'<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:16px 20px;margin:20px 0;">'
+        f'<table cellpadding="0" cellspacing="0" width="100%">'
+        f'<tr><td style="font-size:12px;color:{BRAND_MUTED};padding:5px 0;width:110px;">Date &amp; time</td>'
+        f'<td style="font-size:13px;font-weight:600;color:{BRAND_DARK};">{timestamp}</td></tr>'
+        f'<tr><td style="font-size:12px;color:{BRAND_MUTED};padding:5px 0;">IP address</td>'
+        f'<td style="font-size:13px;font-weight:600;color:{BRAND_DARK};">{ip_text}</td></tr>'
+        f'</table>'
+        f'</div>' +
+        f'<div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:12px 16px;margin:16px 0;">'
+        f'<p style="margin:0;font-size:13px;color:#991B1B;font-weight:600;">'
+        f'If this wasn\'t you, secure your account immediately by changing your password and enabling 2FA.'
+        f'</p>'
+        f'</div>' +
+        _note("This notification is sent automatically for every sign-in to keep your account secure. NexusBlog will never ask for your password.")
+    )
+    await _send(
+        to=to,
+        subject="New sign-in detected — NexusBlog",
+        html=_base(
+            title="Sign-in notification",
+            preview=f"A new sign-in was detected from IP {ip_text}",
+            body_html=body,
+        ),
+    )
+
+
+async def send_superadmin_event(
+    to: list[str],
+    event_type: str,
+    title: str,
+    details: str,
+    actor_email: str | None = None,
+) -> None:
+    """Sent to all super admins when a significant platform event occurs."""
+    if not to:
+        return
+
+    color_map = {
+        "user.register":     ("#10B981", "#F0FDF4", "#BBF7D0"),
+        "payment.completed": ("#6366F1", "#EEF2FF", "#C7D2FE"),
+        "ad.submitted":      ("#F59E0B", "#FFFBEB", "#FDE68A"),
+        "article.published": ("#3B82F6", "#EFF6FF", "#BFDBFE"),
+    }
+    accent, bg, border = color_map.get(event_type, ("#6366F1", "#EEF2FF", "#C7D2FE"))
+
+    actor_row = ""
+    if actor_email:
+        actor_row = (
+            f'<tr><td style="font-size:12px;color:{BRAND_MUTED};padding:5px 0;width:90px;">Actor</td>'
+            f'<td style="font-size:13px;font-weight:600;color:{BRAND_DARK};">{actor_email}</td></tr>'
+        )
+
+    body = (
+        f'<div style="display:inline-block;background:{bg};border:1px solid {border};border-radius:6px;padding:4px 10px;margin-bottom:16px;">'
+        f'<span style="font-size:11px;font-weight:700;color:{accent};text-transform:uppercase;letter-spacing:0.8px;">{event_type}</span>'
+        f'</div>' +
+        _h1(title) +
+        f'<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-left:4px solid {accent};border-radius:8px;padding:14px 18px;margin:16px 0;">'
+        f'<table cellpadding="0" cellspacing="0" width="100%">'
+        + actor_row +
+        f'<tr><td style="font-size:12px;color:{BRAND_MUTED};padding:5px 0;width:90px;">Details</td>'
+        f'<td style="font-size:13px;color:{BRAND_DARK};">{details}</td></tr>'
+        f'</table>'
+        f'</div>' +
+        _note("You receive this notification because you are a NexusBlog super administrator.")
+    )
+    await _send(
+        to=to,
+        subject=f"[NexusBlog] {title}",
+        html=_base(
+            title=f"Platform event: {event_type}",
+            preview=title,
+            body_html=body,
+        ),
+    )
+
+
 async def send_2fa_backup_codes_email(
     to: str,
     display_name: str,

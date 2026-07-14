@@ -134,6 +134,25 @@ async def submit_ad(
     ad.payment_session_id = str(invoice["id"])
     await db.commit()
 
+    # Notify super admins of new ad submission
+    try:
+        from app.services.email_service import send_superadmin_event
+        from app.services.auth_service import _get_super_admin_emails
+        from sqlalchemy import select as _select
+        from app.models.tenant import Tenant as _Tenant
+        sa_emails = await _get_super_admin_emails(db)
+        tenant_res = await db.execute(_select(_Tenant).where(_Tenant.id == tenant_id))
+        tenant_obj = tenant_res.scalar_one_or_none()
+        await send_superadmin_event(
+            to=sa_emails,
+            event_type="ad.submitted",
+            title=f"New ad submission — {body.title}",
+            details=f"Budget: {body.total_budget} {body.currency} · Blog: {tenant_obj.slug if tenant_obj else tenant_id}",
+            actor_email=body.advertiser_email,
+        )
+    except Exception:
+        pass
+
     return SubmitAdCheckoutResponse(
         ad_id=str(ad.id),
         invoice_url=invoice["invoice_url"],

@@ -9,7 +9,7 @@ import {
   Layers, FolderOpen, Image, Megaphone, GitBranch, BookOpen,
   Brain, Mail, Bell, Server, Settings, ScrollText, Shield,
   HeadphonesIcon, LogOut, Activity, ChevronRight, ShieldCheck,
-  PanelLeft, Sun, Moon, ChevronDown,
+  PanelLeft, Sun, Moon, ChevronDown, Eye,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { cn } from '@/lib/utils';
@@ -106,6 +106,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
         { href: `${b}/emails`,        label: t('nav.emails'),        icon: Mail },
         { href: `${b}/notifications`, label: t('nav.notifications'), icon: Bell },
         { href: `${b}/system`,        label: t('nav.system'),        icon: Server },
+        { href: `${b}/surveillance`,  label: t('nav.surveillance'),  icon: Eye },
       ],
     },
   ];

@@ -95,7 +95,28 @@ async def publish(
     db: DBSession,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
-    return await change_status(db, tenant_id, article_id, ArticleStatus.PUBLISHED)
+    result = await change_status(db, tenant_id, article_id, ArticleStatus.PUBLISHED)
+    try:
+        from sqlalchemy import select as _select
+        from app.models.user import User as _User
+        from app.models.tenant import Tenant as _Tenant
+        from app.services.email_service import send_superadmin_event
+        from app.services.auth_service import _get_super_admin_emails
+        sa_emails = await _get_super_admin_emails(db)
+        author_res = await db.execute(_select(_User).where(_User.id == uuid.UUID(payload["sub"])))
+        author = author_res.scalar_one_or_none()
+        tenant_res = await db.execute(_select(_Tenant).where(_Tenant.id == tenant_id))
+        tenant_obj = tenant_res.scalar_one_or_none()
+        await send_superadmin_event(
+            to=sa_emails,
+            event_type="article.published",
+            title=f"Article published — {result.title[:60]}",
+            details=f"Blog: {tenant_obj.slug if tenant_obj else tenant_id}",
+            actor_email=author.email if author else None,
+        )
+    except Exception:
+        pass
+    return result
 
 
 # ── POST /articles/{article_id}/unpublish ─────────────────────────
