@@ -41,6 +41,7 @@ class CommentStats(BaseModel):
     approved: int
     rejected: int
     spam: int
+    shadow_banned: int
 
 
 @router.get("/comments", response_model=list[CommentListItem])
@@ -117,6 +118,7 @@ async def comment_stats(
         approved=counts.get(CommentStatus.APPROVED, 0),
         rejected=counts.get(CommentStatus.REJECTED, 0),
         spam=counts.get(CommentStatus.SPAM, 0),
+        shadow_banned=counts.get(CommentStatus.SHADOW_BANNED, 0),
     )
 
 

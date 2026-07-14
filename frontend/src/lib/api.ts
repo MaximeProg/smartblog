@@ -781,6 +781,23 @@ export const domainsApi = {
 
 // ─── AI ───────────────────────────────────────────────────────────────────────
 
+export interface AiGeneratedArticle {
+  title: string;
+  excerpt: string;
+  content: string;
+  tags: string[];
+}
+
+export interface AiUsage {
+  plan: string;
+  tokens_used: number;
+  tokens_limit: number | null;
+  tts_chars_used: number;
+  tts_chars_limit: number | null;
+  images_generated: number;
+  images_limit: number | null;
+}
+
 export const aiApi = {
   tts: (tenantId: string, data: { text: string; article_id?: string; voice_id?: string }) =>
     api.post<{ audio_url: string }>(`/tenants/${tenantId}/ai/tts`, data),
@@ -788,11 +805,23 @@ export const aiApi = {
   seo: (tenantId: string, data: { title: string; content: string; keywords?: string }) =>
     api.post<{ seo_title: string; seo_description: string; keywords: string[]; score: number; suggestions: string[] }>(`/tenants/${tenantId}/ai/seo`, data),
 
-  generate: (tenantId: string, data: { prompt: string; tone?: string; language?: string; max_tokens?: number }) =>
-    api.post<{ result: string }>(`/tenants/${tenantId}/ai/generate`, data),
+  generate: (tenantId: string, data: { prompt: string; tone?: string; language?: string; target_words?: number }) =>
+    api.post<AiGeneratedArticle>(`/tenants/${tenantId}/ai/generate`, data),
 
-  translate: (tenantId: string, data: { text: string; target_language: string; source_language?: string }) =>
-    api.post<{ translated_text: string; detected_language?: string }>(`/tenants/${tenantId}/ai/translate`, data),
+  improve: (tenantId: string, data: { content: string; instruction?: string; language?: string }) =>
+    api.post<{ content: string }>(`/tenants/${tenantId}/ai/improve`, data),
+
+  summarize: (tenantId: string, data: { content: string; max_chars?: number; language?: string }) =>
+    api.post<{ excerpt: string }>(`/tenants/${tenantId}/ai/summarize`, data),
+
+  cover: (tenantId: string, data: { prompt: string; size?: string; quality?: string }) =>
+    api.post<{ image_url: string; revised_prompt?: string }>(`/tenants/${tenantId}/ai/cover`, data),
+
+  translate: (tenantId: string, data: { text: string; target_lang: string; source_lang?: string }) =>
+    api.post<{ result: string; detected_source_language?: string; chars_translated?: number }>(`/tenants/${tenantId}/ai/translate`, data),
+
+  usage: (tenantId: string) =>
+    api.get<AiUsage>(`/tenants/${tenantId}/ai/usage`),
 };
 
 // ── Articles scheduling ───────────────────────────────────────────────────────

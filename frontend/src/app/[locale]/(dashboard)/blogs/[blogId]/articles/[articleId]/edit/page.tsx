@@ -87,6 +87,11 @@ export default function EditArticlePage() {
   const [translateLoading,setTranslateLoading]= useState(false);
   const [showSchedule,    setShowSchedule]    = useState(false);
   const [scheduleDate,    setScheduleDate]    = useState('');
+  const [improveInstruction, setImproveInstruction] = useState('');
+  const [improveLoading,     setImproveLoading]     = useState(false);
+  const [summarizeLoading,   setSummarizeLoading]   = useState(false);
+  const [coverPrompt,        setCoverPrompt]        = useState('');
+  const [coverLoading,       setCoverLoading]       = useState(false);
 
   // ── Load article ─────────────────────────────────────────────────
   const { data: article, isLoading } = useQuery({
@@ -246,8 +251,8 @@ export default function EditArticlePage() {
     if (!plainText) return;
     setTranslateLoading(true);
     try {
-      const { data } = await aiApi.translate(blogId, { text: plainText.slice(0, 5000), target_language: translateLang });
-      setContent(data.translated_text);
+      const { data } = await aiApi.translate(blogId, { text: plainText.slice(0, 5000), target_lang: translateLang });
+      setContent(data.result);
       mark();
       toast({ title: 'Traduction appliquée.' });
     } catch {
@@ -256,6 +261,57 @@ export default function EditArticlePage() {
       setTranslateLoading(false);
     }
   }, [blogId, content, translateLang, mark, toast]);
+
+  const handleImprove = useCallback(async () => {
+    if (!content) return;
+    setImproveLoading(true);
+    try {
+      const { data } = await aiApi.improve(blogId, {
+        content:     content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 6000),
+        instruction: improveInstruction.trim() || undefined,
+      });
+      setContent(data.content);
+      mark();
+      toast({ title: 'Contenu amélioré par l\'IA !' });
+    } catch {
+      toast({ variant: 'destructive', title: 'Erreur lors de l\'amélioration.' });
+    } finally {
+      setImproveLoading(false);
+    }
+  }, [blogId, content, improveInstruction, mark, toast]);
+
+  const handleSummarize = useCallback(async () => {
+    if (!content) return;
+    setSummarizeLoading(true);
+    try {
+      const { data } = await aiApi.summarize(blogId, {
+        content: content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 6000),
+        max_chars: 200,
+      });
+      setExcerpt(data.excerpt);
+      mark();
+      toast({ title: 'Extrait généré !' });
+    } catch {
+      toast({ variant: 'destructive', title: 'Erreur lors de la génération de l\'extrait.' });
+    } finally {
+      setSummarizeLoading(false);
+    }
+  }, [blogId, content, mark, toast]);
+
+  const handleGenerateCover = useCallback(async () => {
+    if (!coverPrompt.trim()) return;
+    setCoverLoading(true);
+    try {
+      const { data } = await aiApi.cover(blogId, { prompt: coverPrompt.trim() });
+      setCoverImageUrl(data.image_url);
+      mark();
+      toast({ title: 'Image de couverture générée !' });
+    } catch {
+      toast({ variant: 'destructive', title: 'Erreur lors de la génération d\'image.' });
+    } finally {
+      setCoverLoading(false);
+    }
+  }, [blogId, coverPrompt, mark, toast]);
 
   const handleGenerateTts = useCallback(async () => {
     const plainText = content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
@@ -401,7 +457,19 @@ export default function EditArticlePage() {
 
           {/* Excerpt */}
           <div className="mb-6">
-            <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleExcerptLabel')}</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">{ts('articleExcerptLabel')}</label>
+              <button
+                type="button"
+                onClick={handleSummarize}
+                disabled={summarizeLoading || !content}
+                title="Générer l'extrait depuis le contenu"
+                className="flex items-center gap-1 h-6 px-2 rounded-lg bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 text-[10px] font-bold border border-violet-200 dark:border-violet-800 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors disabled:opacity-40"
+              >
+                {summarizeLoading ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Sparkles className="h-2.5 w-2.5" />}
+                Générer
+              </button>
+            </div>
             <textarea
               value={excerpt}
               onChange={e => { setExcerpt(e.target.value); mark(); }}
@@ -503,6 +571,26 @@ export default function EditArticlePage() {
                       {ttsLoading ? te('ttsGenerating') : te('ttsGenerate')}
                     </button>
                   </div>
+
+                  {/* Améliorer le contenu */}
+                  <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Améliorer le contenu</p>
+                    <input
+                      value={improveInstruction}
+                      onChange={e => setImproveInstruction(e.target.value)}
+                      placeholder="Ex : Rends plus formel, ajoute des exemples…"
+                      className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 mb-2"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleImprove}
+                      disabled={improveLoading || !content}
+                      className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-400 text-[12px] font-semibold hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors disabled:opacity-40"
+                    >
+                      {improveLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                      {improveLoading ? 'Amélioration…' : 'Améliorer avec l\'IA'}
+                    </button>
+                  </div>
                   {articleType === 'podcast' && (
                     <div className="grid grid-cols-2 gap-2">
                       <div>
@@ -522,6 +610,24 @@ export default function EditArticlePage() {
                   {articleType !== 'video' && (
                     <div>
                       <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{ts('articleCoverImageLabel')}</p>
+                      {/* DALL-E 3 cover generation */}
+                      <div className="flex gap-1.5 mb-2">
+                        <input
+                          value={coverPrompt}
+                          onChange={e => setCoverPrompt(e.target.value)}
+                          placeholder="Décris l'image à générer…"
+                          className="flex-1 h-8 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[11px] text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleGenerateCover}
+                          disabled={coverLoading || !coverPrompt.trim()}
+                          title="Générer avec DALL-E 3"
+                          className="h-8 w-8 shrink-0 rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors flex items-center justify-center disabled:opacity-40"
+                        >
+                          {coverLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                        </button>
+                      </div>
                       <ImagePicker value={coverImageUrl} onChange={url => { setCoverImageUrl(url); mark(); }} tenantId={blogId} ratio="16/9" />
                     </div>
                   )}

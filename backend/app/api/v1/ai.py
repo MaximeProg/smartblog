@@ -177,15 +177,16 @@ async def ai_tts(
         {"c": len(body.text), "id": str(tenant_id)},
     )
 
-    # Si article_id fourni → stocker l'URL audio (nécessite upload Cloudinary)
+    await db.commit()
+
+    # Si article_id fourni → upload Cloudinary et retourner JSON {audio_url}
     if body.article_id:
-        audio_bytes = result["audio_bytes"]
         try:
             import cloudinary.uploader
             from app.services.cloudinary_service import _configure
             _configure()
             upload_result = cloudinary.uploader.upload(
-                audio_bytes,
+                result["audio_bytes"],
                 folder=f"smarterbloggers/{tenant_id}/audio",
                 resource_type="video",
                 format="mp3",
@@ -195,14 +196,16 @@ async def ai_tts(
                 text("UPDATE articles SET audio_url = :url WHERE id = :aid AND tenant_id = :tid"),
                 {"url": audio_url, "aid": body.article_id, "tid": str(tenant_id)},
             )
+            await db.commit()
+            return {"audio_url": audio_url}
         except Exception:
             pass
 
-    await db.commit()
+    # Sinon retourner le fichier audio brut (lecture dans le navigateur)
     return Response(
         content=result["audio_bytes"],
         media_type="audio/mpeg",
-        headers={"Content-Disposition": "attachment; filename=article_audio.mp3"},
+        headers={"Content-Disposition": "inline; filename=article_audio.mp3"},
     )
 
 
@@ -215,6 +218,24 @@ async def ai_cover(
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
     await _check_images(db, tenant_id)
     result = await generate_cover_image(body.prompt, body.size, body.quality)
+
+    # Upload vers Cloudinary pour une URL permanente
+    try:
+        import httpx as _httpx
+        import cloudinary.uploader
+        from app.services.cloudinary_service import _configure
+        _configure()
+        async with _httpx.AsyncClient(timeout=30.0) as client:
+            img_resp = await client.get(result["image_url"])
+        upload_result = cloudinary.uploader.upload(
+            img_resp.content,
+            folder=f"smarterbloggers/{tenant_id}/ai-covers",
+            resource_type="image",
+        )
+        result["image_url"] = upload_result["secure_url"]
+    except Exception:
+        pass  # Fallback : URL temporaire OpenAI (~1h)
+
     return result
 
 
