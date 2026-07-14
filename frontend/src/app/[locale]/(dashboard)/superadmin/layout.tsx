@@ -4,6 +4,8 @@ import { useEffect, useState, useRef, type ElementType } from 'react';
 import { useRouter, useParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { useQuery } from '@tanstack/react-query';
+import { superadminApi } from '@/lib/api';
 import {
   LayoutDashboard, Users, Building2, CreditCard, FileText,
   Layers, FolderOpen, Image, Megaphone, GitBranch, BookOpen,
@@ -38,6 +40,14 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
   const [dark, setDark]           = useState(true);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+
+  const { data: openTicketCount } = useQuery({
+    queryKey: ['sa-bell-count'],
+    queryFn: () => superadminApi.listSupportTickets({ status: 'open' }).then(r => r.data.total ?? 0),
+    refetchInterval: 60000,
+    retry: false,
+  });
+  const bellCount = openTicketCount ?? 0;
 
   useEffect(() => {
     const html = document.documentElement;
@@ -81,6 +91,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
         { href: `${b}/tenants`,  label: t('nav.tenants'),  icon: Building2 },
         { href: `${b}/plans`,    label: t('nav.plans'),    icon: CreditCard },
         { href: `${b}/payments`, label: t('nav.payments'), icon: FileText },
+        { href: `${b}/support`,  label: t('nav.support'),  icon: HeadphonesIcon },
       ],
     },
     {
@@ -116,7 +127,6 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
     { href: `${b}/settings`, label: t('nav.settings'), icon: Settings },
     { href: `${b}/logs`,     label: t('nav.logs'),     icon: ScrollText },
     { href: `${b}/roles`,    label: t('nav.roles'),    icon: Shield },
-    { href: `${b}/support`,  label: t('nav.support'),  icon: HeadphonesIcon },
   ];
 
   function itemActive(item: NavItem) {
@@ -261,8 +271,26 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
             </span>
           </div>
 
-          {/* Right: theme toggle + profile dropdown */}
+          {/* Right: bell + theme toggle + profile dropdown */}
           <div className="flex items-center gap-2">
+            {/* Notification bell — links to open support tickets */}
+            <Link
+              href={`${b}/support`}
+              className="relative h-8 w-8 flex items-center justify-center rounded-lg transition-colors hover:bg-[var(--sa-surface)]"
+              style={{ border: '1px solid var(--sa-border)', color: 'var(--sa-text-3)' }}
+              title={t('nav.support')}
+            >
+              <Bell className="h-4 w-4" />
+              {bellCount > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 h-4 min-w-4 px-0.5 flex items-center justify-center rounded-full text-[9px] font-bold text-white"
+                  style={{ background: '#ef4444' }}
+                >
+                  {bellCount > 99 ? '99+' : bellCount}
+                </span>
+              )}
+            </Link>
+
             {/* Theme toggle */}
             <button
               onClick={() => setDark(v => !v)}

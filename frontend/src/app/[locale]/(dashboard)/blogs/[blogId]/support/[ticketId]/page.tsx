@@ -10,6 +10,7 @@ import {
 import { supportApi, type SupportMessageItem } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth.store';
+import { useStudioPreview } from '@/contexts/studio-preview';
 
 function fmtTime(iso: string | null) {
   if (!iso) return '';
@@ -34,9 +35,15 @@ export default function SupportTicketPage() {
   const qc = useQueryClient();
   const t = useTranslations('support');
   const { user } = useAuthStore();
+  const { setFullWidth } = useStudioPreview();
 
   const [msg, setMsg] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setFullWidth(true);
+    return () => setFullWidth(false);
+  }, [setFullWidth]);
 
   const { data, isLoading } = useQuery({
     queryKey: ['support-ticket', blogId, ticketId],

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { Bell, Send, RefreshCw, Users, Globe, Loader2 } from 'lucide-react';
 import { superadminApi } from '@/lib/api';
@@ -11,6 +11,7 @@ export default function NotificationsPage() {
   const t  = useTranslations('superAdmin');
   const tn = useTranslations('superAdmin.notifications');
   const { toast } = useToast();
+  const qc = useQueryClient();
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [audience, setAudience] = useState('all');
@@ -22,8 +23,14 @@ export default function NotificationsPage() {
 
   const { mutate: send, isPending: sending } = useMutation({
     mutationFn: () => superadminApi.sendNotification({ title, message, audience }),
-    onSuccess: () => { toast({ title: tn('sent') }); setTitle(''); setMessage(''); },
-    onError:   () => toast({ title: t('common.error'), variant: 'destructive' }),
+    onSuccess: (res) => {
+      const sent = (res.data as any)?.sent ?? 0;
+      toast({ title: `${tn('sent')} (${sent})` });
+      setTitle('');
+      setMessage('');
+      qc.invalidateQueries({ queryKey: ['sa-notifications'] });
+    },
+    onError: () => toast({ title: t('common.error'), variant: 'destructive' }),
   });
 
   const AUDIENCES = [
@@ -103,14 +110,27 @@ export default function NotificationsPage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {(data?.notifications ?? []).map((n: any, i: number) => (
-                <div key={i} className="flex items-start gap-3 p-3 rounded-xl border"
+              {(data?.notifications ?? []).map((n: any) => (
+                <div key={n.id ?? n.sent_at} className="flex items-start gap-3 p-3 rounded-xl border"
                   style={{ borderColor: 'var(--sa-border)', background: 'var(--sa-surface)' }}>
                   <Bell className="h-4 w-4 mt-0.5 shrink-0" style={{ color: '#6366f1' }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-[12px] font-semibold" style={{ color: 'var(--sa-text)' }}>{n.title}</p>
-                    <p className="text-[11px] mt-0.5" style={{ color: 'var(--sa-text-3)' }}>{n.message}</p>
-                    <p className="text-[10px] mt-1 font-mono" style={{ color: 'var(--sa-text-3)' }}>{n.sent_at}</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[12px] font-semibold truncate" style={{ color: 'var(--sa-text)' }}>{n.title}</p>
+                      {n.sent_count > 0 && (
+                        <span className="shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                          style={{ background: 'var(--sa-accent-bg)', color: 'var(--sa-accent)' }}>
+                          {n.sent_count}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] mt-0.5 line-clamp-2" style={{ color: 'var(--sa-text-3)' }}>{n.message}</p>
+                    <p className="text-[10px] mt-1" style={{ color: 'var(--sa-text-3)' }}>
+                      {n.sent_at ? new Date(n.sent_at).toLocaleString() : ''}
+                      {n.audience && n.audience !== 'all' && (
+                        <span className="ml-2 font-semibold">[{n.audience}]</span>
+                      )}
+                    </p>
                   </div>
                 </div>
               ))}

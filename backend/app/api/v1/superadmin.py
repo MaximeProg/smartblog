@@ -1091,7 +1091,7 @@ async def list_support_tickets(
         tenant_r = await db.execute(select(Tenant).where(Tenant.id == t.tenant_id))
         tenant_obj = tenant_r.scalar_one_or_none()
         opener_r = await db.execute(select(User).where(User.id == t.opened_by)) if t.opened_by else None
-        opener = (await opener_r).scalar_one_or_none() if opener_r else None
+        opener = opener_r.scalar_one_or_none() if opener_r else None
 
         # Last message
         last_msg_r = await db.execute(
@@ -1487,12 +1487,29 @@ async def upload_template(
     return {"ok": True, "id": str(new_id), "name": name}
 
 
-# ── Notifications plateforme (stub) ──────────────────────────────
+# ── Notifications plateforme ──────────────────────────────────────
 
 @router.get("/notifications")
 async def list_platform_notifications(payload: TokenPayload, db: DBSession):
     await _require_super_admin(payload, db)
-    return {"notifications": [], "total": 0}
+    rows = (await db.execute(
+        text(
+            "SELECT id, title, message, audience, sent_count, sent_at "
+            "FROM platform_notifications ORDER BY sent_at DESC LIMIT 50"
+        )
+    )).mappings().all()
+    notifications = [
+        {
+            "id": str(r["id"]),
+            "title": r["title"],
+            "message": r["message"],
+            "audience": r["audience"],
+            "sent_count": r["sent_count"],
+            "sent_at": r["sent_at"].isoformat() if r["sent_at"] else None,
+        }
+        for r in rows
+    ]
+    return {"notifications": notifications, "total": len(notifications)}
 
 
 @router.post("/notifications")
@@ -1501,22 +1518,23 @@ async def send_platform_notification(
     db: DBSession,
     body: dict[str, Any],
 ):
-    await _require_super_admin(payload, db)
+    admin = await _require_super_admin(payload, db)
 
-    title   = str(body.get("title", "")).strip()
-    message = str(body.get("message", "")).strip()
+    title    = str(body.get("title", "")).strip()
+    message  = str(body.get("message", "")).strip()
     audience = str(body.get("audience", "all"))
 
     if not title or not message:
         return {"ok": False, "message": "title and message are required."}
 
-    # Récupérer les admins de chaque tenant selon l'audience
+    # Build user query based on audience — TENANT_ADMIN users only
     q = (
-        select(User.email, User.display_name)
+        select(User.id, User.email, User.display_name)
         .join(TenantUser, TenantUser.user_id == User.id)
         .join(Tenant, Tenant.id == TenantUser.tenant_id)
         .where(TenantUser.role == UserRole.TENANT_ADMIN)
         .where(Tenant.status == TenantStatus.ACTIVE)
+        .distinct()
     )
 
     if audience == "paid":
@@ -1528,21 +1546,22 @@ async def send_platform_notification(
     elif audience == "free":
         from app.models.payment import TenantSubscription
         from app.models.enums import SubscriptionStatus
-        from sqlalchemy import not_, exists
+        from sqlalchemy import exists as _exists
         paid_sub = (
             select(TenantSubscription.tenant_id)
             .where(TenantSubscription.status == SubscriptionStatus.ACTIVE)
             .correlate(Tenant)
             .where(TenantSubscription.tenant_id == Tenant.id)
         )
-        q = q.where(~exists(paid_sub))
+        q = q.where(~_exists(paid_sub))
 
     rows = (await db.execute(q)).all()
 
     if not rows:
         return {"ok": True, "sent": 0, "message": "No matching tenants."}
 
-    from app.services.email_service import _send, _base, _h1, _p, _divider, _note, BRAND_TEXT
+    # Send emails
+    from app.services.email_service import _send, _base, _h1, _divider, _note, BRAND_TEXT
     body_html = (
         _h1(title) +
         f'<p style="margin:16px 0;font-size:15px;line-height:1.7;color:{BRAND_TEXT};'
@@ -1553,13 +1572,37 @@ async def send_platform_notification(
     html = _base(title=title, preview=title, body_html=body_html)
 
     sent = 0
-    from app.core.config import settings as cfg
     for row in rows:
         try:
             await _send(to=row.email, subject=f"[SmarterBloggers] {title}", html=html)
             sent += 1
         except Exception:
             pass
+
+    # Send push notifications to all matched users
+    from app.services.push_service import send_push_to_user
+    import asyncio as _asyncio
+    push_tasks = [
+        send_push_to_user(db, row.id, title=title, body=message, url="/dashboard")
+        for row in rows
+    ]
+    await _asyncio.gather(*push_tasks, return_exceptions=True)
+
+    # Persist in platform_notifications for history
+    await db.execute(
+        text(
+            "INSERT INTO platform_notifications (title, message, audience, sent_by, sent_count) "
+            "VALUES (:title, :message, :audience, :sent_by, :sent_count)"
+        ),
+        {
+            "title": title,
+            "message": message,
+            "audience": audience,
+            "sent_by": admin.id,
+            "sent_count": sent,
+        },
+    )
+    await db.commit()
 
     return {"ok": True, "sent": sent, "total": len(rows)}
 
