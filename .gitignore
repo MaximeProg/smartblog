@@ -28,7 +28,10 @@ out/
 
 # ── Logs ──────────────────────────────────────────────────────────────
 *.log
-logs/
+/logs/
+backend/logs/
+# Ne pas ignorer les pages Next.js nommées "logs"
+!frontend/src/app/**/logs/
 
 # ── OS ────────────────────────────────────────────────────────────────
 .DS_Store
