@@ -44,6 +44,12 @@ async def create(
 ):
     user_id = uuid.UUID(payload["sub"])
     tenant = await create_tenant(db, user_id, body)
+
+    from app.services.log_service import log_event
+    await log_event(db, "tenant.created", actor_id=user_id, level="success",
+                    target_type="tenant", target_id=str(tenant.id),
+                    details=f"Blog: {tenant.slug}")
+
     return build_tenant_response(tenant, include_limits=True, include_usage=True)
 
 

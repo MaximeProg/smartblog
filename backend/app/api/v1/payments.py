@@ -242,13 +242,20 @@ async def nowpayments_webhook(
                 gross_amount=actually_paid,
             )
             await db.commit()
+
+            # Log payment event
+            from app.services.log_service import log_event
+            tenant_obj = await db.get(Tenant, sub_tenant_id)
+            tenant_name = tenant_obj.name if tenant_obj else str(sub_tenant_id)
+            await log_event(db, "payment.completed", level="success",
+                            target_type="tenant", target_id=str(sub_tenant_id),
+                            details=f"Subscription {plan}/{billing} ${actually_paid:.2f} USDT — {tenant_name}")
+
             # Notify super admins
             try:
                 from app.services.email_service import send_superadmin_event
                 from app.services.auth_service import _get_super_admin_emails
                 sa_emails = await _get_super_admin_emails(db)
-                tenant_obj = await db.get(Tenant, sub_tenant_id)
-                tenant_name = tenant_obj.name if tenant_obj else str(sub_tenant_id)
                 await send_superadmin_event(
                     to=sa_emails,
                     event_type="payment.completed",

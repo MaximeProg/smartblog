@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations, useLocale } from 'next-intl';
 import {
   ArrowLeft, Send, Loader2, ShieldCheck, User2, Flame,
-  CheckCircle2, Clock, XCircle,
+  Paperclip, X, Download, FileText,
 } from 'lucide-react';
 import { superadminApi, type SupportMessageItem } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
@@ -20,12 +20,73 @@ function fmtTime(iso: string | null) {
 const STATUS_OPTIONS = ['open', 'in_progress', 'resolved', 'closed'] as const;
 const PRIORITY_OPTIONS = ['low', 'normal', 'high', 'urgent'] as const;
 
-const STATUS_CLS: Record<string, string> = {
-  open:        'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400',
-  in_progress: 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400',
-  resolved:    'border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400',
-  closed:      'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400',
-};
+function FileAttachment({ url, name, type, isOwn }: { url: string; name?: string | null; type?: string | null; isOwn: boolean }) {
+  const mime = type || '';
+  if (mime.startsWith('image/')) {
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer" className="block mt-2">
+        <img src={url} alt={name || 'image'} className="max-w-[260px] max-h-[200px] rounded-xl object-cover" style={{ border: isOwn ? '1px solid rgba(255,255,255,0.2)' : '1px solid var(--sa-border)' }} />
+      </a>
+    );
+  }
+  if (mime.startsWith('video/')) {
+    return <div className="mt-2"><video controls src={url} className="max-w-[280px] rounded-xl" /></div>;
+  }
+  if (mime.startsWith('audio/')) {
+    return <div className="mt-2"><audio controls src={url} className="w-[260px]" /></div>;
+  }
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer"
+      className="flex items-center gap-2 mt-2 px-3 py-2 rounded-xl text-[12px] font-medium hover:opacity-80 transition-opacity max-w-[260px]"
+      style={{
+        background: isOwn ? 'rgba(255,255,255,0.12)' : 'var(--sa-surface)',
+        border: `1px solid ${isOwn ? 'rgba(255,255,255,0.25)' : 'var(--sa-border)'}`,
+        color: isOwn ? '#fff' : 'var(--sa-text)',
+      }}>
+      <FileText className="h-4 w-4 shrink-0" />
+      <span className="truncate flex-1">{name || 'Download'}</span>
+      <Download className="h-3 w-3 shrink-0 opacity-60" />
+    </a>
+  );
+}
+
+function FilePicker({ file, onSelect, onRemove, disabled }: {
+  file: File | null;
+  onSelect: (f: File) => void;
+  onRemove: () => void;
+  disabled: boolean;
+}) {
+  const ref = useRef<HTMLInputElement>(null);
+
+  if (!file) return (
+    <>
+      <input ref={ref} type="file" className="hidden"
+        accept="image/*,video/*,audio/*,application/pdf,.pdf,.doc,.docx,.xls,.xlsx,.zip"
+        onChange={e => { const f = e.target.files?.[0]; if (f) onSelect(f); e.target.value = ''; }}
+      />
+      <button type="button" onClick={() => ref.current?.click()} disabled={disabled}
+        className="h-9 w-9 flex items-center justify-center rounded-xl border transition-colors shrink-0 disabled:opacity-40"
+        style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text-3)' }}>
+        <Paperclip className="h-4 w-4" />
+      </button>
+    </>
+  );
+
+  const previewUrl = file.type.startsWith('image/') ? URL.createObjectURL(file) : null;
+  return (
+    <div className="flex items-center gap-2 px-3 py-2 rounded-xl border mb-2"
+      style={{ borderColor: 'var(--sa-accent)', background: 'var(--sa-accent-bg)' }}>
+      {previewUrl
+        ? <img src={previewUrl} alt="" className="h-8 w-8 rounded-lg object-cover shrink-0" />
+        : <FileText className="h-5 w-5 shrink-0" style={{ color: 'var(--sa-accent)' }} />}
+      <span className="text-[12px] truncate flex-1" style={{ color: 'var(--sa-text)' }}>{file.name}</span>
+      <span className="text-[10px] shrink-0" style={{ color: 'var(--sa-text-3)' }}>{(file.size / 1024).toFixed(0)}KB</span>
+      <button onClick={onRemove} className="shrink-0" style={{ color: 'var(--sa-text-3)' }}>
+        <X className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
 
 export default function AdminTicketPage() {
   const params = useParams();
@@ -37,8 +98,9 @@ export default function AdminTicketPage() {
   const t = useTranslations('superAdmin.support');
 
   const [reply, setReply] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ['sa-ticket', ticketId],
@@ -48,18 +110,9 @@ export default function AdminTicketPage() {
     refetchOnWindowFocus: false,
   });
 
-  const replyMut = useMutation({
-    mutationFn: () => superadminApi.replySupportTicket(ticketId, reply.trim()),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['sa-ticket', ticketId] });
-      setReply('');
-    },
-    onError: () => toast({ variant: 'destructive', title: t('replyError') }),
-  });
-
   const updateMut = useMutation({
-    mutationFn: (data: { status?: string; priority?: string }) =>
-      superadminApi.updateSupportTicket(ticketId, data),
+    mutationFn: (d: { status?: string; priority?: string }) =>
+      superadminApi.updateSupportTicket(ticketId, d),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['sa-ticket', ticketId] });
       qc.invalidateQueries({ queryKey: ['sa-support'] });
@@ -74,12 +127,32 @@ export default function AdminTicketPage() {
   const ticket = data?.ticket;
   const messages = (data?.messages ?? []) as SupportMessageItem[];
   const isClosed = ticket?.status === 'closed' || ticket?.status === 'resolved';
+  const canSend = (reply.trim().length > 0 || selectedFile !== null) && !isSubmitting;
+
+  const handleSend = useCallback(async () => {
+    if (!canSend) return;
+    setIsSubmitting(true);
+    try {
+      let fileUrl: string | undefined, fileName: string | undefined, fileType: string | undefined;
+      if (selectedFile) {
+        const up = await superadminApi.uploadSupportFile(selectedFile);
+        fileUrl = up.data.url;
+        fileName = up.data.name;
+        fileType = up.data.type;
+      }
+      await superadminApi.replySupportTicket(ticketId, reply.trim(), fileUrl, fileName, fileType);
+      qc.invalidateQueries({ queryKey: ['sa-ticket', ticketId] });
+      setReply('');
+      setSelectedFile(null);
+    } catch {
+      toast({ variant: 'destructive', title: t('replyError') });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [ticketId, reply, selectedFile, canSend, qc, toast, t]);
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (reply.trim() && !replyMut.isPending) replyMut.mutate();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   }
 
   return (
@@ -121,7 +194,6 @@ export default function AdminTicketPage() {
           ) : null}
         </div>
 
-        {/* Controls */}
         {ticket && (
           <div className="flex items-center gap-2 shrink-0">
             <select
@@ -165,20 +237,24 @@ export default function AdminTicketPage() {
             const isAdmin = m.is_from_admin;
             return (
               <div key={m.id} className={`flex gap-3 ${isAdmin ? 'flex-row-reverse' : 'flex-row'}`}>
-                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 text-white text-[10px] font-bold
-                  ${isAdmin ? 'bg-blue-600' : 'bg-slate-500'}`}>
+                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 text-white
+                  ${isAdmin ? 'bg-[#6366f1]' : 'bg-slate-500'}`}>
                   {isAdmin ? <ShieldCheck className="h-4 w-4" /> : <User2 className="h-4 w-4" />}
                 </div>
                 <div className={`max-w-[70%] space-y-1 ${isAdmin ? 'items-end flex flex-col' : ''}`}>
                   <div className={`rounded-2xl px-4 py-3 text-[13px] leading-relaxed
-                    ${isAdmin
-                      ? 'bg-blue-600 text-white rounded-tr-sm'
-                      : 'rounded-tl-sm border'
-                    }`}
-                    style={!isAdmin ? { background: 'var(--sa-card)', borderColor: 'var(--sa-border)', color: 'var(--sa-text)' } : {}}
+                    ${isAdmin ? 'rounded-tr-sm' : 'rounded-tl-sm border'}`}
+                    style={isAdmin
+                      ? { background: '#6366f1', color: '#fff' }
+                      : { background: 'var(--sa-card)', borderColor: 'var(--sa-border)', color: 'var(--sa-text)' }
+                    }
                   >
-                    {/* Admin sees original (English); tenant messages show translated (English) */}
-                    {isAdmin ? m.body_original : (m.body_translated || m.body_original)}
+                    {(isAdmin ? m.body_original : (m.body_translated || m.body_original)) && (
+                      <span>{isAdmin ? m.body_original : (m.body_translated || m.body_original)}</span>
+                    )}
+                    {m.file_url && (
+                      <FileAttachment url={m.file_url} name={m.file_name} type={m.file_type} isOwn={isAdmin} />
+                    )}
                   </div>
                   <div className={`flex items-center gap-1.5 ${isAdmin ? 'pr-1' : 'pl-1'}`}>
                     <p className="text-[10px]" style={{ color: 'var(--sa-text-3)' }}>
@@ -205,29 +281,35 @@ export default function AdminTicketPage() {
             {t('ticketClosedMsg')}
           </div>
         ) : (
-          <div className="flex items-end gap-3">
-            <textarea
-              value={reply}
-              onChange={e => setReply(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={t('composerPlaceholder')}
-              rows={2}
-              className="flex-1 px-3 py-2.5 rounded-xl text-[13px] border focus:outline-none resize-none"
-              style={{
-                borderColor: 'var(--sa-border)',
-                background: 'var(--sa-surface)',
-                color: 'var(--sa-text)',
-              }}
-            />
-            <button
-              onClick={() => replyMut.mutate()}
-              disabled={!reply.trim() || replyMut.isPending}
-              className="h-10 w-10 flex items-center justify-center rounded-xl text-white disabled:opacity-50 transition-colors shrink-0"
-              style={{ background: 'var(--sa-accent)' }}
-            >
-              {replyMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            </button>
-          </div>
+          <>
+            {selectedFile && (
+              <FilePicker file={selectedFile} onSelect={setSelectedFile} onRemove={() => setSelectedFile(null)} disabled={isSubmitting} />
+            )}
+            <div className="flex items-end gap-2">
+              <FilePicker file={null} onSelect={setSelectedFile} onRemove={() => setSelectedFile(null)} disabled={isSubmitting} />
+              <textarea
+                value={reply}
+                onChange={e => setReply(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={t('composerPlaceholder')}
+                rows={2}
+                className="flex-1 px-3 py-2.5 rounded-xl text-[13px] border focus:outline-none resize-none"
+                style={{
+                  borderColor: 'var(--sa-border)',
+                  background: 'var(--sa-surface)',
+                  color: 'var(--sa-text)',
+                }}
+              />
+              <button
+                onClick={handleSend}
+                disabled={!canSend}
+                className="h-10 w-10 flex items-center justify-center rounded-xl text-white disabled:opacity-50 transition-colors shrink-0"
+                style={{ background: 'var(--sa-accent)' }}
+              >
+                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              </button>
+            </div>
+          </>
         )}
         <p className="text-[10px] mt-2" style={{ color: 'var(--sa-text-3)' }}>{t('replyTranslationNote')}</p>
       </div>

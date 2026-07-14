@@ -126,7 +126,7 @@ async def list_all_tenants(
 async def suspend_tenant(
     tenant_id: uuid.UUID, payload: TokenPayload, db: DBSession,
 ):
-    await _require_super_admin(payload, db)
+    admin = await _require_super_admin(payload, db)
     result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
     if not tenant:
@@ -134,10 +134,14 @@ async def suspend_tenant(
     tenant.status = TenantStatus.SUSPENDED
     await db.commit()
 
-    # Invalider le cache tenant
     from app.core.redis_client import get_redis
     redis = await get_redis()
     await redis.delete(f"tenant:{tenant.slug}")
+
+    from app.services.log_service import log_event
+    await log_event(db, "tenant.suspended", actor_id=admin.id, actor_email=admin.email,
+                    level="warning", target_type="tenant", target_id=str(tenant.id),
+                    details=f"Blog: {tenant.slug}")
     return {"message": f"{tenant.name} suspendu."}
 
 
@@ -145,13 +149,18 @@ async def suspend_tenant(
 async def activate_tenant(
     tenant_id: uuid.UUID, payload: TokenPayload, db: DBSession,
 ):
-    await _require_super_admin(payload, db)
+    admin = await _require_super_admin(payload, db)
     result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
     if not tenant:
         raise NotFoundException("Tenant")
     tenant.status = TenantStatus.ACTIVE
     await db.commit()
+
+    from app.services.log_service import log_event
+    await log_event(db, "tenant.reactivated", actor_id=admin.id, actor_email=admin.email,
+                    level="success", target_type="tenant", target_id=str(tenant.id),
+                    details=f"Blog: {tenant.slug}")
     return {"message": f"{tenant.name} activé."}
 
 
@@ -162,13 +171,20 @@ async def change_plan(
     payload: TokenPayload,
     db: DBSession,
 ):
-    await _require_super_admin(payload, db)
+    admin = await _require_super_admin(payload, db)
     result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
     if not tenant:
         raise NotFoundException("Tenant")
+    old_plan = tenant.plan.value if tenant.plan else "unknown"
     tenant.plan = plan
     await db.commit()
+
+    action = "plan.upgraded" if plan.value > old_plan else "plan.downgraded"
+    from app.services.log_service import log_event
+    await log_event(db, action, actor_id=admin.id, actor_email=admin.email,
+                    level="info", target_type="tenant", target_id=str(tenant.id),
+                    details=f"{old_plan} → {plan.value} (blog: {tenant.slug})")
     return {"message": f"Plan changé → {plan.value}"}
 
 
@@ -176,13 +192,18 @@ async def change_plan(
 async def delete_tenant(
     tenant_id: uuid.UUID, payload: TokenPayload, db: DBSession,
 ):
-    await _require_super_admin(payload, db)
+    admin = await _require_super_admin(payload, db)
     result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
     if not tenant:
         raise NotFoundException("Tenant")
     tenant.status = TenantStatus.DELETED
     await db.commit()
+
+    from app.services.log_service import log_event
+    await log_event(db, "tenant.deleted", actor_id=admin.id, actor_email=admin.email,
+                    level="error", target_type="tenant", target_id=str(tenant.id),
+                    details=f"Blog: {tenant.slug}")
 
 
 # ── Gestion utilisateurs ──────────────────────────────────────────
@@ -232,6 +253,11 @@ async def make_super_admin(
         raise NotFoundException("Utilisateur")
     user.is_super_admin = True
     await db.commit()
+
+    from app.services.log_service import log_event
+    await log_event(db, "admin.role_granted", actor_id=admin.id, actor_email=admin.email,
+                    level="warning", target_type="user", target_id=str(user.id),
+                    details=f"Super-admin granted to {user.email}")
     return {"message": f"{user.email} est maintenant super-admin."}
 
 
@@ -239,7 +265,7 @@ async def make_super_admin(
 async def revoke_super_admin(
     user_id: uuid.UUID, payload: TokenPayload, db: DBSession,
 ):
-    await _require_super_admin(payload, db)
+    admin = await _require_super_admin(payload, db)
     if str(user_id) == payload["sub"]:
         raise ForbiddenException("Vous ne pouvez pas révoquer vos propres droits.")
     result = await db.execute(select(User).where(User.id == user_id))
@@ -248,6 +274,11 @@ async def revoke_super_admin(
         raise NotFoundException("Utilisateur")
     user.is_super_admin = False
     await db.commit()
+
+    from app.services.log_service import log_event
+    await log_event(db, "admin.role_revoked", actor_id=admin.id, actor_email=admin.email,
+                    level="warning", target_type="user", target_id=str(user.id),
+                    details=f"Super-admin revoked from {user.email}")
     return {"message": f"Droits super-admin révoqués pour {user.email}."}
 
 
@@ -678,77 +709,43 @@ async def activity_logs(
     limit: int = Query(15, ge=1, le=500),
     offset: int = Query(0, ge=0),
 ):
-    """Journal d'activité synthétisé depuis les tables existantes."""
+    """Journal d'activité réel depuis activity_logs + données historiques."""
     await _require_super_admin(payload, db)
 
-    events: list[dict[str, Any]] = []
-
-    # Recent user logins
-    logins = await db.execute(text("""
-        SELECT email, last_login_at, last_login_ip
-        FROM users
-        WHERE last_login_at IS NOT NULL
-        ORDER BY last_login_at DESC
-        LIMIT 30
-    """))
-    for r in logins:
-        events.append({
-            "ts": r.last_login_at.isoformat(),
-            "level": "info",
-            "action": "user.login",
-            "actor": r.email,
-            "details": f"IP {r.last_login_ip or '—'}",
-        })
-
-    # New tenant registrations
-    new_tenants = await db.execute(text("""
-        SELECT t.name, t.slug, u.email, t.created_at
-        FROM tenants t
-        JOIN users u ON u.id = (
-            SELECT tu.user_id FROM tenant_users tu
-            WHERE tu.tenant_id = t.id AND tu.role = 'TENANT_ADMIN'
-            LIMIT 1
-        )
-        ORDER BY t.created_at DESC
-        LIMIT 20
-    """))
-    for r in new_tenants:
-        events.append({
-            "ts": r.created_at.isoformat(),
-            "level": "success",
-            "action": "tenant.created",
-            "actor": r.email,
-            "details": f"Blog: {r.slug}",
-        })
-
-    # Recent transactions
-    recent_tx = await db.execute(text("""
-        SELECT t.status, t.amount_fiat, t.currency_fiat, t.amount_crypto, t.currency_crypto, t.created_at, u.email
-        FROM transactions t
-        LEFT JOIN users u ON u.id = t.user_id
-        ORDER BY t.created_at DESC
-        LIMIT 20
-    """))
-    for r in recent_tx:
-        lvl = "success" if r.status == "completed" else ("error" if r.status == "failed" else "info")
-        amount = r.amount_fiat or r.amount_crypto or 0
-        currency = r.currency_fiat or r.currency_crypto or "USDT"
-        events.append({
-            "ts": r.created_at.isoformat(),
-            "level": lvl,
-            "action": f"payment.{r.status}",
-            "actor": r.email or "nowpayments-webhook",
-            "details": f"{amount} {currency}",
-        })
-
-    # Sort by timestamp desc
-    events.sort(key=lambda e: e["ts"], reverse=True)
-
+    where = "WHERE 1=1"
+    params: dict = {"limit": limit, "offset": offset}
     if level:
-        events = [e for e in events if e["level"] == level]
+        where += " AND level = :level"
+        params["level"] = level
 
-    total = len(events)
-    return {"logs": events[offset:offset + limit], "total": total}
+    rows = (await db.execute(text(f"""
+        SELECT id, ts, level, action, actor_email, target_type, target_id, details, ip
+        FROM activity_logs
+        {where}
+        ORDER BY ts DESC
+        LIMIT :limit OFFSET :offset
+    """), params)).mappings().all()
+
+    total_row = (await db.execute(text(f"""
+        SELECT COUNT(*) FROM activity_logs {where}
+    """), {k: v for k, v in params.items() if k not in ("limit", "offset")})).scalar()
+
+    logs = [
+        {
+            "ts":     r["ts"].isoformat() if r["ts"] else None,
+            "level":  r["level"],
+            "action": r["action"],
+            "actor":  r["actor_email"] or "—",
+            "details": (
+                (f"[{r['target_type']}:{r['target_id']}] " if r["target_type"] else "") +
+                (r["details"] or "") +
+                (f" — IP {r['ip']}" if r["ip"] else "")
+            ).strip() or "—",
+        }
+        for r in rows
+    ]
+
+    return {"logs": logs, "total": total_row or 0}
 
 
 # ── Surveillance en temps réel ────────────────────────────────────
@@ -1056,6 +1053,23 @@ from app.models.support_ticket import SupportTicket, SupportMessage, TicketStatu
 from app.services.ai_service import translate_text
 from app.services.push_service import send_push_to_user
 import asyncio as _asyncio
+from fastapi import UploadFile, File as FastAPIFile
+
+
+@router.post("/support/upload")
+async def upload_admin_support_file(
+    payload: TokenPayload,
+    db: DBSession,
+    file: UploadFile = FastAPIFile(...),
+):
+    await _require_super_admin(payload, db)
+    from app.services.cloudinary_service import upload_file as cld_upload
+    result = await cld_upload(file, "superadmin", folder_prefix="smarterbloggers/support")
+    return {
+        "url": result["secure_url"],
+        "name": result["original_filename"],
+        "type": file.content_type,
+    }
 
 
 @router.get("/support/tickets")
@@ -1151,6 +1165,9 @@ async def get_support_ticket(ticket_id: str, payload: TokenPayload, db: DBSessio
             "is_from_admin": m.is_from_admin,
             "body_original": m.body_original,
             "body_translated": m.body_translated,
+            "file_url": m.file_url,
+            "file_name": m.file_name,
+            "file_type": m.file_type,
             "sender_name": sender.display_name if sender else ("Admin" if m.is_from_admin else "Tenant"),
             "created_at": m.created_at.isoformat() if m.created_at else None,
         })
@@ -1174,11 +1191,18 @@ async def get_support_ticket(ticket_id: str, payload: TokenPayload, db: DBSessio
 
 
 class AdminReplyBody(BaseModel):
-    body: str
+    body: str = ""
+    file_url: str | None = None
+    file_name: str | None = None
+    file_type: str | None = None
 
 
 @router.post("/support/tickets/{ticket_id}/messages", status_code=201)
 async def admin_reply(ticket_id: str, body: AdminReplyBody, payload: TokenPayload, db: DBSession):
+    from app.core.exceptions import ValidationException
+    if not body.body.strip() and not body.file_url:
+        raise ValidationException("Un message ou un fichier est requis.")
+
     admin = await _require_super_admin(payload, db)
     tkid = uuid.UUID(ticket_id)
 
@@ -1188,16 +1212,19 @@ async def admin_reply(ticket_id: str, body: AdminReplyBody, payload: TokenPayloa
         from app.core.exceptions import NotFoundException
         raise NotFoundException("Ticket introuvable.")
 
-    # Translate reply to tenant's language
+    text_body = body.body.strip()
     target_lang = ticket.tenant_language or "fr"
-    translated = await translate_text(body.body, target_lang)
+    translated = await translate_text(text_body, target_lang) if text_body else ""
 
     msg = SupportMessage(
         ticket_id=tkid,
         sender_id=admin.id,
         is_from_admin=True,
-        body_original=body.body,
+        body_original=text_body,
         body_translated=translated,
+        file_url=body.file_url,
+        file_name=body.file_name,
+        file_type=body.file_type,
     )
     db.add(msg)
     if ticket.status == TicketStatus.closed:
@@ -1211,8 +1238,10 @@ async def admin_reply(ticket_id: str, body: AdminReplyBody, payload: TokenPayloa
             select(TenantUser).where(TenantUser.tenant_id == ticket.tenant_id)
         )
         tenant_users = tu_r.scalars().all()
+        push_body = text_body[:120] if text_body else f"📎 {body.file_name or 'File'}"
         tasks = [
-            send_push_to_user(db, tu.user_id, "📩 Réponse du support", translated[:120], f"/blogs/{ticket.tenant_id}/support/{ticket_id}")
+            send_push_to_user(db, tu.user_id, "📩 Réponse du support", push_body,
+                              f"/blogs/{ticket.tenant_id}/support/{ticket_id}")
             for tu in tenant_users
         ]
         await _asyncio.gather(*tasks, return_exceptions=True)
@@ -1224,6 +1253,9 @@ async def admin_reply(ticket_id: str, body: AdminReplyBody, payload: TokenPayloa
         "is_from_admin": msg.is_from_admin,
         "body_original": msg.body_original,
         "body_translated": msg.body_translated,
+        "file_url": msg.file_url,
+        "file_name": msg.file_name,
+        "file_type": msg.file_type,
         "sender_name": admin.display_name,
         "created_at": msg.created_at.isoformat() if msg.created_at else None,
     }

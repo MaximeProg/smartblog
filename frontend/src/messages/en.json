@@ -1510,7 +1510,9 @@
     "planFree": "Free",
     "planStarter": "Starter",
     "planPro": "Pro",
-    "planBusiness": "Business"
+    "planBusiness": "Business",
+    "supportAlertTitle": "{count, plural, one {# open support ticket} other {# open support tickets}}",
+    "supportAlertDesc": "Click to view your support conversations."
   },
   "studio": {
     "save": "Save",
@@ -2121,7 +2123,18 @@
     "statusDeleted": "Deleted",
     "treeTab": "Referral tree",
     "exportCSV": "Export CSV",
-    "exportError": "Export failed"
+    "exportError": "Export failed",
+    "inviteFriendTitle": "Invite a friend",
+    "inviteFriendDesc": "Send your referral link directly to a friend with a personal message in their language.",
+    "inviteFriendEmail": "Friend's email",
+    "inviteFriendLanguage": "Friend's language",
+    "inviteFriendMessage": "Your personal message",
+    "inviteFriendMessagePlaceholder": "I've been using SmarterBloggers and I think you'd love it…",
+    "inviteFriendTranslationNote": "Your message will be automatically translated to your friend's language.",
+    "inviteFriendSend": "Send invitation",
+    "inviteSentTitle": "Invitation sent!",
+    "inviteSentDesc": "Your invitation was sent to {email}.",
+    "inviteError": "Could not send invitation."
   },
   "tenantAccounting": {
     "title": "Financial overview",
@@ -3052,5 +3065,24 @@
         "allJournals": "All journals"
       }
     }
+  },
+  "acceptInvite": {
+    "loading": "Loading invitation…",
+    "noToken": "No invitation token found in the URL.",
+    "notFound": "This invitation link is invalid, already accepted, or has expired.",
+    "errorTitle": "Invitation not found",
+    "acceptedTitle": "Welcome aboard!",
+    "acceptedDesc": "Invitation accepted. Redirecting you to your blogs…",
+    "title": "You've been invited!",
+    "subtitle": "{name} has invited you to collaborate on a blog.",
+    "blog": "Blog",
+    "role": "Your role",
+    "invitedTo": "Invited email",
+    "authRequired": "You need to log in or create an account to accept this invitation.",
+    "loginBtn": "Log in",
+    "registerBtn": "Create an account",
+    "acceptBtn": "Accept invitation",
+    "acceptError": "Could not accept the invitation.",
+    "expires": "This invitation expires on {date}."
   }
 }

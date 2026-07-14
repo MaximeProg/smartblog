@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import {
   Users, DollarSign, TrendingUp, Clock, Copy, Check,
   ArrowDownToLine, Share2, Wallet, Gift, AlertCircle,
-  CheckCircle2, XCircle, Download, GitBranch,
+  CheckCircle2, XCircle, Download, GitBranch, Send, Mail,
 } from 'lucide-react';
 import { affiliateApi, type AffiliateDashboard, type AffiliateCommission, type CashoutRequest, type AffiliateReferral } from '@/lib/api';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
@@ -52,6 +52,10 @@ export default function AffiliatePage() {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'commissions' | 'cashouts' | 'referrals' | 'tree'>('referrals');
   const [commissionFilter, setCommissionFilter] = useState<string>('all');
+  const [friendEmail, setFriendEmail] = useState('');
+  const [friendLanguage, setFriendLanguage] = useState('en');
+  const [friendMessage, setFriendMessage] = useState('');
+  const [inviteSent, setInviteSent] = useState(false);
 
   // Use the first tenant as the account holder — affiliate is user-level UX,
   // the tenantId is just the backend anchor point for now.
@@ -108,6 +112,27 @@ export default function AffiliatePage() {
       toast({ variant: 'destructive', title: t('exportError') });
     }
   }
+
+  const inviteFriendMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await affiliateApi.inviteFriend(tenantId, {
+        email: friendEmail.trim(),
+        language: friendLanguage,
+        message: friendMessage.trim(),
+      });
+      return data;
+    },
+    onSuccess: () => {
+      setInviteSent(true);
+      setFriendEmail('');
+      setFriendMessage('');
+      setTimeout(() => setInviteSent(false), 4000);
+      toast({ title: t('inviteSentTitle'), description: t('inviteSentDesc', { email: friendEmail.trim() }) });
+    },
+    onError: () => {
+      toast({ variant: 'destructive', title: t('error'), description: t('inviteError') });
+    },
+  });
 
   const cashoutMutation = useMutation({
     mutationFn: async () => { const { data } = await affiliateApi.requestCashout(tenantId, 'nowpayments_crypto'); return data; },
@@ -263,6 +288,79 @@ export default function AffiliatePage() {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                {/* Invite a friend */}
+                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm p-6">
+                  <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-1 flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-violet-600" />
+                    {t('inviteFriendTitle')}
+                  </h2>
+                  <p className="text-[12px] text-slate-400 dark:text-slate-500 mb-5">{t('inviteFriendDesc')}</p>
+
+                  {inviteSent ? (
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                      <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
+                      <p className="text-[13px] font-medium text-green-700 dark:text-green-400">{t('inviteSentTitle')}</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">
+                          {t('inviteFriendEmail')}
+                        </label>
+                        <input
+                          type="email"
+                          value={friendEmail}
+                          onChange={e => setFriendEmail(e.target.value)}
+                          placeholder="friend@example.com"
+                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">
+                          {t('inviteFriendLanguage')}
+                        </label>
+                        <select
+                          value={friendLanguage}
+                          onChange={e => setFriendLanguage(e.target.value)}
+                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
+                        >
+                          <option value="en">English</option>
+                          <option value="fr">Français</option>
+                          <option value="es">Español</option>
+                          <option value="de">Deutsch</option>
+                          <option value="pt">Português</option>
+                          <option value="it">Italiano</option>
+                          <option value="nl">Nederlands</option>
+                          <option value="pl">Polski</option>
+                        </select>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">
+                          {t('inviteFriendMessage')}
+                        </label>
+                        <textarea
+                          value={friendMessage}
+                          onChange={e => setFriendMessage(e.target.value)}
+                          placeholder={t('inviteFriendMessagePlaceholder')}
+                          rows={3}
+                          className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 resize-none"
+                        />
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">{t('inviteFriendTranslationNote')}</p>
+                      </div>
+                      <div className="sm:col-span-2 flex justify-end">
+                        <button
+                          onClick={() => inviteFriendMutation.mutate()}
+                          disabled={!friendEmail.trim() || !friendMessage.trim() || inviteFriendMutation.isPending}
+                          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-[13px] font-semibold disabled:opacity-50 transition-colors"
+                        >
+                          <Send className="h-4 w-4" />
+                          {inviteFriendMutation.isPending ? '…' : t('inviteFriendSend')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Tabs — affiliés, commissions & cashouts */}

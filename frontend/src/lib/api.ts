@@ -331,6 +331,12 @@ export const teamApi = {
 
   updateRole: (tenantId: string, userId: string, role: string) =>
     api.patch<TeamMember>(`/tenants/${tenantId}/team/${userId}`, { role }),
+
+  lookupInvitation: (token: string) =>
+    api.get<{ tenant_id: string; tenant_name: string; inviter_name: string; email: string; role: string; expires_at: string }>(`/invitations/lookup`, { params: { token } }),
+
+  acceptInvitationByToken: (token: string) =>
+    api.post<{ ok: boolean; tenant_id: string; role: string }>(`/invitations/accept`, null, { params: { token } }),
 };
 
 // ─── Newsletter ───────────────────────────────────────────────────────────────
@@ -728,6 +734,9 @@ export const affiliateApi = {
 
   exportCommissions: (tenantId: string) =>
     api.get(`/tenants/${tenantId}/affiliate/commissions/export`, { responseType: 'blob' }),
+
+  inviteFriend: (tenantId: string, data: { email: string; language: string; message: string }) =>
+    api.post<{ ok: boolean; sent_to: string }>(`/tenants/${tenantId}/affiliate/invite-friend`, data),
 };
 
 // ── M24 — Accounting API ──────────────────────────────────────────────────────
@@ -1258,6 +1267,9 @@ export interface SupportMessageItem {
   body_original: string;
   body_translated: string;
   sender_name?: string | null;
+  file_url?: string | null;
+  file_name?: string | null;
+  file_type?: string | null;
   created_at: string | null;
 }
 
@@ -1278,8 +1290,15 @@ export const supportApi = {
   getTicket: (tenantId: string, ticketId: string) =>
     api.get<SupportTicketDetail>(`/tenants/${tenantId}/support/tickets/${ticketId}`),
 
-  sendMessage: (tenantId: string, ticketId: string, body: string) =>
-    api.post<SupportMessageItem>(`/tenants/${tenantId}/support/tickets/${ticketId}/messages`, { body }),
+  uploadFile: (tenantId: string, file: File) => {
+    const form = new FormData(); form.append('file', file);
+    return api.post<{ url: string; name: string; type: string }>(`/tenants/${tenantId}/support/upload`, form);
+  },
+
+  sendMessage: (tenantId: string, ticketId: string, body: string, fileUrl?: string, fileName?: string, fileType?: string) =>
+    api.post<SupportMessageItem>(`/tenants/${tenantId}/support/tickets/${ticketId}/messages`, {
+      body, file_url: fileUrl || null, file_name: fileName || null, file_type: fileType || null,
+    }),
 
   closeTicket: (tenantId: string, ticketId: string) =>
     api.patch<{ ok: boolean; status: string }>(`/tenants/${tenantId}/support/tickets/${ticketId}/close`),
@@ -1366,8 +1385,15 @@ export const superadminApi = {
   getSupportTicket: (ticketId: string) =>
     api.get<SupportTicketDetail>(`/superadmin/support/tickets/${ticketId}`),
 
-  replySupportTicket: (ticketId: string, body: string) =>
-    api.post<SupportMessageItem>(`/superadmin/support/tickets/${ticketId}/messages`, { body }),
+  uploadSupportFile: (file: File) => {
+    const form = new FormData(); form.append('file', file);
+    return api.post<{ url: string; name: string; type: string }>('/superadmin/support/upload', form);
+  },
+
+  replySupportTicket: (ticketId: string, body: string, fileUrl?: string, fileName?: string, fileType?: string) =>
+    api.post<SupportMessageItem>(`/superadmin/support/tickets/${ticketId}/messages`, {
+      body, file_url: fileUrl || null, file_name: fileName || null, file_type: fileType || null,
+    }),
 
   updateSupportTicket: (ticketId: string, data: { status?: string; priority?: string }) =>
     api.patch<{ ok: boolean; status: string; priority: string }>(`/superadmin/support/tickets/${ticketId}`, data),

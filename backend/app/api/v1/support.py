@@ -8,7 +8,7 @@ Push notifications are sent on every new message.
 import uuid
 import asyncio
 from datetime import datetime
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, UploadFile, File
 from pydantic import BaseModel
 from sqlalchemy import select, func, desc, update
 
@@ -62,6 +62,9 @@ def _msg_dict(m: SupportMessage, sender_name: str | None = None) -> dict:
         "body_original": m.body_original,
         "body_translated": m.body_translated,
         "sender_name": sender_name,
+        "file_url": m.file_url,
+        "file_name": m.file_name,
+        "file_type": m.file_type,
         "created_at": m.created_at.isoformat() if m.created_at else None,
     }
 
@@ -203,7 +206,29 @@ async def get_ticket(
 # ─── Send message ─────────────────────────────────────────────────
 
 class SendMessageBody(BaseModel):
-    body: str
+    body: str = ""
+    file_url: str | None = None
+    file_name: str | None = None
+    file_type: str | None = None
+
+
+# ─── Upload fichier support (tenant) ──────────────────────────────
+
+@router.post("/upload")
+async def upload_support_file(
+    tenant_id: str,
+    payload: TokenPayload,
+    db: DBSession,
+    file: UploadFile = File(...),
+):
+    await _require_tenant_access(payload, db, tenant_id)
+    from app.services.cloudinary_service import upload_file as cld_upload
+    result = await cld_upload(file, tenant_id, folder_prefix="smarterbloggers/support")
+    return {
+        "url": result["secure_url"],
+        "name": result["original_filename"],
+        "type": file.content_type,
+    }
 
 
 @router.post("/tickets/{ticket_id}/messages", status_code=201)
@@ -214,6 +239,10 @@ async def send_message(
     payload: TokenPayload,
     db: DBSession,
 ):
+    from app.core.exceptions import ValidationException
+    if not body.body.strip() and not body.file_url:
+        raise ValidationException("Un message ou un fichier est requis.")
+
     await _require_tenant_access(payload, db, tenant_id)
     tid = uuid.UUID(tenant_id)
     tkid = uuid.UUID(ticket_id)
@@ -228,26 +257,27 @@ async def send_message(
     if ticket.status in (TicketStatus.resolved, TicketStatus.closed):
         ticket.status = TicketStatus.open
 
-    translated = await translate_text(body.body, "en")
+    text_body = body.body.strip()
+    translated = await translate_text(text_body, "en") if text_body else ""
     msg = SupportMessage(
         ticket_id=tkid,
         sender_id=user_id,
         is_from_admin=False,
-        body_original=body.body,
+        body_original=text_body,
         body_translated=translated,
+        file_url=body.file_url,
+        file_name=body.file_name,
+        file_type=body.file_type,
     )
     db.add(msg)
     ticket.updated_at = datetime.utcnow()
     await db.commit()
 
-    # Push admins
-    user_r = await db.execute(select(User).where(User.id == user_id))
-    sender = user_r.scalar_one_or_none()
-    sender_name = sender.display_name if sender else "Tenant"
+    push_body = text_body[:120] if text_body else f"📎 {body.file_name or 'File'}"
     await _push_super_admins(
         db,
         title=f"💬 Reply on: {ticket.subject}",
-        body=body.body[:120],
+        body=push_body,
         url=f"/superadmin/support/{ticket_id}",
     )
 

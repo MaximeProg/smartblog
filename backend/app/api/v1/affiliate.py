@@ -15,6 +15,7 @@ from app.core.dependencies import TokenPayload, DBSession
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
 from app.models.affiliate import AffiliateRelationship, AffiliateCommission, AffiliateCashoutRequest
 from app.models.tenant import Tenant
+from app.models.user import User
 from app.models.enums import AffiliateCommissionStatus, CashoutStatus, UserRole
 from app.api.v1.tenants import _assert_member, _assert_role
 
@@ -570,6 +571,64 @@ async def get_referral_tree(
         for r in rows
     ]
     return {"root_tenant_id": str(tenant_id), "nodes": nodes}
+
+
+# ── POST /tenants/{tenant_id}/affiliate/invite-friend ─────────────
+
+class InviteFriendRequest(BaseModel):
+    email: str
+    language: str = "en"
+    message: str
+
+
+@router.post("/invite-friend", status_code=200)
+async def invite_friend(
+    tenant_id: uuid.UUID,
+    body: InviteFriendRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Send a personalised referral email to a friend in their language."""
+    from app.services.ai_service import translate_text
+    from app.services.email_service import send_affiliate_friend_invitation
+
+    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+
+    tenant = await db.get(Tenant, tenant_id)
+    if not tenant:
+        raise NotFoundException("Blog non trouvé.")
+
+    if not tenant.affiliate_code:
+        tenant.affiliate_code = _generate_affiliate_code()
+        await db.commit()
+        await db.refresh(tenant)
+
+    referral_url = f"{settings.FRONTEND_URL}/register?ref={tenant.affiliate_code}"
+
+    user_result = await db.execute(select(User).where(User.id == uuid.UUID(payload["sub"])))
+    sender = user_result.scalar_one_or_none()
+    sender_name = (sender.display_name or sender.email) if sender else "SmarterBloggers"
+
+    # Translate message to friend's language
+    lang = body.language.lower()[:2]
+    target_lang = "FR" if lang == "fr" else "EN"
+    try:
+        message_translated = await translate_text(body.message, target_lang)
+    except Exception:
+        message_translated = body.message
+
+    try:
+        await send_affiliate_friend_invitation(
+            to=body.email,
+            sender_name=sender_name,
+            message_translated=message_translated,
+            referral_url=referral_url,
+            language=lang,
+        )
+    except Exception:
+        pass
+
+    return {"ok": True, "sent_to": body.email}
 
 
 async def _trigger_auto_payout(db, tenant: Tenant, commission: AffiliateCommission, wallet_address: str):

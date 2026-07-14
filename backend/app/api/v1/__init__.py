@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from app.api.v1.auth import router as auth_router
 from app.api.v1.tenants import router as tenants_router
-from app.api.v1.team import router as team_router
+from app.api.v1.team import router as team_router, invitation_router
 from app.api.v1.articles import router as articles_router
 from app.api.v1.categories import router as categories_router
 from app.api.v1.tags import router as tags_router
@@ -34,6 +34,7 @@ api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(auth_router)
 api_router.include_router(tenants_router)
 api_router.include_router(team_router)
+api_router.include_router(invitation_router)
 api_router.include_router(pages_router)
 api_router.include_router(menus_router)
 api_router.include_router(articles_router)

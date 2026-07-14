@@ -75,6 +75,15 @@ async def login(
         email_verified=firebase_data.get("email_verified", False),
     )
 
+    from app.services.log_service import log_event
+    await log_event(
+        db, "user.login",
+        actor_email=firebase_data["email"],
+        level="info",
+        details=f"provider={firebase_data.get('sign_in_provider', 'password')}",
+        ip=ip,
+    )
+
     # Extract refresh token before serialization
     refresh_plain = getattr(result, "_refresh_token", None)
     if refresh_plain:

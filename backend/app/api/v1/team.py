@@ -1,21 +1,24 @@
 import uuid
 import secrets
 from datetime import datetime, timezone, timedelta
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from sqlalchemy import select
 from pydantic import BaseModel, EmailStr
 
+from app.core.config import settings
 from app.core.dependencies import TokenPayload, DBSession
 from app.core.exceptions import (
     NotFoundException, ValidationException, PlanLimitReachedException,
 )
 from app.models.tenant_user import TenantUser, UserInvitation
+from app.models.tenant import Tenant
 from app.models.user import User
 from app.models.enums import UserRole
 from app.services.tenant_service import get_tenant, PLAN_LIMITS
 from app.api.v1.tenants import _assert_role
 
 router = APIRouter(prefix="/tenants/{tenant_id}/team", tags=["team"])
+invitation_router = APIRouter(prefix="/invitations", tags=["invitations"])
 
 
 class InviteMemberRequest(BaseModel):
@@ -133,7 +136,7 @@ async def invite_member(
         inviter_result = await db.execute(select(User).where(User.id == uuid.UUID(payload["sub"])))
         inviter = inviter_result.scalar_one_or_none()
         inviter_name = inviter.display_name or inviter.email if inviter else "L'équipe"
-        invite_url = f"https://{tenant.slug}.{settings.PLATFORM_DOMAIN}/accept-invite?token={invitation.token}"
+        invite_url = f"{settings.FRONTEND_URL}/en/accept-invite?token={invitation.token}"
         from app.services.email_service import send_team_invitation
         await send_team_invitation(
             to=body.email,
@@ -269,3 +272,101 @@ async def list_invitations(
         )
         for i in result.scalars().all()
     ]
+
+
+# ── DELETE /tenants/{tenant_id}/team/invitations/{invitation_id} ──
+
+@router.delete("/invitations/{invitation_id}", status_code=204)
+async def cancel_invitation(
+    tenant_id: uuid.UUID,
+    invitation_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+    result = await db.execute(
+        select(UserInvitation).where(
+            UserInvitation.id == invitation_id,
+            UserInvitation.tenant_id == tenant_id,
+        )
+    )
+    inv = result.scalar_one_or_none()
+    if not inv:
+        raise NotFoundException("Invitation")
+    await db.delete(inv)
+    await db.commit()
+
+
+# ── Public invitation lookup (no auth) ────────────────────────────
+
+@invitation_router.get("/lookup")
+async def lookup_invitation(
+    token: str = Query(...),
+    db: DBSession = None,  # type: ignore[assignment]  — Depends() injects despite = None
+):
+    result = await db.execute(
+        select(UserInvitation, Tenant, User)
+        .join(Tenant, Tenant.id == UserInvitation.tenant_id)
+        .join(User, User.id == UserInvitation.invited_by)
+        .where(
+            UserInvitation.token == token,
+            UserInvitation.accepted_at.is_(None),
+        )
+    )
+    row = result.first()
+    if not row:
+        raise NotFoundException("Invitation introuvable ou déjà acceptée.")
+    inv, tenant, inviter = row
+    if inv.expires_at < datetime.now(timezone.utc):
+        raise ValidationException("Cette invitation a expiré.")
+    return {
+        "tenant_id": str(inv.tenant_id),
+        "tenant_name": tenant.name,
+        "inviter_name": inviter.display_name or inviter.email,
+        "email": inv.email,
+        "role": inv.role.value,
+        "expires_at": inv.expires_at.isoformat(),
+    }
+
+
+# ── Accept invitation by token (auth required) ────────────────────
+
+@invitation_router.post("/accept")
+async def accept_invitation_by_token(
+    token: str = Query(...),
+    payload: TokenPayload = None,
+    db: DBSession = None,
+):
+    result = await db.execute(
+        select(UserInvitation).where(
+            UserInvitation.token == token,
+            UserInvitation.accepted_at.is_(None),
+        )
+    )
+    inv = result.scalar_one_or_none()
+    if not inv:
+        raise NotFoundException("Invitation introuvable ou déjà acceptée.")
+    if inv.expires_at < datetime.now(timezone.utc):
+        raise ValidationException("Cette invitation a expiré.")
+
+    user_id = uuid.UUID(payload["sub"])
+
+    # Vérifier si déjà membre
+    existing = await db.execute(
+        select(TenantUser).where(
+            TenantUser.tenant_id == inv.tenant_id,
+            TenantUser.user_id == user_id,
+        )
+    )
+    if existing.scalar_one_or_none():
+        raise ValidationException("Vous êtes déjà membre de ce blog.")
+
+    db.add(TenantUser(
+        tenant_id=inv.tenant_id,
+        user_id=user_id,
+        role=inv.role,
+        invited_by=inv.invited_by,
+    ))
+    inv.accepted_at = datetime.now(timezone.utc)
+    await db.commit()
+    return {"ok": True, "tenant_id": str(inv.tenant_id), "role": inv.role.value}

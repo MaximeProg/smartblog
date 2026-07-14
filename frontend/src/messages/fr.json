@@ -1490,7 +1490,9 @@
     "planFree": "Gratuit",
     "planStarter": "Starter",
     "planPro": "Pro",
-    "planBusiness": "Business"
+    "planBusiness": "Business",
+    "supportAlertTitle": "{count, plural, one {# ticket de support ouvert} other {# tickets de support ouverts}}",
+    "supportAlertDesc": "Cliquez pour voir vos conversations de support."
   },
   "studio": {
     "save": "Sauvegarder",
@@ -2101,7 +2103,18 @@
     "statusDeleted": "Supprimé",
     "treeTab": "Arbre de filleuls",
     "exportCSV": "Exporter CSV",
-    "exportError": "Erreur d'export"
+    "exportError": "Erreur d'export",
+    "inviteFriendTitle": "Inviter un ami",
+    "inviteFriendDesc": "Envoyez votre lien de parrainage directement à un ami avec un message personnel dans sa langue.",
+    "inviteFriendEmail": "Email de l'ami",
+    "inviteFriendLanguage": "Langue de l'ami",
+    "inviteFriendMessage": "Votre message personnel",
+    "inviteFriendMessagePlaceholder": "J'utilise SmarterBloggers et je pense que ça te plairait…",
+    "inviteFriendTranslationNote": "Votre message sera automatiquement traduit dans la langue de votre ami.",
+    "inviteFriendSend": "Envoyer l'invitation",
+    "inviteSentTitle": "Invitation envoyée !",
+    "inviteSentDesc": "Votre invitation a été envoyée à {email}.",
+    "inviteError": "Impossible d'envoyer l'invitation."
   },
   "tenantAccounting": {
     "title": "Vue financière",
@@ -3025,5 +3038,24 @@
         "allJournals": "Tous les journaux"
       }
     }
+  },
+  "acceptInvite": {
+    "loading": "Chargement de l'invitation…",
+    "noToken": "Aucun jeton d'invitation trouvé dans l'URL.",
+    "notFound": "Ce lien d'invitation est invalide, déjà accepté ou a expiré.",
+    "errorTitle": "Invitation introuvable",
+    "acceptedTitle": "Bienvenue dans l'équipe !",
+    "acceptedDesc": "Invitation acceptée. Redirection vers vos blogs…",
+    "title": "Vous êtes invité(e) !",
+    "subtitle": "{name} vous invite à collaborer sur un blog.",
+    "blog": "Blog",
+    "role": "Votre rôle",
+    "invitedTo": "Email invité",
+    "authRequired": "Vous devez vous connecter ou créer un compte pour accepter cette invitation.",
+    "loginBtn": "Se connecter",
+    "registerBtn": "Créer un compte",
+    "acceptBtn": "Accepter l'invitation",
+    "acceptError": "Impossible d'accepter l'invitation.",
+    "expires": "Cette invitation expire le {date}."
   }
 }

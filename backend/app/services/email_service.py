@@ -466,6 +466,48 @@ async def send_2fa_backup_codes_email(
     )
 
 
+async def send_affiliate_friend_invitation(
+    to: str,
+    sender_name: str,
+    message_translated: str,
+    referral_url: str,
+    language: str = "en",
+) -> None:
+    """Email sent from a SmarterBloggers user to a friend, in the friend's language."""
+    is_fr = language.lower().startswith("fr")
+    if is_fr:
+        subject_line = f"{sender_name} vous invite à découvrir SmarterBloggers"
+        headline = f"{sender_name} pense à vous !"
+        cta = "Découvrir SmarterBloggers"
+        note_text = "Ce lien de parrainage vous offre un avantage exclusif à votre inscription."
+    else:
+        subject_line = f"{sender_name} invited you to try SmarterBloggers"
+        headline = f"{sender_name} thought of you!"
+        cta = "Discover SmarterBloggers"
+        note_text = "This referral link gives you an exclusive benefit when you sign up."
+
+    body = (
+        _h1(headline) +
+        f'<div style="background:#F0F9FF;border:1px solid #BAE6FD;border-left:4px solid {BRAND_BLUE};'
+        f'border-radius:8px;padding:16px 20px;margin:20px 0;">'
+        f'<p style="margin:0;font-size:15px;line-height:1.7;color:{BRAND_TEXT};font-style:italic;">'
+        f'&ldquo;{message_translated}&rdquo;</p>'
+        f'</div>' +
+        _btn(cta, referral_url) +
+        _divider() +
+        _note(note_text)
+    )
+    await _send(
+        to=to,
+        subject=subject_line,
+        html=_base(
+            title="SmarterBloggers",
+            preview=headline,
+            body_html=body,
+        ),
+    )
+
+
 async def send_affiliate_commission_notification(
     to: str,
     display_name: str,

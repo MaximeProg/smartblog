@@ -3,12 +3,12 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { Plus, Newspaper, Mail, Users, ExternalLink, Settings, TrendingUp, Eye, ArrowUpRight } from 'lucide-react';
+import { Plus, Newspaper, Mail, Users, ExternalLink, Settings, TrendingUp, Eye, ArrowUpRight, LifeBuoy } from 'lucide-react';
 import Link from 'next/link';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { useAuthStore } from '@/store/auth.store';
-import { tenantsApi, analyticsApi } from '@/lib/api';
+import { tenantsApi, analyticsApi, supportApi } from '@/lib/api';
 import type { TenantInfo, DailyMetric } from '@/types';
 
 // ─── Plan gradients ───────────────────────────────────────────────────────────
@@ -208,6 +208,15 @@ export default function DashboardPage() {
   const totalSubscribers = blogs.reduce((s, b) => s + (b.subscribers_count ?? 0), 0);
 
   const viewsSparkline = mergedViews.slice(-14).map(d => d.views);
+  const firstBlogId = blogs[0]?.id ?? '';
+
+  const { data: openTicketsCount = 0 } = useQuery({
+    queryKey: ['dashboard-support-open', firstBlogId],
+    queryFn: () => supportApi.listTickets(firstBlogId, { status: 'open', limit: 1 }).then(r => r.data.total ?? 0),
+    enabled: !!firstBlogId,
+    refetchInterval: 120000,
+    retry: false,
+  });
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
@@ -244,6 +253,25 @@ export default function DashboardPage() {
                 <span className="sm:hidden">New</span>
               </button>
             </div>
+
+            {/* Support alert */}
+            {!blogsLoading && openTicketsCount > 0 && firstBlogId && (
+              <Link
+                href={`/${locale}/blogs/${firstBlogId}/support`}
+                className="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors group"
+              >
+                <div className="h-9 w-9 rounded-xl bg-blue-100 dark:bg-blue-900/40 border border-blue-200 dark:border-blue-800 flex items-center justify-center shrink-0">
+                  <LifeBuoy className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-bold text-blue-800 dark:text-blue-200">
+                    {t('supportAlertTitle', { count: openTicketsCount })}
+                  </p>
+                  <p className="text-[11px] text-blue-600/70 dark:text-blue-400/70">{t('supportAlertDesc')}</p>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-blue-500 dark:text-blue-400 shrink-0 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            )}
 
             {!blogsLoading && blogs.length > 0 && (
               <>
