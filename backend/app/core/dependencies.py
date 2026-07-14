@@ -1,5 +1,7 @@
 from typing import Annotated
-from fastapi import Depends, Request, Cookie
+import uuid
+from datetime import datetime
+from fastapi import Depends, Request, HTTPException
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -72,3 +74,51 @@ def require_super_admin():
             raise ForbiddenException("Accès Super Admin requis.")
         return payload
     return _check
+
+
+async def check_plan_active(
+    tenant_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db_session),
+    payload: dict = Depends(get_current_user_from_token),
+) -> None:
+    """Bloque l'accès si le trial est expiré ou l'abonnement inactif.
+    Super admins et tenants sans subscription sont toujours autorisés.
+    """
+    if payload.get("is_super_admin"):
+        return
+
+    from app.models.payment import TenantSubscription
+    from app.models.enums import SubscriptionStatus
+
+    result = await db.execute(
+        select(TenantSubscription).where(TenantSubscription.tenant_id == tenant_id)
+    )
+    sub = result.scalar_one_or_none()
+
+    if sub is None:
+        return  # Nouveau tenant, aucun enregistrement → autoriser
+
+    now = datetime.utcnow()
+
+    if sub.status == SubscriptionStatus.TRIALING:
+        if sub.trial_ends_at and sub.trial_ends_at < now:
+            raise HTTPException(
+                status_code=402,
+                detail={
+                    "code": "TRIAL_EXPIRED",
+                    "message": "Votre période d'essai a expiré. Passez à un plan payant pour continuer.",
+                },
+            )
+    elif sub.status in (
+        SubscriptionStatus.CANCELED,
+        SubscriptionStatus.PAST_DUE,
+        SubscriptionStatus.UNPAID,
+        SubscriptionStatus.PAUSED,
+    ):
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "code": "SUBSCRIPTION_INACTIVE",
+                "message": "Votre abonnement est inactif. Renouvelez votre plan pour accéder à cette fonctionnalité.",
+            },
+        )

@@ -1,9 +1,12 @@
 ﻿"""M23 — Affiliate Program API"""
+import csv
+import io
 import uuid
 import random
 import string
 from datetime import datetime, timezone
 from fastapi import APIRouter, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy import select, func, update
 from pydantic import BaseModel
 
@@ -409,6 +412,24 @@ async def _accrue_commission(db, affiliate_tenant_id, source_tenant_id, source_t
         await _trigger_auto_payout(db, tenant, commission, wallet_address)
     # Sinon reste PENDING jusqu'à ce que l'affilié ajoute son wallet
 
+    # Email de notification
+    try:
+        from app.services.email_service import send_affiliate_commission_notification
+        from app.core.config import settings
+        if admin_member and user:
+            affiliate_dashboard_url = f"{settings.FRONTEND_URL}/affiliate"
+            await send_affiliate_commission_notification(
+                to=user.email,
+                display_name=user.display_name or user.email,
+                commission_amount=float(commission_amount),
+                new_balance=new_balance,
+                source_type=source_type.value if hasattr(source_type, "value") else str(source_type),
+                level=level,
+                dashboard_url=affiliate_dashboard_url,
+            )
+    except Exception:
+        pass
+
 
 @router.get("/referrals")
 async def list_referrals(
@@ -470,6 +491,85 @@ async def list_referrals(
         ))
 
     return {"referrals": referrals, "total": total}
+
+
+@router.get("/commissions/export")
+async def export_commissions_csv(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Export all commissions as CSV for this affiliate tenant."""
+    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+
+    result = await db.execute(
+        select(AffiliateCommission)
+        .where(AffiliateCommission.affiliate_tenant_id == tenant_id)
+        .order_by(AffiliateCommission.created_at.desc())
+    )
+    commissions = result.scalars().all()
+
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["ID", "Source", "Type", "Commission (USDT)", "Status", "Level", "Date"])
+    for c in commissions:
+        writer.writerow([
+            str(c.id),
+            str(c.source_tenant_id),
+            c.source_type,
+            f"{c.commission_amount:.4f}",
+            c.status.value if hasattr(c.status, "value") else c.status,
+            c.level,
+            c.created_at.isoformat() if c.created_at else "",
+        ])
+
+    buf.seek(0)
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=commissions.csv"},
+    )
+
+
+@router.get("/tree")
+async def get_referral_tree(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+    max_depth: int = Query(3, ge=1, le=5),
+):
+    """Return the referral tree up to max_depth levels."""
+    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+
+    result = await db.execute(
+        select(
+            AffiliateRelationship.descendant_id,
+            AffiliateRelationship.level,
+            Tenant.name,
+            Tenant.slug,
+            Tenant.plan,
+        )
+        .join(Tenant, Tenant.id == AffiliateRelationship.descendant_id)
+        .where(
+            AffiliateRelationship.ancestor_id == tenant_id,
+            AffiliateRelationship.level <= max_depth,
+            Tenant.deleted_at.is_(None),
+        )
+        .order_by(AffiliateRelationship.level, Tenant.name)
+    )
+    rows = result.all()
+
+    nodes = [
+        {
+            "tenant_id": str(r.descendant_id),
+            "name": r.name,
+            "slug": r.slug,
+            "plan": r.plan.value if hasattr(r.plan, "value") else str(r.plan),
+            "level": r.level,
+        }
+        for r in rows
+    ]
+    return {"root_tenant_id": str(tenant_id), "nodes": nodes}
 
 
 async def _trigger_auto_payout(db, tenant: Tenant, commission: AffiliateCommission, wallet_address: str):

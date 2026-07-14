@@ -9,14 +9,19 @@ from sqlalchemy import select, func
 from pydantic import BaseModel
 from typing import Optional
 
-from app.core.dependencies import TokenPayload, DBSession
+from fastapi import Depends
+from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.models.comment import Comment, CommentBan
 from app.models.article import Article
 from app.models.user import User
 from app.models.enums import CommentStatus, UserRole
 from app.api.v1.tenants import _assert_member, _assert_role
 
-router = APIRouter(prefix="/tenants/{tenant_id}/moderation", tags=["moderation"])
+router = APIRouter(
+    prefix="/tenants/{tenant_id}/moderation",
+    tags=["moderation"],
+    dependencies=[Depends(check_plan_active)],
+)
 
 
 class CommentListItem(BaseModel):

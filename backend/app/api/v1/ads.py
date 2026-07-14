@@ -5,13 +5,18 @@ from sqlalchemy import select
 from pydantic import BaseModel, HttpUrl
 
 from app.core.config import settings
-from app.core.dependencies import TokenPayload, DBSession
+from fastapi import Depends
+from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
 from app.models.ad import Ad, AdLinkScan
 from app.models.enums import AdSubmissionStatus, AdCampaignStatus, LinkSafetyStatus, UserRole
 from app.api.v1.tenants import _assert_member, _assert_role
 
-router = APIRouter(prefix="/tenants/{tenant_id}/ads", tags=["ads"])
+router = APIRouter(
+    prefix="/tenants/{tenant_id}/ads",
+    tags=["ads"],
+    dependencies=[Depends(check_plan_active)],
+)
 
 
 # ── Schemas ───────────────────────────────────────────────────────

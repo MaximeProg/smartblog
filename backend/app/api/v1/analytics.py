@@ -1,16 +1,24 @@
 import uuid
 import hashlib
+import csv
+import io
 from datetime import datetime, timezone, timedelta, date
 from fastapi import APIRouter, Request, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy import select, func, text
 from pydantic import BaseModel
 
-from app.core.dependencies import TokenPayload, DBSession
+from fastapi import Depends
+from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.models.analytics import PageView, DailyAnalytics
 from app.api.v1.tenants import _assert_role
 from app.models.enums import UserRole
 
-router = APIRouter(prefix="/tenants/{tenant_id}/analytics", tags=["analytics"])
+router = APIRouter(
+    prefix="/tenants/{tenant_id}/analytics",
+    tags=["analytics"],
+    dependencies=[Depends(check_plan_active)],
+)
 
 
 class TrackRequest(BaseModel):
@@ -31,6 +39,7 @@ class OverviewResponse(BaseModel):
     total_views: int
     unique_sessions: int
     avg_duration_seconds: float
+    bounce_rate: float
     views_by_day: list[dict]
     top_articles: list[dict]
     top_referrers: list[dict]
@@ -136,6 +145,24 @@ async def get_overview(
     )
     avg_duration = float(avg_dur.scalar_one() or 0)
 
+    # Bounce rate : sessions avec une seule page vue
+    bounce_q = await db.execute(text("""
+        SELECT
+          COUNT(*) FILTER (WHERE page_count = 1) AS bounced,
+          COUNT(*) AS total
+        FROM (
+          SELECT session_id, COUNT(*) AS page_count
+          FROM page_views
+          WHERE tenant_id = :tid AND created_at >= :since AND session_id IS NOT NULL
+          GROUP BY session_id
+        ) s
+    """), {"tid": str(tenant_id), "since": since})
+    bounce_row = bounce_q.one()
+    bounce_rate = round(
+        (bounce_row.bounced / bounce_row.total * 100) if bounce_row.total > 0 else 0.0,
+        1,
+    )
+
     # Vues par jour
     daily = await db.execute(text("""
         SELECT DATE(created_at AT TIME ZONE 'UTC') as day,
@@ -191,6 +218,7 @@ async def get_overview(
         total_views=total_views,
         unique_sessions=unique_sessions,
         avg_duration_seconds=avg_duration,
+        bounce_rate=bounce_rate,
         views_by_day=views_by_day,
         top_articles=top_articles,
         top_referrers=top_referrers,
@@ -240,3 +268,54 @@ async def article_analytics(
             for r in rows
         ],
     }
+
+
+# ── GET /analytics/export ─────────────────────────────────────────
+
+@router.get("/export")
+async def export_analytics(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+    days: int = Query(default=30, ge=1, le=365),
+    format: str = Query(default="csv"),
+):
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
+    since = datetime.now(timezone.utc) - timedelta(days=days)
+
+    rows = await db.execute(text("""
+        SELECT
+            DATE(pv.created_at AT TIME ZONE 'UTC') AS day,
+            a.title AS article_title,
+            a.slug AS article_slug,
+            COUNT(*) AS views,
+            COUNT(DISTINCT pv.session_id) AS sessions,
+            ROUND(AVG(pv.duration_seconds)::numeric, 0) AS avg_duration_s,
+            ROUND(AVG(pv.scroll_depth_pct)::numeric, 1) AS avg_scroll_pct,
+            pv.device_type,
+            pv.country_code
+        FROM page_views pv
+        LEFT JOIN articles a ON a.id = pv.article_id
+        WHERE pv.tenant_id = :tid AND pv.created_at >= :since
+        GROUP BY day, a.title, a.slug, pv.device_type, pv.country_code
+        ORDER BY day DESC, views DESC
+    """), {"tid": str(tenant_id), "since": since})
+    data = rows.all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Date", "Article", "Slug", "Vues", "Sessions", "Durée moy. (s)", "Scroll moy. (%)", "Appareil", "Pays"])
+    for r in data:
+        writer.writerow([
+            r.day, r.article_title or "(Page accueil)", r.article_slug or "",
+            r.views, r.sessions, r.avg_duration_s or 0, r.avg_scroll_pct or 0,
+            r.device_type or "", r.country_code or "",
+        ])
+
+    output.seek(0)
+    filename = f"analytics_{tenant_id}_{days}j.csv"
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )

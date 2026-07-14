@@ -5,8 +5,8 @@ Résout le tenant par slug (path param).
 import uuid
 import random
 import secrets
-from fastapi import APIRouter, Query, Request
-from fastapi.responses import Response, PlainTextResponse
+from fastapi import APIRouter, Query, Request, HTTPException
+from fastapi.responses import Response, PlainTextResponse, RedirectResponse
 from sqlalchemy import select, and_, update, func, text as sa_text
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel, EmailStr
@@ -18,7 +18,7 @@ from sqlalchemy.orm import joinedload
 from app.core.database import get_db
 from app.core.exceptions import NotFoundException, ValidationException
 from app.models.tenant import Tenant
-from app.models.article import Article, Category, Tag
+from app.models.article import Article, Category, Tag, SlugRedirect
 from app.models.comment import Comment
 from app.models.ad import Ad
 from app.models.newsletter import NewsletterSubscriber
@@ -181,6 +181,20 @@ async def get_public_article(
     )
     article = result.scalar_one_or_none()
     if not article:
+        # Check for a 301 redirect (slug changed)
+        from fastapi.responses import RedirectResponse
+        redirect = await db.execute(
+            select(SlugRedirect).where(
+                SlugRedirect.tenant_id == tenant.id,
+                SlugRedirect.old_slug == article_slug,
+            ).order_by(SlugRedirect.created_at.desc()).limit(1)
+        )
+        redir = redirect.scalar_one_or_none()
+        if redir:
+            return RedirectResponse(
+                url=f"/public/{slug}/articles/{redir.new_slug}",
+                status_code=301,
+            )
         raise NotFoundException("Article")
 
     is_paid = article.visibility == ContentVisibility.PAID
@@ -805,6 +819,24 @@ async def create_public_comment(
         raise ValidationException("Le commentaire est trop court.")
     if len(body.content) > 5000:
         raise ValidationException("Le commentaire est trop long (max 5000 caractères).")
+
+    # Rate limiting : 5 commentaires par heure par IP
+    ip = request.client.host if request.client else "unknown"
+    try:
+        from app.core.redis_client import redis, key_rate_limit
+        rate_key = key_rate_limit(ip, f"comments:{slug}")
+        count = await redis.incr(rate_key)
+        if count == 1:
+            await redis.expire(rate_key, 3600)
+        if count > 5:
+            raise HTTPException(
+                status_code=429,
+                detail="Trop de commentaires. Réessayez dans une heure.",
+            )
+    except HTTPException:
+        raise
+    except Exception:
+        pass  # Redis indisponible → on laisse passer
 
     tenant = await _resolve_tenant(db, slug)
     article = await _resolve_public_article(db, tenant, article_slug)

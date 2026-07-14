@@ -464,3 +464,47 @@ async def send_2fa_backup_codes_email(
             body_html=body,
         ),
     )
+
+
+async def send_affiliate_commission_notification(
+    to: str,
+    display_name: str,
+    commission_amount: float,
+    new_balance: float,
+    source_type: str,
+    level: int,
+    dashboard_url: str,
+) -> None:
+    """Notifie un affilié qu'une commission vient d'être créditée sur son solde."""
+    source_label = "abonnement SaaS" if source_type == "subscription" else "slot publicitaire"
+    body = (
+        _h1("Commission affilié créditée !") +
+        _p(f"Bonjour <strong>{display_name}</strong>,") +
+        _p(f"Bonne nouvelle ! Une commission de niveau {level} vient d'être créditée "
+           f"sur votre compte affilié suite à un <strong>{source_label}</strong>.") +
+        f'<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #10B981;'
+        f'border-radius:8px;padding:16px 20px;margin:20px 0;">'
+        f'<table cellpadding="0" cellspacing="0" width="100%">'
+        f'<tr>'
+        f'<td style="font-size:13px;color:{BRAND_MUTED};width:150px;">Commission créditée</td>'
+        f'<td style="font-size:18px;font-weight:800;color:#10B981;">+{commission_amount:.4f} USDT</td>'
+        f'</tr>'
+        f'<tr>'
+        f'<td style="font-size:13px;color:{BRAND_MUTED};padding-top:8px;">Nouveau solde</td>'
+        f'<td style="font-size:15px;font-weight:700;color:{BRAND_DARK};padding-top:8px;">{new_balance:.4f} USDT</td>'
+        f'</tr>'
+        f'</table>'
+        f'</div>' +
+        _btn("Voir mon tableau de bord affilié", dashboard_url, "#10B981") +
+        _divider() +
+        _note("Les commissions sont versées automatiquement sur votre wallet USDT TRC20 enregistré.")
+    )
+    await _send(
+        to=to,
+        subject=f"[SmarterBloggers] +{commission_amount:.4f} USDT crédité sur votre compte affilié",
+        html=_base(
+            title="Commission affilié créditée",
+            preview=f"Vous venez de gagner {commission_amount:.4f} USDT en tant qu'affilié niveau {level}.",
+            body_html=body,
+        ),
+    )

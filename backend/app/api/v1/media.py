@@ -4,14 +4,19 @@ from sqlalchemy import select
 from pydantic import BaseModel
 from datetime import datetime
 
-from app.core.dependencies import TokenPayload, DBSession
+from fastapi import Depends
+from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import NotFoundException
 from app.models.media import Media
 from app.models.enums import MediaType, UserRole
 from app.services.cloudinary_service import upload_file, delete_file
 from app.api.v1.tenants import _assert_member, _assert_role
 
-router = APIRouter(prefix="/tenants/{tenant_id}/media", tags=["media"])
+router = APIRouter(
+    prefix="/tenants/{tenant_id}/media",
+    tags=["media"],
+    dependencies=[Depends(check_plan_active)],
+)
 
 
 class MediaResponse(BaseModel):

@@ -15,6 +15,7 @@ class PushToken(Base):
     token: Mapped[str] = mapped_column(Text, nullable=False)
     platform: Mapped[str] = mapped_column(String(20), nullable=False, default="web")  # web | ios | android
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    category_ids: Mapped[list | None] = mapped_column(JSONB)  # liste de category UUIDs (str) pour segmentation
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 

@@ -527,3 +527,69 @@ async def book_ad_slot_payment(
     ]
     for ln in lines:
         db.add(ln)
+
+
+# ── Tenant read-only view ─────────────────────────────────────────
+
+tenant_accounting_router = APIRouter(
+    prefix="/tenants/{tenant_id}/accounting",
+    tags=["accounting-tenant"],
+)
+
+
+@tenant_accounting_router.get("/summary")
+async def tenant_accounting_summary(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Read-only revenue/expense summary for the tenant."""
+    from app.models.payment import Transaction
+    from app.models.enums import TransactionStatus, TransactionType
+    from app.api.v1.tenants import _assert_member
+
+    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+
+    sub_q = await db.execute(
+        select(func.coalesce(func.sum(Transaction.amount_fiat), 0)).where(
+            Transaction.tenant_id == tenant_id,
+            Transaction.status == TransactionStatus.COMPLETED,
+            Transaction.transaction_type == TransactionType.SUBSCRIPTION,
+        )
+    )
+    total_subscription_paid = float(sub_q.scalar() or 0)
+
+    ad_q = await db.execute(
+        select(func.coalesce(func.sum(Transaction.amount_fiat), 0)).where(
+            Transaction.tenant_id == tenant_id,
+            Transaction.status == TransactionStatus.COMPLETED,
+            Transaction.transaction_type == TransactionType.AD_CAMPAIGN,
+        )
+    )
+    total_ad_revenue = float(ad_q.scalar() or 0)
+
+    txn_q = await db.execute(
+        select(Transaction)
+        .where(Transaction.tenant_id == tenant_id)
+        .order_by(Transaction.created_at.desc())
+        .limit(50)
+    )
+    transactions = txn_q.scalars().all()
+
+    return {
+        "total_subscription_paid": total_subscription_paid,
+        "total_ad_revenue": total_ad_revenue,
+        "net": total_ad_revenue - total_subscription_paid,
+        "transactions": [
+            {
+                "id": str(t.id),
+                "type": t.transaction_type.value if hasattr(t.transaction_type, "value") else str(t.transaction_type),
+                "amount": float(t.amount_fiat or t.amount_crypto or 0),
+                "currency": t.currency_fiat or t.currency_crypto or "USDT",
+                "status": t.status.value if hasattr(t.status, "value") else str(t.status),
+                "reference": t.gateway_order_id,
+                "created_at": t.created_at.isoformat() if t.created_at else None,
+            }
+            for t in transactions
+        ],
+    }

@@ -5,7 +5,6 @@ import { EditorialHeader, EditorialFooter } from '../editorial/EditorialShared';
 import { MagazineHeader, MagazineFooter } from '../magazine/MagazineShared';
 import { LuminaryHeader, LuminaryFooter } from '../luminary/LuminaryShared';
 import { CreativeHeader, CreativeFooter } from '../creative/CreativeShared';
-import { MinimalHeader, MinimalFooter } from '../minimal/MinimalShared';
 import { CorporateHeader, CorporateFooter } from '../corporate/shared';
 import { AdvertiseForm } from '@/app/[locale]/(blog)/[slug]/advertise/AdvertiseForm';
 
@@ -44,10 +43,6 @@ export default function AdvertisePage({ blog, categories, basePath }: Props) {
     case 'corporate':
       header = <CorporateHeader blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} />;
       footer = <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} />;
-      break;
-    case 'minimal':
-      header = <MinimalHeader {...shared} />;
-      footer = <MinimalFooter {...shared} />;
       break;
     default:
       header = <EditorialHeader {...shared} />;

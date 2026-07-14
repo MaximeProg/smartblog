@@ -371,6 +371,24 @@ export const newsletterApi = {
       form,
     );
   },
+
+  checkoutCampaign: (tenantId: string, campaignId: string, email: string) =>
+    api.post<{ invoice_url: string; order_id: string }>(
+      `/tenants/${tenantId}/newsletter/campaigns/${campaignId}/checkout`,
+      { email },
+    ),
+
+  updateCampaign: (tenantId: string, campaignId: string, data: {
+    name?: string;
+    subject?: string;
+    preview_text?: string;
+    content_html?: string;
+    content_json?: object;
+    is_paid?: boolean;
+    price?: number;
+    scheduled_at?: string;
+  }) =>
+    api.patch<NewsletterCampaign>(`/tenants/${tenantId}/newsletter/campaigns/${campaignId}`, data),
 };
 
 // ─── Tags ─────────────────────────────────────────────────────────────────────
@@ -390,6 +408,24 @@ export const tagsApi = {
 
   delete: (tenantId: string, tagId: string) =>
     api.delete<void>(`/tenants/${tenantId}/tags/${tagId}`),
+};
+
+// ─── API Keys ─────────────────────────────────────────────────────────────────
+
+export const apiKeysApi = {
+  list: (tenantId: string) =>
+    api.get<{ id: string; name: string; key_prefix: string; is_active: boolean; last_used_at: string | null; expires_at: string | null; created_at: string }[]>(
+      `/tenants/${tenantId}/api-keys`
+    ),
+
+  create: (tenantId: string, name: string, expiresAt?: string) =>
+    api.post<{ id: string; name: string; key_prefix: string; is_active: boolean; last_used_at: string | null; expires_at: string | null; created_at: string; key: string }>(
+      `/tenants/${tenantId}/api-keys`,
+      { name, expires_at: expiresAt ?? null }
+    ),
+
+  revoke: (tenantId: string, keyId: string) =>
+    api.delete<void>(`/tenants/${tenantId}/api-keys/${keyId}`),
 };
 
 // ─── Media ────────────────────────────────────────────────────────────────────
@@ -683,6 +719,15 @@ export const affiliateApi = {
 
   requestCashout: (tenantId: string, payout_method: string = 'nowpayments_crypto') =>
     api.post<CashoutRequest>(`/tenants/${tenantId}/affiliate/cashout`, { payout_method }),
+
+  getTree: (tenantId: string, maxDepth = 3) =>
+    api.get<{ root_tenant_id: string; nodes: { tenant_id: string; name: string; slug: string; plan: string; level: number }[] }>(
+      `/tenants/${tenantId}/affiliate/tree`,
+      { params: { max_depth: maxDepth } }
+    ),
+
+  exportCommissions: (tenantId: string) =>
+    api.get(`/tenants/${tenantId}/affiliate/commissions/export`, { responseType: 'blob' }),
 };
 
 // ── M24 — Accounting API ──────────────────────────────────────────────────────
@@ -751,6 +796,26 @@ export const accountingApi = {
 
   reverseEntry: (entryId: string, reason: string) =>
     api.post<JournalEntry>(`/accounting/entries/${entryId}/reverse`, null, { params: { reason } }),
+};
+
+// ── Tenant Accounting (read-only) ─────────────────────────────────────────────
+
+export const tenantAccountingApi = {
+  getSummary: (tenantId: string) =>
+    api.get<{
+      total_subscription_paid: number;
+      total_ad_revenue: number;
+      net: number;
+      transactions: Array<{
+        id: string;
+        type: string;
+        amount: number;
+        currency: string;
+        status: string;
+        reference: string | null;
+        created_at: string | null;
+      }>;
+    }>(`/tenants/${tenantId}/accounting/summary`),
 };
 
 // ── Domains API ───────────────────────────────────────────────────────────────
@@ -845,6 +910,17 @@ export interface NowPaymentsCheckoutResponse {
   order_id: string;
   amount_usd: number;
 }
+
+export const bookmarkApi = {
+  list: (tenantId: string) =>
+    api.get<{ id: string; article_id: string; article_title: string; article_slug: string; cover_image_url: string | null; created_at: string }[]>(`/tenants/${tenantId}/bookmarks`),
+
+  add: (tenantId: string, articleId: string) =>
+    api.post<{ bookmarked: boolean; id?: string }>(`/tenants/${tenantId}/bookmarks`, { article_id: articleId }),
+
+  remove: (tenantId: string, articleId: string) =>
+    api.delete<{ bookmarked: boolean }>(`/tenants/${tenantId}/bookmarks/${articleId}`),
+};
 
 export const paymentsApi = {
   getSubscription: (tenantId: string) =>

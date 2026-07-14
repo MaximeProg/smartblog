@@ -88,6 +88,12 @@ class Settings(BaseSettings):
     TWITTER_CLIENT_SECRET: str = ""
     TIKTOK_CLIENT_KEY: str = ""
     TIKTOK_CLIENT_SECRET: str = ""
+    INSTAGRAM_APP_ID: str = ""
+    INSTAGRAM_APP_SECRET: str = ""
+    THREADS_APP_ID: str = ""
+    THREADS_APP_SECRET: str = ""
+    PINTEREST_APP_ID: str = ""
+    PINTEREST_APP_SECRET: str = ""
 
     # Plateforme
     PLATFORM_DOMAIN: str = "smarterbloggers.com"

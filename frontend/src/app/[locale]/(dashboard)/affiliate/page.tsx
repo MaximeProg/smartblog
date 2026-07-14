@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import {
   Users, DollarSign, TrendingUp, Clock, Copy, Check,
   ArrowDownToLine, Share2, Wallet, Gift, AlertCircle,
-  CheckCircle2, XCircle,
+  CheckCircle2, XCircle, Download, GitBranch,
 } from 'lucide-react';
 import { affiliateApi, type AffiliateDashboard, type AffiliateCommission, type CashoutRequest, type AffiliateReferral } from '@/lib/api';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
@@ -50,7 +50,7 @@ export default function AffiliatePage() {
   const qc = useQueryClient();
   const { tenants } = useAuthStore();
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<'commissions' | 'cashouts' | 'referrals'>('referrals');
+  const [activeTab, setActiveTab] = useState<'commissions' | 'cashouts' | 'referrals' | 'tree'>('referrals');
   const [commissionFilter, setCommissionFilter] = useState<string>('all');
 
   // Use the first tenant as the account holder — affiliate is user-level UX,
@@ -87,6 +87,27 @@ export default function AffiliatePage() {
     enabled: !!tenantId,
   });
   const referrals = referralsData?.referrals ?? [];
+
+  const { data: treeData } = useQuery<{ nodes: { tenant_id: string; name: string; slug: string; plan: string; level: number }[] }>({
+    queryKey: ['affiliate-tree', tenantId],
+    queryFn: async () => { const { data } = await affiliateApi.getTree(tenantId); return data; },
+    enabled: !!tenantId && activeTab === 'tree',
+  });
+  const treeNodes = treeData?.nodes ?? [];
+
+  async function handleExportCSV() {
+    try {
+      const { data } = await affiliateApi.exportCommissions(tenantId);
+      const url = URL.createObjectURL(data as Blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'commissions.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast({ variant: 'destructive', title: t('exportError') });
+    }
+  }
 
   const cashoutMutation = useMutation({
     mutationFn: async () => { const { data } = await affiliateApi.requestCashout(tenantId, 'nowpayments_crypto'); return data; },
@@ -249,6 +270,7 @@ export default function AffiliatePage() {
                   <div className="flex border-b border-slate-200 dark:border-slate-700">
                     {([
                       { id: 'referrals',    label: t('referralsTab') },
+                      { id: 'tree',         label: t('treeTab') },
                       { id: 'commissions',  label: t('commissionsTitle') },
                       { id: 'cashouts',     label: t('cashoutsTitle') },
                     ] as const).map(tab => (
@@ -342,6 +364,48 @@ export default function AffiliatePage() {
                     </div>
                   )}
 
+                  {activeTab === 'tree' && (
+                    <div className="p-5">
+                      {treeNodes.length === 0 ? (
+                        <div className="py-14 text-center">
+                          <GitBranch className="h-8 w-8 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                          <p className="text-slate-400 dark:text-slate-500 text-sm">{t('noReferrals')}</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          {[1, 2, 3].map(level => {
+                            const levelNodes = treeNodes.filter(n => n.level === level);
+                            if (!levelNodes.length) return null;
+                            return (
+                              <div key={level} className="space-y-1">
+                                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2 mt-3">
+                                  {t('level')} {level}
+                                </p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                                  {levelNodes.map(node => (
+                                    <div key={node.tenant_id}
+                                      className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 px-3 py-2.5"
+                                      style={{ marginLeft: `${(level - 1) * 16}px` }}
+                                    >
+                                      <div className={`h-7 w-7 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0 ${level === 1 ? 'bg-blue-600' : level === 2 ? 'bg-violet-600' : 'bg-slate-500'}`}>
+                                        L{level}
+                                      </div>
+                                      <div className="min-w-0">
+                                        <p className="text-[12px] font-bold text-slate-800 dark:text-slate-200 truncate">{node.name}</p>
+                                        <p className="text-[10px] text-slate-400 font-mono truncate">{node.slug}</p>
+                                      </div>
+                                      <span className="ml-auto text-[10px] font-semibold text-slate-500 capitalize shrink-0">{node.plan}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {activeTab === 'commissions' && (
                     <div>
                       <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex-wrap">
@@ -358,6 +422,14 @@ export default function AffiliatePage() {
                             {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
                           </button>
                         ))}
+                        <div className="flex-1" />
+                        <button
+                          onClick={handleExportCSV}
+                          className="flex items-center gap-1.5 h-7 px-3 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                        >
+                          <Download className="h-3 w-3" />
+                          {t('exportCSV')}
+                        </button>
                       </div>
                       {commissions.length === 0 ? (
                         <div className="py-14 text-center text-slate-400 dark:text-slate-500 text-sm">{t('noCommissions')}</div>

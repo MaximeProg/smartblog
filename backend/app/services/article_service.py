@@ -306,6 +306,7 @@ async def update_article(
 
     old_category_id = article.category_id
     old_status = article.status
+    old_slug = article.slug
 
     changed = False
     for field, value in data.model_dump(exclude_unset=True, exclude={"tags", "category_id"}).items():
@@ -362,6 +363,16 @@ async def update_article(
             content_json=article.content_json,
             created_by=editor_id,
         ))
+
+        # Slug change → create 301 redirect
+        if article.slug != old_slug:
+            from app.models.article import SlugRedirect
+            db.add(SlugRedirect(
+                tenant_id=tenant_id,
+                article_id=article.id,
+                old_slug=old_slug,
+                new_slug=article.slug,
+            ))
 
     await db.commit()
     await db.refresh(article)

@@ -797,7 +797,10 @@
     "generalSettings": "Paramètres généraux",
     "header": "Header",
     "footer": "Footer",
-    "improve": "Améliorer"
+    "improve": "Améliorer",
+    "domains": "Domaines personnalisés",
+    "apiKeys": "Clés API",
+    "accounting": "Finances"
   },
   "menus": {
     "locationPrimary": "Navigation principale",
@@ -1158,7 +1161,11 @@
     "importSuccess": "{imported} abonnés importés ({skipped} ignorés)",
     "importError": "Erreur lors de l'importation",
     "filterByTag": "Tag",
-    "allTags": "Tous"
+    "allTags": "Tous",
+    "paidCampaign": "Campagne payante (crypto)",
+    "campaignPrice": "Prix",
+    "paidCampaignHint": "Les lecteurs paieront via NowPayments avant d'accéder à cette newsletter.",
+    "paid": "Payant"
   },
   "tags": {
     "title": "Tags",
@@ -1184,6 +1191,34 @@
     "mergeTarget": "Fusionner dans",
     "mergeConfirm": "Fusionner",
     "selectTags": "Sélectionnez les tags à fusionner…"
+  },
+  "apiKeys": {
+    "title": "Clés API",
+    "description": "Gérez les clés API pour accéder à votre blog par programmation.",
+    "newKey": "Nouvelle clé",
+    "createTitle": "Créer une clé API",
+    "keyName": "Nom de la clé",
+    "keyNamePlaceholder": "Serveur de production…",
+    "expiresAt": "Expiration",
+    "optional": "optionnel",
+    "generate": "Générer",
+    "cancel": "Annuler",
+    "keyCreated": "Clé API créée",
+    "createError": "Erreur lors de la création",
+    "keyRevoked": "Clé révoquée",
+    "revokeError": "Erreur lors de la révocation",
+    "keyRevealBanner": "Copiez votre clé API maintenant — elle ne sera plus affichée.",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "done": "Terminé",
+    "noKeys": "Aucune clé API",
+    "noKeysDesc": "Créez votre première clé API pour accéder à votre blog via l'API.",
+    "created": "Créée",
+    "lastUsed": "Dernière utilisation",
+    "expires": "Expire",
+    "revoke": "Révoquer",
+    "confirmRevoke": "Confirmer",
+    "securityNote": "Les clés API donnent un accès complet aux données de votre blog. Gardez-les secrètes et ne les partagez jamais publiquement."
   },
   "comments": {
     "title": "Commentaires",
@@ -2062,7 +2097,26 @@
     "statusActive": "Actif",
     "statusTrial": "Essai",
     "statusSuspended": "Suspendu",
-    "statusDeleted": "Supprimé"
+    "statusDeleted": "Supprimé",
+    "treeTab": "Arbre de filleuls",
+    "exportCSV": "Exporter CSV",
+    "exportError": "Erreur d'export"
+  },
+  "tenantAccounting": {
+    "title": "Vue financière",
+    "description": "Résumé de vos revenus et coûts sur la plateforme.",
+    "totalRevenue": "Revenus publicitaires",
+    "totalCost": "Coût d'abonnement",
+    "netBalance": "Solde net",
+    "transactions": "Historique des transactions",
+    "noTransactions": "Aucune transaction",
+    "noTransactionsDesc": "Les transactions apparaîtront ici dès que vous aurez de l'activité sur la plateforme.",
+    "type": "Type",
+    "reference": "Référence",
+    "amount": "Montant",
+    "status": "Statut",
+    "date": "Date",
+    "disclaimer": "Cette vue montre les paiements traités via SmarterBloggers. Elle ne constitue pas un état financier complet."
   },
   "accounting": {
     "title": "Comptabilité",

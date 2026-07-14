@@ -281,6 +281,23 @@ async def nowpayments_webhook(
             except (ValueError, Exception):
                 pass
 
+    # ── Newsletter payante ────────────────────────────────────────
+    elif order_id.startswith("nl_"):
+        try:
+            from app.models.newsletter import NewsletterAccess
+            access_q = await db.execute(
+                select(NewsletterAccess).where(
+                    NewsletterAccess.nowpayments_order_id == order_id
+                )
+            )
+            access = access_q.scalar_one_or_none()
+            if access and access.granted_at is None:
+                access.granted_at = datetime.utcnow()
+                access.amount_paid = actually_paid
+                await db.commit()
+        except Exception:
+            pass
+
     return {"received": True, "action": "processed"}
 
 

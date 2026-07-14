@@ -4,14 +4,19 @@ from fastapi import APIRouter, Query
 from sqlalchemy import select
 from pydantic import BaseModel
 
-from app.core.dependencies import TokenPayload, DBSession
+from fastapi import Depends
+from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import NotFoundException, ValidationException
 from app.core.security import encrypt_value, decrypt_value
 from app.models.social import SocialAccount, SocialPost
 from app.models.enums import SocialPlatform, SocialPostStatus, UserRole
 from app.api.v1.tenants import _assert_member, _assert_role
 
-router = APIRouter(prefix="/tenants/{tenant_id}/social", tags=["social"])
+router = APIRouter(
+    prefix="/tenants/{tenant_id}/social",
+    tags=["social"],
+    dependencies=[Depends(check_plan_active)],
+)
 
 
 # ── Schemas ───────────────────────────────────────────────────────

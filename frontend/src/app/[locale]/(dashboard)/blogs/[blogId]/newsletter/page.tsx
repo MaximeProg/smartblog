@@ -4,7 +4,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Mail, Users, TrendingUp, Download, Search, Send,
-  Plus, X, Check, Loader2, Calendar, Upload,
+  Plus, X, Check, Loader2, Calendar, Upload, DollarSign, Lock,
 } from 'lucide-react';
 import { useState, useEffect, useRef, Suspense } from 'react';
 import NewsletterBodyEditor from '@/components/dashboard/NewsletterBodyEditor';
@@ -73,6 +73,8 @@ function CampaignModal({ blogId, onClose, initialName = '', initialSubject = '',
   const [preview, setPreview] = useState('');
   const [body, setBody] = useState(initialBody);
   const [scheduledAt, setScheduledAt] = useState('');
+  const [isPaid, setIsPaid] = useState(false);
+  const [price, setPrice] = useState('');
 
   const isScheduled = !!scheduledAt;
 
@@ -83,7 +85,9 @@ function CampaignModal({ blogId, onClose, initialName = '', initialSubject = '',
       preview_text: preview.trim() || undefined,
       content_html: body.trim() || undefined,
       scheduled_at: scheduledAt ? new Date(scheduledAt).toISOString() : undefined,
-    }),
+      is_paid: isPaid,
+      price: isPaid && price ? parseFloat(price) : undefined,
+    } as Parameters<typeof newsletterApi.createCampaign>[1] & { is_paid?: boolean; price?: number }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['campaigns', blogId] });
       toast({ title: isScheduled ? t('campaignScheduled') : t('campaignCreated') });
@@ -127,6 +131,40 @@ function CampaignModal({ blogId, onClose, initialName = '', initialSubject = '',
               placeholder={t('campaignBodyPlaceholder')}
             />
           </div>
+          {/* Paid newsletter */}
+          <div className={`rounded-xl border p-3 transition-colors ${isPaid ? 'border-amber-300 dark:border-amber-700 bg-amber-50/60 dark:bg-amber-900/20' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50'}`}>
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <div
+                onClick={() => setIsPaid(v => !v)}
+                className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${isPaid ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-600'}`}
+              >
+                <span className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow transition-transform ${isPaid ? 'translate-x-4' : 'translate-x-0.5'}`} />
+              </div>
+              <span className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-700 dark:text-slate-300">
+                <Lock className="h-3.5 w-3.5 text-amber-500" />
+                {t('paidCampaign')}
+              </span>
+            </label>
+            {isPaid && (
+              <div className="mt-2.5">
+                <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-1">{t('campaignPrice')} (USDT)</label>
+                <div className="relative">
+                  <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={price}
+                    onChange={e => setPrice(e.target.value)}
+                    placeholder="4.99"
+                    className="w-full h-9 pl-7 pr-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-400/30 focus:border-amber-400"
+                  />
+                </div>
+                <p className="mt-1 text-[10px] text-amber-600 dark:text-amber-400 font-medium">{t('paidCampaignHint')}</p>
+              </div>
+            )}
+          </div>
+
           <div>
             <label className="block text-[11px] font-semibold text-slate-500 uppercase tracking-wide mb-1">
               <span className="flex items-center gap-1.5">
@@ -448,6 +486,12 @@ function NewsletterPageInner() {
                         <span className={`inline-flex items-center h-5 px-2 rounded-full text-[10px] font-bold border shrink-0 ${CAMPAIGN_STATUS_COLOR[c.status]}`}>
                           {c.status}
                         </span>
+                        {c.is_paid && (
+                          <span className="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold border shrink-0 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800">
+                            <Lock className="h-2.5 w-2.5" />
+                            {c.price ? `${c.price} USDT` : t('paid')}
+                          </span>
+                        )}
                       </div>
                       <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">{c.subject}</p>
                       <div className="flex items-center gap-3 mt-1">

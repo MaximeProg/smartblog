@@ -7,7 +7,8 @@ from fastapi import APIRouter, Request, UploadFile, File
 from sqlalchemy import select, func
 from pydantic import BaseModel, EmailStr
 
-from app.core.dependencies import TokenPayload, DBSession
+from fastapi import Depends
+from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import (
     NotFoundException, ValidationException, PlanLimitReachedException,
 )
@@ -16,7 +17,11 @@ from app.models.enums import SubscriberStatus, CampaignStatus, UserRole
 from app.services.tenant_service import get_tenant, PLAN_LIMITS
 from app.api.v1.tenants import _assert_member, _assert_role
 
-router = APIRouter(prefix="/tenants/{tenant_id}/newsletter", tags=["newsletter"])
+router = APIRouter(
+    prefix="/tenants/{tenant_id}/newsletter",
+    tags=["newsletter"],
+    dependencies=[Depends(check_plan_active)],
+)
 
 
 class SubscribeRequest(BaseModel):
@@ -432,6 +437,86 @@ def _sub_response(s: NewsletterSubscriber) -> SubscriberResponse:
         last_name=s.last_name, status=s.status,
         source=s.source, tags=s.tags or [], created_at=s.created_at,
     )
+
+
+# ── POST /newsletter/campaigns/{id}/checkout ─────────────────────
+
+class NewsletterCheckoutRequest(BaseModel):
+    email: EmailStr
+    success_url: str | None = None
+    cancel_url: str | None = None
+
+
+@router.post("/campaigns/{campaign_id}/checkout", status_code=201)
+async def checkout_newsletter(
+    tenant_id: uuid.UUID,
+    campaign_id: uuid.UUID,
+    body: NewsletterCheckoutRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Crée une invoice NowPayments pour accéder à une newsletter payante."""
+    from app.core.config import settings
+    from app.services.nowpayments_service import create_invoice
+
+    result = await db.execute(
+        select(NewsletterCampaign).where(
+            NewsletterCampaign.id == campaign_id,
+            NewsletterCampaign.tenant_id == tenant_id,
+        )
+    )
+    campaign = result.scalar_one_or_none()
+    if not campaign:
+        raise NotFoundException("Campagne")
+    if not campaign.is_paid or not campaign.price or campaign.price <= 0:
+        raise ValidationException("Cette newsletter n'est pas payante.")
+
+    from app.models.newsletter import NewsletterAccess
+    existing = await db.execute(
+        select(NewsletterAccess).where(
+            NewsletterAccess.campaign_id == campaign_id,
+            NewsletterAccess.email == str(body.email),
+        )
+    )
+    if existing.scalar_one_or_none():
+        raise ValidationException("Vous avez déjà accès à cette newsletter.")
+
+    order_id = f"nl_{tenant_id}_{campaign_id}_{uuid.uuid4().hex[:8]}"
+    frontend_url = settings.FRONTEND_URL
+
+    invoice = await create_invoice(
+        price_amount=campaign.price,
+        price_currency="usd",
+        order_id=order_id,
+        order_description=campaign.subject[:100],
+        success_url=body.success_url or f"{frontend_url}/newsletter/{campaign_id}?unlocked=1",
+        cancel_url=body.cancel_url or f"{frontend_url}/newsletter/{campaign_id}",
+        ipn_callback_url=f"{settings.PLATFORM_API_DOMAIN or frontend_url}/api/v1/tenants/{tenant_id}/payments/webhook/nowpayments",
+    )
+
+    # Enregistrer l'accès en attente (granted_at=null jusqu'au webhook)
+    from app.models.newsletter import NewsletterAccess
+    user_id_val = None
+    try:
+        user_id_val = uuid.UUID(payload["sub"])
+    except Exception:
+        pass
+    pending = NewsletterAccess(
+        tenant_id=tenant_id,
+        campaign_id=campaign_id,
+        user_id=user_id_val,
+        email=str(body.email),
+        nowpayments_order_id=order_id,
+    )
+    db.add(pending)
+    await db.commit()
+
+    return {
+        "invoice_url": invoice["invoice_url"],
+        "invoice_id": str(invoice["id"]),
+        "order_id": order_id,
+        "amount_usd": campaign.price,
+    }
 
 
 def _campaign_response(c: NewsletterCampaign) -> CampaignResponse:

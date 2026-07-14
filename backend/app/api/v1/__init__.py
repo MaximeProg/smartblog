@@ -24,8 +24,10 @@ from app.api.v1.pages import pages_router, menus_router
 from app.api.v1.engagement import router as engagement_router
 from app.api.v1.moderation import router as moderation_router
 from app.api.v1.affiliate import router as affiliate_router, superadmin_router as affiliate_admin_router
-from app.api.v1.accounting import router as accounting_router
+from app.api.v1.accounting import router as accounting_router, tenant_accounting_router
 from app.api.v1.domains import router as domains_router
+from app.api.v1.bookmarks import router as bookmarks_router
+from app.api.v1.api_keys import router as api_keys_router
 
 api_router = APIRouter(prefix="/api/v1")
 api_router.include_router(auth_router)
@@ -56,7 +58,10 @@ api_router.include_router(moderation_router)
 api_router.include_router(affiliate_router)
 api_router.include_router(affiliate_admin_router)
 api_router.include_router(accounting_router)
+api_router.include_router(tenant_accounting_router)
 api_router.include_router(domains_router)
+api_router.include_router(bookmarks_router)
+api_router.include_router(api_keys_router)
 api_router.include_router(explore_router)  # must be before public_router (no slug conflict)
 api_router.include_router(public_router)
 api_router.include_router(platform_router)

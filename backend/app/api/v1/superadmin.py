@@ -1295,7 +1295,66 @@ async def send_platform_notification(
     body: dict[str, Any],
 ):
     await _require_super_admin(payload, db)
-    return {"ok": True, "message": "Notification queued."}
+
+    title   = str(body.get("title", "")).strip()
+    message = str(body.get("message", "")).strip()
+    audience = str(body.get("audience", "all"))
+
+    if not title or not message:
+        return {"ok": False, "message": "title and message are required."}
+
+    # Récupérer les admins de chaque tenant selon l'audience
+    q = (
+        select(User.email, User.display_name)
+        .join(TenantUser, TenantUser.user_id == User.id)
+        .join(Tenant, Tenant.id == TenantUser.tenant_id)
+        .where(TenantUser.role == UserRole.TENANT_ADMIN)
+        .where(Tenant.status == TenantStatus.ACTIVE)
+    )
+
+    if audience == "paid":
+        from app.models.payment import TenantSubscription
+        from app.models.enums import SubscriptionStatus
+        q = q.join(TenantSubscription, TenantSubscription.tenant_id == Tenant.id).where(
+            TenantSubscription.status == SubscriptionStatus.ACTIVE
+        )
+    elif audience == "free":
+        from app.models.payment import TenantSubscription
+        from app.models.enums import SubscriptionStatus
+        from sqlalchemy import not_, exists
+        paid_sub = (
+            select(TenantSubscription.tenant_id)
+            .where(TenantSubscription.status == SubscriptionStatus.ACTIVE)
+            .correlate(Tenant)
+            .where(TenantSubscription.tenant_id == Tenant.id)
+        )
+        q = q.where(~exists(paid_sub))
+
+    rows = (await db.execute(q)).all()
+
+    if not rows:
+        return {"ok": True, "sent": 0, "message": "No matching tenants."}
+
+    from app.services.email_service import _send, _base, _h1, _p, _divider, _note, BRAND_TEXT
+    body_html = (
+        _h1(title) +
+        f'<p style="margin:16px 0;font-size:15px;line-height:1.7;color:{BRAND_TEXT};'
+        f'white-space:pre-wrap;">{message}</p>' +
+        _divider() +
+        _note("Vous recevez cet email en tant qu'administrateur d'un blog SmarterBloggers.")
+    )
+    html = _base(title=title, preview=title, body_html=body_html)
+
+    sent = 0
+    from app.core.config import settings as cfg
+    for row in rows:
+        try:
+            await _send(to=row.email, subject=f"[SmarterBloggers] {title}", html=html)
+            sent += 1
+        except Exception:
+            pass
+
+    return {"ok": True, "sent": sent, "total": len(rows)}
 
 
 # ── Config IA (stub) ──────────────────────────────────────────────

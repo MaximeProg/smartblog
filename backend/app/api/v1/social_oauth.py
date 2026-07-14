@@ -34,7 +34,7 @@ from sqlalchemy import select
 router = APIRouter(prefix="/tenants/{tenant_id}/social/oauth", tags=["social-oauth"])
 callback_router = APIRouter(prefix="/social/oauth", tags=["social-oauth"])
 
-_PLATFORMS = ["facebook", "linkedin", "twitter", "tiktok"]
+_PLATFORMS = ["facebook", "linkedin", "twitter", "tiktok", "instagram", "threads", "pinterest"]
 _STATE_TTL = 600  # 10 minutes
 
 
@@ -147,6 +147,47 @@ async def get_connect_url(
             f"&state={state}"
         )
 
+    elif platform == "instagram":
+        # Instagram Basic Display API
+        if not settings.INSTAGRAM_APP_ID:
+            raise ValidationException("Instagram app not configured")
+        cb = _callback_url("instagram")
+        url = (
+            f"https://api.instagram.com/oauth/authorize"
+            f"?client_id={settings.INSTAGRAM_APP_ID}"
+            f"&redirect_uri={cb}"
+            f"&scope=user_profile,user_media"
+            f"&response_type=code"
+            f"&state={state}"
+        )
+
+    elif platform == "threads":
+        # Threads API uses the same App as Instagram / Meta
+        if not settings.THREADS_APP_ID:
+            raise ValidationException("Threads app not configured")
+        cb = _callback_url("threads")
+        url = (
+            f"https://threads.net/oauth/authorize"
+            f"?client_id={settings.THREADS_APP_ID}"
+            f"&redirect_uri={cb}"
+            f"&scope=threads_basic,threads_content_publish"
+            f"&response_type=code"
+            f"&state={state}"
+        )
+
+    elif platform == "pinterest":
+        if not settings.PINTEREST_APP_ID:
+            raise ValidationException("Pinterest app not configured")
+        cb = _callback_url("pinterest")
+        url = (
+            f"https://www.pinterest.com/oauth/"
+            f"?client_id={settings.PINTEREST_APP_ID}"
+            f"&redirect_uri={cb}"
+            f"&scope=boards:read,pins:read,pins:write"
+            f"&response_type=code"
+            f"&state={state}"
+        )
+
     return {"url": url}
 
 
@@ -181,6 +222,12 @@ async def oauth_callback(
             account_data = await _handle_twitter(code, state, sh)
         elif platform == "tiktok":
             account_data = await _handle_tiktok(code, state, sh)
+        elif platform == "instagram":
+            account_data = await _handle_instagram(code, state, sh)
+        elif platform == "threads":
+            account_data = await _handle_threads(code, state, sh)
+        elif platform == "pinterest":
+            account_data = await _handle_pinterest(code, state, sh)
         else:
             return RedirectResponse(f"{settings.FRONTEND_URL}/en/social?error=unsupported")
     except Exception as exc:
@@ -403,4 +450,138 @@ async def _handle_tiktok(code: str, state: str, sh: str) -> dict:
         "access_token": access_token,
         "refresh_token": tokens.get("refresh_token"),
         "scopes": ["user.info.basic", "video.list"],
+    }
+
+
+async def _handle_instagram(code: str, state: str, sh: str) -> dict:
+    cb = _callback_url("instagram")
+    async with httpx.AsyncClient(timeout=15) as client:
+        # Step 1: short-lived token
+        token_resp = await client.post(
+            "https://api.instagram.com/oauth/access_token",
+            data={
+                "client_id": settings.INSTAGRAM_APP_ID,
+                "client_secret": settings.INSTAGRAM_APP_SECRET,
+                "grant_type": "authorization_code",
+                "redirect_uri": cb,
+                "code": code,
+            },
+        )
+        token_resp.raise_for_status()
+        short = token_resp.json()
+        short_token = short["access_token"]
+        ig_user_id = str(short["user_id"])
+
+        # Step 2: exchange for long-lived token
+        long_resp = await client.get(
+            "https://graph.instagram.com/access_token",
+            params={
+                "grant_type": "ig_exchange_token",
+                "client_secret": settings.INSTAGRAM_APP_SECRET,
+                "access_token": short_token,
+            },
+        )
+        long_resp.raise_for_status()
+        long = long_resp.json()
+        access_token = long["access_token"]
+
+        # Step 3: user profile
+        me_resp = await client.get(
+            f"https://graph.instagram.com/v19.0/{ig_user_id}",
+            params={"fields": "id,username,profile_picture_url", "access_token": access_token},
+        )
+        me = me_resp.json()
+
+    return {
+        "platform_user_id": ig_user_id,
+        "username": me.get("username"),
+        "display_name": me.get("username"),
+        "avatar_url": me.get("profile_picture_url"),
+        "access_token": access_token,
+        "scopes": ["user_profile", "user_media"],
+    }
+
+
+async def _handle_threads(code: str, state: str, sh: str) -> dict:
+    cb = _callback_url("threads")
+    async with httpx.AsyncClient(timeout=15) as client:
+        token_resp = await client.post(
+            "https://graph.threads.net/oauth/access_token",
+            data={
+                "client_id": settings.THREADS_APP_ID,
+                "client_secret": settings.THREADS_APP_SECRET,
+                "grant_type": "authorization_code",
+                "redirect_uri": cb,
+                "code": code,
+            },
+        )
+        token_resp.raise_for_status()
+        tokens = token_resp.json()
+        access_token = tokens["access_token"]
+        user_id = str(tokens["user_id"])
+
+        # Long-lived token exchange
+        ll_resp = await client.get(
+            "https://graph.threads.net/access_token",
+            params={
+                "grant_type": "th_exchange_token",
+                "client_secret": settings.THREADS_APP_SECRET,
+                "access_token": access_token,
+            },
+        )
+        if ll_resp.status_code == 200:
+            access_token = ll_resp.json().get("access_token", access_token)
+
+        me_resp = await client.get(
+            f"https://graph.threads.net/v1.0/{user_id}",
+            params={"fields": "id,username,threads_profile_picture_url", "access_token": access_token},
+        )
+        me = me_resp.json()
+
+    return {
+        "platform_user_id": user_id,
+        "username": me.get("username"),
+        "display_name": me.get("username"),
+        "avatar_url": me.get("threads_profile_picture_url"),
+        "access_token": access_token,
+        "scopes": ["threads_basic", "threads_content_publish"],
+    }
+
+
+async def _handle_pinterest(code: str, state: str, sh: str) -> dict:
+    cb = _callback_url("pinterest")
+    credentials = base64.b64encode(
+        f"{settings.PINTEREST_APP_ID}:{settings.PINTEREST_APP_SECRET}".encode()
+    ).decode()
+    async with httpx.AsyncClient(timeout=15) as client:
+        token_resp = await client.post(
+            "https://api.pinterest.com/v5/oauth/token",
+            data={
+                "grant_type": "authorization_code",
+                "code": code,
+                "redirect_uri": cb,
+            },
+            headers={
+                "Authorization": f"Basic {credentials}",
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        )
+        token_resp.raise_for_status()
+        tokens = token_resp.json()
+        access_token = tokens["access_token"]
+
+        me_resp = await client.get(
+            "https://api.pinterest.com/v5/user_account",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        me = me_resp.json()
+
+    return {
+        "platform_user_id": me.get("username", ""),
+        "username": me.get("username"),
+        "display_name": me.get("display_name") or me.get("username"),
+        "avatar_url": me.get("profile_image"),
+        "access_token": access_token,
+        "refresh_token": tokens.get("refresh_token"),
+        "scopes": ["boards:read", "pins:read", "pins:write"],
     }

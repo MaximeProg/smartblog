@@ -1,6 +1,7 @@
 import uuid
 from fastapi import APIRouter, Query
-from app.core.dependencies import TokenPayload, DBSession
+from fastapi import Depends
+from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import ForbiddenException
 from app.models.enums import ArticleStatus, UserRole
 from app.schemas.article import (
@@ -19,7 +20,11 @@ import structlog
 
 logger = structlog.get_logger()
 
-router = APIRouter(prefix="/tenants/{tenant_id}/articles", tags=["articles"])
+router = APIRouter(
+    prefix="/tenants/{tenant_id}/articles",
+    tags=["articles"],
+    dependencies=[Depends(check_plan_active)],
+)
 
 
 # ── GET /articles ─────────────────────────────────────────────────

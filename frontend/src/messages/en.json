@@ -798,7 +798,9 @@
     "header": "Header",
     "footer": "Footer",
     "improve": "Upgrade",
-    "domains": "Custom domains"
+    "domains": "Custom domains",
+    "apiKeys": "API Keys",
+    "accounting": "Financials"
   },
   "menus": {
     "locationPrimary": "Main navigation",
@@ -1169,7 +1171,11 @@
     "importSuccess": "Imported {imported} subscribers ({skipped} skipped)",
     "importError": "Import failed",
     "filterByTag": "Tag",
-    "allTags": "All"
+    "allTags": "All",
+    "paidCampaign": "Paid campaign (crypto)",
+    "campaignPrice": "Price",
+    "paidCampaignHint": "Readers will pay via NowPayments before accessing this newsletter.",
+    "paid": "Paid"
   },
   "tags": {
     "title": "Tags",
@@ -1195,6 +1201,34 @@
     "mergeTarget": "Merge into",
     "mergeConfirm": "Merge",
     "selectTags": "Select tags to merge…"
+  },
+  "apiKeys": {
+    "title": "API Keys",
+    "description": "Manage API keys to access your blog programmatically.",
+    "newKey": "New key",
+    "createTitle": "Create API key",
+    "keyName": "Key name",
+    "keyNamePlaceholder": "Production server…",
+    "expiresAt": "Expires",
+    "optional": "optional",
+    "generate": "Generate",
+    "cancel": "Cancel",
+    "keyCreated": "API key created",
+    "createError": "Failed to create key",
+    "keyRevoked": "Key revoked",
+    "revokeError": "Failed to revoke key",
+    "keyRevealBanner": "Copy your API key now — it will not be shown again.",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "done": "Done",
+    "noKeys": "No API keys",
+    "noKeysDesc": "Create your first API key to access your blog via the API.",
+    "created": "Created",
+    "lastUsed": "Last used",
+    "expires": "Expires",
+    "revoke": "Revoke",
+    "confirmRevoke": "Confirm revoke",
+    "securityNote": "API keys grant full access to your blog data. Keep them secret and never share them publicly."
   },
   "comments": {
     "title": "Comments",
@@ -2083,7 +2117,26 @@
     "statusActive": "Active",
     "statusTrial": "Trial",
     "statusSuspended": "Suspended",
-    "statusDeleted": "Deleted"
+    "statusDeleted": "Deleted",
+    "treeTab": "Referral tree",
+    "exportCSV": "Export CSV",
+    "exportError": "Export failed"
+  },
+  "tenantAccounting": {
+    "title": "Financial overview",
+    "description": "Summary of your revenue and costs on the platform.",
+    "totalRevenue": "Ad revenue",
+    "totalCost": "Subscription cost",
+    "netBalance": "Net balance",
+    "transactions": "Transaction history",
+    "noTransactions": "No transactions yet",
+    "noTransactionsDesc": "Transactions will appear here once you have activity on the platform.",
+    "type": "Type",
+    "reference": "Reference",
+    "amount": "Amount",
+    "status": "Status",
+    "date": "Date",
+    "disclaimer": "This overview shows payments processed through SmarterBloggers. It does not constitute a full financial statement."
   },
   "accounting": {
     "title": "Accounting",

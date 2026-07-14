@@ -1,21 +1,26 @@
 import uuid
 from datetime import datetime
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from pydantic import BaseModel
 
-from app.core.dependencies import TokenPayload, DBSession
+from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import NotFoundException, ValidationException
 from app.models.push import PushToken, PushNotification
 from app.models.enums import UserRole
 from app.api.v1.tenants import _assert_role
 
-router = APIRouter(prefix="/tenants/{tenant_id}/push", tags=["push"])
+router = APIRouter(
+    prefix="/tenants/{tenant_id}/push",
+    tags=["push"],
+    dependencies=[Depends(check_plan_active)],
+)
 
 
 class RegisterTokenRequest(BaseModel):
     token: str
     platform: str = "web"  # web | ios | android
+    category_ids: list[str] | None = None  # catégories d'intérêt du lecteur
 
 
 class SendNotificationRequest(BaseModel):
@@ -25,6 +30,7 @@ class SendNotificationRequest(BaseModel):
     click_url: str | None = None
     image_url: str | None = None
     article_id: str | None = None
+    category_id: str | None = None  # si fourni, envoyer uniquement aux tokens intéressés par cette catégorie
     data: dict | None = None
 
 
@@ -61,12 +67,15 @@ async def register_token(
         pt.is_active = True
         pt.user_id = user_id
         pt.last_used_at = datetime.utcnow()
+        if body.category_ids is not None:
+            pt.category_ids = body.category_ids
     else:
         pt = PushToken(
             tenant_id=tenant_id,
             user_id=user_id,
             token=body.token,
             platform=body.platform,
+            category_ids=body.category_ids,
         )
         db.add(pt)
 
@@ -105,13 +114,22 @@ async def send_notification(
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
 
-    # Récupérer tous les tokens actifs du tenant
-    tokens_result = await db.execute(
-        select(PushToken).where(
-            PushToken.tenant_id == tenant_id,
-            PushToken.is_active == True,
-        )
+    # Récupérer les tokens actifs — filtrer par catégorie si fournie
+    q = select(PushToken).where(
+        PushToken.tenant_id == tenant_id,
+        PushToken.is_active == True,
     )
+    if body.category_id:
+        # Garder les tokens sans préférence (category_ids null) ET ceux qui ont la catégorie
+        from sqlalchemy import or_, cast
+        from sqlalchemy.dialects.postgresql import JSONB as PG_JSONB
+        q = q.where(
+            or_(
+                PushToken.category_ids.is_(None),
+                PushToken.category_ids.contains([body.category_id]),
+            )
+        )
+    tokens_result = await db.execute(q)
     tokens = [pt.token for pt in tokens_result.scalars().all()]
 
     notif = PushNotification(

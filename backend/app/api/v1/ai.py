@@ -1,10 +1,10 @@
 ﻿import uuid
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import Response
 from sqlalchemy import select, text
 from pydantic import BaseModel
 
-from app.core.dependencies import TokenPayload, DBSession
+from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import AIQuotaExceededException, ValidationException
 from app.models.tenant import Tenant
 from app.models.enums import UserRole
@@ -15,7 +15,11 @@ from app.services.ai_service import (
 )
 from app.api.v1.tenants import _assert_role
 
-router = APIRouter(prefix="/tenants/{tenant_id}/ai", tags=["ai"])
+router = APIRouter(
+    prefix="/tenants/{tenant_id}/ai",
+    tags=["ai"],
+    dependencies=[Depends(check_plan_active)],
+)
 
 
 # ── Helpers quota ─────────────────────────────────────────────────

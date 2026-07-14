@@ -67,3 +67,17 @@ class NewsletterCampaign(Base):
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class NewsletterAccess(Base):
+    """Accès payant à une newsletter payante (après paiement NowPayments)."""
+    __tablename__ = "newsletter_access"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    tenant_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False)
+    campaign_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("newsletter_campaigns.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"))
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    amount_paid: Mapped[float | None] = mapped_column()
+    nowpayments_order_id: Mapped[str | None] = mapped_column(String(255))
+    granted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))  # null = paiement en attente
