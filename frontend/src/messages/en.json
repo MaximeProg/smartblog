@@ -20,7 +20,8 @@
     "soon": "Coming soon",
     "user": "User",
     "ads": "Advertising",
-    "affiliate": "Affiliate Program"
+    "affiliate": "Affiliate Program",
+    "support": "Support"
   },
   "auth": {
     "login": {
