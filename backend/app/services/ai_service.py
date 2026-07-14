@@ -59,6 +59,33 @@ async def generate_article(
     }
 
 
+# ─── Traduction de messages (support tickets) ────────────────────
+
+async def translate_text(text: str, target_lang: str) -> str:
+    """
+    Translates `text` to `target_lang` (e.g. "en", "fr", "es").
+    Returns the original text unchanged if empty or OpenAI is not configured.
+    """
+    if not text.strip() or not settings.OPENAI_API_KEY:
+        return text
+    resp = await _oai().chat.completions.create(
+        model=settings.OPENAI_DEFAULT_MODEL,
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    f"Translate the following text to {target_lang}. "
+                    "Return ONLY the translated text — no explanation, no commentary, no quotes."
+                ),
+            },
+            {"role": "user", "content": text},
+        ],
+        temperature=0,
+        max_tokens=2048,
+    )
+    return resp.choices[0].message.content.strip()
+
+
 # ─── Amélioration contenu ─────────────────────────────────────────
 
 async def improve_content(

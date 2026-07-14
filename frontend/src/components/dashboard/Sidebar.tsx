@@ -9,7 +9,7 @@ import {
   PanelTop, PanelBottom,
   BarChart2, Search, ArrowLeft, ExternalLink,
   Zap, Plus, ChevronDown, ChevronRight, Settings,
-  LogOut, Users, Globe, X, Key, DollarSign,
+  LogOut, Users, Globe, X, Key, DollarSign, LifeBuoy,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useAuthStore, useCurrentTenant } from '@/store/auth.store';
@@ -136,9 +136,10 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
   ];
 
   const teamItems: NavItem[] = [
-    { href: 'collaborators', icon: Users, label: t('collaborators') },
-    { href: 'domains',       icon: Globe, label: t('domains') },
-    { href: 'api-keys',      icon: Key,   label: t('apiKeys') },
+    { href: 'collaborators', icon: Users,    label: t('collaborators') },
+    { href: 'domains',       icon: Globe,    label: t('domains') },
+    { href: 'api-keys',      icon: Key,      label: t('apiKeys') },
+    { href: 'support',       icon: LifeBuoy, label: t('support') },
   ];
 
   const planKey  = (currentTenant?.plan ?? 'free').toLowerCase();

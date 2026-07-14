@@ -1050,12 +1050,217 @@ async def update_platform_settings(
     return {"ok": True, "settings": current}
 
 
-# ── Support tickets (stub — aucune table dédiée pour l'instant) ───
+# ── Support tickets ───────────────────────────────────────────────
+
+from app.models.support_ticket import SupportTicket, SupportMessage, TicketStatus, TicketPriority
+from app.services.ai_service import translate_text
+from app.services.push_service import send_push_to_user
+import asyncio as _asyncio
+
 
 @router.get("/support/tickets")
-async def list_support_tickets(payload: TokenPayload, db: DBSession):
+async def list_support_tickets(
+    payload: TokenPayload,
+    db: DBSession,
+    status: str | None = Query(None),
+    tenant_id: str | None = Query(None),
+    limit: int = Query(30, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
     await _require_super_admin(payload, db)
-    return {"tickets": [], "total": 0}
+
+    q = select(SupportTicket)
+    if status:
+        q = q.where(SupportTicket.status == status)
+    if tenant_id:
+        q = q.where(SupportTicket.tenant_id == uuid.UUID(tenant_id))
+    q = q.order_by(SupportTicket.updated_at.desc()).limit(limit).offset(offset)
+
+    result = await db.execute(q)
+    tickets = result.scalars().all()
+
+    total_q = select(func.count()).select_from(SupportTicket)
+    if status:
+        total_q = total_q.where(SupportTicket.status == status)
+    total_r = await db.execute(total_q)
+    total = total_r.scalar() or 0
+
+    # Enrich with tenant name + opener email
+    enriched = []
+    for t in tickets:
+        tenant_r = await db.execute(select(Tenant).where(Tenant.id == t.tenant_id))
+        tenant_obj = tenant_r.scalar_one_or_none()
+        opener_r = await db.execute(select(User).where(User.id == t.opened_by)) if t.opened_by else None
+        opener = (await opener_r).scalar_one_or_none() if opener_r else None
+
+        # Last message
+        last_msg_r = await db.execute(
+            select(SupportMessage).where(SupportMessage.ticket_id == t.id)
+            .order_by(SupportMessage.created_at.desc()).limit(1)
+        )
+        last_msg = last_msg_r.scalar_one_or_none()
+
+        enriched.append({
+            "id": str(t.id),
+            "subject": t.subject,
+            "status": t.status.value,
+            "priority": t.priority.value,
+            "tenant_id": str(t.tenant_id),
+            "tenant_name": tenant_obj.name if tenant_obj else None,
+            "tenant_slug": tenant_obj.slug if tenant_obj else None,
+            "tenant_language": t.tenant_language,
+            "opener_email": opener.email if opener else None,
+            "opener_name": opener.display_name if opener else None,
+            "last_message": last_msg.body_translated if last_msg else None,
+            "last_message_from_admin": last_msg.is_from_admin if last_msg else False,
+            "created_at": t.created_at.isoformat() if t.created_at else None,
+            "updated_at": t.updated_at.isoformat() if t.updated_at else None,
+        })
+
+    return {"tickets": enriched, "total": total}
+
+
+@router.get("/support/tickets/{ticket_id}")
+async def get_support_ticket(ticket_id: str, payload: TokenPayload, db: DBSession):
+    await _require_super_admin(payload, db)
+    tkid = uuid.UUID(ticket_id)
+
+    t_r = await db.execute(select(SupportTicket).where(SupportTicket.id == tkid))
+    ticket = t_r.scalar_one_or_none()
+    if not ticket:
+        from app.core.exceptions import NotFoundException
+        raise NotFoundException("Ticket introuvable.")
+
+    msgs_r = await db.execute(
+        select(SupportMessage).where(SupportMessage.ticket_id == tkid)
+        .order_by(SupportMessage.created_at.asc())
+    )
+    messages = msgs_r.scalars().all()
+
+    tenant_r = await db.execute(select(Tenant).where(Tenant.id == ticket.tenant_id))
+    tenant_obj = tenant_r.scalar_one_or_none()
+    opener_r = await db.execute(select(User).where(User.id == ticket.opened_by)) if ticket.opened_by else None
+    opener = (await opener_r).scalar_one_or_none() if opener_r else None
+
+    msg_list = []
+    for m in messages:
+        sender_r = await db.execute(select(User).where(User.id == m.sender_id)) if m.sender_id else None
+        sender = (await sender_r).scalar_one_or_none() if sender_r else None
+        msg_list.append({
+            "id": str(m.id),
+            "is_from_admin": m.is_from_admin,
+            "body_original": m.body_original,
+            "body_translated": m.body_translated,
+            "sender_name": sender.display_name if sender else ("Admin" if m.is_from_admin else "Tenant"),
+            "created_at": m.created_at.isoformat() if m.created_at else None,
+        })
+
+    return {
+        "ticket": {
+            "id": str(ticket.id),
+            "subject": ticket.subject,
+            "status": ticket.status.value,
+            "priority": ticket.priority.value,
+            "tenant_id": str(ticket.tenant_id),
+            "tenant_name": tenant_obj.name if tenant_obj else None,
+            "tenant_language": ticket.tenant_language,
+            "opener_email": opener.email if opener else None,
+            "created_at": ticket.created_at.isoformat() if ticket.created_at else None,
+            "updated_at": ticket.updated_at.isoformat() if ticket.updated_at else None,
+            "resolved_at": ticket.resolved_at.isoformat() if ticket.resolved_at else None,
+        },
+        "messages": msg_list,
+    }
+
+
+class AdminReplyBody(BaseModel):
+    body: str
+
+
+@router.post("/support/tickets/{ticket_id}/messages", status_code=201)
+async def admin_reply(ticket_id: str, body: AdminReplyBody, payload: TokenPayload, db: DBSession):
+    admin = await _require_super_admin(payload, db)
+    tkid = uuid.UUID(ticket_id)
+
+    t_r = await db.execute(select(SupportTicket).where(SupportTicket.id == tkid))
+    ticket = t_r.scalar_one_or_none()
+    if not ticket:
+        from app.core.exceptions import NotFoundException
+        raise NotFoundException("Ticket introuvable.")
+
+    # Translate reply to tenant's language
+    target_lang = ticket.tenant_language or "fr"
+    translated = await translate_text(body.body, target_lang)
+
+    msg = SupportMessage(
+        ticket_id=tkid,
+        sender_id=admin.id,
+        is_from_admin=True,
+        body_original=body.body,
+        body_translated=translated,
+    )
+    db.add(msg)
+    if ticket.status == TicketStatus.closed:
+        ticket.status = TicketStatus.in_progress
+    ticket.updated_at = datetime.now(timezone.utc)
+    await db.commit()
+
+    # Push all users of the tenant
+    try:
+        tu_r = await db.execute(
+            select(TenantUser).where(TenantUser.tenant_id == ticket.tenant_id)
+        )
+        tenant_users = tu_r.scalars().all()
+        tasks = [
+            send_push_to_user(db, tu.user_id, "📩 Réponse du support", translated[:120], f"/blogs/{ticket.tenant_id}/support/{ticket_id}")
+            for tu in tenant_users
+        ]
+        await _asyncio.gather(*tasks, return_exceptions=True)
+    except Exception:
+        pass
+
+    return {
+        "id": str(msg.id),
+        "is_from_admin": msg.is_from_admin,
+        "body_original": msg.body_original,
+        "body_translated": msg.body_translated,
+        "sender_name": admin.display_name,
+        "created_at": msg.created_at.isoformat() if msg.created_at else None,
+    }
+
+
+class UpdateTicketBody(BaseModel):
+    status: str | None = None
+    priority: str | None = None
+
+
+@router.patch("/support/tickets/{ticket_id}")
+async def update_ticket_status(ticket_id: str, body: UpdateTicketBody, payload: TokenPayload, db: DBSession):
+    await _require_super_admin(payload, db)
+    tkid = uuid.UUID(ticket_id)
+
+    t_r = await db.execute(select(SupportTicket).where(SupportTicket.id == tkid))
+    ticket = t_r.scalar_one_or_none()
+    if not ticket:
+        from app.core.exceptions import NotFoundException
+        raise NotFoundException("Ticket introuvable.")
+
+    if body.status:
+        try:
+            ticket.status = TicketStatus(body.status)
+            if body.status in ("resolved", "closed"):
+                ticket.resolved_at = datetime.now(timezone.utc)
+        except ValueError:
+            pass
+    if body.priority:
+        try:
+            ticket.priority = TicketPriority(body.priority)
+        except ValueError:
+            pass
+
+    ticket.updated_at = datetime.now(timezone.utc)
+    await db.commit()
+    return {"ok": True, "status": ticket.status.value, "priority": ticket.priority.value}
 
 
 # ── Template Categories ───────────────────────────────────────────

@@ -1232,6 +1232,59 @@ export interface SAAffiliateItem {
   cashout_pending: boolean;
 }
 
+// ── Support ticket types ──────────────────────────────────────────────────────
+
+export interface SupportTicketItem {
+  id: string;
+  subject: string;
+  status: 'open' | 'in_progress' | 'resolved' | 'closed';
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  tenant_id?: string;
+  tenant_name?: string | null;
+  tenant_language?: string;
+  opener_email?: string | null;
+  opener_name?: string | null;
+  last_message?: string | null;
+  last_message_from_admin?: boolean;
+  created_at: string | null;
+  updated_at?: string | null;
+  resolved_at?: string | null;
+}
+
+export interface SupportMessageItem {
+  id: string;
+  ticket_id?: string;
+  is_from_admin: boolean;
+  body_original: string;
+  body_translated: string;
+  sender_name?: string | null;
+  created_at: string | null;
+}
+
+export interface SupportTicketDetail {
+  ticket: SupportTicketItem;
+  messages: SupportMessageItem[];
+}
+
+// ── Tenant support API ────────────────────────────────────────────────────────
+
+export const supportApi = {
+  listTickets: (tenantId: string, params?: { status?: string; limit?: number; offset?: number }) =>
+    api.get<{ tickets: SupportTicketItem[]; total: number }>(`/tenants/${tenantId}/support/tickets`, { params }),
+
+  createTicket: (tenantId: string, data: { subject: string; first_message: string; priority?: string; language?: string }) =>
+    api.post<SupportTicketItem>(`/tenants/${tenantId}/support/tickets`, data),
+
+  getTicket: (tenantId: string, ticketId: string) =>
+    api.get<SupportTicketDetail>(`/tenants/${tenantId}/support/tickets/${ticketId}`),
+
+  sendMessage: (tenantId: string, ticketId: string, body: string) =>
+    api.post<SupportMessageItem>(`/tenants/${tenantId}/support/tickets/${ticketId}/messages`, { body }),
+
+  closeTicket: (tenantId: string, ticketId: string) =>
+    api.patch<{ ok: boolean; status: string }>(`/tenants/${tenantId}/support/tickets/${ticketId}/close`),
+};
+
 export const superadminApi = {
   stats: () =>
     api.get<SuperAdminStats>('/superadmin/stats'),
@@ -1307,8 +1360,17 @@ export const superadminApi = {
   updateSettings: (body: Record<string, unknown>) =>
     api.patch<{ ok: boolean }>('/superadmin/settings', body),
 
-  listSupportTickets: () =>
-    api.get<{ tickets: unknown[]; total: number }>('/superadmin/support/tickets'),
+  listSupportTickets: (params?: { status?: string; tenant_id?: string; limit?: number; offset?: number }) =>
+    api.get<{ tickets: SupportTicketItem[]; total: number }>('/superadmin/support/tickets', { params }),
+
+  getSupportTicket: (ticketId: string) =>
+    api.get<SupportTicketDetail>(`/superadmin/support/tickets/${ticketId}`),
+
+  replySupportTicket: (ticketId: string, body: string) =>
+    api.post<SupportMessageItem>(`/superadmin/support/tickets/${ticketId}/messages`, { body }),
+
+  updateSupportTicket: (ticketId: string, data: { status?: string; priority?: string }) =>
+    api.patch<{ ok: boolean; status: string; priority: string }>(`/superadmin/support/tickets/${ticketId}`, data),
 
   listNotifications: () =>
     api.get<{ notifications: unknown[]; total: number }>('/superadmin/notifications'),
