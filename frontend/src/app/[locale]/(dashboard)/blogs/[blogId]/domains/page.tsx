@@ -189,6 +189,12 @@ export default function DomainsPage() {
                 <p className="text-[11.5px] text-orange-700 dark:text-orange-400 leading-relaxed">{t('cloudflareTip')}</p>
               </div>
 
+              {/* Hostinger tip */}
+              <div className="px-5 py-3 bg-blue-50 dark:bg-blue-950/30 flex items-start gap-2">
+                <span className="text-[15px] shrink-0 mt-0.5">🔵</span>
+                <p className="text-[11.5px] text-blue-700 dark:text-blue-400 leading-relaxed">{t('hostingerTip')}</p>
+              </div>
+
             </div>
           )}
         </div>

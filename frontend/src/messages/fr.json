@@ -2187,8 +2187,9 @@
     "step3Title": "Cliquez sur Vérifier",
     "step3Desc": "Une fois vos enregistrements DNS propagés (quelques minutes sur Cloudflare, jusqu'à 48h ailleurs), cliquez sur le bouton d'actualisation à côté de votre domaine.",
     "cloudflareTip": "Vous utilisez Cloudflare ? Activez le proxy (nuage orange) sur votre enregistrement CNAME — le SSL est alors géré automatiquement, aucune configuration supplémentaire.",
-    "recordCname": "Enregistrement 1 — CNAME domaine principal (gemticash.com)",
-    "recordCnameWww": "Enregistrement 2 — CNAME www (www.gemticash.com)",
+    "hostingerTip": "Vous utilisez Hostinger ? Hostinger n'autorise pas de CNAME à la racine (@). À la place, créez une redirection du domaine racine vers www, puis ajoutez uniquement le CNAME pour \"www\" et l'enregistrement TXT de vérification.",
+    "recordCname": "Enregistrement 1 — CNAME domaine racine",
+    "recordCnameWww": "Enregistrement 2 — CNAME sous-domaine www",
     "recordTxt": "Enregistrement 3 — TXT (vérification)",
     "verifiedDesc": "Votre blog est en ligne à ce domaine. Les visiteurs peuvent y accéder directement."
   },

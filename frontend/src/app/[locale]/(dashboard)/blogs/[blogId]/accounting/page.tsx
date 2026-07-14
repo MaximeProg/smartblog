@@ -47,7 +47,7 @@ export default function TenantAccountingPage() {
 
   return (
     <FullPageShell title={t('title')} description={t('description')}>
-      <div className="px-6 py-6 space-y-6 max-w-4xl">
+      <div className="px-6 py-6 space-y-6">
 
         {/* Summary cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

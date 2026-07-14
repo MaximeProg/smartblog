@@ -723,7 +723,7 @@ async def activity_logs(
 
     # Recent transactions
     recent_tx = await db.execute(text("""
-        SELECT t.status, t.amount, t.currency, t.created_at, u.email
+        SELECT t.status, t.amount_fiat, t.currency_fiat, t.amount_crypto, t.currency_crypto, t.created_at, u.email
         FROM transactions t
         LEFT JOIN users u ON u.id = t.user_id
         ORDER BY t.created_at DESC
@@ -731,12 +731,14 @@ async def activity_logs(
     """))
     for r in recent_tx:
         lvl = "success" if r.status == "completed" else ("error" if r.status == "failed" else "info")
+        amount = r.amount_fiat or r.amount_crypto or 0
+        currency = r.currency_fiat or r.currency_crypto or "USDT"
         events.append({
             "ts": r.created_at.isoformat(),
             "level": lvl,
             "action": f"payment.{r.status}",
             "actor": r.email or "nowpayments-webhook",
-            "details": f"{r.amount} {r.currency}",
+            "details": f"{amount} {currency}",
         })
 
     # Sort by timestamp desc

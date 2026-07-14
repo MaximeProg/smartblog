@@ -77,7 +77,7 @@ export default function ApiKeysPage() {
         </button>
       }
     >
-      <div className="px-6 py-6 space-y-5 max-w-3xl">
+      <div className="px-6 py-6 space-y-5">
 
         {/* Revealed key banner */}
         {revealedKey && (
