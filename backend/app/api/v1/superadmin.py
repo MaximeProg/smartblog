@@ -135,7 +135,7 @@ async def suspend_tenant(
     await db.commit()
 
     # Invalider le cache tenant
-    from app.core.security import get_redis
+    from app.core.redis_client import get_redis
     redis = await get_redis()
     await redis.delete(f"tenant:{tenant.slug}")
     return {"message": f"{tenant.name} suspendu."}
