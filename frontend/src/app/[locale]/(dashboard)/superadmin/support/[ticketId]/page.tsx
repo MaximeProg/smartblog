@@ -43,7 +43,9 @@ export default function AdminTicketPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['sa-ticket', ticketId],
     queryFn: () => superadminApi.getSupportTicket(ticketId).then(r => r.data),
-    refetchInterval: 8000,
+    refetchInterval: 15000,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 
   const replyMut = useMutation({

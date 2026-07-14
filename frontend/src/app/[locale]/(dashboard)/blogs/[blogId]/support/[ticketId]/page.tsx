@@ -48,7 +48,9 @@ export default function SupportTicketPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['support-ticket', blogId, ticketId],
     queryFn: () => supportApi.getTicket(blogId, ticketId).then(r => r.data),
-    refetchInterval: 10000,
+    refetchInterval: 15000,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 
   const sendMut = useMutation({

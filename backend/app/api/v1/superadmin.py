@@ -1140,12 +1140,12 @@ async def get_support_ticket(ticket_id: str, payload: TokenPayload, db: DBSessio
     tenant_r = await db.execute(select(Tenant).where(Tenant.id == ticket.tenant_id))
     tenant_obj = tenant_r.scalar_one_or_none()
     opener_r = await db.execute(select(User).where(User.id == ticket.opened_by)) if ticket.opened_by else None
-    opener = (await opener_r).scalar_one_or_none() if opener_r else None
+    opener = opener_r.scalar_one_or_none() if opener_r else None
 
     msg_list = []
     for m in messages:
         sender_r = await db.execute(select(User).where(User.id == m.sender_id)) if m.sender_id else None
-        sender = (await sender_r).scalar_one_or_none() if sender_r else None
+        sender = sender_r.scalar_one_or_none() if sender_r else None
         msg_list.append({
             "id": str(m.id),
             "is_from_admin": m.is_from_admin,
