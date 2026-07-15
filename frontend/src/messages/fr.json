@@ -1044,6 +1044,16 @@
       "wide": "Large",
       "full": "Pleine largeur"
     },
+    "themeTitle": "Thème",
+    "themeDesc": "Le design global de votre blog public.",
+    "lockedBadge": "Verrouillé après publication",
+    "colorTitle": "Couleur principale",
+    "colorDesc": "Utilisée pour les boutons, liens et accents visuels.",
+    "fontTitle": "Typographie",
+    "fontDesc": "Police utilisée dans tout votre blog.",
+    "unsavedChanges": "Vous avez des modifications non enregistrées.",
+    "saveChanges": "Enregistrer les modifications",
+    "saving": "Enregistrement...",
     "themes": {
       "minimal": "Épuré, axé sur le contenu",
       "magazine": "Style éditorial moderne",
@@ -1361,6 +1371,16 @@
     "currentPlanButton": "Plan actuel",
     "footerNote": "Paiement sécurisé · Annulation possible à tout moment · Pas de frais cachés",
     "checkoutError": "Erreur lors du paiement. Veuillez réessayer.",
+    "upgradeNow": "Mettre à niveau maintenant",
+    "trialExpiredTitle": "Votre essai a expiré",
+    "trialExpiredDesc": "Choisissez un plan pour continuer à publier et développer votre blog.",
+    "trialActiveDesc": "Profitez de toutes les fonctionnalités avant la fin de votre essai.",
+    "trialLastDay": "Dernier jour de votre essai !",
+    "trialDaysLeft": "{days} jours restants dans votre essai",
+    "contactModalTitle": "Passer à {plan}",
+    "contactModalDesc": "Le paiement sera disponible prochainement. En attendant, contactez-nous pour activer manuellement votre plan.",
+    "contactModalCta": "Nous contacter par email",
+    "contactModalNote": "Nous activerons votre plan dans les 24 heures.",
     "plans": {
       "free": {
         "name": "Gratuit",
