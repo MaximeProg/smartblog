@@ -2210,6 +2210,13 @@
     "submitEntry": "Soumettre l'écriture",
     "reverseReason": "Motif d'extourne"
   },
+  "trial": {
+    "daysLeft": "{days} jours restants dans votre essai",
+    "lastDay": "Dernier jour de votre essai — passez à la version payante aujourd'hui !",
+    "expiredMessage": "Votre essai a expiré. Passez à la version payante pour continuer à utiliser toutes les fonctionnalités.",
+    "upgradeNow": "Mettre à niveau maintenant",
+    "viewPlans": "Voir les forfaits"
+  },
   "domains": {
     "pageTitle": "Domaines personnalisés",
     "pageDesc": "Connectez votre propre nom de domaine à votre blog.",
