@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 type Device = 'desktop' | 'tablet' | 'mobile';
 
 interface Props {
-  previewUrl:    string;
+  previewUrl:    string | null;
   refreshSignal: number;
 }
 
@@ -25,6 +25,7 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
   };
 
   useEffect(() => {
+    if (!previewUrl) return;
     const iframe = iframeRef.current;
     if (!iframe) return;
     if (mountedUrl.current === null) {
@@ -90,15 +91,17 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
           >
             <RefreshCw className="h-3 w-3" />
           </button>
-          <a
-            href={previewUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={t('openNewTab')}
-            className="h-6 w-6 rounded-md flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            <ExternalLink className="h-3 w-3" />
-          </a>
+          {previewUrl && (
+            <a
+              href={previewUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={t('openNewTab')}
+              className="h-6 w-6 rounded-md flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
         </div>
       </div>
 
@@ -116,17 +119,23 @@ export function StudioPreviewPanel({ previewUrl, refreshSignal }: Props) {
               <div className="h-2.5 w-2.5 rounded-full bg-green-400" />
             </div>
             <div className="flex-1 bg-white rounded-md h-4 flex items-center px-2">
-              <span className="text-[9px] text-slate-400 truncate">{previewUrl}</span>
+              <span className="text-[9px] text-slate-400 truncate">{previewUrl ?? '…'}</span>
             </div>
           </div>
 
-          <iframe
-            ref={iframeRef}
-            key={reloadKey}
-            src={previewUrl}
-            className="flex-1 w-full border-0 block min-h-0"
-            title={t('blogPreviewIframeTitle')}
-          />
+          {previewUrl ? (
+            <iframe
+              ref={iframeRef}
+              key={reloadKey}
+              src={previewUrl}
+              className="flex-1 w-full border-0 block min-h-0"
+              title={t('blogPreviewIframeTitle')}
+            />
+          ) : (
+            <div className="flex-1 flex items-center justify-center bg-slate-50">
+              <div className="h-6 w-6 rounded-full border-2 border-slate-300 border-t-slate-600 animate-spin" />
+            </div>
+          )}
         </div>
       </div>
     </div>

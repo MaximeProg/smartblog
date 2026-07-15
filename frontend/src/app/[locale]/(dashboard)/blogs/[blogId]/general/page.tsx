@@ -2,10 +2,11 @@
 
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { useAutoSave } from '@/hooks/use-auto-save';
 import {
   BlogStudioShell, StudioSection, StudioField,
   StudioInput, StudioColorPicker,
@@ -36,20 +37,34 @@ export default function GeneralPage() {
     },
   });
 
-  const [form, setForm] = useState({
+  type GeneralForm = {
+    name: string;
+    description: string;
+    primary_color: string;
+    cover_image_url: string;
+    social_links: Record<string, string>;
+    ga4_measurement_id: string;
+    matomo_url: string;
+    matomo_site_id: string;
+    facebook_pixel_id: string;
+  };
+
+  const [form, setForm] = useState<GeneralForm>({
     name: '',
     description: '',
     primary_color: '#2563eb',
     cover_image_url: '',
-    social_links: {} as Record<string, string>,
+    social_links: {},
     ga4_measurement_id: '',
     matomo_url: '',
     matomo_site_id: '',
     facebook_pixel_id: '',
   });
+  const [serverLoaded, setServerLoaded] = useState(false);
+  const isDirtyRef = useRef(false);
 
   useEffect(() => {
-    if (tenant) {
+    if (!isDirtyRef.current && tenant) {
       setForm({
         name: tenant.name ?? '',
         description: tenant.description ?? '',
@@ -61,30 +76,41 @@ export default function GeneralPage() {
         matomo_site_id: (tenant as any).matomo_site_id ?? '',
         facebook_pixel_id: (tenant as any).facebook_pixel_id ?? '',
       });
+      setServerLoaded(true);
     }
   }, [tenant]);
 
+  const doSave = async (latestForm: GeneralForm) => {
+    await tenantsApi.update(blogId, {
+      name: latestForm.name,
+      description: latestForm.description,
+      primary_color: latestForm.primary_color,
+      cover_image_url: latestForm.cover_image_url || null,
+      social_links: latestForm.social_links,
+      ga4_measurement_id: latestForm.ga4_measurement_id || null,
+      matomo_url: latestForm.matomo_url || null,
+      matomo_site_id: latestForm.matomo_site_id || null,
+      facebook_pixel_id: latestForm.facebook_pixel_id || null,
+    } as any);
+    isDirtyRef.current = false;
+    qc.invalidateQueries({ queryKey: ['tenant', blogId] });
+  };
+
+  const patchForm = (updater: (f: GeneralForm) => GeneralForm) => {
+    isDirtyRef.current = true;
+    setForm(updater);
+  };
+
+  const { isAutoSaving } = useAutoSave(form, doSave, { enabled: serverLoaded });
+
   const mutation = useMutation({
-    mutationFn: () => tenantsApi.update(blogId, {
-      name: form.name,
-      description: form.description,
-      primary_color: form.primary_color,
-      cover_image_url: form.cover_image_url || null,
-      social_links: form.social_links,
-      ga4_measurement_id: form.ga4_measurement_id || null,
-      matomo_url: form.matomo_url || null,
-      matomo_site_id: form.matomo_site_id || null,
-      facebook_pixel_id: form.facebook_pixel_id || null,
-    } as any),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['tenant', blogId] });
-      toast({ title: ts('saved') });
-    },
+    mutationFn: () => doSave(form),
+    onSuccess: () => toast({ title: ts('saved') }),
     onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
   const setSocial = (key: string, val: string) =>
-    setForm(f => ({ ...f, social_links: { ...f.social_links, [key]: val } }));
+    patchForm(f => ({ ...f, social_links: { ...f.social_links, [key]: val } }));
 
   return (
     <BlogStudioShell
@@ -92,21 +118,21 @@ export default function GeneralPage() {
       description={ts('pageGeneralDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
-      saving={mutation.isPending}
+      saving={mutation.isPending || isAutoSaving}
       onSave={() => mutation.mutate()}
     >
       <StudioSection id="identity" title={ts('sectionIdentity')} defaultOpen>
         <StudioField label={ts('fieldBlogName')}>
           <StudioInput
             value={form.name}
-            onChange={v => setForm(f => ({ ...f, name: v }))}
+            onChange={v => patchForm(f => ({ ...f, name: v }))}
             placeholder="Mon blog"
           />
         </StudioField>
         <StudioField label={ts('fieldDescription')} hint={ts('fieldDescriptionHint')}>
           <StudioInput
             value={form.description}
-            onChange={v => setForm(f => ({ ...f, description: v }))}
+            onChange={v => patchForm(f => ({ ...f, description: v }))}
             placeholder="Un blog sur…"
             multiline
             rows={3}
@@ -115,7 +141,7 @@ export default function GeneralPage() {
         <StudioField label={ts('fieldThumbnail')} hint={ts('fieldThumbnailHint')}>
           <ImagePicker
             value={form.cover_image_url}
-            onChange={v => setForm(f => ({ ...f, cover_image_url: v }))}
+            onChange={v => patchForm(f => ({ ...f, cover_image_url: v }))}
             tenantId={blogId}
           />
         </StudioField>
@@ -135,7 +161,7 @@ export default function GeneralPage() {
         <StudioField label={ts('fieldColor')} hint={ts('fieldColorHint')}>
           <StudioColorPicker
             value={form.primary_color}
-            onChange={v => setForm(f => ({ ...f, primary_color: v }))}
+            onChange={v => patchForm(f => ({ ...f, primary_color: v }))}
           />
         </StudioField>
       </StudioSection>
@@ -156,28 +182,28 @@ export default function GeneralPage() {
         <StudioField label={ts('fieldGa4Id')} hint={ts('fieldGa4IdHint')}>
           <StudioInput
             value={form.ga4_measurement_id}
-            onChange={v => setForm(f => ({ ...f, ga4_measurement_id: v }))}
+            onChange={v => patchForm(f => ({ ...f, ga4_measurement_id: v }))}
             placeholder="G-XXXXXXXXXX"
           />
         </StudioField>
         <StudioField label={ts('fieldMatomoUrl')} hint={ts('fieldMatomoUrlHint')}>
           <StudioInput
             value={form.matomo_url}
-            onChange={v => setForm(f => ({ ...f, matomo_url: v }))}
+            onChange={v => patchForm(f => ({ ...f, matomo_url: v }))}
             placeholder="https://analytics.example.com"
           />
         </StudioField>
         <StudioField label={ts('fieldMatomoSiteId')}>
           <StudioInput
             value={form.matomo_site_id}
-            onChange={v => setForm(f => ({ ...f, matomo_site_id: v }))}
+            onChange={v => patchForm(f => ({ ...f, matomo_site_id: v }))}
             placeholder="1"
           />
         </StudioField>
         <StudioField label={ts('fieldFbPixelId')} hint={ts('fieldFbPixelIdHint')}>
           <StudioInput
             value={form.facebook_pixel_id}
-            onChange={v => setForm(f => ({ ...f, facebook_pixel_id: v }))}
+            onChange={v => patchForm(f => ({ ...f, facebook_pixel_id: v }))}
             placeholder="123456789012345"
           />
         </StudioField>

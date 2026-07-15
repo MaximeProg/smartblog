@@ -177,6 +177,93 @@ async def send_newsletter_confirmation(
     )
 
 
+async def send_newsletter_welcome_subscriber(
+    to: str,
+    blog_name: str,
+    blog_url: str,
+    language: str = "en",
+) -> None:
+    """Welcome email sent to a new newsletter subscriber, in the blog's default language."""
+    is_fr = language.lower().startswith("fr")
+    if is_fr:
+        subject = f"Bienvenue sur la newsletter de {blog_name} !"
+        preview = f"Vous êtes maintenant abonné(e) à {blog_name}"
+        body = (
+            _h1(f"Merci de votre abonnement à {blog_name} !") +
+            _p("Vous venez de vous abonner à notre newsletter. Vous serez parmi les premiers à recevoir "
+               "nos nouveaux articles, actualités et contenus exclusifs.") +
+            _btn(f"Visiter {blog_name}", blog_url, "#10B981") +
+            _divider() +
+            _note("Vous pouvez vous désabonner à tout moment en cliquant sur le lien de désabonnement "
+                  "présent dans chaque email.")
+        )
+    else:
+        subject = f"Welcome to {blog_name}'s newsletter!"
+        preview = f"You're now subscribed to {blog_name}"
+        body = (
+            _h1(f"Thanks for subscribing to {blog_name}!") +
+            _p("You've successfully subscribed to our newsletter. You'll be among the first to receive "
+               "our latest articles, news, and exclusive content.") +
+            _btn(f"Visit {blog_name}", blog_url, "#10B981") +
+            _divider() +
+            _note("You can unsubscribe at any time by clicking the unsubscribe link in any of our emails.")
+        )
+    await _send(
+        to=to,
+        subject=subject,
+        html=_base(title=subject, preview=preview, body_html=body),
+    )
+
+
+async def send_newsletter_owner_notification(
+    to: str,
+    blog_name: str,
+    subscriber_email: str,
+    language: str = "en",
+) -> None:
+    """Notification sent to the blog owner when someone subscribes to their newsletter."""
+    is_fr = language.lower().startswith("fr")
+    if is_fr:
+        subject = f"Nouvel abonné sur {blog_name}"
+        preview = f"{subscriber_email} vient de s'abonner à votre newsletter"
+        body = (
+            _h1("Vous avez un nouvel abonné !") +
+            _p(f"Bonne nouvelle ! <strong>{subscriber_email}</strong> vient de s'abonner à la newsletter "
+               f"de <strong>{blog_name}</strong>.") +
+            f'<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #10B981;'
+            f'border-radius:8px;padding:14px 18px;margin:20px 0;">'
+            f'<p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#065F46;'
+            f'text-transform:uppercase;letter-spacing:0.5px;">Nouvel abonné</p>'
+            f'<p style="margin:0;font-size:15px;font-weight:600;color:#065F46;">{subscriber_email}</p>'
+            f'</div>' +
+            _p("Continuez à publier du contenu de qualité pour fidéliser votre audience !") +
+            _divider() +
+            _note("Vous recevez cet email car vous êtes propriétaire du blog.")
+        )
+    else:
+        subject = f"New subscriber on {blog_name}"
+        preview = f"{subscriber_email} just subscribed to your newsletter"
+        body = (
+            _h1("You have a new subscriber!") +
+            _p(f"Great news! <strong>{subscriber_email}</strong> just subscribed to the newsletter "
+               f"of <strong>{blog_name}</strong>.") +
+            f'<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #10B981;'
+            f'border-radius:8px;padding:14px 18px;margin:20px 0;">'
+            f'<p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#065F46;'
+            f'text-transform:uppercase;letter-spacing:0.5px;">New subscriber</p>'
+            f'<p style="margin:0;font-size:15px;font-weight:600;color:#065F46;">{subscriber_email}</p>'
+            f'</div>' +
+            _p("Keep publishing great content to grow and retain your audience!") +
+            _divider() +
+            _note("You receive this email because you are the owner of this blog.")
+        )
+    await _send(
+        to=to,
+        subject=subject,
+        html=_base(title=subject, preview=preview, body_html=body),
+    )
+
+
 async def send_newsletter_campaign(
     to: list[str],
     from_name: str,

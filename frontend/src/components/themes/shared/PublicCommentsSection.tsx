@@ -339,7 +339,7 @@ export function PublicCommentsSection({ blogSlug, articleSlug, primaryColor }: P
                 <input
                   value={name} onChange={e => setName(e.target.value)} required
                   placeholder={t('commentFormNamePlaceholder')}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2"
                   style={ring}
                 />
               </div>
@@ -350,7 +350,7 @@ export function PublicCommentsSection({ blogSlug, articleSlug, primaryColor }: P
                 <input
                   type="email" value={email} onChange={e => setEmail(e.target.value)}
                   placeholder={t('commentFormEmailPlaceholder')}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2"
                   style={ring}
                 />
               </div>
@@ -362,7 +362,7 @@ export function PublicCommentsSection({ blogSlug, articleSlug, primaryColor }: P
               <textarea
                 value={text} onChange={e => setText(e.target.value)} required rows={4}
                 placeholder={t('commentFormPlaceholder')}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm resize-none focus:outline-none focus:ring-2"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm resize-none focus:outline-none focus:ring-2"
                 style={ring}
               />
             </div>

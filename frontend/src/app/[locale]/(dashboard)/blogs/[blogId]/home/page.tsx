@@ -2,10 +2,11 @@
 
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { useAutoSave } from '@/hooks/use-auto-save';
 import {
   BlogStudioShell, StudioSection, StudioField,
   StudioSwitch, StudioInput,
@@ -70,23 +71,34 @@ export default function HomePage() {
   });
 
   const [cfg, setCfg] = useState<HomeConfig>(DEFAULT);
+  const [serverLoaded, setServerLoaded] = useState(false);
+  const isDirtyRef = useRef(false);
 
   useEffect(() => {
-    if (tenant?.template_config?.home) {
+    if (!isDirtyRef.current && tenant?.template_config?.home) {
       setCfg({ ...DEFAULT, ...(tenant.template_config.home as any) });
+      setServerLoaded(true);
     }
   }, [tenant]);
 
-  const patch = (fn: (c: HomeConfig) => HomeConfig) => setCfg(fn);
+  const patch = (fn: (c: HomeConfig) => HomeConfig) => {
+    isDirtyRef.current = true;
+    setCfg(fn);
+  };
+
+  const doSave = async (latestCfg: HomeConfig) => {
+    await tenantsApi.update(blogId, {
+      template_config: { ...(tenant?.template_config ?? {}), home: latestCfg },
+    });
+    isDirtyRef.current = false;
+    qc.invalidateQueries({ queryKey: ['tenant', blogId] });
+  };
+
+  const { isAutoSaving } = useAutoSave(cfg, doSave, { enabled: serverLoaded });
 
   const mutation = useMutation({
-    mutationFn: () => tenantsApi.update(blogId, {
-      template_config: { ...(tenant?.template_config ?? {}), home: cfg },
-    }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['tenant', blogId] });
-      toast({ title: ts('homeSavedToast') });
-    },
+    mutationFn: () => doSave(cfg),
+    onSuccess: () => toast({ title: ts('homeSavedToast') }),
     onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
@@ -96,7 +108,7 @@ export default function HomePage() {
       description={ts('pageHomeDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
-      saving={mutation.isPending}
+      saving={mutation.isPending || isAutoSaving}
       onSave={() => mutation.mutate()}
     >
       <StudioSection id="hero" title={ts('sectionFeatured')} defaultOpen>

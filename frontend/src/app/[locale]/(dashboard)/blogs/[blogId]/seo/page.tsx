@@ -2,11 +2,12 @@
 
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Search, Globe, Share2, Eye, Bot } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { useAutoSave } from '@/hooks/use-auto-save';
 import {
   BlogStudioShell, StudioSection, StudioField, StudioInput,
 } from '@/components/dashboard/BlogStudioShell';
@@ -24,34 +25,49 @@ export default function SeoPage() {
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const [form, setForm] = useState({
+  type SeoForm = { seo_title_template: string; seo_meta_description: string; og_image_url: string; robots_txt: string };
+
+  const [form, setForm] = useState<SeoForm>({
     seo_title_template:   '',
     seo_meta_description: '',
     og_image_url:         '',
     robots_txt:           '',
   });
+  const [serverLoaded, setServerLoaded] = useState(false);
+  const isDirtyRef = useRef(false);
 
   useEffect(() => {
-    if (tenant) {
+    if (!isDirtyRef.current && tenant) {
       setForm({
         seo_title_template:   tenant.seo_title_template ?? '{title} | {blog_name}',
         seo_meta_description: tenant.seo_meta_description ?? '',
         og_image_url:         (tenant as any).og_image_url ?? '',
         robots_txt:           tenant.robots_txt ?? '',
       });
+      setServerLoaded(true);
     }
   }, [tenant]);
 
+  const patchForm = (updater: (f: SeoForm) => SeoForm) => {
+    isDirtyRef.current = true;
+    setForm(updater);
+  };
+
+  const doSave = async (latestForm: SeoForm) => {
+    await tenantsApi.update(blogId, {
+      seo_title_template:   latestForm.seo_title_template   || undefined,
+      seo_meta_description: latestForm.seo_meta_description || undefined,
+      robots_txt:           latestForm.robots_txt           || undefined,
+    });
+    isDirtyRef.current = false;
+    qc.invalidateQueries({ queryKey: ['tenant', blogId] });
+  };
+
+  const { isAutoSaving } = useAutoSave(form, doSave, { enabled: serverLoaded });
+
   const mutation = useMutation({
-    mutationFn: () => tenantsApi.update(blogId, {
-      seo_title_template:   form.seo_title_template   || undefined,
-      seo_meta_description: form.seo_meta_description || undefined,
-      robots_txt:           form.robots_txt           || undefined,
-    }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['tenant', blogId] });
-      toast({ title: ts('seoSavedToast') });
-    },
+    mutationFn: () => doSave(form),
+    onSuccess: () => toast({ title: ts('seoSavedToast') }),
     onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
@@ -67,7 +83,7 @@ export default function SeoPage() {
       description={ts('pageSeoDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
-      saving={mutation.isPending}
+      saving={mutation.isPending || isAutoSaving}
       onSave={() => mutation.mutate()}
     >
       {/* Google preview */}
@@ -94,7 +110,7 @@ export default function SeoPage() {
         >
           <StudioInput
             value={form.seo_title_template}
-            onChange={v => setForm(f => ({ ...f, seo_title_template: v }))}
+            onChange={v => patchForm(f => ({ ...f, seo_title_template: v }))}
             placeholder="{title} | {blog_name}"
           />
           <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5 font-mono bg-slate-50 dark:bg-slate-800 rounded-lg px-2.5 py-1.5 truncate">
@@ -108,7 +124,7 @@ export default function SeoPage() {
         >
           <StudioInput
             value={form.seo_meta_description}
-            onChange={v => setForm(f => ({ ...f, seo_meta_description: v }))}
+            onChange={v => patchForm(f => ({ ...f, seo_meta_description: v }))}
             placeholder="Découvrez nos meilleurs articles sur…"
             multiline
             rows={3}
@@ -126,7 +142,7 @@ export default function SeoPage() {
         >
           <ImagePicker
             value={form.og_image_url}
-            onChange={v => setForm(f => ({ ...f, og_image_url: v }))}
+            onChange={v => patchForm(f => ({ ...f, og_image_url: v }))}
             tenantId={blogId}
             ratio="16/9"
           />
@@ -161,7 +177,7 @@ export default function SeoPage() {
         <StudioField label={ts('seoRobotsLabel')} hint={ts('seoRobotsHint')}>
           <StudioInput
             value={form.robots_txt}
-            onChange={v => setForm(f => ({ ...f, robots_txt: v }))}
+            onChange={v => patchForm(f => ({ ...f, robots_txt: v }))}
             placeholder={`User-agent: *\nAllow: /\nSitemap: https://${tenant?.slug ?? 'blog'}.smarterbloggers.com/sitemap.xml`}
             multiline
             rows={8}

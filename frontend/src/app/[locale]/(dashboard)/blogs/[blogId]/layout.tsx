@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Menu, ArrowLeft } from 'lucide-react';
@@ -20,9 +20,16 @@ export default function BlogStudioLayout({ children }: { children: React.ReactNo
   const currentTenant = useCurrentTenant();
 
   const [previewPath,     setPreviewPath]     = useState('');
-  const [blogSlug,        setBlogSlug]        = useState<string | undefined>(undefined);
+  const [blogSlug,        setBlogSlug]        = useState<string | undefined>(currentTenant?.slug);
   const [refreshSignal,   setRefreshSignal]   = useState(0);
   const [fullWidth,       setFullWidthState]  = useState(false);
+
+  // Sync if store loads after initial render (cold navigation)
+  useEffect(() => {
+    if (currentTenant?.slug) {
+      setBlogSlug(prev => prev ?? currentTenant.slug);
+    }
+  }, [currentTenant?.slug]);
 
   const setPreview = useCallback(({ path, blogSlug: slug }: { path: string; blogSlug?: string }) => {
     setPreviewPath(path);
@@ -34,7 +41,7 @@ export default function BlogStudioLayout({ children }: { children: React.ReactNo
 
   const previewUrl = blogSlug
     ? `/${locale}/${blogSlug}${previewPath}`
-    : `/en/template${previewPath}`;
+    : null;
 
   const ctx = useMemo(() => ({ setPreview, refresh, setFullWidth }), [setPreview, refresh, setFullWidth]);
 

@@ -5,6 +5,9 @@ Résout le tenant par slug (path param).
 import uuid
 import random
 import secrets
+import structlog
+
+logger = structlog.get_logger()
 from fastapi import APIRouter, Query, Request, HTTPException
 from fastapi.responses import Response, PlainTextResponse, RedirectResponse
 from sqlalchemy import select, and_, update, func, text as sa_text
@@ -23,12 +26,15 @@ from app.models.comment import Comment
 from app.models.ad import Ad
 from app.models.newsletter import NewsletterSubscriber
 from app.models.domain import CustomDomain
+from app.models.tenant_user import TenantUser
+from app.models.user import User
 from app.models.enums import (
     ArticleStatus, ContentVisibility, TenantStatus, CommentStatus,
     AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus, SubscriberStatus,
-    DomainVerificationStatus,
+    DomainVerificationStatus, UserRole,
 )
 from app.core.dependencies import DBSession
+from app.services import email_service
 
 router = APIRouter(prefix="/public/{slug}", tags=["public"])
 explore_router = APIRouter(prefix="/public", tags=["explore"])
@@ -339,6 +345,41 @@ async def public_subscribe(slug: str, body: PublicSubscribeRequest, request: Req
     except Exception:
         pass
     await db.commit()
+
+    # Send welcome email to subscriber and notification to blog owner
+    lang = tenant.language or "en"
+    blog_url = f"https://{tenant.slug}.smarterbloggers.com"
+    try:
+        await email_service.send_newsletter_welcome_subscriber(
+            to=body.email,
+            blog_name=tenant.name,
+            blog_url=blog_url,
+            language=lang,
+        )
+    except Exception:
+        logger.warning("public_subscribe: failed to send welcome email", email=body.email)
+
+    try:
+        owner_result = await db.execute(
+            select(User.email)
+            .join(TenantUser, TenantUser.user_id == User.id)
+            .where(
+                TenantUser.tenant_id == tenant.id,
+                TenantUser.role == UserRole.TENANT_ADMIN,
+            )
+            .limit(1)
+        )
+        owner_email = owner_result.scalar_one_or_none()
+        if owner_email:
+            await email_service.send_newsletter_owner_notification(
+                to=owner_email,
+                blog_name=tenant.name,
+                subscriber_email=body.email,
+                language=lang,
+            )
+    except Exception:
+        logger.warning("public_subscribe: failed to send owner notification", tenant_id=str(tenant.id))
+
     return {"message": "ok"}
 
 

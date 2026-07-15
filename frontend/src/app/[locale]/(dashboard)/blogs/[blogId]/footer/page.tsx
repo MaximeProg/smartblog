@@ -2,11 +2,12 @@
 
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { useAutoSave } from '@/hooks/use-auto-save';
 import {
   BlogStudioShell, StudioSection, StudioField,
   StudioSwitch, StudioInput,
@@ -47,23 +48,34 @@ export default function FooterPage() {
   });
 
   const [cfg, setCfg] = useState<FooterConfig>(DEFAULT);
+  const [serverLoaded, setServerLoaded] = useState(false);
+  const isDirtyRef = useRef(false);
 
   useEffect(() => {
-    if (tenant?.template_config?.footer) {
+    if (!isDirtyRef.current && tenant?.template_config?.footer) {
       setCfg({ ...DEFAULT, ...(tenant.template_config.footer as any) });
+      setServerLoaded(true);
     }
   }, [tenant]);
 
-  const patch = (fn: (c: FooterConfig) => FooterConfig) => setCfg(fn);
+  const patch = (fn: (c: FooterConfig) => FooterConfig) => {
+    isDirtyRef.current = true;
+    setCfg(fn);
+  };
+
+  const doSave = async (latestCfg: FooterConfig) => {
+    await tenantsApi.update(blogId, {
+      template_config: { ...(tenant?.template_config ?? {}), footer: latestCfg },
+    });
+    isDirtyRef.current = false;
+    qc.invalidateQueries({ queryKey: ['tenant', blogId] });
+  };
+
+  const { isAutoSaving } = useAutoSave(cfg, doSave, { enabled: serverLoaded });
 
   const mutation = useMutation({
-    mutationFn: () => tenantsApi.update(blogId, {
-      template_config: { ...(tenant?.template_config ?? {}), footer: cfg },
-    }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['tenant', blogId] });
-      toast({ title: ts('footerSavedToast') });
-    },
+    mutationFn: () => doSave(cfg),
+    onSuccess: () => toast({ title: ts('footerSavedToast') }),
     onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
   });
 
@@ -78,7 +90,7 @@ export default function FooterPage() {
       description={ts('pageFooterDesc')}
       previewPath=""
       blogSlug={tenant?.slug}
-      saving={mutation.isPending}
+      saving={mutation.isPending || isAutoSaving}
       onSave={() => mutation.mutate()}
     >
       <StudioSection id="brand" title={ts('sectionBrand')} defaultOpen>
