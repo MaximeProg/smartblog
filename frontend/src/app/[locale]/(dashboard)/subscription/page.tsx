@@ -3,11 +3,12 @@
 import { Check, Zap, Star, Building2, Sparkles, Clock, ArrowRight, Loader2, CreditCard } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { useLocale } from 'next-intl';
 import { useAuthStore, useCurrentTenant } from '@/store/auth.store';
-import { paymentsApi } from '@/lib/api';
+import { paymentsApi, platformApi, type PublicPlan } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 
 // ── Plan config ───────────────────────────────────────────────────
@@ -19,7 +20,8 @@ const PLAN_ACCENTS: Record<string, string> = {
 const PLAN_BADGE_CLS: Record<string, string> = {
   starter: 'bg-indigo-600', pro: 'bg-blue-600', business: 'bg-amber-600',
 };
-const PLAN_PRICES: Record<string, number> = { free: 0, starter: 9, pro: 29, business: 99 };
+// Fallback prices used only while the API is loading
+const PLAN_PRICES_FALLBACK: Record<string, number> = { free: 0, starter: 5, pro: 30, business: 90 };
 
 function daysLeft(iso: string): number {
   return Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 86400000));
@@ -35,6 +37,19 @@ export default function SubscriptionPage() {
   const { toast } = useToast();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const currentPlan = user?.plan ?? 'free';
+
+  const { data: plansData } = useQuery({
+    queryKey: ['platform-plans'],
+    queryFn: async () => {
+      const { data } = await platformApi.getPlans();
+      return data;
+    },
+    staleTime: 60 * 60 * 1000,
+  });
+
+  const planById = Object.fromEntries((plansData ?? []).map((p: PublicPlan) => [p.id, p]));
+  const getPlanPrice = (planId: string): number =>
+    planById[planId]?.price_monthly ?? PLAN_PRICES_FALLBACK[planId] ?? 0;
 
   async function handleCheckout(planId: string) {
     if (planId === 'free' || planId === currentPlan || !tenant?.id) return;
@@ -111,7 +126,7 @@ export default function SubscriptionPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
               {PLAN_IDS.map(planId => {
                 const isCurrent = currentPlan === planId;
-                const price = PLAN_PRICES[planId];
+                const price = getPlanPrice(planId);
                 const PlanIcon = PLAN_ICONS[planId];
                 const planData = t.raw(`plans.${planId}`) as { name: string; cta: string; badge?: string; features: string[] };
                 const accent = PLAN_ACCENTS[planId];

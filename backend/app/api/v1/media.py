@@ -1,6 +1,6 @@
 import uuid
-from fastapi import APIRouter, UploadFile, File, Query
-from sqlalchemy import select
+from fastapi import APIRouter, HTTPException, UploadFile, File, Query
+from sqlalchemy import select, text
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -8,6 +8,7 @@ from fastapi import Depends
 from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import NotFoundException
 from app.models.media import Media
+from app.models.tenant import Tenant
 from app.models.enums import MediaType, UserRole
 from app.services.cloudinary_service import upload_file, delete_file
 from app.api.v1.tenants import _assert_member, _assert_role
@@ -51,6 +52,24 @@ async def upload(
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
 
+    # Enforce storage quota before uploading
+    tenant_row = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
+    tenant = tenant_row.scalar_one_or_none()
+    if tenant:
+        plan_row = await db.execute(
+            text("SELECT max_storage_mb FROM subscription_plans WHERE id = :plan"),
+            {"plan": tenant.plan.value},
+        )
+        max_storage_mb = plan_row.scalar_one_or_none()
+        if max_storage_mb is not None and max_storage_mb > 0:
+            used_bytes = tenant.storage_used_bytes or 0
+            max_bytes = max_storage_mb * 1024 * 1024
+            if used_bytes >= max_bytes:
+                raise HTTPException(
+                    status_code=402,
+                    detail=f"Storage limit reached for your plan ({max_storage_mb} MB). Please upgrade or free up space.",
+                )
+
     result = await upload_file(file, str(tenant_id))
 
     media = Media(
@@ -71,7 +90,6 @@ async def upload(
     db.add(media)
 
     # Mettre à jour le storage du tenant
-    from sqlalchemy import text
     if result["file_size_bytes"]:
         await db.execute(
             text("UPDATE tenants SET storage_used_bytes = storage_used_bytes + :size WHERE id = :tid"),
@@ -142,7 +160,6 @@ async def delete_media(
     await delete_file(media.cloudinary_public_id, media.cloudinary_resource_type)
 
     if media.file_size_bytes:
-        from sqlalchemy import text
         await db.execute(
             text("UPDATE tenants SET storage_used_bytes = GREATEST(0, storage_used_bytes - :size) WHERE id = :tid"),
             {"size": media.file_size_bytes, "tid": str(tenant_id)},

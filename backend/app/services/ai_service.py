@@ -20,10 +20,11 @@ def _oai() -> AsyncOpenAI:
 # ─── Limites quotas par plan ──────────────────────────────────────
 
 AI_PLAN_LIMITS = {
-    "starter":    {"tokens_per_month": 50_000,   "tts_chars_per_month": 10_000,  "images_per_month": 5},
-    "pro":        {"tokens_per_month": 200_000,  "tts_chars_per_month": 50_000,  "images_per_month": 30},
-    "business":   {"tokens_per_month": 1_000_000,"tts_chars_per_month": 200_000, "images_per_month": 100},
-    "enterprise": {"tokens_per_month": None,      "tts_chars_per_month": None,    "images_per_month": None},
+    "free":       {"tokens_per_month": 0,         "tts_chars_per_month": 0,       "images_per_month": 0},
+    "starter":    {"tokens_per_month": 50_000,    "tts_chars_per_month": 10_000,  "images_per_month": 5},
+    "pro":        {"tokens_per_month": 200_000,   "tts_chars_per_month": 50_000,  "images_per_month": 30},
+    "business":   {"tokens_per_month": 1_000_000, "tts_chars_per_month": 200_000, "images_per_month": 100},
+    "enterprise": {"tokens_per_month": None,       "tts_chars_per_month": None,    "images_per_month": None},
 }
 
 
@@ -221,3 +222,140 @@ async def generate_cover_image(
         "revised_prompt": revised_prompt,
         "size": size,
     }
+
+
+# ─── AI Blog Builder ──────────────────────────────────────────────
+
+async def generate_blog_config(
+    niche: str,
+    audience: str,
+    tone: str,
+    language: str,
+    brand_name: str,
+    color_preference: str | None = None,
+) -> dict:
+    """Generate a complete blog configuration (all studio sections) using GPT-4o."""
+    lang_label = "French" if language == "fr" else "English"
+    color_hint = f"\n- Preferred color palette: {color_preference}" if color_preference else ""
+
+    system = (
+        f"You are an expert blog content strategist. Generate a complete blog configuration "
+        f"in {lang_label}. All text fields MUST be in {lang_label}. "
+        "Return ONLY valid JSON matching the exact structure requested. No markdown, no explanation."
+    )
+
+    user = f"""Create a complete blog configuration for:
+- Blog niche / topic: {niche}
+- Target audience: {audience}
+- Writing tone: {tone}
+- Brand / blog name: {brand_name}{color_hint}
+
+Return this exact JSON structure (fill every field with relevant content):
+{{
+  "general": {{
+    "name": "compelling blog name",
+    "description": "catchy tagline under 200 chars",
+    "primary_color": "#hex (choose a color fitting the brand and niche)"
+  }},
+  "seo": {{
+    "seo_title_template": "{{{{title}}}} | {{{{blog_name}}}}",
+    "seo_meta_description": "engaging meta description, max 155 chars"
+  }},
+  "header": {{
+    "topBar": {{ "enabled": true, "showDate": true, "showSocial": true, "showNewsletter": true, "showRss": true }},
+    "subscribe": {{ "enabled": true, "label": "subscribe button text" }},
+    "nav": {{ "links": [
+      {{ "label": "home link label", "url": "/" }},
+      {{ "label": "about link label", "url": "/about" }},
+      {{ "label": "contact link label", "url": "/contact" }}
+    ]}}
+  }},
+  "footer": {{
+    "description": "short footer tagline",
+    "showCategories": true,
+    "navLinks": [
+      {{ "label": "home link label", "url": "/" }},
+      {{ "label": "about link label", "url": "/about" }},
+      {{ "label": "contact link label", "url": "/contact" }}
+    ],
+    "showSocialLinks": true,
+    "showNewsletterMini": true,
+    "newsletterMiniText": "newsletter mini teaser",
+    "copyrightText": "© 2025 {brand_name}. All rights reserved.",
+    "showPoweredBy": true
+  }},
+  "home": {{
+    "hero": {{ "enabled": true, "sectionTitle": "hero section title" }},
+    "categoriesStrip": {{ "enabled": true, "label": "browse categories label" }},
+    "newsletter": {{
+      "enabled": true,
+      "title": "newsletter section title",
+      "description": "newsletter section description",
+      "buttonLabel": "subscribe button",
+      "placeholder": "email placeholder",
+      "disclaimer": "no spam disclaimer"
+    }},
+    "latest": {{ "enabled": true, "sectionTitle": "latest articles section title", "postsPerPage": 12 }},
+    "sidebar": {{
+      "popularArticles": true, "popularTitle": "popular articles title",
+      "categories": true, "categoriesTitle": "categories title",
+      "tags": true, "tagsTitle": "tags title",
+      "newsletterMini": true
+    }}
+  }},
+  "about": {{
+    "hero": {{ "enabled": true, "subtitle": "eyebrow text", "title": "about page title", "description": "2-3 sentence intro", "cover_image_url": "" }},
+    "stats": {{ "enabled": true, "items": [
+      {{ "value": "50+", "label": "articles stat label" }},
+      {{ "value": "1K+", "label": "readers stat label" }},
+      {{ "value": "10+", "label": "topics stat label" }}
+    ]}},
+    "mission": {{ "enabled": true, "title": "mission section title", "description": "2-3 sentence mission statement", "image_url": "" }},
+    "values": {{ "enabled": true, "title": "values section title", "items": [
+      {{ "icon": "🎯", "title": "value 1 title", "description": "value 1 description" }},
+      {{ "icon": "✨", "title": "value 2 title", "description": "value 2 description" }},
+      {{ "icon": "🤝", "title": "value 3 title", "description": "value 3 description" }}
+    ]}},
+    "team": {{ "enabled": false, "title": "", "members": [] }},
+    "cta": {{ "enabled": true, "title": "cta title", "description": "cta description", "primaryLabel": "primary cta button", "secondaryLabel": "secondary cta button" }}
+  }},
+  "contact": {{
+    "hero": {{ "enabled": true, "subtitle": "eyebrow text", "title": "contact page title", "description": "1-2 sentence contact intro", "cover_image_url": "" }},
+    "form": {{
+      "enabled": true,
+      "title": "form section title",
+      "namePlaceholder": "name placeholder",
+      "emailPlaceholder": "email placeholder",
+      "subjectPlaceholder": "subject placeholder",
+      "messagePlaceholder": "message placeholder",
+      "submitLabel": "send button",
+      "successMessage": "success message after submit"
+    }},
+    "info": {{
+      "enabled": true,
+      "title": "contact info section title",
+      "email": "contact@{brand_name.lower().replace(' ', '')}.com",
+      "responseTime": "response time message",
+      "showAddress": false,
+      "address": "",
+      "phone": ""
+    }}
+  }}
+}}"""
+
+    resp = await _oai().chat.completions.create(
+        model=settings.OPENAI_STRONG_MODEL,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        response_format={"type": "json_object"},
+        temperature=0.75,
+        max_tokens=4000,
+    )
+
+    import json
+    config = json.loads(resp.choices[0].message.content)
+    tokens_used = resp.usage.total_tokens
+
+    return {"result": config, "tokens_used": tokens_used}

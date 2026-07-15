@@ -11,6 +11,7 @@ from app.models.enums import UserRole
 from app.services.ai_service import (
     generate_article, improve_content, summarize,
     generate_seo, translate, text_to_speech, generate_cover_image,
+    generate_blog_config,
     AI_PLAN_LIMITS,
 )
 from app.api.v1.tenants import _assert_role
@@ -24,15 +25,24 @@ router = APIRouter(
 
 # ── Helpers quota ─────────────────────────────────────────────────
 
-async def _check_and_consume_tokens(db, tenant_id: uuid.UUID, tokens: int) -> None:
+async def _get_tenant_with_limits(db, tenant_id: uuid.UUID) -> tuple:
+    """Returns (tenant, limits_dict). Falls back to free plan limits if tenant not found."""
     result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
-    limits = AI_PLAN_LIMITS.get(tenant.plan.value if tenant else "starter", {})
-    max_tokens = limits.get("tokens_per_month")
+    limits = AI_PLAN_LIMITS.get(tenant.plan.value if tenant else "free", {})
+    return tenant, limits
 
-    if max_tokens is not None and (tenant.ai_tokens_used or 0) + tokens > max_tokens:
+
+async def _pre_check_tokens(db, tenant_id: uuid.UUID) -> None:
+    """Raise before the API call if the plan has no token budget left."""
+    tenant, limits = await _get_tenant_with_limits(db, tenant_id)
+    max_tokens = limits.get("tokens_per_month")
+    if max_tokens is not None and (tenant.ai_tokens_used or 0) >= max_tokens:
         raise AIQuotaExceededException("tokens", max_tokens)
 
+
+async def _consume_tokens(db, tenant_id: uuid.UUID, tokens: int) -> None:
+    """Record tokens consumed after the API call."""
     await db.execute(
         text("UPDATE tenants SET ai_tokens_used = COALESCE(ai_tokens_used, 0) + :t WHERE id = :id"),
         {"t": tokens, "id": str(tenant_id)},
@@ -41,9 +51,7 @@ async def _check_and_consume_tokens(db, tenant_id: uuid.UUID, tokens: int) -> No
 
 
 async def _check_images(db, tenant_id: uuid.UUID) -> None:
-    result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
-    tenant = result.scalar_one_or_none()
-    limits = AI_PLAN_LIMITS.get(tenant.plan.value if tenant else "starter", {})
+    tenant, limits = await _get_tenant_with_limits(db, tenant_id)
     max_img = limits.get("images_per_month")
 
     if max_img is not None and (tenant.ai_images_generated or 0) >= max_img:
@@ -110,8 +118,9 @@ async def ai_generate(
     payload: TokenPayload, db: DBSession,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
+    await _pre_check_tokens(db, tenant_id)
     result = await generate_article(body.prompt, body.tone, body.language, body.target_words)
-    await _check_and_consume_tokens(db, tenant_id, result["tokens_used"])
+    await _consume_tokens(db, tenant_id, result["tokens_used"])
     return result["result"]
 
 
@@ -121,8 +130,9 @@ async def ai_improve(
     payload: TokenPayload, db: DBSession,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
+    await _pre_check_tokens(db, tenant_id)
     result = await improve_content(body.content, body.instruction, body.language)
-    await _check_and_consume_tokens(db, tenant_id, result["tokens_used"])
+    await _consume_tokens(db, tenant_id, result["tokens_used"])
     return {"content": result["result"]}
 
 
@@ -132,8 +142,9 @@ async def ai_summarize(
     payload: TokenPayload, db: DBSession,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
+    await _pre_check_tokens(db, tenant_id)
     result = await summarize(body.content, body.max_chars, body.language)
-    await _check_and_consume_tokens(db, tenant_id, result["tokens_used"])
+    await _consume_tokens(db, tenant_id, result["tokens_used"])
     return {"excerpt": result["result"]}
 
 
@@ -143,8 +154,9 @@ async def ai_seo(
     payload: TokenPayload, db: DBSession,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
+    await _pre_check_tokens(db, tenant_id)
     result = await generate_seo(body.title, body.content, body.language)
-    await _check_and_consume_tokens(db, tenant_id, result["tokens_used"])
+    await _consume_tokens(db, tenant_id, result["tokens_used"])
     return result["result"]
 
 
@@ -167,11 +179,9 @@ async def ai_tts(
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
 
     # Vérifier quota TTS
-    t_result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
-    tenant = t_result.scalar_one_or_none()
-    limits = AI_PLAN_LIMITS.get(tenant.plan.value if tenant else "starter", {})
+    tenant, limits = await _get_tenant_with_limits(db, tenant_id)
     max_chars = limits.get("tts_chars_per_month")
-    if max_chars is not None and (tenant.ai_tts_chars_used or 0) + len(body.text) > max_chars:
+    if max_chars is not None and (tenant.ai_tts_chars_used or 0) >= max_chars:
         raise AIQuotaExceededException("tts_chars", max_chars)
 
     result = await text_to_speech(body.text, body.voice_id, body.model_id)
@@ -261,3 +271,36 @@ async def ai_usage(
         "images_generated": tenant.ai_images_generated or 0,
         "images_limit": limits.get("images_per_month"),
     }
+
+
+# ── AI Blog Builder ────────────────────────────────────────────────
+
+class SetupBlogRequest(BaseModel):
+    niche: str
+    audience: str
+    tone: str = "professional"
+    language: str = "fr"
+    brand_name: str
+    color_preference: str | None = None
+
+
+@router.post("/setup-blog")
+async def ai_setup_blog(
+    tenant_id: uuid.UUID, body: SetupBlogRequest,
+    payload: TokenPayload, db: DBSession,
+):
+    """Generate a complete blog configuration (all studio sections) with GPT-4o."""
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
+    await _pre_check_tokens(db, tenant_id)
+
+    result = await generate_blog_config(
+        niche=body.niche,
+        audience=body.audience,
+        tone=body.tone,
+        language=body.language,
+        brand_name=body.brand_name,
+        color_preference=body.color_preference,
+    )
+
+    await _consume_tokens(db, tenant_id, result["tokens_used"])
+    return result["result"]

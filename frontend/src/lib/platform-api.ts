@@ -28,18 +28,19 @@ export interface Category {
 export interface PricingPlan {
   id: string;
   name: string;
-  name_fr: string;
-  slug: string;
-  price_monthly: number | null;
-  price_yearly: number | null;
-  currency: string;
   description: string | null;
-  description_fr: string | null;
+  price_monthly: number;
+  price_yearly: number;
+  currency: string;
+  max_articles: number;
+  max_storage_mb: number;
+  max_members: number;
+  max_ai_requests: number;
+  max_custom_domains: number;
   features: string[];
-  features_fr: string[];
   is_highlighted: boolean;
-  badge: string | null;
-  badge_fr: string | null;
+  is_default: boolean;
+  sort_order: number;
 }
 
 // ── Fetchers ──────────────────────────────────────────────────────────

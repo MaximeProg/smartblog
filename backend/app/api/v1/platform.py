@@ -1,11 +1,10 @@
-﻿"""
+"""
 Endpoints publics de la plateforme SmarterBloggers (sans auth).
-Sert les données gérées par l'admin super: tarifs, config, etc.
+Sert les données gérées par les super admins: tarifs, config, etc.
 """
 from fastapi import APIRouter
-from sqlalchemy import select, text
+from sqlalchemy import text
 from pydantic import BaseModel
-from decimal import Decimal
 
 from app.core.dependencies import DBSession
 
@@ -14,54 +13,56 @@ router = APIRouter(prefix="/platform", tags=["platform"])
 
 # ── Schémas ──────────────────────────────────────────────────────────
 
-class PricingPlan(BaseModel):
+class PublicPlan(BaseModel):
     id: str
     name: str
-    name_fr: str
-    slug: str
-    price_monthly: float | None
-    price_yearly: float | None
-    currency: str
-    description: str | None
-    description_fr: str | None
-    features: list[str]
-    features_fr: list[str]
-    is_highlighted: bool
-    badge: str | None
-    badge_fr: str | None
+    description: str | None = None
+    price_monthly: float
+    price_yearly: float
+    currency: str = "USD"
+    max_articles: int
+    max_storage_mb: int
+    max_members: int
+    max_ai_requests: int
+    max_custom_domains: int
+    features: list = []
+    is_highlighted: bool = False
+    is_default: bool = False
+    sort_order: int = 0
 
 
 # ── GET /platform/pricing ─────────────────────────────────────────────
 
-@router.get("/pricing", response_model=list[PricingPlan])
+@router.get("/pricing", response_model=list[PublicPlan])
 async def get_pricing(db: DBSession):
     result = await db.execute(
         text("""
-            SELECT id, name, name_fr, slug, price_monthly, price_yearly, currency,
-                   description, description_fr, features, features_fr,
-                   is_highlighted, badge, badge_fr
-            FROM pricing_plans
+            SELECT id, name, description, price_monthly, price_yearly,
+                   max_articles, max_storage_mb, max_members, max_ai_requests,
+                   max_custom_domains, features, is_default, sort_order
+            FROM subscription_plans
             WHERE is_active = TRUE
             ORDER BY sort_order ASC
         """)
     )
     rows = result.fetchall()
     return [
-        PricingPlan(
+        PublicPlan(
             id=str(row.id),
             name=row.name,
-            name_fr=row.name_fr,
-            slug=row.slug,
-            price_monthly=float(row.price_monthly) if row.price_monthly is not None else None,
-            price_yearly=float(row.price_yearly) if row.price_yearly is not None else None,
-            currency=row.currency,
             description=row.description,
-            description_fr=row.description_fr,
+            price_monthly=float(row.price_monthly),
+            price_yearly=float(row.price_yearly),
+            currency="USD",
+            max_articles=row.max_articles,
+            max_storage_mb=row.max_storage_mb,
+            max_members=row.max_members,
+            max_ai_requests=row.max_ai_requests,
+            max_custom_domains=row.max_custom_domains,
             features=row.features if isinstance(row.features, list) else [],
-            features_fr=row.features_fr if isinstance(row.features_fr, list) else [],
-            is_highlighted=row.is_highlighted,
-            badge=row.badge,
-            badge_fr=row.badge_fr,
+            is_highlighted=str(row.id) == "pro",
+            is_default=bool(row.is_default),
+            sort_order=row.sort_order,
         )
         for row in rows
     ]

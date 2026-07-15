@@ -9,7 +9,7 @@ import {
   PanelTop, PanelBottom,
   BarChart2, Search, ArrowLeft, ExternalLink,
   Zap, Plus, ChevronDown, ChevronRight, Settings,
-  LogOut, Users, Globe, X, Key, DollarSign, LifeBuoy,
+  LogOut, Users, Globe, X, Key, DollarSign, LifeBuoy, Sparkles,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useAuthStore, useCurrentTenant } from '@/store/auth.store';
@@ -223,6 +223,18 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-2 px-3" style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}>
+
+        {/* AI Blog Builder — prominent entry point */}
+        <div className="mb-3 mt-1">
+          <Link
+            href={`${base}/ai-builder`}
+            onClick={handleNavClick}
+            className="w-full flex items-center gap-2.5 rounded-xl px-2.5 py-[9px] bg-gradient-to-r from-violet-600 to-blue-600 text-white text-[13px] font-bold shadow-sm hover:from-violet-700 hover:to-blue-700 transition-all"
+          >
+            <Sparkles className="h-4 w-4 shrink-0" />
+            <span>{t('aiBuilder')}</span>
+          </Link>
+        </div>
 
         <SidebarItem item={{ href: 'general', icon: Settings, label: t('generalSettings') }} base={base} />
 

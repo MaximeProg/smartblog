@@ -896,6 +896,16 @@ export const aiApi = {
 
   usage: (tenantId: string) =>
     api.get<AiUsage>(`/tenants/${tenantId}/ai/usage`),
+
+  setupBlog: (tenantId: string, data: {
+    niche: string;
+    audience: string;
+    tone: string;
+    language: string;
+    brand_name: string;
+    color_preference?: string;
+  }) =>
+    api.post<Record<string, unknown>>(`/tenants/${tenantId}/ai/setup-blog`, data),
 };
 
 // ── Articles scheduling ───────────────────────────────────────────────────────
@@ -1450,4 +1460,28 @@ export const superadminApi = {
   // ── Affiliates ─────────────────────────────────────────────────
   listAffiliates: (params?: { limit?: number; offset?: number }) =>
     api.get<{ affiliates: SAAffiliateItem[]; total: number }>('/superadmin/affiliate/list', { params }),
+};
+
+// ── Public platform API (no auth required) ────────────────────────────
+
+export interface PublicPlan {
+  id: string;
+  name: string;
+  description: string | null;
+  price_monthly: number;
+  price_yearly: number;
+  currency: string;
+  max_articles: number;
+  max_storage_mb: number;
+  max_members: number;
+  max_ai_requests: number;
+  max_custom_domains: number;
+  features: string[];
+  is_highlighted: boolean;
+  is_default: boolean;
+  sort_order: number;
+}
+
+export const platformApi = {
+  getPlans: () => api.get<PublicPlan[]>('/platform/pricing'),
 };

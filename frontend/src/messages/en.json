@@ -802,7 +802,8 @@
     "domains": "Custom domains",
     "apiKeys": "API Keys",
     "accounting": "Financials",
-    "support": "Support"
+    "support": "Support",
+    "aiBuilder": "AI Blog Builder"
   },
   "menus": {
     "locationPrimary": "Main navigation",

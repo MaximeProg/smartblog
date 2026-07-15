@@ -7,8 +7,7 @@ import {
 } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
-import { getPricingPlans } from '@/lib/platform-api';
-import type { PricingPlan } from '@/lib/platform-api';
+import { getPricingPlans, type PricingPlan } from '@/lib/platform-api';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,72 +30,71 @@ export default async function HomePage({
     { icon: FileText, title: t('features.seoTitle'), desc: t('features.seoDesc'), color: 'bg-orange-500/10 text-orange-400' },
   ];
 
-  const STATIC_PLANS = [
-    {
+  // Static text/features per plan (EN/FR) — display text stays in code, prices come from API
+  const PLAN_STATIC: Record<string, { name: string; desc: string; features: string[] }> = {
+    free: {
       name: isFr ? 'Gratuit' : 'Free',
-      price: isFr ? 'Gratuit' : 'Free',
-      period: undefined,
       desc: isFr ? 'Parfait pour commencer à bloguer.' : 'Perfect to start blogging.',
       features: isFr
         ? ['1 blog', '10 articles / mois', '1 auteur', 'Sous-domaine smarterbloggers.com']
         : ['1 blog', '10 articles / month', '1 author', 'smarterbloggers.com subdomain'],
-      cta: t('pricing.ctaFree'),
-      highlight: false,
-      badge: null,
     },
-    {
+    starter: {
       name: 'Starter',
-      price: '€9',
-      period: isFr ? '/mois' : '/mo',
       desc: isFr ? 'Pour les blogueurs sérieux.' : 'For serious bloggers.',
       features: isFr
         ? ['2 blogs', 'Articles illimités', '3 auteurs', 'Domaine personnalisé', 'Newsletter — 1 000 abonnés']
         : ['2 blogs', 'Unlimited articles', '3 authors', 'Custom domain', 'Newsletter — 1,000 subscribers'],
-      cta: t('pricing.cta'),
-      highlight: false,
-      badge: null,
     },
-    {
+    pro: {
       name: 'Pro',
-      price: '€29',
-      period: isFr ? '/mois' : '/mo',
       desc: isFr ? 'Pour les équipes créatives.' : 'For creative teams.',
       features: isFr
         ? ['5 blogs', 'Articles illimités', '10 auteurs', 'Domaine personnalisé', 'Newsletter — 10 000 abonnés', 'IA — 50 articles / mois', 'Analytics avancés']
         : ['5 blogs', 'Unlimited articles', '10 authors', 'Custom domain', 'Newsletter — 10,000 subscribers', 'AI — 50 articles / month', 'Advanced analytics'],
-      cta: t('pricing.cta'),
-      highlight: true,
-      badge: isFr ? 'Populaire' : 'Popular',
     },
-    {
+    business: {
       name: 'Business',
-      price: '€79',
-      period: isFr ? '/mois' : '/mo',
       desc: isFr ? 'Pour les grandes organisations.' : 'For large organizations.',
       features: isFr
         ? ['Blogs illimités', 'Articles illimités', 'Auteurs illimités', 'Domaines illimités', 'Newsletter illimitée', 'IA illimitée', 'Accès API', 'White label']
         : ['Unlimited blogs', 'Unlimited articles', 'Unlimited authors', 'Unlimited domains', 'Unlimited newsletter', 'Unlimited AI', 'API access', 'White label'],
-      cta: t('pricing.cta'),
-      highlight: false,
-      badge: null,
     },
-  ];
+    enterprise: {
+      name: 'Enterprise',
+      desc: isFr ? 'Pour les grandes entreprises.' : 'For large enterprises.',
+      features: isFr
+        ? ['Tout Business', 'SLA dédié', 'Support prioritaire', 'Onboarding personnalisé']
+        : ['Everything in Business', 'Dedicated SLA', 'Priority support', 'Custom onboarding'],
+    },
+  };
 
-  // Use API plans if the API returns exactly 4 plans; otherwise use static fallback
-  const plans = pricingPlans.length === 4
-    ? pricingPlans.map((p: PricingPlan) => ({
-        name: isFr ? p.name_fr : p.name,
-        price: p.price_monthly === null
-          ? (isFr ? 'Gratuit' : 'Free')
-          : `${p.currency === 'EUR' ? '€' : '$'}${p.price_monthly}`,
-        period: p.price_monthly !== null ? (isFr ? '/mois' : '/mo') : undefined,
-        desc: isFr ? (p.description_fr ?? '') : (p.description ?? ''),
-        features: isFr ? p.features_fr : p.features,
-        cta: p.price_monthly === null ? t('pricing.ctaFree') : t('pricing.cta'),
-        highlight: p.is_highlighted,
-        badge: isFr ? p.badge_fr : p.badge,
-      }))
-    : STATIC_PLANS;
+  // Lookup API prices by plan ID; fall back to static display if API unavailable
+  const apiById = Object.fromEntries(pricingPlans.map((p: PricingPlan) => [p.id, p]));
+
+  const DISPLAY_ORDER = ['free', 'starter', 'pro', 'business'];
+  const planIds = pricingPlans.length > 0
+    ? pricingPlans.map((p: PricingPlan) => p.id).filter(id => DISPLAY_ORDER.includes(id))
+    : DISPLAY_ORDER;
+
+  const FALLBACK_PRICES: Record<string, number> = { free: 0, starter: 5, pro: 30, business: 90 };
+
+  const plans = planIds.map(id => {
+    const api = apiById[id] as PricingPlan | undefined;
+    const text = PLAN_STATIC[id] ?? { name: id, desc: '', features: [] };
+    const priceNum = api ? api.price_monthly : (FALLBACK_PRICES[id] ?? 0);
+    return {
+      id,
+      name: text.name,
+      price: priceNum === 0 ? (isFr ? 'Gratuit' : 'Free') : `$${priceNum}`,
+      period: priceNum > 0 ? (isFr ? '/mois' : '/mo') : undefined,
+      desc: text.desc,
+      features: text.features,
+      cta: priceNum === 0 ? t('pricing.ctaFree') : t('pricing.cta'),
+      highlight: api ? api.is_highlighted : id === 'pro',
+      badge: (api ? api.is_highlighted : id === 'pro') ? (isFr ? 'Populaire' : 'Popular') : null,
+    };
+  });
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">

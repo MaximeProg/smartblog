@@ -1,9 +1,12 @@
 import uuid
 from fastapi import APIRouter, Query
 from fastapi import Depends
+from sqlalchemy import func, select, text
 from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import ForbiddenException
 from app.models.enums import ArticleStatus, UserRole
+from app.models.tenant import Tenant
+from app.models.article import Article
 from app.schemas.article import (
     CreateArticleRequest, UpdateArticleRequest,
     ArticleResponse, ArticleListItem, ArticleVersionResponse,
@@ -60,6 +63,28 @@ async def create(
     db: DBSession,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
+
+    # Enforce max_articles plan limit
+    tenant_row = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
+    tenant = tenant_row.scalar_one_or_none()
+    if tenant:
+        plan_row = await db.execute(
+            text("SELECT max_articles FROM subscription_plans WHERE id = :plan"),
+            {"plan": tenant.plan.value},
+        )
+        max_articles = plan_row.scalar_one_or_none()
+        if max_articles is not None and max_articles > 0:
+            count_row = await db.execute(
+                select(func.count()).select_from(Article).where(Article.tenant_id == tenant_id)
+            )
+            article_count = count_row.scalar_one()
+            if article_count >= max_articles:
+                from fastapi import HTTPException
+                raise HTTPException(
+                    status_code=402,
+                    detail=f"Article limit reached for your plan ({max_articles} articles). Please upgrade.",
+                )
+
     return await create_article(db, tenant_id, uuid.UUID(payload["sub"]), body)
 
 

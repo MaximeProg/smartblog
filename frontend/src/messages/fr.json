@@ -802,7 +802,8 @@
     "domains": "Domaines personnalisés",
     "apiKeys": "Clés API",
     "accounting": "Finances",
-    "support": "Support"
+    "support": "Support",
+    "aiBuilder": "Créateur IA"
   },
   "menus": {
     "locationPrimary": "Navigation principale",
