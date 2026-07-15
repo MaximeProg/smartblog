@@ -14,8 +14,6 @@ import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 import { useBookmark } from '@/hooks/useBookmark';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
-
 const cardGradients = [
   'from-zinc-100 to-zinc-200',
   'from-blue-50 to-blue-100',
@@ -142,7 +140,7 @@ export default function EditorialArticle({
     setLiked(true);
     setLikeCount(n => n + 1);
     try {
-      await fetch(`${API_URL}/api/v1/public/${blog.slug}/articles/${article.slug}/like`, {
+      await fetch(`/api/public-proxy/${blog.slug}/articles/${article.slug}/like`, {
         method: 'POST',
       });
     } catch {}

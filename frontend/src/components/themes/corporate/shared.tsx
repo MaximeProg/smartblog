@@ -12,8 +12,6 @@ import type { PublicArticle, PublicCategory } from '@/lib/public-api';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 import { ShareButtons } from '../shared/ShareButtons';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 export function fmtDate(iso: string | null, locale = 'fr') {
@@ -680,7 +678,7 @@ export function NewsletterSection({
     if (!email.trim()) return;
     setStatus('loading');
     try {
-      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/subscribe`, {
+      const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 function getOrCreateSessionId(): string {
   try {
@@ -43,7 +42,7 @@ export function BlogAnalyticsTracker({ tenantId, articleId }: Props) {
       if (sentRef.current) return;
       sentRef.current = true;
       try {
-        await fetch(`${API_BASE}/api/v1/tenants/${tenantId}/analytics/track`, {
+        await fetch(`/api/analytics-proxy/${tenantId}/track`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

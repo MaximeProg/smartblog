@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -19,8 +19,6 @@ interface ThemeSidebarProps {
   /** Visual style variant — 'light' (default) or 'dark' */
   variant?: 'light' | 'dark';
 }
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 
 export function ThemeSidebar({
   blog,
@@ -67,7 +65,7 @@ export function ThemeSidebar({
     if (!email.trim()) return;
     setSubStatus('loading');
     try {
-      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/subscribe`, {
+      const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

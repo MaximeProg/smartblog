@@ -14,8 +14,6 @@ import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 import { useBookmark } from '@/hooks/useBookmark';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
-
 const GRADIENTS = [
   'from-zinc-800 to-zinc-950',
   'from-amber-900 to-zinc-900',
@@ -141,7 +139,7 @@ export default function LuminaryArticle({
     setLiked(true);
     setLikeCount(n => n + 1);
     try {
-      await fetch(`${API_URL}/api/v1/public/${blog.slug}/articles/${article.slug}/like`, {
+      await fetch(`/api/public-proxy/${blog.slug}/articles/${article.slug}/like`, {
         method: 'POST',
       });
     } catch {}

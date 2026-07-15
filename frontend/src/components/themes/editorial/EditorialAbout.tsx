@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -7,8 +7,6 @@ import { useTranslations } from 'next-intl';
 import { CheckCircle2, Users, ArrowRight, Mail } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 interface Props {
   blog: BlogInfo;
@@ -63,7 +61,7 @@ export default function EditorialAbout({ blog, categories, basePath }: Props) {
     if (!email.trim()) return;
     setSubStatus('loading');
     try {
-      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/subscribe`, {
+      const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

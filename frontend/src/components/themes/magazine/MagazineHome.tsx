@@ -8,8 +8,6 @@ import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
-
 function formatDate(d: string | null) {
   if (!d) return '';
   return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -52,7 +50,7 @@ export default function MagazineHome({
     if (!email.trim()) return;
     setSubStatus('loading');
     try {
-      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/subscribe`, {
+      const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

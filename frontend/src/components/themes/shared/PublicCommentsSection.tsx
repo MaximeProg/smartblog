@@ -1,10 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, type FormEvent, type CSSProperties } from 'react';
 import { MessageCircle, Send, Check, Loader2, CornerDownRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 interface PublicComment {
   id: string;
@@ -78,7 +76,7 @@ function ReplyForm({
     setSubmitting(true);
     setError('');
     try {
-      const res = await fetch(`${API_BASE}/api/v1/public/${blogSlug}/articles/${articleSlug}/comments`, {
+      const res = await fetch(`/api/public-proxy/${blogSlug}/articles/${articleSlug}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: text.trim(), author_name: name.trim(), parent_id: parentId }),
@@ -153,7 +151,7 @@ function CommentItem({
     setRepliesLoading(true);
     try {
       const res = await fetch(
-        `${API_BASE}/api/v1/public/${blogSlug}/articles/${articleSlug}/comments/${comment.id}/replies`
+        `/api/public-proxy/${blogSlug}/articles/${articleSlug}/comments/${comment.id}/replies`
       );
       if (res.ok) setReplies(await res.json());
     } catch {
@@ -279,7 +277,7 @@ export function PublicCommentsSection({ blogSlug, articleSlug, primaryColor }: P
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/v1/public/${blogSlug}/articles/${articleSlug}/comments`)
+    fetch(`/api/public-proxy/${blogSlug}/articles/${articleSlug}/comments`)
       .then(r => r.ok ? r.json() : [])
       .then(data => setComments(Array.isArray(data) ? data : []))
       .catch(() => setComments([]))
@@ -292,7 +290,7 @@ export function PublicCommentsSection({ blogSlug, articleSlug, primaryColor }: P
     setSubmitting(true);
     setError('');
     try {
-      const res = await fetch(`${API_BASE}/api/v1/public/${blogSlug}/articles/${articleSlug}/comments`, {
+      const res = await fetch(`/api/public-proxy/${blogSlug}/articles/${articleSlug}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: text.trim(), author_name: name.trim(), author_email: email.trim() || undefined }),

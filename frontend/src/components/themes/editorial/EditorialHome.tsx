@@ -9,8 +9,6 @@ import { EditorialHeader, EditorialFooter } from './EditorialShared';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 import { ThemeSidebar } from '../shared/ThemeSidebar';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
-
 const cardGradients = [
   'from-zinc-100 to-zinc-200',
   'from-blue-50 to-blue-100',
@@ -71,7 +69,7 @@ export default function EditorialHome({
     if (!email.trim()) return;
     setSubStatus('loading');
     try {
-      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/subscribe`, {
+      const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

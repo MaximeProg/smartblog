@@ -10,8 +10,6 @@ import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
 import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
-
 const GRADIENTS = [
   'from-zinc-800 to-zinc-950',
   'from-amber-900 to-zinc-900',
@@ -141,7 +139,7 @@ export default function LuminaryHome({
     if (!email.trim()) return;
     setSubStatus('loading');
     try {
-      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/subscribe`, {
+      const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

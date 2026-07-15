@@ -1,12 +1,10 @@
-'use client';
+﻿'use client';
 
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { Mail, Phone, MapPin, CheckCircle2, Loader2, Send } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 interface Props {
   blog: BlogInfo;
@@ -46,7 +44,7 @@ export default function MagazineContact({ blog, categories, basePath }: Props) {
     setStatus('loading');
     setErrorMsg('');
     try {
-      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/contact`, {
+      const res = await fetch(`/api/public-proxy/${blog.slug}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, subject, message }),

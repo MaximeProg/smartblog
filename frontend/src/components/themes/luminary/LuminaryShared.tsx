@@ -6,8 +6,6 @@ import { Menu, X, Twitter, Linkedin, Github, ExternalLink, Instagram, Youtube } 
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { ShareButtons } from '../shared/ShareButtons';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
-
 interface SharedProps {
   blog: BlogInfo;
   categories: PublicCategory[];
@@ -178,7 +176,7 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
     if (!email.trim()) return;
     setSubStatus('loading');
     try {
-      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/subscribe`, {
+      const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

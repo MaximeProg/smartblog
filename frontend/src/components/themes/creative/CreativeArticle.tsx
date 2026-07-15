@@ -13,8 +13,6 @@ import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 import { useBookmark } from '@/hooks/useBookmark';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com';
-
 const GRADIENTS = [
   'from-violet-900 to-indigo-900',
   'from-rose-900 to-pink-800',
@@ -96,7 +94,7 @@ export default function CreativeArticle({
     setLiked(true);
     setLikeCount(n => n + 1);
     try {
-      await fetch(`${API_URL}/api/v1/public/${blog.slug}/articles/${article.slug}/like`, { method: 'POST' });
+      await fetch(`/api/public-proxy/${blog.slug}/articles/${article.slug}/like`, { method: 'POST' });
     } catch {}
   };
 

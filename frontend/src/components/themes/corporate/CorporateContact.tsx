@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -12,8 +12,6 @@ interface Props {
   categories: PublicCategory[];
   basePath: string;
 }
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export default function CorporateContactPage({ blog, categories, basePath }: Props) {
   const primaryColor = blog.primary_color || '#2563eb';
@@ -45,7 +43,7 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
     setStatus('loading');
     setErrorMsg('');
     try {
-      const res = await fetch(`${API_URL}/api/v1/public/${blog.slug}/contact`, {
+      const res = await fetch(`/api/public-proxy/${blog.slug}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, subject, message }),
