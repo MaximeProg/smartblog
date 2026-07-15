@@ -20,7 +20,7 @@ export function useAutoSave<T>(
   { debounceMs = 1500, enabled = true }: UseAutoSaveOptions = {},
 ): { isAutoSaving: boolean } {
   const [isAutoSaving, setIsAutoSaving] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const cfgRef = useRef(cfg);
   const saveFnRef = useRef(saveFn);
   const skipRef = useRef(true); // skip first fire after enabled becomes true
