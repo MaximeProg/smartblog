@@ -52,7 +52,7 @@ export function CardHero({ article, href }: { article: PublicArticle; href: stri
   return (
     <Link href={href} className="group relative flex flex-col rounded-3xl overflow-hidden bg-slate-900 min-h-[480px] lg:min-h-[540px]">
       {isVideo ? (
-        <VideoCardThumb videoUrl={article.video_url} />
+        <VideoCardThumb videoUrl={article.video_url} coverImageUrl={article.cover_image_url} />
       ) : hasImg ? (
         <Image src={article.cover_image_url!} alt={article.title} fill
           className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -98,7 +98,7 @@ export function CardSide({ article, href }: { article: PublicArticle; href: stri
   return (
     <Link href={href} className="group relative rounded-2xl overflow-hidden flex flex-col min-h-[220px] bg-slate-800">
       {isVideo ? (
-        <VideoCardThumb videoUrl={article.video_url} />
+        <VideoCardThumb videoUrl={article.video_url} coverImageUrl={article.cover_image_url} />
       ) : hasImg ? (
         <Image src={article.cover_image_url!} alt={article.title} fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -128,7 +128,7 @@ export function CardMedium({ article, href }: { article: PublicArticle; href: st
     <Link href={href} className="group flex flex-col rounded-2xl overflow-hidden border border-slate-100 bg-white hover:shadow-xl hover:border-[var(--cp)]/20 transition-all duration-300">
       <div className="relative aspect-[16/9] overflow-hidden">
         {isVideo ? (
-          <VideoCardThumb videoUrl={article.video_url} />
+          <VideoCardThumb videoUrl={article.video_url} coverImageUrl={article.cover_image_url} />
         ) : hasImg ? (
           <Image src={article.cover_image_url!} alt={article.title} fill
             className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -176,7 +176,7 @@ export function CardCompact({ article, href, rank }: { article: PublicArticle; h
       )}
       <div className="relative shrink-0 w-20 h-16 rounded-xl overflow-hidden bg-slate-100">
         {isVideo ? (
-          <VideoCardThumb videoUrl={article.video_url} />
+          <VideoCardThumb videoUrl={article.video_url} coverImageUrl={article.cover_image_url} />
         ) : hasImg ? (
           <Image src={article.cover_image_url!} alt={article.title} fill
             className="object-cover group-hover:scale-110 transition-transform duration-300"

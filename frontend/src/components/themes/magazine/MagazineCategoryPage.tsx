@@ -91,7 +91,7 @@ export default function MagazineCategoryPage({
               >
                 <div className="relative h-56 sm:h-56 sm:w-96 shrink-0 rounded overflow-hidden">
                   {featured.article_type === 'video' ? (
-                    <VideoCardThumb videoUrl={featured.video_url} />
+                    <VideoCardThumb videoUrl={featured.video_url} coverImageUrl={featured.cover_image_url} />
                   ) : featured.cover_image_url ? (
                     <Image
                       src={featured.cover_image_url}
@@ -139,7 +139,7 @@ export default function MagazineCategoryPage({
                   >
                     <div className="relative h-44 overflow-hidden">
                       {a.article_type === 'video' ? (
-                        <VideoCardThumb videoUrl={a.video_url} />
+                        <VideoCardThumb videoUrl={a.video_url} coverImageUrl={a.cover_image_url} />
                       ) : a.cover_image_url ? (
                         <Image
                           src={a.cover_image_url}

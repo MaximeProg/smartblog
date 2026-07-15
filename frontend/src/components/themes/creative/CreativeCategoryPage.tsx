@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -90,7 +90,7 @@ export default function CreativeCategoryPage({
                   className={`group relative rounded-xl overflow-hidden cursor-pointer block ${isWide ? 'sm:col-span-2' : ''} ${aspectClass}`}
                 >
                   {a.article_type === 'video' ? (
-                    <VideoCardThumb videoUrl={a.video_url} />
+                    <VideoCardThumb videoUrl={a.video_url} coverImageUrl={a.cover_image_url} />
                   ) : a.cover_image_url ? (
                     <Image
                       src={a.cover_image_url}

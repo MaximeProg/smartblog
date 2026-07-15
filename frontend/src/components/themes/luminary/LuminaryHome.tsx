@@ -80,7 +80,7 @@ function DepartmentCard({ article, href, primaryColor }: DepartmentCardProps) {
     <Link href={href} className="group flex flex-col">
       <div className="relative aspect-[4/3] overflow-hidden mb-4">
         {article.article_type === 'video' ? (
-          <VideoCardThumb videoUrl={article.video_url} />
+          <VideoCardThumb videoUrl={article.video_url} coverImageUrl={article.cover_image_url} />
         ) : article.cover_image_url ? (
           <Image
             src={article.cover_image_url}
@@ -196,7 +196,7 @@ export default function LuminaryHome({
       {coverArticle && (
         <section className="relative w-full h-[70vh] min-h-[420px]">
           {coverArticle.article_type === 'video' ? (
-            <VideoCardThumb videoUrl={coverArticle.video_url} />
+            <VideoCardThumb videoUrl={coverArticle.video_url} coverImageUrl={coverArticle.cover_image_url} />
           ) : coverArticle.cover_image_url ? (
             <Image
               src={coverArticle.cover_image_url}

@@ -121,7 +121,7 @@ export default function MagazineHome({
                 >
                   <div className="relative h-44 overflow-hidden">
                     {a.article_type === 'video' ? (
-                      <VideoCardThumb videoUrl={a.video_url} />
+                      <VideoCardThumb videoUrl={a.video_url} coverImageUrl={a.cover_image_url} />
                     ) : a.cover_image_url ? (
                       <Image
                         src={a.cover_image_url}
@@ -160,7 +160,7 @@ export default function MagazineHome({
                     <div className="lg:col-span-2">
                       <Link href={aHref(hero.slug)} className="block group relative h-72 sm:h-[420px] rounded overflow-hidden">
                         {hero.article_type === 'video' ? (
-                          <VideoCardThumb videoUrl={hero.video_url} />
+                          <VideoCardThumb videoUrl={hero.video_url} coverImageUrl={hero.cover_image_url} />
                         ) : hero.cover_image_url ? (
                           <Image
                             src={hero.cover_image_url}
@@ -242,7 +242,7 @@ export default function MagazineHome({
                         <Link href={aHref(featured.slug)} className="sm:col-span-2 group flex gap-4">
                           <div className="relative h-40 w-44 shrink-0 rounded overflow-hidden">
                             {featured.article_type === 'video' ? (
-                              <VideoCardThumb videoUrl={featured.video_url} />
+                              <VideoCardThumb videoUrl={featured.video_url} coverImageUrl={featured.cover_image_url} />
                             ) : featured.cover_image_url ? (
                               <Image
                                 src={featured.cover_image_url}
@@ -271,7 +271,7 @@ export default function MagazineHome({
                           <Link key={a.id} href={aHref(a.slug)} className={`group flex gap-3 pb-3 ${idx < mini.length - 1 ? 'border-b border-zinc-100 mb-3' : ''}`}>
                             <div className="relative h-14 w-14 rounded shrink-0 overflow-hidden">
                               {a.article_type === 'video' ? (
-                                <VideoCardThumb videoUrl={a.video_url} />
+                                <VideoCardThumb videoUrl={a.video_url} coverImageUrl={a.cover_image_url} />
                               ) : a.cover_image_url ? (
                                 <Image
                                   src={a.cover_image_url}

@@ -31,6 +31,7 @@ interface Blog {
   name: string; slug: string; description: string | null; category: string | null;
   logo_url: string | null; cover_image_url: string | null; language: string;
   theme: string; primary_color: string; articles_count: number;
+  custom_domain?: string | null;
 }
 
 interface Props {

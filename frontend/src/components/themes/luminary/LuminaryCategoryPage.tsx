@@ -121,7 +121,7 @@ export default function LuminaryCategoryPage({
               >
                 <div className="relative aspect-[4/3] overflow-hidden mb-4">
                   {a.article_type === 'video' ? (
-                    <VideoCardThumb videoUrl={a.video_url} />
+                    <VideoCardThumb videoUrl={a.video_url} coverImageUrl={a.cover_image_url} />
                   ) : a.cover_image_url ? (
                     <Image
                       src={a.cover_image_url}

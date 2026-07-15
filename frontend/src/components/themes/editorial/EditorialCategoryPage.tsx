@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -105,7 +105,7 @@ export default function EditorialCategoryPage({
               <Link key={a.id} href={`${basePath}/${a.slug}`} className="group flex flex-col">
                 <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-4 ring-0 group-hover:ring-2 transition-all ring-offset-2 ring-[var(--cp)]">
                   {a.article_type === 'video' ? (
-                    <VideoCardThumb videoUrl={a.video_url} />
+                    <VideoCardThumb videoUrl={a.video_url} coverImageUrl={a.cover_image_url} />
                   ) : a.cover_image_url ? (
                     <Image
                       src={a.cover_image_url}

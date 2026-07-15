@@ -22,9 +22,11 @@ from app.models.article import Article, Category, Tag, SlugRedirect
 from app.models.comment import Comment
 from app.models.ad import Ad
 from app.models.newsletter import NewsletterSubscriber
+from app.models.domain import CustomDomain
 from app.models.enums import (
     ArticleStatus, ContentVisibility, TenantStatus, CommentStatus,
     AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus, SubscriberStatus,
+    DomainVerificationStatus,
 )
 from app.core.dependencies import DBSession
 
@@ -533,15 +535,12 @@ class PublicBlogCard(BaseModel):
     theme: str
     primary_color: str
     articles_count: int
+    custom_domain: str | None = None
 
 
 @explore_router.get("/resolve-domain")
 async def resolve_domain(hostname: str, db: DBSession):
     """Resolve a custom domain to its tenant slug. Called by Next.js middleware."""
-    from app.models.domain import CustomDomain
-    from app.models.enums import DomainVerificationStatus
-    from fastapi import HTTPException
-
     clean = hostname.removeprefix("www.")
 
     result = await db.execute(
@@ -598,7 +597,17 @@ async def list_public_blogs(
     )
     counts: dict[str, int] = {str(row.tenant_id): row.cnt for row in count_result.all()}
 
-    # 3. Sort by real article count descending
+    # 3. Fetch verified custom domains for these tenants
+    domain_result = await db.execute(
+        select(CustomDomain.tenant_id, CustomDomain.domain)
+        .where(
+            CustomDomain.tenant_id.in_(tenant_ids),
+            CustomDomain.verification_status == DomainVerificationStatus.VERIFIED,
+        )
+    )
+    domains: dict[str, str] = {str(row.tenant_id): row.domain for row in domain_result.all()}
+
+    # 4. Sort by real article count descending
     tenants_sorted = sorted(tenants, key=lambda t: counts.get(str(t.id), 0), reverse=True)
     rows = [(t, counts.get(str(t.id), 0)) for t in tenants_sorted]
     return [
@@ -613,6 +622,7 @@ async def list_public_blogs(
             theme=t.theme,
             primary_color=t.primary_color,
             articles_count=real_count,
+            custom_domain=domains.get(str(t.id)),
         )
         for t, real_count in rows
     ]

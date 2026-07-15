@@ -15,6 +15,7 @@ interface Blog {
   theme: string;
   primary_color: string;
   articles_count: number;
+  custom_domain?: string | null;
 }
 
 const BLOG_CATEGORIES = [
@@ -36,9 +37,13 @@ function BlogCard({ blog, locale }: { blog: Blog; locale: string }) {
     .slice(0, 2)
     .toUpperCase();
 
+  const blogUrl = blog.custom_domain
+    ? `https://${blog.custom_domain}`
+    : `/${locale}/${blog.slug}`;
+
   return (
     <a
-      href={`/${locale}/${blog.slug}`}
+      href={blogUrl}
       target="_blank"
       rel="noopener noreferrer"
       className="group flex flex-col rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden hover:shadow-xl hover:border-blue-200 dark:hover:border-blue-900 transition-all duration-200"
@@ -85,7 +90,9 @@ function BlogCard({ blog, locale }: { blog: Blog; locale: string }) {
             <h3 className="font-bold text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
               {blog.name}
             </h3>
-            <p className="text-[11px] text-slate-400 truncate">{blog.slug}.smarterbloggers.com</p>
+            <p className="text-[11px] text-slate-400 truncate">
+              {blog.custom_domain ?? `${blog.slug}.smarterbloggers.com`}
+            </p>
           </div>
         </div>
 

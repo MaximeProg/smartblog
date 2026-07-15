@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, ExternalLink, ChevronDown, ChevronUp, Info } from 'lucide-react';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 const ROTATE_INTERVAL_MS = 30_000;
 
 interface AdData {
@@ -45,8 +44,8 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
   async function fetchAd(currentExcludeId?: string) {
     try {
       const url = currentExcludeId
-        ? `${API_BASE}/api/v1/public/${slug}/ads/rotator?exclude=${encodeURIComponent(currentExcludeId)}`
-        : `${API_BASE}/api/v1/public/${slug}/ads/rotator`;
+        ? `/api/ads-proxy/${slug}/rotator?exclude=${encodeURIComponent(currentExcludeId)}`
+        : `/api/ads-proxy/${slug}/rotator`;
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) return;
       const data: AdData | null = await res.json();
@@ -61,12 +60,12 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
   }
 
   function trackImpression(adId: string) {
-    fetch(`${API_BASE}/api/v1/public/${slug}/ads/${adId}/impression`, { method: 'POST' }).catch(() => {});
+    fetch(`/api/ads-proxy/${slug}/${adId}/impression`, { method: 'POST' }).catch(() => {});
   }
 
   function handleClick() {
     if (!ad) return;
-    fetch(`${API_BASE}/api/v1/public/${slug}/ads/${ad.id}/click`, { method: 'POST' }).catch(() => {});
+    fetch(`/api/ads-proxy/${slug}/${ad.id}/click`, { method: 'POST' }).catch(() => {});
     window.open(ad.click_url, '_blank', 'noopener,noreferrer');
   }
 

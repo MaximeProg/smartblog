@@ -79,7 +79,7 @@ export default function CreativeHome({
           <Link href={aHref(heroArticle.slug)} className="block">
             <div className="relative h-[60vh] sm:h-[70vh] min-h-[400px] rounded-2xl overflow-hidden group cursor-pointer">
               {heroArticle.article_type === 'video' ? (
-                <VideoCardThumb videoUrl={heroArticle.video_url} />
+                <VideoCardThumb videoUrl={heroArticle.video_url} coverImageUrl={heroArticle.cover_image_url} />
               ) : heroArticle.cover_image_url ? (
                 <Image
                   src={heroArticle.cover_image_url}
@@ -178,7 +178,7 @@ export default function CreativeHome({
                   className={`group relative rounded-xl overflow-hidden cursor-pointer block ${isWide ? 'sm:col-span-2' : ''} ${aspectClass}`}
                 >
                   {a.article_type === 'video' ? (
-                    <VideoCardThumb videoUrl={a.video_url} />
+                    <VideoCardThumb videoUrl={a.video_url} coverImageUrl={a.cover_image_url} />
                   ) : a.cover_image_url ? (
                     <Image
                       src={a.cover_image_url}
