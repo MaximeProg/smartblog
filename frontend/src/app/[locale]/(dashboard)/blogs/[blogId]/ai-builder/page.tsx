@@ -129,7 +129,7 @@ export default function AiBuilderPage() {
 
   if (done) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center">
+      <div className="h-full flex flex-col items-center justify-center px-6 text-center">
         <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center mb-6">
           <Check className="h-8 w-8 text-emerald-600" />
         </div>
@@ -160,7 +160,9 @@ export default function AiBuilderPage() {
   }
 
   return (
-    <div className="min-h-screen px-5 py-8 max-w-xl mx-auto">
+    <div className="h-full flex flex-col overflow-hidden">
+    <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#e2e8f0 transparent' }}>
+    <div className="px-5 py-8 max-w-xl mx-auto">
 
       {/* Header */}
       <div className="mb-8 text-center">
@@ -330,6 +332,8 @@ export default function AiBuilderPage() {
             : "This action uses AI credits. Generation takes about 15-30 seconds."}
         </p>
       </div>
+    </div>
+    </div>
     </div>
   );
 }

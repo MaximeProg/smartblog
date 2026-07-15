@@ -69,20 +69,19 @@ export default async function HomePage({
     },
   };
 
-  // Lookup API prices by plan ID; fall back to static display if API unavailable
-  const apiById = Object.fromEntries(pricingPlans.map((p: PricingPlan) => [p.id, p]));
+  // Lookup API prices by plan ID (case-insensitive); static text always shown regardless of API
+  const apiById = Object.fromEntries(
+    pricingPlans.map((p: PricingPlan) => [p.id.toLowerCase(), p])
+  );
 
   const DISPLAY_ORDER = ['free', 'starter', 'pro', 'business'];
-  const planIds = pricingPlans.length > 0
-    ? pricingPlans.map((p: PricingPlan) => p.id).filter(id => DISPLAY_ORDER.includes(id))
-    : DISPLAY_ORDER;
-
   const FALLBACK_PRICES: Record<string, number> = { free: 0, starter: 5, pro: 30, business: 90 };
 
-  const plans = planIds.map(id => {
+  // Always render the 4 core plans; overlay API prices when available
+  const plans = DISPLAY_ORDER.map(id => {
     const api = apiById[id] as PricingPlan | undefined;
     const text = PLAN_STATIC[id] ?? { name: id, desc: '', features: [] };
-    const priceNum = api ? api.price_monthly : (FALLBACK_PRICES[id] ?? 0);
+    const priceNum = api != null ? api.price_monthly : (FALLBACK_PRICES[id] ?? 0);
     return {
       id,
       name: text.name,
@@ -91,8 +90,8 @@ export default async function HomePage({
       desc: text.desc,
       features: text.features,
       cta: priceNum === 0 ? t('pricing.ctaFree') : t('pricing.cta'),
-      highlight: api ? api.is_highlighted : id === 'pro',
-      badge: (api ? api.is_highlighted : id === 'pro') ? (isFr ? 'Populaire' : 'Popular') : null,
+      highlight: api != null ? api.is_highlighted : id === 'pro',
+      badge: (api != null ? api.is_highlighted : id === 'pro') ? (isFr ? 'Populaire' : 'Popular') : null,
     };
   });
 
