@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, type AbstractIntlMessages } from 'next-intl';
 import { publicApi } from '@/lib/public-api';
 import { BlogReaderProvider } from '@/components/themes/shared/BlogReaderProvider';
 import { PersistentAudioProvider } from '@/components/themes/shared/PersistentAudioPlayer';
@@ -9,7 +9,10 @@ import FloatingSearch from '@/components/themes/shared/FloatingSearch';
 import enMessages from '@/messages/en.json';
 import frMessages from '@/messages/fr.json';
 
-const MESSAGES: Record<string, typeof enMessages> = { en: enMessages, fr: frMessages };
+const MESSAGES: Record<string, AbstractIntlMessages> = {
+  en: enMessages as unknown as AbstractIntlMessages,
+  fr: frMessages as unknown as AbstractIntlMessages,
+};
 
 interface Props {
   children: React.ReactNode;
