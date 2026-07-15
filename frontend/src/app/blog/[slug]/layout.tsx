@@ -6,13 +6,12 @@ import { BlogReaderProvider } from '@/components/themes/shared/BlogReaderProvide
 import { PersistentAudioProvider } from '@/components/themes/shared/PersistentAudioPlayer';
 import FloatingSearch from '@/components/themes/shared/FloatingSearch';
 
-import enMessages from '@/messages/en.json';
-import frMessages from '@/messages/fr.json';
+/* eslint-disable @typescript-eslint/no-require-imports */
+const enMessages: AbstractIntlMessages = require('@/messages/en.json');
+const frMessages: AbstractIntlMessages = require('@/messages/fr.json');
+/* eslint-enable @typescript-eslint/no-require-imports */
 
-const MESSAGES: Record<string, AbstractIntlMessages> = {
-  en: enMessages as unknown as AbstractIntlMessages,
-  fr: frMessages as unknown as AbstractIntlMessages,
-};
+const MESSAGES: Record<string, AbstractIntlMessages> = { en: enMessages, fr: frMessages };
 
 interface Props {
   children: React.ReactNode;
