@@ -90,7 +90,7 @@ export default function EditorialAbout({ blog, categories, basePath }: Props) {
           <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: primaryColor }}>{heroSubtitle}</p>
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-6">{heroTitle}</h1>
           <div className="text-zinc-400 text-lg leading-relaxed max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: heroDesc }} />
-          <Link href={basePath} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/5 transition-colors">
+          <Link href={basePath || "/"} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-white/5 transition-colors">
             {t('readArticles')} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

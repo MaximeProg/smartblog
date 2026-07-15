@@ -89,7 +89,7 @@ export default function CorporateAboutPage({ blog, categories, basePath }: Props
           <div className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto mb-10"
             dangerouslySetInnerHTML={{ __html: heroDesc }} />
           <Link
-            href={basePath}
+            href={basePath || "/"}
             className="inline-flex items-center gap-2 h-12 px-8 rounded-2xl text-sm font-bold border border-white/20 text-white hover:bg-white/5 transition-colors"
           >
             {t('readArticles')} <ArrowRight className="h-4 w-4" />
@@ -212,7 +212,7 @@ export default function CorporateAboutPage({ blog, categories, basePath }: Props
                 <Mail className="h-4 w-4" /> {ctaPrimary}
               </a>
               <Link
-                href={basePath}
+                href={basePath || "/"}
                 className="h-12 px-8 rounded-2xl text-sm font-bold border border-white/20 text-white flex items-center gap-2 hover:bg-white/5 transition-colors"
               >
                 {ctaSecondary} <ArrowRight className="h-4 w-4" />

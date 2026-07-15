@@ -145,7 +145,7 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
               </div>
 
               <div className="pt-4 border-t border-slate-100">
-                <Link href={basePath}
+                <Link href={basePath || "/"}
                   className="inline-flex items-center gap-2 text-sm font-semibold hover:underline"
                   style={{ color: primaryColor }}>
                   <ArrowRight className="h-4 w-4 rotate-180" /> {t('backToArticles')}

@@ -231,12 +231,12 @@ export function CorporateHeader({
   // Appends ?preview=slug to internal links when in preview mode
   const pq = previewSlug ? `?preview=${previewSlug}` : '';
 
-  const homeHref = (basePath ?? '/') + pq;
-  const catBasePath = basePath ? `${basePath}/categories` : null;
+  const homeHref = (basePath ?? '/') + pq || '/';
+  const catBasePath = basePath != null ? `${basePath}/categories` : null;
 
-  const defaultPageLinks = basePath
+  const defaultPageLinks = basePath != null
     ? [
-        { href: basePath + pq, label: t('navHome') },
+        { href: (basePath || '/') + pq, label: t('navHome') },
         { href: `${basePath}/about${pq}`, label: t('navAbout') },
         { href: `${basePath}/contact${pq}`, label: t('navContact') },
       ]
@@ -428,7 +428,7 @@ export function CorporateHeader({
                   <Search className="h-4 w-4" />
                 </button>
               )}
-              {basePath && (
+              {basePath != null && (
                 <Link href={`${basePath}/advertise${pq}`}
                   className="hidden lg:inline-flex items-center gap-1.5 h-9 px-4 rounded-xl text-sm font-bold border border-white/20 text-slate-200 hover:border-white/50 hover:text-white transition-all shrink-0">
                   Advertise
@@ -488,7 +488,7 @@ export function CorporateHeader({
                 </>
               )}
 
-              {basePath && (
+              {basePath != null && (
                 <Link href={`${basePath}/advertise${pq}`} onClick={() => setMenuOpen(false)}
                   className="mt-2 flex items-center justify-center h-11 px-4 rounded-xl text-sm font-bold border border-white/20 text-slate-200 hover:bg-white/5 transition-colors">
                   Advertise
@@ -533,10 +533,10 @@ export function CorporateFooter({
   const copyrightText = footerConfig?.copyrightText || `© ${new Date().getFullYear()} ${blog.name}. Tous droits réservés.`;
 
   const defaultNavLinks = [
-    { href: (basePath ?? '/') + pq, label: t('navHome') },
-    { href: basePath ? `${basePath}/about${pq}` : '/a-propos', label: t('navAbout') },
-    { href: basePath ? `${basePath}/contact${pq}` : '/contact', label: t('navContact') },
-    { href: basePath ? `${basePath}/advertise${pq}` : '/advertise', label: 'Advertise' },
+    { href: ((basePath ?? '/') || '/') + pq, label: t('navHome') },
+    { href: basePath != null ? `${basePath}/about${pq}` : '/about', label: t('navAbout') },
+    { href: basePath != null ? `${basePath}/contact${pq}` : '/contact', label: t('navContact') },
+    { href: basePath != null ? `${basePath}/advertise${pq}` : '/advertise', label: 'Advertise' },
     { href: '/rss.xml', label: t('navRss') },
   ];
   const navLinks = footerConfig?.navLinks?.length
@@ -558,7 +558,7 @@ export function CorporateFooter({
 
           {/* Brand */}
           <div>
-            <Link href={basePath ?? '/'} className="flex items-center gap-3 mb-5">
+            <Link href={(basePath ?? '/') || '/'} className="flex items-center gap-3 mb-5">
               {blog.logo_url ? (
                 <Image src={blog.logo_url} alt={blog.name} width={32} height={32} className="rounded-xl" />
               ) : (
@@ -595,7 +595,7 @@ export function CorporateFooter({
               <ul className="space-y-2.5">
                 {categories.slice(0, 7).map(c => (
                   <li key={c.slug}>
-                    <Link href={basePath ? `${basePath}/categories/${c.slug}${pq}` : `?category=${c.slug}`}
+                    <Link href={basePath != null ? `${basePath}/categories/${c.slug}${pq}` : `?category=${c.slug}`}
                       className="group flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors">
                       <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100 shrink-0 transition-opacity" style={{ color: primaryColor }} />
                       <span>{c.name}</span>

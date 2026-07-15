@@ -40,6 +40,7 @@ export default async function CategoryPage({ params }: Props) {
         articles={articles}
         categories={categories}
         currentCategory={cat}
+        basePath=""
       />
     );
   } catch {

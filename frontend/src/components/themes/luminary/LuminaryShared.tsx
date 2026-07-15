@@ -83,7 +83,7 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
-        <Link href={basePath} className="flex-1 flex justify-center md:flex-none md:justify-start">
+        <Link href={basePath || "/"} className="flex-1 flex justify-center md:flex-none md:justify-start">
           {blog.logo_url ? (
             <div className="relative h-10 w-36">
               <Image src={blog.logo_url} alt={blog.name} fill className="object-contain object-center" />
@@ -191,7 +191,7 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
     <footer className="bg-zinc-950 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-8">
         <div className="text-center mb-16 pb-16 border-b border-zinc-800">
-          <Link href={basePath}>
+          <Link href={basePath || "/"}>
             <span className="font-serif italic text-4xl sm:text-5xl text-white tracking-tight">{blog.name}</span>
           </Link>
           {description && (

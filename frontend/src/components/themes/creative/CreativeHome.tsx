@@ -31,22 +31,25 @@ export default function CreativeHome({
   searchQuery,
   getArticleHref,
   previewSlug,
+  basePath: baseProp,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
   const primaryColor = blog.primary_color || '#7c3aed';
 
-  const basePath = previewSlug
-    ? `/en/template?preview=${previewSlug}`
-    : `/${locale}/${blog.slug}`;
+  const basePath = baseProp !== undefined
+    ? baseProp
+    : previewSlug
+      ? `/en/template?preview=${previewSlug}`
+      : `/${locale}/${blog.slug}`;
 
   const aHref = useCallback(
     (s: string) => {
       if (getArticleHref) return getArticleHref(s);
       if (previewSlug) return `/en/template/${s}?preview=${previewSlug}`;
-      return `/${locale}/${blog.slug}/${s}`;
+      return `${basePath}/${s}`;
     },
-    [getArticleHref, previewSlug, locale, blog.slug]
+    [getArticleHref, previewSlug, basePath]
   );
 
   const homeCfg = blog.template_config?.home;
@@ -146,7 +149,7 @@ export default function CreativeHome({
                 <p className="text-xs text-zinc-300 mt-1">{articles.length} articles</p>
               </div>
               <Link
-                href={basePath}
+                href={basePath || "/"}
                 className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors border border-zinc-200 rounded-full px-4 py-2"
               >
                 ← Back to all

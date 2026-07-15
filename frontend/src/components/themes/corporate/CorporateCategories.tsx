@@ -40,7 +40,7 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
       <section className="bg-slate-950 text-white py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-8">
-            <Link href={basePath} className="hover:text-slate-300 transition-colors">{t('navHome')}</Link>
+            <Link href={basePath || "/"} className="hover:text-slate-300 transition-colors">{t('navHome')}</Link>
             <ChevronRight className="h-3 w-3" />
             <span className="text-slate-300">{t('categories')}</span>
           </div>
@@ -62,7 +62,7 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
           <div className="py-32 text-center">
             <BookOpen className="h-14 w-14 mx-auto mb-5 text-slate-200" />
             <p className="text-xl font-bold text-slate-400 mb-2">{t('noCategoriesYet')}</p>
-            <Link href={basePath}
+            <Link href={basePath || "/"}
               className="inline-flex items-center gap-2 text-sm font-bold hover:underline"
               style={{ color: primaryColor }}>
               <ArrowRight className="h-4 w-4 rotate-180" /> {t('backToHome')}
@@ -141,7 +141,7 @@ export default function CorporateCategoriesPage({ blog, categories, articles, ba
             <div className="flex items-center gap-3 mb-8">
               <h2 className="text-xs font-black uppercase tracking-widest text-slate-700">{t('recentArticles')}</h2>
               <div className="flex-1 h-px bg-slate-200" />
-              <Link href={basePath} className="text-xs font-bold hover:underline" style={{ color: primaryColor }}>
+              <Link href={basePath || "/"} className="text-xs font-bold hover:underline" style={{ color: primaryColor }}>
                 {t('seeAll')}
               </Link>
             </div>

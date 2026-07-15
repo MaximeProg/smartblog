@@ -90,7 +90,7 @@ export default function LuminaryAbout({ blog, categories, basePath }: Props) {
           <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-6">{heroSubtitle}</p>
           <h1 className="font-serif italic text-5xl sm:text-6xl lg:text-7xl leading-tight mb-6">{heroTitle}</h1>
           <div className="font-sans text-zinc-400 text-lg max-w-xl mx-auto leading-relaxed" dangerouslySetInnerHTML={{ __html: heroDesc }} />
-          <Link href={basePath} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 text-sm font-sans hover:bg-white/5 transition-colors">
+          <Link href={basePath || "/"} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 text-sm font-sans hover:bg-white/5 transition-colors">
             {t('readArticles')} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

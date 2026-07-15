@@ -1,0 +1,44 @@
+import { publicApi } from '@/lib/public-api';
+import { notFound } from 'next/navigation';
+import SearchClientPage from '@/app/[locale]/(blog)/[slug]/search/SearchClientPage';
+
+type Params = Promise<{ slug: string }>;
+type SearchParams = Promise<{ q?: string }>;
+
+export default async function CustomDomainSearchPage({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams: SearchParams;
+}) {
+  const { slug } = await params;
+  const { q } = await searchParams;
+
+  let blog;
+  try {
+    blog = await publicApi.getBlogInfo(slug);
+  } catch {
+    notFound();
+  }
+
+  let initialResults = null;
+  if (q && q.trim()) {
+    try {
+      initialResults = await publicApi.search(slug, { q: q.trim(), size: 20 });
+    } catch {
+      // silently fail — client will retry
+    }
+  }
+
+  return (
+    <SearchClientPage
+      blog={blog}
+      slug={slug}
+      locale={blog.language || 'en'}
+      initialQuery={q ?? ''}
+      initialResults={initialResults}
+      basePath=""
+    />
+  );
+}

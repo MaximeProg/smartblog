@@ -43,10 +43,15 @@ export default function EditorialHome({
   searchQuery,
   getArticleHref,
   previewSlug,
+  basePath: baseProp,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
-  const basePath = `/${locale}/${blog.slug}`;
+  const basePath = baseProp !== undefined
+    ? baseProp
+    : previewSlug
+      ? `/en/template?preview=${previewSlug}`
+      : `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#18181b';
 
   const [email, setEmail] = useState('');
@@ -56,9 +61,9 @@ export default function EditorialHome({
     (s: string) => {
       if (getArticleHref) return getArticleHref(s);
       if (previewSlug) return `/en/template/${s}?preview=${previewSlug}`;
-      return `/${locale}/${blog.slug}/${s}`;
+      return `${basePath}/${s}`;
     },
-    [getArticleHref, previewSlug, locale, blog.slug],
+    [getArticleHref, previewSlug, basePath],
   );
 
   const handleSubscribe = async (e: FormEvent) => {
@@ -188,7 +193,7 @@ export default function EditorialHome({
       {isFiltered && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10">
           <Link
-            href={basePath}
+            href={basePath || "/"}
             className="text-xs text-zinc-400 hover:text-zinc-900 transition-colors inline-flex items-center gap-1 mb-6"
           >
             ← All stories

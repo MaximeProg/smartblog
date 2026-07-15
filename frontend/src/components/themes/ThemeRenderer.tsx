@@ -45,6 +45,7 @@ export interface HomeProps {
   searchQuery?: string;
   getArticleHref?: (slug: string) => string;
   previewSlug?: string;
+  basePath?: string;
 }
 
 export interface ArticleProps {

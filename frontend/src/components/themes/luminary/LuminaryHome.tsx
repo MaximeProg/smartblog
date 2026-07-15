@@ -112,10 +112,15 @@ export default function LuminaryHome({
   searchQuery,
   getArticleHref,
   previewSlug,
+  basePath: baseProp,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
-  const basePath = `/${locale}/${blog.slug}`;
+  const basePath = baseProp !== undefined
+    ? baseProp
+    : previewSlug
+      ? `/en/template?preview=${previewSlug}`
+      : `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#b8960c';
 
   const [email, setEmail] = useState('');
@@ -126,9 +131,9 @@ export default function LuminaryHome({
     (articleSlug: string) => {
       if (getArticleHref) return getArticleHref(articleSlug);
       if (previewSlug) return `/en/template/${articleSlug}?preview=${previewSlug}`;
-      return `/${locale}/${blog.slug}/${articleSlug}`;
+      return `${basePath}/${articleSlug}`;
     },
-    [getArticleHref, previewSlug, locale, blog.slug],
+    [getArticleHref, previewSlug, basePath],
   );
 
   const handleSubscribe = async (e: FormEvent) => {
@@ -247,7 +252,7 @@ export default function LuminaryHome({
       {isFiltered && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-4">
           <Link
-            href={basePath}
+            href={basePath || "/"}
             className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-colors inline-flex items-center gap-1 mb-8"
           >
             &larr; All Stories
@@ -304,7 +309,7 @@ export default function LuminaryHome({
             {articles.length > 8 && (
               <div className="text-center mt-8">
                 <Link
-                  href={basePath}
+                  href={basePath || "/"}
                   className="font-sans text-xs uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors inline-flex items-center gap-2"
                 >
                   View all stories <ArrowRight className="h-3.5 w-3.5" />

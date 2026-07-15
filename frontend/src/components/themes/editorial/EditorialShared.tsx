@@ -39,7 +39,7 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-zinc-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-        <Link href={basePath} className="shrink-0">
+        <Link href={basePath || "/"} className="shrink-0">
           {blog.logo_url ? (
             <Image src={blog.logo_url} alt={blog.name} width={120} height={32} className="h-8 w-auto object-contain" />
           ) : (

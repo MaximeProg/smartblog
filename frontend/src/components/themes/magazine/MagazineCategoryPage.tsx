@@ -72,7 +72,7 @@ export default function MagazineCategoryPage({
         {articles.length === 0 ? (
           <div className="py-24 text-center">
             <p className="text-lg font-bold text-zinc-300">No articles in this topic yet.</p>
-            <Link href={basePath} className="mt-4 inline-block text-sm text-zinc-400 hover:text-zinc-900 transition-colors">
+            <Link href={basePath || "/"} className="mt-4 inline-block text-sm text-zinc-400 hover:text-zinc-900 transition-colors">
               ← Back to home
             </Link>
           </div>

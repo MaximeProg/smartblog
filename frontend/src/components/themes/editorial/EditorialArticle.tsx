@@ -132,9 +132,9 @@ export default function EditorialArticle({
     (s: string) => {
       if (getArticleHref) return getArticleHref(s);
       if (previewSlug) return `/en/template/${s}?preview=${previewSlug}`;
-      return `/${locale}/${blog.slug}/${s}`;
+      return `${basePath}/${s}`;
     },
-    [getArticleHref, previewSlug, locale, blog.slug],
+    [getArticleHref, previewSlug, basePath],
   );
 
   const handleLike = async () => {
@@ -171,7 +171,7 @@ export default function EditorialArticle({
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-10">
         <nav className="flex items-center gap-2 text-xs text-zinc-400 mb-6">
-          <Link href={basePath} className="hover:text-zinc-700 transition-colors">
+          <Link href={basePath || "/"} className="hover:text-zinc-700 transition-colors">
             Home
           </Link>
           {article.category_name && article.category_slug && (

@@ -76,7 +76,7 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
       {/* Logo + subscribe + hamburger */}
       <div className="bg-white border-b-2" style={{ borderColor: primaryColor }}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
-          <Link href={basePath} className="shrink-0">
+          <Link href={basePath || "/"} className="shrink-0">
             {blog.logo_url ? (
               <div className="relative h-10 w-32">
                 <Image src={blog.logo_url} alt={blog.name} fill className="object-contain object-left" />

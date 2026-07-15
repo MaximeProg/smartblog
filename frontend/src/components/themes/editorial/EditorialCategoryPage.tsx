@@ -92,7 +92,7 @@ export default function EditorialCategoryPage({
               Articles in this category will appear here once they&apos;ve been published.
             </p>
             <Link
-              href={basePath}
+              href={basePath || "/"}
               className="inline-flex items-center gap-2 text-sm font-bold hover:underline"
               style={{ color: primaryColor }}
             >

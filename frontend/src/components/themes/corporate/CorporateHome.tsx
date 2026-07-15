@@ -14,7 +14,7 @@ import {
 import { AdRotator } from '../shared/AdRotator';
 
 export default function CorporateHome({
-  blog, articles, categories, currentCategory, searchQuery, getArticleHref, previewSlug,
+  blog, articles, categories, currentCategory, searchQuery, getArticleHref, previewSlug, basePath: baseProp,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
@@ -26,16 +26,17 @@ export default function CorporateHome({
   const isFiltered = !!(searchQuery || currentCategory);
   const isPreview = !!(previewSlug || blog.slug === 'demo');
 
-  // For preview: /en/template. For real blog: /{locale}/{slug}
-  const basePath = isPreview ? '/en/template' : `/${locale}/${blog.slug}`;
+  const basePath = baseProp !== undefined
+    ? baseProp
+    : isPreview ? '/en/template' : `/${locale}/${blog.slug}`;
 
   const aHref = useCallback(
     (articleSlug: string) => {
       if (getArticleHref) return getArticleHref(articleSlug);
       if (previewSlug) return `/en/template/${articleSlug}?preview=${previewSlug}`;
-      return `/${locale}/${blog.slug}/${articleSlug}`;
+      return `${basePath}/${articleSlug}`;
     },
-    [getArticleHref, previewSlug, locale, blog.slug],
+    [getArticleHref, previewSlug, basePath],
   );
 
   const featuredTitle = homeConfig?.hero?.sectionTitle || legacyContent?.featuredSectionTitle || t('featuredNews');
@@ -76,7 +77,7 @@ export default function CorporateHome({
       {isFiltered ? (
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
           <div className="flex items-center gap-4 mb-10">
-            <Link href={basePath}
+            <Link href={basePath || "/"}
               className="h-9 w-9 rounded-xl bg-white border border-slate-200 shadow-sm flex items-center justify-center text-slate-500 hover:border-[var(--cp)] hover:text-[var(--cp)] transition-all">
               <ChevronRight className="h-4 w-4 rotate-180" />
             </Link>
@@ -102,7 +103,7 @@ export default function CorporateHome({
             <div className="py-32 text-center">
               <BookOpen className="h-14 w-14 mx-auto mb-5 text-slate-200" />
               <p className="text-xl font-bold text-slate-400 mb-2">{t('noArticlesFound')}</p>
-              <Link href={basePath} className="inline-flex items-center gap-2 text-sm font-semibold hover:underline" style={{ color: primaryColor }}>
+              <Link href={basePath || "/"} className="inline-flex items-center gap-2 text-sm font-semibold hover:underline" style={{ color: primaryColor }}>
                 <ArrowRight className="h-4 w-4 rotate-180" /> {t('backToHome')}
               </Link>
             </div>

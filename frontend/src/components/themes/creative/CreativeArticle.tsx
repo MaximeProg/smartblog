@@ -57,17 +57,17 @@ export default function CreativeArticle({
   const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || 'More';
   const showComments = articleCfg?.comments?.enabled !== false;
 
-  const basePath =
-    baseProp ||
-    (previewSlug ? `/en/template?preview=${previewSlug}` : `/${locale}/${blog.slug}`);
+  const basePath = baseProp !== undefined
+    ? baseProp
+    : (previewSlug ? `/en/template?preview=${previewSlug}` : `/${locale}/${blog.slug}`);
 
   const aHref = useCallback(
     (s: string) => {
       if (getArticleHref) return getArticleHref(s);
       if (previewSlug) return `/en/template/${s}?preview=${previewSlug}`;
-      return `/${locale}/${blog.slug}/${s}`;
+      return `${basePath}/${s}`;
     },
-    [getArticleHref, previewSlug, locale, blog.slug]
+    [getArticleHref, previewSlug, basePath]
   );
 
   const [progress, setProgress] = useState(0);
@@ -296,7 +296,7 @@ export default function CreativeArticle({
 
         <div className="mt-10 pt-8 border-t border-zinc-100">
           <Link
-            href={basePath}
+            href={basePath || "/"}
             className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
           >
             ← Back to all articles

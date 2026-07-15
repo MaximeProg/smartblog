@@ -131,9 +131,9 @@ export default function LuminaryArticle({
     (articleSlug: string) => {
       if (getArticleHref) return getArticleHref(articleSlug);
       if (previewSlug) return `/en/template/${articleSlug}?preview=${previewSlug}`;
-      return `/${locale}/${blog.slug}/${articleSlug}`;
+      return `${basePath}/${articleSlug}`;
     },
-    [getArticleHref, previewSlug, locale, blog.slug],
+    [getArticleHref, previewSlug, basePath],
   );
 
   const handleLike = async () => {
@@ -173,7 +173,7 @@ export default function LuminaryArticle({
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12">
         <nav className="flex items-center gap-2 font-sans text-xs text-zinc-400 mb-8 uppercase tracking-widest">
-          <Link href={basePath} className="hover:text-zinc-700 transition-colors">
+          <Link href={basePath || "/"} className="hover:text-zinc-700 transition-colors">
             Home
           </Link>
           {article.category_name && article.category_slug && (

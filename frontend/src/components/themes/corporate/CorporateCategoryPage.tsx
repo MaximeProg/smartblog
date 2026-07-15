@@ -66,7 +66,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16">
           {/* Breadcrumb */}
           <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-8 flex-wrap">
-            <Link href={basePath} className="hover:text-white transition-colors">{t('navHome')}</Link>
+            <Link href={basePath || "/"} className="hover:text-white transition-colors">{t('navHome')}</Link>
             <ChevronRight className="h-3 w-3" />
             <Link href={`${basePath}/categories`} className="hover:text-white transition-colors">{t('categories')}</Link>
             <ChevronRight className="h-3 w-3" />
@@ -115,7 +115,7 @@ export default function CorporateCategoryPage({ blog, categories, category, arti
                 <BookOpen className="h-16 w-16 mx-auto mb-5 text-slate-200" />
                 <p className="text-xl font-bold text-slate-400 mb-2">{t('noArticles')}</p>
                 <p className="text-slate-400 text-sm mb-6">{t('noArticlesInCategoryDesc')}</p>
-                <Link href={basePath}
+                <Link href={basePath || "/"}
                   className="inline-flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl text-white hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: primaryColor }}>
                   <ArrowRight className="h-4 w-4 rotate-180" /> {t('seeAllArticles')}

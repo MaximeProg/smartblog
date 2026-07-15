@@ -30,6 +30,7 @@ interface Props {
   locale: string;
   initialQuery: string;
   initialResults: SearchResults | null;
+  basePath?: string;
 }
 
 const LOCALE_LANG: Record<string, string> = {
@@ -58,7 +59,7 @@ function HighlightSnippet({ hit }: { hit: SearchHit }) {
   );
 }
 
-export default function SearchClientPage({ blog, slug, locale, initialQuery, initialResults }: Props) {
+export default function SearchClientPage({ blog, slug, locale, initialQuery, initialResults, basePath: baseProp }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [query, setQuery] = useState(initialQuery);
@@ -111,7 +112,7 @@ export default function SearchClientPage({ blog, slug, locale, initialQuery, ini
     }
   }, [listening, query]);
 
-  const basePath = `/${locale}/${slug}`;
+  const basePath = baseProp !== undefined ? baseProp : `/${locale}/${slug}`;
 
   return (
     <div
@@ -122,7 +123,7 @@ export default function SearchClientPage({ blog, slug, locale, initialQuery, ini
       <div className="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 sticky top-0 z-20 shadow-sm">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link
-            href={basePath}
+            href={basePath || "/"}
             className="shrink-0 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
             aria-label="Back to blog"
           >

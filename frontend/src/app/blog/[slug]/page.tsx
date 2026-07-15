@@ -25,6 +25,7 @@ export default async function BlogHomePage({ params, searchParams }: Props) {
         categories={categories}
         currentCategory={category}
         searchQuery={q}
+        basePath=""
       />
     );
   } catch {

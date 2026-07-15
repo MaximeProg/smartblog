@@ -10,6 +10,7 @@ interface Props {
   blog: BlogInfo;
   slug: string;
   locale: string;
+  basePath?: string;
 }
 
 function formatDate(iso: string) {
@@ -20,9 +21,9 @@ function formatDate(iso: string) {
   });
 }
 
-export default function BookmarksClientPage({ blog, slug, locale }: Props) {
+export default function BookmarksClientPage({ blog, slug, locale, basePath: baseProp }: Props) {
   const primaryColor = blog.primary_color || '#3b82f6';
-  const basePath = `/${locale}/${slug}`;
+  const basePath = baseProp !== undefined ? baseProp : `/${locale}/${slug}`;
   const { bookmarks, remove } = useAllBookmarks();
   const [mounted, setMounted] = useState(false);
 
@@ -45,7 +46,7 @@ export default function BookmarksClientPage({ blog, slug, locale }: Props) {
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-zinc-100">
         <div className="max-w-2xl mx-auto px-5 h-14 flex items-center gap-3">
           <Link
-            href={basePath}
+            href={basePath || "/"}
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-500 hover:text-zinc-900 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -90,7 +91,7 @@ export default function BookmarksClientPage({ blog, slug, locale }: Props) {
               Cliquez sur le bouton &quot;Sauvegarder&quot; sur un article pour le retrouver ici.
             </p>
             <Link
-              href={basePath}
+              href={basePath || "/"}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
               style={{ backgroundColor: primaryColor }}
             >

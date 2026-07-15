@@ -73,9 +73,9 @@ export default function MagazineArticle({
     (s: string) => {
       if (getArticleHref) return getArticleHref(s);
       if (previewSlug) return `/en/template/${s}?preview=${previewSlug}`;
-      return `/${locale}/${blog.slug}/${s}`;
+      return `${basePath}/${s}`;
     },
-    [getArticleHref, previewSlug, locale, blog.slug],
+    [getArticleHref, previewSlug, basePath],
   );
 
   const handleLike = async () => {

@@ -46,7 +46,7 @@ export default function LuminaryCategories({ blog, categories, articles, basePat
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-8">
         <Link
-          href={basePath}
+          href={basePath || "/"}
           className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-colors inline-flex items-center gap-1 mb-10"
         >
           &larr; Home
@@ -69,7 +69,7 @@ export default function LuminaryCategories({ blog, categories, articles, basePat
               Topics will appear here once they have been created.
             </p>
             <Link
-              href={basePath}
+              href={basePath || "/"}
               className="font-sans text-xs uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors underline underline-offset-4"
             >
               Return home

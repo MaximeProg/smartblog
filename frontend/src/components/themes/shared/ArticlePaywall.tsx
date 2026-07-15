@@ -49,7 +49,7 @@ export default function ArticlePaywall({
       {/* Top bar */}
       <div className="sticky top-0 z-40 border-b border-zinc-100 bg-white/95 backdrop-blur-sm px-6 py-3.5">
         <Link
-          href={basePath}
+          href={basePath || "/"}
           className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-700 hover:text-zinc-900 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -176,7 +176,7 @@ export default function ArticlePaywall({
             )}
 
             <Link
-              href={basePath}
+              href={basePath || "/"}
               className="text-xs text-zinc-400 hover:text-zinc-600 transition-colors mt-1"
             >
               ← Back to {blog.name}

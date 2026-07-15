@@ -91,7 +91,7 @@ export default function MagazineAbout({ blog, categories, basePath }: Props) {
             <span className="text-[10px] font-black uppercase tracking-widest mb-4 block" style={{ color: primaryColor }}>{heroSubtitle}</span>
             <h1 className="text-5xl sm:text-7xl font-black text-white leading-none mb-6">{heroTitle}</h1>
             <div className="text-zinc-400 text-xl max-w-2xl leading-relaxed" dangerouslySetInnerHTML={{ __html: heroDesc }} />
-            <Link href={basePath} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 text-sm font-black hover:bg-white/5 transition-colors">
+            <Link href={basePath || "/"} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 text-sm font-black hover:bg-white/5 transition-colors">
               {t('readArticles')} <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

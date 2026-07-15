@@ -57,6 +57,7 @@ export default async function ArticlePage({ params }: Props) {
           blog={blog}
           article={article}
           relatedArticles={related}
+          basePath=""
         />
       </>
     );

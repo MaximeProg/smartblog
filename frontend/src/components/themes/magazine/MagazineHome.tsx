@@ -23,10 +23,15 @@ export default function MagazineHome({
   searchQuery,
   getArticleHref,
   previewSlug,
+  basePath: baseProp,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
-  const basePath = `/${locale}/${blog.slug}`;
+  const basePath = baseProp !== undefined
+    ? baseProp
+    : previewSlug
+      ? `/en/template?preview=${previewSlug}`
+      : `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#e11d48';
 
   const [email, setEmail] = useState('');
@@ -37,9 +42,9 @@ export default function MagazineHome({
     (s: string) => {
       if (getArticleHref) return getArticleHref(s);
       if (previewSlug) return `/en/template/${s}?preview=${previewSlug}`;
-      return `/${locale}/${blog.slug}/${s}`;
+      return `${basePath}/${s}`;
     },
-    [getArticleHref, previewSlug, locale, blog.slug],
+    [getArticleHref, previewSlug, basePath],
   );
 
   const handleSubscribe = async (e: FormEvent) => {
@@ -97,7 +102,7 @@ export default function MagazineHome({
                 : `Search: "${searchQuery}"`}
             </span>
             <span className="text-xs text-zinc-400">— {articles.length} article{articles.length !== 1 ? 's' : ''}</span>
-            <Link href={basePath} className="ml-auto text-xs text-zinc-400 hover:text-zinc-900 transition-colors">
+            <Link href={basePath || "/"} className="ml-auto text-xs text-zinc-400 hover:text-zinc-900 transition-colors">
               ← Clear filter
             </Link>
           </div>

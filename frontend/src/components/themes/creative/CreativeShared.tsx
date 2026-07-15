@@ -33,7 +33,7 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
   return (
     <header className="sticky top-0 z-50 bg-zinc-950 border-b border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href={basePath} className="flex items-center text-white font-black text-lg tracking-tight hover:opacity-80 transition-opacity">
+        <Link href={basePath || "/"} className="flex items-center text-white font-black text-lg tracking-tight hover:opacity-80 transition-opacity">
           {blog.logo_url ? (
             <Image src={blog.logo_url} alt={blog.name} width={100} height={28} className="h-7 w-auto object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
           ) : (
@@ -133,7 +133,7 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
-            <Link href={basePath} className="text-2xl font-black text-white mb-3 block hover:opacity-80 transition-opacity">
+            <Link href={basePath || "/"} className="text-2xl font-black text-white mb-3 block hover:opacity-80 transition-opacity">
               {blog.name}
             </Link>
             {description && <p className="text-sm text-zinc-400 max-w-xs leading-relaxed">{description}</p>}
