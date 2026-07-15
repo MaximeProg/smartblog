@@ -8,7 +8,7 @@ import {
   Camera, Video, Mic, Radio, Layers, FileText,
   Eye, EyeOff, History, Monitor, Tablet, Smartphone,
   ThumbsUp, ThumbsDown, Clock, Headphones, Sparkles,
-  Languages, CalendarClock, X as XIcon,
+  Languages, CalendarClock, X as XIcon, Lock,
 } from 'lucide-react';
 import type { ArticleType, ArticleVersionResponse } from '@/types';
 import Link from 'next/link';
@@ -109,6 +109,13 @@ export default function EditArticlePage() {
     queryFn: async () => { const { data } = await articlesApi.getVersions(blogId, articleId); return data; },
     enabled: showVersions,
   });
+
+  const { data: aiUsage } = useQuery({
+    queryKey: ['ai-usage', blogId],
+    queryFn: async () => { const { data } = await aiApi.usage(blogId); return data; },
+    staleTime: 5 * 60 * 1000,
+  });
+  const aiBlocked = aiUsage?.tokens_limit === 0;
 
   useEffect(() => {
     if (!article) return;
@@ -462,12 +469,12 @@ export default function EditArticlePage() {
               <button
                 type="button"
                 onClick={handleSummarize}
-                disabled={summarizeLoading || !content}
-                title="Générer l'extrait depuis le contenu"
+                disabled={summarizeLoading || !content || aiBlocked}
+                title={aiBlocked ? 'Disponible à partir du plan Starter' : 'Générer l\'extrait depuis le contenu'}
                 className="flex items-center gap-1 h-6 px-2 rounded-lg bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 text-[10px] font-bold border border-violet-200 dark:border-violet-800 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors disabled:opacity-40"
               >
-                {summarizeLoading ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Sparkles className="h-2.5 w-2.5" />}
-                Générer
+                {summarizeLoading ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : aiBlocked ? <Lock className="h-2.5 w-2.5" /> : <Sparkles className="h-2.5 w-2.5" />}
+                {aiBlocked ? 'Plan requis' : 'Générer'}
               </button>
             </div>
             <textarea
@@ -564,32 +571,42 @@ export default function EditArticlePage() {
                     <button
                       type="button"
                       onClick={handleGenerateTts}
-                      disabled={ttsLoading || !content}
+                      disabled={ttsLoading || !content || aiBlocked}
+                      title={aiBlocked ? 'Disponible à partir du plan Starter' : undefined}
                       className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40"
                     >
-                      {ttsLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Headphones className="h-3.5 w-3.5" />}
-                      {ttsLoading ? te('ttsGenerating') : te('ttsGenerate')}
+                      {ttsLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : aiBlocked ? <Lock className="h-3.5 w-3.5" /> : <Headphones className="h-3.5 w-3.5" />}
+                      {ttsLoading ? te('ttsGenerating') : aiBlocked ? 'Plan Starter requis' : te('ttsGenerate')}
                     </button>
                   </div>
 
                   {/* Améliorer le contenu */}
                   <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
                     <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Améliorer le contenu</p>
-                    <input
-                      value={improveInstruction}
-                      onChange={e => setImproveInstruction(e.target.value)}
-                      placeholder="Ex : Rends plus formel, ajoute des exemples…"
-                      className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 mb-2"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleImprove}
-                      disabled={improveLoading || !content}
-                      className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-400 text-[12px] font-semibold hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors disabled:opacity-40"
-                    >
-                      {improveLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                      {improveLoading ? 'Amélioration…' : 'Améliorer avec l\'IA'}
-                    </button>
+                    {aiBlocked ? (
+                      <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-400 text-[12px]">
+                        <Lock className="h-3.5 w-3.5 shrink-0" />
+                        <span>Disponible à partir du plan Starter</span>
+                      </div>
+                    ) : (
+                      <>
+                        <input
+                          value={improveInstruction}
+                          onChange={e => setImproveInstruction(e.target.value)}
+                          placeholder="Ex : Rends plus formel, ajoute des exemples…"
+                          className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 mb-2"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleImprove}
+                          disabled={improveLoading || !content}
+                          className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-400 text-[12px] font-semibold hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors disabled:opacity-40"
+                        >
+                          {improveLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                          {improveLoading ? 'Amélioration…' : 'Améliorer avec l\'IA'}
+                        </button>
+                      </>
+                    )}
                   </div>
                   {articleType === 'podcast' && (
                     <div className="grid grid-cols-2 gap-2">
@@ -615,17 +632,18 @@ export default function EditArticlePage() {
                         <input
                           value={coverPrompt}
                           onChange={e => setCoverPrompt(e.target.value)}
-                          placeholder="Décris l'image à générer…"
-                          className="flex-1 h-8 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[11px] text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+                          disabled={aiBlocked}
+                          placeholder={aiBlocked ? 'Plan Starter requis' : 'Décris l\'image à générer…'}
+                          className="flex-1 h-8 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[11px] text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                         <button
                           type="button"
                           onClick={handleGenerateCover}
-                          disabled={coverLoading || !coverPrompt.trim()}
-                          title="Générer avec DALL-E 3"
+                          disabled={coverLoading || !coverPrompt.trim() || aiBlocked}
+                          title={aiBlocked ? 'Disponible à partir du plan Starter' : 'Générer avec DALL-E 3'}
                           className="h-8 w-8 shrink-0 rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors flex items-center justify-center disabled:opacity-40"
                         >
-                          {coverLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                          {coverLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : aiBlocked ? <Lock className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
                         </button>
                       </div>
                       <ImagePicker value={coverImageUrl} onChange={url => { setCoverImageUrl(url); mark(); }} tenantId={blogId} ratio="16/9" />
@@ -696,10 +714,11 @@ export default function EditArticlePage() {
                         )}
                       </div>
                     )}
-                    <button onClick={handleSeoScore} disabled={seoLoading || !title || !content}
+                    <button onClick={handleSeoScore} disabled={seoLoading || !title || !content || aiBlocked}
+                      title={aiBlocked ? 'Disponible à partir du plan Starter' : undefined}
                       className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40">
-                      {seoLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                      {seoLoading ? 'Analyse…' : 'Analyser avec l\'IA'}
+                      {seoLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : aiBlocked ? <Lock className="h-3.5 w-3.5" /> : <Sparkles className="h-3.5 w-3.5" />}
+                      {seoLoading ? 'Analyse…' : aiBlocked ? 'Plan Starter requis' : 'Analyser avec l\'IA'}
                     </button>
                   </div>
 
@@ -718,9 +737,10 @@ export default function EditArticlePage() {
                         <option value="zh">Chinois</option>
                         <option value="ar">Arabe</option>
                       </select>
-                      <button onClick={handleTranslate} disabled={translateLoading || !content}
+                      <button onClick={handleTranslate} disabled={translateLoading || !content || aiBlocked}
+                        title={aiBlocked ? 'Disponible à partir du plan Starter' : undefined}
                         className="flex items-center gap-1 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-40">
-                        {translateLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Languages className="h-3.5 w-3.5" />}
+                        {translateLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : aiBlocked ? <Lock className="h-3.5 w-3.5" /> : <Languages className="h-3.5 w-3.5" />}
                       </button>
                     </div>
                     <p className="mt-1 text-[10px] text-slate-400">Le contenu de l'éditeur sera remplacé par la traduction.</p>

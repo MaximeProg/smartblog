@@ -38,7 +38,7 @@ async def _pre_check_tokens(db, tenant_id: uuid.UUID) -> None:
     tenant, limits = await _get_tenant_with_limits(db, tenant_id)
     max_tokens = limits.get("tokens_per_month")
     if max_tokens is not None and (tenant.ai_tokens_used or 0) >= max_tokens:
-        raise AIQuotaExceededException("tokens", max_tokens)
+        raise AIQuotaExceededException()
 
 
 async def _consume_tokens(db, tenant_id: uuid.UUID, tokens: int) -> None:
@@ -55,7 +55,7 @@ async def _check_images(db, tenant_id: uuid.UUID) -> None:
     max_img = limits.get("images_per_month")
 
     if max_img is not None and (tenant.ai_images_generated or 0) >= max_img:
-        raise AIQuotaExceededException("images", max_img)
+        raise AIQuotaExceededException()
 
     await db.execute(
         text("UPDATE tenants SET ai_images_generated = COALESCE(ai_images_generated, 0) + 1 WHERE id = :id"),
@@ -182,7 +182,7 @@ async def ai_tts(
     tenant, limits = await _get_tenant_with_limits(db, tenant_id)
     max_chars = limits.get("tts_chars_per_month")
     if max_chars is not None and (tenant.ai_tts_chars_used or 0) >= max_chars:
-        raise AIQuotaExceededException("tts_chars", max_chars)
+        raise AIQuotaExceededException()
 
     result = await text_to_speech(body.text, body.voice_id, body.model_id)
 

@@ -5,7 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState, useEffect, useCallback } from 'react';
 import {
   ArrowLeft, Save, Send, Loader2, FileText, Camera, Video,
-  Mic, Radio, Layers, Sparkles, X as XIcon,
+  Mic, Radio, Layers, Sparkles, X as XIcon, Lock,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
@@ -81,6 +81,13 @@ export default function NewArticlePage() {
     queryKey: ['categories', blogId],
     queryFn: async () => { const { data } = await categoriesApi.list(blogId); return data; },
   });
+
+  const { data: aiUsage } = useQuery({
+    queryKey: ['ai-usage', blogId],
+    queryFn: async () => { const { data } = await aiApi.usage(blogId); return data; },
+    staleTime: 5 * 60 * 1000,
+  });
+  const aiBlocked = aiUsage?.tokens_limit === 0;
 
   const handleTitleChange = (v: string) => {
     setTitle(v);
@@ -181,7 +188,15 @@ export default function NewArticlePage() {
         <div className="flex-1 overflow-y-auto px-10 py-8 min-w-0">
 
           {/* ── AI Generation Panel ── */}
-          {showAiPanel ? (
+          {aiBlocked ? (
+            <div className="mb-8 w-full flex items-center gap-3 px-4 h-11 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30 text-slate-400 text-[13px]">
+              <Lock className="h-4 w-4 shrink-0" />
+              <span className="font-semibold">Générer avec l'IA</span>
+              <Link href={`/${locale}/subscription`} className="ml-auto text-[11px] font-bold text-blue-600 hover:underline whitespace-nowrap">
+                Passer au plan Starter →
+              </Link>
+            </div>
+          ) : showAiPanel ? (
             <div className="mb-8 rounded-2xl border border-violet-200 dark:border-violet-800 bg-violet-50/60 dark:bg-violet-950/20 p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
