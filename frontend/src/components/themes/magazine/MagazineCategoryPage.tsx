@@ -33,8 +33,8 @@ export default function MagazineCategoryPage({
   const primaryColor = blog.primary_color || '#e11d48';
 
   const aHref = useCallback(
-    (s: string) => `/${locale}/${blog.slug}/${s}`,
-    [locale, blog.slug],
+    (s: string) => `${basePath}/${s}`,
+    [basePath],
   );
 
   const featured = articles[0];

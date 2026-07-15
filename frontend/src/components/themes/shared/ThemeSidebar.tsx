@@ -15,6 +15,7 @@ interface ThemeSidebarProps {
   getArticleHref: (slug: string) => string;
   isPreview?: boolean;
   locale: string;
+  basePath?: string;
   /** Visual style variant — 'light' (default) or 'dark' */
   variant?: 'light' | 'dark';
 }
@@ -29,6 +30,7 @@ export function ThemeSidebar({
   getArticleHref,
   isPreview,
   locale,
+  basePath,
   variant = 'light',
 }: ThemeSidebarProps) {
   const [email, setEmail]         = useState('');
@@ -122,7 +124,7 @@ export function ThemeSidebar({
             {categories.map(c => (
               <Link
                 key={c.slug}
-                href={`/${locale}/${blog.slug}?category=${c.slug}`}
+                href={`${basePath !== undefined ? (basePath || '/') : `/${locale}/${blog.slug}`}?category=${c.slug}`}
                 className={`flex items-center justify-between px-3 py-2 rounded-xl text-[12px] font-medium transition-colors ${
                   isDark
                     ? 'text-slate-300 hover:bg-slate-800 hover:text-slate-100'
@@ -152,7 +154,7 @@ export function ThemeSidebar({
             {allTags.map(tag => (
               <Link
                 key={tag}
-                href={`/${locale}/${blog.slug}?q=${encodeURIComponent(tag)}`}
+                href={`${basePath !== undefined ? (basePath || '/') : `/${locale}/${blog.slug}`}?q=${encodeURIComponent(tag)}`}
                 className={`text-[11px] px-2.5 py-1 rounded-xl border transition-colors ${tagBg}`}
               >
                 #{tag}

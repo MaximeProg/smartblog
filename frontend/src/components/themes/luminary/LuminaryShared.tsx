@@ -16,7 +16,7 @@ interface SharedProps {
 }
 
 function rl(url: string, base: string): string {
-  if (!url || url === '/') return base;
+  if (!url || url === '/') return base || '/';
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
   return `${base}${url.startsWith('/') ? url : '/' + url}`;
 }
@@ -49,7 +49,7 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
   const navLinks = hCfg?.nav?.links?.length
     ? hCfg.nav.links.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
     : [
-        { label: 'Home', href: basePath },
+        { label: 'Home', href: basePath || '/' },
         ...navCats.map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
         { label: 'All Topics', href: `${basePath}/categories` },
       ];
@@ -166,7 +166,7 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
   const navLinks = fCfg?.navLinks?.length
     ? fCfg.navLinks.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
     : [
-        { label: 'Home',           href: basePath },
+        { label: 'Home',           href: basePath || '/' },
         { label: 'About',          href: `${basePath}/about` },
         { label: 'Contact',        href: `${basePath}/contact` },
         { label: 'All Categories', href: `${basePath}/categories` },

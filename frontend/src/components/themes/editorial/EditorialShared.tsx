@@ -15,7 +15,7 @@ interface SharedProps {
 
 // Resolve blog-relative URLs (e.g. "/about" → "/en/myblog/about")
 function rl(url: string, base: string): string {
-  if (!url || url === '/') return base;
+  if (!url || url === '/') return base || '/';
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
   return `${base}${url.startsWith('/') ? url : '/' + url}`;
 }
@@ -27,7 +27,7 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
   const navLinks = hCfg?.nav?.links?.length
     ? hCfg.nav.links.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
     : [
-        { label: 'Home',    href: basePath },
+        { label: 'Home',    href: basePath || '/' },
         { label: 'About',   href: `${basePath}/about` },
         { label: 'Contact', href: `${basePath}/contact` },
         ...categories.slice(0, 3).map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
@@ -118,7 +118,7 @@ export function EditorialFooter({ blog, categories, basePath, primaryColor }: Sh
   const navLinks = fCfg?.navLinks?.length
     ? fCfg.navLinks.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
     : [
-        { label: 'Home',       href: basePath },
+        { label: 'Home',       href: basePath || '/' },
         { label: 'About',      href: `${basePath}/about` },
         { label: 'Contact',    href: `${basePath}/contact` },
         { label: 'Categories', href: `${basePath}/categories` },

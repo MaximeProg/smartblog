@@ -247,10 +247,10 @@ export function CorporateHeader({
   // Strip that prefix first so /en/about → /about → basePath/about.
   const resolveNavHref = (url: string): string => {
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    if (!basePath) return url;
+    if (basePath == null) return url;
     // Strip leading /{locale} or /{locale-REGION}  e.g. /en, /fr, /en-US
     const withoutLocale = url.replace(/^\/[a-z]{2}(?:-[A-Z]{2})?(\/|$)/, '$1') || '/';
-    if (withoutLocale === '/') return basePath + pq;
+    if (withoutLocale === '/') return (basePath || '/') + pq;
     return basePath + withoutLocale + pq;
   };
 

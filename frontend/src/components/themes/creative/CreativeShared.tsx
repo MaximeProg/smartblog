@@ -14,7 +14,7 @@ interface SharedProps {
 }
 
 function rl(url: string, base: string): string {
-  if (!url || url === '/') return base;
+  if (!url || url === '/') return base || '/';
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
   return `${base}${url.startsWith('/') ? url : '/' + url}`;
 }
@@ -121,7 +121,7 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
   const navLinks = fCfg?.navLinks?.length
     ? fCfg.navLinks.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
     : [
-        { label: 'Home',       href: basePath },
+        { label: 'Home',       href: basePath || '/' },
         { label: 'About',      href: `${basePath}/about` },
         { label: 'Contact',    href: `${basePath}/contact` },
         { label: 'Categories', href: `${basePath}/categories` },

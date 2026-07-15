@@ -295,6 +295,7 @@ export default function EditorialHome({
                 getArticleHref={aHref}
                 isPreview={!!previewSlug}
                 locale={locale}
+                basePath={basePath}
               />
             </div>
           </div>
