@@ -64,7 +64,7 @@ export function TemplateCanvas() {
   }, [selectSection, updateField]);
 
   // ── debounced real-time config patch ────────────────────────────────────
-  const patchTimer = useRef<ReturnType<typeof setTimeout>>();
+  const patchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(() => {
     clearTimeout(patchTimer.current);
     patchTimer.current = setTimeout(() => {
