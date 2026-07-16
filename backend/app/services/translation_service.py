@@ -34,6 +34,16 @@ class TranslationQuotaExceededError(Exception):
     propagated to callers."""
 
 
+def _deepl_endpoint() -> str:
+    # DeepL rejects requests sent to the wrong tier's endpoint (403 "Wrong
+    # endpoint"). Free-tier keys always end in ":fx"; Pro keys never do —
+    # detect from the key itself rather than relying on a separately
+    # configured URL that can drift out of sync with the key in use.
+    if settings.DEEPL_API_KEY.endswith(":fx"):
+        return "https://api-free.deepl.com/v2/translate"
+    return "https://api.deepl.com/v2/translate"
+
+
 async def _deepl_call(texts: list[str], target_lang: str, source_lang: str | None = None) -> list[str]:
     if not settings.DEEPL_API_KEY:
         raise RuntimeError("DeepL not configured")
@@ -51,7 +61,7 @@ async def _deepl_call(texts: list[str], target_lang: str, source_lang: str | Non
 
     async with httpx.AsyncClient(timeout=20.0) as client:
         resp = await client.post(
-            settings.DEEPL_API_URL,
+            _deepl_endpoint(),
             headers={"Authorization": f"DeepL-Auth-Key {settings.DEEPL_API_KEY}"},
             data=data,
         )

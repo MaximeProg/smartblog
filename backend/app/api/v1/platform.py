@@ -83,6 +83,9 @@ async def get_pricing(db: DBSession):
 
 # ── GET /platform/pages/{slug} ────────────────────────────────────────
 
+_CMS_SUPPORTED_LANGS = frozenset({"en", "fr", "es", "de", "pt", "it"})
+
+
 @router.get("/pages/{slug}")
 async def get_platform_page(slug: str, db: DBSession, lang: str = Query(default="en")):
     row = (await db.execute(
@@ -92,7 +95,8 @@ async def get_platform_page(slug: str, db: DBSession, lang: str = Query(default=
     if not row:
         raise NotFoundException("Page")
 
-    if lang.lower() == "en":
+    lang = lang.lower() if lang.lower() in _CMS_SUPPORTED_LANGS else "en"
+    if lang == "en":
         return {"slug": slug, "lang": "en", "content": row.content}
 
     cache_key = key_translate(f"{slug}:{lang.lower()}", row.content_hash)
