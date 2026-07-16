@@ -7,6 +7,7 @@ import { CMS_SUPPORTED_LANGS } from '@/config/cms';
 
 interface Props {
   params: Promise<{ slug: string; articleSlug: string }>;
+  searchParams: Promise<{ lang?: string }>;
 }
 
 function buildHreflang(articleSlug: string) {
@@ -17,12 +18,13 @@ function buildHreflang(articleSlug: string) {
   return languages;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug, articleSlug } = await params;
+  const { lang } = await searchParams;
   try {
     const [blog, article] = await Promise.all([
       publicApi.getBlogInfo(slug),
-      publicApi.getArticle(slug, articleSlug),
+      publicApi.getArticle(slug, articleSlug, lang),
     ]);
     return {
       title: article.seo_title ?? article.title,
@@ -36,6 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         publishedTime: article.published_at ?? undefined,
         authors: article.author_name ? [article.author_name] : [],
         siteName: blog.name,
+        locale: lang,
       },
       twitter: {
         card: 'summary_large_image',
@@ -49,13 +52,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function ArticlePage({ params }: Props) {
+export default async function ArticlePage({ params, searchParams }: Props) {
   const { slug, articleSlug } = await params;
+  const { lang } = await searchParams;
   try {
     const [blog, article, relatedArticles] = await Promise.all([
-      publicApi.getBlogInfo(slug),
-      publicApi.getArticle(slug, articleSlug),
-      publicApi.getArticles(slug, { limit: 4 }),
+      publicApi.getBlogInfo(slug, lang),
+      publicApi.getArticle(slug, articleSlug, lang),
+      publicApi.getArticles(slug, { limit: 4, lang }),
     ]);
 
     const related = relatedArticles.filter((a) => a.slug !== articleSlug).slice(0, 3);
@@ -68,6 +72,7 @@ export default async function ArticlePage({ params }: Props) {
           article={article}
           relatedArticles={related}
           basePath=""
+          lang={lang}
         />
       </>
     );
