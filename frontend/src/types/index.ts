@@ -198,51 +198,6 @@ export interface AuthorInfo {
   email: string;
 }
 
-// ─── Pages ────────────────────────────────────────────────────────────────────
-
-export type PageStatus = 'draft' | 'published' | 'private';
-export type PageType = 'standard' | 'system' | 'dynamic';
-
-export interface PageListItem {
-  id: string;
-  title: string;
-  slug: string;
-  status: PageStatus;
-  page_type: PageType;
-  is_homepage: boolean;
-  sort_order: number;
-  updated_at: string;
-  published_at: string | null;
-}
-
-export interface PageResponse extends PageListItem {
-  tenant_id: string;
-  blocks: Record<string, unknown>[];
-  meta_title: string | null;
-  meta_description: string | null;
-  og_image_url: string | null;
-  created_at: string;
-}
-
-export interface CreatePageData {
-  title: string;
-  slug?: string;
-  page_type?: PageType;
-  blocks?: Record<string, unknown>[];
-  meta_title?: string;
-  meta_description?: string;
-}
-
-export interface UpdatePageData {
-  title?: string;
-  slug?: string;
-  blocks?: Record<string, unknown>[];
-  meta_title?: string;
-  meta_description?: string;
-  og_image_url?: string;
-  sort_order?: number;
-}
-
 export interface CategoryInfo {
   id: string;
   name: string;
@@ -318,25 +273,6 @@ export interface PaginatedResponse<T> {
     has_more: boolean;
     total: number | null;
   };
-}
-
-// ─── Menus ────────────────────────────────────────────────────────────────────
-
-export interface MenuItemData {
-  label: string;
-  ref_id?: string;
-  url?: string;
-  open_new_tab?: boolean;
-  children?: MenuItemData[];
-}
-
-export interface MenuResponse {
-  id: string;
-  tenant_id: string;
-  name: string;
-  location: string;
-  items: MenuItemData[];
-  updated_at: string;
 }
 
 // ─── Media ────────────────────────────────────────────────────────────────────

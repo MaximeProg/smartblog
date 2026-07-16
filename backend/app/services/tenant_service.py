@@ -18,7 +18,6 @@ from app.schemas.tenant import (
     CreateTenantRequest, UpdateTenantRequest,
     TenantResponse, TenantLimits, TenantUsage, SlugCheckResponse,
 )
-from app.services.template_seed import seed_blog
 
 # ── Nombre max de blogs par plan utilisateur (account-level) ──────
 # -1 = illimité
@@ -176,9 +175,6 @@ async def create_tenant(
     db.add(membership)
     await db.commit()
     await db.refresh(tenant)
-
-    # Seed pages + menus par défaut selon le template choisi
-    await seed_blog(db, tenant.id, data.name, data.theme or "minimal")
 
     # Enregistre le parrainage si un code de référence est fourni
     if data.referral_code:

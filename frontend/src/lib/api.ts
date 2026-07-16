@@ -28,15 +28,8 @@ import type {
   PublicBlog,
   PublicArticle,
   TenantInfo,
-  PageListItem,
-  PageResponse,
-  PageStatus,
-  CreatePageData,
-  UpdatePageData,
   TagInfo,
   MediaItem,
-  MenuItemData,
-  MenuResponse,
   LikeResponse,
   ShareResponse,
   SharePlatform,
@@ -466,41 +459,6 @@ export const mediaApi = {
 };
 
 // ─── Menus ────────────────────────────────────────────────────────────────────
-
-export const menusApi = {
-  list: (tenantId: string) =>
-    api.get<MenuResponse[]>(`/tenants/${tenantId}/menus`),
-
-  upsert: (tenantId: string, location: string, items: MenuItemData[]) =>
-    api.put<MenuResponse>(`/tenants/${tenantId}/menus/${location}`, { items }),
-};
-
-// ─── Pages ────────────────────────────────────────────────────────────────────
-
-export const pagesApi = {
-  list: (tenantId: string, status?: PageStatus) =>
-    api.get<PageListItem[]>(`/tenants/${tenantId}/pages`, {
-      params: status ? { status } : undefined,
-    }),
-
-  get: (tenantId: string, pageId: string) =>
-    api.get<PageResponse>(`/tenants/${tenantId}/pages/${pageId}`),
-
-  create: (tenantId: string, data: CreatePageData) =>
-    api.post<PageResponse>(`/tenants/${tenantId}/pages`, data),
-
-  update: (tenantId: string, pageId: string, data: UpdatePageData) =>
-    api.patch<PageResponse>(`/tenants/${tenantId}/pages/${pageId}`, data),
-
-  setStatus: (tenantId: string, pageId: string, status: PageStatus) =>
-    api.post<PageResponse>(`/tenants/${tenantId}/pages/${pageId}/status`, { status }),
-
-  setHomepage: (tenantId: string, pageId: string) =>
-    api.post<PageResponse>(`/tenants/${tenantId}/pages/${pageId}/homepage`),
-
-  delete: (tenantId: string, pageId: string) =>
-    api.delete<void>(`/tenants/${tenantId}/pages/${pageId}`),
-};
 
 // ─── Modération (commentaires au niveau tenant) ────────────────────────────────
 

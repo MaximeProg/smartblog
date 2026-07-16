@@ -60,10 +60,6 @@ class Tenant(Base):
     plan_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     grace_period_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
-    # Paiement
-    stripe_account_id: Mapped[str | None] = mapped_column(String(255))
-    paypal_merchant_id: Mapped[str | None] = mapped_column(String(255))
-
     # IA
     ai_api_key_enc: Mapped[str | None] = mapped_column(Text)
     ai_tokens_used: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
