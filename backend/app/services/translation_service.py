@@ -40,10 +40,14 @@ async def _deepl_call(texts: list[str], target_lang: str, source_lang: str | Non
     if not texts:
         return []
 
-    data = [("text", t[:5000]) for t in texts]
-    data.append(("target_lang", target_lang.upper()))
+    # httpx only takes the form-urlencoded path when `data` is a Mapping —
+    # a list of tuples gets silently reinterpreted as raw `content=`, which
+    # breaks under AsyncClient. A dict value can be a list to send repeated
+    # fields (needed here for DeepL's batch `text` parameter).
+    data: dict[str, str | list[str]] = {"text": [t[:5000] for t in texts]}
+    data["target_lang"] = target_lang.upper()
     if source_lang:
-        data.append(("source_lang", source_lang.upper()))
+        data["source_lang"] = source_lang.upper()
 
     async with httpx.AsyncClient(timeout=20.0) as client:
         resp = await client.post(
