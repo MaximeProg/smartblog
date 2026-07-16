@@ -54,7 +54,7 @@ export default function CorporateContactPage({ blog, categories, basePath, editM
   }
 
   const cpStyle = { '--cp': primaryColor } as CSSProperties;
-  const hasInfo = !!(infoEmail || infoPhone || infoAddress);
+  const hasInfo = info.enabled !== false && !!(infoEmail || infoPhone || infoAddress);
 
   return (
     <div className="min-h-screen bg-white text-slate-900" style={cpStyle}>
@@ -97,7 +97,7 @@ export default function CorporateContactPage({ blog, categories, basePath, editM
               tag="h1"
               className="text-4xl sm:text-5xl font-black leading-tight mb-6"
             />
-            <p className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">{heroDesc}</p>
+            <div className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: heroDesc }} />
           </div>
         </section>
       </EditableSection>

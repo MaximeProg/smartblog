@@ -26,9 +26,13 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
   const showSubscribe = hCfg?.subscribe?.enabled !== false;
   const subscribeLabel = hCfg?.subscribe?.label || 'Subscribe';
 
-  const navLinks = hCfg?.nav?.links?.length
+  const pageLinks = hCfg?.nav?.links?.length
     ? hCfg.nav.links.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
-    : categories.slice(0, 5).map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` }));
+    : [];
+  const navLinks = [
+    ...pageLinks,
+    ...categories.slice(0, 5).map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
+  ];
 
   return (
     <header className="sticky top-0 z-50 bg-zinc-950 border-b border-zinc-800">

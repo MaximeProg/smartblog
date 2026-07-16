@@ -24,7 +24,7 @@ export default function CreativeContact({ blog, categories, basePath, editMode, 
   const infoEmail = info.email || null;
   const infoPhone = info.phone || null;
   const infoAddress = info.address || null;
-  const hasInfo = !!(infoEmail || infoPhone || infoAddress);
+  const hasInfo = info.enabled !== false && !!(infoEmail || infoPhone || infoAddress);
 
   const formTitle = contactConfig?.form?.title || t('contactFormTitle');
   const formDesc: string | null = contactConfig?.form?.description || null;
@@ -74,7 +74,7 @@ export default function CreativeContact({ blog, categories, basePath, editMode, 
           <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
             <InlineEditable path="template_config.contact.hero.subtitle" value={heroSubtitle} editMode={editMode} tag="span" className="text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full mb-6 inline-block text-zinc-950" style={{ backgroundColor: primaryColor }} />
             <InlineEditable path="template_config.contact.hero.title" value={heroTitle} editMode={editMode} tag="h1" className="text-5xl font-black text-white leading-tight mb-4" />
-            <p className="text-zinc-400 text-xl max-w-xl">{heroDesc}</p>
+            <div className="text-zinc-400 text-xl max-w-xl" dangerouslySetInnerHTML={{ __html: heroDesc }} />
           </div>
         </section>
       </EditableSection>

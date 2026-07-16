@@ -24,14 +24,17 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
   const [mobileOpen, setMobileOpen] = useState(false);
   const hCfg = blog.template_config?.header;
 
-  const navLinks = hCfg?.nav?.links?.length
+  const pageLinks = hCfg?.nav?.links?.length
     ? hCfg.nav.links.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
     : [
         { label: 'Home',    href: basePath || '/' },
         { label: 'About',   href: `${basePath}/about` },
         { label: 'Contact', href: `${basePath}/contact` },
-        ...categories.slice(0, 3).map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
       ];
+  const navLinks = [
+    ...pageLinks,
+    ...categories.slice(0, 4).map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
+  ];
 
   const showSubscribe = hCfg?.subscribe?.enabled !== false;
   const subscribeLabel = hCfg?.subscribe?.label || 'Subscribe';

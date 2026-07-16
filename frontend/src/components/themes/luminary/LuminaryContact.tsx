@@ -24,7 +24,7 @@ export default function LuminaryContact({ blog, categories, basePath, editMode, 
   const infoEmail = info.email || null;
   const infoPhone = info.phone || null;
   const infoAddress = info.address || null;
-  const hasInfo = !!(infoEmail || infoPhone || infoAddress);
+  const hasInfo = info.enabled !== false && !!(infoEmail || infoPhone || infoAddress);
 
   const formTitle = contactConfig?.form?.title || t('contactFormTitle');
   const formDesc: string | null = contactConfig?.form?.description || null;
@@ -74,7 +74,7 @@ export default function LuminaryContact({ blog, categories, basePath, editMode, 
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <InlineEditable path="template_config.contact.hero.subtitle" value={heroSubtitle} editMode={editMode} tag="p" className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-6" />
             <InlineEditable path="template_config.contact.hero.title" value={heroTitle} editMode={editMode} tag="h1" className="font-serif italic text-5xl sm:text-6xl text-white mb-6" />
-            <p className="font-sans text-zinc-400 text-lg max-w-xl mx-auto">{heroDesc}</p>
+            <div className="font-sans text-zinc-400 text-lg max-w-xl mx-auto" dangerouslySetInnerHTML={{ __html: heroDesc }} />
           </div>
         </section>
       </EditableSection>

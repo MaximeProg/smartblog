@@ -24,7 +24,7 @@ export default function EditorialContact({ blog, categories, basePath, editMode,
   const infoEmail = info.email || null;
   const infoPhone = info.phone || null;
   const infoAddress = info.address || null;
-  const hasInfo = !!(infoEmail || infoPhone || infoAddress);
+  const hasInfo = info.enabled !== false && !!(infoEmail || infoPhone || infoAddress);
 
   const formTitle = contactConfig?.form?.title || t('contactFormTitle');
   const formDesc: string | null = contactConfig?.form?.description || null;
@@ -75,7 +75,7 @@ export default function EditorialContact({ blog, categories, basePath, editMode,
           <div className="relative max-w-4xl mx-auto text-center">
             <InlineEditable path="template_config.contact.hero.subtitle" value={heroSubtitle} editMode={editMode} tag="p" className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: primaryColor }} />
             <InlineEditable path="template_config.contact.hero.title" value={heroTitle} editMode={editMode} tag="h1" className="text-4xl sm:text-5xl font-bold leading-tight mb-4" />
-            <p className="text-zinc-400 text-lg max-w-xl mx-auto">{heroDesc}</p>
+            <div className="text-zinc-400 text-lg max-w-xl mx-auto" dangerouslySetInnerHTML={{ __html: heroDesc }} />
           </div>
         </section>
       </EditableSection>

@@ -35,12 +35,13 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
   const linkedin = blog.social_links?.linkedin || '';
 
   // Main nav: use config links if set, else show categories
-  const navLinks = hCfg?.nav?.links?.length
+  const pageLinks = hCfg?.nav?.links?.length
     ? hCfg.nav.links.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
-    : [
-        { label: 'Home', href: basePath || '/' },
-        ...categories.slice(0, 6).map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
-      ];
+    : [{ label: 'Home', href: basePath || '/' }];
+  const navLinks = [
+    ...pageLinks,
+    ...categories.slice(0, 6).map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
+  ];
 
   return (
     <header>

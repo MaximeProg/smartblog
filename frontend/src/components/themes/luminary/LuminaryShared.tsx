@@ -44,13 +44,14 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
 
   const navCats = categories.slice(0, 6);
 
-  const navLinks = hCfg?.nav?.links?.length
+  const pageLinks = hCfg?.nav?.links?.length
     ? hCfg.nav.links.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
-    : [
-        { label: 'Home', href: basePath || '/' },
-        ...navCats.map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
-        { label: 'All Topics', href: `${basePath}/categories` },
-      ];
+    : [{ label: 'Home', href: basePath || '/' }];
+  const navLinks = [
+    ...pageLinks,
+    ...navCats.map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
+    { label: 'All Topics', href: `${basePath}/categories` },
+  ];
 
   return (
     <header className="sticky top-0 z-50 bg-[#faf8f4]/95 backdrop-blur-sm border-b border-zinc-200" style={{ '--cp': primaryColor } as CSSProperties}>

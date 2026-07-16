@@ -89,9 +89,6 @@ export const basePages: PageDef[] = [
         fields: [
           { key: 'template_config.home.hero.enabled', type: 'boolean', label: 'Activer la section héro' },
           { key: 'template_config.home.hero.sectionTitle', type: 'text', label: 'Titre de section', inplace: true },
-          { key: 'template_config.content.heroHeadline', type: 'text', label: 'Titre principal', inplace: true },
-          { key: 'template_config.content.heroSubheadline', type: 'textarea', label: 'Sous-titre', inplace: true },
-          { key: 'template_config.content.heroCta', type: 'text', label: 'Bouton CTA', inplace: true },
         ],
       },
       {
@@ -110,7 +107,6 @@ export const basePages: PageDef[] = [
         fields: [
           { key: 'template_config.home.latest.enabled', type: 'boolean', label: 'Afficher la section' },
           { key: 'template_config.home.latest.sectionTitle', type: 'text', label: 'Titre de section', inplace: true },
-          { key: 'template_config.content.latestSectionTitle', type: 'text', label: 'Titre alternatif', inplace: true },
         ],
       },
       {
@@ -122,8 +118,8 @@ export const basePages: PageDef[] = [
           { key: 'template_config.home.newsletter.title', type: 'text', label: 'Titre', inplace: true },
           { key: 'template_config.home.newsletter.description', type: 'textarea', label: 'Description', inplace: true },
           { key: 'template_config.home.newsletter.buttonLabel', type: 'text', label: 'Libellé bouton', inplace: true },
-          { key: 'template_config.home.newsletter.placeholder', type: 'text', label: 'Placeholder email', inplace: true },
-          { key: 'template_config.home.newsletter.disclaimer', type: 'text', label: 'Disclaimer', inplace: true },
+          { key: 'template_config.home.newsletter.placeholder', type: 'text', label: 'Placeholder email' },
+          { key: 'template_config.home.newsletter.disclaimer', type: 'text', label: 'Disclaimer' },
         ],
       },
       {
@@ -153,9 +149,10 @@ export const basePages: PageDef[] = [
         label: 'Héro',
         icon: 'Layout',
         fields: [
-          { key: 'template_config.about.heroTitle', type: 'text', label: 'Titre principal', inplace: true },
-          { key: 'template_config.about.heroSubtitle', type: 'text', label: 'Sous-titre', inplace: true },
-          { key: 'template_config.about.heroCoverUrl', type: 'image', label: 'Image de fond', ratio: '16/9' },
+          { key: 'template_config.about.hero.title', type: 'text', label: 'Titre principal', inplace: true },
+          { key: 'template_config.about.hero.subtitle', type: 'text', label: 'Sous-titre', inplace: true },
+          { key: 'template_config.about.hero.description', type: 'textarea', label: 'Description' },
+          { key: 'template_config.about.hero.cover_image_url', type: 'image', label: 'Image de fond', ratio: '16/9' },
         ],
       },
       {
@@ -163,9 +160,27 @@ export const basePages: PageDef[] = [
         label: 'Mission',
         icon: 'Target',
         fields: [
-          { key: 'template_config.about.missionTitle', type: 'text', label: 'Titre', inplace: true },
-          { key: 'template_config.about.missionText', type: 'richtext', label: 'Texte' },
-          { key: 'template_config.about.missionImageUrl', type: 'image', label: 'Illustration', ratio: '4/3' },
+          { key: 'template_config.about.mission.enabled', type: 'boolean', label: 'Afficher la section' },
+          { key: 'template_config.about.mission.title', type: 'text', label: 'Titre', inplace: true },
+          { key: 'template_config.about.mission.description', type: 'richtext', label: 'Texte' },
+          { key: 'template_config.about.mission.image_url', type: 'image', label: 'Illustration', ratio: '4/3' },
+        ],
+      },
+      {
+        id: 'about.stats',
+        label: 'Statistiques',
+        icon: 'BarChart2',
+        fields: [
+          { key: 'template_config.about.stats.enabled', type: 'boolean', label: 'Afficher la section' },
+          {
+            key: 'template_config.about.stats.items',
+            type: 'array',
+            label: 'Chiffres clés',
+            itemFields: [
+              { key: 'value', type: 'text', label: 'Valeur (ex: 10k)' },
+              { key: 'label', type: 'text', label: 'Label (ex: Lecteurs)' },
+            ],
+          },
         ],
       },
       {
@@ -173,13 +188,14 @@ export const basePages: PageDef[] = [
         label: 'Valeurs',
         icon: 'Star',
         fields: [
-          { key: 'template_config.about.valuesTitle', type: 'text', label: 'Titre de la section', inplace: true },
+          { key: 'template_config.about.values.enabled', type: 'boolean', label: 'Afficher la section' },
+          { key: 'template_config.about.values.title', type: 'text', label: 'Titre de la section', inplace: true },
           {
-            key: 'template_config.about.values',
+            key: 'template_config.about.values.items',
             type: 'array',
             label: 'Valeurs',
             itemFields: [
-              { key: 'emoji', type: 'text', label: 'Emoji' },
+              { key: 'icon', type: 'text', label: 'Emoji' },
               { key: 'title', type: 'text', label: 'Titre' },
               { key: 'description', type: 'textarea', label: 'Description' },
             ],
@@ -191,16 +207,17 @@ export const basePages: PageDef[] = [
         label: 'Équipe',
         icon: 'Users',
         fields: [
-          { key: 'template_config.about.teamTitle', type: 'text', label: 'Titre de la section', inplace: true },
+          { key: 'template_config.about.team.enabled', type: 'boolean', label: 'Afficher la section' },
+          { key: 'template_config.about.team.title', type: 'text', label: 'Titre de la section', inplace: true },
           {
-            key: 'template_config.about.team',
+            key: 'template_config.about.team.members',
             type: 'array',
             label: 'Membres',
             itemFields: [
               { key: 'name', type: 'text', label: 'Nom' },
               { key: 'role', type: 'text', label: 'Rôle' },
               { key: 'bio', type: 'textarea', label: 'Biographie' },
-              { key: 'avatar', type: 'image', label: 'Avatar', ratio: '1/1' },
+              { key: 'avatar_url', type: 'image', label: 'Avatar', ratio: '1/1' },
             ],
           },
         ],
@@ -210,9 +227,10 @@ export const basePages: PageDef[] = [
         label: "Appel à l'action",
         icon: 'ArrowRight',
         fields: [
-          { key: 'template_config.about.ctaTitle', type: 'text', label: 'Titre', inplace: true },
-          { key: 'template_config.about.ctaButtonLabel', type: 'text', label: 'Libellé bouton', inplace: true },
-          { key: 'template_config.about.ctaButtonUrl', type: 'text', label: 'URL du bouton' },
+          { key: 'template_config.about.cta.enabled', type: 'boolean', label: 'Afficher la section' },
+          { key: 'template_config.about.cta.title', type: 'text', label: 'Titre', inplace: true },
+          { key: 'template_config.about.cta.description', type: 'textarea', label: 'Description' },
+          { key: 'template_config.about.cta.primaryLabel', type: 'text', label: 'Libellé bouton', inplace: true },
         ],
       },
     ],
@@ -228,18 +246,20 @@ export const basePages: PageDef[] = [
         label: 'Héro',
         icon: 'Layout',
         fields: [
-          { key: 'template_config.contact.heroTitle', type: 'text', label: 'Titre', inplace: true },
-          { key: 'template_config.contact.heroSubtitle', type: 'text', label: 'Sous-titre', inplace: true },
+          { key: 'template_config.contact.hero.title', type: 'text', label: 'Titre', inplace: true },
+          { key: 'template_config.contact.hero.subtitle', type: 'text', label: 'Sous-titre', inplace: true },
+          { key: 'template_config.contact.hero.description', type: 'textarea', label: 'Description' },
+          { key: 'template_config.contact.hero.cover_image_url', type: 'image', label: 'Image de fond', ratio: '16/9' },
         ],
       },
       {
         id: 'contact.info',
-        label: 'Informations',
+        label: 'Informations de contact',
         icon: 'MapPin',
         fields: [
-          { key: 'template_config.contact.email', type: 'text', label: 'Email' },
-          { key: 'template_config.contact.address', type: 'text', label: 'Adresse' },
-          { key: 'template_config.contact.phone', type: 'text', label: 'Téléphone' },
+          { key: 'template_config.contact.info.email', type: 'text', label: 'Email' },
+          { key: 'template_config.contact.info.phone', type: 'text', label: 'Téléphone' },
+          { key: 'template_config.contact.info.address', type: 'text', label: 'Adresse' },
         ],
       },
       {
@@ -247,8 +267,8 @@ export const basePages: PageDef[] = [
         label: 'Formulaire',
         icon: 'Mail',
         fields: [
-          { key: 'template_config.contact.formTitle', type: 'text', label: 'Titre du formulaire', inplace: true },
-          { key: 'template_config.contact.formSubtitle', type: 'text', label: 'Sous-titre', inplace: true },
+          { key: 'template_config.contact.form.title', type: 'text', label: 'Titre du formulaire', inplace: true },
+          { key: 'template_config.contact.form.description', type: 'textarea', label: 'Description du formulaire' },
         ],
       },
     ],
