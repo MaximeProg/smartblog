@@ -4,9 +4,36 @@ import { ArrowRight, Layers } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
-import { getPlatformCategories } from '@/lib/platform-api';
+import { getPlatformCategories, getUiTranslations } from '@/lib/platform-api';
 
 export const dynamic = 'force-dynamic';
+
+interface CategoriesLabels {
+  heroTitle: string;
+  heroSubtitle: string;
+  noCategoriesYet: string;
+  noCategoriesDesc: string;
+  articlesLabel: string;
+  viewArticles: string;
+}
+
+const EN_LABELS: CategoriesLabels = {
+  heroTitle: 'Categories',
+  heroSubtitle: 'Explore content by topic and find what interests you.',
+  noCategoriesYet: 'No categories yet',
+  noCategoriesDesc: 'Categories will be available here soon.',
+  articlesLabel: 'articles',
+  viewArticles: 'View articles',
+};
+
+const FR_LABELS: CategoriesLabels = {
+  heroTitle: 'Catégories',
+  heroSubtitle: 'Explorez le contenu par thème et trouvez ce qui vous intéresse.',
+  noCategoriesYet: 'Aucune catégorie pour le moment',
+  noCategoriesDesc: 'Les catégories seront disponibles ici prochainement.',
+  articlesLabel: 'articles',
+  viewArticles: 'Voir les articles',
+};
 
 const GRADIENT_COLORS = [
   'from-blue-600/50 to-blue-900/70',
@@ -21,22 +48,32 @@ const GRADIENT_COLORS = [
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1558655146-364adaf1fcc9?auto=format&fit=crop&w=800&q=80';
 
-export default async function CategoriesPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function CategoriesPage({
+  params, searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ cmsLang?: string }>;
+}) {
   const { locale } = await params;
-  const isFr = locale === 'fr';
+  const { cmsLang } = await searchParams;
+  const lang = (cmsLang || locale).toLowerCase();
+
+  let l: CategoriesLabels = lang === 'fr' ? FR_LABELS : EN_LABELS;
+  if (lang !== 'en' && lang !== 'fr') {
+    const translated = await getUiTranslations('marketing', lang);
+    if (translated?.categories) l = { ...EN_LABELS, ...(translated.categories as Partial<CategoriesLabels>) };
+  }
 
   const categories = await getPlatformCategories();
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
-      <PublicNav locale={locale} />
+      <PublicNav locale={locale} lang={lang} />
 
       <PageHero
         image="https://images.unsplash.com/photo-1558655146-364adaf1fcc9?auto=format&fit=crop&w=1920&q=85"
-        title={isFr ? 'Catégories' : 'Categories'}
-        subtitle={isFr
-          ? 'Explorez le contenu par thème et trouvez ce qui vous intéresse.'
-          : 'Explore content by topic and find what interests you.'}
+        title={l.heroTitle}
+        subtitle={l.heroSubtitle}
       />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-16">
@@ -46,12 +83,10 @@ export default async function CategoriesPage({ params }: { params: Promise<{ loc
               <Layers className="h-8 w-8 text-slate-400" />
             </div>
             <h3 className="text-xl font-bold mb-2">
-              {isFr ? 'Aucune catégorie pour le moment' : 'No categories yet'}
+              {l.noCategoriesYet}
             </h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm">
-              {isFr
-                ? 'Les catégories seront disponibles ici prochainement.'
-                : 'Categories will be available here soon.'}
+              {l.noCategoriesDesc}
             </p>
           </div>
         ) : (
@@ -74,7 +109,7 @@ export default async function CategoriesPage({ params }: { params: Promise<{ loc
 
                 <div className="absolute inset-0 p-4 md:p-6 flex flex-col justify-end">
                   <span className="text-xs font-semibold text-white/60 uppercase tracking-widest mb-1">
-                    {cat.articles_count} {isFr ? 'articles' : 'articles'}
+                    {cat.articles_count} {l.articlesLabel}
                   </span>
                   <h3 className="text-xl font-black text-white mb-2">{cat.name}</h3>
                   {cat.description && (
@@ -83,7 +118,7 @@ export default async function CategoriesPage({ params }: { params: Promise<{ loc
                     </p>
                   )}
                   <div className="flex items-center gap-2 text-sm font-semibold text-white/80 group-hover:text-white transition-colors">
-                    {isFr ? 'Voir les articles' : 'View articles'}
+                    {l.viewArticles}
                     <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
@@ -93,7 +128,7 @@ export default async function CategoriesPage({ params }: { params: Promise<{ loc
         )}
       </div>
 
-      <PublicFooter locale={locale} />
+      <PublicFooter locale={locale} lang={lang} />
     </div>
   );
 }

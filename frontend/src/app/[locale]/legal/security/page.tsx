@@ -63,7 +63,7 @@ export default async function SecurityPage({
         </div>
       </div>
 
-      <PublicFooter locale={locale} />
+      <PublicFooter locale={locale} lang={lang} />
     </div>
   );
 }

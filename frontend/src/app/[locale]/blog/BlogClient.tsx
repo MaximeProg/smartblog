@@ -29,7 +29,7 @@ const THEME_LABEL: Record<string, string> = {
   news: 'News', tech: 'Tech', portfolio: 'Portfolio',
 };
 
-function BlogCard({ blog, locale }: { blog: Blog; locale: string }) {
+function BlogCard({ blog, locale, noDescriptionLabel }: { blog: Blog; locale: string; noDescriptionLabel: string }) {
   const initials = blog.name
     .split(' ')
     .map((w) => w[0])
@@ -101,7 +101,7 @@ function BlogCard({ blog, locale }: { blog: Blog; locale: string }) {
             {blog.description}
           </p>
         ) : (
-          <p className="text-sm text-slate-300 dark:text-slate-600 italic">No description</p>
+          <p className="text-sm text-slate-300 dark:text-slate-600 italic">{noDescriptionLabel}</p>
         )}
       </div>
 
@@ -128,21 +128,39 @@ function BlogCard({ blog, locale }: { blog: Blog; locale: string }) {
   );
 }
 
+export interface BlogExploreLabels {
+  heroTitle: string;
+  heroSubtitle: string;
+  searchPlaceholder: string;
+  allCategories: string;
+  search: string;
+  noBlogsFound: string;
+  resultsCountSingular: string;
+  resultsCountPlural: string;
+  serviceUnavailable: string;
+  serviceUnavailableDesc: string;
+  reload: string;
+  noBlogsYet: string;
+  beFirst: string;
+  createMyBlog: string;
+  noDescription: string;
+}
+
 interface Props {
   blogs: Blog[];
   locale: string;
   q?: string;
   category?: string;
   apiError?: boolean;
+  labels: BlogExploreLabels;
 }
 
-export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, apiError }: Props) {
+export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, apiError, labels: l }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState(initialQ ?? '');
   const [selectedCat, setSelectedCat] = useState(initialCat ?? '');
-  const isFr = locale === 'fr';
 
   function applyFilters(q: string, cat: string) {
     const params = new URLSearchParams();
@@ -164,7 +182,7 @@ export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, a
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && applyFilters(search, selectedCat)}
-            placeholder={isFr ? 'Rechercher un blog...' : 'Search blogs...'}
+            placeholder={l.searchPlaceholder}
             className="w-full pl-9 pr-4 h-11 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -173,7 +191,7 @@ export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, a
           onChange={(e) => { setSelectedCat(e.target.value); applyFilters(search, e.target.value); }}
           className="h-11 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:w-52"
         >
-          <option value="">{isFr ? 'Toutes catégories' : 'All categories'}</option>
+          <option value="">{l.allCategories}</option>
           {BLOG_CATEGORIES.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
@@ -183,17 +201,15 @@ export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, a
           disabled={isPending}
           className="h-11 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors disabled:opacity-50"
         >
-          {isFr ? 'Rechercher' : 'Search'}
+          {l.search}
         </button>
       </div>
 
       {/* Count */}
       <p className="text-sm text-slate-400 mb-6">
         {blogs.length === 0
-          ? (isFr ? 'Aucun blog trouvé' : 'No blogs found')
-          : isFr
-          ? `${blogs.length} blog${blogs.length > 1 ? 's' : ''} disponible${blogs.length > 1 ? 's' : ''}`
-          : `${blogs.length} blog${blogs.length !== 1 ? 's' : ''} available`}
+          ? l.noBlogsFound
+          : (blogs.length === 1 ? l.resultsCountSingular : l.resultsCountPlural).replace('{count}', String(blogs.length))}
       </p>
 
       {/* Grid */}
@@ -201,34 +217,32 @@ export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, a
         <div className="text-center py-32 text-slate-400">
           <Rss className="h-14 w-14 mx-auto mb-5 opacity-20" />
           <p className="font-semibold text-lg">
-            {isFr ? 'Service temporairement indisponible' : 'Service temporarily unavailable'}
+            {l.serviceUnavailable}
           </p>
           <p className="text-sm mt-2 max-w-sm mx-auto">
-            {isFr
-              ? 'Le serveur met quelques secondes à démarrer. Rechargez la page dans un instant.'
-              : 'The server is waking up. Reload the page in a moment.'}
+            {l.serviceUnavailableDesc}
           </p>
           <button
             onClick={() => window.location.reload()}
             className="inline-block mt-6 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors"
           >
-            {isFr ? 'Recharger' : 'Reload'}
+            {l.reload}
           </button>
         </div>
       ) : blogs.length === 0 ? (
         <div className="text-center py-32 text-slate-400">
           <Rss className="h-14 w-14 mx-auto mb-5 opacity-20" />
           <p className="font-semibold text-lg">
-            {isFr ? 'Aucun blog pour le moment' : 'No blogs yet'}
+            {l.noBlogsYet}
           </p>
           <p className="text-sm mt-2">
-            {isFr ? 'Soyez le premier à créer le vôtre !' : 'Be the first to create one!'}
+            {l.beFirst}
           </p>
           <a
             href={`/${locale}/register`}
             className="inline-block mt-6 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors"
           >
-            {isFr ? 'Créer mon blog' : 'Create my blog'}
+            {l.createMyBlog}
           </a>
         </div>
       ) : (
@@ -238,7 +252,7 @@ export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, a
           }`}
         >
           {blogs.map((blog) => (
-            <BlogCard key={blog.slug} blog={blog} locale={locale} />
+            <BlogCard key={blog.slug} blog={blog} locale={locale} noDescriptionLabel={l.noDescription} />
           ))}
         </div>
       )}

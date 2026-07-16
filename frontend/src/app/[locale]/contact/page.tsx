@@ -132,7 +132,7 @@ export default async function ContactPage({
         </div>
       </div>
 
-      <PublicFooter locale={locale} />
+      <PublicFooter locale={locale} lang={lang} />
     </div>
   );
 }

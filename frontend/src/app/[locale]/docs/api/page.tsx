@@ -147,7 +147,7 @@ export default async function ApiReferencePage({
         </div>
       </div>
 
-      <PublicFooter locale={locale} />
+      <PublicFooter locale={locale} lang={lang} />
     </div>
   );
 }

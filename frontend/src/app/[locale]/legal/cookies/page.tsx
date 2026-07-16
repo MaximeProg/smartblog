@@ -34,7 +34,7 @@ export default async function CookiesPage({
         subtitle={c.hero.subtitle}
       />
       <LegalSections sections={c.sections} />
-      <PublicFooter locale={locale} />
+      <PublicFooter locale={locale} lang={lang} />
     </div>
   );
 }

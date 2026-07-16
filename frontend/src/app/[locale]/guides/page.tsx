@@ -105,7 +105,7 @@ export default async function GuidesPage({
         </div>
       </div>
 
-      <PublicFooter locale={locale} />
+      <PublicFooter locale={locale} lang={lang} />
     </div>
   );
 }

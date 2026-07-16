@@ -1,32 +1,71 @@
 ﻿import Link from 'next/link';
 import { PenLine, Twitter, Github, Linkedin, Mail } from 'lucide-react';
 import { siteConfig } from '@/config/site';
+import { getUiTranslations } from '@/lib/platform-api';
 
 interface PublicFooterProps {
   locale: string;
+  /** Langue du contenu CMS (peut différer de `locale` via ?cmsLang=) — voir
+   * PublicNav pour le même mécanisme. */
+  lang?: string;
 }
 
-export function PublicFooter({ locale }: PublicFooterProps) {
+interface FooterLabels {
+  tagline: string;
+  platformHeading: string; companyHeading: string; resourcesHeading: string; legalHeading: string;
+  featuresLink: string; pricingLink: string; categoriesLink: string;
+  aboutLink: string; careersLink: string; privacyLink: string; termsLink: string;
+  stayInLoop: string; stayInLoopDesc: string; emailPlaceholder: string; subscribe: string;
+  allRightsReserved: string; allSystemsOperational: string;
+}
+
+const EN_FOOTER: FooterLabels = {
+  tagline: 'The next-generation blogging platform built for creators who demand excellence.',
+  platformHeading: 'Platform', companyHeading: 'Company', resourcesHeading: 'Resources', legalHeading: 'Legal',
+  featuresLink: 'Features', pricingLink: 'Pricing', categoriesLink: 'Categories',
+  aboutLink: 'About', careersLink: 'Careers', privacyLink: 'Privacy Policy', termsLink: 'Terms of Service',
+  stayInLoop: 'Stay in the loop', stayInLoopDesc: 'Get the latest updates delivered straight to your inbox.',
+  emailPlaceholder: 'your@email.com', subscribe: 'Subscribe',
+  allRightsReserved: 'All rights reserved.', allSystemsOperational: 'All systems operational',
+};
+
+const FR_FOOTER: FooterLabels = {
+  tagline: "La plateforme de blog nouvelle génération pour les créateurs qui exigent l'excellence.",
+  platformHeading: 'Platform', companyHeading: 'Entreprise', resourcesHeading: 'Ressources', legalHeading: 'Legal',
+  featuresLink: 'Fonctionnalités', pricingLink: 'Tarifs', categoriesLink: 'Catégories',
+  aboutLink: 'À propos', careersLink: 'Carrières', privacyLink: 'Confidentialité', termsLink: 'Conditions',
+  stayInLoop: 'Restez informé', stayInLoopDesc: 'Recevez les dernières mises à jour directement dans votre boîte mail.',
+  emailPlaceholder: 'votre@email.com', subscribe: "S'abonner",
+  allRightsReserved: 'Tous droits réservés.', allSystemsOperational: 'Tous les systèmes sont opérationnels',
+};
+
+export async function PublicFooter({ locale, lang: langProp }: PublicFooterProps) {
   const year = new Date().getFullYear();
-  const isFr = locale === 'fr';
+  const lang = (langProp ?? locale).toLowerCase();
+
+  let l: FooterLabels = lang === 'fr' ? FR_FOOTER : EN_FOOTER;
+  if (lang !== 'en' && lang !== 'fr') {
+    const translated = await getUiTranslations('marketing', lang);
+    if (translated?.footer) l = { ...EN_FOOTER, ...(translated.footer as Partial<FooterLabels>) };
+  }
 
   const links = {
     platform: [
-      { label: isFr ? 'Fonctionnalités' : 'Features', href: `/${locale}#features` },
-      { label: isFr ? 'Tarifs' : 'Pricing', href: `/${locale}#pricing` },
+      { label: l.featuresLink, href: `/${locale}#features` },
+      { label: l.pricingLink, href: `/${locale}#pricing` },
       { label: 'Blog', href: `/${locale}/blog` },
-      { label: isFr ? 'Catégories' : 'Categories', href: `/${locale}/categories` },
+      { label: l.categoriesLink, href: `/${locale}/categories` },
       { label: 'Changelog', href: `/${locale}/changelog` },
     ],
     company: [
-      { label: isFr ? 'À propos' : 'About', href: `/${locale}/about` },
-      { label: isFr ? 'Carrières' : 'Careers', href: `/${locale}/careers` },
+      { label: l.aboutLink, href: `/${locale}/about` },
+      { label: l.careersLink, href: `/${locale}/careers` },
       { label: 'Press', href: `/${locale}/press` },
       { label: 'Contact', href: `/${locale}/contact` },
     ],
     legal: [
-      { label: isFr ? 'Confidentialité' : 'Privacy Policy', href: `/${locale}/legal/privacy` },
-      { label: isFr ? 'Conditions' : 'Terms of Service', href: `/${locale}/legal/terms` },
+      { label: l.privacyLink, href: `/${locale}/legal/privacy` },
+      { label: l.termsLink, href: `/${locale}/legal/terms` },
       { label: 'Cookies', href: `/${locale}/legal/cookies` },
       { label: 'Security', href: `/${locale}/legal/security` },
     ],
@@ -53,9 +92,7 @@ export function PublicFooter({ locale }: PublicFooterProps) {
               <span className="font-black text-slate-900 dark:text-white tracking-widest uppercase text-sm">SmarterBloggers</span>
             </Link>
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-5 max-w-xs">
-              {isFr
-                ? "La plateforme de blog nouvelle génération pour les créateurs qui exigent l'excellence."
-                : 'The next-generation blogging platform built for creators who demand excellence.'}
+              {l.tagline}
             </p>
             <div className="flex items-center gap-2">
               {[
@@ -79,7 +116,7 @@ export function PublicFooter({ locale }: PublicFooterProps) {
           {/* Platform */}
           <div>
             <p className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest mb-3 md:mb-4">
-              Platform
+              {l.platformHeading}
             </p>
             <ul className="space-y-2.5">
               {links.platform.map(({ label, href }) => (
@@ -95,7 +132,7 @@ export function PublicFooter({ locale }: PublicFooterProps) {
           {/* Company */}
           <div>
             <p className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest mb-3 md:mb-4">
-              {isFr ? 'Entreprise' : 'Company'}
+              {l.companyHeading}
             </p>
             <ul className="space-y-2.5">
               {links.company.map(({ label, href }) => (
@@ -111,7 +148,7 @@ export function PublicFooter({ locale }: PublicFooterProps) {
           {/* Resources */}
           <div>
             <p className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest mb-3 md:mb-4">
-              {isFr ? 'Ressources' : 'Resources'}
+              {l.resourcesHeading}
             </p>
             <ul className="space-y-2.5">
               {links.resources.map(({ label, href }) => (
@@ -127,7 +164,7 @@ export function PublicFooter({ locale }: PublicFooterProps) {
           {/* Legal */}
           <div>
             <p className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-widest mb-3 md:mb-4">
-              Legal
+              {l.legalHeading}
             </p>
             <ul className="space-y-2.5">
               {links.legal.map(({ label, href }) => (
@@ -147,22 +184,20 @@ export function PublicFooter({ locale }: PublicFooterProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 md:py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
           <div>
             <p className="text-sm font-semibold text-slate-900 dark:text-white mb-1">
-              {isFr ? 'Restez informé' : 'Stay in the loop'}
+              {l.stayInLoop}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm">
-              {isFr
-                ? 'Recevez les dernières mises à jour directement dans votre boîte mail.'
-                : 'Get the latest updates delivered straight to your inbox.'}
+              {l.stayInLoopDesc}
             </p>
           </div>
           <div className="flex gap-2 w-full md:w-auto">
             <input
               type="email"
-              placeholder={isFr ? 'votre@email.com' : 'your@email.com'}
+              placeholder={l.emailPlaceholder}
               className="flex-1 md:w-60 px-3 sm:px-4 py-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-500 transition-colors min-w-0"
             />
             <button className="shrink-0 px-4 sm:px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors whitespace-nowrap">
-              {isFr ? "S'abonner" : 'Subscribe'}
+              {l.subscribe}
             </button>
           </div>
         </div>
@@ -172,12 +207,12 @@ export function PublicFooter({ locale }: PublicFooterProps) {
       <div className="border-t border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3">
           <p className="text-xs text-slate-400 dark:text-slate-500">
-            © {year} SmarterBloggers. {isFr ? 'Tous droits réservés.' : 'All rights reserved.'}
+            © {year} SmarterBloggers. {l.allRightsReserved}
           </p>
           <div className="flex items-center gap-2">
             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-xs text-slate-400 dark:text-slate-500">
-              {isFr ? 'Tous les systèmes sont opérationnels' : 'All systems operational'}
+              {l.allSystemsOperational}
             </span>
           </div>
         </div>

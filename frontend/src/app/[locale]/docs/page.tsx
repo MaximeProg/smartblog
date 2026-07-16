@@ -88,7 +88,7 @@ export default async function DocsPage({
         </div>
       </div>
 
-      <PublicFooter locale={locale} />
+      <PublicFooter locale={locale} lang={lang} />
     </div>
   );
 }

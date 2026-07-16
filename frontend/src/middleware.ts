@@ -12,6 +12,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 const LANG_CODES: Set<string> = new Set(CMS_SUPPORTED_LANGS.map((l) => l.code));
 const CONTENT_LANG_COOKIE = 'sb_content_lang';
+const CMS_LANG_COOKIE = 'sb_cms_lang';
 
 function getBlogSlug(hostname: string): string | null {
   // Production: football.smarterbloggers.com
@@ -150,6 +151,27 @@ export async function middleware(request: NextRequest) {
       const loginUrl = new URL(`/${locale}/login`, request.url);
       loginUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // ── Persistance de la langue du contenu CMS (site marketing) ─────
+  // Miroir du cookie sb_content_lang des blogs tenant : mémorise le choix
+  // de langue du visiteur sur les pages marketing (?cmsLang=) pour qu'il
+  // n'ait pas à le resélectionner à chaque navigation.
+  const appLocaleMatch = pathname.match(/^\/(en|fr)(\/.*)?$/);
+  if (appLocaleMatch && !isProtectedPath(pathname)) {
+    const cmsLangParam = request.nextUrl.searchParams.get('cmsLang');
+    if (cmsLangParam && LANG_CODES.has(cmsLangParam)) {
+      const res = intlMiddleware(request) ?? NextResponse.next();
+      res.cookies.set(CMS_LANG_COOKIE, cmsLangParam, { maxAge: 60 * 60 * 24 * 365, path: '/' });
+      return res;
+    }
+
+    const cookieCmsLang = request.cookies.get(CMS_LANG_COOKIE)?.value;
+    if (cookieCmsLang && LANG_CODES.has(cookieCmsLang) && cookieCmsLang !== appLocaleMatch[1]) {
+      const url = request.nextUrl.clone();
+      url.searchParams.set('cmsLang', cookieCmsLang);
+      return NextResponse.redirect(url);
     }
   }
 

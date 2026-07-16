@@ -1,6 +1,5 @@
 ﻿import Image from 'next/image';
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
 import {
   ArrowRight, Check, BarChart2, Users, FileText, Rss,
   Bot, Globe2, Zap, Shield, Star,
@@ -20,7 +19,6 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const { cmsLang } = await searchParams;
-  const t = await getTranslations({ locale, namespace: 'landing' });
   const isFr = locale === 'fr';
   const lang = cmsLang || locale;
   const [pricingPlans, stats, cms] = await Promise.all([
@@ -49,14 +47,51 @@ export default async function HomePage({
   const trustBadges = (cms?.cta as any)?.trust_badges
     ?? ['2-min setup', 'Enterprise security', '4.9/5 rating'];
 
-  const features = [
-    { icon: Bot, title: t('features.aiTitle'), desc: t('features.aiDesc'), color: 'bg-violet-500/10 text-violet-400' },
-    { icon: Globe2, title: t('features.multiTenantTitle'), desc: t('features.multiTenantDesc'), color: 'bg-blue-500/10 text-blue-400' },
-    { icon: Users, title: t('features.teamTitle'), desc: t('features.teamDesc'), color: 'bg-cyan-500/10 text-cyan-400' },
-    { icon: BarChart2, title: t('features.analyticsTitle'), desc: t('features.analyticsDesc'), color: 'bg-emerald-500/10 text-emerald-400' },
-    { icon: Rss, title: t('features.newsletterTitle'), desc: t('features.newsletterDesc'), color: 'bg-pink-500/10 text-pink-400' },
-    { icon: FileText, title: t('features.seoTitle'), desc: t('features.seoDesc'), color: 'bg-orange-500/10 text-orange-400' },
+  const hero = (cms?.hero as any) ?? {
+    title: 'The professional blog platform for teams',
+    subtitle: 'Launch and manage multiple blogs, collaborate with your team, and grow your audience — all from one powerful platform.',
+    cta: 'Get started free',
+    ctaSecondary: 'View demo',
+  };
+  const featuresSection = (cms?.features as any) ?? {
+    title: 'Everything you need to run a professional blog',
+    subtitle: 'From writing to publishing, from analytics to monetization.',
+    items: [
+      { title: 'AI writing assistant', desc: 'Generate, improve, summarize, and translate content with integrated AI capabilities.' },
+      { title: 'Multi-blog management', desc: 'Manage multiple independent blogs from a single dashboard. Each with its own team, domain, and settings.' },
+      { title: 'Team collaboration', desc: 'Invite editors, authors, and viewers. Control who can write, review, and publish.' },
+      { title: 'Built-in analytics', desc: 'Track page views, top articles, and subscriber growth with detailed real-time reports.' },
+      { title: 'Newsletter built-in', desc: 'Grow and manage your subscriber list without any third-party tools.' },
+      { title: 'SEO-first editor', desc: 'AI-powered SEO suggestions, automatic sitemaps, and structured data built right in.' },
+    ],
+  };
+  const pricingHeaders = (cms?.pricing_headers as any) ?? {
+    title: 'Simple, transparent pricing',
+    subtitle: 'Start for free. Upgrade as you grow.',
+    ctaFree: 'Start for free',
+    cta: 'Get started',
+  };
+  const ctaSection = (cms?.cta_section as any) ?? {
+    title: 'Ready to launch your blog?',
+    subtitle: 'Join thousands of content creators who trust SmarterBloggers.',
+    button: 'Start for free — no credit card needed',
+  };
+
+  const FEATURE_ICONS = [Bot, Globe2, Users, BarChart2, Rss, FileText];
+  const FEATURE_COLORS = [
+    'bg-violet-500/10 text-violet-400',
+    'bg-blue-500/10 text-blue-400',
+    'bg-cyan-500/10 text-cyan-400',
+    'bg-emerald-500/10 text-emerald-400',
+    'bg-pink-500/10 text-pink-400',
+    'bg-orange-500/10 text-orange-400',
   ];
+  const features = (featuresSection.items as { title: string; desc: string }[]).map((item, i) => ({
+    icon: FEATURE_ICONS[i] ?? Bot,
+    title: item.title,
+    desc: item.desc,
+    color: FEATURE_COLORS[i] ?? FEATURE_COLORS[0],
+  }));
 
   // Static text/features per plan (EN/FR) — display text stays in code, prices come from API
   const PLAN_STATIC: Record<string, { name: string; desc: string; features: string[] }> = {
@@ -119,7 +154,7 @@ export default async function HomePage({
       period: priceNum > 0 ? (isFr ? '/mois' : '/mo') : undefined,
       desc: api?.description || fallback.desc,
       features: api?.features?.length ? api.features : fallback.features,
-      cta: priceNum === 0 ? t('pricing.ctaFree') : t('pricing.cta'),
+      cta: priceNum === 0 ? pricingHeaders.ctaFree : pricingHeaders.cta,
       highlight: api != null ? api.is_highlighted : id === 'pro',
       badge: (api != null ? api.is_highlighted : id === 'pro') ? (isFr ? 'Populaire' : 'Popular') : null,
     };
@@ -144,11 +179,11 @@ export default async function HomePage({
 
         <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto">
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-5 md:mb-6 drop-shadow-2xl text-white">
-            {t('hero.title')}
+            {hero.title}
           </h1>
 
           <p className="text-base md:text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed mb-8 md:mb-12">
-            {t('hero.subtitle')}
+            {hero.subtitle}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-8">
@@ -156,14 +191,14 @@ export default async function HomePage({
               href={`/${locale}/login`}
               className="group flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm sm:text-base transition-all shadow-xl shadow-blue-600/30 hover:shadow-blue-500/40 hover:scale-[1.02] w-full sm:w-auto justify-center"
             >
-              {t('hero.cta')}
+              {hero.cta}
               <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Link>
             <a
               href="#features"
               className="flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-xl border border-white/20 hover:border-white/40 text-white font-semibold text-sm sm:text-base transition-all hover:bg-white/5 backdrop-blur-sm w-full sm:w-auto justify-center"
             >
-              {t('hero.ctaSecondary')}
+              {hero.ctaSecondary}
             </a>
           </div>
         </div>
@@ -197,8 +232,8 @@ export default async function HomePage({
       <section id="features" className="py-16 md:py-24 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3 md:mb-4">{t('features.title')}</h2>
-            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-2xl mx-auto">{t('features.subtitle')}</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3 md:mb-4">{featuresSection.title}</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-2xl mx-auto">{featuresSection.subtitle}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
             {features.map(({ icon: Icon, title, desc, color }) => (
@@ -283,8 +318,8 @@ export default async function HomePage({
       <section id="pricing" className="py-16 md:py-24 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3 md:mb-4">{t('pricing.title')}</h2>
-            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg">{t('pricing.subtitle')}</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3 md:mb-4">{pricingHeaders.title}</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg">{pricingHeaders.subtitle}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 items-start">
             {plans.map((plan) => (
@@ -353,13 +388,13 @@ export default async function HomePage({
         />
         <div className="absolute inset-0 bg-slate-950/85" />
         <div className="relative z-10 max-w-3xl mx-auto text-center px-6">
-          <h2 className="text-3xl md:text-4xl font-black text-white mb-4">{t('cta.title')}</h2>
-          <p className="text-slate-300 text-lg mb-10 leading-relaxed">{t('cta.subtitle')}</p>
+          <h2 className="text-3xl md:text-4xl font-black text-white mb-4">{ctaSection.title}</h2>
+          <p className="text-slate-300 text-lg mb-10 leading-relaxed">{ctaSection.subtitle}</p>
           <Link
             href={`/${locale}/login`}
             className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-base transition-all shadow-xl shadow-blue-600/30 hover:scale-[1.02]"
           >
-            {t('cta.button')}
+            {ctaSection.button}
             <ArrowRight className="h-4 w-4" />
           </Link>
           <div className="flex items-center justify-center gap-8 mt-10">
@@ -376,7 +411,7 @@ export default async function HomePage({
         </div>
       </section>
 
-      <PublicFooter locale={locale} />
+      <PublicFooter locale={locale} lang={lang} />
     </div>
   );
 }

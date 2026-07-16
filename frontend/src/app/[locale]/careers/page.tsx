@@ -125,7 +125,7 @@ export default async function CareersPage({
         </div>
       </section>
 
-      <PublicFooter locale={locale} />
+      <PublicFooter locale={locale} lang={lang} />
     </div>
   );
 }

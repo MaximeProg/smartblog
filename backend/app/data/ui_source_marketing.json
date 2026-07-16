@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "home": "Home",
+    "blogs": "Blogs",
+    "features": "Features",
+    "pricing": "Pricing",
+    "about": "About",
+    "contact": "Contact",
+    "signIn": "Sign In"
+  },
+  "footer": {
+    "tagline": "The next-generation blogging platform built for creators who demand excellence.",
+    "platformHeading": "Platform",
+    "companyHeading": "Company",
+    "resourcesHeading": "Resources",
+    "legalHeading": "Legal",
+    "featuresLink": "Features",
+    "pricingLink": "Pricing",
+    "categoriesLink": "Categories",
+    "aboutLink": "About",
+    "careersLink": "Careers",
+    "privacyLink": "Privacy Policy",
+    "termsLink": "Terms of Service",
+    "stayInLoop": "Stay in the loop",
+    "stayInLoopDesc": "Get the latest updates delivered straight to your inbox.",
+    "emailPlaceholder": "your@email.com",
+    "subscribe": "Subscribe",
+    "allRightsReserved": "All rights reserved.",
+    "allSystemsOperational": "All systems operational"
+  },
+  "blogExplore": {
+    "heroTitle": "Blogs",
+    "heroSubtitle": "Discover all blogs created by our community.",
+    "searchPlaceholder": "Search blogs...",
+    "allCategories": "All categories",
+    "search": "Search",
+    "noBlogsFound": "No blogs found",
+    "resultsCountSingular": "{count} blog available",
+    "resultsCountPlural": "{count} blogs available",
+    "serviceUnavailable": "Service temporarily unavailable",
+    "serviceUnavailableDesc": "The server is waking up. Reload the page in a moment.",
+    "reload": "Reload",
+    "noBlogsYet": "No blogs yet",
+    "beFirst": "Be the first to create one!",
+    "createMyBlog": "Create my blog",
+    "noDescription": "No description"
+  },
+  "categories": {
+    "heroTitle": "Categories",
+    "heroSubtitle": "Explore content by topic and find what interests you.",
+    "noCategoriesYet": "No categories yet",
+    "noCategoriesDesc": "Categories will be available here soon.",
+    "articlesLabel": "articles",
+    "viewArticles": "View articles"
+  }
+}
