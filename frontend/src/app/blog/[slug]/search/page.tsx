@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import SearchClientPage from '@/app/[locale]/(blog)/[slug]/search/SearchClientPage';
 
 type Params = Promise<{ slug: string }>;
-type SearchParams = Promise<{ q?: string }>;
+type SearchParams = Promise<{ q?: string; lang?: string }>;
 
 export default async function CustomDomainSearchPage({
   params,
@@ -13,11 +13,11 @@ export default async function CustomDomainSearchPage({
   searchParams: SearchParams;
 }) {
   const { slug } = await params;
-  const { q } = await searchParams;
+  const { q, lang } = await searchParams;
 
   let blog;
   try {
-    blog = await publicApi.getBlogInfo(slug);
+    blog = await publicApi.getBlogInfo(slug, lang);
   } catch {
     notFound();
   }
@@ -25,7 +25,7 @@ export default async function CustomDomainSearchPage({
   let initialResults = null;
   if (q && q.trim()) {
     try {
-      initialResults = await publicApi.search(slug, { q: q.trim(), size: 20 });
+      initialResults = await publicApi.search(slug, { q: q.trim(), size: 20, lang });
     } catch {
       // silently fail — client will retry
     }

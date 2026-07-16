@@ -5,6 +5,7 @@ import { ThemeHome } from '@/components/themes/ThemeRenderer';
 
 interface Props {
   params: Promise<{ slug: string; cat: string }>;
+  searchParams: Promise<{ lang?: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -25,12 +26,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function CategoryPage({ params }: Props) {
+export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug, cat } = await params;
+  const { lang } = await searchParams;
   try {
     const [blog, articles, categories] = await Promise.all([
-      publicApi.getBlogInfo(slug),
-      publicApi.getArticles(slug, { category: cat, limit: 20 }),
+      publicApi.getBlogInfo(slug, lang),
+      publicApi.getArticles(slug, { category: cat, limit: 20, lang }),
       publicApi.getCategories(slug),
     ]);
 

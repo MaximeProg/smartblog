@@ -3,9 +3,18 @@ import type { Metadata } from 'next';
 import { publicApi } from '@/lib/public-api';
 import { ThemeArticle } from '@/components/themes/ThemeRenderer';
 import { ViewTracker } from '@/components/ViewTracker';
+import { CMS_SUPPORTED_LANGS } from '@/config/cms';
 
 interface Props {
   params: Promise<{ slug: string; articleSlug: string }>;
+}
+
+function buildHreflang(articleSlug: string) {
+  const languages: Record<string, string> = { 'x-default': `/${articleSlug}` };
+  for (const l of CMS_SUPPORTED_LANGS) {
+    languages[l.code] = l.code === 'en' ? `/${articleSlug}` : `/${l.code}/${articleSlug}`;
+  }
+  return languages;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -18,6 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: article.seo_title ?? article.title,
       description: article.seo_description ?? article.excerpt ?? undefined,
+      alternates: { languages: buildHreflang(articleSlug) },
       openGraph: {
         title: article.seo_title ?? article.title,
         description: article.seo_description ?? article.excerpt ?? undefined,

@@ -108,8 +108,17 @@ class PublicBlogInfo(BaseModel):
 # ── GET /public/{slug} — info blog ───────────────────────────────
 
 @router.get("", response_model=PublicBlogInfo)
-async def get_blog_info(slug: str, db: DBSession):
+async def get_blog_info(slug: str, db: DBSession, lang: str | None = Query(default=None)):
     tenant = await _resolve_tenant(db, slug)
+
+    template_config = tenant.template_config
+    source_lang = (tenant.language or "en").lower()
+    target_lang = (lang or source_lang).lower()
+    if target_lang != source_lang and template_config:
+        translated = await _get_or_create_tenant_content_translation(db, tenant, target_lang)
+        if translated is not None:
+            template_config = translated
+
     return PublicBlogInfo(
         id=str(tenant.id),
         name=tenant.name,
@@ -124,8 +133,47 @@ async def get_blog_info(slug: str, db: DBSession):
         primary_color=tenant.primary_color,
         font_family=getattr(tenant, 'font_family', 'Inter'),
         social_links=tenant.social_links or {},
-        template_config=tenant.template_config,
+        template_config=template_config,
     )
+
+
+async def _get_or_create_tenant_content_translation(db: DBSession, tenant: Tenant, lang: str) -> dict | None:
+    """Traduction complète de template_config, même pattern que les pages CMS
+    plateforme (hash source, upsert atomique, jamais d'exception propagée)."""
+    import hashlib
+    import json as _json
+    from app.services.translation_service import translate_json
+
+    source_hash = hashlib.sha256(
+        _json.dumps(tenant.template_config, sort_keys=True).encode()
+    ).hexdigest()
+
+    existing = (await db.execute(sa_text(
+        "SELECT template_config, source_hash FROM tenant_content_translations WHERE tenant_id = :tid AND lang = :lang"
+    ), {"tid": str(tenant.id), "lang": lang})).fetchone()
+
+    if existing and existing.source_hash == source_hash:
+        return existing.template_config
+
+    try:
+        translated = await translate_json(tenant.template_config, lang, source_lang=(tenant.language or "en"))
+    except Exception:
+        logger.warning("tenant content translation failed", tenant_id=str(tenant.id), lang=lang)
+        return None
+
+    await db.execute(sa_text("""
+        INSERT INTO tenant_content_translations (tenant_id, lang, template_config, source_hash)
+        VALUES (:tid, :lang, CAST(:content AS JSONB), :hash)
+        ON CONFLICT (tenant_id, lang) DO UPDATE
+        SET template_config = EXCLUDED.template_config, source_hash = EXCLUDED.source_hash,
+            translated_at = now()
+    """), {
+        "tid": str(tenant.id), "lang": lang,
+        "content": _json.dumps(translated), "hash": source_hash,
+    })
+    await db.commit()
+
+    return translated
 
 
 # ── GET /public/{slug}/articles ───────────────────────────────────
@@ -140,6 +188,7 @@ async def list_public_articles(
     type: str | None = Query(default=None, alias="type"),
     limit: int = Query(default=20, le=50),
     cursor: str | None = Query(default=None),
+    lang: str | None = Query(default=None),
 ):
     tenant = await _resolve_tenant(db, slug)
 
@@ -167,7 +216,78 @@ async def list_public_articles(
     result = await db.execute(query)
     articles = result.unique().scalars().all()
 
+    source_lang = (tenant.language or "en").lower()
+    target_lang = (lang or source_lang).lower()
+    if target_lang != source_lang and articles:
+        previews = await _get_or_create_article_previews(db, tenant, articles, target_lang)
+        out = []
+        for a in articles:
+            p = _to_public(a)
+            preview = previews.get(str(a.id))
+            if preview:
+                p.title = preview["title"]
+                p.excerpt = preview["excerpt"] or None
+            out.append(p)
+        return out
+
     return [_to_public(a) for a in articles]
+
+
+async def _get_or_create_article_previews(db: DBSession, tenant: Tenant, articles: list[Article], lang: str) -> dict:
+    """Traduction groupée titre+extrait (un seul appel DeepL pour toute la
+    page de résultats) — ne touche jamais `content` (laissé NULL/inchangé,
+    généré seulement quand un lecteur ouvre l'article en entier)."""
+    import hashlib
+    import json as _json
+    from app.services.translation_service import translate_json
+
+    def _hash(a: Article) -> str:
+        return hashlib.sha256(
+            _json.dumps({"title": a.title, "excerpt": a.excerpt, "content": a.content}, sort_keys=True).encode()
+        ).hexdigest()
+
+    ids = [str(a.id) for a in articles]
+    hashes = {str(a.id): _hash(a) for a in articles}
+
+    existing_rows = (await db.execute(sa_text(
+        "SELECT article_id, title, excerpt, source_hash FROM article_translations "
+        "WHERE lang = :lang AND article_id = ANY(:ids)"
+    ), {"lang": lang, "ids": ids})).fetchall()
+    existing = {str(r.article_id): r for r in existing_rows}
+
+    result_map: dict[str, dict] = {}
+    to_translate: dict[str, dict] = {}
+    for a in articles:
+        aid = str(a.id)
+        row = existing.get(aid)
+        if row and row.source_hash == hashes[aid]:
+            result_map[aid] = {"title": row.title, "excerpt": row.excerpt}
+        else:
+            to_translate[aid] = {"title": a.title, "excerpt": a.excerpt or ""}
+
+    if to_translate:
+        try:
+            translated_batch = await translate_json(to_translate, lang, source_lang=(tenant.language or "en"))
+        except Exception:
+            logger.warning("article preview translation failed", tenant_id=str(tenant.id), lang=lang)
+            translated_batch = to_translate
+
+        for aid, vals in translated_batch.items():
+            result_map[aid] = vals
+            await db.execute(sa_text("""
+                INSERT INTO article_translations (tenant_id, article_id, lang, title, excerpt, content, source_hash)
+                VALUES (:tid, :aid, :lang, :title, :excerpt, NULL, :hash)
+                ON CONFLICT (article_id, lang) DO UPDATE
+                SET title = EXCLUDED.title, excerpt = EXCLUDED.excerpt,
+                    source_hash = EXCLUDED.source_hash, translated_at = now()
+            """), {
+                "tid": str(tenant.id), "aid": aid, "lang": lang,
+                "title": vals["title"], "excerpt": vals["excerpt"],
+                "hash": hashes[aid],
+            })
+        await db.commit()
+
+    return result_map
 
 
 # ── GET /public/{slug}/articles/{article_slug} ───────────────────
@@ -175,6 +295,7 @@ async def list_public_articles(
 @router.get("/articles/{article_slug}", response_model=PublicArticleFull)
 async def get_public_article(
     slug: str, article_slug: str, db: DBSession,
+    lang: str | None = Query(default=None),
 ):
     tenant = await _resolve_tenant(db, slug)
     result = await db.execute(
@@ -207,18 +328,109 @@ async def get_public_article(
 
     is_paid = article.visibility == ContentVisibility.PAID
     base = _to_public(article).model_dump()
+
+    title, excerpt = article.title, article.excerpt
+    content = article.content if not is_paid else None
+    seo_title, seo_description = article.seo_title, article.seo_description
+
+    source_lang = (tenant.language or "en").lower()
+    target_lang = (lang or source_lang).lower()
+    if target_lang != source_lang and not is_paid:
+        translation = await _get_or_create_article_translation(db, tenant, article, target_lang)
+        if translation:
+            title = translation["title"]
+            excerpt = translation["excerpt"]
+            content = translation["content"]
+            seo_title = translation["seo_title"]
+            seo_description = translation["seo_description"]
+            base["title"] = title
+            base["excerpt"] = excerpt
+
     return PublicArticleFull(
         **base,
-        content=article.content if not is_paid else None,
+        content=content,
         audio_url=getattr(article, 'audio_url', None),
         episode_number=getattr(article, 'episode_number', None),
         season=getattr(article, 'season', None),
-        seo_title=article.seo_title,
-        seo_description=article.seo_description,
+        seo_title=seo_title,
+        seo_description=seo_description,
         seo_keywords=article.seo_keywords,
         canonical_url=getattr(article, 'canonical_url', None),
         robots_noindex=getattr(article, 'robots_noindex', False),
     )
+
+
+async def _get_or_create_article_translation(db: DBSession, tenant: Tenant, article: Article, lang: str) -> dict | None:
+    """Lazy translation, same pattern as GET /platform/pages/{slug}?lang= —
+    generates on first request, persists, upserts atomically, never raises
+    (falls back to None → caller keeps serving the source content)."""
+    import hashlib
+    import json as _json
+    from app.services.translation_service import translate_article
+
+    source_hash = hashlib.sha256(
+        _json.dumps(
+            {"title": article.title, "excerpt": article.excerpt, "content": article.content},
+            sort_keys=True,
+        ).encode()
+    ).hexdigest()
+
+    existing = (await db.execute(sa_text(
+        "SELECT title, excerpt, content, seo_title, seo_description, source_hash "
+        "FROM article_translations WHERE article_id = :aid AND lang = :lang"
+    ), {"aid": str(article.id), "lang": lang})).fetchone()
+
+    if existing and existing.source_hash == source_hash:
+        return {
+            "title": existing.title, "excerpt": existing.excerpt, "content": existing.content,
+            "seo_title": existing.seo_title, "seo_description": existing.seo_description,
+        }
+
+    try:
+        translated = await translate_article(article, lang, source_lang=(tenant.language or "en"))
+    except Exception:
+        logger.warning("article translation failed", article_id=str(article.id), lang=lang)
+        return None
+
+    await db.execute(sa_text("""
+        INSERT INTO article_translations (tenant_id, article_id, lang, title, excerpt, content, seo_title, seo_description, source_hash)
+        VALUES (:tid, :aid, :lang, :title, :excerpt, :content, :seo_title, :seo_description, :hash)
+        ON CONFLICT (article_id, lang) DO UPDATE
+        SET title = EXCLUDED.title, excerpt = EXCLUDED.excerpt, content = EXCLUDED.content,
+            seo_title = EXCLUDED.seo_title, seo_description = EXCLUDED.seo_description,
+            source_hash = EXCLUDED.source_hash, translated_at = now()
+    """), {
+        "tid": str(tenant.id), "aid": str(article.id), "lang": lang,
+        "title": translated["title"], "excerpt": translated["excerpt"], "content": translated["content"],
+        "seo_title": translated["seo_title"], "seo_description": translated["seo_description"],
+        "hash": source_hash,
+    })
+    await db.commit()
+
+    try:
+        from app.services.search_service import index_article
+        await index_article(
+            tenant.slug,
+            {
+                "id": str(article.id),
+                "tenant_id": str(article.tenant_id),
+                "title": translated["title"],
+                "slug": article.slug,
+                "excerpt": translated["excerpt"] or "",
+                "content": translated["content"] or "",
+                "article_type": article.article_type.value if article.article_type else None,
+                "status": article.status.value,
+                "visibility": article.visibility.value if article.visibility else None,
+                "category_id": str(article.category_id) if article.category_id else None,
+                "published_at": article.published_at.isoformat() if article.published_at else None,
+                "lang": lang,
+            },
+            doc_id=f"{article.id}:{lang}",
+        )
+    except Exception:
+        logger.warning("ES indexing of article translation failed", article_id=str(article.id), lang=lang)
+
+    return translated
 
 
 # ── POST /public/{slug}/articles/{article_slug}/view ─────────────
@@ -963,6 +1175,7 @@ async def public_blog_search(
     db: DBSession,
     q: str | None = Query(default=None, min_length=1, max_length=200),
     category_id: str | None = Query(default=None),
+    lang: str | None = Query(default=None),
     page: int = Query(default=1, ge=1),
     size: int = Query(default=10, le=20),
 ):
@@ -972,6 +1185,7 @@ async def public_blog_search(
         tenant_slug=tenant.slug,
         q=q,
         category_id=category_id,
+        lang=lang,
         status="published",
         from_=(page - 1) * size,
         size=size,

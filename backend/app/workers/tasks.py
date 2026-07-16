@@ -204,6 +204,49 @@ async def auto_publish_scheduled(ctx: dict) -> None:
             await db.rollback()
 
 
+# ── Health check ping (cron toutes les 5 min) — alimente /platform/stats ───────
+
+async def health_check_ping(ctx: dict) -> None:
+    """Vérifie DB + Redis directement (pas de vrai appel HTTP à /health — inutile
+    en interne) et logue le résultat pour calculer un vrai % de disponibilité
+    sur 30 jours. Ne sera significatif qu'après plusieurs semaines de collecte."""
+    import time
+    from sqlalchemy import text
+    from app.core.database import AsyncSessionLocal
+    from app.core.redis_client import redis
+
+    t0 = time.monotonic()
+    db_ok = True
+    try:
+        async with AsyncSessionLocal() as db:
+            await db.execute(text("SELECT 1"))
+    except Exception as exc:
+        db_ok = False
+        logger.error("health_check_ping: DB check failed", error=str(exc))
+
+    redis_ok = True
+    try:
+        await redis.ping()
+    except Exception as exc:
+        redis_ok = False
+        logger.error("health_check_ping: Redis check failed", error=str(exc))
+
+    latency_ms = int((time.monotonic() - t0) * 1000)
+
+    try:
+        async with AsyncSessionLocal() as db:
+            await db.execute(
+                text(
+                    "INSERT INTO health_check_log (success, latency_ms, db_ok, redis_ok) "
+                    "VALUES (:success, :latency, :db_ok, :redis_ok)"
+                ),
+                {"success": db_ok and redis_ok, "latency": latency_ms, "db_ok": db_ok, "redis_ok": redis_ok},
+            )
+            await db.commit()
+    except Exception as exc:
+        logger.error("health_check_ping: failed to log result", error=str(exc))
+
+
 # ── Scheduled newsletter auto-send (cron toutes les 60s) ─────────────────────
 
 async def auto_send_scheduled_newsletters(ctx: dict) -> None:

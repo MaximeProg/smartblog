@@ -4,14 +4,16 @@ import { ThemeContact } from '@/components/themes/ThemeRenderer';
 import { BlogAnalyticsTracker } from '@/components/themes/shared/BlogAnalyticsTracker';
 
 type Params = Promise<{ slug: string }>;
+type SearchParams = Promise<{ lang?: string }>;
 
-export default async function CustomDomainContactPage({ params }: { params: Params }) {
+export default async function CustomDomainContactPage({ params, searchParams }: { params: Params; searchParams: SearchParams }) {
   const { slug } = await params;
+  const { lang } = await searchParams;
 
   let blog, categories;
   try {
     [blog, categories] = await Promise.all([
-      publicApi.getBlogInfo(slug),
+      publicApi.getBlogInfo(slug, lang),
       publicApi.getCategories(slug),
     ]);
   } catch {

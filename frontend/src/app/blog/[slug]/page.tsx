@@ -4,17 +4,17 @@ import { ThemeHome } from '@/components/themes/ThemeRenderer';
 
 interface Props {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ category?: string; q?: string }>;
+  searchParams: Promise<{ category?: string; q?: string; lang?: string }>;
 }
 
 export default async function BlogHomePage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { category, q } = await searchParams;
+  const { category, q, lang } = await searchParams;
 
   try {
     const [blog, articles, categories] = await Promise.all([
-      publicApi.getBlogInfo(slug),
-      publicApi.getArticles(slug, { category, q, limit: 20 }),
+      publicApi.getBlogInfo(slug, lang),
+      publicApi.getArticles(slug, { category, q, limit: 20, lang }),
       publicApi.getCategories(slug),
     ]);
 

@@ -1,7 +1,10 @@
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import type { Metadata } from 'next';
 import { NextIntlClientProvider, type AbstractIntlMessages } from 'next-intl';
 import { publicApi } from '@/lib/public-api';
+import { getUiTranslations } from '@/lib/platform-api';
+import { CMS_SUPPORTED_LANGS } from '@/config/cms';
 import { BlogReaderProvider } from '@/components/themes/shared/BlogReaderProvider';
 import { PersistentAudioProvider } from '@/components/themes/shared/PersistentAudioPlayer';
 import FloatingSearch from '@/components/themes/shared/FloatingSearch';
@@ -12,6 +15,7 @@ const frMessages: AbstractIntlMessages = require('@/messages/fr.json');
 /* eslint-enable @typescript-eslint/no-require-imports */
 
 const MESSAGES: Record<string, AbstractIntlMessages> = { en: enMessages, fr: frMessages };
+const CMS_LANG_CODES: Set<string> = new Set(CMS_SUPPORTED_LANGS.map((l) => l.code));
 
 interface Props {
   children: React.ReactNode;
@@ -22,8 +26,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   try {
     const blog = await publicApi.getBlogInfo(slug);
+    const host = (await headers()).get('host') || `${slug}.smarterbloggers.com`;
     return {
-      metadataBase: new URL(`https://${slug}.smarterbloggers.com`),
+      metadataBase: new URL(`https://${host}`),
       title: { default: blog.name, template: `%s — ${blog.name}` },
       description: blog.description ?? undefined,
       icons: { icon: blog.favicon_url ?? '/favicon.ico' },
@@ -47,8 +52,20 @@ export default async function BlogLayout({ children, params }: Props) {
   }
 
   const { primary_color, font_family } = blog;
-  const locale = blog.language || 'en';
-  const messages = MESSAGES[locale] ?? MESSAGES.en;
+  const sourceLang = (blog.language || 'en').toLowerCase();
+  const contentLang = (await headers()).get('x-blog-lang')?.toLowerCase() || sourceLang;
+
+  const locale = MESSAGES[contentLang] ? contentLang : sourceLang in MESSAGES ? sourceLang : 'en';
+  const baseMessages = MESSAGES[locale] ?? MESSAGES.en;
+
+  let messages: AbstractIntlMessages = baseMessages;
+  if (!MESSAGES[contentLang] && CMS_LANG_CODES.has(contentLang)) {
+    const translatedPublicBlog = await getUiTranslations('publicBlog', contentLang);
+    if (translatedPublicBlog) {
+      messages = { ...baseMessages, publicBlog: translatedPublicBlog } as AbstractIntlMessages;
+    }
+  }
+  const displayLocale = CMS_LANG_CODES.has(contentLang) ? contentLang : locale;
 
   const needsGoogleFont =
     font_family &&
@@ -59,7 +76,7 @@ export default async function BlogLayout({ children, params }: Props) {
     : null;
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
+    <NextIntlClientProvider locale={displayLocale} messages={messages}>
       <div
         id="blog-root"
         style={{
@@ -82,7 +99,7 @@ export default async function BlogLayout({ children, params }: Props) {
             {children}
           </BlogReaderProvider>
         </PersistentAudioProvider>
-        <FloatingSearch basePath="" locale={locale} />
+        <FloatingSearch basePath="" locale={displayLocale} />
       </div>
     </NextIntlClientProvider>
   );

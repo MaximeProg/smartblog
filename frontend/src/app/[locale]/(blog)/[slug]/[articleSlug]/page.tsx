@@ -39,8 +39,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   }
 }
 
-export default async function PublicArticlePage({ params }: { params: Params }) {
+export default async function PublicArticlePage({
+  params, searchParams,
+}: { params: Params; searchParams: Promise<{ lang?: string }> }) {
   const { locale, slug, articleSlug } = await params;
+  const { lang } = await searchParams;
 
   let blog: Awaited<ReturnType<typeof publicApi.getBlogInfo>>;
   let article: Awaited<ReturnType<typeof publicApi.getArticle>>;
@@ -50,7 +53,7 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
   try {
     [blog, article, categories] = await Promise.all([
       publicApi.getBlogInfo(slug),
-      publicApi.getArticle(slug, articleSlug),
+      publicApi.getArticle(slug, articleSlug, lang),
       publicApi.getCategories(slug),
     ]);
     relatedArticles = await publicApi.getArticles(slug, {
@@ -81,6 +84,7 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: article.title,
+    inLanguage: lang || blog.language,
     description: article.excerpt ?? undefined,
     ...(article.cover_image_url ? { image: article.cover_image_url } : {}),
     datePublished: article.published_at ?? undefined,
@@ -120,6 +124,7 @@ export default async function PublicArticlePage({ params }: { params: Params }) 
         relatedArticles={relatedArticles}
         categories={categories}
         basePath={basePath}
+        lang={lang}
       />
     </>
   );

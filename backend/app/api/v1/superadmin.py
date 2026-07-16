@@ -652,6 +652,88 @@ async def deactivate_plan(plan_id: str, payload: TokenPayload, db: DBSession):
     await db.commit()
 
 
+# ── CRUD Pages CMS plateforme (platform_pages table) ──────────────
+
+class PlatformPageUpdateBody(BaseModel):
+    content: dict
+
+
+@router.get("/platform-pages")
+async def list_platform_pages(payload: TokenPayload, db: DBSession):
+    """Liste les pages CMS plateforme (pilote : home, about, contact)."""
+    await _require_super_admin(payload, db)
+    rows = await db.execute(text(
+        "SELECT slug, updated_at FROM platform_pages ORDER BY slug ASC"
+    ))
+    return {
+        "pages": [
+            {"slug": r.slug, "updated_at": r.updated_at.isoformat() if r.updated_at else None}
+            for r in rows
+        ]
+    }
+
+
+@router.get("/platform-pages/{slug}")
+async def get_platform_page_admin(slug: str, payload: TokenPayload, db: DBSession):
+    """Contenu source EN complet d'une page CMS, pour préremplir le formulaire."""
+    await _require_super_admin(payload, db)
+    row = (await db.execute(
+        text("SELECT content, updated_at FROM platform_pages WHERE slug = :slug"),
+        {"slug": slug},
+    )).fetchone()
+    if not row:
+        raise NotFoundException("Page")
+    return {"slug": slug, "content": row.content, "updated_at": row.updated_at.isoformat() if row.updated_at else None}
+
+
+@router.put("/platform-pages/{slug}")
+async def update_platform_page(
+    slug: str,
+    body: PlatformPageUpdateBody,
+    payload: TokenPayload,
+    db: DBSession,
+    force_retranslate: bool = Query(default=False),
+):
+    """Remplace le contenu source EN d'une page CMS. Les traductions existantes
+    deviennent périmées automatiquement (comparaison de hash) et seront
+    régénérées à la prochaine visite publique dans cette langue — sauf si
+    force_retranslate=true, qui les supprime immédiatement pour forcer une
+    régénération synchrone au prochain fetch."""
+    import hashlib
+    import json as _json
+
+    admin = await _require_super_admin(payload, db)
+
+    existing = (await db.execute(
+        text("SELECT id FROM platform_pages WHERE slug = :slug"), {"slug": slug}
+    )).fetchone()
+    if not existing:
+        raise NotFoundException("Page")
+
+    content_hash = hashlib.sha256(_json.dumps(body.content, sort_keys=True).encode()).hexdigest()
+
+    await db.execute(text("""
+        UPDATE platform_pages
+        SET content = CAST(:content AS JSONB), content_hash = :hash,
+            updated_by = :updated_by, updated_at = NOW()
+        WHERE slug = :slug
+    """), {
+        "content": _json.dumps(body.content),
+        "hash": content_hash,
+        "updated_by": str(admin.id),
+        "slug": slug,
+    })
+
+    if force_retranslate:
+        await db.execute(
+            text("DELETE FROM platform_page_translations WHERE page_id = :pid"),
+            {"pid": existing.id},
+        )
+
+    await db.commit()
+    return {"ok": True, "content_hash": content_hash}
+
+
 # ── Santé système ─────────────────────────────────────────────────
 
 _server_start = time.time()

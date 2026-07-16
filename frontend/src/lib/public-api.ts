@@ -116,8 +116,8 @@ async function fetchPublic<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const publicApi = {
-  getBlogInfo: (slug: string) =>
-    fetchPublic<BlogInfo>(`/${slug}`),
+  getBlogInfo: (slug: string, lang?: string) =>
+    fetchPublic<BlogInfo>(`/${slug}${lang ? `?lang=${lang}` : ''}`),
 
   getArticles: (slug: string, params?: {
     category?: string;
@@ -126,6 +126,7 @@ export const publicApi = {
     type?: string;
     limit?: number;
     cursor?: string;
+    lang?: string;
   }) => {
     const qs = new URLSearchParams();
     if (params?.category) qs.set('category', params.category);
@@ -134,12 +135,13 @@ export const publicApi = {
     if (params?.type) qs.set('type', params.type);
     if (params?.limit) qs.set('limit', String(params.limit));
     if (params?.cursor) qs.set('cursor', params.cursor);
+    if (params?.lang) qs.set('lang', params.lang);
     const query = qs.toString() ? `?${qs}` : '';
     return fetchPublic<PublicArticle[]>(`/${slug}/articles${query}`);
   },
 
-  getArticle: (slug: string, articleSlug: string) =>
-    fetchPublic<PublicArticleFull>(`/${slug}/articles/${articleSlug}`),
+  getArticle: (slug: string, articleSlug: string, lang?: string) =>
+    fetchPublic<PublicArticleFull>(`/${slug}/articles/${articleSlug}${lang ? `?lang=${lang}` : ''}`),
 
   getCategories: (slug: string) =>
     fetchPublic<PublicCategory[]>(`/${slug}/categories`),
@@ -147,12 +149,14 @@ export const publicApi = {
   search: (slug: string, params: {
     q?: string;
     category_id?: string;
+    lang?: string;
     page?: number;
     size?: number;
   }) => {
     const qs = new URLSearchParams();
     if (params.q) qs.set('q', params.q);
     if (params.category_id) qs.set('category_id', params.category_id);
+    if (params.lang) qs.set('lang', params.lang);
     if (params.page) qs.set('page', String(params.page));
     if (params.size) qs.set('size', String(params.size));
     const query = qs.toString() ? `?${qs}` : '';

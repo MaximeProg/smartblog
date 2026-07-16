@@ -601,6 +601,7 @@ async def _on_article_published(
                 "views_count": article.views_count or 0,
                 "likes_count": article.likes_count or 0,
                 "published_at": article.published_at.isoformat() if article.published_at else None,
+                "lang": (tenant.language or "en").lower(),
             })
         except Exception as exc:
             logger.warning("ES indexing failed", article_id=str(article.id), error=str(exc))

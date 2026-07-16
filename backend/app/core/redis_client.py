@@ -57,3 +57,6 @@ def key_oauth_state(state_hash: str) -> str:
 
 def key_oauth_pkce(state_hash: str) -> str:
     return f"oauth:pkce:{state_hash}"
+
+def key_platform_stats() -> str:
+    return "cache:platform:stats"

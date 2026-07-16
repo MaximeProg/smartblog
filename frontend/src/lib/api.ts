@@ -1396,6 +1396,19 @@ export const superadminApi = {
   deactivatePlan: (planId: string) =>
     api.delete<void>(`/superadmin/plans/${planId}`),
 
+  // ── Pages CMS plateforme ─────────────────────────────────────────
+  listPlatformPages: () =>
+    api.get<{ pages: { slug: string; updated_at: string | null }[] }>('/superadmin/platform-pages'),
+
+  getPlatformPage: (slug: string) =>
+    api.get<{ slug: string; content: Record<string, unknown>; updated_at: string | null }>(`/superadmin/platform-pages/${slug}`),
+
+  updatePlatformPage: (slug: string, content: Record<string, unknown>, forceRetranslate = false) =>
+    api.put<{ ok: boolean; content_hash: string }>(
+      `/superadmin/platform-pages/${slug}${forceRetranslate ? '?force_retranslate=true' : ''}`,
+      { content },
+    ),
+
   // ── Templates ─────────────────────────────────────────────────
   listTemplates: () =>
     api.get<{ templates: SATemplate[]; total: number }>('/superadmin/templates'),
@@ -1448,4 +1461,7 @@ export interface PublicPlan {
 
 export const platformApi = {
   getPlans: () => api.get<PublicPlan[]>('/platform/pricing'),
+
+  sendContactMessage: (body: { channel: string; name: string; email: string; subject: string; message: string }) =>
+    api.post<{ ok: boolean }>('/platform/contact', body),
 };

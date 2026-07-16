@@ -10,6 +10,7 @@ import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
+import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 import { useBookmark } from '@/hooks/useBookmark';
 
 function formatDate(d: string | null) {
@@ -48,6 +49,7 @@ export default function MagazineArticle({
   getArticleHref,
   basePath: _basePath,
   previewSlug,
+  lang,
 }: ArticleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
@@ -216,11 +218,14 @@ export default function MagazineArticle({
                   {bookmarked ? 'Saved' : 'Save'}
                 </button>
               </div>
-              <ShareButtons
-                url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.smarterbloggers.com/${article.slug}`}
-                title={article.title}
-                primaryColor={primaryColor}
-              />
+              <div className="flex items-center gap-3">
+                <ShareButtons
+                  url={typeof window !== 'undefined' ? window.location.href : `https://${blog.slug}.smarterbloggers.com/${article.slug}`}
+                  title={article.title}
+                  primaryColor={primaryColor}
+                />
+                <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
+              </div>
             </div>
           </article>
 

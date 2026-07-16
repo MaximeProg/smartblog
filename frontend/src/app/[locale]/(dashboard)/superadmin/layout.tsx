@@ -11,7 +11,7 @@ import {
   Layers, FolderOpen, Image, Megaphone, GitBranch, BookOpen,
   Brain, Mail, Bell, Server, Settings, ScrollText, Shield,
   HeadphonesIcon, LogOut, Activity, ChevronRight, ShieldCheck,
-  PanelLeft, Sun, Moon, ChevronDown, Eye,
+  PanelLeft, Sun, Moon, ChevronDown, Eye, Globe,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { cn } from '@/lib/utils';
@@ -100,6 +100,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
         { href: `${b}/templates`,           label: t('nav.templates'),  icon: Layers },
         { href: `${b}/template-categories`, label: t('nav.categories'), icon: FolderOpen },
         { href: `${b}/media`,               label: t('nav.media'),      icon: Image },
+        { href: `${b}/platform-pages`,      label: t('nav.platformPages'), icon: Globe },
       ],
     },
     {

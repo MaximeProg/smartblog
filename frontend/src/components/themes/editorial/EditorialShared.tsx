@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, Twitter, Linkedin, Github, ExternalLink } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { ShareButtons } from '../shared/ShareButtons';
+import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -61,6 +62,7 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
         </nav>
 
         <div className="flex items-center gap-3">
+          <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
           <Link
             href={`${basePath}/advertise`}
             className="hidden md:inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-white hover:opacity-80 transition-opacity"

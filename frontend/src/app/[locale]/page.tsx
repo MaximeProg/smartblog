@@ -7,19 +7,48 @@ import {
 } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
-import { getPricingPlans, type PricingPlan } from '@/lib/platform-api';
+import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
+import { getPricingPlans, getPlatformStats, getPlatformPage, type PricingPlan } from '@/lib/platform-api';
 
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ cmsLang?: string }>;
 }) {
   const { locale } = await params;
+  const { cmsLang } = await searchParams;
   const t = await getTranslations({ locale, namespace: 'landing' });
   const isFr = locale === 'fr';
-  const pricingPlans = await getPricingPlans();
+  const lang = cmsLang || locale;
+  const [pricingPlans, stats, cms] = await Promise.all([
+    getPricingPlans(),
+    getPlatformStats(),
+    getPlatformPage('home', lang),
+  ]);
+
+  // Fallback EN codé en dur si le backend CMS est indisponible — jamais de page cassée.
+  const cmsStatsLabels = (cms?.stats as any)?.labels ?? {
+    active_blogs: 'Active blogs', articles_published: 'Articles published',
+    monthly_readers: 'Monthly readers', uptime: 'Uptime SLA',
+  };
+  const editorShowcase = (cms?.editor_showcase as any) ?? {
+    title: 'Write with built-in AI assistance',
+    description: 'A powerful WYSIWYG editor with support for images, videos, code blocks, tables, and AI writing assistance to help you write faster and better.',
+    items: ['AI content generation', 'Automatic SEO optimization', 'Code blocks with syntax highlighting', 'Rich media embeds'],
+  };
+  const analyticsShowcase = (cms?.analytics_showcase as any) ?? {
+    title: 'Advanced real-time analytics',
+    description: 'Track every metric that matters with real-time analytics, visitor insights, and comprehensive engagement reports.',
+    items: ['Real-time page views', 'Detailed traffic sources', 'Top performing articles', 'Newsletter conversion rates'],
+  };
+  const pricingDisclaimer = (cms?.pricing as any)?.disclaimer
+    ?? 'All plans include a 14-day free trial. No credit card required to start.';
+  const trustBadges = (cms?.cta as any)?.trust_badges
+    ?? ['2-min setup', 'Enterprise security', '4.9/5 rating'];
 
   const features = [
     { icon: Bot, title: t('features.aiTitle'), desc: t('features.aiDesc'), color: 'bg-violet-500/10 text-violet-400' },
@@ -77,18 +106,20 @@ export default async function HomePage({
   const DISPLAY_ORDER = ['free', 'starter', 'pro', 'business'];
   const FALLBACK_PRICES: Record<string, number> = { free: 0, starter: 5, pro: 30, business: 90 };
 
-  // Always render the 4 core plans; overlay API prices when available
+  // Always render the 4 core plans; prefer real DB fields (name/description/
+  // features, editable from superadmin/plans), fall back to static EN/FR text
+  // only when the API is unavailable or a field is empty.
   const plans = DISPLAY_ORDER.map(id => {
     const api = apiById[id] as PricingPlan | undefined;
-    const text = PLAN_STATIC[id] ?? { name: id, desc: '', features: [] };
+    const fallback = PLAN_STATIC[id] ?? { name: id, desc: '', features: [] };
     const priceNum = api != null ? api.price_monthly : (FALLBACK_PRICES[id] ?? 0);
     return {
       id,
-      name: text.name,
+      name: api?.name || fallback.name,
       price: priceNum === 0 ? (isFr ? 'Gratuit' : 'Free') : `$${priceNum}`,
       period: priceNum > 0 ? (isFr ? '/mois' : '/mo') : undefined,
-      desc: text.desc,
-      features: text.features,
+      desc: api?.description || fallback.desc,
+      features: api?.features?.length ? api.features : fallback.features,
       cta: priceNum === 0 ? t('pricing.ctaFree') : t('pricing.cta'),
       highlight: api != null ? api.is_highlighted : id === 'pro',
       badge: (api != null ? api.is_highlighted : id === 'pro') ? (isFr ? 'Populaire' : 'Popular') : null,
@@ -149,10 +180,10 @@ export default async function HomePage({
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8 text-center">
             {[
-              { value: '10,000+', label: isFr ? 'Blogs actifs' : 'Active blogs' },
-              { value: '2M+', label: isFr ? 'Articles publiés' : 'Articles published' },
-              { value: '50M+', label: isFr ? 'Lecteurs/mois' : 'Monthly readers' },
-              { value: '99.9%', label: 'Uptime SLA' },
+              { value: stats ? stats.active_blogs.toLocaleString(locale) : '—', label: cmsStatsLabels.active_blogs },
+              { value: stats ? stats.published_articles.toLocaleString(locale) : '—', label: cmsStatsLabels.articles_published },
+              { value: stats ? stats.monthly_readers.toLocaleString(locale) : '—', label: cmsStatsLabels.monthly_readers },
+              { value: stats?.uptime_pct != null ? `${stats.uptime_pct}%` : (isFr ? 'Collecte en cours' : 'Collecting data'), label: cmsStatsLabels.uptime },
             ].map(({ value, label }) => (
               <div key={label}>
                 <p className="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white mb-1">{value}</p>
@@ -192,22 +223,13 @@ export default async function HomePage({
         <div className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
-              {isFr
-                ? "Écrivez avec l'assistance de l'IA intégrée"
-                : 'Write with built-in AI assistance'}
+              {editorShowcase.title}
             </h2>
             <p className="text-slate-500 dark:text-slate-400 text-base leading-relaxed mb-8">
-              {isFr
-                ? "Un éditeur riche WYSIWYG avec support des images, vidéos, blocs de code, tableaux et l'assistance IA pour écrire plus vite et mieux."
-                : 'A powerful WYSIWYG editor with support for images, videos, code blocks, tables, and AI writing assistance to help you write faster and better.'}
+              {editorShowcase.description}
             </p>
             <ul className="space-y-3">
-              {[
-                isFr ? 'Génération de contenu par IA' : 'AI content generation',
-                isFr ? 'Optimisation SEO automatique' : 'Automatic SEO optimization',
-                isFr ? 'Blocs de code avec coloration syntaxique' : 'Code blocks with syntax highlighting',
-                isFr ? 'Intégration de médias' : 'Rich media embeds',
-              ].map((item) => (
+              {(editorShowcase.items as string[]).map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
                   <Check className="h-4 w-4 text-emerald-500 shrink-0" />
                   {item}
@@ -241,22 +263,13 @@ export default async function HomePage({
           </div>
           <div className="order-1 lg:order-2">
             <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
-              {isFr
-                ? 'Des analyses avancées en temps réel'
-                : 'Advanced real-time analytics'}
+              {analyticsShowcase.title}
             </h2>
             <p className="text-slate-500 dark:text-slate-400 text-base leading-relaxed mb-8">
-              {isFr
-                ? "Suivez chaque métrique importante avec des analyses en temps réel, des insights visiteurs et des rapports d'engagement complets."
-                : 'Track every metric that matters with real-time analytics, visitor insights, and comprehensive engagement reports.'}
+              {analyticsShowcase.description}
             </p>
             <ul className="space-y-3">
-              {[
-                isFr ? 'Vues de pages en temps réel' : 'Real-time page views',
-                isFr ? 'Sources de trafic détaillées' : 'Detailed traffic sources',
-                isFr ? 'Articles les plus performants' : 'Top performing articles',
-                isFr ? 'Taux de conversion newsletter' : 'Newsletter conversion rates',
-              ].map((item) => (
+              {(analyticsShowcase.items as string[]).map((item) => (
                 <li key={item} className="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-300">
                   <Check className="h-4 w-4 text-blue-500 shrink-0" />
                   {item}
@@ -326,9 +339,7 @@ export default async function HomePage({
             ))}
           </div>
           <p className="text-center text-sm text-slate-400 mt-10">
-            {isFr
-              ? "Tous les plans incluent 14 jours d'essai gratuit."
-              : 'All plans include a 14-day free trial. No credit card required to start.'}
+            {pricingDisclaimer}
           </p>
         </div>
       </section>
@@ -353,19 +364,22 @@ export default async function HomePage({
             <ArrowRight className="h-4 w-4" />
           </Link>
           <div className="flex items-center justify-center gap-8 mt-10">
-            {[
-              { icon: Zap, text: isFr ? 'Démarrage en 2 min' : '2-min setup' },
-              { icon: Shield, text: isFr ? 'Sécurité enterprise' : 'Enterprise security' },
-              { icon: Star, text: '4.9/5 rating' },
-            ].map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-center gap-2 text-slate-400 text-sm">
-                <Icon className="h-4 w-4 text-slate-500" />
-                {text}
-              </div>
-            ))}
+            {(trustBadges as string[]).map((text, i) => {
+              const Icon = [Zap, Shield, Star][i] ?? Star;
+              return (
+                <div key={text} className="flex items-center gap-2 text-slate-400 text-sm">
+                  <Icon className="h-4 w-4 text-slate-500" />
+                  {text}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
+
+      <div className="flex justify-center py-4 border-t border-slate-100 dark:border-slate-900">
+        <CmsLanguageSwitcher currentLang={lang} />
+      </div>
 
       <PublicFooter locale={locale} />
     </div>

@@ -92,3 +92,42 @@ export async function getPricingPlans(): Promise<PricingPlan[]> {
     return [];
   }
 }
+
+export interface PlatformStats {
+  active_blogs: number;
+  published_articles: number;
+  monthly_readers: number;
+  uptime_pct: number | null;
+}
+
+export async function getPlatformStats(): Promise<PlatformStats | null> {
+  try {
+    return await apiFetch(`${API_URL}/api/v1/platform/stats`, 120);
+  } catch {
+    return null;
+  }
+}
+
+export async function getPlatformPage(
+  slug: string,
+  lang: string,
+): Promise<Record<string, unknown> | null> {
+  try {
+    const data = await apiFetch(`${API_URL}/api/v1/platform/pages/${slug}?lang=${lang}`, 300);
+    return data?.content ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getUiTranslations(
+  namespace: string,
+  lang: string,
+): Promise<Record<string, unknown> | null> {
+  try {
+    const data = await apiFetch(`${API_URL}/api/v1/platform/ui-translations?namespace=${namespace}&lang=${lang}`, 300);
+    return data?.messages ?? null;
+  } catch {
+    return null;
+  }
+}

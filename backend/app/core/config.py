@@ -72,6 +72,8 @@ class Settings(BaseSettings):
     OPENAI_DEFAULT_MODEL: str = "gpt-4o-mini"
     OPENAI_STRONG_MODEL: str = "gpt-4o"
     DEEPL_API_KEY: str = ""
+    # Free plan → api-free.deepl.com ; Pro plan → api.deepl.com (clés Free se terminent par ":fx")
+    DEEPL_API_URL: str = "https://api-free.deepl.com/v2/translate"
     ELEVENLABS_API_KEY: str = ""
 
     # Sécurité liens pub

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Menu, X, Twitter, Linkedin, Github, ExternalLink, Instagram, Youtube } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { ShareButtons } from '../shared/ShareButtons';
+import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -92,9 +93,10 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
           )}
         </Link>
 
-        <div className="hidden md:flex flex-1 justify-end">
+        <div className="hidden md:flex flex-1 justify-end items-center gap-1">
           <Link href={`${basePath}/about`} className="text-xs font-sans uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors px-3">About</Link>
           <Link href={`${basePath}/contact`} className="text-xs font-sans uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors px-3">Contact</Link>
+          <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
           <Link
             href={`${basePath}/advertise`}
             className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-white hover:opacity-80 transition-opacity"
@@ -104,7 +106,9 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
           </Link>
         </div>
 
-        <div className="md:hidden w-10" />
+        <div className="md:hidden flex justify-end w-10">
+          <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} className="px-1.5" />
+        </div>
       </div>
 
       {/* Category nav */}

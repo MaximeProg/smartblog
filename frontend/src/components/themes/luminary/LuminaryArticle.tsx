@@ -12,6 +12,7 @@ import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
+import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 import { useBookmark } from '@/hooks/useBookmark';
 
 const GRADIENTS = [
@@ -97,6 +98,7 @@ export default function LuminaryArticle({
   getArticleHref,
   basePath: _basePath,
   previewSlug,
+  lang,
 }: ArticleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
@@ -250,7 +252,10 @@ export default function LuminaryArticle({
             <Bookmark className={`h-3.5 w-3.5 ${bookmarked ? 'fill-zinc-900' : ''}`} />
             {bookmarked ? 'Saved' : 'Save'}
           </button>
-          <ShareButtons url={articleUrl} title={article.title} primaryColor={primaryColor} />
+          <div className="flex items-center gap-3">
+            <ShareButtons url={articleUrl} title={article.title} primaryColor={primaryColor} />
+            <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
+          </div>
         </div>
       </div>
 

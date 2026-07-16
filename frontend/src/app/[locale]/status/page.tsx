@@ -1,49 +1,46 @@
-﻿import { CheckCircle2, AlertTriangle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle, Clock } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
-
-const SERVICES = [
-  { name: 'API', status: 'operational', latency: '42ms' },
-  { name: 'Web App', status: 'operational', latency: '120ms' },
-  { name: 'CDN', status: 'operational', latency: '8ms' },
-  { name: 'Database', status: 'operational', latency: '3ms' },
-  { name: 'Media Storage', status: 'operational', latency: '56ms' },
-  { name: 'Search (Elasticsearch)', status: 'operational', latency: '18ms' },
-  { name: 'Email Delivery', status: 'operational', latency: '—' },
-  { name: 'Authentication', status: 'operational', latency: '31ms' },
-];
-
-const INCIDENTS = [
-  {
-    date: 'June 10, 2025',
-    title: 'Increased API latency',
-    titleFr: 'Latence API accrue',
-    desc: 'Some users experienced increased API response times for 18 minutes. Root cause: database connection pool exhaustion. Resolved by scaling the connection pool.',
-    descFr: "Certains utilisateurs ont expérimenté des temps de réponse API accrus pendant 18 minutes. Cause : épuisement du pool de connexions BD. Résolu par le scaling du pool.",
-    resolved: true,
-  },
-  {
-    date: 'May 22, 2025',
-    title: 'Scheduled maintenance — Database upgrade',
-    titleFr: 'Maintenance planifiée — Mise à jour BD',
-    desc: 'Planned 30-minute maintenance window for database version upgrade. All services restored as scheduled.',
-    descFr: 'Fenêtre de maintenance planifiée de 30 minutes pour la mise à jour de la base de données. Tous les services restaurés comme prévu.',
-    resolved: true,
-  },
-];
+import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
+import { getPlatformPage, getPlatformStats } from '@/lib/platform-api';
 
 const statusCfg = {
-  operational: { icon: CheckCircle2, color: 'text-emerald-500', label: 'Operational', labelFr: 'Opérationnel' },
-  degraded:    { icon: AlertTriangle, color: 'text-amber-500',  label: 'Degraded',    labelFr: 'Dégradé' },
-  outage:      { icon: XCircle,       color: 'text-red-500',    label: 'Outage',      labelFr: 'Panne' },
-  maintenance: { icon: Clock,          color: 'text-blue-500',   label: 'Maintenance', labelFr: 'Maintenance' },
+  operational: { icon: CheckCircle2, color: 'text-emerald-500', label: 'Operational' },
+  degraded:    { icon: AlertTriangle, color: 'text-amber-500',  label: 'Degraded' },
+  outage:      { icon: XCircle,       color: 'text-red-500',    label: 'Outage' },
+  maintenance: { icon: Clock,         color: 'text-blue-500',   label: 'Maintenance' },
 };
 
-export default async function StatusPage({ params }: { params: Promise<{ locale: string }> }) {
+const FALLBACK = {
+  hero: { title: 'System Status', subtitle: 'Real-time availability and performance of SmarterBloggers.' },
+  services: [
+    { name: 'API', status: 'operational' },
+    { name: 'Web App', status: 'operational' },
+    { name: 'CDN', status: 'operational' },
+    { name: 'Database', status: 'operational' },
+    { name: 'Media Storage', status: 'operational' },
+    { name: 'Search (Elasticsearch)', status: 'operational' },
+    { name: 'Email Delivery', status: 'operational' },
+    { name: 'Authentication', status: 'operational' },
+  ],
+  incidents: [] as { date: string; title: string; description: string; resolved: boolean }[],
+};
+
+export default async function StatusPage({
+  params, searchParams,
+}: { params: Promise<{ locale: string }>; searchParams: Promise<{ cmsLang?: string }> }) {
   const { locale } = await params;
-  const isFr = locale === 'fr';
-  const allOK = SERVICES.every((s) => s.status === 'operational');
+  const { cmsLang } = await searchParams;
+  const lang = cmsLang || locale;
+  const [cms, stats] = await Promise.all([
+    getPlatformPage('status', lang) as Promise<typeof FALLBACK | null>,
+    getPlatformStats(),
+  ]);
+  const c = cms ?? FALLBACK;
+  const services = c.services as typeof FALLBACK.services;
+  const incidents = c.incidents as typeof FALLBACK.incidents;
+  const allOK = services.every((s) => s.status === 'operational');
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
@@ -51,14 +48,11 @@ export default async function StatusPage({ params }: { params: Promise<{ locale:
 
       <PageHero
         image="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1920&q=85"
-        title={isFr ? 'Statut des systèmes' : 'System Status'}
-        subtitle={isFr
-          ? 'Disponibilité et performance de SmarterBloggers en temps réel.'
-          : 'Real-time availability and performance of SmarterBloggers.'}
+        title={c.hero.title}
+        subtitle={c.hero.subtitle}
       />
 
       <div className="max-w-5xl mx-auto px-6 py-16 space-y-12">
-        {/* Overall badge */}
         <div className={`rounded-2xl p-6 flex items-center gap-5 ${allOK ? 'bg-emerald-50 dark:bg-emerald-500/5' : 'bg-amber-50 dark:bg-amber-500/5'}`}>
           <div className={`h-14 w-14 rounded-2xl flex items-center justify-center ${allOK ? 'bg-emerald-500/10' : 'bg-amber-500/10'}`}>
             {allOK
@@ -67,22 +61,19 @@ export default async function StatusPage({ params }: { params: Promise<{ locale:
           </div>
           <div>
             <h2 className="text-xl font-bold">
-              {allOK
-                ? (isFr ? 'Tous les systèmes sont opérationnels' : 'All Systems Operational')
-                : (isFr ? 'Perturbation en cours' : 'Ongoing Disruption')}
+              {allOK ? 'All Systems Operational' : 'Ongoing Disruption'}
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              {isFr ? 'Dernière vérification il y a 30 secondes' : 'Last checked 30 seconds ago'}
+              Status is updated manually by our team when incidents occur.
             </p>
           </div>
         </div>
 
-        {/* Services */}
         <div>
-          <h2 className="text-xl font-bold mb-5">{isFr ? 'Services' : 'Services'}</h2>
+          <h2 className="text-xl font-bold mb-5">Services</h2>
           <div className="rounded-2xl bg-slate-50 dark:bg-slate-900 overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
-            {SERVICES.map((service) => {
-              const cfg = statusCfg[service.status as keyof typeof statusCfg];
+            {services.map((service) => {
+              const cfg = statusCfg[service.status as keyof typeof statusCfg] ?? statusCfg.operational;
               const Icon = cfg.icon;
               return (
                 <div key={service.name} className="flex items-center justify-between px-6 py-4">
@@ -90,56 +81,52 @@ export default async function StatusPage({ params }: { params: Promise<{ locale:
                     <Icon className={`h-4 w-4 ${cfg.color}`} />
                     <span className="text-sm font-medium">{service.name}</span>
                   </div>
-                  <div className="flex items-center gap-6">
-                    <span className="text-xs text-slate-400 font-mono">{service.latency}</span>
-                    <span className={`text-xs font-semibold ${cfg.color}`}>
-                      {isFr ? cfg.labelFr : cfg.label}
-                    </span>
-                  </div>
+                  <span className={`text-xs font-semibold ${cfg.color}`}>{cfg.label}</span>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Uptime */}
+        {/* Uptime réel — calculé depuis health_check_log, pas de chiffre inventé */}
         <div>
-          <h2 className="text-xl font-bold mb-5">{isFr ? 'Disponibilité — 90 derniers jours' : 'Uptime — Last 90 days'}</h2>
-          <div className="grid sm:grid-cols-3 gap-4">
-            {[
-              { label: 'API', value: '99.98%' },
-              { label: 'Web App', value: '99.95%' },
-              { label: 'CDN', value: '100%' },
-            ].map(({ label, value }) => (
-              <div key={label} className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 text-center">
-                <p className="text-3xl font-black text-emerald-500 mb-1">{value}</p>
-                <p className="text-sm text-slate-500">{label}</p>
-              </div>
-            ))}
+          <h2 className="text-xl font-bold mb-5">Uptime — Last 30 days</h2>
+          <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 text-center max-w-xs">
+            <p className="text-3xl font-black text-emerald-500 mb-1">
+              {stats?.uptime_pct != null ? `${stats.uptime_pct}%` : 'Collecting data'}
+            </p>
+            <p className="text-sm text-slate-500">Platform-wide availability</p>
           </div>
         </div>
 
-        {/* Incidents */}
         <div>
-          <h2 className="text-xl font-bold mb-5">{isFr ? 'Historique des incidents' : 'Incident History'}</h2>
-          <div className="space-y-4">
-            {INCIDENTS.map((inc) => (
-              <div key={inc.title} className="rounded-2xl bg-slate-50 dark:bg-slate-900 p-6">
-                <div className="flex items-start justify-between gap-4 mb-2">
-                  <h3 className="font-semibold">{isFr ? inc.titleFr : inc.title}</h3>
-                  <span className="text-xs text-slate-400 shrink-0">{inc.date}</span>
-                </div>
-                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{isFr ? inc.descFr : inc.desc}</p>
-                {inc.resolved && (
-                  <div className="flex items-center gap-1.5 mt-3">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                    <span className="text-xs text-emerald-500 font-medium">{isFr ? 'Résolu' : 'Resolved'}</span>
+          <h2 className="text-xl font-bold mb-5">Incident History</h2>
+          {incidents.length === 0 ? (
+            <p className="text-sm text-slate-500 dark:text-slate-400">No incidents reported.</p>
+          ) : (
+            <div className="space-y-4">
+              {incidents.map((inc) => (
+                <div key={inc.title} className="rounded-2xl bg-slate-50 dark:bg-slate-900 p-6">
+                  <div className="flex items-start justify-between gap-4 mb-2">
+                    <h3 className="font-semibold">{inc.title}</h3>
+                    <span className="text-xs text-slate-400 shrink-0">{inc.date}</span>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{inc.description}</p>
+                  {inc.resolved && (
+                    <div className="flex items-center gap-1.5 mt-3">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                      <span className="text-xs text-emerald-500 font-medium">Resolved</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+      </div>
+
+      <div className="flex justify-center py-4 border-t border-slate-100 dark:border-slate-900">
+        <CmsLanguageSwitcher currentLang={lang} />
       </div>
 
       <PublicFooter locale={locale} />

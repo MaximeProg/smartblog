@@ -22,6 +22,7 @@ import { ArticleMediaBlock } from '../shared/ArticleMediaBlock';
 import { PublicCommentsSection } from '../shared/PublicCommentsSection';
 import { AdRotator } from '../shared/AdRotator';
 import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
+import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 
 // ─── Extended props ────────────────────────────────────────────────────────────
 
@@ -100,7 +101,7 @@ function processContent(source: string): { processed: string; toc: TocItem[] } {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function CorporateArticle({
-  blog, article, relatedArticles, getArticleHref, basePath: baseProp, previewSlug,
+  blog, article, relatedArticles, getArticleHref, basePath: baseProp, previewSlug, lang,
 }: CorporateArticleProps) {
   const primaryColor = blog.primary_color || '#2563eb';
   const params = useParams();
@@ -394,6 +395,7 @@ export default function CorporateArticle({
               title={article.title}
               primaryColor={primaryColor}
             />
+            <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
             <div className="ml-auto flex items-center gap-2 text-sm text-slate-400">
               <Eye className="h-4 w-4" />
               {(article.views_count ?? 0).toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')} {t('viewsLabel')}

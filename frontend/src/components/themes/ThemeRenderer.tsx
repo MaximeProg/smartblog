@@ -63,6 +63,9 @@ export interface ArticleProps {
   getArticleHref?: (slug: string) => string;
   basePath?: string;
   previewSlug?: string;
+  /** Current content language of this view (from the /{lang}/ URL segment) —
+   * undefined means the source/default language (no prefix). */
+  lang?: string;
 }
 
 export interface AboutProps extends EditModeProps {

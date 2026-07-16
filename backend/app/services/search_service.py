@@ -26,6 +26,8 @@ ARTICLE_MAPPING = {
     "mappings": {
         "properties": {
             "tenant_id":    {"type": "keyword"},
+            "article_id":   {"type": "keyword"},
+            "lang":         {"type": "keyword"},
             "title":        {"type": "text", "analyzer": "standard", "fields": {"keyword": {"type": "keyword"}}},
             "slug":         {"type": "keyword"},
             "excerpt":      {"type": "text", "analyzer": "standard"},
@@ -60,13 +62,16 @@ async def ensure_index(tenant_slug: str) -> None:
         await es.indices.create(index=index, body=ARTICLE_MAPPING)
 
 
-async def index_article(tenant_slug: str, article: dict) -> None:
+async def index_article(tenant_slug: str, article: dict, doc_id: str | None = None) -> None:
+    """`doc_id` lets a translation be indexed as a separate ES document
+    (e.g. f"{article['id']}:{lang}") while `article['id']` in the body stays
+    the true article UUID (frontend still links back to the same article)."""
     es = get_es()
     await ensure_index(tenant_slug)
     await es.index(
         index=_index_name(tenant_slug),
-        id=article["id"],
-        document=article,
+        id=doc_id or article["id"],
+        document={**article, "article_id": article["id"]},
     )
 
 
@@ -74,6 +79,15 @@ async def delete_article(tenant_slug: str, article_id: str) -> None:
     es = get_es()
     try:
         await es.delete(index=_index_name(tenant_slug), id=article_id)
+    except NotFoundError:
+        pass
+    # Nettoie aussi les documents de traduction associés (id composite {article_id}:{lang})
+    try:
+        await es.delete_by_query(
+            index=_index_name(tenant_slug),
+            body={"query": {"term": {"article_id": article_id}}},
+            ignore_unavailable=True,
+        )
     except NotFoundError:
         pass
 
@@ -85,6 +99,7 @@ async def search_articles(
     tags: list[str] | None = None,
     article_type: str | None = None,
     status: str = "published",
+    lang: str | None = None,
     from_: int = 0,
     size: int = 10,
 ) -> dict:
@@ -93,6 +108,8 @@ async def search_articles(
 
     must = [{"term": {"status": status}}]
     filters = []
+    if lang:
+        filters.append({"term": {"lang": lang.lower()}})
 
     if q:
         must.append({
