@@ -1,10 +1,5 @@
-import { redirect } from 'next/navigation';
+import { TemplateCanvas } from './_studio/TemplateCanvas';
 
-export default async function BlogRootPage({
-  params,
-}: {
-  params: Promise<{ locale: string; blogId: string }>;
-}) {
-  const { locale, blogId } = await params;
-  redirect(`/${locale}/blogs/${blogId}/general`);
+export default function StudioPage() {
+  return <TemplateCanvas />;
 }

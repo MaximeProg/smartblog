@@ -5,15 +5,12 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Mail, Phone, MapPin, Send, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 import { CorporateHeader, CorporateFooter } from './shared';
-import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+import type { ContactProps } from '@/components/themes/ThemeRenderer';
+import { EditableSection } from '@/components/themes/shared/EditableSection';
+import { InlineEditable } from '@/components/themes/shared/InlineEditable';
 
-interface Props {
-  blog: BlogInfo;
-  categories: PublicCategory[];
-  basePath: string;
-}
-
-export default function CorporateContactPage({ blog, categories, basePath }: Props) {
+export default function CorporateContactPage({ blog, categories, basePath, editMode, selectedSectionId, onSectionClick, onSectionHover }: ContactProps) {
+  const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
   const primaryColor = blog.primary_color || '#2563eb';
   const t = useTranslations('publicBlog');
   const contactConfig = blog.template_config?.contact as Record<string, any> | undefined;
@@ -61,36 +58,52 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
 
   return (
     <div className="min-h-screen bg-white text-slate-900" style={cpStyle}>
-      <CorporateHeader
-        blog={blog}
-        categories={categories}
-        primaryColor={primaryColor}
-        minimal
-        basePath={basePath}
-      />
+      <EditableSection id="header" {...editProps}>
+        <CorporateHeader
+          blog={blog}
+          categories={categories}
+          primaryColor={primaryColor}
+          minimal
+          basePath={basePath}
+        />
+      </EditableSection>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-slate-950 text-white py-24 px-4">
-        {heroCoverImage && (
-          <>
-            <img src={heroCoverImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/50 to-slate-950/80" />
-          </>
-        )}
-        <div className="absolute inset-0"
-          style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3 opacity-20"
-          style={{ backgroundColor: primaryColor }} />
-        <div className="relative max-w-4xl mx-auto text-center">
-          <p className="text-sm font-bold uppercase tracking-widest mb-4" style={{ color: primaryColor }}>
-            {heroSubtitle}
-          </p>
-          <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-6">{heroTitle}</h1>
-          <p className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">{heroDesc}</p>
-        </div>
-      </section>
+      <EditableSection id="contact.hero" {...editProps}>
+        <section className="relative overflow-hidden bg-slate-950 text-white py-24 px-4">
+          {heroCoverImage && (
+            <>
+              <img src={heroCoverImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
+              <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/50 to-slate-950/80" />
+            </>
+          )}
+          <div className="absolute inset-0"
+            style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.04) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+          <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full blur-3xl -translate-y-1/2 -translate-x-1/3 opacity-20"
+            style={{ backgroundColor: primaryColor }} />
+          <div className="relative max-w-4xl mx-auto text-center">
+            <InlineEditable
+              path="template_config.contact.hero.subtitle"
+              value={heroSubtitle}
+              editMode={editMode}
+              tag="p"
+              className="text-sm font-bold uppercase tracking-widest mb-4"
+              style={{ color: primaryColor }}
+            />
+            <InlineEditable
+              path="template_config.contact.hero.title"
+              value={heroTitle}
+              editMode={editMode}
+              tag="h1"
+              className="text-4xl sm:text-5xl font-black leading-tight mb-6"
+            />
+            <p className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">{heroDesc}</p>
+          </div>
+        </section>
+      </EditableSection>
 
       {/* Main content */}
+      <EditableSection id="contact.form" {...editProps}>
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-20">
         <div className={`grid gap-12 ${hasInfo ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1 max-w-2xl mx-auto'}`}>
 
@@ -156,7 +169,13 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
           <div className={hasInfo ? 'lg:col-span-2' : ''}>
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-8">
               <div className="mb-8">
-                <h2 className="text-2xl font-black text-slate-900 mb-2">{formTitle}</h2>
+                <InlineEditable
+                  path="template_config.contact.form.title"
+                  value={formTitle}
+                  editMode={editMode}
+                  tag="h2"
+                  className="text-2xl font-black text-slate-900 mb-2"
+                />
                 {formDesc && <p className="text-slate-500 text-sm">{formDesc}</p>}
               </div>
 
@@ -251,8 +270,11 @@ export default function CorporateContactPage({ blog, categories, basePath }: Pro
           </div>
         </div>
       </section>
+      </EditableSection>
 
-      <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} />
+      <EditableSection id="footer" {...editProps}>
+        <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} />
+      </EditableSection>
     </div>
   );
 }

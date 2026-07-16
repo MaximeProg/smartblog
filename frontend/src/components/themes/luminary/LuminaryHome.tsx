@@ -7,6 +7,8 @@ import { ArrowRight, ChevronRight } from 'lucide-react';
 import type { HomeProps } from '../ThemeRenderer';
 import type { PublicArticle, PublicCategory } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
+import { EditableSection } from '../shared/EditableSection';
+import { InlineEditable } from '../shared/InlineEditable';
 import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
@@ -111,6 +113,10 @@ export default function LuminaryHome({
   getArticleHref,
   previewSlug,
   basePath: baseProp,
+  editMode,
+  selectedSectionId,
+  onSectionClick,
+  onSectionHover,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
@@ -119,6 +125,7 @@ export default function LuminaryHome({
     : previewSlug
       ? `/en/template?preview=${previewSlug}`
       : `/${locale}/${blog.slug}`;
+  const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
   const primaryColor = blog.primary_color || '#b8960c';
 
   const [email, setEmail] = useState('');
@@ -184,14 +191,17 @@ export default function LuminaryHome({
       className="bg-[#faf8f4] min-h-screen text-zinc-900"
       style={{ '--cp': primaryColor } as CSSProperties}
     >
-      <LuminaryHeader
-        blog={blog}
-        categories={categories}
-        basePath={basePath}
-        primaryColor={primaryColor}
-      />
+      <EditableSection id="header" {...editProps}>
+        <LuminaryHeader
+          blog={blog}
+          categories={categories}
+          basePath={basePath}
+          primaryColor={primaryColor}
+        />
+      </EditableSection>
 
       {coverArticle && (
+        <EditableSection id="home.hero" {...editProps}>
         <section className="relative w-full h-[70vh] min-h-[420px]">
           {coverArticle.article_type === 'video' ? (
             <VideoCardThumb videoUrl={coverArticle.video_url} coverImageUrl={coverArticle.cover_image_url} />
@@ -239,9 +249,10 @@ export default function LuminaryHome({
             </div>
           </div>
         </section>
+        </EditableSection>
       )}
 
-      {!previewSlug && (
+      {!previewSlug && !editMode && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <AdRotator slug={blog.slug} primaryColor={primaryColor} onAdLoaded={setTopAdId} />
         </div>
@@ -283,12 +294,11 @@ export default function LuminaryHome({
 
       {!isFiltered && articles.length > 0 && (
         <>
+          <EditableSection id="home.latest" {...editProps}>
           <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
             <div className="flex items-center gap-4 mb-8">
               <div className="flex-1 h-px bg-zinc-300" />
-              <span className="font-sans text-[10px] uppercase tracking-[0.2em] text-zinc-400 whitespace-nowrap">
-                In This Issue
-              </span>
+              <InlineEditable path="template_config.home.latest.sectionTitle" value={latestTitle} editMode={editMode} tag="span" className="font-sans text-[10px] uppercase tracking-[0.2em] text-zinc-400 whitespace-nowrap" />
               <div className="flex-1 h-px bg-zinc-300" />
             </div>
 
@@ -315,9 +325,11 @@ export default function LuminaryHome({
               </div>
             )}
           </section>
+          </EditableSection>
 
           {Object.values(articlesByCategory).map(({ category, articles: catArts }) => (
-            <section key={category.id} className="py-12 border-t border-zinc-200">
+            <EditableSection key={category.id} id="home.categories" {...editProps}>
+            <section className="py-12 border-t border-zinc-200">
               <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 <div className="flex items-center gap-4 mb-10">
                   <div className="flex-1 h-px bg-zinc-300" />
@@ -349,9 +361,11 @@ export default function LuminaryHome({
                 </div>
               </div>
             </section>
+            </EditableSection>
           ))}
 
           {uncategorised.length > 0 && Object.keys(articlesByCategory).length > 0 && (
+            <EditableSection id="home.categories" {...editProps}>
             <section className="py-12 border-t border-zinc-200">
               <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 <div className="flex items-center gap-4 mb-10">
@@ -373,16 +387,18 @@ export default function LuminaryHome({
                 </div>
               </div>
             </section>
+            </EditableSection>
           )}
         </>
       )}
 
       {showNewsletter && (
+        <EditableSection id="home.newsletter" {...editProps}>
         <section id="newsletter" className="bg-zinc-950 py-24">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
             <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-4">Newsletter</p>
-            <h2 className="font-serif italic text-4xl sm:text-5xl text-white mb-4">{newsletterTitle}</h2>
-            <p className="font-sans text-sm text-zinc-400 mb-10 leading-relaxed">{newsletterDesc}</p>
+            <InlineEditable path="template_config.home.newsletter.title" value={newsletterTitle} editMode={editMode} tag="h2" className="font-serif italic text-4xl sm:text-5xl text-white mb-4" />
+            <InlineEditable path="template_config.home.newsletter.description" value={newsletterDesc} editMode={editMode} tag="p" className="font-sans text-sm text-zinc-400 mb-10 leading-relaxed" multiline />
             {subStatus === 'ok' ? (
               <p className="font-serif italic text-xl text-white">Thank you for subscribing.</p>
             ) : (
@@ -400,20 +416,23 @@ export default function LuminaryHome({
             {newsletterDisclaimer && <p className="font-sans text-xs text-zinc-600 mt-6">{newsletterDisclaimer}</p>}
           </div>
         </section>
+        </EditableSection>
       )}
 
-      {!previewSlug && (
+      {!previewSlug && !editMode && (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" excludeId={topAdId ?? undefined} />
         </div>
       )}
 
-      <LuminaryFooter
-        blog={blog}
-        categories={categories}
-        basePath={basePath}
-        primaryColor={primaryColor}
-      />
+      <EditableSection id="footer" {...editProps}>
+        <LuminaryFooter
+          blog={blog}
+          categories={categories}
+          basePath={basePath}
+          primaryColor={primaryColor}
+        />
+      </EditableSection>
     </div>
   );
 }

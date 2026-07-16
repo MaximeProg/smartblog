@@ -3,16 +3,13 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import { useTranslations } from 'next-intl';
 import { Mail, Phone, MapPin, CheckCircle2, Loader2, Send } from 'lucide-react';
-import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+import type { ContactProps } from '@/components/themes/ThemeRenderer';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
+import { EditableSection } from '@/components/themes/shared/EditableSection';
+import { InlineEditable } from '@/components/themes/shared/InlineEditable';
 
-interface Props {
-  blog: BlogInfo;
-  categories: PublicCategory[];
-  basePath: string;
-}
-
-export default function EditorialContact({ blog, categories, basePath }: Props) {
+export default function EditorialContact({ blog, categories, basePath, editMode, selectedSectionId, onSectionClick, onSectionHover }: ContactProps) {
+  const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
   const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#18181b';
   const contactConfig = blog.template_config?.contact as Record<string, any> | undefined;
@@ -62,24 +59,29 @@ export default function EditorialContact({ blog, categories, basePath }: Props) 
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
-      <EditorialHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      <EditableSection id="header" {...editProps}>
+        <EditorialHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      </EditableSection>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-zinc-950 text-white py-24 px-4">
-        {heroCoverImage && (
-          <>
-            <img src={heroCoverImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
-            <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/60 to-zinc-950/80" />
-          </>
-        )}
-        <div className="relative max-w-4xl mx-auto text-center">
-          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: primaryColor }}>{heroSubtitle}</p>
-          <h1 className="text-4xl sm:text-5xl font-bold leading-tight mb-4">{heroTitle}</h1>
-          <p className="text-zinc-400 text-lg max-w-xl mx-auto">{heroDesc}</p>
-        </div>
-      </section>
+      <EditableSection id="contact.hero" {...editProps}>
+        <section className="relative overflow-hidden bg-zinc-950 text-white py-24 px-4">
+          {heroCoverImage && (
+            <>
+              <img src={heroCoverImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+              <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/60 to-zinc-950/80" />
+            </>
+          )}
+          <div className="relative max-w-4xl mx-auto text-center">
+            <InlineEditable path="template_config.contact.hero.subtitle" value={heroSubtitle} editMode={editMode} tag="p" className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: primaryColor }} />
+            <InlineEditable path="template_config.contact.hero.title" value={heroTitle} editMode={editMode} tag="h1" className="text-4xl sm:text-5xl font-bold leading-tight mb-4" />
+            <p className="text-zinc-400 text-lg max-w-xl mx-auto">{heroDesc}</p>
+          </div>
+        </section>
+      </EditableSection>
 
       {/* Main */}
+      <EditableSection id="contact.form" {...editProps}>
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-20">
         <div className={`grid gap-12 ${hasInfo ? 'grid-cols-1 lg:grid-cols-3' : 'grid-cols-1 max-w-2xl mx-auto'}`}>
 
@@ -132,7 +134,7 @@ export default function EditorialContact({ blog, categories, basePath }: Props) 
           <div className={hasInfo ? 'lg:col-span-2' : ''}>
             <div className="bg-white border border-zinc-200 rounded-2xl p-8 shadow-sm">
               <div className="mb-8">
-                <h2 className="text-2xl font-bold text-zinc-900 mb-2">{formTitle}</h2>
+                <InlineEditable path="template_config.contact.form.title" value={formTitle} editMode={editMode} tag="h2" className="text-2xl font-bold text-zinc-900 mb-2" />
                 {formDesc && <p className="text-zinc-500 text-sm">{formDesc}</p>}
               </div>
 
@@ -192,8 +194,11 @@ export default function EditorialContact({ blog, categories, basePath }: Props) 
           </div>
         </div>
       </section>
+      </EditableSection>
 
-      <EditorialFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      <EditableSection id="footer" {...editProps}>
+        <EditorialFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      </EditableSection>
     </div>
   );
 }

@@ -1,5 +1,12 @@
 import type { BlogInfo, PublicArticle, PublicArticleFull, PublicCategory } from '@/lib/public-api';
 
+export interface EditModeProps {
+  editMode?: boolean;
+  selectedSectionId?: string | null;
+  onSectionClick?: (id: string) => void;
+  onSectionHover?: (id: string | null) => void;
+}
+
 import AdvertisePage from './shared/AdvertisePage';
 
 import CorporateHome from './corporate/CorporateHome';
@@ -37,7 +44,7 @@ import LuminaryContact from './luminary/LuminaryContact';
 import LuminaryCategories from './luminary/LuminaryCategories';
 import LuminaryCategoryPage from './luminary/LuminaryCategoryPage';
 
-export interface HomeProps {
+export interface HomeProps extends EditModeProps {
   blog: BlogInfo;
   articles: PublicArticle[];
   categories: PublicCategory[];
@@ -58,13 +65,13 @@ export interface ArticleProps {
   previewSlug?: string;
 }
 
-export interface AboutProps {
+export interface AboutProps extends EditModeProps {
   blog: BlogInfo;
   categories: PublicCategory[];
   basePath: string;
 }
 
-export interface ContactProps {
+export interface ContactProps extends EditModeProps {
   blog: BlogInfo;
   categories: PublicCategory[];
   basePath: string;
@@ -116,7 +123,7 @@ export function ThemeAbout(props: AboutProps) {
     case 'magazine':  return <MagazineAbout {...props} />;
     case 'creative':  return <CreativeAbout {...props} />;
     case 'luminary':  return <LuminaryAbout {...props} />;
-    case 'corporate': return <CorporateAbout blog={props.blog} categories={props.categories} basePath={props.basePath} />;
+    case 'corporate': return <CorporateAbout {...props} />;
     default:          return <EditorialAbout {...props} />;
   }
 }
@@ -126,7 +133,7 @@ export function ThemeContact(props: ContactProps) {
     case 'magazine':  return <MagazineContact {...props} />;
     case 'creative':  return <CreativeContact {...props} />;
     case 'luminary':  return <LuminaryContact {...props} />;
-    case 'corporate': return <CorporateContact blog={props.blog} categories={props.categories} basePath={props.basePath} />;
+    case 'corporate': return <CorporateContact {...props} />;
     default:          return <EditorialContact {...props} />;
   }
 }

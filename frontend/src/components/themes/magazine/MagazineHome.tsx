@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { HomeProps } from '../ThemeRenderer';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
+import { EditableSection } from '../shared/EditableSection';
+import { InlineEditable } from '../shared/InlineEditable';
 import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
@@ -22,6 +24,10 @@ export default function MagazineHome({
   getArticleHref,
   previewSlug,
   basePath: baseProp,
+  editMode,
+  selectedSectionId,
+  onSectionClick,
+  onSectionHover,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
@@ -69,6 +75,7 @@ export default function MagazineHome({
   const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
   const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
 
+  const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
   const isFiltered = !!currentCategory || !!searchQuery;
   const hero = showHero ? articles[0] : null;
   const trending = articles.slice(showHero ? 1 : 0, showHero ? 6 : 5);
@@ -83,9 +90,11 @@ export default function MagazineHome({
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
-      <MagazineHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      <EditableSection id="header" {...editProps}>
+        <MagazineHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      </EditableSection>
 
-      {!previewSlug && (
+      {!previewSlug && !editMode && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <AdRotator slug={blog.slug} primaryColor={primaryColor} onAdLoaded={setTopAdId} />
         </div>
@@ -152,6 +161,7 @@ export default function MagazineHome({
             </div>
           ) : (
             <>
+              <EditableSection id="home.hero" {...editProps}>
               <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-2">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                   {hero && (
@@ -217,12 +227,14 @@ export default function MagazineHome({
                   </div>
                 </div>
               </section>
+              </EditableSection>
 
               {categoryGroups.map(({ cat, arts }) => {
                 const featured = arts[0];
                 const mini = arts.slice(1, 3);
                 return (
-                  <section key={cat.id} className="max-w-6xl mx-auto px-4 sm:px-6 py-8 border-t border-zinc-100">
+                  <EditableSection key={cat.id} id="home.categories" {...editProps}>
+                  <section className="max-w-6xl mx-auto px-4 sm:px-6 py-8 border-t border-zinc-100">
                     <div className="flex items-center justify-between mb-5">
                       <div className="flex items-center gap-3">
                         <span className="text-sm font-black uppercase tracking-wider" style={{ color: primaryColor }}>{cat.name}</span>
@@ -292,18 +304,20 @@ export default function MagazineHome({
                       </div>
                     </div>
                   </section>
+                  </EditableSection>
                 );
               })}
 
               {showNewsletter && (
+              <EditableSection id="home.newsletter" {...editProps}>
               <div id="newsletter" className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                 <div
                   className="rounded-lg p-8 flex flex-col sm:flex-row items-center justify-between gap-6"
                   style={{ backgroundColor: primaryColor }}
                 >
                   <div>
-                    <p className="text-xl font-black text-white">{newsletterTitle}</p>
-                    <p className="text-white/80 text-sm mt-1">{newsletterDesc}</p>
+                    <InlineEditable path="template_config.home.newsletter.title" value={newsletterTitle} editMode={editMode} tag="p" className="text-xl font-black text-white" />
+                    <InlineEditable path="template_config.home.newsletter.description" value={newsletterDesc} editMode={editMode} tag="p" className="text-white/80 text-sm mt-1" multiline />
                   </div>
                   <div className="w-full sm:max-w-sm">
                     {subStatus === 'ok' ? (
@@ -324,19 +338,22 @@ export default function MagazineHome({
                   </div>
                 </div>
               </div>
+              </EditableSection>
               )}
             </>
           )}
         </>
       )}
 
-      {!previewSlug && (
+      {!previewSlug && !editMode && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" excludeId={topAdId ?? undefined} />
         </div>
       )}
 
-      <MagazineFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      <EditableSection id="footer" {...editProps}>
+        <MagazineFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      </EditableSection>
     </div>
   );
 }

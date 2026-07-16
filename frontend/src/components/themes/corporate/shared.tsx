@@ -11,6 +11,7 @@ import {
 import type { PublicArticle, PublicCategory } from '@/lib/public-api';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 import { ShareButtons } from '../shared/ShareButtons';
+import { InlineEditable } from '../shared/InlineEditable';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -662,12 +663,13 @@ export function CorporateFooter({
 // ─── Newsletter Section ───────────────────────────────────────────────────────
 
 export function NewsletterSection({
-  blog, primaryColor, title, description,
+  blog, primaryColor, title, description, editMode,
 }: {
   blog: { name: string; slug: string };
   primaryColor: string;
   title?: string;
   description?: string;
+  editMode?: boolean;
 }) {
   const t = useTranslations('publicBlog');
   const [email, setEmail] = useState('');
@@ -700,12 +702,8 @@ export function NewsletterSection({
         <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-white/20 backdrop-blur-sm mb-6">
           <Mail className="h-7 w-7 text-white" />
         </div>
-        <h2 className="text-3xl sm:text-4xl font-black mb-4 leading-tight">
-          {title || t('stayInformed')}
-        </h2>
-        <p className="text-white/80 text-lg mb-8 leading-relaxed">
-          {description || t('subscribeDesc')}
-        </p>
+        <InlineEditable path="template_config.home.newsletter.title" value={title || t('stayInformed')} editMode={editMode} tag="h2" className="text-3xl sm:text-4xl font-black mb-4 leading-tight" />
+        <InlineEditable path="template_config.home.newsletter.description" value={description || t('subscribeDesc')} editMode={editMode} tag="p" className="text-white/80 text-lg mb-8 leading-relaxed" multiline />
 
         {status === 'ok' ? (
           <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm px-8 py-4 rounded-2xl font-bold text-lg">

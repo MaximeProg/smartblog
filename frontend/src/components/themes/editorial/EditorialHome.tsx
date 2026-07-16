@@ -6,6 +6,8 @@ import { useParams } from 'next/navigation';
 import { ArrowRight, BookOpen, Clock } from 'lucide-react';
 import type { HomeProps } from '../ThemeRenderer';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
+import { EditableSection } from '../shared/EditableSection';
+import { InlineEditable } from '../shared/InlineEditable';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 import { ThemeSidebar } from '../shared/ThemeSidebar';
 
@@ -42,6 +44,10 @@ export default function EditorialHome({
   getArticleHref,
   previewSlug,
   basePath: baseProp,
+  editMode,
+  selectedSectionId,
+  onSectionClick,
+  onSectionHover,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
@@ -96,6 +102,7 @@ export default function EditorialHome({
 
   const sidebarCfg = homeCfg?.sidebar;
 
+  const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
   const isFiltered = !!(currentCategory || searchQuery);
   const filteredCategory = categories.find(c => c.slug === currentCategory);
   const featuredArticle = !isFiltered && showHero && articles.length > 0 ? articles[0] : null;
@@ -103,20 +110,21 @@ export default function EditorialHome({
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
-      <EditorialHeader
-        blog={blog}
-        categories={categories}
-        basePath={basePath}
-        primaryColor={primaryColor}
-      />
+      <EditableSection id="header" {...editProps}>
+        <EditorialHeader
+          blog={blog}
+          categories={categories}
+          basePath={basePath}
+          primaryColor={primaryColor}
+        />
+      </EditableSection>
 
       {featuredArticle && (
+        <EditableSection id="home.hero" {...editProps}>
         <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-6">
           <div className="flex items-center gap-3 mb-5">
             <div className="flex-1 h-px bg-zinc-200" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 whitespace-nowrap">
-              {heroTitle}
-            </span>
+            <InlineEditable path="template_config.home.hero.sectionTitle" value={heroTitle} editMode={editMode} tag="span" className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 whitespace-nowrap" />
             <div className="flex-1 h-px bg-zinc-200" />
           </div>
 
@@ -186,6 +194,7 @@ export default function EditorialHome({
             </div>
           </div>
         </section>
+        </EditableSection>
       )}
 
       {isFiltered && (
@@ -215,9 +224,11 @@ export default function EditorialHome({
 
       {articles.length > 0 && showLatest && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-14 mb-8 flex items-center gap-4">
-          <h2 className="text-xs font-black uppercase tracking-widest text-zinc-900 whitespace-nowrap">
-            {isFiltered ? 'Results' : latestTitle}
-          </h2>
+          {isFiltered ? (
+            <h2 className="text-xs font-black uppercase tracking-widest text-zinc-900 whitespace-nowrap">Results</h2>
+          ) : (
+            <InlineEditable path="template_config.home.latest.sectionTitle" value={latestTitle} editMode={editMode} tag="h2" className="text-xs font-black uppercase tracking-widest text-zinc-900 whitespace-nowrap" />
+          )}
           <div className="flex-1 h-px bg-zinc-200" />
           <span className="text-xs text-zinc-400">{gridArticles.length} articles</span>
         </div>
@@ -301,10 +312,11 @@ export default function EditorialHome({
       )}
 
       {showNewsletter && (
+        <EditableSection id="home.newsletter" {...editProps}>
         <div id="newsletter" className="max-w-6xl mx-auto px-4 sm:px-6 mt-16 mb-4">
           <div className="bg-zinc-950 rounded-3xl px-6 sm:px-16 py-16 text-center">
-            <h2 className="text-3xl font-bold text-white mb-3">{newsletterTitle}</h2>
-            <p className="text-zinc-400 text-base mb-8 max-w-md mx-auto">{newsletterDesc}</p>
+            <InlineEditable path="template_config.home.newsletter.title" value={newsletterTitle} editMode={editMode} tag="h2" className="text-3xl font-bold text-white mb-3" />
+            <InlineEditable path="template_config.home.newsletter.description" value={newsletterDesc} editMode={editMode} tag="p" className="text-zinc-400 text-base mb-8 max-w-md mx-auto" multiline />
             {subStatus === 'ok' ? (
               <p className="text-sm font-medium text-emerald-400">You&apos;re subscribed. Thank you!</p>
             ) : (
@@ -323,9 +335,11 @@ export default function EditorialHome({
             {newsletterDisclaimer && <p className="text-xs text-zinc-600 mt-4">{newsletterDisclaimer}</p>}
           </div>
         </div>
+        </EditableSection>
       )}
 
       {showCategoriesStrip && categories.length > 0 && (
+        <EditableSection id="home.categories" {...editProps}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-5">
             {categoriesStripLabel}
@@ -342,14 +356,17 @@ export default function EditorialHome({
             ))}
           </div>
         </div>
+        </EditableSection>
       )}
 
-      <EditorialFooter
-        blog={blog}
-        categories={categories}
-        basePath={basePath}
-        primaryColor={primaryColor}
-      />
+      <EditableSection id="footer" {...editProps}>
+        <EditorialFooter
+          blog={blog}
+          categories={categories}
+          basePath={basePath}
+          primaryColor={primaryColor}
+        />
+      </EditableSection>
     </div>
   );
 }

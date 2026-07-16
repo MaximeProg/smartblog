@@ -72,6 +72,7 @@ export interface TenantResponse {
   seo_title_template?: string | null;
   seo_meta_description?: string | null;
   template_config?: Record<string, unknown> | null;
+  social_links?: Record<string, string>;
   robots_txt?: string | null;
   trial_ends_at?: string | null;
   plan_expires_at?: string | null;

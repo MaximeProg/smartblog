@@ -6,6 +6,8 @@ import { useState, useCallback, type CSSProperties } from 'react';
 import { useParams } from 'next/navigation';
 import type { HomeProps } from '../ThemeRenderer';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
+import { EditableSection } from '../shared/EditableSection';
+import { InlineEditable } from '../shared/InlineEditable';
 import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
@@ -32,9 +34,14 @@ export default function CreativeHome({
   getArticleHref,
   previewSlug,
   basePath: baseProp,
+  editMode,
+  selectedSectionId,
+  onSectionClick,
+  onSectionHover,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
   const primaryColor = blog.primary_color || '#7c3aed';
 
   const basePath = baseProp !== undefined
@@ -72,9 +79,12 @@ export default function CreativeHome({
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as CSSProperties}>
-      <CreativeHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      <EditableSection id="header" {...editProps}>
+        <CreativeHeader blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      </EditableSection>
 
       {heroArticle && !isFiltered && (
+        <EditableSection id="home.hero" {...editProps}>
         <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-4">
           <Link href={aHref(heroArticle.slug)} className="block">
             <div className="relative h-[60vh] sm:h-[70vh] min-h-[400px] rounded-2xl overflow-hidden group cursor-pointer">
@@ -102,9 +112,7 @@ export default function CreativeHome({
                       {heroArticle.category_name}
                     </span>
                   )}
-                  <span className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white/10 text-white border border-white/20">
-                    {heroTitle}
-                  </span>
+                  <InlineEditable path="template_config.home.hero.sectionTitle" value={heroTitle} editMode={editMode} tag="span" className="text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full bg-white/10 text-white border border-white/20" />
                 </div>
                 <h1 className="text-4xl sm:text-6xl font-black text-white leading-tight mt-4 mb-4 max-w-3xl">
                   {heroArticle.title}
@@ -123,9 +131,10 @@ export default function CreativeHome({
             </div>
           </Link>
         </section>
+        </EditableSection>
       )}
 
-      {!previewSlug && (
+      {!previewSlug && !editMode && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
           <AdRotator slug={blog.slug} primaryColor={primaryColor} onAdLoaded={setTopAdId} />
         </div>
@@ -139,6 +148,7 @@ export default function CreativeHome({
           </div>
         </section>
       ) : (
+        <EditableSection id="home.latest" {...editProps}>
         <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
           {isFiltered ? (
             <div className="flex items-center justify-between mb-8">
@@ -157,7 +167,7 @@ export default function CreativeHome({
             </div>
           ) : (
             <div className="flex items-center justify-between mb-8">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">{latestTitle}</p>
+              <InlineEditable path="template_config.home.latest.sectionTitle" value={latestTitle} editMode={editMode} tag="p" className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400" />
               <p className="text-xs text-zinc-300">{gridArticles.length} articles</p>
             </div>
           )}
@@ -213,9 +223,11 @@ export default function CreativeHome({
             })}
           </div>
         </section>
+        </EditableSection>
       )}
 
       {!isFiltered && categories.length > 0 && (
+        <EditableSection id="home.categories" {...editProps}>
         <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 border-t border-zinc-100">
           <div className="flex items-center gap-3 overflow-x-auto pb-1">
             <span className="text-xs font-black uppercase tracking-widest text-zinc-400 shrink-0 mr-3">
@@ -232,15 +244,15 @@ export default function CreativeHome({
             ))}
           </div>
         </section>
+        </EditableSection>
       )}
 
       {!isFiltered && showNewsletter && (
+        <EditableSection id="home.newsletter" {...editProps}>
         <section className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <div className="bg-zinc-950 rounded-2xl px-8 sm:px-16 py-16 text-center">
-            <p className="text-4xl font-black text-white mb-2">{newsletterTitle}</p>
-            <p className="text-zinc-400 text-base mb-8 max-w-md mx-auto">
-              {newsletterDesc}
-            </p>
+            <InlineEditable path="template_config.home.newsletter.title" value={newsletterTitle} editMode={editMode} tag="p" className="text-4xl font-black text-white mb-2" />
+            <InlineEditable path="template_config.home.newsletter.description" value={newsletterDesc} editMode={editMode} tag="p" className="text-zinc-400 text-base mb-8 max-w-md mx-auto" multiline />
             <form
               className="flex max-w-sm mx-auto gap-2"
               onSubmit={(e) => {
@@ -265,17 +277,20 @@ export default function CreativeHome({
             </form>
           </div>
         </section>
+        </EditableSection>
       )}
 
       <div className="py-6" />
 
-      {!previewSlug && (
+      {!previewSlug && !editMode && (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
           <AdRotator slug={blog.slug} primaryColor={primaryColor} variant="strip" excludeId={topAdId ?? undefined} />
         </div>
       )}
 
-      <CreativeFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      <EditableSection id="footer" {...editProps}>
+        <CreativeFooter blog={blog} categories={categories} basePath={basePath} primaryColor={primaryColor} />
+      </EditableSection>
     </div>
   );
 }

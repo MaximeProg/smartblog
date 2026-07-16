@@ -11,10 +11,13 @@ import {
   CorporateHeader, CorporateFooter, NewsletterSection,
   CardHero, CardSide, CardMedium, CardCompact,
 } from './shared';
+import { EditableSection } from '../shared/EditableSection';
+import { InlineEditable } from '../shared/InlineEditable';
 import { AdRotator } from '../shared/AdRotator';
 
 export default function CorporateHome({
   blog, articles, categories, currentCategory, searchQuery, getArticleHref, previewSlug, basePath: baseProp,
+  editMode, selectedSectionId, onSectionClick, onSectionHover,
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
@@ -23,6 +26,7 @@ export default function CorporateHome({
   const primaryColor = blog.primary_color || '#2563eb';
   const homeConfig = blog.template_config?.home;
   const legacyContent = blog.template_config?.content;
+  const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
   const isFiltered = !!(searchQuery || currentCategory);
   const isPreview = !!(previewSlug || blog.slug === 'demo');
 
@@ -63,15 +67,17 @@ export default function CorporateHome({
         fontFamily: blog.font_family ? `'${blog.font_family}', system-ui, sans-serif` : 'system-ui, -apple-system, sans-serif',
       } as CSSProperties}
     >
-      <CorporateHeader
-        blog={blog}
-        categories={categories}
-        current={currentCategory}
-        searchQuery={searchQuery}
-        primaryColor={primaryColor}
-        basePath={basePath}
-        previewSlug={previewSlug}
-      />
+      <EditableSection id="header" {...editProps}>
+        <CorporateHeader
+          blog={blog}
+          categories={categories}
+          current={currentCategory}
+          searchQuery={searchQuery}
+          primaryColor={primaryColor}
+          basePath={basePath}
+          previewSlug={previewSlug}
+        />
+      </EditableSection>
 
       {/* ── FILTERED / SEARCH VIEW ─────────────────────────────────────────── */}
       {isFiltered ? (
@@ -129,12 +135,11 @@ export default function CorporateHome({
             <>
               {/* ── HERO ──────────────────────────────────────────────────── */}
               {featuredHero && (
+                <EditableSection id="home.hero" {...editProps}>
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-2">
                   <div className="flex items-center gap-3 mb-6">
                     <TrendingUp className="h-4 w-4 shrink-0" style={{ color: primaryColor }} />
-                    <span className="text-xs font-black uppercase tracking-widest" style={{ color: primaryColor }}>
-                      {featuredTitle}
-                    </span>
+                    <InlineEditable path="template_config.home.hero.sectionTitle" value={featuredTitle} editMode={editMode} tag="span" className="text-xs font-black uppercase tracking-widest" style={{ color: primaryColor }} />
                     <div className="flex-1 h-px bg-slate-200" />
                   </div>
 
@@ -151,10 +156,12 @@ export default function CorporateHome({
                     </div>
                   </div>
                 </section>
+                </EditableSection>
               )}
 
               {/* ── CATEGORIES STRIP ──────────────────────────────────────── */}
               {showCategoriesStrip && categories.length > 0 && (
+                <EditableSection id="home.categories" {...editProps}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
                   <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 shrink-0 mr-3">{t('explore')}</span>
@@ -167,29 +174,32 @@ export default function CorporateHome({
                     ))}
                   </div>
                 </div>
+                </EditableSection>
               )}
 
               {/* ── NEWSLETTER ────────────────────────────────────────────── */}
               {showNewsletter && (
+              <EditableSection id="home.newsletter" {...editProps}>
               <NewsletterSection
                 blog={blog}
                 primaryColor={primaryColor}
                 title={newsletterTitle}
                 description={newsletterDesc}
+                editMode={editMode}
               />
+              </EditableSection>
               )}
 
               {/* ── LATEST ARTICLES + SIDEBAR ─────────────────────────────── */}
               {showLatest && latestArticles.length > 0 && (
+                <EditableSection id="home.latest" {...editProps}>
                 <section className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
 
                     {/* Article grid — 2/3 */}
                     <div className="lg:col-span-2">
                       <div className="flex items-center gap-3 mb-8">
-                        <h2 className="text-xs font-black uppercase tracking-widest text-slate-800">
-                          {latestTitle}
-                        </h2>
+                        <InlineEditable path="template_config.home.latest.sectionTitle" value={latestTitle} editMode={editMode} tag="h2" className="text-xs font-black uppercase tracking-widest text-slate-800" />
                         <div className="flex-1 h-px bg-slate-200" />
                         <span className="text-xs text-slate-400 shrink-0">{latestArticles.length} articles</span>
                       </div>
@@ -259,7 +269,7 @@ export default function CorporateHome({
                       )}
 
                       {/* Ad rotator */}
-                      {!isPreview && (
+                      {!isPreview && !editMode && (
                         <AdRotator slug={blog.slug} primaryColor={primaryColor} />
                       )}
 
@@ -283,13 +293,16 @@ export default function CorporateHome({
                     </aside>
                   </div>
                 </section>
+                </EditableSection>
               )}
             </>
           )}
         </>
       )}
 
-      <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} previewSlug={previewSlug} />
+      <EditableSection id="footer" {...editProps}>
+        <CorporateFooter blog={blog} categories={categories} primaryColor={primaryColor} basePath={basePath} previewSlug={previewSlug} />
+      </EditableSection>
     </div>
   );
 }
