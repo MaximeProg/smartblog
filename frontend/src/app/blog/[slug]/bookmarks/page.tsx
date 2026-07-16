@@ -1,6 +1,6 @@
 import { publicApi } from '@/lib/public-api';
 import { notFound } from 'next/navigation';
-import BookmarksClientPage from '@/app/[locale]/(blog)/[slug]/bookmarks/BookmarksClientPage';
+import BookmarksClientPage from '@/components/themes/shared/BookmarksClientPage';
 
 type Params = Promise<{ slug: string }>;
 type SearchParams = Promise<{ lang?: string }>;

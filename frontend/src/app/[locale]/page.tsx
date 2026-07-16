@@ -7,7 +7,6 @@ import {
 } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
-import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
 import { getPricingPlans, getPlatformStats, getPlatformPage, type PricingPlan } from '@/lib/platform-api';
 
 export const dynamic = 'force-dynamic';
@@ -128,7 +127,7 @@ export default async function HomePage({
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
-      <PublicNav locale={locale} transparent />
+      <PublicNav locale={locale} lang={lang} transparent />
 
       {/* ─── HERO ──────────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -376,10 +375,6 @@ export default async function HomePage({
           </div>
         </div>
       </section>
-
-      <div className="flex justify-center py-4 border-t border-slate-100 dark:border-slate-900">
-        <CmsLanguageSwitcher currentLang={lang} />
-      </div>
 
       <PublicFooter locale={locale} />
     </div>

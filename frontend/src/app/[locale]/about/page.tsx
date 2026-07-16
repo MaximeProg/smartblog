@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 import { Shield, Globe2, Zap, BarChart2, FileText, Bot, Check, type LucideIcon } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
-import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
 import { getPlatformPage } from '@/lib/platform-api';
 
 export const metadata: Metadata = {
@@ -79,7 +78,7 @@ export default async function AboutPage({
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
-      <PublicNav locale={locale} />
+      <PublicNav locale={locale} lang={lang} />
 
       {/* ─── Hero ──────────────────────────────────────────────────── */}
       <section className="relative pt-28 sm:pt-32 pb-16 md:pb-24 overflow-hidden">
@@ -204,10 +203,6 @@ export default async function AboutPage({
           </div>
         </div>
       </section>
-
-      <div className="flex justify-center py-4 border-t border-slate-100 dark:border-slate-900">
-        <CmsLanguageSwitcher currentLang={lang} />
-      </div>
 
       <PublicFooter locale={locale} />
     </div>

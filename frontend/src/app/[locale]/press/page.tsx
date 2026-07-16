@@ -3,7 +3,6 @@ import { Download, ExternalLink, Newspaper, Camera, Package, Users, type LucideI
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
-import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
 import { siteConfig } from '@/config/site';
 import { getPlatformPage } from '@/lib/platform-api';
 
@@ -51,7 +50,7 @@ export default async function PressPage({
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
-      <PublicNav locale={locale} />
+      <PublicNav locale={locale} lang={lang} />
 
       <PageHero
         image="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1920&q=85"
@@ -134,10 +133,6 @@ export default async function PressPage({
             })}
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-center py-4 border-t border-slate-100 dark:border-slate-900">
-        <CmsLanguageSwitcher currentLang={lang} />
       </div>
 
       <PublicFooter locale={locale} />

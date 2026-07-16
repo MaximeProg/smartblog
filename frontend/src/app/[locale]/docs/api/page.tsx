@@ -1,7 +1,6 @@
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
-import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
 import { getPlatformPage } from '@/lib/platform-api';
 
 const METHOD_COLOR: Record<string, string> = {
@@ -72,7 +71,7 @@ export default async function ApiReferencePage({
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
-      <PublicNav locale={locale} />
+      <PublicNav locale={locale} lang={lang} />
 
       <PageHero
         image="https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?auto=format&fit=crop&w=1920&q=85"
@@ -146,10 +145,6 @@ export default async function ApiReferencePage({
             <p className="text-slate-500 dark:text-slate-400 leading-relaxed">{c.rate_limiting.description}</p>
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-center py-4 border-t border-slate-100 dark:border-slate-900">
-        <CmsLanguageSwitcher currentLang={lang} />
       </div>
 
       <PublicFooter locale={locale} />

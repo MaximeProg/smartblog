@@ -1,18 +1,9 @@
-import { publicApi } from '@/lib/public-api';
-import { notFound } from 'next/navigation';
-import BookmarksClientPage from './BookmarksClientPage';
+import { redirect } from 'next/navigation';
 
 type Params = Promise<{ locale: string; slug: string }>;
 
-export default async function BookmarksPage({ params }: { params: Params }) {
+// Legacy route (/{locale}/{slug}/bookmarks) — redirige vers app/blog/[slug]/bookmarks.
+export default async function BookmarksPageRedirect({ params }: { params: Params }) {
   const { locale, slug } = await params;
-
-  let blog;
-  try {
-    blog = await publicApi.getBlogInfo(slug);
-  } catch {
-    notFound();
-  }
-
-  return <BookmarksClientPage blog={blog} slug={slug} locale={locale} />;
+  redirect(`/blog/${slug}/bookmarks?lang=${locale}`);
 }

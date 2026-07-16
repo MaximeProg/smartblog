@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { MapPin, ArrowRight, Heart, Globe2, Zap, Coffee, type LucideIcon } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
-import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
 import { getPlatformPage } from '@/lib/platform-api';
 
 const ICONS: Record<string, LucideIcon> = { globe2: Globe2, heart: Heart, zap: Zap, coffee: Coffee };
@@ -49,7 +48,7 @@ export default async function CareersPage({
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
-      <PublicNav locale={locale} />
+      <PublicNav locale={locale} lang={lang} />
 
       <section className="relative pt-32 pb-20 overflow-hidden">
         <Image src={c.hero.image_url} alt="Team at work" fill className="object-cover" priority />
@@ -125,10 +124,6 @@ export default async function CareersPage({
           </div>
         </div>
       </section>
-
-      <div className="flex justify-center py-4 border-t border-slate-100 dark:border-slate-900">
-        <CmsLanguageSwitcher currentLang={lang} />
-      </div>
 
       <PublicFooter locale={locale} />
     </div>

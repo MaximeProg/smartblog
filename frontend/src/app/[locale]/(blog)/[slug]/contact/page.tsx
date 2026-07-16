@@ -1,31 +1,9 @@
-import { notFound } from 'next/navigation';
-import { publicApi } from '@/lib/public-api';
-import { ThemeContact } from '@/components/themes/ThemeRenderer';
-import { BlogAnalyticsTracker } from '@/components/themes/shared/BlogAnalyticsTracker';
+import { redirect } from 'next/navigation';
 
 type Params = Promise<{ locale: string; slug: string }>;
 
-export default async function PublicContactPage({ params }: { params: Params }) {
+// Legacy route (/{locale}/{slug}/contact) — redirige vers app/blog/[slug]/contact.
+export default async function PublicContactPageRedirect({ params }: { params: Params }) {
   const { locale, slug } = await params;
-
-  let blog, categories;
-  try {
-    [blog, categories] = await Promise.all([
-      publicApi.getBlogInfo(slug),
-      publicApi.getCategories(slug),
-    ]);
-  } catch {
-    notFound();
-  }
-
-  return (
-    <>
-      <BlogAnalyticsTracker tenantId={blog.id} />
-      <ThemeContact
-        blog={blog}
-        categories={categories}
-        basePath={`/${locale}/${slug}`}
-      />
-    </>
-  );
+  redirect(`/blog/${slug}/contact?lang=${locale}`);
 }

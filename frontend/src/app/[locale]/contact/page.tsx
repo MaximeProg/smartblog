@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { Mail, MessageSquare, Headphones, type LucideIcon } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
-import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
 import { siteConfig } from '@/config/site';
 import { getPlatformPage } from '@/lib/platform-api';
 import { ContactForm } from './ContactForm';
@@ -66,7 +65,7 @@ export default async function ContactPage({
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
-      <PublicNav locale={locale} />
+      <PublicNav locale={locale} lang={lang} />
 
       {/* Hero */}
       <section className="relative pt-40 pb-28 overflow-hidden">
@@ -131,10 +130,6 @@ export default async function ContactPage({
             <ContactForm config={c.form} initialSubject={subject ?? ''} />
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-center py-4 border-t border-slate-100 dark:border-slate-900">
-        <CmsLanguageSwitcher currentLang={lang} />
       </div>
 
       <PublicFooter locale={locale} />

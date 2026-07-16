@@ -6,7 +6,7 @@ import { MagazineHeader, MagazineFooter } from '../magazine/MagazineShared';
 import { LuminaryHeader, LuminaryFooter } from '../luminary/LuminaryShared';
 import { CreativeHeader, CreativeFooter } from '../creative/CreativeShared';
 import { CorporateHeader, CorporateFooter } from '../corporate/shared';
-import { AdvertiseForm } from '@/app/[locale]/(blog)/[slug]/advertise/AdvertiseForm';
+import { AdvertiseForm } from '@/components/themes/shared/AdvertiseForm';
 
 interface Props {
   blog: BlogInfo;

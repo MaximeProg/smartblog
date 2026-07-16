@@ -1,6 +1,6 @@
 import { publicApi } from '@/lib/public-api';
 import { notFound } from 'next/navigation';
-import SearchClientPage from '@/app/[locale]/(blog)/[slug]/search/SearchClientPage';
+import SearchClientPage from '@/components/themes/shared/SearchClientPage';
 
 type Params = Promise<{ slug: string }>;
 type SearchParams = Promise<{ q?: string; lang?: string }>;

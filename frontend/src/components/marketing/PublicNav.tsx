@@ -3,17 +3,21 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Search, PenLine, Sun, Moon, Menu, X } from 'lucide-react';
-import { LanguageSwitcher } from '@/components/ui/language-switcher';
+import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
 import { useTheme } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 
 interface PublicNavProps {
   locale: string;
+  /** Langue du contenu CMS (peut différer de `locale` via ?cmsLang=) — par
+   * défaut, retombe sur `locale` pour les pages qui n'ont pas encore de
+   * contenu traduisible (ex: liste des blogs, catégories). */
+  lang?: string;
   transparent?: boolean;
 }
 
-export function PublicNav({ locale, transparent = false }: PublicNavProps) {
+export function PublicNav({ locale, lang, transparent = false }: PublicNavProps) {
   const pathname = usePathname();
   const { theme, toggle } = useTheme();
   const [scrolled, setScrolled] = useState(false);
@@ -94,9 +98,8 @@ export function PublicNav({ locale, transparent = false }: PublicNavProps) {
             </button>
 
             {/* Language switcher */}
-            <LanguageSwitcher
-              locale={locale}
-              align="end"
+            <CmsLanguageSwitcher
+              currentLang={lang ?? locale}
               className="text-slate-400 hover:text-white hover:bg-white/10 border-transparent"
             />
 

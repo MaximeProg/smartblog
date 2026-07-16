@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { publicApi } from '@/lib/public-api';
 import { ThemeHome } from '@/components/themes/ThemeRenderer';
+import { BlogAnalyticsTracker } from '@/components/themes/shared/BlogAnalyticsTracker';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -19,14 +20,17 @@ export default async function BlogHomePage({ params, searchParams }: Props) {
     ]);
 
     return (
-      <ThemeHome
-        blog={blog}
-        articles={articles}
-        categories={categories}
-        currentCategory={category}
-        searchQuery={q}
-        basePath=""
-      />
+      <>
+        <BlogAnalyticsTracker tenantId={blog.id} />
+        <ThemeHome
+          blog={blog}
+          articles={articles}
+          categories={categories}
+          currentCategory={category}
+          searchQuery={q}
+          basePath=""
+        />
+      </>
     );
   } catch {
     notFound();

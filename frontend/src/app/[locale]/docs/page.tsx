@@ -2,7 +2,6 @@ import { ArrowRight, BookOpen, Code2, Webhook, Key, Users, FileText, type Lucide
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
-import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
 import { getPlatformPage } from '@/lib/platform-api';
 
 const ICONS: Record<string, LucideIcon> = {
@@ -43,7 +42,7 @@ export default async function DocsPage({
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
-      <PublicNav locale={locale} />
+      <PublicNav locale={locale} lang={lang} />
 
       <PageHero
         image="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1920&q=85"
@@ -87,10 +86,6 @@ export default async function DocsPage({
             );
           })}
         </div>
-      </div>
-
-      <div className="flex justify-center py-4 border-t border-slate-100 dark:border-slate-900">
-        <CmsLanguageSwitcher currentLang={lang} />
       </div>
 
       <PublicFooter locale={locale} />

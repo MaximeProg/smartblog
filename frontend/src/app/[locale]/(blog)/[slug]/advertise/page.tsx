@@ -1,40 +1,9 @@
-import { notFound } from 'next/navigation';
-import { publicApi } from '@/lib/public-api';
-import { ThemeAdvertise } from '@/components/themes/ThemeRenderer';
-import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 type Params = Promise<{ locale: string; slug: string }>;
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { slug } = await params;
-  try {
-    const blog = await publicApi.getBlogInfo(slug);
-    return { title: `Advertise on ${blog.name}`, description: `Reach the audience of ${blog.name} with targeted advertising.` };
-  } catch {
-    return { title: 'Advertise' };
-  }
-}
-
-export default async function AdvertisePage({ params }: { params: Params }) {
+// Legacy route (/{locale}/{slug}/advertise) — redirige vers app/blog/[slug]/advertise.
+export default async function AdvertisePageRedirect({ params }: { params: Params }) {
   const { locale, slug } = await params;
-  const basePath = `/${locale}/${slug}`;
-
-  let blog;
-  let categories;
-  try {
-    [blog, categories] = await Promise.all([
-      publicApi.getBlogInfo(slug),
-      publicApi.getCategories(slug),
-    ]);
-  } catch {
-    notFound();
-  }
-
-  return (
-    <ThemeAdvertise
-      blog={blog}
-      categories={categories}
-      basePath={basePath}
-    />
-  );
+  redirect(`/blog/${slug}/advertise?lang=${locale}`);
 }
