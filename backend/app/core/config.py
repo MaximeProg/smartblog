@@ -94,6 +94,9 @@ class Settings(BaseSettings):
     THREADS_APP_SECRET: str = ""
     PINTEREST_APP_ID: str = ""
     PINTEREST_APP_SECRET: str = ""
+    # YouTube + Google Business Profile partagent le même client OAuth Google Cloud
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
 
     # Plateforme
     PLATFORM_DOMAIN: str = "smarterbloggers.com"

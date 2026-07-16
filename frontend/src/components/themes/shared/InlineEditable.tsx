@@ -30,6 +30,8 @@ export function InlineEditable({
   return (
     <Tag
       ref={el}
+      data-edit-id={path}
+      data-edit-kind="text"
       contentEditable
       suppressContentEditableWarning
       className={className}

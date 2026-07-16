@@ -516,7 +516,13 @@ export const socialApi = {
     api.post<SocialPostInfo>(`/tenants/${tenantId}/social/posts/${postId}/publish`),
 
   getOAuthConnectUrl: (tenantId: string, platform: string) =>
-    api.get<{ url: string }>(`/tenants/${tenantId}/social/oauth/${platform}/connect`),
+    api.get<{ url: string }>(`/oauth/${platform}/connect`, { params: { tenant_id: tenantId } }),
+
+  oauthDisconnect: (tenantId: string, platform: string) =>
+    api.post<void>(`/oauth/${platform}/disconnect`, null, { params: { tenant_id: tenantId } }),
+
+  oauthRefresh: (tenantId: string, platform: string) =>
+    api.post<{ refreshed: number }>(`/oauth/${platform}/refresh`, null, { params: { tenant_id: tenantId } }),
 
   toggleAutoPost: (tenantId: string, accountId: string, enabled: boolean) =>
     api.patch<SocialAccountInfo>(`/tenants/${tenantId}/social/accounts/${accountId}/auto-post`, {

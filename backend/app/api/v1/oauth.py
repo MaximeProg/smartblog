@@ -1,12 +1,29 @@
 """OAuth flows for social platform connections.
 
-Connect flow:
-  GET /tenants/{tenant_id}/social/oauth/{platform}/connect  (auth required)
-  → returns { url } for the frontend to redirect to
+Redirect URIs registered with each provider (fixed, already communicated
+externally — do not change the `{platform}/callback` path segment without
+re-registering with every provider):
 
-Callback flow:
-  GET /social/oauth/{platform}/callback  (public — called by the platform)
-  → exchanges code, saves account, redirects to frontend dashboard
+  https://{PLATFORM_API_DOMAIN}/api/v1/oauth/facebook/callback
+  https://{PLATFORM_API_DOMAIN}/api/v1/oauth/instagram/callback
+  https://{PLATFORM_API_DOMAIN}/api/v1/oauth/linkedin/callback
+  https://{PLATFORM_API_DOMAIN}/api/v1/oauth/x/callback
+  https://{PLATFORM_API_DOMAIN}/api/v1/oauth/tiktok/callback
+  https://{PLATFORM_API_DOMAIN}/api/v1/oauth/threads/callback
+  https://{PLATFORM_API_DOMAIN}/api/v1/oauth/pinterest/callback
+  https://{PLATFORM_API_DOMAIN}/api/v1/oauth/youtube/callback
+  https://{PLATFORM_API_DOMAIN}/api/v1/oauth/google-business/callback
+
+Connect / disconnect / refresh are internal endpoints (only our own frontend
+calls them) — tenant is passed as `?tenant_id=` and authorized the same way
+as every other tenant-scoped route (`_assert_role` against `TenantUser`),
+not trusted from a JWT claim.
+
+Note technique — YouTube : l'API publique YouTube Data v3 n'expose aucun
+endpoint pour créer un post "Communauté" (Community tab). La connexion du
+compte est donc fonctionnelle (identification de la chaîne), mais la
+publication automatique d'un article n'est pas réalisable via l'API
+publique tant que Google n'expose pas cet endpoint.
 """
 from __future__ import annotations
 
@@ -21,21 +38,43 @@ from fastapi import APIRouter, Query
 from fastapi.responses import RedirectResponse
 
 from jose import JWTError, jwt
+from sqlalchemy import select
 
 from app.core.config import settings
 from app.core.dependencies import TokenPayload, DBSession
-from app.core.exceptions import ValidationException
+from app.core.exceptions import ValidationException, NotFoundException
 from app.core.redis_client import redis, key_oauth_pkce, key_oauth_state
-from app.core.security import encrypt_value
-from app.models.enums import SocialPlatform
+from app.core.security import encrypt_value, decrypt_value
+from app.models.enums import SocialPlatform, UserRole
 from app.models.social import SocialAccount
-from sqlalchemy import select
+from app.api.v1.tenants import _assert_role
 
-router = APIRouter(prefix="/tenants/{tenant_id}/social/oauth", tags=["social-oauth"])
-callback_router = APIRouter(prefix="/social/oauth", tags=["social-oauth"])
+router = APIRouter(prefix="/oauth", tags=["oauth"])
 
-_PLATFORMS = ["facebook", "linkedin", "twitter", "tiktok", "instagram", "threads", "pinterest"]
 _STATE_TTL = 600  # 10 minutes
+
+# Slug externe (registré chez le fournisseur) → valeur interne (enum SocialPlatform)
+_ALIASES = {
+    "x": "twitter",
+    "youtube": "youtube_community",
+    "google-business": "google_business",
+}
+# Valeur interne → slug externe (pour construire un redirect_uri toujours identique
+# à celui enregistré, quel que soit le slug utilisé par l'appelant)
+_EXTERNAL_SLUG = {v: k for k, v in _ALIASES.items()}
+
+_PLATFORMS = [
+    "facebook", "linkedin", "twitter", "tiktok", "instagram",
+    "threads", "pinterest", "youtube_community", "google_business",
+]
+
+
+def _to_internal(platform: str) -> str:
+    return _ALIASES.get(platform, platform)
+
+
+def _to_external(internal: str) -> str:
+    return _EXTERNAL_SLUG.get(internal, internal)
 
 
 # ── State helpers ─────────────────────────────────────────────────────────────
@@ -61,15 +100,14 @@ def _state_hash(state: str) -> str:
     return hashlib.sha256(state.encode()).hexdigest()[:24]
 
 
-def _callback_url(platform: str) -> str:
-    return f"https://{settings.PLATFORM_API_DOMAIN}/api/v1/social/oauth/{platform}/callback"
+def _callback_url(internal_platform: str) -> str:
+    external = _to_external(internal_platform)
+    return f"https://{settings.PLATFORM_API_DOMAIN}/api/v1/oauth/{external}/callback"
 
 
-def _dashboard_url(tenant_id: str, platform: str) -> str:
-    return f"{settings.FRONTEND_URL}/en/blogs/{tenant_id}/social?connected={platform}"
+def _dashboard_url(tenant_id: str, internal_platform: str) -> str:
+    return f"{settings.FRONTEND_URL}/en/blogs/{tenant_id}/social?connected={internal_platform}"
 
-
-# ── PKCE helpers (Twitter only) ───────────────────────────────────────────────
 
 def _pkce_pair() -> tuple[str, str]:
     verifier = secrets.token_urlsafe(64)
@@ -78,24 +116,32 @@ def _pkce_pair() -> tuple[str, str]:
     return verifier, challenge
 
 
-# ── Connect endpoints ─────────────────────────────────────────────────────────
+async def _require_admin(db, tenant_id: uuid.UUID, payload: dict) -> None:
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+
+
+# ── Connect ───────────────────────────────────────────────────────────────────
 
 @router.get("/{platform}/connect")
 async def get_connect_url(
-    tenant_id: uuid.UUID,
     platform: str,
     payload: TokenPayload,
+    db: DBSession,
+    tenant_id: uuid.UUID = Query(...),
 ):
-    if platform not in _PLATFORMS:
+    await _require_admin(db, tenant_id, payload)
+
+    internal = _to_internal(platform)
+    if internal not in _PLATFORMS:
         raise ValidationException(f"Platform '{platform}' not supported")
 
-    state = _make_state(str(tenant_id), payload["sub"], platform)
+    state = _make_state(str(tenant_id), payload["sub"], internal)
     sh = _state_hash(state)
+    cb = _callback_url(internal)
 
-    if platform == "facebook":
+    if internal == "facebook":
         if not settings.FACEBOOK_APP_ID:
             raise ValidationException("Facebook app not configured")
-        cb = _callback_url("facebook")
         url = (
             f"https://www.facebook.com/v19.0/dialog/oauth"
             f"?client_id={settings.FACEBOOK_APP_ID}"
@@ -104,10 +150,9 @@ async def get_connect_url(
             f"&state={state}"
         )
 
-    elif platform == "linkedin":
+    elif internal == "linkedin":
         if not settings.LINKEDIN_CLIENT_ID:
             raise ValidationException("LinkedIn app not configured")
-        cb = _callback_url("linkedin")
         url = (
             f"https://www.linkedin.com/oauth/v2/authorization"
             f"?response_type=code"
@@ -117,12 +162,11 @@ async def get_connect_url(
             f"&state={state}"
         )
 
-    elif platform == "twitter":
+    elif internal == "twitter":
         if not settings.TWITTER_CLIENT_ID:
             raise ValidationException("Twitter/X app not configured")
         verifier, challenge = _pkce_pair()
         await redis.setex(key_oauth_pkce(sh), _STATE_TTL, verifier)
-        cb = _callback_url("twitter")
         url = (
             f"https://twitter.com/i/oauth2/authorize"
             f"?response_type=code"
@@ -134,10 +178,9 @@ async def get_connect_url(
             f"&code_challenge_method=S256"
         )
 
-    elif platform == "tiktok":
+    elif internal == "tiktok":
         if not settings.TIKTOK_CLIENT_KEY:
             raise ValidationException("TikTok app not configured")
-        cb = _callback_url("tiktok")
         url = (
             f"https://www.tiktok.com/v2/auth/authorize/"
             f"?client_key={settings.TIKTOK_CLIENT_KEY}"
@@ -147,11 +190,9 @@ async def get_connect_url(
             f"&state={state}"
         )
 
-    elif platform == "instagram":
-        # Instagram Basic Display API
+    elif internal == "instagram":
         if not settings.INSTAGRAM_APP_ID:
             raise ValidationException("Instagram app not configured")
-        cb = _callback_url("instagram")
         url = (
             f"https://api.instagram.com/oauth/authorize"
             f"?client_id={settings.INSTAGRAM_APP_ID}"
@@ -161,11 +202,9 @@ async def get_connect_url(
             f"&state={state}"
         )
 
-    elif platform == "threads":
-        # Threads API uses the same App as Instagram / Meta
+    elif internal == "threads":
         if not settings.THREADS_APP_ID:
             raise ValidationException("Threads app not configured")
-        cb = _callback_url("threads")
         url = (
             f"https://threads.net/oauth/authorize"
             f"?client_id={settings.THREADS_APP_ID}"
@@ -175,10 +214,9 @@ async def get_connect_url(
             f"&state={state}"
         )
 
-    elif platform == "pinterest":
+    elif internal == "pinterest":
         if not settings.PINTEREST_APP_ID:
             raise ValidationException("Pinterest app not configured")
-        cb = _callback_url("pinterest")
         url = (
             f"https://www.pinterest.com/oauth/"
             f"?client_id={settings.PINTEREST_APP_ID}"
@@ -188,12 +226,41 @@ async def get_connect_url(
             f"&state={state}"
         )
 
+    elif internal == "youtube_community":
+        if not settings.GOOGLE_CLIENT_ID:
+            raise ValidationException("Google app not configured")
+        url = (
+            f"https://accounts.google.com/o/oauth2/v2/auth"
+            f"?client_id={settings.GOOGLE_CLIENT_ID}"
+            f"&redirect_uri={cb}"
+            f"&response_type=code"
+            f"&access_type=offline&prompt=consent"
+            f"&scope=https://www.googleapis.com/auth/youtube.readonly"
+            f"&state={state}"
+        )
+
+    elif internal == "google_business":
+        if not settings.GOOGLE_CLIENT_ID:
+            raise ValidationException("Google app not configured")
+        url = (
+            f"https://accounts.google.com/o/oauth2/v2/auth"
+            f"?client_id={settings.GOOGLE_CLIENT_ID}"
+            f"&redirect_uri={cb}"
+            f"&response_type=code"
+            f"&access_type=offline&prompt=consent"
+            f"&scope=https://www.googleapis.com/auth/business.manage"
+            f"&state={state}"
+        )
+
+    else:
+        raise ValidationException(f"Platform '{platform}' not supported")
+
     return {"url": url}
 
 
-# ── Callback endpoints ────────────────────────────────────────────────────────
+# ── Callback ──────────────────────────────────────────────────────────────────
 
-@callback_router.get("/{platform}/callback")
+@router.get("/{platform}/callback")
 async def oauth_callback(
     platform: str,
     db: DBSession,
@@ -211,33 +278,37 @@ async def oauth_callback(
 
     tenant_id = uuid.UUID(claims["tid"])
     user_id = uuid.UUID(claims["uid"])
+    internal = claims["p"]
     sh = _state_hash(state)
 
     try:
-        if platform == "facebook":
-            account_data = await _handle_facebook(code, state, sh)
-        elif platform == "linkedin":
-            account_data = await _handle_linkedin(code, state, sh)
-        elif platform == "twitter":
-            account_data = await _handle_twitter(code, state, sh)
-        elif platform == "tiktok":
-            account_data = await _handle_tiktok(code, state, sh)
-        elif platform == "instagram":
-            account_data = await _handle_instagram(code, state, sh)
-        elif platform == "threads":
-            account_data = await _handle_threads(code, state, sh)
-        elif platform == "pinterest":
-            account_data = await _handle_pinterest(code, state, sh)
+        if internal == "facebook":
+            account_data = await _handle_facebook(code)
+        elif internal == "linkedin":
+            account_data = await _handle_linkedin(code)
+        elif internal == "twitter":
+            account_data = await _handle_twitter(code, sh)
+        elif internal == "tiktok":
+            account_data = await _handle_tiktok(code)
+        elif internal == "instagram":
+            account_data = await _handle_instagram(code)
+        elif internal == "threads":
+            account_data = await _handle_threads(code)
+        elif internal == "pinterest":
+            account_data = await _handle_pinterest(code)
+        elif internal == "youtube_community":
+            account_data = await _handle_youtube(code)
+        elif internal == "google_business":
+            account_data = await _handle_google_business(code)
         else:
             return RedirectResponse(f"{settings.FRONTEND_URL}/en/social?error=unsupported")
-    except Exception as exc:
+    except Exception:
         return RedirectResponse(f"{settings.FRONTEND_URL}/en/social?error=oauth_failed")
 
-    # Upsert social account
     existing = await db.execute(
         select(SocialAccount).where(
             SocialAccount.tenant_id == tenant_id,
-            SocialAccount.platform == SocialPlatform(platform),
+            SocialAccount.platform == SocialPlatform(internal),
             SocialAccount.platform_user_id == account_data["platform_user_id"],
         )
     )
@@ -254,7 +325,7 @@ async def oauth_callback(
         acct = SocialAccount(
             tenant_id=tenant_id,
             connected_by=user_id,
-            platform=SocialPlatform(platform),
+            platform=SocialPlatform(internal),
             platform_user_id=account_data["platform_user_id"],
             platform_username=account_data.get("username"),
             platform_display_name=account_data.get("display_name"),
@@ -266,12 +337,183 @@ async def oauth_callback(
         db.add(acct)
 
     await db.commit()
-    return RedirectResponse(_dashboard_url(str(tenant_id), platform))
+    return RedirectResponse(_dashboard_url(str(tenant_id), internal))
 
 
-# ── Per-platform handlers ─────────────────────────────────────────────────────
+# ── Disconnect ────────────────────────────────────────────────────────────────
 
-async def _handle_facebook(code: str, state: str, sh: str) -> dict:
+@router.post("/{platform}/disconnect", status_code=204)
+async def oauth_disconnect(
+    platform: str,
+    payload: TokenPayload,
+    db: DBSession,
+    tenant_id: uuid.UUID = Query(...),
+):
+    await _require_admin(db, tenant_id, payload)
+    internal = _to_internal(platform)
+
+    result = await db.execute(
+        select(SocialAccount).where(
+            SocialAccount.tenant_id == tenant_id,
+            SocialAccount.platform == SocialPlatform(internal),
+            SocialAccount.is_active == True,
+        )
+    )
+    accounts = result.scalars().all()
+    if not accounts:
+        raise NotFoundException("Compte social")
+    for acct in accounts:
+        acct.is_active = False
+    await db.commit()
+
+
+# ── Refresh ───────────────────────────────────────────────────────────────────
+
+@router.post("/{platform}/refresh")
+async def oauth_refresh(
+    platform: str,
+    payload: TokenPayload,
+    db: DBSession,
+    tenant_id: uuid.UUID = Query(...),
+):
+    await _require_admin(db, tenant_id, payload)
+    internal = _to_internal(platform)
+
+    result = await db.execute(
+        select(SocialAccount).where(
+            SocialAccount.tenant_id == tenant_id,
+            SocialAccount.platform == SocialPlatform(internal),
+            SocialAccount.is_active == True,
+        )
+    )
+    accounts = result.scalars().all()
+    if not accounts:
+        raise NotFoundException("Compte social")
+
+    refreshed = 0
+    for acct in accounts:
+        new_tokens = await _refresh_account(internal, acct)
+        if new_tokens:
+            acct.access_token_enc = encrypt_value(new_tokens["access_token"])
+            if new_tokens.get("refresh_token"):
+                acct.refresh_token_enc = encrypt_value(new_tokens["refresh_token"])
+            refreshed += 1
+
+    await db.commit()
+    if not refreshed:
+        raise ValidationException("Impossible de rafraîchir ce compte — reconnexion requise.")
+    return {"refreshed": refreshed}
+
+
+async def _refresh_account(internal: str, acct: SocialAccount) -> dict | None:
+    async with httpx.AsyncClient(timeout=15) as client:
+        if internal == "facebook":
+            if not acct.access_token_enc:
+                return None
+            current = decrypt_value(acct.access_token_enc)
+            resp = await client.get(
+                "https://graph.facebook.com/v19.0/oauth/access_token",
+                params={
+                    "grant_type": "fb_exchange_token",
+                    "client_id": settings.FACEBOOK_APP_ID,
+                    "client_secret": settings.FACEBOOK_APP_SECRET,
+                    "fb_exchange_token": current,
+                },
+            )
+            if resp.status_code != 200:
+                return None
+            return {"access_token": resp.json()["access_token"]}
+
+        if internal in ("instagram", "threads"):
+            if not acct.access_token_enc:
+                return None
+            current = decrypt_value(acct.access_token_enc)
+            host = "graph.instagram.com" if internal == "instagram" else "graph.threads.net"
+            grant = "ig_refresh_token" if internal == "instagram" else "th_refresh_token"
+            resp = await client.get(
+                f"https://{host}/refresh_access_token",
+                params={"grant_type": grant, "access_token": current},
+            )
+            if resp.status_code != 200:
+                return None
+            return {"access_token": resp.json()["access_token"]}
+
+        if not acct.refresh_token_enc:
+            return None
+        refresh_token = decrypt_value(acct.refresh_token_enc)
+
+        if internal == "linkedin":
+            resp = await client.post(
+                "https://www.linkedin.com/oauth/v2/accessToken",
+                data={
+                    "grant_type": "refresh_token",
+                    "refresh_token": refresh_token,
+                    "client_id": settings.LINKEDIN_CLIENT_ID,
+                    "client_secret": settings.LINKEDIN_CLIENT_SECRET,
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+        elif internal == "twitter":
+            credentials = base64.b64encode(
+                f"{settings.TWITTER_CLIENT_ID}:{settings.TWITTER_CLIENT_SECRET}".encode()
+            ).decode()
+            resp = await client.post(
+                "https://api.twitter.com/2/oauth2/token",
+                data={"grant_type": "refresh_token", "refresh_token": refresh_token},
+                headers={
+                    "Authorization": f"Basic {credentials}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            )
+        elif internal == "tiktok":
+            resp = await client.post(
+                "https://open.tiktokapis.com/v2/oauth/token/",
+                data={
+                    "client_key": settings.TIKTOK_CLIENT_KEY,
+                    "client_secret": settings.TIKTOK_CLIENT_SECRET,
+                    "grant_type": "refresh_token",
+                    "refresh_token": refresh_token,
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+        elif internal == "pinterest":
+            credentials = base64.b64encode(
+                f"{settings.PINTEREST_APP_ID}:{settings.PINTEREST_APP_SECRET}".encode()
+            ).decode()
+            resp = await client.post(
+                "https://api.pinterest.com/v5/oauth/token",
+                data={"grant_type": "refresh_token", "refresh_token": refresh_token},
+                headers={
+                    "Authorization": f"Basic {credentials}",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            )
+        elif internal in ("youtube_community", "google_business"):
+            resp = await client.post(
+                "https://oauth2.googleapis.com/token",
+                data={
+                    "grant_type": "refresh_token",
+                    "refresh_token": refresh_token,
+                    "client_id": settings.GOOGLE_CLIENT_ID,
+                    "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+        else:
+            return None
+
+        if resp.status_code != 200:
+            return None
+        tokens = resp.json()
+        return {
+            "access_token": tokens["access_token"],
+            "refresh_token": tokens.get("refresh_token"),
+        }
+
+
+# ── Per-platform handlers (connect exchange) ──────────────────────────────────
+
+async def _handle_facebook(code: str) -> dict:
     cb = _callback_url("facebook")
     async with httpx.AsyncClient(timeout=15) as client:
         token_resp = await client.get(
@@ -285,17 +527,14 @@ async def _handle_facebook(code: str, state: str, sh: str) -> dict:
         )
         token_resp.raise_for_status()
         tokens = token_resp.json()
-
         access_token = tokens["access_token"]
 
-        # Get user profile (and pages)
         me_resp = await client.get(
             "https://graph.facebook.com/v19.0/me",
             params={"fields": "id,name,picture", "access_token": access_token},
         )
         me = me_resp.json()
 
-        # Try to get the user's first managed page (for posting)
         pages_resp = await client.get(
             "https://graph.facebook.com/v19.0/me/accounts",
             params={"access_token": access_token},
@@ -308,11 +547,10 @@ async def _handle_facebook(code: str, state: str, sh: str) -> dict:
                 "username": page.get("name"),
                 "display_name": page.get("name"),
                 "avatar_url": me.get("picture", {}).get("data", {}).get("url"),
-                "access_token": page["access_token"],  # page-level token
+                "access_token": page["access_token"],
                 "scopes": ["pages_manage_posts", "pages_read_engagement"],
             }
 
-        # No pages — store user-level account (can post to personal profile in some regions)
         return {
             "platform_user_id": me["id"],
             "username": me.get("name"),
@@ -323,7 +561,7 @@ async def _handle_facebook(code: str, state: str, sh: str) -> dict:
         }
 
 
-async def _handle_linkedin(code: str, state: str, sh: str) -> dict:
+async def _handle_linkedin(code: str) -> dict:
     cb = _callback_url("linkedin")
     async with httpx.AsyncClient(timeout=15) as client:
         token_resp = await client.post(
@@ -351,7 +589,6 @@ async def _handle_linkedin(code: str, state: str, sh: str) -> dict:
         last = me.get("localizedLastName", "")
         display_name = f"{first} {last}".strip() or me.get("id", "")
 
-        # Extract avatar
         try:
             elements = me["profilePicture"]["displayImage~"]["elements"]
             avatar_url = elements[-1]["identifiers"][0]["identifier"]
@@ -369,12 +606,11 @@ async def _handle_linkedin(code: str, state: str, sh: str) -> dict:
         }
 
 
-async def _handle_twitter(code: str, state: str, sh: str) -> dict:
+async def _handle_twitter(code: str, sh: str) -> dict:
     cb = _callback_url("twitter")
     verifier = await redis.get(key_oauth_pkce(sh))
     if not verifier:
         raise ValueError("PKCE verifier expired or missing")
-
     await redis.delete(key_oauth_pkce(sh))
 
     credentials = base64.b64encode(
@@ -417,7 +653,7 @@ async def _handle_twitter(code: str, state: str, sh: str) -> dict:
     }
 
 
-async def _handle_tiktok(code: str, state: str, sh: str) -> dict:
+async def _handle_tiktok(code: str) -> dict:
     cb = _callback_url("tiktok")
     async with httpx.AsyncClient(timeout=15) as client:
         token_resp = await client.post(
@@ -453,10 +689,9 @@ async def _handle_tiktok(code: str, state: str, sh: str) -> dict:
     }
 
 
-async def _handle_instagram(code: str, state: str, sh: str) -> dict:
+async def _handle_instagram(code: str) -> dict:
     cb = _callback_url("instagram")
     async with httpx.AsyncClient(timeout=15) as client:
-        # Step 1: short-lived token
         token_resp = await client.post(
             "https://api.instagram.com/oauth/access_token",
             data={
@@ -472,7 +707,6 @@ async def _handle_instagram(code: str, state: str, sh: str) -> dict:
         short_token = short["access_token"]
         ig_user_id = str(short["user_id"])
 
-        # Step 2: exchange for long-lived token
         long_resp = await client.get(
             "https://graph.instagram.com/access_token",
             params={
@@ -482,10 +716,8 @@ async def _handle_instagram(code: str, state: str, sh: str) -> dict:
             },
         )
         long_resp.raise_for_status()
-        long = long_resp.json()
-        access_token = long["access_token"]
+        access_token = long_resp.json()["access_token"]
 
-        # Step 3: user profile
         me_resp = await client.get(
             f"https://graph.instagram.com/v19.0/{ig_user_id}",
             params={"fields": "id,username,profile_picture_url", "access_token": access_token},
@@ -502,7 +734,7 @@ async def _handle_instagram(code: str, state: str, sh: str) -> dict:
     }
 
 
-async def _handle_threads(code: str, state: str, sh: str) -> dict:
+async def _handle_threads(code: str) -> dict:
     cb = _callback_url("threads")
     async with httpx.AsyncClient(timeout=15) as client:
         token_resp = await client.post(
@@ -520,7 +752,6 @@ async def _handle_threads(code: str, state: str, sh: str) -> dict:
         access_token = tokens["access_token"]
         user_id = str(tokens["user_id"])
 
-        # Long-lived token exchange
         ll_resp = await client.get(
             "https://graph.threads.net/access_token",
             params={
@@ -548,7 +779,7 @@ async def _handle_threads(code: str, state: str, sh: str) -> dict:
     }
 
 
-async def _handle_pinterest(code: str, state: str, sh: str) -> dict:
+async def _handle_pinterest(code: str) -> dict:
     cb = _callback_url("pinterest")
     credentials = base64.b64encode(
         f"{settings.PINTEREST_APP_ID}:{settings.PINTEREST_APP_SECRET}".encode()
@@ -584,4 +815,78 @@ async def _handle_pinterest(code: str, state: str, sh: str) -> dict:
         "access_token": access_token,
         "refresh_token": tokens.get("refresh_token"),
         "scopes": ["boards:read", "pins:read", "pins:write"],
+    }
+
+
+async def _handle_youtube(code: str) -> dict:
+    cb = _callback_url("youtube_community")
+    async with httpx.AsyncClient(timeout=15) as client:
+        token_resp = await client.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "client_id": settings.GOOGLE_CLIENT_ID,
+                "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                "grant_type": "authorization_code",
+                "redirect_uri": cb,
+                "code": code,
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+        token_resp.raise_for_status()
+        tokens = token_resp.json()
+        access_token = tokens["access_token"]
+
+        me_resp = await client.get(
+            "https://www.googleapis.com/youtube/v3/channels",
+            params={"part": "snippet", "mine": "true"},
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        items = me_resp.json().get("items", [])
+        channel = items[0] if items else {}
+        snippet = channel.get("snippet", {})
+
+    return {
+        "platform_user_id": channel.get("id", ""),
+        "username": snippet.get("customUrl") or snippet.get("title"),
+        "display_name": snippet.get("title"),
+        "avatar_url": (snippet.get("thumbnails", {}).get("default", {}) or {}).get("url"),
+        "access_token": access_token,
+        "refresh_token": tokens.get("refresh_token"),
+        "scopes": ["youtube.readonly"],
+    }
+
+
+async def _handle_google_business(code: str) -> dict:
+    cb = _callback_url("google_business")
+    async with httpx.AsyncClient(timeout=15) as client:
+        token_resp = await client.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "client_id": settings.GOOGLE_CLIENT_ID,
+                "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                "grant_type": "authorization_code",
+                "redirect_uri": cb,
+                "code": code,
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+        token_resp.raise_for_status()
+        tokens = token_resp.json()
+        access_token = tokens["access_token"]
+
+        accounts_resp = await client.get(
+            "https://mybusinessaccountmanagement.googleapis.com/v1/accounts",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        accounts = accounts_resp.json().get("accounts", []) if accounts_resp.status_code == 200 else []
+        account = accounts[0] if accounts else {}
+
+    return {
+        "platform_user_id": account.get("name", ""),
+        "username": account.get("accountName"),
+        "display_name": account.get("accountName"),
+        "avatar_url": account.get("profilePhotoUri"),
+        "access_token": access_token,
+        "refresh_token": tokens.get("refresh_token"),
+        "scopes": ["business.manage"],
     }

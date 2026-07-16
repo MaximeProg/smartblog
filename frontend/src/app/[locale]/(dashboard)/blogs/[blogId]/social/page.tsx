@@ -32,6 +32,7 @@ const PLATFORMS: Partial<Record<SocialPlatform, PlatformMeta>> = {
   youtube_community: { label: 'YouTube',         bg: 'bg-red-50 dark:bg-red-900/20',   iconBg: 'bg-[#FF0000]',                              color: 'text-red-600', icon: '▶' },
   tiktok:            { label: 'TikTok',         bg: 'bg-slate-50 dark:bg-slate-800',  iconBg: 'bg-black',                                  color: 'text-slate-900', icon: '♪' },
   threads:           { label: 'Threads',         bg: 'bg-slate-50 dark:bg-slate-800',  iconBg: 'bg-black dark:bg-slate-200',                 color: 'text-slate-800', icon: '@' },
+  google_business:   { label: 'Google Business', bg: 'bg-amber-50 dark:bg-amber-900/20', iconBg: 'bg-gradient-to-br from-blue-500 via-red-500 to-yellow-500', color: 'text-amber-600', icon: 'G' },
 };
 
 const PLATFORM_FALLBACK: PlatformMeta = {

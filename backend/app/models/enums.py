@@ -96,6 +96,7 @@ class SocialPlatform(str, enum.Enum):
     DISCORD = "discord"
     REDDIT = "reddit"
     UPSCROLLED = "upscrolled"
+    GOOGLE_BUSINESS = "google_business"
 
 
 class SocialPostStatus(str, enum.Enum):

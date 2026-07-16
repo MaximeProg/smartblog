@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import type { BlogInfo, PublicArticle, PublicCategory, TemplateConfig } from '@/lib/public-api';
 import { publicApi } from '@/lib/public-api';
 import { ThemeHome, ThemeAbout, ThemeContact } from '@/components/themes/ThemeRenderer';
+import { EditModeController } from '@/components/themes/shared/EditModeController';
+import { SelectionOverlay } from '@/components/themes/shared/SelectionOverlay';
 
 // ──────────────────────────────────────────────────────────────────
 // postMessage types (parent ↔ canvas protocol)
@@ -64,6 +66,8 @@ export default function CanvasPage() {
   const [articles, setArticles] = useState<PublicArticle[]>([]);
   const [categories, setCategories] = useState<PublicCategory[]>([]);
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
 
   // Tell parent we are ready as soon as the component mounts
   useEffect(() => {
@@ -84,6 +88,7 @@ export default function CanvasPage() {
         setLiveConfig(msg.liveConfig);
         setActivePage(msg.activePage);
         setSelectedSectionId(null);
+        setSelectedElementId(null);
         setInitialized(true);
         // Fetch public data for this blog
         Promise.all([
@@ -100,6 +105,7 @@ export default function CanvasPage() {
       } else if (msg.type === 'NAVIGATE') {
         setActivePage(msg.activePage);
         setSelectedSectionId(null);
+        setSelectedElementId(null);
       }
     }
 
@@ -107,14 +113,33 @@ export default function CanvasPage() {
     return () => window.removeEventListener('message', onMessage);
   }, []);
 
-  const handleSectionClick = useCallback((id: string) => {
-    setSelectedSectionId(id);
-    window.parent.postMessage({ type: 'SECTION_CLICK', sectionId: id }, '*');
+  // Resolved by EditModeController via delegated click/hover — the single
+  // source of truth for both section-level (PropertiesPanel) and granular
+  // element-level (future toolbar) selection.
+  const handleElementSelect = useCallback(
+    (elementId: string | null, kind: string | null, sectionId: string | null) => {
+      setSelectedElementId(elementId);
+      setSelectedSectionId(sectionId);
+      window.parent.postMessage({ type: 'ELEMENT_CLICK', elementId, kind, sectionId }, '*');
+    },
+    [],
+  );
+
+  const handleElementHover = useCallback((id: string | null) => {
+    setHoveredElementId(id);
   }, []);
 
-  const handleSectionHover = useCallback((id: string | null) => {
-    window.parent.postMessage({ type: 'SECTION_HOVER', sectionId: id }, '*');
-  }, []);
+  // Kept for components still wired to the old section-only contract —
+  // routes through the same unified selection state.
+  const handleSectionClick = useCallback(
+    (id: string) => handleElementSelect(id, 'section', id),
+    [handleElementSelect],
+  );
+
+  const handleSectionHover = useCallback(
+    (id: string | null) => handleElementHover(id),
+    [handleElementHover],
+  );
 
   // Keep preventNav stable across renders — must be declared before any early return
   const preventNav = useCallback(() => '#', []);
@@ -155,36 +180,29 @@ export default function CanvasPage() {
 
   const basePath = '#';
 
+  let content;
   if (activePage === 'about') {
-    return (
-      <ThemeAbout
+    content = <ThemeAbout blog={blog} categories={categories} basePath={basePath} {...editProps} />;
+  } else if (activePage === 'contact') {
+    content = <ThemeContact blog={blog} categories={categories} basePath={basePath} {...editProps} />;
+  } else {
+    content = (
+      <ThemeHome
         blog={blog}
+        articles={articles}
         categories={categories}
         basePath={basePath}
-        {...editProps}
-      />
-    );
-  }
-
-  if (activePage === 'contact') {
-    return (
-      <ThemeContact
-        blog={blog}
-        categories={categories}
-        basePath={basePath}
+        getArticleHref={preventNav}
         {...editProps}
       />
     );
   }
 
   return (
-    <ThemeHome
-      blog={blog}
-      articles={articles}
-      categories={categories}
-      basePath={basePath}
-      getArticleHref={preventNav}
-      {...editProps}
-    />
+    <>
+      {content}
+      <EditModeController enabled onSelect={handleElementSelect} onHover={handleElementHover} />
+      <SelectionOverlay hoveredId={hoveredElementId} selectedId={selectedElementId} />
+    </>
   );
 }

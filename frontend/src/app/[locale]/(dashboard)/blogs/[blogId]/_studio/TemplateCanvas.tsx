@@ -18,7 +18,7 @@ export function TemplateCanvas() {
   const locale  = params.locale as string;
   const blogId  = params.blogId as string;
 
-  const { schema, activePage, tenantSlug, tenantId, liveConfig, refreshCounter, selectSection, updateField } =
+  const { schema, activePage, tenantSlug, tenantId, liveConfig, refreshCounter, selectSection, selectElement, updateField } =
     useEditorStore();
 
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -35,7 +35,14 @@ export function TemplateCanvas() {
   // ── receive messages from the canvas iframe ──────────────────────────────
   useEffect(() => {
     function onMessage(e: MessageEvent) {
-      const msg = e.data as { type?: string; sectionId?: string; path?: string; value?: unknown };
+      const msg = e.data as {
+        type?: string;
+        sectionId?: string;
+        elementId?: string | null;
+        kind?: string | null;
+        path?: string;
+        value?: unknown;
+      };
       if (!msg?.type) return;
 
       if (msg.type === 'CANVAS_READY') {
@@ -52,6 +59,8 @@ export function TemplateCanvas() {
           },
           '*',
         );
+      } else if (msg.type === 'ELEMENT_CLICK') {
+        selectElement(msg.elementId ?? null, msg.sectionId ?? null);
       } else if (msg.type === 'SECTION_CLICK' && msg.sectionId) {
         selectSection(msg.sectionId);
       } else if (msg.type === 'INLINE_EDIT' && msg.path) {
@@ -61,7 +70,7 @@ export function TemplateCanvas() {
 
     window.addEventListener('message', onMessage);
     return () => window.removeEventListener('message', onMessage);
-  }, [selectSection, updateField]);
+  }, [selectSection, selectElement, updateField]);
 
   // ── debounced real-time config patch ────────────────────────────────────
   const patchTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);

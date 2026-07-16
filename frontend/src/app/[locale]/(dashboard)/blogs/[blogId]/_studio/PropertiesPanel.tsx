@@ -38,7 +38,7 @@ export function PropertiesPanel() {
 
       {/* Fields */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4" style={{ scrollbarWidth: 'thin' }}>
-        {section.fields.map((field) => {
+        {section.fields.filter((field) => !field.inplace).map((field) => {
           const value = getPath(liveConfig, field.key);
           return (
             <FieldRenderer

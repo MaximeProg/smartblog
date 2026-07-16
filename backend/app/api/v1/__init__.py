@@ -9,7 +9,7 @@ from app.api.v1.media import router as media_router
 from app.api.v1.comments import router as comments_router, tenant_comments_router
 from app.api.v1.newsletter import router as newsletter_router
 from app.api.v1.social import router as social_router
-from app.api.v1.social_oauth import router as social_oauth_router, callback_router as social_oauth_callback_router
+from app.api.v1.oauth import router as oauth_router
 from app.api.v1.ads import router as ads_router
 from app.api.v1.analytics import router as analytics_router
 from app.api.v1.search import router as search_router
@@ -42,8 +42,7 @@ api_router.include_router(comments_router)
 api_router.include_router(tenant_comments_router)
 api_router.include_router(newsletter_router)
 api_router.include_router(social_router)
-api_router.include_router(social_oauth_router)
-api_router.include_router(social_oauth_callback_router)
+api_router.include_router(oauth_router)
 api_router.include_router(ads_router)
 api_router.include_router(analytics_router)
 api_router.include_router(search_router)

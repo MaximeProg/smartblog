@@ -30,6 +30,7 @@ interface EditorState {
 
   activePage: string;
   selectedSectionId: string | null;
+  selectedElementId: string | null;
 
   liveConfig: LiveConfig;
 
@@ -40,6 +41,7 @@ interface EditorState {
   init: (tenantId: string, tenant: TenantResponse) => void;
   setActivePage: (pageId: string) => void;
   selectSection: (sectionId: string | null) => void;
+  selectElement: (elementId: string | null, sectionId: string | null) => void;
   updateField: (path: string, value: unknown) => void;
   save: () => Promise<void>;
 }
@@ -64,6 +66,7 @@ export const useEditorStore = create<EditorState>((set, get) => ({
   schema: null,
   activePage: 'home',
   selectedSectionId: null,
+  selectedElementId: null,
   liveConfig: DEFAULT_CONFIG,
   dirty: false,
   saving: false,
@@ -94,12 +97,15 @@ export const useEditorStore = create<EditorState>((set, get) => ({
       dirty: false,
       activePage: 'home',
       selectedSectionId: null,
+      selectedElementId: null,
     });
   },
 
-  setActivePage: (pageId) => set({ activePage: pageId, selectedSectionId: null }),
+  setActivePage: (pageId) => set({ activePage: pageId, selectedSectionId: null, selectedElementId: null }),
 
-  selectSection: (sectionId) => set({ selectedSectionId: sectionId }),
+  selectSection: (sectionId) => set({ selectedSectionId: sectionId, selectedElementId: null }),
+
+  selectElement: (elementId, sectionId) => set({ selectedElementId: elementId, selectedSectionId: sectionId }),
 
   updateField: (path, value) => {
     set((s) => ({

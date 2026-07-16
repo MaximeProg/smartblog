@@ -406,7 +406,7 @@ export interface NewsletterCampaign {
 
 // ─── Social ───────────────────────────────────────────────────────────────────
 
-export type SocialPlatform = 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'pinterest' | 'youtube_community' | 'tiktok' | 'threads' | 'telegram' | 'whatsapp' | 'discord' | 'reddit' | 'upscrolled';
+export type SocialPlatform = 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'pinterest' | 'youtube_community' | 'tiktok' | 'threads' | 'telegram' | 'whatsapp' | 'discord' | 'reddit' | 'upscrolled' | 'google_business';
 export type SocialPostStatus = 'pending' | 'scheduled' | 'published' | 'failed' | 'canceled';
 
 export interface SocialAccountInfo {
