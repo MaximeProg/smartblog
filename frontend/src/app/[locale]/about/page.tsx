@@ -148,6 +148,7 @@ export default async function AboutPage({
               alt="Team collaboration"
               fill
               className="object-cover"
+              unoptimized
             />
           </div>
         </div>
@@ -212,7 +213,7 @@ export default async function AboutPage({
             {(c.team.members as { name: string; role: string; photo_url: string; bio: string }[]).map((member) => (
               <div key={member.name} className="text-center group">
                 <div className="relative h-24 w-24 mx-auto rounded-2xl overflow-hidden mb-4 ring-2 ring-slate-200 dark:ring-slate-700 group-hover:ring-blue-500 transition-all">
-                  <Image src={member.photo_url} alt={member.name} fill className="object-cover" />
+                  <Image src={member.photo_url} alt={member.name} fill className="object-cover" unoptimized />
                 </div>
                 <h3 className="font-bold text-slate-900 dark:text-white mb-0.5">{member.name}</h3>
                 <p className="text-xs text-blue-500 dark:text-blue-400 font-semibold mb-2">{member.role}</p>

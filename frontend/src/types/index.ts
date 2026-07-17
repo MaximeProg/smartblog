@@ -300,6 +300,14 @@ export interface MediaItem {
   created_at: string;
 }
 
+export interface PlatformMediaItem {
+  id: string;
+  cloudinary_secure_url: string;
+  media_type: MediaType;
+  original_filename: string | null;
+  created_at: string;
+}
+
 // ─── Categories ───────────────────────────────────────────────────────────────
 
 export interface CreateCategoryData {

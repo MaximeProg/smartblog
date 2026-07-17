@@ -3,13 +3,21 @@
 import { useEffect, useRef, useState } from 'react';
 import { Upload, Link2, X, ImageIcon, Loader2, Check, Images } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { mediaApi } from '@/lib/api';
-import type { MediaItem } from '@/types';
+import { mediaApi, superadminApi } from '@/lib/api';
+
+interface GalleryItem {
+  id: string;
+  cloudinary_secure_url: string;
+  original_filename?: string | null;
+  alt_text?: string | null;
+}
 
 interface ImagePickerProps {
   value: string;
   onChange: (url: string) => void;
-  tenantId: string;
+  /** Tenant propriétaire (upload tenant-scopé). Omis => mode "platform" (CMS
+   * super admin, indépendant de tout tenant — voir /superadmin/media). */
+  tenantId?: string;
   ratio?: '16/9' | '1/1' | '3/2';
 }
 
@@ -17,24 +25,28 @@ type Tab = 'file' | 'url' | 'gallery';
 
 export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: ImagePickerProps) {
   const t = useTranslations('studio');
+  const isPlatform = !tenantId;
   const [tab, setTab] = useState<Tab>('file');
   const [urlInput, setUrlInput] = useState('');
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [previewError, setPreviewError] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const [gallery, setGallery] = useState<MediaItem[]>([]);
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [galleryLoading, setGalleryLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (tab !== 'gallery' || !tenantId) return;
+    if (tab !== 'gallery') return;
     setGalleryLoading(true);
-    mediaApi.list(tenantId, { type: 'image', limit: 60 })
+    const req = isPlatform
+      ? superadminApi.listPlatformMedia(60)
+      : mediaApi.list(tenantId!, { type: 'image', limit: 60 });
+    req
       .then(({ data }) => setGallery(data))
       .catch(() => setGallery([]))
       .finally(() => setGalleryLoading(false));
-  }, [tab, tenantId]);
+  }, [tab, tenantId, isPlatform]);
 
   const paddingPct = ratio === '1/1' ? '100%' : ratio === '3/2' ? '66.67%' : '56.25%';
 
@@ -46,7 +58,9 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
     setUploading(true);
     setUploadError('');
     try {
-      const { data } = await mediaApi.upload(tenantId, file);
+      const { data } = isPlatform
+        ? await superadminApi.uploadPlatformMedia(file)
+        : await mediaApi.upload(tenantId!, file);
       onChange(data.cloudinary_secure_url);
       setPreviewError(false);
     } catch {

@@ -6,7 +6,7 @@ import uuid
 import time
 import os
 from datetime import datetime, timezone
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, UploadFile, File
 from sqlalchemy import select, func, text
 from pydantic import BaseModel
 from typing import Any
@@ -16,6 +16,7 @@ from app.core.exceptions import ForbiddenException, NotFoundException
 from app.models.tenant import Tenant
 from app.models.user import User
 from app.models.tenant_user import TenantUser
+from app.models.platform_media import PlatformMedia
 from app.models.enums import TenantStatus, PlanTier, UserRole
 
 router = APIRouter(prefix="/superadmin", tags=["superadmin"])
@@ -761,6 +762,64 @@ async def ai_generate_platform_page(
 
     generated = await generate_platform_page_content(row.content, body.answers, body.language)
     return generated
+
+
+# ── Médias CMS plateforme (platform_media table) ───────────────────
+# Indépendant des tenants clients : les images des pages home/about/...
+# n'appartiennent à aucun blog, donc pas de tenant_id ni de FK vers tenants.
+
+class PlatformMediaResponse(BaseModel):
+    id: str
+    cloudinary_secure_url: str
+    media_type: str
+    original_filename: str | None
+    created_at: str
+
+
+def _platform_media_to_response(m: PlatformMedia) -> PlatformMediaResponse:
+    return PlatformMediaResponse(
+        id=str(m.id),
+        cloudinary_secure_url=m.cloudinary_secure_url,
+        media_type=m.media_type.value,
+        original_filename=m.original_filename,
+        created_at=m.created_at.isoformat(),
+    )
+
+
+@router.post("/media/upload", response_model=PlatformMediaResponse, status_code=201)
+async def upload_platform_media(payload: TokenPayload, db: DBSession, file: UploadFile = File(...)):
+    from app.services.cloudinary_service import upload_file
+
+    admin = await _require_super_admin(payload, db)
+    result = await upload_file(file, "platform")
+
+    media = PlatformMedia(
+        uploaded_by=admin.id,
+        cloudinary_public_id=result["public_id"],
+        cloudinary_url=result["url"],
+        cloudinary_secure_url=result["secure_url"],
+        cloudinary_resource_type=result["resource_type"],
+        media_type=result["media_type"],
+        original_filename=result["original_filename"],
+        file_size_bytes=result["file_size_bytes"],
+        width=result["width"],
+        height=result["height"],
+        duration_seconds=result["duration_seconds"],
+        format=result["format"],
+    )
+    db.add(media)
+    await db.commit()
+    await db.refresh(media)
+    return _platform_media_to_response(media)
+
+
+@router.get("/media", response_model=list[PlatformMediaResponse])
+async def list_platform_media(payload: TokenPayload, db: DBSession, limit: int = Query(default=60, le=200)):
+    await _require_super_admin(payload, db)
+    rows = (await db.execute(
+        select(PlatformMedia).order_by(PlatformMedia.created_at.desc()).limit(limit)
+    )).scalars().all()
+    return [_platform_media_to_response(m) for m in rows]
 
 
 # ── Santé système ─────────────────────────────────────────────────

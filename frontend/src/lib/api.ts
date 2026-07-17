@@ -30,6 +30,7 @@ import type {
   TenantInfo,
   TagInfo,
   MediaItem,
+  PlatformMediaItem,
   LikeResponse,
   ShareResponse,
   SharePlatform,
@@ -1414,6 +1415,19 @@ export const superadminApi = {
       `/superadmin/platform-pages/${slug}/ai-generate`,
       { answers, language },
     ),
+
+  // ── Médias CMS plateforme (indépendants des tenants) ──────────────
+  listPlatformMedia: (limit = 60) =>
+    api.get<PlatformMediaItem[]>('/superadmin/media', { params: { limit } }),
+
+  uploadPlatformMedia: (file: File) => {
+    const form = new FormData();
+    form.append('file', file);
+    return api.post<PlatformMediaItem>('/superadmin/media/upload', form, {
+      headers: { 'Content-Type': undefined },
+      timeout: 300_000,
+    });
+  },
 
   // ── Templates ─────────────────────────────────────────────────
   listTemplates: () =>
