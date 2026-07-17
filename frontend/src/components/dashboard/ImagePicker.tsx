@@ -247,7 +247,7 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
                   type="button"
                   onClick={() => { onChange(item.cloudinary_secure_url); setPreviewError(false); }}
                   className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-colors"
-                  title={item.original_filename}
+                  title={item.original_filename ?? undefined}
                 >
                   <img src={item.cloudinary_secure_url} alt={item.alt_text ?? ''} className="absolute inset-0 w-full h-full object-cover" />
                 </button>
