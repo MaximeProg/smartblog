@@ -399,9 +399,6 @@ export default async function HomePage({
       <section id="affiliate" className="py-16 md:py-24 px-4 sm:px-6 bg-slate-50 dark:bg-slate-900/40">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10 md:mb-16">
-            <p className="text-xs font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-3">
-              {affiliate.eyebrow}
-            </p>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3 md:mb-4">{affiliate.title}</h2>
             <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-2xl mx-auto">{affiliate.subtitle}</p>
           </div>

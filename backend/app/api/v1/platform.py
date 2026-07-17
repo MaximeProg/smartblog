@@ -242,7 +242,7 @@ class ContactMessageBody(BaseModel):
 
 async def _push_all_super_admins(db: DBSession, title: str, body: str, url: str) -> None:
     try:
-        result = await db.execute(select(User).where(User.is_super_admin == True, User.deleted_at.is_(None)))
+        result = await db.execute(select(User).where(User.is_super_admin == True))
         admins = result.scalars().all()
         tasks = [send_push_to_user(db, admin.id, title, body, url) for admin in admins]
         await asyncio.gather(*tasks, return_exceptions=True)
@@ -286,7 +286,7 @@ async def submit_contact_message(body: ContactMessageBody, request: Request, db:
     await db.commit()
 
     admin_emails = (await db.execute(
-        select(User.email).where(User.is_super_admin == True, User.deleted_at.is_(None))
+        select(User.email).where(User.is_super_admin == True)
     )).scalars().all()
 
     details = (

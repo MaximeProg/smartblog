@@ -227,9 +227,6 @@ export default async function AboutPage({
       <section id="affiliate" className="py-12 md:py-20 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10 md:mb-14">
-            <p className="text-xs font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-3">
-              {c.affiliate.eyebrow}
-            </p>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mb-3">
               {c.affiliate.title}
             </h2>

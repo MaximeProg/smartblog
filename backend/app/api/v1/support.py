@@ -72,7 +72,7 @@ def _msg_dict(m: SupportMessage, sender_name: str | None = None) -> dict:
 async def _push_super_admins(db: DBSession, title: str, body: str, url: str) -> None:
     """Send push notification to all super admins."""
     try:
-        result = await db.execute(select(User).where(User.is_super_admin == True, User.deleted_at == None))
+        result = await db.execute(select(User).where(User.is_super_admin == True))
         admins = result.scalars().all()
         tasks = [send_push_to_user(db, admin.id, title, body, url) for admin in admins]
         await asyncio.gather(*tasks, return_exceptions=True)
