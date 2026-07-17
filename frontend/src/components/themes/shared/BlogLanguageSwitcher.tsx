@@ -100,10 +100,6 @@ export function BlogLanguageSwitcher({ sourceLang, enabledLanguages, basePath = 
       <DropdownMenuContent
         align="end"
         className="min-w-[200px] p-0"
-        onOpenAutoFocus={(e) => {
-          e.preventDefault();
-          searchRef.current?.focus();
-        }}
         onCloseAutoFocus={() => setQuery('')}
       >
         <div className="flex items-center gap-2 px-2.5 py-2 border-b border-border">
