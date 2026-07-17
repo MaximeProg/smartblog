@@ -341,10 +341,10 @@ export default function CreateBlogPage() {
     <div className="flex h-screen overflow-hidden bg-white dark:bg-slate-950">
       <DashboardSidebar />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-h-0">
         <TopBar />
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto min-h-0">
           <div className="max-w-3xl mx-auto px-6 py-10">
 
             {/* Page header */}
@@ -681,6 +681,14 @@ export default function CreateBlogPage() {
               <span className="text-amber-500 text-sm shrink-0 mt-px">⚠</span>
               <p className="text-[11.5px] text-amber-700 dark:text-amber-400 leading-relaxed">
                 <strong>Template is permanent.</strong> Your template defines the visual structure of your blog and cannot be changed after creation. You can customize colors, fonts, content and all settings in the Studio.
+              </p>
+            </div>
+
+            {/* Domain requirement note */}
+            <div className="mt-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-xl px-4 py-3 flex gap-3">
+              <Globe className="h-4 w-4 text-blue-500 shrink-0 mt-px" />
+              <p className="text-[11.5px] text-blue-700 dark:text-blue-400 leading-relaxed">
+                {t('domainRequiredNote')}
               </p>
             </div>
 

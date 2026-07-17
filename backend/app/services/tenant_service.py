@@ -325,6 +325,7 @@ def build_tenant_response(tenant: Tenant, include_limits: bool = False, include_
         seo_title_template=tenant.seo_title_template,
         seo_meta_description=tenant.seo_meta_description,
         robots_txt=tenant.robots_txt,
+        enabled_languages=tenant.enabled_languages or [],
         trial_ends_at=tenant.trial_ends_at,
         plan_expires_at=tenant.plan_expires_at,
         limits=limits,

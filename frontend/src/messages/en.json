@@ -2003,6 +2003,7 @@
     "quickCreating": "Creating…",
     "quickCreate": "Create my blog",
     "quickSuccess": "Blog created! Redirecting…",
+    "domainRequiredNote": "Your blog won't be visible to visitors until you connect a domain. Once created, go to the Domains page in your blog's studio to set it up.",
     "quickSlugTaken": "This slug is already taken, please choose another.",
     "quickDescriptionLabel": "Description",
     "quickDescriptionPlaceholder": "A blog about tech, design and entrepreneurship..."

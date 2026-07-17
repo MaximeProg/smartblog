@@ -15,6 +15,7 @@ interface AuthState {
 
   // Actions
   setAuth: (user: UserInfo, tenants: TenantInfo[], token: string) => void;
+  updateUser: (user: UserInfo) => void;
   addTenant: (tenant: TenantInfo) => void;
   syncTenants: (tenants: TenantInfo[]) => void;
   setCurrentTenant: (tenantId: string) => void;
@@ -46,6 +47,11 @@ export const useAuthStore = create<AuthState>()(
           currentTenantId: get().currentTenantId ?? tenants[0]?.id ?? null,
         });
       },
+
+      // Rafraîchit uniquement le user (ex: plan après un upgrade — le champ
+      // dérive de /auth/me, jamais mis à jour tant que le token n'est pas
+      // rafraîchi ou que la session n'est pas rechargée).
+      updateUser: (user) => set({ user }),
 
       addTenant: (tenant) =>
         set((state) => ({

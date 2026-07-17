@@ -2003,6 +2003,7 @@
     "quickCreating": "Création en cours…",
     "quickCreate": "Créer mon blog",
     "quickSuccess": "Blog créé ! Redirection…",
+    "domainRequiredNote": "Votre blog ne sera pas visible par les visiteurs tant qu'aucun domaine n'est connecté. Une fois créé, rendez-vous sur la page Domaines du studio de votre blog pour le configurer.",
     "quickSlugTaken": "Ce slug est déjà utilisé, choisissez-en un autre.",
     "quickDescriptionLabel": "Description",
     "quickDescriptionPlaceholder": "Un blog sur la tech, le design et l’entrepreneuriat..."

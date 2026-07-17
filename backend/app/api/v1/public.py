@@ -10,7 +10,7 @@ import structlog
 logger = structlog.get_logger()
 from fastapi import APIRouter, Query, Request, HTTPException
 from fastapi.responses import Response, PlainTextResponse, RedirectResponse
-from sqlalchemy import select, and_, update, func, text as sa_text
+from sqlalchemy import select, and_, update, func, exists, text as sa_text
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel, EmailStr
 from datetime import datetime, timezone
@@ -925,9 +925,20 @@ async def list_public_blogs(
     offset: int = Query(default=0, ge=0),
     lang: str | None = Query(default=None),
 ):
-    """Returns all active public blogs with live article counts."""
-    # 1. Fetch matching tenants
-    query = select(Tenant).where(Tenant.status == TenantStatus.ACTIVE, Tenant.deleted_at.is_(None))
+    """Returns all active public blogs with live article counts — only
+    tenants with at least one verified custom domain are listed (a blog
+    without a domain isn't reachable by visitors yet, so it shouldn't
+    appear in the public directory)."""
+    # 1. Fetch matching tenants — require a verified custom domain
+    has_verified_domain = exists().where(
+        CustomDomain.tenant_id == Tenant.id,
+        CustomDomain.verification_status == DomainVerificationStatus.VERIFIED,
+    )
+    query = select(Tenant).where(
+        Tenant.status == TenantStatus.ACTIVE,
+        Tenant.deleted_at.is_(None),
+        has_verified_domain,
+    )
     if category:
         query = query.where(Tenant.category == category)
     if q:
