@@ -46,8 +46,62 @@ class PublicPlan(BaseModel):
 
 # ── GET /platform/pricing ─────────────────────────────────────────────
 
+async def _get_or_create_plan_translations(db: DBSession, rows: list, lang: str) -> dict:
+    """Traduction groupée nom+description+features des plans tarifaires (un
+    seul appel DeepL pour tous les plans), même pattern que les previews
+    d'articles — hash source, upsert atomique, jamais d'exception propagée."""
+    import hashlib
+    import json as _json
+
+    def _hash(row) -> str:
+        return hashlib.sha256(
+            _json.dumps({"name": row.name, "description": row.description, "features": row.features}, sort_keys=True).encode()
+        ).hexdigest()
+
+    ids = [str(row.id) for row in rows]
+    hashes = {str(row.id): _hash(row) for row in rows}
+
+    existing_rows = (await db.execute(text(
+        "SELECT plan_id, name, description, features, source_hash FROM subscription_plan_translations "
+        "WHERE lang = :lang AND plan_id = ANY(:ids)"
+    ), {"lang": lang, "ids": ids})).fetchall()
+    existing = {r.plan_id: r for r in existing_rows}
+
+    result_map: dict[str, dict] = {}
+    to_translate: dict[str, dict] = {}
+    for row in rows:
+        pid = str(row.id)
+        cached = existing.get(pid)
+        if cached and cached.source_hash == hashes[pid]:
+            result_map[pid] = {"name": cached.name, "description": cached.description, "features": cached.features}
+        else:
+            to_translate[pid] = {"name": row.name, "description": row.description or "", "features": row.features or []}
+
+    if to_translate:
+        try:
+            translated_batch = await translate_json(to_translate, lang, source_lang="en")
+        except Exception:
+            translated_batch = to_translate
+
+        for pid, vals in translated_batch.items():
+            result_map[pid] = vals
+            await db.execute(text("""
+                INSERT INTO subscription_plan_translations (plan_id, lang, name, description, features, source_hash)
+                VALUES (:pid, :lang, :name, :description, CAST(:features AS JSONB), :hash)
+                ON CONFLICT (plan_id, lang) DO UPDATE
+                SET name = EXCLUDED.name, description = EXCLUDED.description, features = EXCLUDED.features,
+                    source_hash = EXCLUDED.source_hash, translated_at = now()
+            """), {
+                "pid": pid, "lang": lang, "name": vals["name"], "description": vals["description"] or None,
+                "features": _json.dumps(vals["features"]), "hash": hashes[pid],
+            })
+        await db.commit()
+
+    return result_map
+
+
 @router.get("/pricing", response_model=list[PublicPlan])
-async def get_pricing(db: DBSession):
+async def get_pricing(db: DBSession, lang: str = Query(default="en")):
     result = await db.execute(
         text("""
             SELECT id, name, description, price_monthly, price_yearly,
@@ -59,11 +113,16 @@ async def get_pricing(db: DBSession):
         """)
     )
     rows = result.fetchall()
+
+    translations: dict[str, dict] = {}
+    if lang.lower() != "en" and rows:
+        translations = await _get_or_create_plan_translations(db, rows, lang.lower())
+
     return [
         PublicPlan(
             id=str(row.id),
-            name=row.name,
-            description=row.description,
+            name=translations.get(str(row.id), {}).get("name") or row.name,
+            description=translations.get(str(row.id), {}).get("description") if str(row.id) in translations else row.description,
             price_monthly=float(row.price_monthly),
             price_yearly=float(row.price_yearly),
             currency="USD",
@@ -72,7 +131,7 @@ async def get_pricing(db: DBSession):
             max_members=row.max_members,
             max_ai_requests=row.max_ai_requests,
             max_custom_domains=row.max_custom_domains,
-            features=row.features if isinstance(row.features, list) else [],
+            features=translations.get(str(row.id), {}).get("features") or (row.features if isinstance(row.features, list) else []),
             is_highlighted=str(row.id) == "pro",
             is_default=bool(row.is_default),
             sort_order=row.sort_order,

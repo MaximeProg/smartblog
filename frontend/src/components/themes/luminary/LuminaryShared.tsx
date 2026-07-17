@@ -96,7 +96,7 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
         <div className="hidden md:flex flex-1 justify-end items-center gap-1">
           <Link href={`${basePath}/about`} className="text-xs font-sans uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors px-3">About</Link>
           <Link href={`${basePath}/contact`} className="text-xs font-sans uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors px-3">Contact</Link>
-          <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
+          <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} />
           <Link
             href={`${basePath}/advertise`}
             className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-white hover:opacity-80 transition-opacity"
@@ -107,7 +107,7 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
         </div>
 
         <div className="md:hidden flex justify-end w-10">
-          <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} className="px-1.5" />
+          <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} className="px-1.5" />
         </div>
       </div>
 

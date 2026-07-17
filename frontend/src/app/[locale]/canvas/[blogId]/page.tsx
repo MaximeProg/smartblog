@@ -169,6 +169,7 @@ export default function CanvasPage() {
     font_family: liveConfig.blog.font_family,
     social_links: liveConfig.blog.social_links,
     template_config: liveConfig.template_config as TemplateConfig,
+    enabled_languages: [],
   };
 
   const editProps = {

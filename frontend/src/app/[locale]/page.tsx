@@ -22,7 +22,7 @@ export default async function HomePage({
   const isFr = locale === 'fr';
   const lang = cmsLang || locale;
   const [pricingPlans, stats, cms] = await Promise.all([
-    getPricingPlans(),
+    getPricingPlans(lang),
     getPlatformStats(),
     getPlatformPage('home', lang),
   ]);

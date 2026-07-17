@@ -79,6 +79,10 @@ class Tenant(Base):
     social_links: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
     sidebar_config: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
 
+    # Langues de traduction activées par le tenant pour son blog public
+    # (fonctionnalité réservée aux plans payants — voir _allowed_languages)
+    enabled_languages: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+
     # Configuration du template (header, footer, home, about, contact, article)
     template_config: Mapped[dict | None] = mapped_column(JSON, nullable=True)
 

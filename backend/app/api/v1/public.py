@@ -31,7 +31,7 @@ from app.models.user import User
 from app.models.enums import (
     ArticleStatus, ContentVisibility, TenantStatus, CommentStatus,
     AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus, SubscriberStatus,
-    DomainVerificationStatus, UserRole,
+    DomainVerificationStatus, UserRole, PlanTier,
 )
 from app.core.dependencies import DBSession
 from app.services import email_service
@@ -50,6 +50,23 @@ async def _resolve_tenant(db: AsyncSession, slug: str) -> Tenant:
     if not tenant:
         raise NotFoundException("Blog")
     return tenant
+
+
+def _allowed_languages(tenant: Tenant) -> list[str]:
+    """Langues de traduction que ce tenant a le droit de proposer à ses
+    visiteurs — réservé aux plans payants, quel que soit le contenu resté
+    en base (ex: après un downgrade vers le plan gratuit)."""
+    if tenant.plan == PlanTier.FREE:
+        return []
+    return tenant.enabled_languages or []
+
+
+def _is_lang_allowed(tenant: Tenant, lang: str) -> bool:
+    """Une langue est toujours autorisée si c'est la langue source du tenant
+    (aucune traduction nécessaire), sinon seulement si activée explicitement."""
+    if lang == (tenant.language or "en").lower():
+        return True
+    return lang in _allowed_languages(tenant)
 
 
 # ── Schémas publics ────────────────────────────────────────────────
@@ -103,6 +120,7 @@ class PublicBlogInfo(BaseModel):
     font_family: str
     social_links: dict
     template_config: dict | None
+    enabled_languages: list[str] = []
 
 
 # ── GET /public/{slug} — info blog ───────────────────────────────
@@ -114,7 +132,7 @@ async def get_blog_info(slug: str, db: DBSession, lang: str | None = Query(defau
     template_config = tenant.template_config
     source_lang = (tenant.language or "en").lower()
     target_lang = (lang or source_lang).lower()
-    if target_lang != source_lang and template_config:
+    if target_lang != source_lang and template_config and _is_lang_allowed(tenant, target_lang):
         translated = await _get_or_create_tenant_content_translation(db, tenant, target_lang)
         if translated is not None:
             template_config = translated
@@ -134,6 +152,7 @@ async def get_blog_info(slug: str, db: DBSession, lang: str | None = Query(defau
         font_family=getattr(tenant, 'font_family', 'Inter'),
         social_links=tenant.social_links or {},
         template_config=template_config,
+        enabled_languages=_allowed_languages(tenant),
     )
 
 
@@ -218,7 +237,7 @@ async def list_public_articles(
 
     source_lang = (tenant.language or "en").lower()
     target_lang = (lang or source_lang).lower()
-    if target_lang != source_lang and articles:
+    if target_lang != source_lang and articles and _is_lang_allowed(tenant, target_lang):
         previews = await _get_or_create_article_previews(db, tenant, articles, target_lang)
         out = []
         for a in articles:
@@ -335,7 +354,7 @@ async def get_public_article(
 
     source_lang = (tenant.language or "en").lower()
     target_lang = (lang or source_lang).lower()
-    if target_lang != source_lang and not is_paid:
+    if target_lang != source_lang and not is_paid and _is_lang_allowed(tenant, target_lang):
         translation = await _get_or_create_article_translation(db, tenant, article, target_lang)
         if translation:
             title = translation["title"]
@@ -814,6 +833,69 @@ async def resolve_domain(hostname: str, db: DBSession):
     return {"slug": tenant.slug}
 
 
+async def _get_or_create_tenant_card_translations(db: DBSession, tenants: list, lang: str) -> dict:
+    """Traduction groupée nom+description des tenants pour la page Explorer
+    (un seul appel DeepL pour toute la page), même pattern que les previews
+    d'articles — hash source, upsert atomique, jamais d'exception propagée."""
+    import hashlib
+    import json as _json
+    from app.services.translation_service import translate_json
+
+    def _hash(t: Tenant) -> str:
+        return hashlib.sha256(
+            _json.dumps({"name": t.name, "description": t.description}, sort_keys=True).encode()
+        ).hexdigest()
+
+    ids = [str(t.id) for t in tenants]
+    hashes = {str(t.id): _hash(t) for t in tenants}
+
+    existing_rows = (await db.execute(sa_text(
+        "SELECT tenant_id, name, description, source_hash FROM tenant_card_translations "
+        "WHERE lang = :lang AND tenant_id = ANY(:ids)"
+    ), {"lang": lang, "ids": ids})).fetchall()
+    existing = {str(r.tenant_id): r for r in existing_rows}
+
+    result_map: dict[str, dict] = {}
+    # Chaque tenant peut avoir sa propre langue source — regroupe par langue
+    # source pour ne faire qu'un appel DeepL groupé par groupe (et non par
+    # tenant), tout en traduisant depuis la vraie langue d'origine de chacun.
+    to_translate_by_source: dict[str, dict[str, dict]] = {}
+    for t in tenants:
+        tid = str(t.id)
+        cached = existing.get(tid)
+        if cached and cached.source_hash == hashes[tid]:
+            result_map[tid] = {"name": cached.name, "description": cached.description}
+            continue
+        source = (t.language or "en").lower()
+        if source == lang:
+            result_map[tid] = {"name": t.name, "description": t.description}
+            continue
+        to_translate_by_source.setdefault(source, {})[tid] = {"name": t.name, "description": t.description or ""}
+
+    for source, batch in to_translate_by_source.items():
+        try:
+            translated_batch = await translate_json(batch, lang, source_lang=source)
+        except Exception:
+            translated_batch = batch
+
+        for tid, vals in translated_batch.items():
+            result_map[tid] = vals
+            await db.execute(sa_text("""
+                INSERT INTO tenant_card_translations (tenant_id, lang, name, description, source_hash)
+                VALUES (:tid, :lang, :name, :description, :hash)
+                ON CONFLICT (tenant_id, lang) DO UPDATE
+                SET name = EXCLUDED.name, description = EXCLUDED.description,
+                    source_hash = EXCLUDED.source_hash, translated_at = now()
+            """), {
+                "tid": tid, "lang": lang, "name": vals["name"], "description": vals["description"] or None,
+                "hash": hashes[tid],
+            })
+    if to_translate_by_source:
+        await db.commit()
+
+    return result_map
+
+
 @explore_router.get("", response_model=list[PublicBlogCard])
 async def list_public_blogs(
     db: DBSession,
@@ -821,6 +903,7 @@ async def list_public_blogs(
     q: str | None = Query(default=None),
     limit: int = Query(default=24, le=100),
     offset: int = Query(default=0, ge=0),
+    lang: str | None = Query(default=None),
 ):
     """Returns all active public blogs with live article counts."""
     # 1. Fetch matching tenants
@@ -863,11 +946,16 @@ async def list_public_blogs(
     # 4. Sort by real article count descending
     tenants_sorted = sorted(tenants, key=lambda t: counts.get(str(t.id), 0), reverse=True)
     rows = [(t, counts.get(str(t.id), 0)) for t in tenants_sorted]
+
+    card_translations: dict[str, dict] = {}
+    if lang and lang.lower() != "en" and tenants:
+        card_translations = await _get_or_create_tenant_card_translations(db, tenants, lang.lower())
+
     return [
         PublicBlogCard(
-            name=t.name,
+            name=card_translations.get(str(t.id), {}).get("name") or t.name,
             slug=t.slug,
-            description=t.description,
+            description=card_translations.get(str(t.id), {}).get("description") if str(t.id) in card_translations else t.description,
             category=t.category,
             logo_url=t.logo_url,
             cover_image_url=t.cover_image_url,

@@ -62,7 +62,7 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
         </nav>
 
         <div className="flex items-center gap-3">
-          <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
+          <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} />
           <Link
             href={`${basePath}/advertise`}
             className="hidden md:inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-white hover:opacity-80 transition-opacity"

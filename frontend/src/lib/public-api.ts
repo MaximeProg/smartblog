@@ -58,6 +58,7 @@ export interface BlogInfo {
   font_family: string;
   social_links: Record<string, string>;
   template_config: TemplateConfig | null;
+  enabled_languages: string[];
 }
 
 export interface PublicArticle {

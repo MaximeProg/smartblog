@@ -803,7 +803,8 @@
     "apiKeys": "API Keys",
     "accounting": "Financials",
     "support": "Support",
-    "aiBuilder": "AI Blog Builder"
+    "aiBuilder": "AI Blog Builder",
+    "languages": "Languages"
   },
   "menus": {
     "locationPrimary": "Main navigation",
@@ -1551,6 +1552,12 @@
     "pageArticleDesc": "Configure the article reading experience.",
     "pageSeo": "SEO",
     "pageSeoDesc": "Optimize your blog for search engines.",
+    "pageLanguages": "Languages",
+    "pageLanguagesDesc": "Choose which languages visitors can read your blog in.",
+    "languagesUpsellTitle": "Available from the Starter plan",
+    "languagesUpsellDesc": "Upgrade your plan to let visitors translate your blog into the languages of your choice.",
+    "languagesSectionTitle": "Available languages",
+    "languagesSavedToast": "Languages updated",
     "pageNewsletter": "Newsletter",
     "pageNewsletterDesc": "Manage your newsletter subscribers.",
     "pageAnalytics": "Analytics",

@@ -86,7 +86,7 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
             )}
           </Link>
           <div className="flex items-center gap-3">
-            <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
+            <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} />
             <button className="text-zinc-500 hover:text-zinc-900 transition-colors hidden sm:block" aria-label="Search">
               <Search className="h-5 w-5" />
             </button>

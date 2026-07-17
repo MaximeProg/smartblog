@@ -254,7 +254,7 @@ export default function LuminaryArticle({
           </button>
           <div className="flex items-center gap-3">
             <ShareButtons url={articleUrl} title={article.title} primaryColor={primaryColor} />
-            <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
+            <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} />
           </div>
         </div>
       </div>

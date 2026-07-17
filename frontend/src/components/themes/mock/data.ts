@@ -256,6 +256,7 @@ export const MOCK_BLOG_EDITORIAL: BlogInfo = {
   font_family: 'Inter',
   social_links: { twitter: 'https://twitter.com', linkedin: 'https://linkedin.com', github: 'https://github.com' },
   template_config: null,
+  enabled_languages: [],
 };
 
 export const MOCK_BLOG_MAGAZINE: BlogInfo = {
@@ -273,6 +274,7 @@ export const MOCK_BLOG_MAGAZINE: BlogInfo = {
   font_family: 'Inter',
   social_links: { twitter: 'https://twitter.com', linkedin: 'https://linkedin.com' },
   template_config: null,
+  enabled_languages: [],
 };
 
 export const MOCK_BLOG_MINIMAL: BlogInfo = {
@@ -290,6 +292,7 @@ export const MOCK_BLOG_MINIMAL: BlogInfo = {
   font_family: 'Inter',
   social_links: { twitter: 'https://twitter.com' },
   template_config: null,
+  enabled_languages: [],
 };
 
 export const MOCK_BLOG_CREATIVE: BlogInfo = {
@@ -307,4 +310,5 @@ export const MOCK_BLOG_CREATIVE: BlogInfo = {
   font_family: 'Inter',
   social_links: { instagram: 'https://instagram.com', twitter: 'https://twitter.com', dribbble: 'https://dribbble.com' },
   template_config: null,
+  enabled_languages: [],
 };

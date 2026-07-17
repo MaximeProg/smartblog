@@ -206,7 +206,7 @@ export function CardCompact({ article, href, rank }: { article: PublicArticle; h
 export function CorporateHeader({
   blog, categories, current, searchQuery, primaryColor, minimal = false, basePath, previewSlug,
 }: {
-  blog: { name: string; logo_url?: string | null; language?: string; social_links?: Record<string, string>; template_config?: { header?: { topBar?: { enabled?: boolean; showDate?: boolean; showSocial?: boolean; showNewsletter?: boolean; showRss?: boolean }; subscribe?: { enabled?: boolean; label?: string }; nav?: { links?: { label: string; url: string }[] } } } | null };
+  blog: { name: string; logo_url?: string | null; language?: string; enabled_languages?: string[]; social_links?: Record<string, string>; template_config?: { header?: { topBar?: { enabled?: boolean; showDate?: boolean; showSocial?: boolean; showNewsletter?: boolean; showRss?: boolean }; subscribe?: { enabled?: boolean; label?: string }; nav?: { links?: { label: string; url: string }[] } } } | null };
   categories: PublicCategory[];
   current?: string;
   searchQuery?: string;
@@ -428,7 +428,7 @@ export function CorporateHeader({
                   <Search className="h-4 w-4" />
                 </button>
               )}
-              <BlogLanguageSwitcher sourceLang={blog.language || 'en'} basePath={basePath ?? ''} className="text-slate-300 hover:text-white hover:bg-white/10" />
+              <BlogLanguageSwitcher sourceLang={blog.language || 'en'} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath ?? ''} className="text-slate-300 hover:text-white hover:bg-white/10" />
               {basePath != null && (
                 <Link href={`${basePath}/advertise${pq}`}
                   className="hidden lg:inline-flex items-center gap-1.5 h-9 px-4 rounded-xl text-sm font-bold border border-white/20 text-slate-200 hover:border-white/50 hover:text-white transition-all shrink-0">

@@ -84,9 +84,9 @@ export async function getPlatformCategories(): Promise<Category[]> {
   }
 }
 
-export async function getPricingPlans(): Promise<PricingPlan[]> {
+export async function getPricingPlans(lang = 'en'): Promise<PricingPlan[]> {
   try {
-    const data = await apiFetch(`${API_URL}/api/v1/platform/pricing`, 3600);
+    const data = await apiFetch(`${API_URL}/api/v1/platform/pricing?lang=${lang}`, 3600);
     return Array.isArray(data) ? data : [];
   } catch {
     return [];

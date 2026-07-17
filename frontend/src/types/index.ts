@@ -74,6 +74,7 @@ export interface TenantResponse {
   template_config?: Record<string, unknown> | null;
   social_links?: Record<string, string>;
   robots_txt?: string | null;
+  enabled_languages?: string[];
   trial_ends_at?: string | null;
   plan_expires_at?: string | null;
   limits?: PlanLimits;
@@ -139,6 +140,7 @@ export interface UpdateTenantData {
   seo_meta_description?: string;
   template_config?: Record<string, unknown>;
   robots_txt?: string;
+  enabled_languages?: string[];
 }
 
 export interface SlugCheckResponse {

@@ -43,11 +43,12 @@ const FR_LABELS: BlogExploreLabels = {
   noDescription: 'Aucune description',
 };
 
-async function fetchBlogs(q?: string, category?: string): Promise<{ blogs: Blog[]; error: boolean }> {
+async function fetchBlogs(q?: string, category?: string, lang?: string): Promise<{ blogs: Blog[]; error: boolean }> {
   const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
   const params = new URLSearchParams({ limit: '48' });
   if (q) params.set('q', q);
   if (category) params.set('category', category);
+  if (lang) params.set('lang', lang);
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 12000);
   try {
@@ -80,7 +81,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const { locale } = await params;
   const { q, category, cmsLang } = await searchParams;
   const lang = (cmsLang || locale).toLowerCase();
-  const { blogs, error } = await fetchBlogs(q, category);
+  const { blogs, error } = await fetchBlogs(q, category, lang);
 
   let labels: BlogExploreLabels = lang === 'fr' ? FR_LABELS : EN_LABELS;
   if (lang !== 'en' && lang !== 'fr') {

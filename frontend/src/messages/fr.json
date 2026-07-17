@@ -803,7 +803,8 @@
     "apiKeys": "Clés API",
     "accounting": "Finances",
     "support": "Support",
-    "aiBuilder": "Créateur IA"
+    "aiBuilder": "Créateur IA",
+    "languages": "Langues"
   },
   "menus": {
     "locationPrimary": "Navigation principale",
@@ -1551,6 +1552,12 @@
     "pageArticleDesc": "Configurez l'expérience de lecture des articles.",
     "pageSeo": "SEO",
     "pageSeoDesc": "Optimisez votre blog pour les moteurs de recherche.",
+    "pageLanguages": "Langues",
+    "pageLanguagesDesc": "Choisissez dans quelles langues vos visiteurs peuvent lire votre blog.",
+    "languagesUpsellTitle": "Disponible à partir du plan Starter",
+    "languagesUpsellDesc": "Passez à un plan supérieur pour permettre à vos visiteurs de traduire votre blog dans les langues de votre choix.",
+    "languagesSectionTitle": "Langues disponibles",
+    "languagesSavedToast": "Langues mises à jour",
     "pageNewsletter": "Newsletter",
     "pageNewsletterDesc": "Gérez les abonnés à votre newsletter.",
     "pageAnalytics": "Analytics",

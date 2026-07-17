@@ -395,7 +395,7 @@ export default function CorporateArticle({
               title={article.title}
               primaryColor={primaryColor}
             />
-            <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
+            <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} />
             <div className="ml-auto flex items-center gap-2 text-sm text-slate-400">
               <Eye className="h-4 w-4" />
               {(article.views_count ?? 0).toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')} {t('viewsLabel')}

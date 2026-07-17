@@ -55,6 +55,7 @@ class UpdateTenantRequest(BaseModel):
     sidebar_config: list | None = None
     template_config: dict | None = None
     robots_txt: str | None = None
+    enabled_languages: list[str] | None = None
 
 
 class TenantLimits(BaseModel):
@@ -98,6 +99,7 @@ class TenantResponse(BaseModel):
     seo_title_template: str | None = None
     seo_meta_description: str | None = None
     robots_txt: str | None = None
+    enabled_languages: list[str] = []
     trial_ends_at: datetime | None = None
     plan_expires_at: datetime | None = None
     limits: TenantLimits | None = None

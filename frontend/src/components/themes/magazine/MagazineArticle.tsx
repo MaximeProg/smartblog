@@ -224,7 +224,7 @@ export default function MagazineArticle({
                   title={article.title}
                   primaryColor={primaryColor}
                 />
-                <BlogLanguageSwitcher sourceLang={blog.language} basePath={basePath} />
+                <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} />
               </div>
             </div>
           </article>
