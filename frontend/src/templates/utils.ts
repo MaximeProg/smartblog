@@ -2,11 +2,16 @@ import type { TemplateSchema, SectionDef, PageDef } from './types';
 
 export function deepSet<T>(obj: T, path: string, value: unknown): T {
   const keys = path.split('.');
-  const result = { ...(obj as object) } as Record<string, unknown>;
+  const result = (Array.isArray(obj) ? [...obj] : { ...(obj as object) }) as Record<string, unknown>;
   let cur = result;
   for (let i = 0; i < keys.length - 1; i++) {
     const k = keys[i];
-    cur[k] = cur[k] != null ? { ...(cur[k] as object) } : {};
+    const existing = cur[k];
+    cur[k] = Array.isArray(existing)
+      ? [...existing]
+      : existing != null
+      ? { ...(existing as object) }
+      : /^\d+$/.test(keys[i + 1]) ? [] : {};
     cur = cur[k] as Record<string, unknown>;
   }
   cur[keys[keys.length - 1]] = value;

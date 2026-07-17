@@ -375,7 +375,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto" style={{ fontSize: '14px' }}>
+        <div className="flex-1 overflow-y-auto min-h-0" style={{ fontSize: '14px' }}>
           {children}
         </div>
       </div>

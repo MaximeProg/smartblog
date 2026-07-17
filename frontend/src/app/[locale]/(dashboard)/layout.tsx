@@ -18,6 +18,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [isHydrated, isAuthenticated, locale, router]);
 
+  // Le dashboard/superadmin est un layout "app" plein écran : le scroll doit
+  // rester confiné aux conteneurs internes (overflow-y-auto). Sans ça, si un
+  // enfant flex dépasse d'un pixel (ex. min-h-0 manquant quelque part), le
+  // document lui-même devient aussi scrollable — deux barres de défilement
+  // et un espace vide qui se recalcule différemment de l'intérieur.
+  useEffect(() => {
+    const { documentElement: html, body } = document;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+    };
+  }, []);
+
   // Le plan de l'utilisateur (User.plan) n'est mis à jour côté serveur qu'au
   // moment du paiement, mais le store persisté ne le relit jamais tout seul
   // — sans ça, un upgrade reste invisible dans l'app jusqu'à la déconnexion.

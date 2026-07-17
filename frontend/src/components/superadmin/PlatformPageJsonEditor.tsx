@@ -68,14 +68,16 @@ function NodeEditor({ path, value, onSet }: { path: string; value: unknown; onSe
     const key = path.split('.').pop() ?? '';
     if (IMAGE_KEY_RE.test(key)) {
       const platformTenantId = process.env.NEXT_PUBLIC_PLATFORM_TENANT_ID ?? '';
-      return (
+      const isAvatar = /photo|avatar/i.test(key);
+      const picker = (
         <ImagePicker
           value={value}
           onChange={(url) => onSet(path, url)}
           tenantId={platformTenantId}
-          ratio="16/9"
+          ratio={isAvatar ? '1/1' : '16/9'}
         />
       );
+      return isAvatar ? <div className="max-w-[160px]">{picker}</div> : picker;
     }
     if (value.length > 80) {
       return (

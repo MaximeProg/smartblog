@@ -232,6 +232,7 @@ async def refresh_access_token(
         tenant_id=data["tenant_id"],
         role=data["role"],
         email=user.email,
+        is_super_admin=user.is_super_admin,
     )
 
     new_refresh_plain, new_refresh_hash = generate_refresh_token()
