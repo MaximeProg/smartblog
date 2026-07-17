@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { Languages, Check } from 'lucide-react';
+import { Languages, Check, Search } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -33,6 +33,8 @@ interface Props {
 export function BlogLanguageSwitcher({ sourceLang, enabledLanguages, basePath = '', className }: Props) {
   const pathname = usePathname() || '/';
   const [mounted, setMounted] = useState(false);
+  const [query, setQuery] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
   useEffect(() => setMounted(true), []);
 
   const enabledSet = new Set(enabledLanguages.map((c) => c.toLowerCase()));
@@ -43,6 +45,10 @@ export function BlogLanguageSwitcher({ sourceLang, enabledLanguages, basePath = 
   // Pas de langue additionnelle activée (plan gratuit ou aucune activée) —
   // rien à proposer, on n'affiche même pas le sélecteur.
   if (availableLangs.length <= 1) return null;
+
+  const filteredLangs = availableLangs.filter((l) =>
+    l.label.toLowerCase().includes(query.toLowerCase()) || l.code.includes(query.toLowerCase())
+  );
 
   const withoutBase = basePath && pathname.startsWith(basePath)
     ? pathname.slice(basePath.length) || '/'
@@ -91,16 +97,40 @@ export function BlogLanguageSwitcher({ sourceLang, enabledLanguages, basePath = 
         <Languages className="h-3.5 w-3.5" />
         <span className="text-xs font-semibold uppercase tracking-wide">{activeMeta.code}</span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[160px]">
-        {availableLangs.map((l) => (
-          <DropdownMenuItem key={l.code} asChild className="flex items-center gap-2.5 cursor-pointer">
-            <a href={hrefFor(l.code)} onClick={() => handleSelect(l.code)}>
-              <span className="text-base leading-none">{l.flag}</span>
-              <span className="text-sm flex-1">{l.label}</span>
-              {l.code === active && <Check className="h-3.5 w-3.5 text-primary shrink-0" />}
-            </a>
-          </DropdownMenuItem>
-        ))}
+      <DropdownMenuContent
+        align="end"
+        className="min-w-[200px] p-0"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          searchRef.current?.focus();
+        }}
+        onCloseAutoFocus={() => setQuery('')}
+      >
+        <div className="flex items-center gap-2 px-2.5 py-2 border-b border-border">
+          <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+          <input
+            ref={searchRef}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.stopPropagation()}
+            placeholder="Search..."
+            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+          />
+        </div>
+        <div className="max-h-64 overflow-y-auto p-1">
+          {filteredLangs.length === 0 && (
+            <p className="px-2.5 py-2 text-sm text-muted-foreground">No match</p>
+          )}
+          {filteredLangs.map((l) => (
+            <DropdownMenuItem key={l.code} asChild className="flex items-center gap-2.5 cursor-pointer">
+              <a href={hrefFor(l.code)} onClick={() => handleSelect(l.code)}>
+                <span className="text-base leading-none">{l.flag}</span>
+                <span className="text-sm flex-1">{l.label}</span>
+                {l.code === active && <Check className="h-3.5 w-3.5 text-primary shrink-0" />}
+              </a>
+            </DropdownMenuItem>
+          ))}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

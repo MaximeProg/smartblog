@@ -10,7 +10,7 @@ import {
   BookOpen, Heart, Layers, Tags, Images, MessageSquare,
   Megaphone, BarChart2, Search, DollarSign, Settings,
   Key, LifeBuoy, Sparkles, ChevronDown, ChevronRight,
-  ExternalLink, Zap, Plus, LogOut,
+  ExternalLink, Zap, Plus, LogOut, Languages,
   X,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
@@ -298,6 +298,7 @@ export function StructurePanel() {
           { href: 'analytics',  icon: BarChart2,  label: 'Analytics' },
           { href: 'seo',        icon: Search,     label: 'SEO' },
           { href: 'social',     icon: Share2,     label: 'Social' },
+          { href: 'languages',  icon: Languages,  label: 'Langues' },
           { href: 'accounting', icon: DollarSign, label: 'Comptabilité' },
         ].map(({ href, icon: Icon, label }) => {
           const full = `${base}/${href}`;
