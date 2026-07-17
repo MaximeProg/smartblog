@@ -1814,6 +1814,8 @@
     "imageChange": "Changer",
     "imageFromComputer": "Depuis l'ordinateur",
     "imageDirectUrl": "URL directe",
+    "imageGallery": "Galerie",
+    "imageGalleryEmpty": "Aucune image importée pour le moment.",
     "imageClickOrDrag": "Cliquez ou glissez une image",
     "imageDropHere": "Déposez ici",
     "imageFormats": "JPG, PNG, WebP, GIF • max 10 Mo",

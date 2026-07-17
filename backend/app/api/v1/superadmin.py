@@ -734,6 +734,35 @@ async def update_platform_page(
     return {"ok": True, "content_hash": content_hash}
 
 
+class PlatformPageAiGenerateBody(BaseModel):
+    answers: dict[str, str]
+    language: str = "en"
+
+
+@router.post("/platform-pages/{slug}/ai-generate")
+async def ai_generate_platform_page(
+    slug: str,
+    body: PlatformPageAiGenerateBody,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Génère un brouillon de texte pour une page CMS via l'IA, à partir de
+    quelques réponses du super admin — ne sauvegarde rien, la page continue
+    de passer par le PUT existant une fois relue/ajustée."""
+    from app.services.ai_service import generate_platform_page_content
+
+    await _require_super_admin(payload, db)
+
+    row = (await db.execute(
+        text("SELECT content FROM platform_pages WHERE slug = :slug"), {"slug": slug}
+    )).fetchone()
+    if not row:
+        raise NotFoundException("Page")
+
+    generated = await generate_platform_page_content(row.content, body.answers, body.language)
+    return generated
+
+
 # ── Santé système ─────────────────────────────────────────────────
 
 _server_start = time.time()

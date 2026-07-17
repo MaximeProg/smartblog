@@ -1,9 +1,10 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { Upload, Link2, X, ImageIcon, Loader2, Check } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Upload, Link2, X, ImageIcon, Loader2, Check, Images } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { mediaApi } from '@/lib/api';
+import type { MediaItem } from '@/types';
 
 interface ImagePickerProps {
   value: string;
@@ -12,7 +13,7 @@ interface ImagePickerProps {
   ratio?: '16/9' | '1/1' | '3/2';
 }
 
-type Tab = 'file' | 'url';
+type Tab = 'file' | 'url' | 'gallery';
 
 export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: ImagePickerProps) {
   const t = useTranslations('studio');
@@ -22,7 +23,18 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
   const [uploadError, setUploadError] = useState('');
   const [previewError, setPreviewError] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [gallery, setGallery] = useState<MediaItem[]>([]);
+  const [galleryLoading, setGalleryLoading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (tab !== 'gallery' || !tenantId) return;
+    setGalleryLoading(true);
+    mediaApi.list(tenantId, { type: 'image', limit: 60 })
+      .then(({ data }) => setGallery(data))
+      .catch(() => setGallery([]))
+      .finally(() => setGalleryLoading(false));
+  }, [tab, tenantId]);
 
   const paddingPct = ratio === '1/1' ? '100%' : ratio === '3/2' ? '66.67%' : '56.25%';
 
@@ -127,6 +139,15 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
         >
           <Link2 className="h-3 w-3" /> {t('imageDirectUrl')}
         </button>
+        <button
+          type="button"
+          onClick={() => setTab('gallery')}
+          className={`flex-1 flex items-center justify-center gap-1.5 h-8 text-[11px] font-semibold transition-colors border-l border-slate-200 dark:border-slate-700 ${
+            tab === 'gallery' ? 'bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900' : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
+          }`}
+        >
+          <Images className="h-3 w-3" /> {t('imageGallery')}
+        </button>
       </div>
 
       {/* File tab */}
@@ -192,6 +213,33 @@ export function ImagePicker({ value, onChange, tenantId, ratio = '16/9' }: Image
               <Check className="h-3.5 w-3.5" /> OK
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Gallery tab */}
+      {tab === 'gallery' && (
+        <div>
+          {galleryLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
+            </div>
+          ) : gallery.length === 0 ? (
+            <p className="text-[12px] text-slate-400 dark:text-slate-500 text-center py-8">{t('imageGalleryEmpty')}</p>
+          ) : (
+            <div className="grid grid-cols-4 gap-2 max-h-56 overflow-y-auto">
+              {gallery.map(item => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => { onChange(item.cloudinary_secure_url); setPreviewError(false); }}
+                  className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 hover:border-blue-400 transition-colors"
+                  title={item.original_filename}
+                >
+                  <img src={item.cloudinary_secure_url} alt={item.alt_text ?? ''} className="absolute inset-0 w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

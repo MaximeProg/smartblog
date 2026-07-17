@@ -2,9 +2,15 @@
 
 import { Plus, Trash2 } from 'lucide-react';
 import { deepSet, getPath } from '@/templates/utils';
+import { ImagePicker } from '@/components/dashboard/ImagePicker';
 
 const inputCls = "w-full h-9 px-3 rounded-lg border bg-transparent text-[13px] focus:outline-none focus:ring-2 focus:ring-[#6366f1]/30";
 const inputStyle = { borderColor: 'var(--sa-border)', color: 'var(--sa-text)' } as React.CSSProperties;
+
+// Même heuristique que backend/app/services/ai_service.py::_is_image_key —
+// une clé qui matche est traitée comme un champ image (ImagePicker) plutôt
+// qu'un champ texte, et jamais générée/modifiée par le remplissage IA.
+const IMAGE_KEY_RE = /url|image|photo|logo|avatar|cover|background/i;
 
 function humanLabel(key: string): string {
   return key.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
@@ -59,6 +65,18 @@ function NodeEditor({ path, value, onSet }: { path: string; value: unknown; onSe
   }
 
   if (typeof value === 'string') {
+    const key = path.split('.').pop() ?? '';
+    if (IMAGE_KEY_RE.test(key)) {
+      const platformTenantId = process.env.NEXT_PUBLIC_PLATFORM_TENANT_ID ?? '';
+      return (
+        <ImagePicker
+          value={value}
+          onChange={(url) => onSet(path, url)}
+          tenantId={platformTenantId}
+          ratio="16/9"
+        />
+      );
+    }
     if (value.length > 80) {
       return (
         <textarea

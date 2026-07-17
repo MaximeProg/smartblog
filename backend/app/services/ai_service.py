@@ -2,6 +2,7 @@
 Service IA — OpenAI GPT-4o, DeepL, ElevenLabs, DALL-E 3.
 Toutes les fonctions retournent un dict avec le résultat et la consommation.
 """
+import re
 import httpx
 from openai import AsyncOpenAI
 from app.core.config import settings
@@ -359,3 +360,96 @@ Return this exact JSON structure (fill every field with relevant content):
     tokens_used = resp.usage.total_tokens
 
     return {"result": config, "tokens_used": tokens_used}
+
+
+# ─── Remplissage IA des pages CMS plateforme (super admin) ────────
+
+# Même heuristique que PlatformPageJsonEditor.tsx côté frontend : une clé
+# correspondant à ce motif est un champ image, jamais généré/modifié par l'IA.
+_IMAGE_KEY_RE = re.compile(r"url|image|photo|logo|avatar|cover|background", re.IGNORECASE)
+
+
+def _is_image_key(key: str) -> bool:
+    return bool(_IMAGE_KEY_RE.search(key))
+
+
+def _strip_images_for_prompt(node):
+    """Copie profonde de `node` où les valeurs des champs image sont
+    remplacées par un marqueur — préserve la forme JSON pour que le modèle
+    la reproduise, sans jamais exposer/generer de vraies URLs d'image."""
+    if isinstance(node, dict):
+        return {
+            k: ("<KEEP_UNCHANGED>" if _is_image_key(k) and isinstance(v, str) else _strip_images_for_prompt(v))
+            for k, v in node.items()
+        }
+    if isinstance(node, list):
+        return [_strip_images_for_prompt(v) for v in node]
+    return node
+
+
+def _merge_preserving_images(original, generated):
+    """Ne retient de `generated` que les clés déjà présentes dans `original`
+    (ignore toute clé hallucinée en plus) et ne touche jamais aux champs
+    image — sécurité en plus du prompt, au cas où le modèle ne le respecte pas."""
+    if isinstance(original, dict) and isinstance(generated, dict):
+        result = {}
+        for k, v in original.items():
+            if _is_image_key(k) and isinstance(v, str):
+                result[k] = v
+            elif k in generated:
+                result[k] = _merge_preserving_images(v, generated[k])
+            else:
+                result[k] = v
+        return result
+    if isinstance(original, list) and isinstance(generated, list):
+        return [
+            _merge_preserving_images(orig_item, generated[i]) if i < len(generated) else orig_item
+            for i, orig_item in enumerate(original)
+        ]
+    if isinstance(generated, type(original)) or (isinstance(original, (int, float)) and isinstance(generated, (int, float))):
+        return generated
+    return original
+
+
+async def generate_platform_page_content(content: dict, answers: dict[str, str], language: str = "en") -> dict:
+    """Régénère le texte d'une page CMS plateforme (home/about/careers/...) en
+    préservant exactement sa structure JSON actuelle — n'importe quelle page,
+    sans schéma dédié, contrairement à generate_blog_config(). Les champs
+    image (détectés par nom de clé) ne sont jamais générés ni modifiés."""
+    import json
+
+    lang_label = "French" if language == "fr" else "English"
+    template_for_prompt = _strip_images_for_prompt(content)
+    answers_lines = "\n".join(f"- {k}: {v}" for k, v in answers.items() if v)
+
+    system = (
+        f"You are an expert marketing copywriter. Rewrite the text content of a website page "
+        f"in {lang_label}. You MUST return a JSON object with EXACTLY the same keys and nesting "
+        f'as the JSON template provided — do not add, remove, or rename any key. Any string value '
+        f'equal to "<KEEP_UNCHANGED>" is an image reference: copy it back verbatim, never replace '
+        f"it with a real value. Return ONLY valid JSON, no markdown, no explanation."
+    )
+    user = f"""Page content template (JSON — values are placeholders to replace with real copy):
+{json.dumps(template_for_prompt, indent=2)}
+
+Context provided by the site admin:
+{answers_lines or '(no additional context provided)'}
+
+Rewrite every text value into engaging, on-brand marketing copy consistent with this context. Keep the exact same JSON structure and key names."""
+
+    resp = await _oai().chat.completions.create(
+        model=settings.OPENAI_STRONG_MODEL,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        response_format={"type": "json_object"},
+        temperature=0.7,
+        max_tokens=4000,
+    )
+
+    generated = json.loads(resp.choices[0].message.content)
+    merged = _merge_preserving_images(content, generated)
+    tokens_used = resp.usage.total_tokens
+
+    return {"result": merged, "tokens_used": tokens_used}

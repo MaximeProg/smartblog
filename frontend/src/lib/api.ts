@@ -1409,6 +1409,12 @@ export const superadminApi = {
       { content },
     ),
 
+  generatePlatformPageContent: (slug: string, answers: Record<string, string>, language = 'en') =>
+    api.post<{ result: Record<string, unknown>; tokens_used: number }>(
+      `/superadmin/platform-pages/${slug}/ai-generate`,
+      { answers, language },
+    ),
+
   // ── Templates ─────────────────────────────────────────────────
   listTemplates: () =>
     api.get<{ templates: SATemplate[]; total: number }>('/superadmin/templates'),
