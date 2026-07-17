@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAutoSave } from '@/hooks/use-auto-save';
+import { useCurrentUser } from '@/store/auth.store';
 import {
   BlogStudioShell, StudioSection, StudioSwitch,
 } from '@/components/dashboard/BlogStudioShell';
@@ -25,7 +26,12 @@ export default function LanguagesPage() {
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const isFree = (tenant?.plan ?? 'free') === 'free';
+  // L'abonnement est rattaché à l'utilisateur (propriétaire du blog), pas au
+  // tenant — Tenant.plan n'est qu'une copie figée à la création du blog,
+  // jamais resynchronisée après un upgrade/downgrade. Le plan réel et à jour
+  // est celui de l'utilisateur connecté (webhook de paiement → User.plan).
+  const currentUser = useCurrentUser();
+  const isFree = (currentUser?.plan ?? 'free') === 'free';
   const sourceLang = (tenant?.language ?? 'en').toLowerCase();
 
   const [enabled, setEnabled] = useState<string[]>([]);

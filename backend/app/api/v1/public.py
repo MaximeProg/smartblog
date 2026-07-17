@@ -52,21 +52,40 @@ async def _resolve_tenant(db: AsyncSession, slug: str) -> Tenant:
     return tenant
 
 
-def _allowed_languages(tenant: Tenant) -> list[str]:
+async def _owner_plan(db: AsyncSession, tenant: Tenant) -> PlanTier:
+    """L'abonnement est rattaché à l'utilisateur (propriétaire du blog), pas
+    au tenant — Tenant.plan n'est qu'une copie figée au moment de la création
+    du blog, jamais resynchronisée après un upgrade/downgrade (le webhook de
+    paiement ne met à jour que User.plan). On résout donc le vrai plan actif
+    via le TENANT_ADMIN, comme le fait le webhook de paiement lui-même."""
+    result = await db.execute(
+        select(User.plan)
+        .join(TenantUser, TenantUser.user_id == User.id)
+        .where(
+            TenantUser.tenant_id == tenant.id,
+            TenantUser.role == UserRole.TENANT_ADMIN,
+        )
+        .limit(1)
+    )
+    plan = result.scalar_one_or_none()
+    return plan if plan is not None else tenant.plan
+
+
+async def _allowed_languages(db: AsyncSession, tenant: Tenant) -> list[str]:
     """Langues de traduction que ce tenant a le droit de proposer à ses
     visiteurs — réservé aux plans payants, quel que soit le contenu resté
     en base (ex: après un downgrade vers le plan gratuit)."""
-    if tenant.plan == PlanTier.FREE:
+    if await _owner_plan(db, tenant) == PlanTier.FREE:
         return []
     return tenant.enabled_languages or []
 
 
-def _is_lang_allowed(tenant: Tenant, lang: str) -> bool:
+async def _is_lang_allowed(db: AsyncSession, tenant: Tenant, lang: str) -> bool:
     """Une langue est toujours autorisée si c'est la langue source du tenant
     (aucune traduction nécessaire), sinon seulement si activée explicitement."""
     if lang == (tenant.language or "en").lower():
         return True
-    return lang in _allowed_languages(tenant)
+    return lang in await _allowed_languages(db, tenant)
 
 
 # ── Schémas publics ────────────────────────────────────────────────
@@ -132,7 +151,8 @@ async def get_blog_info(slug: str, db: DBSession, lang: str | None = Query(defau
     template_config = tenant.template_config
     source_lang = (tenant.language or "en").lower()
     target_lang = (lang or source_lang).lower()
-    if target_lang != source_lang and template_config and _is_lang_allowed(tenant, target_lang):
+    allowed_languages = await _allowed_languages(db, tenant)
+    if target_lang != source_lang and template_config and (target_lang in allowed_languages):
         translated = await _get_or_create_tenant_content_translation(db, tenant, target_lang)
         if translated is not None:
             template_config = translated
@@ -152,7 +172,7 @@ async def get_blog_info(slug: str, db: DBSession, lang: str | None = Query(defau
         font_family=getattr(tenant, 'font_family', 'Inter'),
         social_links=tenant.social_links or {},
         template_config=template_config,
-        enabled_languages=_allowed_languages(tenant),
+        enabled_languages=allowed_languages,
     )
 
 
@@ -237,7 +257,7 @@ async def list_public_articles(
 
     source_lang = (tenant.language or "en").lower()
     target_lang = (lang or source_lang).lower()
-    if target_lang != source_lang and articles and _is_lang_allowed(tenant, target_lang):
+    if target_lang != source_lang and articles and await _is_lang_allowed(db, tenant, target_lang):
         previews = await _get_or_create_article_previews(db, tenant, articles, target_lang)
         out = []
         for a in articles:
@@ -354,7 +374,7 @@ async def get_public_article(
 
     source_lang = (tenant.language or "en").lower()
     target_lang = (lang or source_lang).lower()
-    if target_lang != source_lang and not is_paid and _is_lang_allowed(tenant, target_lang):
+    if target_lang != source_lang and not is_paid and await _is_lang_allowed(db, tenant, target_lang):
         translation = await _get_or_create_article_translation(db, tenant, article, target_lang)
         if translation:
             title = translation["title"]
