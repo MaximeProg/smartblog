@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import {
   ArrowRight, Check, BarChart2, Users, FileText, Rss,
-  Bot, Globe2, Zap, Shield, Star,
+  Bot, Globe2, Zap, Shield, Star, Link2, UserPlus, Coins,
 } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
@@ -76,6 +76,23 @@ export default async function HomePage({
     subtitle: 'Join thousands of content creators who trust SmarterBloggers.',
     button: 'Start for free — no credit card needed',
   };
+  const affiliate = (cms?.affiliate as any) ?? {
+    eyebrow: 'Affiliate Program',
+    title: 'Earn money by recommending SmarterBloggers',
+    subtitle: 'Turn your network into recurring income — no cap on referrals, automatic crypto payouts.',
+    steps: [
+      { icon: 'link2', title: 'Share your unique link', description: 'Every account gets a personal referral code and link you can share anywhere — social media, email, your own blog.' },
+      { icon: 'userplus', title: 'They subscribe', description: 'When someone you referred signs up for a paid plan, the commission tracking starts automatically — nothing to set up.' },
+      { icon: 'coins', title: 'Get paid automatically', description: 'Commissions are paid out in cryptocurrency (USDT) as soon as your wallet is configured — no waiting period, no payout fees.' },
+    ],
+    highlights: [
+      { value: '10%', label: 'Recurring commission on every payment your direct referrals make, for as long as they stay subscribed' },
+      { value: '10 levels', label: "Extended referral network — earn a share from your referrals' own referrals too" },
+      { value: 'Unlimited', label: 'No cap on how many people you can refer' },
+    ],
+    cta_label: 'Start earning today',
+  };
+  const AFFILIATE_ICONS: Record<string, typeof Link2> = { link2: Link2, userplus: UserPlus, coins: Coins };
 
   const FEATURE_ICONS = [Bot, Globe2, Users, BarChart2, Rss, FileText];
   const FEATURE_COLORS = [
@@ -375,6 +392,59 @@ export default async function HomePage({
           <p className="text-center text-sm text-slate-400 mt-10">
             {pricingDisclaimer}
           </p>
+        </div>
+      </section>
+
+      {/* ─── AFFILIATE PROGRAM ─────────────────────────────────────────────── */}
+      <section id="affiliate" className="py-16 md:py-24 px-4 sm:px-6 bg-slate-50 dark:bg-slate-900/40">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10 md:mb-16">
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-3">
+              {affiliate.eyebrow}
+            </p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3 md:mb-4">{affiliate.title}</h2>
+            <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg max-w-2xl mx-auto">{affiliate.subtitle}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 mb-12 md:mb-16">
+            {(affiliate.steps as { icon: string; title: string; description: string }[]).map(({ icon, title, description }, i) => {
+              const Icon = AFFILIATE_ICONS[icon] ?? Link2;
+              return (
+                <div
+                  key={title}
+                  className="relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 hover:border-slate-300 dark:hover:border-slate-700 transition-all"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 dark:text-blue-400">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <span className="text-xs font-black text-slate-300 dark:text-slate-700">0{i + 1}</span>
+                  </div>
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-2">{title}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{description}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-10">
+            {(affiliate.highlights as { value: string; label: string }[]).map(({ value, label }) => (
+              <div key={label} className="text-center px-4">
+                <p className="text-3xl md:text-4xl font-black text-blue-600 dark:text-blue-400 mb-2">{value}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{label}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link
+              href={`/${locale}/login`}
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition-all shadow-lg shadow-blue-600/20 hover:scale-[1.02]"
+            >
+              {affiliate.cta_label}
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
