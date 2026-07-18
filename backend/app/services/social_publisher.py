@@ -1,6 +1,7 @@
 """Social publisher — posts articles to connected social platforms."""
 from __future__ import annotations
 
+import asyncio
 import httpx
 import structlog
 
@@ -33,6 +34,10 @@ async def publish_article(
             return await _post_twitter(access_token, article_url, title)
         if platform == "tiktok":
             return await _post_tiktok(access_token, article_url, title)
+        if platform == "instagram":
+            return await _post_instagram(access_token, account.platform_user_id, article_url, title, excerpt, cover_url)
+        if platform == "threads":
+            return await _post_threads(access_token, account.platform_user_id, article_url, title, excerpt)
         return None, f"Auto-post not supported for {platform}"
     except Exception as exc:
         logger.warning("social_publish_error", platform=platform, error=str(exc))
@@ -49,7 +54,7 @@ async def _post_facebook(
     message = f"{title}\n\n{excerpt or ''}\n\n{article_url}".strip()
     async with httpx.AsyncClient(timeout=15) as client:
         resp = await client.post(
-            f"https://graph.facebook.com/v19.0/{page_id}/feed",
+            f"https://graph.facebook.com/v22.0/{page_id}/feed",
             params={"message": message, "link": article_url, "access_token": access_token},
         )
     if resp.status_code == 200:
@@ -135,3 +140,71 @@ async def _post_tiktok(
     # TikTok text/link posts require the Content Posting API with Creator approval.
     # Video upload is supported; plain article links are not directly supported.
     return None, "TikTok text post not supported — use video upload API instead"
+
+
+async def _post_instagram(
+    access_token: str,
+    ig_user_id: str,
+    article_url: str,
+    title: str,
+    excerpt: str | None,
+    cover_url: str | None,
+) -> tuple[str | None, str | None]:
+    # Instagram feed posts require an image — there's no text-only post type.
+    if not cover_url:
+        return None, "Instagram requires a cover image"
+
+    caption = f"{title}\n\n{excerpt or ''}\n\n{article_url}".strip()
+    async with httpx.AsyncClient(timeout=15) as client:
+        container_resp = await client.post(
+            f"https://graph.instagram.com/{ig_user_id}/media",
+            params={"image_url": cover_url, "caption": caption, "access_token": access_token},
+        )
+        if container_resp.status_code != 200:
+            return None, container_resp.text[:200]
+        creation_id = container_resp.json().get("id")
+        if not creation_id:
+            return None, "Instagram did not return a container id"
+
+        publish_resp = await client.post(
+            f"https://graph.instagram.com/{ig_user_id}/media_publish",
+            params={"creation_id": creation_id, "access_token": access_token},
+        )
+    if publish_resp.status_code == 200:
+        media_id = publish_resp.json().get("id", "")
+        url = f"https://www.instagram.com/p/{media_id}/" if media_id else None
+        return url, None
+    return None, publish_resp.text[:200]
+
+
+async def _post_threads(
+    access_token: str,
+    threads_user_id: str,
+    article_url: str,
+    title: str,
+    excerpt: str | None,
+) -> tuple[str | None, str | None]:
+    text = f"{title}\n\n{excerpt or ''}\n\n{article_url}".strip()[:500]
+    async with httpx.AsyncClient(timeout=15) as client:
+        container_resp = await client.post(
+            f"https://graph.threads.net/v1.0/{threads_user_id}/threads",
+            params={"media_type": "TEXT", "text": text, "access_token": access_token},
+        )
+        if container_resp.status_code != 200:
+            return None, container_resp.text[:200]
+        creation_id = container_resp.json().get("id")
+        if not creation_id:
+            return None, "Threads did not return a container id"
+
+        # Meta requires waiting before publishing a freshly created container.
+        await asyncio.sleep(30)
+
+        publish_resp = await client.post(
+            f"https://graph.threads.net/v1.0/{threads_user_id}/threads_publish",
+            params={"creation_id": creation_id, "access_token": access_token},
+        )
+    if publish_resp.status_code == 200:
+        post_id = publish_resp.json().get("id", "")
+        url = f"https://www.threads.net/@{threads_user_id}/post/{post_id}" if post_id else None
+        return url, None
+    return None, publish_resp.text[:200]

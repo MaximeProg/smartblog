@@ -530,8 +530,8 @@ export const socialApi = {
   publishNow: (tenantId: string, postId: string) =>
     api.post<SocialPostInfo>(`/tenants/${tenantId}/social/posts/${postId}/publish`),
 
-  getOAuthConnectUrl: (tenantId: string, platform: string) =>
-    api.get<{ url: string }>(`/oauth/${platform}/connect`, { params: { tenant_id: tenantId } }),
+  getOAuthConnectUrl: (tenantId: string, platform: string, locale: string) =>
+    api.get<{ url: string }>(`/oauth/${platform}/connect`, { params: { tenant_id: tenantId, locale } }),
 
   oauthDisconnect: (tenantId: string, platform: string) =>
     api.post<void>(`/oauth/${platform}/disconnect`, null, { params: { tenant_id: tenantId } }),

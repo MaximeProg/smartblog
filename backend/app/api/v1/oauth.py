@@ -79,11 +79,12 @@ def _to_external(internal: str) -> str:
 
 # ── State helpers ─────────────────────────────────────────────────────────────
 
-def _make_state(tenant_id: str, user_id: str, platform: str) -> str:
+def _make_state(tenant_id: str, user_id: str, platform: str, locale: str) -> str:
     payload = {
         "tid": tenant_id,
         "uid": user_id,
         "p": platform,
+        "loc": locale,
         "exp": int(time.time()) + _STATE_TTL,
     }
     return jwt.encode(payload, settings.APP_SECRET_KEY, algorithm="HS256")
@@ -105,8 +106,12 @@ def _callback_url(internal_platform: str) -> str:
     return f"https://{settings.PLATFORM_API_DOMAIN}/api/v1/oauth/{external}/callback"
 
 
-def _dashboard_url(tenant_id: str, internal_platform: str) -> str:
-    return f"{settings.FRONTEND_URL}/en/blogs/{tenant_id}/social?connected={internal_platform}"
+def _dashboard_url(tenant_id: str, internal_platform: str, locale: str) -> str:
+    return f"{settings.FRONTEND_URL}/{locale}/blogs/{tenant_id}/social?connected={internal_platform}"
+
+
+def _dashboard_error_url(tenant_id: str, locale: str, error: str) -> str:
+    return f"{settings.FRONTEND_URL}/{locale}/blogs/{tenant_id}/social?error={error}"
 
 
 def _pkce_pair() -> tuple[str, str]:
@@ -128,6 +133,7 @@ async def get_connect_url(
     payload: TokenPayload,
     db: DBSession,
     tenant_id: uuid.UUID = Query(...),
+    locale: str = Query(default="en"),
 ):
     await _require_admin(db, tenant_id, payload)
 
@@ -135,7 +141,7 @@ async def get_connect_url(
     if internal not in _PLATFORMS:
         raise ValidationException(f"Platform '{platform}' not supported")
 
-    state = _make_state(str(tenant_id), payload["sub"], internal)
+    state = _make_state(str(tenant_id), payload["sub"], internal, locale)
     sh = _state_hash(state)
     cb = _callback_url(internal)
 
@@ -143,7 +149,7 @@ async def get_connect_url(
         if not settings.FACEBOOK_APP_ID:
             raise ValidationException("Facebook app not configured")
         url = (
-            f"https://www.facebook.com/v19.0/dialog/oauth"
+            f"https://www.facebook.com/v22.0/dialog/oauth"
             f"?client_id={settings.FACEBOOK_APP_ID}"
             f"&redirect_uri={cb}"
             f"&scope=pages_manage_posts,pages_read_engagement,public_profile"
@@ -158,7 +164,7 @@ async def get_connect_url(
             f"?response_type=code"
             f"&client_id={settings.LINKEDIN_CLIENT_ID}"
             f"&redirect_uri={cb}"
-            f"&scope=w_member_social+r_liteprofile+r_emailaddress"
+            f"&scope=openid+profile+email+w_member_social"
             f"&state={state}"
         )
 
@@ -194,10 +200,10 @@ async def get_connect_url(
         if not settings.INSTAGRAM_APP_ID:
             raise ValidationException("Instagram app not configured")
         url = (
-            f"https://api.instagram.com/oauth/authorize"
+            f"https://www.instagram.com/oauth/authorize"
             f"?client_id={settings.INSTAGRAM_APP_ID}"
             f"&redirect_uri={cb}"
-            f"&scope=user_profile,user_media"
+            f"&scope=instagram_business_basic,instagram_business_content_publish"
             f"&response_type=code"
             f"&state={state}"
         )
@@ -264,19 +270,20 @@ async def get_connect_url(
 async def oauth_callback(
     platform: str,
     db: DBSession,
-    code: str = Query(...),
+    code: str | None = Query(default=None),
     state: str = Query(...),
     error: str | None = Query(default=None),
 ):
-    if error:
-        return RedirectResponse(f"{settings.FRONTEND_URL}/en/social?error={error}")
-
     try:
         claims = _decode_state(state)
+        tenant_id = uuid.UUID(claims["tid"])
+        locale = claims.get("loc", "en")
     except Exception:
-        return RedirectResponse(f"{settings.FRONTEND_URL}/en/social?error=invalid_state")
+        return RedirectResponse(f"{settings.FRONTEND_URL}/en/blogs?social_error=invalid_state")
 
-    tenant_id = uuid.UUID(claims["tid"])
+    if error or not code:
+        return RedirectResponse(_dashboard_error_url(str(tenant_id), locale, error or "no_code"))
+
     user_id = uuid.UUID(claims["uid"])
     internal = claims["p"]
     sh = _state_hash(state)
@@ -301,9 +308,9 @@ async def oauth_callback(
         elif internal == "google_business":
             account_data = await _handle_google_business(code)
         else:
-            return RedirectResponse(f"{settings.FRONTEND_URL}/en/social?error=unsupported")
+            return RedirectResponse(_dashboard_error_url(str(tenant_id), locale, "unsupported"))
     except Exception:
-        return RedirectResponse(f"{settings.FRONTEND_URL}/en/social?error=oauth_failed")
+        return RedirectResponse(_dashboard_error_url(str(tenant_id), locale, "oauth_failed"))
 
     existing = await db.execute(
         select(SocialAccount).where(
@@ -337,7 +344,7 @@ async def oauth_callback(
         db.add(acct)
 
     await db.commit()
-    return RedirectResponse(_dashboard_url(str(tenant_id), internal))
+    return RedirectResponse(_dashboard_url(str(tenant_id), internal, locale))
 
 
 # ── Disconnect ────────────────────────────────────────────────────────────────
@@ -412,7 +419,7 @@ async def _refresh_account(internal: str, acct: SocialAccount) -> dict | None:
                 return None
             current = decrypt_value(acct.access_token_enc)
             resp = await client.get(
-                "https://graph.facebook.com/v19.0/oauth/access_token",
+                "https://graph.facebook.com/v22.0/oauth/access_token",
                 params={
                     "grant_type": "fb_exchange_token",
                     "client_id": settings.FACEBOOK_APP_ID,
@@ -517,7 +524,7 @@ async def _handle_facebook(code: str) -> dict:
     cb = _callback_url("facebook")
     async with httpx.AsyncClient(timeout=15) as client:
         token_resp = await client.get(
-            "https://graph.facebook.com/v19.0/oauth/access_token",
+            "https://graph.facebook.com/v22.0/oauth/access_token",
             params={
                 "client_id": settings.FACEBOOK_APP_ID,
                 "client_secret": settings.FACEBOOK_APP_SECRET,
@@ -530,13 +537,13 @@ async def _handle_facebook(code: str) -> dict:
         access_token = tokens["access_token"]
 
         me_resp = await client.get(
-            "https://graph.facebook.com/v19.0/me",
+            "https://graph.facebook.com/v22.0/me",
             params={"fields": "id,name,picture", "access_token": access_token},
         )
         me = me_resp.json()
 
         pages_resp = await client.get(
-            "https://graph.facebook.com/v19.0/me/accounts",
+            "https://graph.facebook.com/v22.0/me/accounts",
             params={"access_token": access_token},
         )
         pages = pages_resp.json().get("data", [])
@@ -580,29 +587,19 @@ async def _handle_linkedin(code: str) -> dict:
         access_token = tokens["access_token"]
 
         me_resp = await client.get(
-            "https://api.linkedin.com/v2/me",
-            params={"projection": "(id,localizedFirstName,localizedLastName,profilePicture(displayImage~:playableStreams))"},
+            "https://api.linkedin.com/v2/userinfo",
             headers={"Authorization": f"Bearer {access_token}"},
         )
         me = me_resp.json()
-        first = me.get("localizedFirstName", "")
-        last = me.get("localizedLastName", "")
-        display_name = f"{first} {last}".strip() or me.get("id", "")
-
-        try:
-            elements = me["profilePicture"]["displayImage~"]["elements"]
-            avatar_url = elements[-1]["identifiers"][0]["identifier"]
-        except (KeyError, IndexError):
-            avatar_url = None
 
         return {
-            "platform_user_id": me["id"],
+            "platform_user_id": me["sub"],
             "username": None,
-            "display_name": display_name,
-            "avatar_url": avatar_url,
+            "display_name": me.get("name") or me["sub"],
+            "avatar_url": me.get("picture"),
             "access_token": access_token,
             "refresh_token": tokens.get("refresh_token"),
-            "scopes": ["w_member_social", "r_liteprofile"],
+            "scopes": ["openid", "profile", "email", "w_member_social"],
         }
 
 
@@ -719,7 +716,7 @@ async def _handle_instagram(code: str) -> dict:
         access_token = long_resp.json()["access_token"]
 
         me_resp = await client.get(
-            f"https://graph.instagram.com/v19.0/{ig_user_id}",
+            "https://graph.instagram.com/me",
             params={"fields": "id,username,profile_picture_url", "access_token": access_token},
         )
         me = me_resp.json()

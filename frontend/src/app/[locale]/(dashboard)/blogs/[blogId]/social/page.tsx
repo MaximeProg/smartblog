@@ -3,7 +3,7 @@
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, Suspense } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import {
   Link2, Link2Off, Clock, Send, AlertCircle, CheckCircle2,
   Plus, Trash2, Loader2, ExternalLink, X, Zap,
@@ -80,6 +80,7 @@ function AccountCard({
   onToggleAutoPost: (id: string, enabled: boolean) => void;
 }) {
   const t = useTranslations('social');
+  const locale = useLocale();
   const meta = PLATFORMS[platform] ?? PLATFORM_FALLBACK;
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
   const [connecting, setConnecting] = useState(false);
@@ -88,7 +89,7 @@ function AccountCard({
   const handleConnect = async () => {
     setConnecting(true);
     try {
-      const { data } = await socialApi.getOAuthConnectUrl(blogId, platform);
+      const { data } = await socialApi.getOAuthConnectUrl(blogId, platform, locale);
       window.location.href = data.url;
     } catch (err: any) {
       const msg = err?.response?.data?.detail || t('connectError');
@@ -114,7 +115,12 @@ function AccountCard({
               </div>
             </>
           ) : (
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{t('notConnected')}</p>
+            <>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{t('notConnected')}</p>
+              {platform === 'instagram' && (
+                <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1 leading-snug">{t('instagramBusinessOnly')}</p>
+              )}
+            </>
           )}
         </div>
       </div>

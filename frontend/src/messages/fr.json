@@ -1317,6 +1317,7 @@
     "tabPosts": "Publications",
     "connected": "Connecté",
     "notConnected": "Non connecté",
+    "instagramBusinessOnly": "Nécessite un compte Instagram Business ou Créateur.",
     "connect": "Connecter",
     "connecting": "Connexion…",
     "connectError": "Impossible de démarrer OAuth — vérifiez les credentials de plateforme",
