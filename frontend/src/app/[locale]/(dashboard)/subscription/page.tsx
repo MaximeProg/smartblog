@@ -4,6 +4,7 @@ import { Check, Zap, Star, Building2, Sparkles, Clock, ArrowRight, Loader2, Cred
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { useLocale } from 'next-intl';
@@ -34,6 +35,7 @@ export default function SubscriptionPage() {
   const { user, updateUser } = useAuthStore();
   const tenant = useCurrentTenant();
   const locale = useLocale();
+  const router = useRouter();
   const t = useTranslations('subscription');
   const { toast } = useToast();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
@@ -55,7 +57,12 @@ export default function SubscriptionPage() {
     planById[planId]?.price_monthly ?? PLAN_PRICES_FALLBACK[planId] ?? 0;
 
   async function handleCheckout(planId: string) {
-    if (planId === 'free' || planId === currentPlan || !tenant?.id) return;
+    if (planId === 'free' || planId === currentPlan) return;
+    if (!tenant?.id) {
+      toast({ title: t('needBlogTitle'), description: t('needBlogDesc') });
+      router.push(`/${locale}/blogs/new`);
+      return;
+    }
     setCheckoutLoading(planId);
     try {
       const { data } = await paymentsApi.createSubscriptionCheckout(tenant.id, {
