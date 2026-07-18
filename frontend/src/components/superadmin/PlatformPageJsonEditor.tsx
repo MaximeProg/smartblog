@@ -10,7 +10,7 @@ const inputStyle = { borderColor: 'var(--sa-border)', color: 'var(--sa-text)' } 
 // Même heuristique que backend/app/services/ai_service.py::_is_image_key —
 // une clé qui matche est traitée comme un champ image (ImagePicker) plutôt
 // qu'un champ texte, et jamais générée/modifiée par le remplissage IA.
-const IMAGE_KEY_RE = /url|image|photo|logo|avatar|cover|background/i;
+const IMAGE_KEY_RE = /image|photo|logo|avatar|cover|background/i;
 
 function humanLabel(key: string): string {
   return key.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Metadata } from 'next';
-import { Shield, Globe2, Zap, BarChart2, FileText, Bot, Check, Link2, UserPlus, Coins, ArrowRight, type LucideIcon } from 'lucide-react';
+import { Shield, Globe2, Zap, BarChart2, FileText, Bot, Check, Link2, UserPlus, Coins, ArrowRight, Facebook, Instagram, Linkedin, Globe, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
@@ -60,10 +60,10 @@ const FALLBACK: any = {
   team: {
     title: 'The people behind SmarterBloggers',
     members: [
-      { name: 'Alexandra Chen', role: 'CEO & Co-Founder', photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80', bio: 'Former Google engineer with 12 years of experience in scalable SaaS platforms.' },
-      { name: 'Marcus Thompson', role: 'CTO & Co-Founder', photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', bio: 'Full-stack architect who previously built systems serving 100M+ users at Meta.' },
-      { name: 'Priya Sharma', role: 'Head of Product', photo_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80', bio: 'Product leader passionate about creating tools that empower content creators worldwide.' },
-      { name: 'James Okafor', role: 'Head of Design', photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80', bio: 'Award-winning designer with a focus on developer experience and accessibility.' },
+      { name: 'Alexandra Chen', role: 'CEO & Co-Founder', photo_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80', bio: 'Former Google engineer with 12 years of experience in scalable SaaS platforms.', facebook_url: '', instagram_url: '', linkedin_url: '', website_url: '' },
+      { name: 'Marcus Thompson', role: 'CTO & Co-Founder', photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80', bio: 'Full-stack architect who previously built systems serving 100M+ users at Meta.', facebook_url: '', instagram_url: '', linkedin_url: '', website_url: '' },
+      { name: 'Priya Sharma', role: 'Head of Product', photo_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=200&q=80', bio: 'Product leader passionate about creating tools that empower content creators worldwide.', facebook_url: '', instagram_url: '', linkedin_url: '', website_url: '' },
+      { name: 'James Okafor', role: 'Head of Design', photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80', bio: 'Award-winning designer with a focus on developer experience and accessibility.', facebook_url: '', instagram_url: '', linkedin_url: '', website_url: '' },
     ],
   },
   affiliate: {
@@ -212,16 +212,40 @@ export default async function AboutPage({
             </h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {(c.team.members as { name: string; role: string; photo_url: string; bio: string }[]).map((member) => (
-              <div key={member.name} className="text-center group">
-                <div className="relative h-24 w-24 mx-auto rounded-2xl overflow-hidden mb-4 ring-2 ring-slate-200 dark:ring-slate-700 group-hover:ring-blue-500 transition-all">
-                  <Image src={member.photo_url} alt={member.name} fill className="object-cover" unoptimized />
+            {(c.team.members as { name: string; role: string; photo_url: string; bio: string; facebook_url?: string; instagram_url?: string; linkedin_url?: string; website_url?: string }[]).map((member) => {
+              const links = [
+                { url: member.facebook_url, icon: Facebook, label: 'Facebook' },
+                { url: member.instagram_url, icon: Instagram, label: 'Instagram' },
+                { url: member.linkedin_url, icon: Linkedin, label: 'LinkedIn' },
+                { url: member.website_url, icon: Globe, label: 'Website' },
+              ].filter((l) => l.url && l.url.trim());
+              return (
+                <div key={member.name} className="text-center group">
+                  <div className="relative h-24 w-24 mx-auto rounded-2xl overflow-hidden mb-4 ring-2 ring-slate-200 dark:ring-slate-700 group-hover:ring-blue-500 transition-all">
+                    <Image src={member.photo_url} alt={member.name} fill className="object-cover" unoptimized />
+                  </div>
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-0.5">{member.name}</h3>
+                  <p className="text-xs text-blue-500 dark:text-blue-400 font-semibold mb-2">{member.role}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{member.bio}</p>
+                  {links.length > 0 && (
+                    <div className="flex items-center justify-center gap-2 mt-3">
+                      {links.map(({ url, icon: Icon, label }) => (
+                        <a
+                          key={label}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={label}
+                          className="h-7 w-7 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-blue-500 hover:text-white transition-colors"
+                        >
+                          <Icon className="h-3.5 w-3.5" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <h3 className="font-bold text-slate-900 dark:text-white mb-0.5">{member.name}</h3>
-                <p className="text-xs text-blue-500 dark:text-blue-400 font-semibold mb-2">{member.role}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{member.bio}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

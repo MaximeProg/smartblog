@@ -142,7 +142,13 @@ async def get_pricing(db: DBSession, lang: str = Query(default="en")):
 
 # ── GET /platform/pages/{slug} ────────────────────────────────────────
 
-_CMS_SUPPORTED_LANGS = frozenset({"en", "fr", "es", "de", "pt", "it"})
+# Doit rester synchronisé avec ALL_CMS_LANGS (migrations/versions/042_...)
+# et frontend/src/config/cms.ts::CMS_SUPPORTED_LANGS.
+_CMS_SUPPORTED_LANGS = frozenset({
+    "en", "fr", "es", "de", "pt", "it", "nl", "pl", "ru", "ja", "zh", "ko",
+    "tr", "sv", "da", "nb", "fi", "cs", "sk", "ro", "hu", "bg", "el", "uk",
+    "id", "lt", "lv", "et", "sl",
+})
 
 
 @router.get("/pages/{slug}")

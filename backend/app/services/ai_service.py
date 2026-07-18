@@ -366,7 +366,7 @@ Return this exact JSON structure (fill every field with relevant content):
 
 # Même heuristique que PlatformPageJsonEditor.tsx côté frontend : une clé
 # correspondant à ce motif est un champ image, jamais généré/modifié par l'IA.
-_IMAGE_KEY_RE = re.compile(r"url|image|photo|logo|avatar|cover|background", re.IGNORECASE)
+_IMAGE_KEY_RE = re.compile(r"image|photo|logo|avatar|cover|background", re.IGNORECASE)
 
 
 def _is_image_key(key: str) -> bool:
