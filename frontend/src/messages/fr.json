@@ -2398,12 +2398,15 @@
       "table": {
         "user": "Utilisateur",
         "plan": "Plan",
+        "blogs": "Blogs",
         "provider": "Fournisseur",
         "joined": "Inscription",
         "lastLogin": "Dernière connexion",
         "twoFA": "2FA",
         "actions": "Actions"
       },
+      "blogsSection": "Blogs ({count})",
+      "noBlogs": "Ce compte n'a encore créé aucun blog.",
       "actions": {
         "makeSuperAdmin": "Nommer Super Admin",
         "revokeSuperAdmin": "Révoquer Super Admin",
@@ -2435,7 +2438,8 @@
       "confirmSuspend": "Suspendre ce blog ? Les utilisateurs perdront l'accès immédiatement.",
       "confirmActivate": "Réactiver ce blog ?",
       "confirmDelete": "Supprimer définitivement ce blog ? Tout le contenu sera perdu.",
-      "planChanged": "Plan mis à jour avec succès.",
+      "owner": "Propriétaire",
+      "planChangeAccountWide": "Ce changement s'applique à tout le compte ({email}) — tous ses blogs passeront à ce plan.",
       "articles": "articles",
       "members": "membres",
       "storage": "Stockage"
@@ -2528,6 +2532,9 @@
       "cashoutTable": {
         "affiliate": "Affilié",
         "amount": "Montant",
+        "gross": "Brut",
+        "fee": "Frais",
+        "net": "Net",
         "requested": "Demandé le",
         "status": "Statut",
         "actions": "Actions"

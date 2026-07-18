@@ -974,6 +974,8 @@ export interface TenantAdminView {
   articles_count: number;
   subscribers_count: number;
   storage_used_bytes: number;
+  owner_user_id: string | null;
+  owner_email: string | null;
 }
 
 export interface UserAdminView {
@@ -985,6 +987,22 @@ export interface UserAdminView {
   two_fa_enabled: boolean;
   last_login_at: string | null;
   created_at: string;
+  plan: string;
+  blog_count: number;
+}
+
+export interface UserTenantView {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  cover_image_url: string | null;
+  plan: string;
+  status: string;
+  role: string;
+  articles_count: number;
+  subscribers_count: number;
+  authors_count: number;
 }
 
 export interface CashoutAdminView {
@@ -993,6 +1011,9 @@ export interface CashoutAdminView {
   user_email: string;
   user_display_name: string | null;
   amount: number;
+  fee: number;
+  net_amount: number;
+  payout_method: string;
   status: string;
   requested_at: string;
   processed_at: string | null;
@@ -1181,7 +1202,7 @@ export interface SAPlanConfig {
   is_active: boolean;
   is_default: boolean;
   sort_order: number;
-  tenant_count: number;
+  subscriber_count: number;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -1322,7 +1343,10 @@ export const superadminApi = {
     api.post<{ status: string }>(`/superadmin/tenants/${tenantId}/activate`),
 
   changePlan: (tenantId: string, plan: string) =>
-    api.patch<{ plan: string }>(`/superadmin/tenants/${tenantId}/plan`, { plan }),
+    api.patch<{ message: string }>(`/superadmin/tenants/${tenantId}/plan`, { plan }),
+
+  getUserTenants: (userId: string) =>
+    api.get<{ items: UserTenantView[]; total: number }>(`/superadmin/users/${userId}/tenants`),
 
   deleteTenant: (tenantId: string) =>
     api.delete<void>(`/superadmin/tenants/${tenantId}`),
@@ -1447,7 +1471,7 @@ export const superadminApi = {
 
   // ── Médias CMS plateforme (indépendants des tenants) ──────────────
   listPlatformMedia: (limit = 60) =>
-    api.get<PlatformMediaItem[]>('/superadmin/media', { params: { limit } }),
+    api.get<PlatformMediaItem[]>('/superadmin/media/platform', { params: { limit } }),
 
   uploadPlatformMedia: (file: File) => {
     const form = new FormData();

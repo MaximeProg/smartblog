@@ -31,7 +31,8 @@ function CashoutModal({ cashout, action, onConfirm, onCancel, isPending, t }: {
           {action === 'approve' ? ta('confirmApprove') : ta('confirmReject')}
         </h3>
         <p className="text-[11px] mb-4" style={{ color: 'var(--sa-text-3)' }}>
-          {cashout.user_display_name ?? cashout.user_email} — ${cashout.amount}
+          {cashout.user_display_name ?? cashout.user_email} — {ta('cashoutTable.net')} ${cashout.net_amount.toFixed(2)}
+          {' '}({ta('cashoutTable.gross')} ${cashout.amount.toFixed(2)})
         </p>
         <div className="space-y-3 mb-5">
           {action === 'approve' && (
@@ -285,7 +286,12 @@ export default function AffiliatePage() {
                             <p className="font-semibold" style={{ color: 'var(--sa-text)' }}>{c.user_display_name ?? c.user_email}</p>
                             <p className="text-[9px] font-mono" style={{ color: 'var(--sa-text-3)' }}>{c.user_email}</p>
                           </td>
-                          <td className="px-5 py-3.5 font-black text-emerald-500 font-mono">${c.amount}</td>
+                          <td className="px-5 py-3.5 font-mono">
+                            <p className="font-black text-emerald-500">${c.net_amount.toFixed(2)}</p>
+                            <p className="text-[9px]" style={{ color: 'var(--sa-text-3)' }}>
+                              {ta('cashoutTable.gross')} ${c.amount.toFixed(2)} · {ta('cashoutTable.fee')} ${c.fee.toFixed(2)}
+                            </p>
+                          </td>
                           <td className="px-5 py-3.5 font-mono" style={{ color: 'var(--sa-text-3)' }}>{fmtDate(c.requested_at)}</td>
                           <td className="px-5 py-3.5">
                             <span className={`text-[8px] font-bold px-2 py-0.5 rounded-full border ${sc.cls}`}>{sc.label}</span>

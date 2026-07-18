@@ -43,7 +43,7 @@ async def platform_stats(payload: TokenPayload, db: DBSession):
     total_users = (await db.execute(select(func.count(User.id)))).scalar_one()
 
     by_plan = await db.execute(text("""
-        SELECT plan, COUNT(*) as count FROM tenants GROUP BY plan ORDER BY count DESC
+        SELECT plan, COUNT(*) as count FROM users GROUP BY plan ORDER BY count DESC
     """))
     plans = {r.plan: r.count for r in by_plan}
 
@@ -86,6 +86,8 @@ class TenantAdminView(BaseModel):
     subscribers_count: int
     storage_used_bytes: int
     created_at: datetime
+    owner_user_id: str | None = None
+    owner_email: str | None = None
 
 
 @router.get("/tenants")
@@ -111,6 +113,19 @@ async def list_all_tenants(
     total = (await db.execute(select(func.count()).select_from(base.subquery()))).scalar_one()
     result = await db.execute(base.order_by(Tenant.created_at.desc()).limit(limit).offset(offset))
     tenants = result.scalars().all()
+
+    owners: dict[uuid.UUID, tuple[uuid.UUID, str]] = {}
+    if tenants:
+        owner_rows = await db.execute(
+            select(TenantUser.tenant_id, User.id, User.email)
+            .join(User, User.id == TenantUser.user_id)
+            .where(
+                TenantUser.tenant_id.in_([t.id for t in tenants]),
+                TenantUser.role == UserRole.TENANT_ADMIN,
+            )
+        )
+        owners = {tid: (uid, email) for tid, uid, email in owner_rows}
+
     return {
         "items": [TenantAdminView(
             id=str(t.id), name=t.name, slug=t.slug, plan=t.plan,
@@ -118,6 +133,8 @@ async def list_all_tenants(
             subscribers_count=t.subscribers_count,
             storage_used_bytes=t.storage_used_bytes or 0,
             created_at=t.created_at,
+            owner_user_id=str(owners[t.id][0]) if t.id in owners else None,
+            owner_email=owners[t.id][1] if t.id in owners else None,
         ) for t in tenants],
         "total": total,
     }
@@ -165,13 +182,18 @@ async def activate_tenant(
     return {"message": f"{tenant.name} activé."}
 
 
+class ChangePlanBody(BaseModel):
+    plan: PlanTier
+
+
 @router.patch("/tenants/{tenant_id}/plan")
 async def change_plan(
     tenant_id: uuid.UUID,
-    plan: PlanTier,
+    body: ChangePlanBody,
     payload: TokenPayload,
     db: DBSession,
 ):
+    plan = body.plan
     admin = await _require_super_admin(payload, db)
     result = await db.execute(select(Tenant).where(Tenant.id == tenant_id))
     tenant = result.scalar_one_or_none()
@@ -189,7 +211,9 @@ async def change_plan(
     await sync_tenant_plans_for_user(db, owner_user_id, plan)
     await db.commit()
 
-    action = "plan.upgraded" if plan.value > old_plan else "plan.downgraded"
+    plan_order = [t.value for t in PlanTier]
+    old_rank = plan_order.index(old_plan) if old_plan in plan_order else -1
+    action = "plan.upgraded" if plan_order.index(plan.value) > old_rank else "plan.downgraded"
     from app.services.log_service import log_event
     await log_event(db, action, actor_id=admin.id, actor_email=admin.email,
                     level="info", target_type="user", target_id=str(owner_user_id),
@@ -234,6 +258,19 @@ async def list_all_users(
     total = (await db.execute(select(func.count()).select_from(base.subquery()))).scalar_one()
     result = await db.execute(base.order_by(User.created_at.desc()).limit(limit).offset(offset))
     users = result.scalars().all()
+
+    blog_counts: dict[uuid.UUID, int] = {}
+    if users:
+        count_rows = await db.execute(
+            select(TenantUser.user_id, func.count())
+            .where(
+                TenantUser.user_id.in_([u.id for u in users]),
+                TenantUser.role == UserRole.TENANT_ADMIN,
+            )
+            .group_by(TenantUser.user_id)
+        )
+        blog_counts = dict(count_rows.all())
+
     return {
         "items": [
             {
@@ -244,6 +281,8 @@ async def list_all_users(
                 "two_fa_enabled": u.two_fa_enabled,
                 "last_login_at": u.last_login_at,
                 "created_at": u.created_at,
+                "plan": u.plan.value,
+                "blog_count": blog_counts.get(u.id, 0),
             }
             for u in users
         ],
@@ -251,11 +290,22 @@ async def list_all_users(
     }
 
 
+@router.get("/users/{user_id}/tenants")
+async def get_user_tenants_admin(
+    user_id: uuid.UUID, payload: TokenPayload, db: DBSession,
+):
+    """Liste les blogs (avec rôle) d'un utilisateur — vue détail super admin."""
+    await _require_super_admin(payload, db)
+    from app.services.tenant_service import get_user_tenants
+    tenants = await get_user_tenants(db, user_id)
+    return {"items": tenants, "total": len(tenants)}
+
+
 @router.post("/users/{user_id}/make-super-admin", status_code=200)
 async def make_super_admin(
     user_id: uuid.UUID, payload: TokenPayload, db: DBSession,
 ):
-    await _require_super_admin(payload, db)
+    admin = await _require_super_admin(payload, db)
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
@@ -432,46 +482,48 @@ async def list_all_transactions(
 
 # ── Plans / Abonnements ───────────────────────────────────────────
 
-PLAN_PRICES = {
-    "free": 0, "starter": 5, "pro": 30, "business": 90, "enterprise": 500,
-}
-
 @router.get("/plans/stats")
 async def plans_stats(payload: TokenPayload, db: DBSession):
-    """Distribution des tenants par plan + MRR estimé."""
+    """Distribution des comptes utilisateurs par plan + MRR estimé.
+    Le plan est une propriété du compte (users.plan) — compter les tenants
+    gonflerait artificiellement les chiffres pour un abonné possédant
+    plusieurs blogs."""
     await _require_super_admin(payload, db)
 
     by_plan = await db.execute(text("""
         SELECT plan, COUNT(*) AS count
-        FROM tenants
-        WHERE status != 'deleted'
+        FROM users
         GROUP BY plan
         ORDER BY count DESC
     """))
     plan_rows = {r.plan: r.count for r in by_plan}
 
+    prices_q = await db.execute(text("SELECT id, price_monthly FROM subscription_plans"))
+    prices = {r.id: float(r.price_monthly) for r in prices_q}
+
     plans = []
     total_mrr = 0
     for tier in PlanTier:
         count = plan_rows.get(tier.value, 0)
-        mrr = count * PLAN_PRICES.get(tier.value, 0)
+        price = prices.get(tier.value, 0)
+        mrr = count * price
         total_mrr += mrr
         plans.append({
             "id": tier.value,
             "count": count,
             "mrr": mrr,
-            "arpu": PLAN_PRICES.get(tier.value, 0),
+            "arpu": price,
         })
 
-    total_tenants = sum(r["count"] for r in plans)
-    paid_tenants  = sum(r["count"] for r in plans if r["id"] != "free")
-    arpu = round(total_mrr / paid_tenants, 2) if paid_tenants else 0
+    total_users = sum(r["count"] for r in plans)
+    paid_users  = sum(r["count"] for r in plans if r["id"] != "free")
+    arpu = round(total_mrr / paid_users, 2) if paid_users else 0
 
     return {
         "plans": plans,
         "total_mrr": total_mrr,
-        "total_tenants": total_tenants,
-        "paid_tenants": paid_tenants,
+        "total_tenants": total_users,
+        "paid_tenants": paid_users,
         "arpu": arpu,
     }
 
@@ -524,10 +576,12 @@ async def list_plans(payload: TokenPayload, db: DBSession):
     """))
     plans = rows.mappings().all()
 
-    # Tenant counts per plan
+    # Nombre de comptes utilisateurs par plan (le plan est une propriété du
+    # compte — compter les tenants gonflerait les chiffres pour un abonné
+    # possédant plusieurs blogs)
     counts_q = await db.execute(text("""
         SELECT plan, COUNT(*) AS count
-        FROM tenants WHERE status != 'deleted'
+        FROM users
         GROUP BY plan
     """))
     counts = {r.plan: r.count for r in counts_q}
@@ -549,7 +603,7 @@ async def list_plans(payload: TokenPayload, db: DBSession):
                 "is_active": p["is_active"],
                 "is_default": p["is_default"],
                 "sort_order": p["sort_order"],
-                "tenant_count": counts.get(p["id"], 0),
+                "subscriber_count": counts.get(p["id"], 0),
                 "created_at": p["created_at"].isoformat() if p["created_at"] else None,
                 "updated_at": p["updated_at"].isoformat() if p["updated_at"] else None,
             }
@@ -820,7 +874,7 @@ async def upload_platform_media(payload: TokenPayload, db: DBSession, file: Uplo
     return _platform_media_to_response(media)
 
 
-@router.get("/media", response_model=list[PlatformMediaResponse])
+@router.get("/media/platform", response_model=list[PlatformMediaResponse])
 async def list_platform_media(payload: TokenPayload, db: DBSession, limit: int = Query(default=60, le=200)):
     await _require_super_admin(payload, db)
     rows = (await db.execute(
@@ -1273,6 +1327,8 @@ async def list_support_tickets(
     total_q = select(func.count()).select_from(SupportTicket)
     if status:
         total_q = total_q.where(SupportTicket.status == status)
+    if tenant_id:
+        total_q = total_q.where(SupportTicket.tenant_id == uuid.UUID(tenant_id))
     total_r = await db.execute(total_q)
     total = total_r.scalar() or 0
 
@@ -1541,7 +1597,7 @@ import io
 import json as _json
 import base64 as _b64
 
-from fastapi import UploadFile, File, HTTPException as _FastHTTPEx
+from fastapi import HTTPException as _FastHTTPEx
 
 BUILT_IN_THEMES = [
     {"id": "editorial", "name": "Editorial", "description": "Clean · Serif · Timeless — style Medium / The Atlantic", "accent": "#18181b"},
@@ -1789,8 +1845,6 @@ async def send_platform_notification(
             pass
 
     # Send push notifications to all matched users
-    from app.services.push_service import send_push_to_user
-    import asyncio as _asyncio
     push_tasks = [
         send_push_to_user(db, row.id, title=title, body=message, url="/dashboard")
         for row in rows

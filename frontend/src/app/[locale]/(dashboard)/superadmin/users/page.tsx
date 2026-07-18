@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Users, Search, Shield, ShieldCheck, X, Mail,
-  Clock, Globe, AlertCircle, RefreshCw, Loader2,
+  Clock, Globe, AlertCircle, RefreshCw, Loader2, Layers,
 } from 'lucide-react';
 import { superadminApi, type UserAdminView } from '@/lib/api';
 import { useAuthStore } from '@/store/auth.store';
@@ -68,6 +68,13 @@ export default function UsersPage() {
 
   const users = data?.items ?? [];
   const total = data?.total ?? 0;
+
+  const { data: userTenantsData, isLoading: userTenantsLoading } = useQuery({
+    queryKey: ['superadmin-user-tenants', selected?.id],
+    queryFn: () => superadminApi.getUserTenants(selected!.id).then(r => r.data),
+    enabled: !!selected,
+  });
+  const userTenants = userTenantsData?.items ?? [];
 
   const mutMake = useMutation({
     mutationFn: (id: string) => superadminApi.makeSuperAdmin(id),
@@ -164,9 +171,9 @@ export default function UsersPage() {
       {/* Table */}
       <div className="rounded-2xl border overflow-hidden" style={{ background: 'var(--sa-card)', borderColor: 'var(--sa-border)' }}>
         {/* Header row */}
-        <div className="grid grid-cols-[1fr_100px_90px_120px_60px_110px] gap-3 px-5 py-2.5 border-b"
+        <div className="grid grid-cols-[1fr_70px_60px_100px_90px_120px_60px_110px] gap-3 px-5 py-2.5 border-b"
           style={{ borderColor: 'var(--sa-border)', background: 'var(--sa-surface)' }}>
-          {[tu('table.user'), tu('table.provider'), tu('table.twoFA'), tu('table.joined'), 'Role', tu('table.actions')].map((h, i) => (
+          {[tu('table.user'), tu('table.plan'), tu('table.blogs'), tu('table.provider'), tu('table.twoFA'), tu('table.joined'), 'Role', tu('table.actions')].map((h, i) => (
             <span key={i} className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--sa-text-3)' }}>{h}</span>
           ))}
         </div>
@@ -185,7 +192,7 @@ export default function UsersPage() {
                 <div
                   key={u.id}
                   onClick={() => setSel(u)}
-                  className="grid grid-cols-[1fr_100px_90px_120px_60px_110px] gap-3 px-5 py-3.5 cursor-pointer transition-colors hover:bg-[var(--sa-surface)]"
+                  className="grid grid-cols-[1fr_70px_60px_100px_90px_120px_60px_110px] gap-3 px-5 py-3.5 cursor-pointer transition-colors hover:bg-[var(--sa-surface)]"
                 >
                   {/* User */}
                   <div className="flex items-center gap-2.5 min-w-0">
@@ -205,6 +212,17 @@ export default function UsersPage() {
                       <p className="text-[9px] truncate" style={{ color: 'var(--sa-text-3)' }}>{u.email}</p>
                     </div>
                   </div>
+
+                  {/* Plan */}
+                  <span className="text-[9px] font-bold self-center capitalize px-1.5 py-0.5 rounded-md w-fit"
+                    style={{ background: 'var(--sa-surface)', border: '1px solid var(--sa-border)', color: 'var(--sa-text-2)' }}>
+                    {u.plan}
+                  </span>
+
+                  {/* Blogs */}
+                  <span className="text-[11px] font-black font-mono self-center" style={{ color: 'var(--sa-text-2)' }}>
+                    {u.blog_count}
+                  </span>
 
                   {/* Provider */}
                   <span className="text-[10px] self-center" style={{ color: 'var(--sa-text-2)' }}>
@@ -312,6 +330,7 @@ export default function UsersPage() {
             </div>
 
             {[
+              { icon: Layers, label: tu('table.plan'),     value: selected.plan },
               { icon: Globe,  label: tu('table.provider'), value: fmtProvider(selected.sign_in_provider) },
               { icon: Shield, label: tu('table.twoFA'),    value: selected.two_fa_enabled ? tu('twoFAEnabled') : tu('twoFADisabled') },
               { icon: Clock,  label: tu('table.joined'),   value: fmtDate(selected.created_at) },
@@ -320,9 +339,37 @@ export default function UsersPage() {
               <div key={row.label} className="flex items-center gap-3 text-[11px]">
                 <row.icon className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--sa-text-3)' }} />
                 <span style={{ color: 'var(--sa-text-3)' }}>{row.label}</span>
-                <span className="ml-auto font-semibold" style={{ color: 'var(--sa-text-2)' }}>{row.value}</span>
+                <span className="ml-auto font-semibold capitalize" style={{ color: 'var(--sa-text-2)' }}>{row.value}</span>
               </div>
             ))}
+
+            {/* Blogs owned by this user */}
+            <div className="pt-2 border-t" style={{ borderColor: 'var(--sa-border)' }}>
+              <p className="text-[9px] font-bold uppercase tracking-widest mb-2 mt-2" style={{ color: 'var(--sa-text-3)' }}>
+                {tu('blogsSection', { count: userTenants.length })}
+              </p>
+              {userTenantsLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" style={{ color: 'var(--sa-text-3)' }} />
+              ) : userTenants.length === 0 ? (
+                <p className="text-[10px]" style={{ color: 'var(--sa-text-3)' }}>{tu('noBlogs')}</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {userTenants.map(bt => (
+                    <div key={bt.id} className="flex items-center justify-between gap-2 rounded-lg border px-2.5 py-1.5"
+                      style={{ borderColor: 'var(--sa-border)', background: 'var(--sa-surface)' }}>
+                      <div className="min-w-0">
+                        <p className="text-[10.5px] font-semibold truncate" style={{ color: 'var(--sa-text)' }}>{bt.name}</p>
+                        <p className="text-[8.5px] truncate" style={{ color: 'var(--sa-text-3)' }}>{bt.slug} · {bt.role.toLowerCase()}</p>
+                      </div>
+                      <span className="text-[8px] font-black px-1.5 py-0.5 rounded-md capitalize shrink-0"
+                        style={{ background: 'rgba(99,102,241,0.1)', color: '#6366f1' }}>
+                        {bt.plan}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="px-5 py-4 border-t space-y-2" style={{ borderColor: 'var(--sa-border)' }}>

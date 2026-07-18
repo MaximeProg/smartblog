@@ -76,9 +76,12 @@ function PlanModal({ tenant, onConfirm, onCancel, isPending, t }: {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="w-full max-w-sm mx-4 rounded-2xl border p-5 shadow-2xl" style={{ background: 'var(--sa-card)', borderColor: 'var(--sa-border)' }}>
-        <h3 className="text-[13px] font-black mb-4" style={{ color: 'var(--sa-text)' }}>
+        <h3 className="text-[13px] font-black mb-1" style={{ color: 'var(--sa-text)' }}>
           {t('tenants.actions.changePlan')} — {tenant.name}
         </h3>
+        <p className="text-[10.5px] mb-4 leading-relaxed" style={{ color: 'var(--sa-text-3)' }}>
+          {t('tenants.planChangeAccountWide', { email: tenant.owner_email ?? '—' })}
+        </p>
         <div className="space-y-1.5 mb-5">
           {plans.map(p => (
             <button key={p} onClick={() => setPlan(p)}
@@ -150,7 +153,7 @@ export default function TenantsPage() {
   });
   const mutPlan = useMutation({
     mutationFn: ({ id, plan }: { id: string; plan: string }) => superadminApi.changePlan(id, plan),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['superadmin-tenants'] }); setPlanModal(null); toast({ title: '✓', description: tt('planChanged') }); },
+    onSuccess: (res) => { qc.invalidateQueries({ queryKey: ['superadmin-tenants'] }); setPlanModal(null); toast({ title: '✓', description: res.data.message }); },
   });
 
   const anyMutPending = mutSuspend.isPending || mutActivate.isPending || mutDelete.isPending || mutPlan.isPending;
@@ -260,6 +263,9 @@ export default function TenantsPage() {
                     </div>
                     <div className="flex items-center gap-3 mt-0.5 text-[9px]" style={{ color: 'var(--sa-text-3)' }}>
                       <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> {tenant.slug}.smarterbloggers.com</span>
+                      {tenant.owner_email && (
+                        <span className="flex items-center gap-1">· {tt('owner')}: {tenant.owner_email}</span>
+                      )}
                     </div>
                   </div>
 

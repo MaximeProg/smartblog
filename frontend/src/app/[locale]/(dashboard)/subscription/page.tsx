@@ -174,7 +174,7 @@ export default function SubscriptionPage() {
 
                     <div className="flex items-baseline gap-1 mb-5">
                       <span className="text-[30px] font-black text-slate-900 dark:text-slate-100">
-                        {price === 0 ? t('freeLabel') : `${price}€`}
+                        {price === 0 ? t('freeLabel') : `$${price}`}
                       </span>
                       {price > 0 && <span className="text-[13px] text-slate-400 dark:text-slate-500">{t('perMonth')}</span>}
                     </div>

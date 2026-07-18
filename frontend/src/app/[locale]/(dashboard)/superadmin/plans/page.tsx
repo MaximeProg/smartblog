@@ -470,8 +470,8 @@ export default function PlansPage() {
                       </div>
                     ))}
                     <div className="text-center">
-                      <p className="font-black tabular-nums" style={{ color: 'var(--sa-text)' }}>{plan.tenant_count}</p>
-                      <p style={{ color: 'var(--sa-text-3)' }}>Tenants</p>
+                      <p className="font-black tabular-nums" style={{ color: 'var(--sa-text)' }}>{plan.subscriber_count}</p>
+                      <p style={{ color: 'var(--sa-text-3)' }}>Subscribers</p>
                     </div>
                   </div>
 
