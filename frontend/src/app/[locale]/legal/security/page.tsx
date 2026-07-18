@@ -6,6 +6,8 @@ import { LegalSections, type LegalSectionData } from '@/components/marketing/Leg
 import { getPlatformPage } from '@/lib/platform-api';
 import { siteConfig } from '@/config/site';
 
+export const dynamic = 'force-dynamic';
+
 const FALLBACK = {
   hero: { title: 'Enterprise-Grade Security', subtitle: 'Your content and data are protected by industry-leading security practices.' },
   sections: [

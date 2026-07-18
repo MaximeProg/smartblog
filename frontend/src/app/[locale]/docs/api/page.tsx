@@ -3,6 +3,8 @@ import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
 import { getPlatformPage } from '@/lib/platform-api';
 
+export const dynamic = 'force-dynamic';
+
 const METHOD_COLOR: Record<string, string> = {
   GET: 'bg-emerald-500/10 text-emerald-500',
   POST: 'bg-blue-500/10 text-blue-500',

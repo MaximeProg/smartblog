@@ -4,6 +4,8 @@ import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
 import { getPlatformPage } from '@/lib/platform-api';
 
+export const dynamic = 'force-dynamic';
+
 const ICONS: Record<string, LucideIcon> = {
   bookopen: BookOpen, code2: Code2, webhook: Webhook, key: Key, users: Users, filetext: FileText,
 };

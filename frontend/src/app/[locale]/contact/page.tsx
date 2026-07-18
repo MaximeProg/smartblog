@@ -6,6 +6,8 @@ import { siteConfig } from '@/config/site';
 import { getPlatformPage } from '@/lib/platform-api';
 import { ContactForm } from './ContactForm';
 
+export const dynamic = 'force-dynamic';
+
 const ICONS: Record<string, LucideIcon> = {
   messagesquare: MessageSquare, headphones: Headphones, mail: Mail,
 };

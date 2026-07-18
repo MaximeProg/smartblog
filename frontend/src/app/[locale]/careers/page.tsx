@@ -4,6 +4,8 @@ import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { getPlatformPage } from '@/lib/platform-api';
 
+export const dynamic = 'force-dynamic';
+
 const ICONS: Record<string, LucideIcon> = { globe2: Globe2, heart: Heart, zap: Zap, coffee: Coffee };
 
 const FALLBACK = {

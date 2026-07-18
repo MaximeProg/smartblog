@@ -4,6 +4,8 @@ import { PageHero } from '@/components/marketing/PageHero';
 import { LegalSections, type LegalSectionData } from '@/components/marketing/LegalSection';
 import { getPlatformPage } from '@/lib/platform-api';
 
+export const dynamic = 'force-dynamic';
+
 const FALLBACK = {
   hero: { title: 'Cookie Policy', subtitle: 'How and why we use cookies on SmarterBloggers.' },
   sections: [

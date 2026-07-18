@@ -6,6 +6,8 @@ import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { getPlatformPage } from '@/lib/platform-api';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'About — SmarterBloggers',
   description: 'A next-generation blogging platform built for creators who demand excellence.',

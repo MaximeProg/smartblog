@@ -6,6 +6,8 @@ import { PageHero } from '@/components/marketing/PageHero';
 import { siteConfig } from '@/config/site';
 import { getPlatformPage } from '@/lib/platform-api';
 
+export const dynamic = 'force-dynamic';
+
 const ICONS: Record<string, LucideIcon> = { package: Package, newspaper: Newspaper, camera: Camera, users: Users };
 
 const FALLBACK = {

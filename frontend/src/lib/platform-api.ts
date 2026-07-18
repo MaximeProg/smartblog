@@ -51,7 +51,9 @@ async function apiFetch(url: string, revalidate: number) {
   try {
     const res = await fetch(url, {
       signal: controller.signal,
-      next: { revalidate },
+      // revalidate=0 => contenu CMS édité par un super admin, doit refléter
+      // immédiatement chaque sauvegarde sur le site public, jamais de cache.
+      ...(revalidate === 0 ? { cache: 'no-store' as const } : { next: { revalidate } }),
     });
     if (!res.ok) throw new Error(`${res.status}`);
     return res.json();
@@ -113,7 +115,7 @@ export async function getPlatformPage(
   lang: string,
 ): Promise<Record<string, unknown> | null> {
   try {
-    const data = await apiFetch(`${API_URL}/api/v1/platform/pages/${slug}?lang=${lang}`, 300);
+    const data = await apiFetch(`${API_URL}/api/v1/platform/pages/${slug}?lang=${lang}`, 0);
     return data?.content ?? null;
   } catch {
     return null;

@@ -4,6 +4,8 @@ import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
 import { getPlatformPage } from '@/lib/platform-api';
 
+export const dynamic = 'force-dynamic';
+
 const ICONS: Record<string, LucideIcon> = {
   rocket: Rocket, bookopen: BookOpen, users: Users, barchart2: BarChart2, palette: Palette, globe2: Globe2,
 };

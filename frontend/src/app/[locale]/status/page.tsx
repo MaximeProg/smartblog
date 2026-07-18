@@ -4,6 +4,8 @@ import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
 import { getPlatformPage, getPlatformStats } from '@/lib/platform-api';
 
+export const dynamic = 'force-dynamic';
+
 const statusCfg = {
   operational: { icon: CheckCircle2, color: 'text-emerald-500', label: 'Operational' },
   degraded:    { icon: AlertTriangle, color: 'text-amber-500',  label: 'Degraded' },

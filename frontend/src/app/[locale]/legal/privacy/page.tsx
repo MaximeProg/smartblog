@@ -4,6 +4,8 @@ import { PageHero } from '@/components/marketing/PageHero';
 import { LegalSections, type LegalSectionData } from '@/components/marketing/LegalSection';
 import { getPlatformPage } from '@/lib/platform-api';
 
+export const dynamic = 'force-dynamic';
+
 const FALLBACK = {
   hero: { title: 'Privacy Policy', subtitle: 'How we collect, use, and protect your personal information.' },
   sections: [
