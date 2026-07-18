@@ -164,23 +164,3 @@ async def send_single_payout(
         withdrawals=[withdrawal],
         batch_withdrawal_id=str(uuid.uuid4()),
     )
-
-
-# ── Prix abonnements ─────────────────────────────────────────────
-
-PLAN_PRICES_USD: dict[str, float] = {
-    "starter_monthly": 19.00,
-    "starter_annual":  190.00,   # ~2 mois offerts
-    "pro_monthly":     49.00,
-    "pro_annual":      490.00,
-    "business_monthly": 99.00,
-    "business_annual":  990.00,
-}
-
-
-def get_plan_price(plan: str, billing: str) -> float:
-    key = f"{plan.lower()}_{billing.lower()}"
-    price = PLAN_PRICES_USD.get(key)
-    if price is None:
-        raise ValueError(f"Plan inconnu : {key}")
-    return price

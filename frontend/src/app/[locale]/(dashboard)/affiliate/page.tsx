@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ElementType } from 'react';
+import { useEffect, useState, type ElementType } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import {
@@ -8,10 +8,9 @@ import {
   ArrowDownToLine, Share2, Wallet, Gift, AlertCircle,
   CheckCircle2, XCircle, Download, GitBranch, Send, Mail,
 } from 'lucide-react';
-import { affiliateApi, type AffiliateDashboard, type AffiliateCommission, type CashoutRequest, type AffiliateReferral } from '@/lib/api';
+import { affiliateApi, type UserAffiliateDashboard, type AffiliateCommission, type CashoutRequest, type AffiliateReferral } from '@/lib/api';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
-import { useAuthStore } from '@/store/auth.store';
 import { useToast } from '@/hooks/use-toast';
 
 function fmtDate(iso: string | null | undefined) {
@@ -48,60 +47,62 @@ export default function AffiliatePage() {
   const t = useTranslations('affiliate');
   const { toast } = useToast();
   const qc = useQueryClient();
-  const { tenants } = useAuthStore();
-  const [copied, setCopied] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'commissions' | 'cashouts' | 'referrals' | 'tree'>('referrals');
   const [commissionFilter, setCommissionFilter] = useState<string>('all');
   const [friendEmail, setFriendEmail] = useState('');
   const [friendLanguage, setFriendLanguage] = useState('en');
   const [friendMessage, setFriendMessage] = useState('');
   const [inviteSent, setInviteSent] = useState(false);
+  // Blog utilisé pour les ACTIONS (retrait, invitation, export) — les listes
+  // et totaux ci-dessous restent, eux, agrégés sur tous les blogs possédés.
+  const [actionBlogId, setActionBlogId] = useState('');
 
-  // Use the first tenant as the account holder — affiliate is user-level UX,
-  // the tenantId is just the backend anchor point for now.
-  const tenantId = tenants[0]?.id ?? '';
-
-  const { data: dashboard, isLoading } = useQuery<AffiliateDashboard>({
-    queryKey: ['affiliate-dashboard', tenantId],
-    queryFn: async () => { const { data } = await affiliateApi.getDashboard(tenantId); return data; },
-    enabled: !!tenantId,
+  const { data: dashboard, isLoading } = useQuery<UserAffiliateDashboard>({
+    queryKey: ['affiliate-dashboard-user'],
+    queryFn: async () => { const { data } = await affiliateApi.getUserDashboard(); return data; },
   });
+  const blogs = dashboard?.blogs ?? [];
 
-  const { data: commissions = [] } = useQuery<AffiliateCommission[]>({
-    queryKey: ['affiliate-commissions', tenantId, commissionFilter],
+  useEffect(() => {
+    if (!actionBlogId && blogs.length > 0) {
+      setActionBlogId(blogs.find(b => b.can_cashout)?.tenant_id ?? blogs[0].tenant_id);
+    }
+  }, [blogs, actionBlogId]);
+
+  const { data: commissions = [] } = useQuery<(AffiliateCommission & { blog_name: string })[]>({
+    queryKey: ['affiliate-commissions-user', commissionFilter],
     queryFn: async () => {
-      const { data } = await affiliateApi.listCommissions(tenantId, {
+      const { data } = await affiliateApi.listUserCommissions({
         status: commissionFilter !== 'all' ? commissionFilter : undefined,
         limit: 100,
       });
       return data;
     },
-    enabled: !!tenantId,
   });
 
-  const { data: cashouts = [] } = useQuery<CashoutRequest[]>({
-    queryKey: ['affiliate-cashouts', tenantId],
-    queryFn: async () => { const { data } = await affiliateApi.listCashouts(tenantId); return data; },
-    enabled: !!tenantId,
+  const { data: cashouts = [] } = useQuery<(CashoutRequest & { blog_name: string })[]>({
+    queryKey: ['affiliate-cashouts-user'],
+    queryFn: async () => { const { data } = await affiliateApi.listUserCashouts(); return data; },
   });
 
   const { data: referralsData } = useQuery<{ referrals: AffiliateReferral[]; total: number }>({
-    queryKey: ['affiliate-referrals', tenantId],
-    queryFn: async () => { const { data } = await affiliateApi.listReferrals(tenantId, { limit: 100 }); return data; },
-    enabled: !!tenantId,
+    queryKey: ['affiliate-referrals-user'],
+    queryFn: async () => { const { data } = await affiliateApi.listUserReferrals({ limit: 100 }); return data; },
   });
   const referrals = referralsData?.referrals ?? [];
 
-  const { data: treeData } = useQuery<{ nodes: { tenant_id: string; name: string; slug: string; plan: string; level: number }[] }>({
-    queryKey: ['affiliate-tree', tenantId],
-    queryFn: async () => { const { data } = await affiliateApi.getTree(tenantId); return data; },
-    enabled: !!tenantId && activeTab === 'tree',
+  const { data: treeData } = useQuery<{ nodes: { tenant_id: string; name: string; slug: string; plan: string; level: number; via_blog_name?: string }[] }>({
+    queryKey: ['affiliate-tree-user'],
+    queryFn: async () => { const { data } = await affiliateApi.getUserTree(); return data; },
+    enabled: activeTab === 'tree',
   });
   const treeNodes = treeData?.nodes ?? [];
 
   async function handleExportCSV() {
+    if (!actionBlogId) return;
     try {
-      const { data } = await affiliateApi.exportCommissions(tenantId);
+      const { data } = await affiliateApi.exportCommissions(actionBlogId);
       const url = URL.createObjectURL(data as Blob);
       const a = document.createElement('a');
       a.href = url;
@@ -115,7 +116,7 @@ export default function AffiliatePage() {
 
   const inviteFriendMutation = useMutation({
     mutationFn: async () => {
-      const { data } = await affiliateApi.inviteFriend(tenantId, {
+      const { data } = await affiliateApi.inviteFriend(actionBlogId, {
         email: friendEmail.trim(),
         language: friendLanguage,
         message: friendMessage.trim(),
@@ -135,11 +136,11 @@ export default function AffiliatePage() {
   });
 
   const cashoutMutation = useMutation({
-    mutationFn: async () => { const { data } = await affiliateApi.requestCashout(tenantId, 'nowpayments_crypto'); return data; },
+    mutationFn: async () => { const { data } = await affiliateApi.requestCashout(actionBlogId, 'nowpayments_crypto'); return data; },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['affiliate-dashboard', tenantId] });
-      qc.invalidateQueries({ queryKey: ['affiliate-cashouts', tenantId] });
-      qc.invalidateQueries({ queryKey: ['affiliate-commissions', tenantId] });
+      qc.invalidateQueries({ queryKey: ['affiliate-dashboard-user'] });
+      qc.invalidateQueries({ queryKey: ['affiliate-cashouts-user'] });
+      qc.invalidateQueries({ queryKey: ['affiliate-commissions-user'] });
       toast({ title: t('cashoutRequested') });
     },
     onError: (err: any) => {
@@ -147,18 +148,18 @@ export default function AffiliatePage() {
     },
   });
 
-  const copyLink = async () => {
-    if (!dashboard?.referral_url) return;
+  const copyLink = async (url: string, code: string) => {
     try {
-      await navigator.clipboard.writeText(dashboard.referral_url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(url);
+      setCopiedCode(code);
+      setTimeout(() => setCopiedCode(null), 2000);
     } catch {}
   };
 
   const balance = dashboard?.balance ?? 0;
-  const threshold = dashboard?.cashout_threshold ?? 50;
-  const progressPct = Math.min((balance / threshold) * 100, 100);
+  const threshold = dashboard?.cashout_threshold ?? 0;
+  const progressPct = threshold > 0 ? Math.min((balance / threshold) * 100, 100) : 0;
+  const actionBlog = blogs.find(b => b.tenant_id === actionBlogId) ?? blogs[0];
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
@@ -180,14 +181,14 @@ export default function AffiliatePage() {
               <div className="flex items-center justify-center h-64">
                 <div className="h-6 w-6 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
               </div>
-            ) : !tenantId ? (
+            ) : blogs.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-24 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <Gift className="h-10 w-10 text-slate-300 dark:text-slate-600 mb-4" />
                 <p className="text-slate-500 dark:text-slate-400 text-sm">{t('noBlog')}</p>
               </div>
             ) : (
               <>
-                {/* Stats */}
+                {/* Stats — agrégés sur tous les blogs possédés */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {[
                     { label: t('balance'),        value: fmtCurrency(balance),                        icon: Wallet,     color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20',   border: 'border-blue-100 dark:border-blue-800' },
@@ -206,34 +207,33 @@ export default function AffiliatePage() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Referral link */}
+                  {/* Referral links — un par blog possédé */}
                   <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm p-6">
                     <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
                       <Share2 className="h-4 w-4 text-blue-600" />
                       {t('yourLink')}
                     </h2>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5 block">{t('yourCode')}</label>
-                        <span className="font-mono text-3xl font-black text-slate-900 dark:text-slate-100 tracking-widest">
-                          {dashboard?.affiliate_code ?? '—'}
-                        </span>
-                      </div>
-                      <div>
-                        <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1.5 block">{t('yourLink')}</label>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 font-mono text-sm text-slate-600 dark:text-slate-400 truncate">
-                            {dashboard?.referral_url ?? '—'}
+                    <div className="space-y-3">
+                      {blogs.map(b => (
+                        <div key={b.tenant_id}>
+                          <div className="flex items-center justify-between mb-1">
+                            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{b.name}</label>
+                            <span className="font-mono text-xs font-bold text-slate-500 dark:text-slate-400 tracking-widest">{b.affiliate_code}</span>
                           </div>
-                          <button
-                            onClick={copyLink}
-                            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors shrink-0"
-                          >
-                            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                            {copied ? t('copied') : t('copyLink')}
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 font-mono text-sm text-slate-600 dark:text-slate-400 truncate">
+                              {b.referral_url}
+                            </div>
+                            <button
+                              onClick={() => copyLink(b.referral_url, b.affiliate_code)}
+                              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors shrink-0"
+                            >
+                              {copiedCode === b.affiliate_code ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                              {copiedCode === b.affiliate_code ? t('copied') : t('copyLink')}
+                            </button>
+                          </div>
                         </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
 
@@ -244,21 +244,34 @@ export default function AffiliatePage() {
                       {t('requestCashout')}
                     </h2>
                     <div className="space-y-4">
+                      {blogs.length > 1 && (
+                        <select
+                          value={actionBlogId}
+                          onChange={e => setActionBlogId(e.target.value)}
+                          className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300"
+                        >
+                          {blogs.map(b => (
+                            <option key={b.tenant_id} value={b.tenant_id}>
+                              {b.name} — {fmtCurrency(b.balance)}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                       <div>
                         <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1.5">
-                          <span className="font-semibold text-slate-700 dark:text-slate-300">{fmtCurrency(balance)}</span>
-                          <span>{t('threshold')}: {fmtCurrency(threshold)}</span>
+                          <span className="font-semibold text-slate-700 dark:text-slate-300">{fmtCurrency(actionBlog?.balance ?? 0)}</span>
+                          <span>{t('threshold')}: {fmtCurrency(actionBlog?.cashout_threshold ?? 0)}</span>
                         </div>
                         <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-blue-500 to-green-500 rounded-full transition-all duration-500"
-                            style={{ width: `${progressPct}%` }}
+                            style={{ width: `${actionBlog ? Math.min((actionBlog.balance / (actionBlog.cashout_threshold || 1)) * 100, 100) : 0}%` }}
                           />
                         </div>
                       </div>
                       <button
                         onClick={() => cashoutMutation.mutate()}
-                        disabled={!dashboard?.can_cashout || cashoutMutation.isPending}
+                        disabled={!actionBlog?.can_cashout || cashoutMutation.isPending}
                         className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         <ArrowDownToLine className="h-4 w-4" />
@@ -305,6 +318,22 @@ export default function AffiliatePage() {
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {blogs.length > 1 && (
+                        <div className="sm:col-span-2">
+                          <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">
+                            {t('yourLink')}
+                          </label>
+                          <select
+                            value={actionBlogId}
+                            onChange={e => setActionBlogId(e.target.value)}
+                            className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300"
+                          >
+                            {blogs.map(b => (
+                              <option key={b.tenant_id} value={b.tenant_id}>{b.name}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                       <div>
                         <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">
                           {t('inviteFriendEmail')}
@@ -403,7 +432,7 @@ export default function AffiliatePage() {
                           <table className="w-full text-sm">
                             <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
                               <tr>
-                                {[t('refBlog'), t('refPlan'), t('refStatus'), t('refJoined'), t('refCommissions')].map(h => (
+                                {[t('refBlog'), t('refVia'), t('refPlan'), t('refStatus'), t('refJoined'), t('refCommissions')].map(h => (
                                   <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{h}</th>
                                 ))}
                               </tr>
@@ -435,6 +464,9 @@ export default function AffiliatePage() {
                                         <p className="font-semibold text-slate-900 dark:text-slate-100">{r.name}</p>
                                         <p className="text-xs text-slate-400 dark:text-slate-500 font-mono">{r.slug}</p>
                                       </div>
+                                    </td>
+                                    <td className="px-4 py-3 text-slate-400 dark:text-slate-500 text-xs">
+                                      {r.via_blog_name ?? '—'}
                                     </td>
                                     <td className="px-4 py-3">
                                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${planColors[r.plan] ?? planColors.free}`}>
@@ -536,17 +568,18 @@ export default function AffiliatePage() {
                           <table className="w-full text-sm">
                             <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
                               <tr>
-                                {[t('source'), t('level'), t('amount'), t('status'), t('date')].map(h => (
+                                {[t('source'), t('refBlog'), t('level'), t('amount'), t('status'), t('date')].map(h => (
                                   <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{h}</th>
                                 ))}
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                              {(commissions as AffiliateCommission[]).map(c => (
+                              {commissions.map(c => (
                                 <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                                   <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 capitalize">
                                     {c.source_type === 'subscription' ? t('subscription') : t('ad_slot')}
                                   </td>
+                                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs">{c.blog_name}</td>
                                   <td className="px-4 py-3 text-slate-500 dark:text-slate-400">L{c.level}</td>
                                   <td className="px-4 py-3 font-semibold text-green-700 dark:text-green-400">{fmtCurrency(c.commission_amount)}</td>
                                   <td className="px-4 py-3"><StatusBadge status={c.status} /></td>
@@ -569,14 +602,15 @@ export default function AffiliatePage() {
                           <table className="w-full text-sm">
                             <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
                               <tr>
-                                {['Gross', 'Fee', 'Net', t('status'), 'Requested', 'Processed'].map(h => (
+                                {[t('refBlog'), 'Gross', 'Fee', 'Net', t('status'), 'Requested', 'Processed'].map(h => (
                                   <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{h}</th>
                                 ))}
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                              {(cashouts as CashoutRequest[]).map(c => (
+                              {cashouts.map(c => (
                                 <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs">{c.blog_name}</td>
                                   <td className="px-4 py-3 font-semibold text-slate-900 dark:text-slate-100">{fmtCurrency(c.gross_amount)}</td>
                                   <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{fmtCurrency(c.fee)}</td>
                                   <td className="px-4 py-3 font-semibold text-green-700 dark:text-green-400">{fmtCurrency(c.net_amount)}</td>

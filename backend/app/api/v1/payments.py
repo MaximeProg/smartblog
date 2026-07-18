@@ -13,7 +13,7 @@ la même fonction idempotente `_finalize_transaction`.
 import uuid
 from datetime import datetime
 from fastapi import APIRouter, Request, Header, HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, text
 from pydantic import BaseModel
 
 from app.core.config import settings
@@ -25,7 +25,7 @@ from app.models.tenant import Tenant
 from app.models.enums import PaymentGateway, TransactionType, TransactionStatus, SubscriptionStatus
 from app.services.nowpayments_service import (
     create_payment, get_payment_status, generate_qr_data_uri,
-    verify_ipn_signature, get_plan_price,
+    verify_ipn_signature,
 )
 from app.api.v1.tenants import _assert_member, _assert_role
 from app.models.enums import UserRole
@@ -80,6 +80,22 @@ class TransactionResponse(BaseModel):
 
 
 # ── Helpers partagés (paiement intégré) ───────────────────────────
+
+async def _get_plan_price(db, plan: str, billing: str) -> float:
+    """Prix réel du plan — lu depuis subscription_plans, la même source que
+    la page de tarifs publique. Ne JAMAIS utiliser un prix codé en dur ici :
+    le montant facturé doit toujours correspondre au prix affiché."""
+    row = (await db.execute(
+        text("SELECT price_monthly, price_yearly FROM subscription_plans WHERE id = :id AND is_active = TRUE"),
+        {"id": plan},
+    )).fetchone()
+    if not row:
+        raise ValueError(f"Plan inconnu ou inactif : {plan}")
+    price = row.price_yearly if billing == "annual" else row.price_monthly
+    if price is None or float(price) <= 0:
+        raise ValueError(f"Ce plan n'a pas de prix configuré : {plan}")
+    return float(price)
+
 
 def _ipn_callback_url(tenant_id: uuid.UUID) -> str:
     base = settings.PLATFORM_API_DOMAIN or settings.FRONTEND_URL
@@ -309,7 +325,7 @@ async def checkout_subscription(
         raise ValidationException(f"Plan invalide : {plan}")
 
     try:
-        amount_usd = get_plan_price(plan, billing)
+        amount_usd = await _get_plan_price(db, plan, billing)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

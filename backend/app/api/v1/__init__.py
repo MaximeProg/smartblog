@@ -22,7 +22,7 @@ from app.api.v1.public import router as public_router, explore_router
 from app.api.v1.platform import router as platform_router
 from app.api.v1.engagement import router as engagement_router
 from app.api.v1.moderation import router as moderation_router
-from app.api.v1.affiliate import router as affiliate_router, superadmin_router as affiliate_admin_router
+from app.api.v1.affiliate import router as affiliate_router, user_router as affiliate_user_router, superadmin_router as affiliate_admin_router
 from app.api.v1.accounting import router as accounting_router, tenant_accounting_router
 from app.api.v1.domains import router as domains_router
 from app.api.v1.bookmarks import router as bookmarks_router
@@ -54,6 +54,7 @@ api_router.include_router(webhooks_router)
 api_router.include_router(engagement_router)
 api_router.include_router(moderation_router)
 api_router.include_router(affiliate_router)
+api_router.include_router(affiliate_user_router)
 api_router.include_router(affiliate_admin_router)
 api_router.include_router(accounting_router)
 api_router.include_router(tenant_accounting_router)

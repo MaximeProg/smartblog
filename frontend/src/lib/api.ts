@@ -673,6 +673,30 @@ export interface AffiliateReferral {
   status: string;
   joined_at: string | null;
   total_commission: number;
+  via_blog_name?: string | null;
+  via_blog_slug?: string | null;
+}
+
+export interface AffiliateBlogSummary {
+  tenant_id: string;
+  name: string;
+  slug: string;
+  affiliate_code: string;
+  referral_url: string;
+  balance: number;
+  cashout_threshold: number;
+  can_cashout: boolean;
+}
+
+export interface UserAffiliateDashboard {
+  balance: number;
+  cashout_threshold: number;
+  can_cashout: boolean;
+  total_earned: number;
+  total_paid_out: number;
+  total_referrals: number;
+  pending_commissions: number;
+  blogs: AffiliateBlogSummary[];
 }
 
 export const affiliateApi = {
@@ -702,6 +726,25 @@ export const affiliateApi = {
 
   inviteFriend: (tenantId: string, data: { email: string; language: string; message: string }) =>
     api.post<{ ok: boolean; sent_to: string }>(`/tenants/${tenantId}/affiliate/invite-friend`, data),
+
+  // ── Agrégation au niveau utilisateur (tous les blogs possédés) ──
+  getUserDashboard: () =>
+    api.get<UserAffiliateDashboard>('/users/me/affiliate/dashboard'),
+
+  listUserReferrals: (params?: { limit?: number; offset?: number }) =>
+    api.get<{ referrals: AffiliateReferral[]; total: number }>('/users/me/affiliate/referrals', { params }),
+
+  getUserTree: (maxDepth = 3) =>
+    api.get<{ nodes: { tenant_id: string; name: string; slug: string; plan: string; level: number; via_blog_name?: string }[] }>(
+      '/users/me/affiliate/tree',
+      { params: { max_depth: maxDepth } }
+    ),
+
+  listUserCommissions: (params?: { status?: string; limit?: number; offset?: number }) =>
+    api.get<(AffiliateCommission & { blog_name: string })[]>('/users/me/affiliate/commissions', { params }),
+
+  listUserCashouts: () =>
+    api.get<(CashoutRequest & { blog_name: string })[]>('/users/me/affiliate/cashouts'),
 };
 
 // ── M24 — Accounting API ──────────────────────────────────────────────────────
