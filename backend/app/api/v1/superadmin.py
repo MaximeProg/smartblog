@@ -333,7 +333,6 @@ async def list_all_ads(
                 "link_safety_status": r.Ad.link_safety_status.value,
                 "total_budget": float(r.Ad.total_budget) if r.Ad.total_budget else None,
                 "price_per_day": float(r.Ad.price_per_day) if r.Ad.price_per_day else None,
-                "payment_link_url": r.Ad.payment_link_url,
                 "rejection_reason": r.Ad.rejection_reason,
                 "impressions_count": r.Ad.impressions_count,
                 "clicks_count": r.Ad.clicks_count,

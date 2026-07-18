@@ -2,13 +2,16 @@
 Service NowPayments — Crypto USDT TRC20
 Docs : https://documenter.getpostman.com/view/7907941/2s93JtP3F6
 """
+import base64
 import hashlib
 import hmac
+import io
 import json
 import uuid
 from typing import Any
 
 import httpx
+import qrcode
 
 from app.core.config import settings
 
@@ -20,23 +23,22 @@ def _headers(api_key: str) -> dict:
     return {"x-api-key": api_key, "Content-Type": "application/json"}
 
 
-# ── Invoice (paiement entrant) ────────────────────────────────────
+# ── Payment (paiement intégré, sans redirection) ──────────────────
 
-async def create_invoice(
+async def create_payment(
     *,
     price_amount: float,
     price_currency: str = "usd",
     order_id: str,
     order_description: str,
-    success_url: str,
-    cancel_url: str,
     ipn_callback_url: str,
 ) -> dict:
     """
-    Crée une invoice NowPayments. L'utilisateur est redirigé vers invoice_url
-    pour payer en USDT (ou autre crypto). Les fonds arrivent dans le wallet
-    NOWPAYMENTS_WALLET_USDT de la plateforme.
-    Retourne : { invoice_url, id, order_id, ... }
+    Crée un paiement NowPayments direct (API "Payment", pas "Invoice") :
+    retourne l'adresse de dépôt et le montant à envoyer, sans jamais rediriger
+    l'utilisateur hors de la plateforme.
+    Retourne notamment : { payment_id, pay_address, pay_amount, pay_currency,
+    payment_status, expiration_estimate_date, ... }
     """
     if not settings.NOWPAYMENTS_API_KEY:
         raise RuntimeError("NOWPAYMENTS_API_KEY non configuré.")
@@ -47,8 +49,6 @@ async def create_invoice(
         "pay_currency": "usdttrc20",
         "order_id": order_id,
         "order_description": order_description,
-        "success_url": success_url,
-        "cancel_url": cancel_url,
         "ipn_callback_url": ipn_callback_url,
         "is_fixed_rate": True,
         "is_fee_paid_by_user": False,
@@ -56,12 +56,39 @@ async def create_invoice(
 
     async with httpx.AsyncClient(timeout=15) as client:
         resp = await client.post(
-            f"{_BASE}/invoice",
+            f"{_BASE}/payment",
             headers=_headers(settings.NOWPAYMENTS_API_KEY),
             json=payload,
         )
         resp.raise_for_status()
         return resp.json()
+
+
+async def get_payment_status(payment_id: str) -> dict:
+    """
+    Relit le statut d'un paiement directement depuis NowPayments (vérification
+    "à la source", en complément — pas en remplacement — du webhook IPN).
+    """
+    if not settings.NOWPAYMENTS_API_KEY:
+        raise RuntimeError("NOWPAYMENTS_API_KEY non configuré.")
+
+    async with httpx.AsyncClient(timeout=15) as client:
+        resp = await client.get(
+            f"{_BASE}/payment/{payment_id}",
+            headers=_headers(settings.NOWPAYMENTS_API_KEY),
+        )
+        resp.raise_for_status()
+        return resp.json()
+
+
+def generate_qr_data_uri(data: str) -> str:
+    """Encode `data` (ex: adresse de paiement) en QR code PNG, renvoyé en
+    data URI base64 — affichable directement dans un <img src=...>."""
+    img = qrcode.make(data)
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    encoded = base64.b64encode(buf.getvalue()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
 
 
 # ── IPN Webhook verification ──────────────────────────────────────

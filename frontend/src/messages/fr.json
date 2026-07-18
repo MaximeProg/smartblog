@@ -1373,6 +1373,7 @@
     "currentPlanButton": "Plan actuel",
     "footerNote": "Paiement sécurisé · Annulation possible à tout moment · Pas de frais cachés",
     "checkoutError": "Erreur lors du paiement. Veuillez réessayer.",
+    "checkoutSuccess": "Paiement confirmé — votre plan a été mis à niveau.",
     "upgradeNow": "Mettre à niveau maintenant",
     "trialExpiredTitle": "Votre essai a expiré",
     "trialExpiredDesc": "Choisissez un plan pour continuer à publier et développer votre blog.",

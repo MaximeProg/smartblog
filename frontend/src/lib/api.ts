@@ -373,7 +373,7 @@ export const newsletterApi = {
   },
 
   checkoutCampaign: (tenantId: string, campaignId: string, email: string) =>
-    api.post<{ invoice_url: string; order_id: string }>(
+    api.post<CryptoPaymentResponse>(
       `/tenants/${tenantId}/newsletter/campaigns/${campaignId}/checkout`,
       { email },
     ),
@@ -888,11 +888,23 @@ export const articleScheduleApi = {
 
 // ── Payments API ──────────────────────────────────────────────────────────────
 
-export interface NowPaymentsCheckoutResponse {
-  invoice_url: string;
-  invoice_id: string;
+export interface CryptoPaymentResponse {
+  transaction_id: string;
   order_id: string;
+  pay_address: string;
+  pay_amount: number;
+  pay_currency: string;
+  qr_code_data_uri: string;
+  expires_at: string | null;
   amount_usd: number;
+}
+
+export interface PaymentStatusResponse {
+  status: string;
+  provider_status: string | null;
+  pay_address: string | null;
+  pay_amount: number | null;
+  expires_at: string | null;
 }
 
 export const bookmarkApi = {
@@ -910,11 +922,14 @@ export const paymentsApi = {
   getSubscription: (tenantId: string) =>
     api.get<{ plan: string; status: string; expires_at: string | null; trial_ends_at: string | null }>(`/tenants/${tenantId}/payments/subscription`),
 
-  createArticleCheckout: (tenantId: string, data: { article_id: string; success_url?: string; cancel_url?: string }) =>
-    api.post<NowPaymentsCheckoutResponse>(`/tenants/${tenantId}/payments/checkout`, data),
+  createArticleCheckout: (tenantId: string, data: { article_id: string }) =>
+    api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/checkout`, data),
 
-  createSubscriptionCheckout: (tenantId: string, data: { plan: string; billing?: 'monthly' | 'annual'; success_url?: string; cancel_url?: string }) =>
-    api.post<NowPaymentsCheckoutResponse>(`/tenants/${tenantId}/payments/checkout-subscription`, data),
+  createSubscriptionCheckout: (tenantId: string, data: { plan: string; billing?: 'monthly' | 'annual' }) =>
+    api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/checkout-subscription`, data),
+
+  getPaymentStatus: (tenantId: string, orderId: string) =>
+    api.get<PaymentStatusResponse>(`/tenants/${tenantId}/payments/status/${orderId}`),
 };
 
 // ── Super Admin API ───────────────────────────────────────────────────────────

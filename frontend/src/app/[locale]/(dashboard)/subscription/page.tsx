@@ -8,8 +8,9 @@ import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { useLocale } from 'next-intl';
 import { useAuthStore, useCurrentTenant } from '@/store/auth.store';
-import { paymentsApi, platformApi, type PublicPlan } from '@/lib/api';
+import { paymentsApi, platformApi, authApi, type PublicPlan, type CryptoPaymentResponse } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 
 // ── Plan config ───────────────────────────────────────────────────
 
@@ -30,12 +31,14 @@ function daysLeft(iso: string): number {
 // ── Main page ─────────────────────────────────────────────────────
 
 export default function SubscriptionPage() {
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const tenant = useCurrentTenant();
   const locale = useLocale();
   const t = useTranslations('subscription');
   const { toast } = useToast();
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const [payment, setPayment] = useState<CryptoPaymentResponse | null>(null);
+  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
   const currentPlan = user?.plan ?? 'free';
 
   const { data: plansData } = useQuery({
@@ -55,14 +58,12 @@ export default function SubscriptionPage() {
     if (planId === 'free' || planId === currentPlan || !tenant?.id) return;
     setCheckoutLoading(planId);
     try {
-      const origin = window.location.origin;
       const { data } = await paymentsApi.createSubscriptionCheckout(tenant.id, {
         plan: planId,
         billing: 'monthly',
-        success_url: `${origin}/${locale}/subscription?success=1&plan=${planId}`,
-        cancel_url: `${origin}/${locale}/subscription`,
       });
-      window.location.href = data.invoice_url;
+      setPendingPlan(planId);
+      setPayment(data);
     } catch (e: any) {
       const detail = e?.response?.data?.detail;
       toast({
@@ -70,8 +71,19 @@ export default function SubscriptionPage() {
         title: t('checkoutError'),
         description: typeof detail === 'string' ? detail : undefined,
       });
+    } finally {
       setCheckoutLoading(null);
     }
+  }
+
+  async function handlePaymentConfirmed() {
+    setPayment(null);
+    toast({ title: t('checkoutSuccess') });
+    try {
+      const { data } = await authApi.me();
+      updateUser(data);
+    } catch {}
+    setPendingPlan(null);
   }
 
   const trialDays = tenant?.trial_ends_at ? daysLeft(tenant.trial_ends_at) : null;
@@ -185,7 +197,7 @@ export default function SubscriptionPage() {
                       }`}
                     >
                       {checkoutLoading === planId ? (
-                        <><Loader2 className="h-4 w-4 animate-spin" /> Redirection…</>
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Preparing payment…</>
                       ) : isCurrent || planId === 'free' ? (
                         t('currentPlanButton')
                       ) : (
@@ -202,6 +214,22 @@ export default function SubscriptionPage() {
         </main>
       </div>
 
+      {payment && tenant?.id && (
+        <CryptoPaymentPanel
+          open={!!payment}
+          onOpenChange={(o) => { if (!o) setPayment(null); }}
+          tenantId={tenant.id}
+          orderId={payment.order_id}
+          payAddress={payment.pay_address}
+          payAmount={payment.pay_amount}
+          payCurrency={payment.pay_currency}
+          qrCodeDataUri={payment.qr_code_data_uri}
+          expiresAt={payment.expires_at}
+          amountUsd={payment.amount_usd}
+          onConfirmed={handlePaymentConfirmed}
+          onRetry={pendingPlan ? () => { setPayment(null); handleCheckout(pendingPlan); } : undefined}
+        />
+      )}
     </div>
   );
 }

@@ -35,6 +35,16 @@ class Transaction(Base):
     # Référence NowPayments
     nowpayments_invoice_id: Mapped[str | None] = mapped_column(String(255))
     nowpayments_order_id: Mapped[str | None] = mapped_column(String(255))
+    nowpayments_payment_id: Mapped[str | None] = mapped_column(String(255))
+
+    # Paiement intégré (adresse + QR affichés directement sur la plateforme)
+    pay_address: Mapped[str | None] = mapped_column(String(255))
+    pay_amount: Mapped[float | None] = mapped_column(Numeric(20, 8))
+    pay_currency: Mapped[str | None] = mapped_column(String(20))
+    payment_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Statut brut NowPayments (waiting/confirming/finished/failed/expired/...),
+    # affiché tel quel côté frontend sans étendre TransactionStatus.
+    provider_status: Mapped[str | None] = mapped_column(String(30))
 
     # Objet acheté
     article_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("articles.id", ondelete="SET NULL"))

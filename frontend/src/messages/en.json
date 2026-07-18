@@ -1373,6 +1373,7 @@
     "currentPlanButton": "Current plan",
     "footerNote": "Secure payment · Cancel anytime · No hidden fees",
     "checkoutError": "Checkout failed. Please try again.",
+    "checkoutSuccess": "Payment confirmed — your plan has been upgraded.",
     "upgradeNow": "Upgrade now",
     "trialExpiredTitle": "Your trial has expired",
     "trialExpiredDesc": "Choose a plan to keep publishing and growing your blog.",

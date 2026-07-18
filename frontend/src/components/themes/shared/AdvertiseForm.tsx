@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   CheckCircle2, AlertCircle, Loader2, ChevronLeft, ChevronRight,
   Globe, MapPin, CreditCard, FileText,
 } from 'lucide-react';
+import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
+import type { CryptoPaymentResponse } from '@/lib/api';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
 
@@ -456,15 +458,10 @@ function Step4({ form, blogName, primaryColor }: { form: FormState; blogName: st
 export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(EMPTY);
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'cancelled'>('idle');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [touched, setTouched] = useState(false);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('payment') === 'success') setStatus('success');
-    else if (params.get('payment') === 'cancelled') setStatus('cancelled');
-  }, []);
+  const [payment, setPayment] = useState<CryptoPaymentResponse | null>(null);
 
   const set = (key: keyof FormState, value: string) =>
     setForm(f => ({ ...f, [key]: value }));
@@ -514,8 +511,6 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
         click_url: form.click_url.trim(),
         total_budget: parseFloat(form.total_budget),
         currency: form.currency,
-        success_url: `${window.location.origin}${window.location.pathname}?payment=success`,
-        cancel_url: `${window.location.origin}${window.location.pathname}?payment=cancelled`,
       };
       if (form.advertiser_company.trim()) body.advertiser_company = form.advertiser_company.trim();
       const descParts = [form.description.trim(), buildTargetingNote()].filter(Boolean);
@@ -534,7 +529,8 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
         throw new Error(data?.detail ?? `Server error ${res.status}`);
       }
       const data = await res.json();
-      window.location.href = data.invoice_url;
+      setPayment(data);
+      setStatus('idle');
     } catch (err: unknown) {
       setStatus('error');
       setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
@@ -563,27 +559,6 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
           className="text-[13px] font-semibold px-5 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
         >
           Submit another ad
-        </button>
-      </div>
-    );
-  }
-
-  // ── Cancelled screen ─────────────────────────────────────────────────────────
-  if (status === 'cancelled') {
-    return (
-      <div className="bg-white rounded-2xl border border-zinc-100 shadow-sm p-10 text-center">
-        <div className="h-16 w-16 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-slate-100">
-          <AlertCircle className="h-8 w-8 text-slate-400" />
-        </div>
-        <h2 className="text-xl font-black text-slate-900 mb-2">Payment cancelled</h2>
-        <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed mb-6">
-          Your payment was not completed. Your ad was not submitted. You can try again below.
-        </p>
-        <button
-          onClick={() => { window.history.replaceState(null, '', window.location.pathname); setStatus('idle'); setStep(3); }}
-          className="text-[13px] font-semibold px-5 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
-        >
-          Try again
         </button>
       </div>
     );
@@ -656,12 +631,28 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
             style={{ backgroundColor: primaryColor }}
           >
             {status === 'loading'
-              ? <><Loader2 className="h-4 w-4 animate-spin" /> Redirecting to payment…</>
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> Preparing payment…</>
               : <><CreditCard className="h-4 w-4" /> Pay now — {form.total_budget} {form.currency}</>
             }
           </button>
         )}
       </div>
+
+      {payment && (
+        <CryptoPaymentPanel
+          open={!!payment}
+          onOpenChange={(o) => { if (!o) setPayment(null); }}
+          tenantId={tenantId}
+          orderId={payment.order_id}
+          payAddress={payment.pay_address}
+          payAmount={payment.pay_amount}
+          payCurrency={payment.pay_currency}
+          qrCodeDataUri={payment.qr_code_data_uri}
+          expiresAt={payment.expires_at}
+          amountUsd={payment.amount_usd}
+          onConfirmed={() => { setPayment(null); setStatus('success'); }}
+        />
+      )}
     </div>
   );
 }

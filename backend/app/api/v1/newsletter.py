@@ -443,8 +443,6 @@ def _sub_response(s: NewsletterSubscriber) -> SubscriberResponse:
 
 class NewsletterCheckoutRequest(BaseModel):
     email: EmailStr
-    success_url: str | None = None
-    cancel_url: str | None = None
 
 
 @router.post("/campaigns/{campaign_id}/checkout", status_code=201)
@@ -455,9 +453,9 @@ async def checkout_newsletter(
     payload: TokenPayload,
     db: DBSession,
 ):
-    """Crée une invoice NowPayments pour accéder à une newsletter payante."""
-    from app.core.config import settings
-    from app.services.nowpayments_service import create_invoice
+    """Crée un paiement NowPayments intégré pour accéder à une newsletter payante."""
+    from app.api.v1.payments import _create_crypto_transaction, _crypto_response
+    from app.models.enums import TransactionType
 
     result = await db.execute(
         select(NewsletterCampaign).where(
@@ -482,41 +480,35 @@ async def checkout_newsletter(
         raise ValidationException("Vous avez déjà accès à cette newsletter.")
 
     order_id = f"nl_{tenant_id}_{campaign_id}_{uuid.uuid4().hex[:8]}"
-    frontend_url = settings.FRONTEND_URL
 
-    invoice = await create_invoice(
-        price_amount=campaign.price,
-        price_currency="usd",
-        order_id=order_id,
-        order_description=campaign.subject[:100],
-        success_url=body.success_url or f"{frontend_url}/newsletter/{campaign_id}?unlocked=1",
-        cancel_url=body.cancel_url or f"{frontend_url}/newsletter/{campaign_id}",
-        ipn_callback_url=f"{settings.PLATFORM_API_DOMAIN or frontend_url}/api/v1/tenants/{tenant_id}/payments/webhook/nowpayments",
-    )
-
-    # Enregistrer l'accès en attente (granted_at=null jusqu'au webhook)
-    from app.models.newsletter import NewsletterAccess
     user_id_val = None
     try:
         user_id_val = uuid.UUID(payload["sub"])
     except Exception:
         pass
-    pending = NewsletterAccess(
+
+    tx, _ = await _create_crypto_transaction(
+        db,
+        tenant_id=tenant_id,
+        user_id=user_id_val,
+        transaction_type=TransactionType.PAID_NEWSLETTER,
+        amount_usd=campaign.price,
+        order_id=order_id,
+        order_description=campaign.subject[:100],
+        campaign_id=campaign_id,
+    )
+
+    # Enregistrer l'accès en attente (granted_at=null jusqu'à la confirmation)
+    db.add(NewsletterAccess(
         tenant_id=tenant_id,
         campaign_id=campaign_id,
         user_id=user_id_val,
         email=str(body.email),
         nowpayments_order_id=order_id,
-    )
-    db.add(pending)
+    ))
     await db.commit()
 
-    return {
-        "invoice_url": invoice["invoice_url"],
-        "invoice_id": str(invoice["id"]),
-        "order_id": order_id,
-        "amount_usd": campaign.price,
-    }
+    return _crypto_response(tx, campaign.price)
 
 
 def _campaign_response(c: NewsletterCampaign) -> CampaignResponse:

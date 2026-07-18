@@ -35,16 +35,6 @@ class SubmitAdRequest(BaseModel):
     price_per_day: float | None = None
     total_budget: float
     currency: str = "USD"
-    success_url: str | None = None
-    cancel_url: str | None = None
-
-
-class SubmitAdCheckoutResponse(BaseModel):
-    ad_id: str
-    invoice_url: str
-    invoice_id: str
-    amount: float
-    currency: str
 
 
 class ReviewAdRequest(BaseModel):
@@ -69,7 +59,6 @@ class AdResponse(BaseModel):
     ends_at: datetime | None
     impressions_count: int
     clicks_count: int
-    payment_link_url: str | None
     created_at: datetime
 
 
@@ -86,14 +75,18 @@ class AdScanResponse(BaseModel):
 
 # ── Soumission publicité (public / annonceur) ─────────────────────
 
-@router.post("/submit", response_model=SubmitAdCheckoutResponse, status_code=201)
+@router.post("/submit", status_code=201)
 async def submit_ad(
     tenant_id: uuid.UUID,
     body: SubmitAdRequest,
     background: BackgroundTasks,
     db: DBSession,
 ):
-    """Soumission d'une publicité + création invoice NowPayments. Sans auth requise."""
+    """Soumission d'une publicité + paiement NowPayments intégré (adresse +
+    QR affichés directement). Sans auth requise."""
+    from app.api.v1.payments import _create_crypto_transaction, _crypto_response
+    from app.models.enums import TransactionType
+
     if body.total_budget <= 0:
         raise ValidationException("Le budget doit être supérieur à 0.")
 
@@ -119,24 +112,17 @@ async def submit_ad(
 
     background.add_task(_scan_ad_link, str(ad.id), ad.click_url)
 
-    from app.services.nowpayments_service import create_invoice
-
     order_id = f"ad_{tenant_id}_{ad.id}_{uuid.uuid4().hex[:8]}"
-    frontend_url = settings.FRONTEND_URL or ""
-
-    invoice = await create_invoice(
-        price_amount=body.total_budget,
-        price_currency=body.currency.lower(),
+    tx, _ = await _create_crypto_transaction(
+        db,
+        tenant_id=tenant_id,
+        user_id=None,
+        transaction_type=TransactionType.AD_CAMPAIGN,
+        amount_usd=body.total_budget,
         order_id=order_id,
         order_description=f"Ad slot: {body.title[:80]}",
-        success_url=body.success_url or f"{frontend_url}/advertise?payment=success&ad_id={ad.id}",
-        cancel_url=body.cancel_url or f"{frontend_url}/advertise?payment=cancelled",
-        ipn_callback_url=f"{settings.PLATFORM_API_DOMAIN or frontend_url}/api/v1/tenants/{tenant_id}/payments/webhook/nowpayments",
+        campaign_id=ad.id,
     )
-
-    ad.payment_link_url = invoice["invoice_url"]
-    ad.payment_session_id = str(invoice["id"])
-    await db.commit()
 
     # Notify super admins of new ad submission
     try:
@@ -157,13 +143,8 @@ async def submit_ad(
     except Exception:
         pass
 
-    return SubmitAdCheckoutResponse(
-        ad_id=str(ad.id),
-        invoice_url=invoice["invoice_url"],
-        invoice_id=str(invoice["id"]),
-        amount=body.total_budget,
-        currency=body.currency,
-    )
+    payment = _crypto_response(tx, body.total_budget)
+    return {"ad_id": str(ad.id), **payment.model_dump()}
 
 
 # ── Listing ads (admin) ───────────────────────────────────────────
@@ -216,10 +197,11 @@ async def review_ad(
     ad.reviewed_by = uuid.UUID(payload["sub"])
 
     if body.decision == AdSubmissionStatus.APPROVED:
-        # Le paiement NowPayments est collecté à la soumission.
-        # Si le webhook a déjà confirmé le paiement (amount_paid > 0) → activer + commissions.
-        # Sinon → approuver mais laisser en pause jusqu'à la confirmation de paiement.
-        if ad.amount_paid and float(ad.amount_paid) > 0:
+        # Le paiement NowPayments est collecté à la soumission (webhook ou
+        # polling confirme et passe amount_paid > 0 avant que l'admin approuve).
+        # Garde contre une double approbation : ne recalcule les commissions
+        # que lors de la transition PAUSED/PENDING → ACTIVE.
+        if ad.amount_paid and float(ad.amount_paid) > 0 and ad.campaign_status != AdCampaignStatus.ACTIVE:
             ad.campaign_status = AdCampaignStatus.ACTIVE
             try:
                 from app.api.v1.affiliate import compute_and_accrue_commissions
@@ -227,12 +209,12 @@ async def review_ad(
                     db=db,
                     source_tenant_id=tenant_id,
                     source_type="ad_slot",
-                    source_transaction_id=str(ad.payment_session_id or ad.id),
+                    source_transaction_id=str(ad.id),
                     gross_amount=float(ad.amount_paid),
                 )
             except Exception:
                 pass
-        else:
+        elif not (ad.amount_paid and float(ad.amount_paid) > 0):
             # Paiement non encore confirmé — campagne activée automatiquement par le webhook
             ad.campaign_status = AdCampaignStatus.PAUSED
 
@@ -401,6 +383,5 @@ def _ad_response(a: Ad) -> AdResponse:
         ends_at=a.ends_at,
         impressions_count=a.impressions_count,
         clicks_count=a.clicks_count,
-        payment_link_url=a.payment_link_url,
         created_at=a.created_at,
     )
