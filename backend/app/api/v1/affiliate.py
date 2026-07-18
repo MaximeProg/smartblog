@@ -1,4 +1,8 @@
-﻿"""M23 — Affiliate Program API"""
+"""M23 — Affiliate Program API
+
+Keyed on USERS, not tenants: a person can own several blogs, but the referral
+code, balance, and commission tree belong to the PERSON, not to whichever blog
+happened to be used to generate a shared link. See migration 047."""
 import csv
 import io
 import uuid
@@ -7,21 +11,16 @@ import string
 from datetime import datetime, timezone
 from fastapi import APIRouter, Query
 from fastapi.responses import StreamingResponse
-from sqlalchemy import select, func, update
-from sqlalchemy.orm import aliased
+from sqlalchemy import select, func
 from pydantic import BaseModel
 
 from app.core.config import settings
 from app.core.dependencies import TokenPayload, DBSession
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
-from app.models.affiliate import AffiliateRelationship, AffiliateCommission, AffiliateCashoutRequest
-from app.models.tenant import Tenant
-from app.models.tenant_user import TenantUser
+from app.models.affiliate import AffiliateRelationship, AffiliateCommission, AffiliateCashoutRequest, AffiliateCodeAlias
 from app.models.user import User
-from app.models.enums import AffiliateCommissionStatus, CashoutStatus, UserRole
-from app.api.v1.tenants import _assert_member, _assert_role
+from app.models.enums import AffiliateCommissionStatus, CashoutStatus
 
-router = APIRouter(prefix="/tenants/{tenant_id}/affiliate", tags=["affiliate"])
 user_router = APIRouter(prefix="/users/me/affiliate", tags=["affiliate"])
 superadmin_router = APIRouter(prefix="/superadmin/affiliate", tags=["affiliate-admin"])
 
@@ -67,46 +66,23 @@ class CashoutResponse(BaseModel):
     processed_at: datetime | None
 
 
-class CashoutRequest(BaseModel):
+class CashoutRequestBody(BaseModel):
     payout_method: str = "nowpayments_crypto"
 
 
-class RegisterReferralRequest(BaseModel):
-    referral_code: str
-
-
 class ReferralItem(BaseModel):
-    tenant_id: str
+    user_id: str
     name: str
-    slug: str
+    email: str
     plan: str
-    status: str
     joined_at: str | None
     total_commission: float
-    via_blog_name: str | None = None
-    via_blog_slug: str | None = None
 
 
-class BlogAffiliateSummary(BaseModel):
-    tenant_id: str
-    name: str
-    slug: str
-    affiliate_code: str
-    referral_url: str
-    balance: float
-    cashout_threshold: float
-    can_cashout: bool
-
-
-class UserAffiliateDashboardResponse(BaseModel):
-    balance: float
-    cashout_threshold: float
-    can_cashout: bool
-    total_earned: float
-    total_paid_out: float
-    total_referrals: int
-    pending_commissions: int
-    blogs: list[BlogAffiliateSummary]
+class InviteFriendRequest(BaseModel):
+    email: str
+    language: str = "en"
+    message: str
 
 
 # ── Helpers ───────────────────────────────────────────────────────
@@ -115,55 +91,42 @@ def _generate_affiliate_code() -> str:
     return "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
 
-async def _owned_tenant_ids(db, user_id: uuid.UUID) -> list[uuid.UUID]:
-    """Tenants this user actually owns (TENANT_ADMIN) — the affiliate program
-    is per-blog under the hood, but the dashboard aggregates across every
-    blog the user owns so one referral link isn't hidden behind another."""
-    result = await db.execute(
-        select(Tenant.id)
-        .join(TenantUser, TenantUser.tenant_id == Tenant.id)
-        .where(
-            TenantUser.user_id == user_id,
-            TenantUser.role == UserRole.TENANT_ADMIN,
-            Tenant.deleted_at.is_(None),
-        )
-    )
-    return list(result.scalars().all())
+async def _get_or_create_affiliate_code(db, user: User) -> str:
+    """Lazily assigns a code the first time it's needed (dashboard visit,
+    invite-friend, ...), mirroring the account's own creation as an alias so
+    it's resolvable from day one."""
+    if user.affiliate_code:
+        return user.affiliate_code
+    code = _generate_affiliate_code()
+    user.affiliate_code = code
+    db.add(AffiliateCodeAlias(code=code, user_id=user.id))
+    await db.commit()
+    await db.refresh(user)
+    return user.affiliate_code
 
 
-# ── Tenant affiliate routes ───────────────────────────────────────
+# ── Dashboard ─────────────────────────────────────────────────────
 
-@router.get("", response_model=AffiliateDashboardResponse)
-async def get_affiliate_dashboard(
-    tenant_id: uuid.UUID,
-    payload: TokenPayload,
-    db: DBSession,
-):
-    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+@user_router.get("/dashboard", response_model=AffiliateDashboardResponse)
+async def get_affiliate_dashboard(payload: TokenPayload, db: DBSession):
+    user_id = uuid.UUID(payload["sub"])
+    user = await db.get(User, user_id)
+    if not user:
+        raise NotFoundException("Utilisateur")
 
-    tenant = await db.get(Tenant, tenant_id)
-    if not tenant:
-        raise NotFoundException("Blog non trouvé.")
+    code = await _get_or_create_affiliate_code(db, user)
 
-    # Ensure affiliate_code exists
-    if not tenant.affiliate_code:
-        tenant.affiliate_code = _generate_affiliate_code()
-        await db.commit()
-        await db.refresh(tenant)
-
-    # Count referrals at level 1
     total_referrals_q = await db.execute(
         select(func.count()).where(
-            AffiliateRelationship.ancestor_id == tenant_id,
+            AffiliateRelationship.ancestor_user_id == user_id,
             AffiliateRelationship.level == 1,
         )
     )
     total_referrals = total_referrals_q.scalar() or 0
 
-    # Aggregate earned
     earned_q = await db.execute(
         select(func.coalesce(func.sum(AffiliateCommission.commission_amount), 0)).where(
-            AffiliateCommission.affiliate_tenant_id == tenant_id,
+            AffiliateCommission.affiliate_user_id == user_id,
             AffiliateCommission.status.in_([
                 AffiliateCommissionStatus.PENDING,
                 AffiliateCommissionStatus.READY,
@@ -175,7 +138,7 @@ async def get_affiliate_dashboard(
 
     paid_out_q = await db.execute(
         select(func.coalesce(func.sum(AffiliateCommission.commission_amount), 0)).where(
-            AffiliateCommission.affiliate_tenant_id == tenant_id,
+            AffiliateCommission.affiliate_user_id == user_id,
             AffiliateCommission.status == AffiliateCommissionStatus.PAID,
         )
     )
@@ -183,18 +146,18 @@ async def get_affiliate_dashboard(
 
     pending_q = await db.execute(
         select(func.count()).where(
-            AffiliateCommission.affiliate_tenant_id == tenant_id,
+            AffiliateCommission.affiliate_user_id == user_id,
             AffiliateCommission.status == AffiliateCommissionStatus.PENDING,
         )
     )
     pending_commissions = pending_q.scalar() or 0
 
-    balance = float(tenant.affiliate_balance or 0)
-    threshold = float(tenant.affiliate_cashout_threshold or MIN_CASHOUT)
+    balance = float(user.affiliate_balance or 0)
+    threshold = float(user.affiliate_cashout_threshold or MIN_CASHOUT)
 
     return AffiliateDashboardResponse(
-        affiliate_code=tenant.affiliate_code,
-        referral_url=f"{settings.FRONTEND_URL}/register?ref={tenant.affiliate_code}",
+        affiliate_code=code,
+        referral_url=f"{settings.FRONTEND_URL}/register?ref={code}",
         balance=balance,
         cashout_threshold=threshold,
         can_cashout=balance >= threshold,
@@ -205,18 +168,17 @@ async def get_affiliate_dashboard(
     )
 
 
-@router.get("/commissions")
+@user_router.get("/commissions")
 async def list_commissions(
-    tenant_id: uuid.UUID,
     payload: TokenPayload,
     db: DBSession,
     status: str | None = Query(None),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ):
-    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+    user_id = uuid.UUID(payload["sub"])
 
-    q = select(AffiliateCommission).where(AffiliateCommission.affiliate_tenant_id == tenant_id)
+    q = select(AffiliateCommission).where(AffiliateCommission.affiliate_user_id == user_id)
     if status:
         q = q.where(AffiliateCommission.status == status)
     q = q.order_by(AffiliateCommission.created_at.desc()).limit(limit).offset(offset)
@@ -240,17 +202,13 @@ async def list_commissions(
     ]
 
 
-@router.get("/cashouts")
-async def list_cashouts(
-    tenant_id: uuid.UUID,
-    payload: TokenPayload,
-    db: DBSession,
-):
-    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+@user_router.get("/cashouts")
+async def list_cashouts(payload: TokenPayload, db: DBSession):
+    user_id = uuid.UUID(payload["sub"])
 
     result = await db.execute(
         select(AffiliateCashoutRequest)
-        .where(AffiliateCashoutRequest.tenant_id == tenant_id)
+        .where(AffiliateCashoutRequest.user_id == user_id)
         .order_by(AffiliateCashoutRequest.requested_at.desc())
     )
     cashouts = result.scalars().all()
@@ -270,29 +228,26 @@ async def list_cashouts(
     ]
 
 
-@router.post("/cashout", status_code=201)
+@user_router.post("/cashout", status_code=201)
 async def request_cashout(
-    tenant_id: uuid.UUID,
-    body: CashoutRequest,
+    body: CashoutRequestBody,
     payload: TokenPayload,
     db: DBSession,
 ):
-    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+    user_id = uuid.UUID(payload["sub"])
+    user = await db.get(User, user_id)
+    if not user:
+        raise NotFoundException("Utilisateur")
 
-    tenant = await db.get(Tenant, tenant_id)
-    if not tenant:
-        raise NotFoundException("Blog non trouvé.")
-
-    balance = float(tenant.affiliate_balance or 0)
-    threshold = float(tenant.affiliate_cashout_threshold or MIN_CASHOUT)
+    balance = float(user.affiliate_balance or 0)
+    threshold = float(user.affiliate_cashout_threshold or MIN_CASHOUT)
 
     if balance < threshold:
         raise ValidationException(f"Solde insuffisant. Minimum requis : ${threshold:.2f}, solde actuel : ${balance:.2f}")
 
-    # Check no pending cashout request
     pending_q = await db.execute(
         select(func.count()).where(
-            AffiliateCashoutRequest.tenant_id == tenant_id,
+            AffiliateCashoutRequest.user_id == user_id,
             AffiliateCashoutRequest.status.in_([CashoutStatus.REQUESTED, CashoutStatus.PROCESSING]),
         )
     )
@@ -304,7 +259,7 @@ async def request_cashout(
         raise ValidationException(f"Le solde (${balance:.2f}) ne couvre pas les frais de retrait (${CASHOUT_FEE:.2f}).")
 
     cashout = AffiliateCashoutRequest(
-        tenant_id=tenant_id,
+        user_id=user_id,
         gross_amount=balance,
         fee=CASHOUT_FEE,
         net_amount=net_amount,
@@ -313,10 +268,9 @@ async def request_cashout(
     )
     db.add(cashout)
 
-    # Mark READY commissions as part of this cashout
     ready_commissions_q = await db.execute(
         select(AffiliateCommission).where(
-            AffiliateCommission.affiliate_tenant_id == tenant_id,
+            AffiliateCommission.affiliate_user_id == user_id,
             AffiliateCommission.status.in_([AffiliateCommissionStatus.PENDING, AffiliateCommissionStatus.READY]),
         )
     )
@@ -329,8 +283,7 @@ async def request_cashout(
         commission.status = AffiliateCommissionStatus.PAID
         commission.paid_at = datetime.now(timezone.utc)
 
-    # Zero out balance
-    tenant.affiliate_balance = 0
+    user.affiliate_balance = 0
     await db.commit()
 
     return CashoutResponse(
@@ -345,18 +298,185 @@ async def request_cashout(
     )
 
 
+@user_router.get("/commissions/export")
+async def export_commissions_csv(payload: TokenPayload, db: DBSession):
+    user_id = uuid.UUID(payload["sub"])
+
+    result = await db.execute(
+        select(AffiliateCommission)
+        .where(AffiliateCommission.affiliate_user_id == user_id)
+        .order_by(AffiliateCommission.created_at.desc())
+    )
+    commissions = result.scalars().all()
+
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["ID", "Source", "Type", "Commission (USDT)", "Status", "Level", "Date"])
+    for c in commissions:
+        writer.writerow([
+            str(c.id),
+            str(c.source_user_id),
+            c.source_type.value if hasattr(c.source_type, "value") else c.source_type,
+            f"{c.commission_amount:.4f}",
+            c.status.value if hasattr(c.status, "value") else c.status,
+            c.level,
+            c.created_at.isoformat() if c.created_at else "",
+        ])
+
+    buf.seek(0)
+    return StreamingResponse(
+        iter([buf.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=commissions.csv"},
+    )
+
+
+@user_router.get("/referrals")
+async def list_referrals(
+    payload: TokenPayload,
+    db: DBSession,
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    """List direct referrals (level=1) for this affiliate."""
+    user_id = uuid.UUID(payload["sub"])
+
+    result = await db.execute(
+        select(
+            AffiliateRelationship.descendant_user_id,
+            AffiliateRelationship.created_at.label("referred_at"),
+            User.email, User.display_name, User.plan,
+        )
+        .join(User, User.id == AffiliateRelationship.descendant_user_id)
+        .where(
+            AffiliateRelationship.ancestor_user_id == user_id,
+            AffiliateRelationship.level == 1,
+        )
+        .order_by(AffiliateRelationship.created_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    rows = result.all()
+
+    total_q = await db.execute(
+        select(func.count()).where(
+            AffiliateRelationship.ancestor_user_id == user_id,
+            AffiliateRelationship.level == 1,
+        )
+    )
+    total = total_q.scalar_one() or 0
+
+    referrals = []
+    for row in rows:
+        comm_q = await db.execute(
+            select(func.coalesce(func.sum(AffiliateCommission.commission_amount), 0)).where(
+                AffiliateCommission.affiliate_user_id == user_id,
+                AffiliateCommission.source_user_id == row.descendant_user_id,
+            )
+        )
+        total_commission = float(comm_q.scalar() or 0)
+        referrals.append(ReferralItem(
+            user_id=str(row.descendant_user_id),
+            name=row.display_name or row.email,
+            email=row.email,
+            plan=row.plan.value if hasattr(row.plan, "value") else str(row.plan),
+            joined_at=row.referred_at.isoformat() if row.referred_at else None,
+            total_commission=total_commission,
+        ))
+
+    return {"referrals": referrals, "total": total}
+
+
+@user_router.get("/tree")
+async def get_referral_tree(
+    payload: TokenPayload,
+    db: DBSession,
+    max_depth: int = Query(3, ge=1, le=5),
+):
+    """Return the referral tree up to max_depth levels."""
+    user_id = uuid.UUID(payload["sub"])
+
+    result = await db.execute(
+        select(
+            AffiliateRelationship.descendant_user_id,
+            AffiliateRelationship.level,
+            User.email, User.display_name, User.plan,
+        )
+        .join(User, User.id == AffiliateRelationship.descendant_user_id)
+        .where(
+            AffiliateRelationship.ancestor_user_id == user_id,
+            AffiliateRelationship.level <= max_depth,
+        )
+        .order_by(AffiliateRelationship.level, User.display_name)
+    )
+    rows = result.all()
+
+    nodes = [
+        {
+            "user_id": str(r.descendant_user_id),
+            "name": r.display_name or r.email,
+            "plan": r.plan.value if hasattr(r.plan, "value") else str(r.plan),
+            "level": r.level,
+        }
+        for r in rows
+    ]
+    return {"nodes": nodes}
+
+
+@user_router.post("/invite-friend", status_code=200)
+async def invite_friend(
+    body: InviteFriendRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Send a personalised referral email to a friend in their language."""
+    from app.services.ai_service import translate_text
+    from app.services.email_service import send_affiliate_friend_invitation
+
+    user_id = uuid.UUID(payload["sub"])
+    user = await db.get(User, user_id)
+    if not user:
+        raise NotFoundException("Utilisateur")
+
+    code = await _get_or_create_affiliate_code(db, user)
+    referral_url = f"{settings.FRONTEND_URL}/register?ref={code}"
+    sender_name = user.display_name or user.email
+
+    lang = body.language.lower()[:2]
+    target_lang = "FR" if lang == "fr" else "EN"
+    try:
+        message_translated = await translate_text(body.message, target_lang)
+    except Exception:
+        message_translated = body.message
+
+    try:
+        await send_affiliate_friend_invitation(
+            to=body.email,
+            sender_name=sender_name,
+            message_translated=message_translated,
+            referral_url=referral_url,
+            language=lang,
+        )
+    except Exception:
+        pass
+
+    return {"ok": True, "sent_to": body.email}
+
+
 # ── Commission computation helpers (called from payment webhooks) ─
 
 async def compute_and_accrue_commissions(
     db,
-    source_tenant_id: uuid.UUID,
+    source_user_id: uuid.UUID,
     source_type: str,
     source_transaction_id: str,
     gross_amount: float,
 ):
     """
     Compute affiliate commissions for a given transaction and accrue them.
-    Called from payment webhook handlers.
+    Called from payment webhook handlers, once the tenant that generated the
+    revenue has been resolved to its owning user (see
+    tenant_service.get_tenant_owner_user_id).
 
     For subscriptions: 20% pool
       - L1: 50% of pool
@@ -372,10 +492,10 @@ async def compute_and_accrue_commissions(
     else:  # ad_slot
         affiliate_pool = round(gross_amount * 0.10, 4)
 
-    # Fetch affiliate tree for the source tenant
+    # Fetch affiliate tree for the source user
     ancestors_q = await db.execute(
         select(AffiliateRelationship)
-        .where(AffiliateRelationship.descendant_id == source_tenant_id)
+        .where(AffiliateRelationship.descendant_user_id == source_user_id)
         .order_by(AffiliateRelationship.level)
     )
     ancestors = ancestors_q.scalars().all()
@@ -400,26 +520,22 @@ async def compute_and_accrue_commissions(
 
     # Accrue L1
     if l1_amount > 0:
-        await _accrue_commission(db, l1.ancestor_id, source_tenant_id, commission_source, source_transaction_id, 1, gross_amount, l1_amount)
+        await _accrue_commission(db, l1.ancestor_user_id, source_user_id, commission_source, source_transaction_id, 1, gross_amount, l1_amount)
 
     # Accrue L2-L10
     for rel in l2_to_l10:
         if per_level_amount > 0:
-            await _accrue_commission(db, rel.ancestor_id, source_tenant_id, commission_source, source_transaction_id, rel.level, gross_amount, per_level_amount)
+            await _accrue_commission(db, rel.ancestor_user_id, source_user_id, commission_source, source_transaction_id, rel.level, gross_amount, per_level_amount)
 
 
-async def _accrue_commission(db, affiliate_tenant_id, source_tenant_id, source_type, source_transaction_id, level, gross_amount, commission_amount):
-    from app.models.enums import AffiliateCommissionStatus
-    from app.models.tenant_user import TenantUser as TenantMember
-    from app.models.user import User as UserModel
-
-    tenant = await db.get(Tenant, affiliate_tenant_id)
-    if not tenant:
+async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type, source_transaction_id, level, gross_amount, commission_amount):
+    user = await db.get(User, affiliate_user_id)
+    if not user:
         return
 
     commission = AffiliateCommission(
-        affiliate_tenant_id=affiliate_tenant_id,
-        source_tenant_id=source_tenant_id,
+        affiliate_user_id=affiliate_user_id,
+        source_user_id=source_user_id,
         source_type=source_type,
         source_transaction_id=source_transaction_id,
         level=level,
@@ -430,532 +546,42 @@ async def _accrue_commission(db, affiliate_tenant_id, source_tenant_id, source_t
     db.add(commission)
 
     # Update balance
-    new_balance = float(tenant.affiliate_balance or 0) + float(commission_amount)
-    tenant.affiliate_balance = new_balance
+    new_balance = float(user.affiliate_balance or 0) + float(commission_amount)
+    user.affiliate_balance = new_balance
 
-    # Récupérer le wallet USDT de l'admin du tenant affilié
-    from sqlalchemy import select as _select
-    from app.models.enums import UserRole
-    admin_row = await db.execute(
-        _select(TenantMember).where(
-            TenantMember.tenant_id == affiliate_tenant_id,
-            TenantMember.role == UserRole.TENANT_ADMIN,
-        )
-    )
-    admin_member = admin_row.scalar_one_or_none()
-    wallet_address = None
-    if admin_member:
-        user = await db.get(UserModel, admin_member.user_id)
-        if user:
-            wallet_address = user.usdt_wallet_address
+    wallet_address = user.usdt_wallet_address
 
     # Paiement immédiat si wallet disponible
     if wallet_address and float(commission_amount) > 0:
         commission.status = AffiliateCommissionStatus.READY
         await db.flush()
-        await _trigger_auto_payout(db, tenant, commission, wallet_address)
+        await _trigger_auto_payout(db, user, commission, wallet_address)
     # Sinon reste PENDING jusqu'à ce que l'affilié ajoute son wallet
 
     # Email de notification
     try:
         from app.services.email_service import send_affiliate_commission_notification
-        from app.core.config import settings
-        if admin_member and user:
-            affiliate_dashboard_url = f"{settings.FRONTEND_URL}/affiliate"
-            await send_affiliate_commission_notification(
-                to=user.email,
-                display_name=user.display_name or user.email,
-                commission_amount=float(commission_amount),
-                new_balance=new_balance,
-                source_type=source_type.value if hasattr(source_type, "value") else str(source_type),
-                level=level,
-                dashboard_url=affiliate_dashboard_url,
-            )
-    except Exception:
-        pass
-
-
-@router.get("/referrals")
-async def list_referrals(
-    tenant_id: uuid.UUID,
-    payload: TokenPayload,
-    db: DBSession,
-    limit: int = Query(50, ge=1, le=200),
-    offset: int = Query(0, ge=0),
-):
-    """List direct referrals (level=1) for this affiliate tenant."""
-    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
-
-    result = await db.execute(
-        select(
-            AffiliateRelationship.descendant_id,
-            AffiliateRelationship.created_at.label("referred_at"),
-            Tenant.name,
-            Tenant.slug,
-            Tenant.plan,
-            Tenant.status,
-        )
-        .join(Tenant, Tenant.id == AffiliateRelationship.descendant_id)
-        .where(
-            AffiliateRelationship.ancestor_id == tenant_id,
-            AffiliateRelationship.level == 1,
-            Tenant.deleted_at.is_(None),
-        )
-        .order_by(AffiliateRelationship.created_at.desc())
-        .limit(limit)
-        .offset(offset)
-    )
-    rows = result.all()
-
-    total_q = await db.execute(
-        select(func.count()).where(
-            AffiliateRelationship.ancestor_id == tenant_id,
-            AffiliateRelationship.level == 1,
-        )
-    )
-    total = total_q.scalar_one() or 0
-
-    referrals = []
-    for row in rows:
-        comm_q = await db.execute(
-            select(func.coalesce(func.sum(AffiliateCommission.commission_amount), 0)).where(
-                AffiliateCommission.affiliate_tenant_id == tenant_id,
-                AffiliateCommission.source_tenant_id == row.descendant_id,
-            )
-        )
-        total_commission = float(comm_q.scalar() or 0)
-        referrals.append(ReferralItem(
-            tenant_id=str(row.descendant_id),
-            name=row.name,
-            slug=row.slug,
-            plan=row.plan.value if hasattr(row.plan, "value") else str(row.plan),
-            status=row.status.value if hasattr(row.status, "value") else str(row.status),
-            joined_at=row.referred_at.isoformat() if row.referred_at else None,
-            total_commission=total_commission,
-        ))
-
-    return {"referrals": referrals, "total": total}
-
-
-@router.get("/commissions/export")
-async def export_commissions_csv(
-    tenant_id: uuid.UUID,
-    payload: TokenPayload,
-    db: DBSession,
-):
-    """Export all commissions as CSV for this affiliate tenant."""
-    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
-
-    result = await db.execute(
-        select(AffiliateCommission)
-        .where(AffiliateCommission.affiliate_tenant_id == tenant_id)
-        .order_by(AffiliateCommission.created_at.desc())
-    )
-    commissions = result.scalars().all()
-
-    buf = io.StringIO()
-    writer = csv.writer(buf)
-    writer.writerow(["ID", "Source", "Type", "Commission (USDT)", "Status", "Level", "Date"])
-    for c in commissions:
-        writer.writerow([
-            str(c.id),
-            str(c.source_tenant_id),
-            c.source_type,
-            f"{c.commission_amount:.4f}",
-            c.status.value if hasattr(c.status, "value") else c.status,
-            c.level,
-            c.created_at.isoformat() if c.created_at else "",
-        ])
-
-    buf.seek(0)
-    return StreamingResponse(
-        iter([buf.getvalue()]),
-        media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=commissions.csv"},
-    )
-
-
-@router.get("/tree")
-async def get_referral_tree(
-    tenant_id: uuid.UUID,
-    payload: TokenPayload,
-    db: DBSession,
-    max_depth: int = Query(3, ge=1, le=5),
-):
-    """Return the referral tree up to max_depth levels."""
-    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
-
-    result = await db.execute(
-        select(
-            AffiliateRelationship.descendant_id,
-            AffiliateRelationship.level,
-            Tenant.name,
-            Tenant.slug,
-            Tenant.plan,
-        )
-        .join(Tenant, Tenant.id == AffiliateRelationship.descendant_id)
-        .where(
-            AffiliateRelationship.ancestor_id == tenant_id,
-            AffiliateRelationship.level <= max_depth,
-            Tenant.deleted_at.is_(None),
-        )
-        .order_by(AffiliateRelationship.level, Tenant.name)
-    )
-    rows = result.all()
-
-    nodes = [
-        {
-            "tenant_id": str(r.descendant_id),
-            "name": r.name,
-            "slug": r.slug,
-            "plan": r.plan.value if hasattr(r.plan, "value") else str(r.plan),
-            "level": r.level,
-        }
-        for r in rows
-    ]
-    return {"root_tenant_id": str(tenant_id), "nodes": nodes}
-
-
-# ── User-level aggregation (across every blog the user owns) ──────
-# L'affiliation reste techniquement rattachée à un blog (code, solde,
-# relations), mais un même utilisateur peut posséder plusieurs blogs et
-# avoir partagé le lien de parrainage de n'importe lequel d'entre eux —
-# ces routes fusionnent tout pour qu'aucun filleul ne soit "invisible"
-# simplement parce que son lien provenait d'un autre blog que le premier.
-
-@user_router.get("/dashboard", response_model=UserAffiliateDashboardResponse)
-async def get_user_affiliate_dashboard(payload: TokenPayload, db: DBSession):
-    user_id = uuid.UUID(payload["sub"])
-    tenant_ids = await _owned_tenant_ids(db, user_id)
-    if not tenant_ids:
-        return UserAffiliateDashboardResponse(
-            balance=0, cashout_threshold=MIN_CASHOUT, can_cashout=False,
-            total_earned=0, total_paid_out=0, total_referrals=0,
-            pending_commissions=0, blogs=[],
-        )
-
-    tenants_q = await db.execute(select(Tenant).where(Tenant.id.in_(tenant_ids)))
-    tenants = list(tenants_q.scalars().all())
-
-    changed = False
-    for t in tenants:
-        if not t.affiliate_code:
-            t.affiliate_code = _generate_affiliate_code()
-            changed = True
-    if changed:
-        await db.commit()
-
-    total_referrals_q = await db.execute(
-        select(func.count()).where(
-            AffiliateRelationship.ancestor_id.in_(tenant_ids),
-            AffiliateRelationship.level == 1,
-        )
-    )
-    total_referrals = total_referrals_q.scalar() or 0
-
-    earned_q = await db.execute(
-        select(func.coalesce(func.sum(AffiliateCommission.commission_amount), 0)).where(
-            AffiliateCommission.affiliate_tenant_id.in_(tenant_ids),
-            AffiliateCommission.status.in_([
-                AffiliateCommissionStatus.PENDING,
-                AffiliateCommissionStatus.READY,
-                AffiliateCommissionStatus.PAID,
-            ]),
-        )
-    )
-    total_earned = float(earned_q.scalar() or 0)
-
-    paid_out_q = await db.execute(
-        select(func.coalesce(func.sum(AffiliateCommission.commission_amount), 0)).where(
-            AffiliateCommission.affiliate_tenant_id.in_(tenant_ids),
-            AffiliateCommission.status == AffiliateCommissionStatus.PAID,
-        )
-    )
-    total_paid_out = float(paid_out_q.scalar() or 0)
-
-    pending_q = await db.execute(
-        select(func.count()).where(
-            AffiliateCommission.affiliate_tenant_id.in_(tenant_ids),
-            AffiliateCommission.status == AffiliateCommissionStatus.PENDING,
-        )
-    )
-    pending_commissions = pending_q.scalar() or 0
-
-    blogs = [
-        BlogAffiliateSummary(
-            tenant_id=str(t.id),
-            name=t.name,
-            slug=t.slug,
-            affiliate_code=t.affiliate_code,
-            referral_url=f"{settings.FRONTEND_URL}/register?ref={t.affiliate_code}",
-            balance=float(t.affiliate_balance or 0),
-            cashout_threshold=float(t.affiliate_cashout_threshold or MIN_CASHOUT),
-            can_cashout=float(t.affiliate_balance or 0) >= float(t.affiliate_cashout_threshold or MIN_CASHOUT),
-        )
-        for t in tenants
-    ]
-
-    return UserAffiliateDashboardResponse(
-        balance=sum(b.balance for b in blogs),
-        cashout_threshold=min((b.cashout_threshold for b in blogs), default=MIN_CASHOUT),
-        can_cashout=any(b.can_cashout for b in blogs),
-        total_earned=total_earned,
-        total_paid_out=total_paid_out,
-        total_referrals=total_referrals,
-        pending_commissions=pending_commissions,
-        blogs=blogs,
-    )
-
-
-@user_router.get("/referrals")
-async def list_user_referrals(
-    payload: TokenPayload,
-    db: DBSession,
-    limit: int = Query(100, ge=1, le=500),
-    offset: int = Query(0, ge=0),
-):
-    user_id = uuid.UUID(payload["sub"])
-    tenant_ids = await _owned_tenant_ids(db, user_id)
-    if not tenant_ids:
-        return {"referrals": [], "total": 0}
-
-    AncestorTenant = aliased(Tenant)
-    result = await db.execute(
-        select(
-            AffiliateRelationship.descendant_id,
-            AffiliateRelationship.ancestor_id,
-            AffiliateRelationship.created_at.label("referred_at"),
-            Tenant.name, Tenant.slug, Tenant.plan, Tenant.status,
-            AncestorTenant.name.label("via_name"), AncestorTenant.slug.label("via_slug"),
-        )
-        .join(Tenant, Tenant.id == AffiliateRelationship.descendant_id)
-        .join(AncestorTenant, AncestorTenant.id == AffiliateRelationship.ancestor_id)
-        .where(
-            AffiliateRelationship.ancestor_id.in_(tenant_ids),
-            AffiliateRelationship.level == 1,
-            Tenant.deleted_at.is_(None),
-        )
-        .order_by(AffiliateRelationship.created_at.desc())
-        .limit(limit)
-        .offset(offset)
-    )
-    rows = result.all()
-
-    total_q = await db.execute(
-        select(func.count()).where(
-            AffiliateRelationship.ancestor_id.in_(tenant_ids),
-            AffiliateRelationship.level == 1,
-        )
-    )
-    total = total_q.scalar_one() or 0
-
-    referrals = []
-    for row in rows:
-        comm_q = await db.execute(
-            select(func.coalesce(func.sum(AffiliateCommission.commission_amount), 0)).where(
-                AffiliateCommission.affiliate_tenant_id == row.ancestor_id,
-                AffiliateCommission.source_tenant_id == row.descendant_id,
-            )
-        )
-        total_commission = float(comm_q.scalar() or 0)
-        referrals.append(ReferralItem(
-            tenant_id=str(row.descendant_id),
-            name=row.name,
-            slug=row.slug,
-            plan=row.plan.value if hasattr(row.plan, "value") else str(row.plan),
-            status=row.status.value if hasattr(row.status, "value") else str(row.status),
-            joined_at=row.referred_at.isoformat() if row.referred_at else None,
-            total_commission=total_commission,
-            via_blog_name=row.via_name,
-            via_blog_slug=row.via_slug,
-        ))
-
-    return {"referrals": referrals, "total": total}
-
-
-@user_router.get("/tree")
-async def get_user_referral_tree(
-    payload: TokenPayload,
-    db: DBSession,
-    max_depth: int = Query(3, ge=1, le=5),
-):
-    user_id = uuid.UUID(payload["sub"])
-    tenant_ids = await _owned_tenant_ids(db, user_id)
-    if not tenant_ids:
-        return {"nodes": []}
-
-    AncestorTenant = aliased(Tenant)
-    result = await db.execute(
-        select(
-            AffiliateRelationship.descendant_id,
-            AffiliateRelationship.level,
-            Tenant.name, Tenant.slug, Tenant.plan,
-            AncestorTenant.name.label("via_name"),
-        )
-        .join(Tenant, Tenant.id == AffiliateRelationship.descendant_id)
-        .join(AncestorTenant, AncestorTenant.id == AffiliateRelationship.ancestor_id)
-        .where(
-            AffiliateRelationship.ancestor_id.in_(tenant_ids),
-            AffiliateRelationship.level <= max_depth,
-            Tenant.deleted_at.is_(None),
-        )
-        .order_by(AffiliateRelationship.level, Tenant.name)
-    )
-    rows = result.all()
-
-    nodes = [
-        {
-            "tenant_id": str(r.descendant_id),
-            "name": r.name,
-            "slug": r.slug,
-            "plan": r.plan.value if hasattr(r.plan, "value") else str(r.plan),
-            "level": r.level,
-            "via_blog_name": r.via_name,
-        }
-        for r in rows
-    ]
-    return {"nodes": nodes}
-
-
-@user_router.get("/commissions")
-async def list_user_commissions(
-    payload: TokenPayload,
-    db: DBSession,
-    status: str | None = Query(None),
-    limit: int = Query(50, ge=1, le=200),
-    offset: int = Query(0, ge=0),
-):
-    user_id = uuid.UUID(payload["sub"])
-    tenant_ids = await _owned_tenant_ids(db, user_id)
-    if not tenant_ids:
-        return []
-
-    q = (
-        select(AffiliateCommission, Tenant.name.label("blog_name"))
-        .join(Tenant, Tenant.id == AffiliateCommission.affiliate_tenant_id)
-        .where(AffiliateCommission.affiliate_tenant_id.in_(tenant_ids))
-    )
-    if status:
-        q = q.where(AffiliateCommission.status == status)
-    q = q.order_by(AffiliateCommission.created_at.desc()).limit(limit).offset(offset)
-
-    result = await db.execute(q)
-    rows = result.all()
-
-    return [
-        {
-            "id": str(r.AffiliateCommission.id),
-            "source_type": r.AffiliateCommission.source_type.value,
-            "source_transaction_id": r.AffiliateCommission.source_transaction_id,
-            "level": r.AffiliateCommission.level,
-            "gross_amount": float(r.AffiliateCommission.gross_amount),
-            "commission_amount": float(r.AffiliateCommission.commission_amount),
-            "status": r.AffiliateCommission.status.value,
-            "created_at": r.AffiliateCommission.created_at,
-            "paid_at": r.AffiliateCommission.paid_at,
-            "blog_name": r.blog_name,
-        }
-        for r in rows
-    ]
-
-
-@user_router.get("/cashouts")
-async def list_user_cashouts(payload: TokenPayload, db: DBSession):
-    user_id = uuid.UUID(payload["sub"])
-    tenant_ids = await _owned_tenant_ids(db, user_id)
-    if not tenant_ids:
-        return []
-
-    result = await db.execute(
-        select(AffiliateCashoutRequest, Tenant.name.label("blog_name"))
-        .join(Tenant, Tenant.id == AffiliateCashoutRequest.tenant_id)
-        .where(AffiliateCashoutRequest.tenant_id.in_(tenant_ids))
-        .order_by(AffiliateCashoutRequest.requested_at.desc())
-    )
-    rows = result.all()
-
-    return [
-        {
-            "id": str(r.AffiliateCashoutRequest.id),
-            "gross_amount": float(r.AffiliateCashoutRequest.gross_amount),
-            "fee": float(r.AffiliateCashoutRequest.fee),
-            "net_amount": float(r.AffiliateCashoutRequest.net_amount),
-            "status": r.AffiliateCashoutRequest.status.value,
-            "payout_method": r.AffiliateCashoutRequest.payout_method,
-            "requested_at": r.AffiliateCashoutRequest.requested_at,
-            "processed_at": r.AffiliateCashoutRequest.processed_at,
-            "blog_name": r.blog_name,
-        }
-        for r in rows
-    ]
-
-
-# ── POST /tenants/{tenant_id}/affiliate/invite-friend ─────────────
-
-class InviteFriendRequest(BaseModel):
-    email: str
-    language: str = "en"
-    message: str
-
-
-@router.post("/invite-friend", status_code=200)
-async def invite_friend(
-    tenant_id: uuid.UUID,
-    body: InviteFriendRequest,
-    payload: TokenPayload,
-    db: DBSession,
-):
-    """Send a personalised referral email to a friend in their language."""
-    from app.services.ai_service import translate_text
-    from app.services.email_service import send_affiliate_friend_invitation
-
-    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
-
-    tenant = await db.get(Tenant, tenant_id)
-    if not tenant:
-        raise NotFoundException("Blog non trouvé.")
-
-    if not tenant.affiliate_code:
-        tenant.affiliate_code = _generate_affiliate_code()
-        await db.commit()
-        await db.refresh(tenant)
-
-    referral_url = f"{settings.FRONTEND_URL}/register?ref={tenant.affiliate_code}"
-
-    user_result = await db.execute(select(User).where(User.id == uuid.UUID(payload["sub"])))
-    sender = user_result.scalar_one_or_none()
-    sender_name = (sender.display_name or sender.email) if sender else "SmarterBloggers"
-
-    # Translate message to friend's language
-    lang = body.language.lower()[:2]
-    target_lang = "FR" if lang == "fr" else "EN"
-    try:
-        message_translated = await translate_text(body.message, target_lang)
-    except Exception:
-        message_translated = body.message
-
-    try:
-        await send_affiliate_friend_invitation(
-            to=body.email,
-            sender_name=sender_name,
-            message_translated=message_translated,
-            referral_url=referral_url,
-            language=lang,
+        affiliate_dashboard_url = f"{settings.FRONTEND_URL}/affiliate"
+        await send_affiliate_commission_notification(
+            to=user.email,
+            display_name=user.display_name or user.email,
+            commission_amount=float(commission_amount),
+            new_balance=new_balance,
+            source_type=source_type.value if hasattr(source_type, "value") else str(source_type),
+            level=level,
+            dashboard_url=affiliate_dashboard_url,
         )
     except Exception:
         pass
 
-    return {"ok": True, "sent_to": body.email}
 
-
-async def _trigger_auto_payout(db, tenant: Tenant, commission: AffiliateCommission, wallet_address: str):
+async def _trigger_auto_payout(db, user: User, commission: AffiliateCommission, wallet_address: str):
     """
     Déclenche un payout NowPayments immédiat pour une commission.
     Si NowPayments n'est pas configuré, passe silencieusement.
     """
     from datetime import timezone as _tz
     from app.services.nowpayments_service import send_single_payout
-    from app.core.config import settings
 
     if not settings.NOWPAYMENTS_PAYOUT_API_KEY:
         return
@@ -968,9 +594,8 @@ async def _trigger_auto_payout(db, tenant: Tenant, commission: AffiliateCommissi
         )
         payout_ref = str(result.get("id", ""))
 
-        # Créer un AffiliateCashoutRequest auto pour le tracking
         cashout = AffiliateCashoutRequest(
-            tenant_id=tenant.id,
+            user_id=user.id,
             gross_amount=float(commission.commission_amount),
             fee=0.00,
             net_amount=float(commission.commission_amount),
@@ -980,47 +605,55 @@ async def _trigger_auto_payout(db, tenant: Tenant, commission: AffiliateCommissi
             status=CashoutStatus.PROCESSING,
         )
         db.add(cashout)
-        commission.cashout_request_id = None  # sera mis à jour après flush
         commission.status = AffiliateCommissionStatus.PAID
         commission.paid_at = datetime.now(_tz.utc)
 
-        # Déduire du solde
-        tenant.affiliate_balance = max(0, float(tenant.affiliate_balance or 0) - float(commission.commission_amount))
+        user.affiliate_balance = max(0, float(user.affiliate_balance or 0) - float(commission.commission_amount))
     except Exception:
         pass  # Échec NowPayments — commission reste READY, retry possible
 
 
-# ── Register referral (called at tenant creation) ─────────────────
+# ── Register referral (called at user registration, first login) ──
 
-async def register_referral(db, new_tenant_id: uuid.UUID, referral_code: str):
+async def register_referral_for_user(db, new_user_id: uuid.UUID, referral_code: str):
     """
-    Called when a new tenant is created with a referral code.
-    Builds the closure table entries for the new tenant.
+    Called when a new user registers with a referral code (their very first
+    successful login). Builds the closure table entries for the new user.
+    Resolves the code against the canonical `users.affiliate_code` first,
+    then falls back to `affiliate_code_aliases` for legacy codes generated
+    back when affiliation lived on individual blogs.
     """
-    # Find the referrer
-    referrer_q = await db.execute(
-        select(Tenant).where(Tenant.affiliate_code == referral_code.upper())
-    )
+    code = referral_code.strip().upper()
+    if not code:
+        return
+
+    referrer_q = await db.execute(select(User).where(User.affiliate_code == code))
     referrer = referrer_q.scalar_one_or_none()
+
+    if not referrer:
+        alias_q = await db.execute(select(AffiliateCodeAlias).where(AffiliateCodeAlias.code == code))
+        alias = alias_q.scalar_one_or_none()
+        if alias:
+            referrer = await db.get(User, alias.user_id)
+
     if not referrer:
         return  # Invalid code — silently ignore
 
-    # Prevent self-referral
-    if referrer.id == new_tenant_id:
-        return
+    if referrer.id == new_user_id:
+        return  # Self-referral guard
 
     # Get referrer's ancestors (up to 9 levels)
     existing_q = await db.execute(
         select(AffiliateRelationship)
-        .where(AffiliateRelationship.descendant_id == referrer.id)
+        .where(AffiliateRelationship.descendant_user_id == referrer.id)
         .order_by(AffiliateRelationship.level)
     )
     referrer_ancestors = existing_q.scalars().all()
 
     # Add direct relationship (L1)
     db.add(AffiliateRelationship(
-        descendant_id=new_tenant_id,
-        ancestor_id=referrer.id,
+        descendant_user_id=new_user_id,
+        ancestor_user_id=referrer.id,
         level=1,
     ))
 
@@ -1028,15 +661,14 @@ async def register_referral(db, new_tenant_id: uuid.UUID, referral_code: str):
     for rel in referrer_ancestors:
         if rel.level < 10:
             db.add(AffiliateRelationship(
-                descendant_id=new_tenant_id,
-                ancestor_id=rel.ancestor_id,
+                descendant_user_id=new_user_id,
+                ancestor_user_id=rel.ancestor_user_id,
                 level=rel.level + 1,
             ))
 
-    # Record referred_by on the new tenant
-    new_tenant = await db.get(Tenant, new_tenant_id)
-    if new_tenant:
-        new_tenant.referred_by_tenant_id = referrer.id
+    new_user = await db.get(User, new_user_id)
+    if new_user:
+        new_user.referred_by_user_id = referrer.id
 
     await db.commit()
 
@@ -1050,16 +682,16 @@ async def admin_list_affiliates(
     limit: int = Query(15, ge=1, le=500),
     offset: int = Query(0, ge=0),
 ):
-    """List all tenants with an active affiliate code and their stats."""
+    """List all users with an active affiliate code and their stats."""
     if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
         raise ForbiddenException("Super admin requis.")
 
     from sqlalchemy import text as _text
     rows = await db.execute(_text("""
         SELECT
-            t.id, t.name, t.slug, t.affiliate_code, t.plan,
-            CAST(COALESCE(t.affiliate_balance, 0) AS FLOAT) AS balance,
-            COUNT(DISTINCT ar.descendant_id) AS referral_count,
+            u.id, u.email, u.display_name, u.affiliate_code, u.plan,
+            CAST(COALESCE(u.affiliate_balance, 0) AS FLOAT) AS balance,
+            COUNT(DISTINCT ar.descendant_user_id) AS referral_count,
             CAST(COALESCE(SUM(ac.commission_amount) FILTER (
                 WHERE ac.status IN ('pending','ready','paid')
             ), 0) AS FLOAT) AS total_earned,
@@ -1067,18 +699,18 @@ async def admin_list_affiliates(
                 WHERE ac.status = 'paid'
             ), 0) AS FLOAT) AS total_paid,
             BOOL_OR(CASE WHEN acr.status IN ('requested','processing') THEN TRUE ELSE FALSE END) AS cashout_pending
-        FROM tenants t
-        LEFT JOIN affiliate_relationships ar ON ar.ancestor_id = t.id AND ar.level = 1
-        LEFT JOIN affiliate_commissions ac ON ac.affiliate_tenant_id = t.id
-        LEFT JOIN affiliate_cashout_requests acr ON acr.tenant_id = t.id
-        WHERE t.affiliate_code IS NOT NULL AND t.status != 'deleted'
-        GROUP BY t.id
+        FROM users u
+        LEFT JOIN affiliate_relationships ar ON ar.ancestor_user_id = u.id AND ar.level = 1
+        LEFT JOIN affiliate_commissions ac ON ac.affiliate_user_id = u.id
+        LEFT JOIN affiliate_cashout_requests acr ON acr.user_id = u.id
+        WHERE u.affiliate_code IS NOT NULL
+        GROUP BY u.id
         ORDER BY balance DESC
         LIMIT :limit OFFSET :offset
     """), {"limit": limit, "offset": offset})
 
     total_row = await db.execute(_text(
-        "SELECT COUNT(*) FROM tenants WHERE affiliate_code IS NOT NULL AND status != 'deleted'"
+        "SELECT COUNT(*) FROM users WHERE affiliate_code IS NOT NULL"
     ))
     total = total_row.scalar_one() or 0
 
@@ -1086,8 +718,8 @@ async def admin_list_affiliates(
     for r in rows:
         affiliates.append({
             "id": str(r.id),
-            "name": r.name,
-            "slug": r.slug,
+            "name": r.display_name or r.email,
+            "email": r.email,
             "affiliate_code": r.affiliate_code,
             "plan": r.plan,
             "affiliate_balance": r.balance,
@@ -1113,10 +745,10 @@ async def admin_list_cashouts(
     base = (
         select(
             AffiliateCashoutRequest,
-            Tenant.name.label("tenant_name"),
-            Tenant.slug.label("tenant_slug"),
+            User.email.label("user_email"),
+            User.display_name.label("user_display_name"),
         )
-        .join(Tenant, Tenant.id == AffiliateCashoutRequest.tenant_id)
+        .join(User, User.id == AffiliateCashoutRequest.user_id)
     )
     if status:
         base = base.where(AffiliateCashoutRequest.status == status)
@@ -1129,9 +761,9 @@ async def admin_list_cashouts(
         "cashouts": [
             {
                 "id": str(r.AffiliateCashoutRequest.id),
-                "tenant_id": str(r.AffiliateCashoutRequest.tenant_id),
-                "tenant_name": r.tenant_name,
-                "tenant_slug": r.tenant_slug,
+                "user_id": str(r.AffiliateCashoutRequest.user_id),
+                "user_email": r.user_email,
+                "user_display_name": r.user_display_name,
                 "amount": float(r.AffiliateCashoutRequest.gross_amount),
                 "fee": float(r.AffiliateCashoutRequest.fee),
                 "net_amount": float(r.AffiliateCashoutRequest.net_amount),
@@ -1188,10 +820,10 @@ async def admin_process_cashout(
         )
         commissions = commissions_q.scalars().all()
         if commissions:
-            tenant = await db.get(Tenant, cashout.tenant_id)
+            user = await db.get(User, cashout.user_id)
             restored = sum(float(c.commission_amount) for c in commissions)
-            if tenant:
-                tenant.affiliate_balance = float(tenant.affiliate_balance or 0) + restored
+            if user:
+                user.affiliate_balance = float(user.affiliate_balance or 0) + restored
             for c in commissions:
                 c.status = AffiliateCommissionStatus.READY
                 c.cashout_request_id = None

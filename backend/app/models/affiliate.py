@@ -8,12 +8,14 @@ from app.models.enums import AffiliateCommissionSource, AffiliateCommissionStatu
 
 
 class AffiliateRelationship(Base):
-    """Precomputed closure table for the affiliate tree (max 10 levels)."""
+    """Precomputed closure table for the affiliate tree (max 10 levels).
+    Keyed on users, not tenants — affiliation belongs to the PERSON, not to
+    whichever blog happened to be used to generate the shared link."""
     __tablename__ = "affiliate_relationships"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    descendant_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False)
-    ancestor_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False)
+    descendant_user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    ancestor_user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     level: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
 
@@ -22,13 +24,23 @@ class AffiliateRelationship(Base):
     )
 
 
+class AffiliateCodeAlias(Base):
+    """Legacy affiliate codes (one blog used to have its own code) that must
+    keep resolving to their owner's canonical user-level identity forever,
+    since links bearing these codes may already be shared/bookmarked."""
+    __tablename__ = "affiliate_code_aliases"
+
+    code: Mapped[str] = mapped_column(String(8), primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+
 class AffiliateCommission(Base):
     """One commission accrual per affiliate per transaction."""
     __tablename__ = "affiliate_commissions"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    affiliate_tenant_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False)
-    source_tenant_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False)
+    affiliate_user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    source_user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
     source_type: Mapped[AffiliateCommissionSource] = mapped_column(
         SAEnum(AffiliateCommissionSource, name="affiliate_commission_source", create_type=False, values_callable=ENUM_VALUES),
@@ -55,7 +67,7 @@ class AffiliateCashoutRequest(Base):
     __tablename__ = "affiliate_cashout_requests"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    tenant_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
     gross_amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     fee: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=20)

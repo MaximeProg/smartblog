@@ -19,7 +19,7 @@ from pydantic import BaseModel
 from app.core.config import settings
 from app.core.dependencies import TokenPayload, DBSession
 from app.core.exceptions import NotFoundException, ValidationException
-from app.models.payment import Transaction, ArticleAccess, TenantSubscription
+from app.models.payment import Transaction, ArticleAccess, UserSubscription
 from app.models.article import Article
 from app.models.tenant import Tenant
 from app.models.enums import PaymentGateway, TransactionType, TransactionStatus, SubscriptionStatus
@@ -198,13 +198,16 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
         await _activate_subscription(db, tx.tenant_id, plan, billing)
 
         from app.api.v1.affiliate import compute_and_accrue_commissions
-        await compute_and_accrue_commissions(
-            db=db,
-            source_tenant_id=tx.tenant_id,
-            source_type="subscription",
-            source_transaction_id=str(tx.id),
-            gross_amount=actually_paid,
-        )
+        from app.services.tenant_service import get_tenant_owner_user_id
+        source_user_id = await get_tenant_owner_user_id(db, tx.tenant_id)
+        if source_user_id:
+            await compute_and_accrue_commissions(
+                db=db,
+                source_user_id=source_user_id,
+                source_type="subscription",
+                source_transaction_id=str(tx.id),
+                gross_amount=actually_paid,
+            )
         await db.commit()
 
         from app.services.log_service import log_event
@@ -275,22 +278,26 @@ async def _activate_subscription(db, tenant_id: uuid.UUID, plan: str, billing: s
     }
     plan_tier = plan_map.get(plan, PlanTier.STARTER)
 
-    tenant = await db.get(Tenant, tenant_id)
-    if tenant:
-        admin_q = await db.execute(
-            select(TenantMember).where(
-                TenantMember.tenant_id == tenant_id,
-                TenantMember.role == UserRole.TENANT_ADMIN,
-            )
+    admin_q = await db.execute(
+        select(TenantMember).where(
+            TenantMember.tenant_id == tenant_id,
+            TenantMember.role == UserRole.TENANT_ADMIN,
         )
-        admin_member = admin_q.scalar_one_or_none()
-        if admin_member:
-            user = await db.get(UserModel, admin_member.user_id)
-            if user:
-                user.plan = plan_tier
+    )
+    admin_member = admin_q.scalar_one_or_none()
+    if not admin_member:
+        return
+
+    user = await db.get(UserModel, admin_member.user_id)
+    if not user:
+        return
+
+    from app.services.tenant_service import sync_tenant_plans_for_user
+    user.plan = plan_tier
+    await sync_tenant_plans_for_user(db, user.id, plan_tier)
 
     sub_q = await db.execute(
-        select(TenantSubscription).where(TenantSubscription.tenant_id == tenant_id)
+        select(UserSubscription).where(UserSubscription.user_id == user.id)
     )
     sub = sub_q.scalar_one_or_none()
     now = datetime.utcnow()
@@ -300,8 +307,8 @@ async def _activate_subscription(db, tenant_id: uuid.UUID, plan: str, billing: s
         sub.status = SubscriptionStatus.ACTIVE
         sub.current_period_end = period_end
     else:
-        db.add(TenantSubscription(
-            tenant_id=tenant_id,
+        db.add(UserSubscription(
+            user_id=user.id,
             status=SubscriptionStatus.ACTIVE,
             current_period_end=period_end,
         ))
@@ -532,8 +539,10 @@ async def get_subscription(
     tenant_id: uuid.UUID, payload: TokenPayload, db: DBSession,
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+    from app.services.tenant_service import get_tenant_owner_user_id
+    owner_user_id = await get_tenant_owner_user_id(db, tenant_id)
     result = await db.execute(
-        select(TenantSubscription).where(TenantSubscription.tenant_id == tenant_id)
+        select(UserSubscription).where(UserSubscription.user_id == owner_user_id)
     )
     sub = result.scalar_one_or_none()
     if not sub:

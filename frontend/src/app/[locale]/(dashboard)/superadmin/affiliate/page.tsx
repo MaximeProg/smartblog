@@ -31,7 +31,7 @@ function CashoutModal({ cashout, action, onConfirm, onCancel, isPending, t }: {
           {action === 'approve' ? ta('confirmApprove') : ta('confirmReject')}
         </h3>
         <p className="text-[11px] mb-4" style={{ color: 'var(--sa-text-3)' }}>
-          {cashout.tenant_name} — ${cashout.amount}
+          {cashout.user_display_name ?? cashout.user_email} — ${cashout.amount}
         </p>
         <div className="space-y-3 mb-5">
           {action === 'approve' && (
@@ -85,7 +85,7 @@ function AffiliateDetailModal({ aff, onClose, t }: {
         <div className="px-5 py-4 space-y-3">
           {[
             { label: ta('detail.code'), value: <span className="font-mono font-bold" style={{ color: 'var(--sa-text)' }}>{aff.affiliate_code}</span> },
-            { label: ta('detail.blog'), value: <span className="font-mono" style={{ color: 'var(--sa-text-2)' }}>{aff.slug}</span> },
+            { label: ta('detail.email'), value: <span className="font-mono" style={{ color: 'var(--sa-text-2)' }}>{aff.email}</span> },
             { label: ta('detail.plan'), value: <span className="capitalize font-semibold" style={{ color: 'var(--sa-text-2)' }}>{aff.plan}</span> },
           ].map(row => (
             <div key={row.label as string} className="flex justify-between text-[12px]">
@@ -223,7 +223,7 @@ export default function AffiliatePage() {
                       <tr key={a.id} className="hover:bg-[var(--sa-surface)] transition-colors">
                         <td className="px-5 py-3.5">
                           <p className="font-semibold" style={{ color: 'var(--sa-text)' }}>{a.name}</p>
-                          <p className="text-[9px] font-mono" style={{ color: 'var(--sa-text-3)' }}>{a.slug}</p>
+                          <p className="text-[9px] font-mono" style={{ color: 'var(--sa-text-3)' }}>{a.email}</p>
                         </td>
                         <td className="px-5 py-3.5 font-mono font-bold" style={{ color: 'var(--sa-text-3)' }}>{a.affiliate_code}</td>
                         <td className="px-5 py-3.5 font-bold tabular-nums" style={{ color: 'var(--sa-text-2)' }}>{a.referral_count}</td>
@@ -282,8 +282,8 @@ export default function AffiliatePage() {
                       return (
                         <tr key={c.id} className="hover:bg-[var(--sa-surface)] transition-colors">
                           <td className="px-5 py-3.5">
-                            <p className="font-semibold" style={{ color: 'var(--sa-text)' }}>{c.tenant_name}</p>
-                            <p className="text-[9px] font-mono" style={{ color: 'var(--sa-text-3)' }}>{c.tenant_slug}</p>
+                            <p className="font-semibold" style={{ color: 'var(--sa-text)' }}>{c.user_display_name ?? c.user_email}</p>
+                            <p className="text-[9px] font-mono" style={{ color: 'var(--sa-text-3)' }}>{c.user_email}</p>
                           </td>
                           <td className="px-5 py-3.5 font-black text-emerald-500 font-mono">${c.amount}</td>
                           <td className="px-5 py-3.5 font-mono" style={{ color: 'var(--sa-text-3)' }}>{fmtDate(c.requested_at)}</td>

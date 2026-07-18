@@ -4,6 +4,7 @@ from app.models.enums import UserRole, PlanTier
 
 class FirebaseLoginRequest(BaseModel):
     firebase_id_token: str
+    referral_code: str | None = None
 
 
 class TenantInfo(BaseModel):

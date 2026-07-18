@@ -1,9 +1,7 @@
 ﻿import uuid
-import random
-import string
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, text
+from sqlalchemy import select, func, text, update
 
 from app.models.tenant import Tenant
 from app.models.tenant_user import TenantUser
@@ -140,8 +138,6 @@ async def create_tenant(
             raise PlanLimitReachedException("blogs", max_blogs)
 
     # Le blog hérite du plan de l'utilisateur
-    affiliate_code = "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
-
     tenant = Tenant(
         name=data.name,
         slug=data.slug,
@@ -158,7 +154,6 @@ async def create_tenant(
         template_config=data.template_config,
         plan=user_plan,
         trial_ends_at=datetime.now(timezone.utc) + timedelta(days=14),
-        affiliate_code=affiliate_code,
     )
     db.add(tenant)
     await db.flush()  # tenant.id is now set
@@ -175,14 +170,6 @@ async def create_tenant(
     db.add(membership)
     await db.commit()
     await db.refresh(tenant)
-
-    # Enregistre le parrainage si un code de référence est fourni
-    if data.referral_code:
-        try:
-            from app.api.v1.affiliate import register_referral
-            await register_referral(db, tenant.id, data.referral_code)
-        except Exception:
-            pass  # Le referral ne doit jamais bloquer la création
 
     # Invalide le cache slug si existait (Redis optionnel)
     try:
@@ -289,6 +276,34 @@ async def get_user_tenants(db: AsyncSession, user_id: uuid.UUID) -> list[dict]:
         }
         for t, role, real_articles_count in rows
     ]
+
+
+async def get_tenant_owner_user_id(db: AsyncSession, tenant_id: uuid.UUID) -> uuid.UUID | None:
+    """The TENANT_ADMIN of a tenant — the real "owner" whose account (plan,
+    affiliate identity, wallet) the tenant's activity is attributed to."""
+    result = await db.execute(
+        select(TenantUser.user_id).where(
+            TenantUser.tenant_id == tenant_id,
+            TenantUser.role == UserRole.TENANT_ADMIN,
+        )
+    )
+    return result.scalar_one_or_none()
+
+
+async def sync_tenant_plans_for_user(db: AsyncSession, user_id: uuid.UUID, plan_tier: PlanTier) -> None:
+    """Propage le plan du propriétaire à tous les blogs dont il est TENANT_ADMIN.
+    Le plan est une propriété du compte utilisateur ; tenant.plan n'est qu'un cache
+    lu par les points de contrôle de quota (articles, IA, équipe, newsletter...)."""
+    await db.execute(
+        update(Tenant).where(
+            Tenant.id.in_(
+                select(TenantUser.tenant_id).where(
+                    TenantUser.user_id == user_id,
+                    TenantUser.role == UserRole.TENANT_ADMIN,
+                )
+            )
+        ).values(plan=plan_tier)
+    )
 
 
 def build_tenant_response(tenant: Tenant, include_limits: bool = False, include_usage: bool = False) -> TenantResponse:

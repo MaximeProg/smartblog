@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import String, Boolean, Text, DateTime, Enum as SAEnum
+from sqlalchemy import String, Boolean, Text, DateTime, Numeric, ForeignKey, Enum as SAEnum
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from app.models.base import Base
@@ -46,6 +46,15 @@ class User(Base):
     # Crypto wallet — USDT TRC20 obligatoire pour recevoir commissions affiliés
     # 2FA doit être activé avant de pouvoir renseigner/modifier cette adresse
     usdt_wallet_address: Mapped[str | None] = mapped_column(String(100))
+
+    # Programme d'affiliation — au niveau du compte, pas d'un blog en particulier :
+    # une même personne peut posséder plusieurs blogs, un seul code/solde compte.
+    affiliate_code: Mapped[str | None] = mapped_column(String(8), unique=True)
+    affiliate_balance: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
+    affiliate_cashout_threshold: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
+    referred_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", use_alter=True, name="fk_user_referred_by", ondelete="SET NULL"),
+    )
 
     # Activité
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

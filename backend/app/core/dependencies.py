@@ -87,16 +87,21 @@ async def check_plan_active(
     if payload.get("is_super_admin"):
         return
 
-    from app.models.payment import TenantSubscription
+    from app.models.payment import UserSubscription
     from app.models.enums import SubscriptionStatus
+    from app.services.tenant_service import get_tenant_owner_user_id
+
+    owner_user_id = await get_tenant_owner_user_id(db, tenant_id)
+    if owner_user_id is None:
+        return
 
     result = await db.execute(
-        select(TenantSubscription).where(TenantSubscription.tenant_id == tenant_id)
+        select(UserSubscription).where(UserSubscription.user_id == owner_user_id)
     )
     sub = result.scalar_one_or_none()
 
     if sub is None:
-        return  # Nouveau tenant, aucun enregistrement → autoriser
+        return  # Nouveau compte, aucun enregistrement → autoriser
 
     now = datetime.utcnow()
 

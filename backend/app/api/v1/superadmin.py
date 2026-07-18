@@ -177,16 +177,24 @@ async def change_plan(
     tenant = result.scalar_one_or_none()
     if not tenant:
         raise NotFoundException("Tenant")
+
+    from app.services.tenant_service import get_tenant_owner_user_id, sync_tenant_plans_for_user
+    owner_user_id = await get_tenant_owner_user_id(db, tenant_id)
+    if not owner_user_id:
+        raise NotFoundException("Propriétaire du blog")
+    owner = await db.get(User, owner_user_id)
+
     old_plan = tenant.plan.value if tenant.plan else "unknown"
-    tenant.plan = plan
+    owner.plan = plan
+    await sync_tenant_plans_for_user(db, owner_user_id, plan)
     await db.commit()
 
     action = "plan.upgraded" if plan.value > old_plan else "plan.downgraded"
     from app.services.log_service import log_event
     await log_event(db, action, actor_id=admin.id, actor_email=admin.email,
-                    level="info", target_type="tenant", target_id=str(tenant.id),
-                    details=f"{old_plan} → {plan.value} (blog: {tenant.slug})")
-    return {"message": f"Plan changé → {plan.value}"}
+                    level="info", target_type="user", target_id=str(owner_user_id),
+                    details=f"{old_plan} → {plan.value} (compte : {owner.email}, déclenché depuis le blog {tenant.slug})")
+    return {"message": f"Plan changé → {plan.value} (appliqué à tous les blogs du compte)"}
 
 
 @router.delete("/tenants/{tenant_id}", status_code=204)
@@ -1739,20 +1747,20 @@ async def send_platform_notification(
     )
 
     if audience == "paid":
-        from app.models.payment import TenantSubscription
+        from app.models.payment import UserSubscription
         from app.models.enums import SubscriptionStatus
-        q = q.join(TenantSubscription, TenantSubscription.tenant_id == Tenant.id).where(
-            TenantSubscription.status == SubscriptionStatus.ACTIVE
+        q = q.join(UserSubscription, UserSubscription.user_id == User.id).where(
+            UserSubscription.status == SubscriptionStatus.ACTIVE
         )
     elif audience == "free":
-        from app.models.payment import TenantSubscription
+        from app.models.payment import UserSubscription
         from app.models.enums import SubscriptionStatus
         from sqlalchemy import exists as _exists
         paid_sub = (
-            select(TenantSubscription.tenant_id)
-            .where(TenantSubscription.status == SubscriptionStatus.ACTIVE)
-            .correlate(Tenant)
-            .where(TenantSubscription.tenant_id == Tenant.id)
+            select(UserSubscription.user_id)
+            .where(UserSubscription.status == SubscriptionStatus.ACTIVE)
+            .correlate(User)
+            .where(UserSubscription.user_id == User.id)
         )
         q = q.where(~_exists(paid_sub))
 

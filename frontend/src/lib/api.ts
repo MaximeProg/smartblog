@@ -146,8 +146,22 @@ export default api;
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 export const authApi = {
-  login: (firebase_id_token: string) =>
-    api.post<LoginResponse>('/auth/login', { firebase_id_token }),
+  // Un code de parrainage capturé à l'inscription (?ref=) est stocké en
+  // localStorage — on le renvoie systématiquement ici, pas seulement depuis
+  // l'écran d'inscription, car pour un compte email/mot de passe le User
+  // n'est réellement créé côté backend qu'au premier login réussi APRÈS la
+  // vérification d'email (sur /login, pas sur /register). Le backend ne
+  // l'applique de toute façon que si le compte vient d'être créé.
+  login: (firebase_id_token: string) => {
+    const referral_code = typeof window !== 'undefined' ? localStorage.getItem('smarterbloggers_ref') : null;
+    return api.post<LoginResponse>('/auth/login', {
+      firebase_id_token,
+      ...(referral_code ? { referral_code } : {}),
+    }).then((res) => {
+      if (referral_code && typeof window !== 'undefined') localStorage.removeItem('smarterbloggers_ref');
+      return res;
+    });
+  },
 
   logout: () => api.post<void>('/auth/logout'),
 
@@ -628,7 +642,8 @@ export const adsApi = {
     api.post<AdResponse>(`/tenants/${tenantId}/ads/${adId}/resume`),
 };
 
-// ── M23 — Affiliate API ───────────────────────────────────────────────────────
+// ── M23 — Affiliate API ─────────────────────────────────────────────────────
+// Un seul code/solde/arbre par UTILISATEUR (pas par blog) — voir migration 047.
 
 export interface AffiliateDashboard {
   affiliate_code: string;
@@ -666,85 +681,41 @@ export interface CashoutRequest {
 }
 
 export interface AffiliateReferral {
-  tenant_id: string;
+  user_id: string;
   name: string;
-  slug: string;
+  email: string;
   plan: string;
-  status: string;
   joined_at: string | null;
   total_commission: number;
-  via_blog_name?: string | null;
-  via_blog_slug?: string | null;
-}
-
-export interface AffiliateBlogSummary {
-  tenant_id: string;
-  name: string;
-  slug: string;
-  affiliate_code: string;
-  referral_url: string;
-  balance: number;
-  cashout_threshold: number;
-  can_cashout: boolean;
-}
-
-export interface UserAffiliateDashboard {
-  balance: number;
-  cashout_threshold: number;
-  can_cashout: boolean;
-  total_earned: number;
-  total_paid_out: number;
-  total_referrals: number;
-  pending_commissions: number;
-  blogs: AffiliateBlogSummary[];
 }
 
 export const affiliateApi = {
-  getDashboard: (tenantId: string) =>
-    api.get<AffiliateDashboard>(`/tenants/${tenantId}/affiliate`),
+  getDashboard: () =>
+    api.get<AffiliateDashboard>('/users/me/affiliate/dashboard'),
 
-  listCommissions: (tenantId: string, params?: { status?: string; limit?: number; offset?: number }) =>
-    api.get<AffiliateCommission[]>(`/tenants/${tenantId}/affiliate/commissions`, { params }),
+  listCommissions: (params?: { status?: string; limit?: number; offset?: number }) =>
+    api.get<AffiliateCommission[]>('/users/me/affiliate/commissions', { params }),
 
-  listCashouts: (tenantId: string) =>
-    api.get<CashoutRequest[]>(`/tenants/${tenantId}/affiliate/cashouts`),
+  listCashouts: () =>
+    api.get<CashoutRequest[]>('/users/me/affiliate/cashouts'),
 
-  listReferrals: (tenantId: string, params?: { limit?: number; offset?: number }) =>
-    api.get<{ referrals: AffiliateReferral[]; total: number }>(`/tenants/${tenantId}/affiliate/referrals`, { params }),
-
-  requestCashout: (tenantId: string, payout_method: string = 'nowpayments_crypto') =>
-    api.post<CashoutRequest>(`/tenants/${tenantId}/affiliate/cashout`, { payout_method }),
-
-  getTree: (tenantId: string, maxDepth = 3) =>
-    api.get<{ root_tenant_id: string; nodes: { tenant_id: string; name: string; slug: string; plan: string; level: number }[] }>(
-      `/tenants/${tenantId}/affiliate/tree`,
-      { params: { max_depth: maxDepth } }
-    ),
-
-  exportCommissions: (tenantId: string) =>
-    api.get(`/tenants/${tenantId}/affiliate/commissions/export`, { responseType: 'blob' }),
-
-  inviteFriend: (tenantId: string, data: { email: string; language: string; message: string }) =>
-    api.post<{ ok: boolean; sent_to: string }>(`/tenants/${tenantId}/affiliate/invite-friend`, data),
-
-  // ── Agrégation au niveau utilisateur (tous les blogs possédés) ──
-  getUserDashboard: () =>
-    api.get<UserAffiliateDashboard>('/users/me/affiliate/dashboard'),
-
-  listUserReferrals: (params?: { limit?: number; offset?: number }) =>
+  listReferrals: (params?: { limit?: number; offset?: number }) =>
     api.get<{ referrals: AffiliateReferral[]; total: number }>('/users/me/affiliate/referrals', { params }),
 
-  getUserTree: (maxDepth = 3) =>
-    api.get<{ nodes: { tenant_id: string; name: string; slug: string; plan: string; level: number; via_blog_name?: string }[] }>(
+  requestCashout: (payout_method: string = 'nowpayments_crypto') =>
+    api.post<CashoutRequest>('/users/me/affiliate/cashout', { payout_method }),
+
+  getTree: (maxDepth = 3) =>
+    api.get<{ nodes: { user_id: string; name: string; plan: string; level: number }[] }>(
       '/users/me/affiliate/tree',
       { params: { max_depth: maxDepth } }
     ),
 
-  listUserCommissions: (params?: { status?: string; limit?: number; offset?: number }) =>
-    api.get<(AffiliateCommission & { blog_name: string })[]>('/users/me/affiliate/commissions', { params }),
+  exportCommissions: () =>
+    api.get('/users/me/affiliate/commissions/export', { responseType: 'blob' }),
 
-  listUserCashouts: () =>
-    api.get<(CashoutRequest & { blog_name: string })[]>('/users/me/affiliate/cashouts'),
+  inviteFriend: (data: { email: string; language: string; message: string }) =>
+    api.post<{ ok: boolean; sent_to: string }>('/users/me/affiliate/invite-friend', data),
 };
 
 // ── M24 — Accounting API ──────────────────────────────────────────────────────
@@ -1018,9 +989,9 @@ export interface UserAdminView {
 
 export interface CashoutAdminView {
   id: string;
-  tenant_id: string;
-  tenant_name: string;
-  tenant_slug: string;
+  user_id: string;
+  user_email: string;
+  user_display_name: string | null;
   amount: number;
   status: string;
   requested_at: string;
@@ -1264,7 +1235,7 @@ export interface SATemplateCategoryCreateBody {
 export interface SAAffiliateItem {
   id: string;
   name: string;
-  slug: string;
+  email: string;
   affiliate_code: string;
   plan: string;
   affiliate_balance: number;

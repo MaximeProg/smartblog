@@ -39,6 +39,7 @@ async def login_with_firebase(
     ip_address: str | None = None,
     sign_in_provider: str | None = None,
     email_verified: bool = False,
+    referral_code: str | None = None,
 ) -> LoginResponse:
     """
     Crée ou met à jour l'utilisateur, génère les tokens.
@@ -68,6 +69,13 @@ async def login_with_firebase(
         )
         db.add(user)
         await db.flush()
+
+        if referral_code:
+            try:
+                from app.api.v1.affiliate import register_referral_for_user
+                await register_referral_for_user(db, user.id, referral_code)
+            except Exception as exc:
+                logger.warning("login: referral registration failed", error=str(exc), email=email)
     else:
         if display_name and not user.display_name:
             user.display_name = display_name

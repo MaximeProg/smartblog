@@ -59,12 +59,13 @@ class Transaction(Base):
         return f"<Transaction {self.id} {self.amount}{self.currency} ({self.status})>"
 
 
-class TenantSubscription(Base):
-    """Abonnement SaaS d'un tenant (plan Starter/Pro/Business/Enterprise)."""
-    __tablename__ = "tenant_subscriptions"
+class UserSubscription(Base):
+    """Abonnement SaaS d'un compte utilisateur (plan Starter/Pro/Business/Enterprise),
+    répercuté sur tous les blogs dont l'utilisateur est propriétaire."""
+    __tablename__ = "user_subscriptions"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    tenant_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False, unique=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
 
     nowpayments_payment_id: Mapped[str | None] = mapped_column(String(255))
 

@@ -73,6 +73,7 @@ async def login(
         ip_address=ip,
         sign_in_provider=firebase_data.get("sign_in_provider"),
         email_verified=firebase_data.get("email_verified", False),
+        referral_code=body.referral_code,
     )
 
     from app.services.log_service import log_event
@@ -275,73 +276,60 @@ async def update_wallet(
 async def _pay_pending_commissions_for_user(db, user_id, wallet_address: str):
     """Paie automatiquement toutes les commissions PENDING de l'utilisateur après ajout du wallet."""
     from sqlalchemy import select
-    from app.models.tenant_user import TenantUser as TenantMember
     from app.models.affiliate import AffiliateCommission, AffiliateCashoutRequest
-    from app.models.enums import AffiliateCommissionStatus, CashoutStatus, UserRole
-    from app.models.tenant import Tenant
+    from app.models.enums import AffiliateCommissionStatus, CashoutStatus
+    from app.models.user import User
     from app.services.nowpayments_service import send_single_payout
     from app.core.config import settings as _cfg
     from datetime import datetime, timezone
 
-    # Trouver tous les tenants dont l'utilisateur est admin
-    tenant_rows = await db.execute(
-        select(TenantMember.tenant_id).where(
-            TenantMember.user_id == user_id,
-            TenantMember.role == UserRole.TENANT_ADMIN,
+    pending_q = await db.execute(
+        select(AffiliateCommission).where(
+            AffiliateCommission.affiliate_user_id == user_id,
+            AffiliateCommission.status == AffiliateCommissionStatus.PENDING,
         )
     )
-    tenant_ids = [r.tenant_id for r in tenant_rows.all()]
-    if not tenant_ids:
+    pending = pending_q.scalars().all()
+    if not pending:
         return
 
-    for tenant_id in tenant_ids:
-        # Récupérer toutes les commissions PENDING
-        pending_q = await db.execute(
-            select(AffiliateCommission).where(
-                AffiliateCommission.affiliate_tenant_id == tenant_id,
-                AffiliateCommission.status == AffiliateCommissionStatus.PENDING,
-            )
+    total = sum(float(c.commission_amount) for c in pending)
+    if total <= 0 or not _cfg.NOWPAYMENTS_PAYOUT_API_KEY:
+        # Marquer READY sans payer
+        for c in pending:
+            c.status = AffiliateCommissionStatus.READY
+        await db.commit()
+        return
+
+    try:
+        result = await send_single_payout(
+            wallet_address=wallet_address,
+            amount_usd=total,
+            extra_id=f"bulk_{user_id}",
         )
-        pending = pending_q.scalars().all()
-        if not pending:
-            continue
-
-        total = sum(float(c.commission_amount) for c in pending)
-        if total <= 0 or not _cfg.NOWPAYMENTS_PAYOUT_API_KEY:
-            # Marquer READY sans payer
-            for c in pending:
-                c.status = AffiliateCommissionStatus.READY
-            continue
-
-        try:
-            result = await send_single_payout(
-                wallet_address=wallet_address,
-                amount_usd=total,
-                extra_id=f"bulk_{tenant_id}",
-            )
-            payout_ref = str(result.get("id", ""))
-            cashout = AffiliateCashoutRequest(
-                tenant_id=tenant_id,
-                gross_amount=total,
-                fee=0.00,
-                net_amount=total,
-                payout_method="nowpayments_crypto",
-                payout_reference=payout_ref,
-                usdt_wallet_snapshot=wallet_address,
-                status=CashoutStatus.PROCESSING,
-            )
-            db.add(cashout)
-            await db.flush()
-            for c in pending:
-                c.status = AffiliateCommissionStatus.PAID
-                c.paid_at = datetime.now(timezone.utc)
-                c.cashout_request_id = cashout.id
-            tenant = await db.get(Tenant, tenant_id)
-            if tenant:
-                tenant.affiliate_balance = 0
-        except Exception:
-            for c in pending:
-                c.status = AffiliateCommissionStatus.READY
+        payout_ref = str(result.get("id", ""))
+        cashout = AffiliateCashoutRequest(
+            user_id=user_id,
+            gross_amount=total,
+            fee=0.00,
+            net_amount=total,
+            payout_method="nowpayments_crypto",
+            payout_reference=payout_ref,
+            usdt_wallet_snapshot=wallet_address,
+            status=CashoutStatus.PROCESSING,
+        )
+        db.add(cashout)
+        await db.flush()
+        for c in pending:
+            c.status = AffiliateCommissionStatus.PAID
+            c.paid_at = datetime.now(timezone.utc)
+            c.cashout_request_id = cashout.id
+        user = await db.get(User, user_id)
+        if user:
+            user.affiliate_balance = 0
+    except Exception:
+        for c in pending:
+            c.status = AffiliateCommissionStatus.READY
 
     await db.commit()
 

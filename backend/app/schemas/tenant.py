@@ -18,7 +18,6 @@ class CreateTenantRequest(BaseModel):
     logo_url: str | None = None
     social_links: dict | None = None
     template_config: dict | None = None
-    referral_code: str | None = None
 
     @field_validator("slug")
     @classmethod

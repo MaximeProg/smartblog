@@ -74,7 +74,8 @@ export function RegisterForm({ locale }: RegisterFormProps) {
       console.log('[Register] starting for', email);
       await registerWithEmail(email, password, name);
       console.log('[Register] success, showing verification screen');
-      // Le code ref reste en localStorage — il sera utilisé à la création du premier blog
+      // Le code ref reste en localStorage — il sera envoyé automatiquement
+      // par authApi.login() au premier login réussi (après vérification email)
       setVerificationEmail(email);
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code ?? '';

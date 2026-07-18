@@ -205,13 +205,16 @@ async def review_ad(
             ad.campaign_status = AdCampaignStatus.ACTIVE
             try:
                 from app.api.v1.affiliate import compute_and_accrue_commissions
-                await compute_and_accrue_commissions(
-                    db=db,
-                    source_tenant_id=tenant_id,
-                    source_type="ad_slot",
-                    source_transaction_id=str(ad.id),
-                    gross_amount=float(ad.amount_paid),
-                )
+                from app.services.tenant_service import get_tenant_owner_user_id
+                source_user_id = await get_tenant_owner_user_id(db, tenant_id)
+                if source_user_id:
+                    await compute_and_accrue_commissions(
+                        db=db,
+                        source_user_id=source_user_id,
+                        source_type="ad_slot",
+                        source_transaction_id=str(ad.id),
+                        gross_amount=float(ad.amount_paid),
+                    )
             except Exception:
                 pass
         elif not (ad.amount_paid and float(ad.amount_paid) > 0):
