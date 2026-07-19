@@ -1267,6 +1267,7 @@ export interface SAPlatformSettings {
   stripe: { configured: boolean; publishable_key: string; platform_fee_percent: number };
   cloudinary: { configured: boolean; cloud_name: string };
   ai: { configured: boolean; model: string };
+  domains: { configured: boolean; sandbox: boolean; registrar: string; markup_percent: number };
   env: string;
 }
 

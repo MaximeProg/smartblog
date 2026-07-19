@@ -121,6 +121,13 @@ export default function SettingsPage() {
                   className="h-9 w-56 px-3 rounded-xl border bg-transparent text-[12px] focus:outline-none"
                   style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text)' }} />
               </Field>
+              <Field label={ts('field.domainMarkup')} hint={ts('field.domainMarkupHint')}>
+                <input defaultValue={data?.domains.markup_percent ?? 20}
+                  type="number" min={0} step={0.5}
+                  onBlur={e => save({ domain_markup_percent: Number(e.target.value) })}
+                  className="h-9 w-24 px-3 rounded-xl border bg-transparent text-[12px] focus:outline-none"
+                  style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text)' }} />
+              </Field>
               <div className="py-4">
                 <p className="text-[10px]" style={{ color: 'var(--sa-text-3)' }}>{ts('autoSaveNote')}</p>
               </div>

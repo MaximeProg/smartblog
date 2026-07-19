@@ -2726,7 +2726,9 @@
         "registrationsHint": "Désactiver pour bloquer la création de nouveaux comptes",
         "platformName": "Nom de la plateforme",
         "platformNameHint": "Affiché sur les pages publiques et les emails",
-        "supportEmail": "Email de support"
+        "supportEmail": "Email de support",
+        "domainMarkup": "Marge sur l'achat de domaines (%)",
+        "domainMarkupHint": "Ajoutée au prix du registrar pour chaque achat/renouvellement de domaine — 0 = revente au prix coûtant"
       },
       "tabs": {
         "general": "Général",

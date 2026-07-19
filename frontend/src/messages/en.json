@@ -2726,7 +2726,9 @@
         "registrationsHint": "Disable to block new account creation",
         "platformName": "Platform Name",
         "platformNameHint": "Displayed on public pages and emails",
-        "supportEmail": "Support Email"
+        "supportEmail": "Support Email",
+        "domainMarkup": "Domain Purchase Markup (%)",
+        "domainMarkupHint": "Added on top of the registrar's price for every domain purchase and renewal — 0 means resale at cost"
       },
       "tabs": {
         "general": "General",
