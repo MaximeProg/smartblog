@@ -68,6 +68,7 @@ export async function PublicFooter({ locale, lang: langProp }: PublicFooterProps
       { label: l.termsLink, href: `/${locale}/legal/terms` },
       { label: 'Cookies', href: `/${locale}/legal/cookies` },
       { label: 'Security', href: `/${locale}/legal/security` },
+      { label: 'Data Deletion', href: `/${locale}/legal/data-deletion` },
     ],
     resources: [
       { label: 'Documentation', href: `/${locale}/docs` },

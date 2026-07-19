@@ -1,14 +1,14 @@
 import {
   Eye, Shield, Users, Lock, Globe2, Mail, FileText, User, Edit3,
   CreditCard, Server, XCircle, AlertTriangle, Cookie, Settings,
-  BarChart2, Star, Key, Zap, CheckCircle2, type LucideIcon,
+  BarChart2, Star, Key, Zap, CheckCircle2, Trash2, type LucideIcon,
 } from 'lucide-react';
 
 const ICONS: Record<string, LucideIcon> = {
   eye: Eye, shield: Shield, users: Users, lock: Lock, globe2: Globe2, mail: Mail,
   filetext: FileText, user: User, edit3: Edit3, creditcard: CreditCard, server: Server,
   xcircle: XCircle, alerttriangle: AlertTriangle, cookie: Cookie, settings: Settings,
-  barchart2: BarChart2, star: Star, key: Key, zap: Zap,
+  barchart2: BarChart2, star: Star, key: Key, zap: Zap, trash2: Trash2,
 };
 
 const ICON_COLORS: Record<string, string> = {
@@ -21,6 +21,7 @@ const ICON_COLORS: Record<string, string> = {
   alerttriangle: 'bg-orange-500/10 text-orange-500', cookie: 'bg-amber-500/10 text-amber-500',
   settings: 'bg-blue-500/10 text-blue-500', barchart2: 'bg-emerald-500/10 text-emerald-500',
   star: 'bg-violet-500/10 text-violet-500', key: 'bg-cyan-500/10 text-cyan-500', zap: 'bg-orange-500/10 text-orange-500',
+  trash2: 'bg-red-500/10 text-red-500',
 };
 
 export interface LegalSectionData {

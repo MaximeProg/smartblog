@@ -1,4 +1,4 @@
-"""Point d'entrée du worker ARQ NexusBlog.
+"""Point d'entrée du worker ARQ SmarterBloggers.
 
 Lancer avec :
     arq backend.worker.WorkerSettings

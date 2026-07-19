@@ -23,6 +23,7 @@ const PAGE_LABELS: Record<string, string> = {
   'legal-terms': "Conditions d'utilisation",
   'legal-cookies': 'Cookies',
   'legal-security': 'Sécurité',
+  'legal-data-deletion': 'Suppression de données',
   docs: 'Documentation',
   'docs-api': "Documentation — Référence d'API",
   guides: 'Guides',
