@@ -54,6 +54,13 @@ class Settings(BaseSettings):
     NOWPAYMENTS_PLATFORM_FEE_PERCENT: int = 5  # Commission plateforme articles payants
     NOWPAYMENTS_SANDBOX: bool = True        # False en production
 
+    # Registrar de domaines — OpenProvider (achat automatisé de noms de domaine)
+    OPENPROVIDER_USERNAME: str = ""
+    OPENPROVIDER_PASSWORD: str = ""
+    OPENPROVIDER_SANDBOX: bool = True        # False en production (compte reseller réel requis)
+    DEFAULT_DOMAIN_REGISTRAR: str = "openprovider"
+    DOMAIN_SEARCH_TLDS: list[str] = ["com", "net", "org", "blog", "ai", "io", "co", "dev"]
+
     # Email (Resend)
     RESEND_API_KEY: str = ""
     EMAIL_FROM_NAME: str = "SmarterBloggers"

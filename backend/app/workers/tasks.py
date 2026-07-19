@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 import structlog
 
@@ -286,4 +286,230 @@ async def auto_send_scheduled_newsletters(ctx: dict) -> None:
 
         except Exception as exc:
             logger.error("auto_send_scheduled_newsletters: failed", error=str(exc))
+
+
+# ── Achat de domaine (registrar) ─────────────────────────────────────────────
+
+async def register_purchased_domain(ctx: dict, order_id: str) -> None:
+    """Enregistre un domaine acheté auprès du registrar après confirmation du
+    paiement, configure sa zone DNS, et crée la ligne custom_domains
+    correspondante. Idempotent : ignore les commandes qui ne sont plus en
+    statut PAID (déjà traitées ou en échec)."""
+    from sqlalchemy import text
+    from app.core.database import AsyncSessionLocal
+    from app.models.domain import DomainOrder, CustomDomain
+    from app.models.enums import DomainOrderStatus, DomainSource, DomainVerificationStatus
+    from app.services.registrars.registry import get_registrar
+    from app.services.registrars.base import RegistrarError
+    from app.services.log_service import log_event
+    from app.api.v1.domains import _register_with_vercel
+
+    async with AsyncSessionLocal() as db:
+        order = await db.get(DomainOrder, uuid.UUID(order_id))
+        if not order or order.status != DomainOrderStatus.PAID:
+            return
+
+        order.status = DomainOrderStatus.REGISTERING
+        await db.commit()
+
+        registrar = get_registrar(order.registrar)
+        is_renewal = order.custom_domain_id is not None
+        try:
+            if is_renewal:
+                # ── Renouvellement d'un domaine déjà enregistré ──────────
+                existing_domain = await db.get(CustomDomain, order.custom_domain_id)
+                if not existing_domain:
+                    raise RegistrarError(f"custom_domain {order.custom_domain_id} introuvable pour renouvellement.")
+
+                result = await registrar.renew_domain(
+                    registrar_domain_id=existing_domain.registrar_domain_id or "",
+                    years=order.years,
+                )
+                if result.expires_at:
+                    try:
+                        existing_domain.expires_at = datetime.fromisoformat(result.expires_at.replace("Z", "+00:00"))
+                    except ValueError:
+                        pass
+                existing_domain.renewal_price = order.renewal_price
+                existing_domain.last_synced_at = datetime.now(timezone.utc)
+
+                order.registrar_order_id = result.registrar_order_id
+                order.status = DomainOrderStatus.REGISTERED
+                order.registered_at = datetime.now(timezone.utc)
+                await db.commit()
+
+                await log_event(db, "domain.renewed", level="success",
+                                target_type="custom_domain", target_id=str(existing_domain.id),
+                                details=f"{order.domain_name} via {order.registrar} — {order.years} an(s)")
+                logger.info("register_purchased_domain: renewal success", order_id=order_id, domain=order.domain_name)
+
+            else:
+                # ── Nouvel enregistrement ─────────────────────────────────
+                result = await registrar.register_domain(
+                    domain=order.domain_name,
+                    years=order.years,
+                    registrant_info=order.registrant_info,
+                )
+                await registrar.configure_dns(
+                    domain=order.domain_name,
+                    records=[
+                        {"type": "CNAME", "name": "@", "value": "cname.vercel-dns.com"},
+                        {"type": "CNAME", "name": "www", "value": "cname.vercel-dns.com"},
+                    ],
+                )
+
+                expires_at = None
+                if result.expires_at:
+                    try:
+                        expires_at = datetime.fromisoformat(result.expires_at.replace("Z", "+00:00"))
+                    except ValueError:
+                        expires_at = None
+
+                custom_domain = CustomDomain(
+                    tenant_id=order.tenant_id,
+                    domain=order.domain_name,
+                    verification_status=DomainVerificationStatus.VERIFIED,
+                    ssl_enabled=True,
+                    verified_at=datetime.now(timezone.utc),
+                    source=DomainSource.PURCHASED,
+                    is_primary=False,
+                    registrar=order.registrar,
+                    registrar_domain_id=result.registrar_domain_id,
+                    purchased_at=datetime.now(timezone.utc),
+                    expires_at=expires_at,
+                    auto_renew=order.auto_renew,
+                    purchase_price=order.purchase_price,
+                    renewal_price=order.renewal_price,
+                    last_synced_at=datetime.now(timezone.utc),
+                )
+                db.add(custom_domain)
+                await db.flush()
+
+                order.custom_domain_id = custom_domain.id
+                order.registrar_domain_id = result.registrar_domain_id
+                order.registrar_order_id = result.registrar_order_id
+                order.status = DomainOrderStatus.REGISTERED
+                order.registered_at = datetime.now(timezone.utc)
+
+                await db.execute(
+                    text("UPDATE tenants SET domains_count = domains_count + 1 WHERE id = :tid"),
+                    {"tid": str(order.tenant_id)},
+                )
+                await db.commit()
+
+                await _register_with_vercel(order.domain_name)
+                await _register_with_vercel(f"www.{order.domain_name}")
+
+                await log_event(db, "domain.registered", level="success",
+                                target_type="custom_domain", target_id=str(custom_domain.id),
+                                details=f"{order.domain_name} via {order.registrar}")
+                logger.info("register_purchased_domain: success", order_id=order_id, domain=order.domain_name)
+
+        except RegistrarError as exc:
+            order.status = DomainOrderStatus.REGISTRATION_FAILED
+            order.error_message = str(exc)[:2000]
+            await db.commit()
+            await log_event(db, "domain.registration_failed", level="error",
+                            target_type="domain_order", target_id=str(order.id),
+                            details=f"{order.domain_name}: {exc}")
+            logger.error("register_purchased_domain: registrar error", order_id=order_id, error=str(exc))
+        except Exception as exc:
+            order.status = DomainOrderStatus.REGISTRATION_FAILED
+            order.error_message = str(exc)[:2000]
+            await db.commit()
+            await log_event(db, "domain.registration_failed", level="error",
+                            target_type="domain_order", target_id=str(order.id),
+                            details=f"{order.domain_name}: unexpected error — {exc}")
+            logger.error("register_purchased_domain: unexpected error", order_id=order_id, error=str(exc))
+
+
+# ── Synchronisation statut domaines (cron quotidien) ─────────────────────────
+
+async def sync_purchased_domains_status(ctx: dict) -> None:
+    """Recale expires_at/statut des domaines achetés depuis le registrar —
+    pas de webhook OpenProvider confirmé pour ces changements, donc polling
+    périodique plutôt que push."""
+    from sqlalchemy import select
+    from app.core.database import AsyncSessionLocal
+    from app.models.domain import CustomDomain
+    from app.models.enums import DomainSource
+    from app.services.registrars.registry import get_registrar
+    from app.services.registrars.base import RegistrarError
+    from app.services.log_service import log_event
+
+    async with AsyncSessionLocal() as db:
+        result = await db.execute(
+            select(CustomDomain).where(CustomDomain.source == DomainSource.PURCHASED)
+        )
+        domains = result.scalars().all()
+        if not domains:
+            return
+
+        for d in domains:
+            if not d.registrar_domain_id:
+                continue
+            try:
+                registrar = get_registrar(d.registrar)
+                info = await registrar.get_domain_info(d.registrar_domain_id)
+                if info.expires_at:
+                    try:
+                        d.expires_at = datetime.fromisoformat(info.expires_at.replace("Z", "+00:00"))
+                    except ValueError:
+                        pass
+                d.last_synced_at = datetime.now(timezone.utc)
+                await db.commit()
+            except RegistrarError as exc:
+                await log_event(db, "domain.sync_error", level="warning",
+                                target_type="custom_domain", target_id=str(d.id),
+                                details=f"{d.domain}: {exc}")
+                logger.warning("sync_purchased_domains_status: registrar error", domain=d.domain, error=str(exc))
+            except Exception as exc:
+                logger.error("sync_purchased_domains_status: unexpected error", domain=d.domain, error=str(exc))
+
+
+# ── Rappels de renouvellement (cron quotidien) ───────────────────────────────
+
+async def send_domain_renewal_reminders(ctx: dict) -> None:
+    """Les paiements crypto ne peuvent pas être auto-débités : pour les
+    domaines expirant sous 20 jours sans auto-renouvellement (ou en attente
+    de l'action du propriétaire), on envoie un rappel email plutôt qu'un
+    renouvellement silencieux."""
+    from sqlalchemy import select
+    from app.core.database import AsyncSessionLocal
+    from app.models.domain import CustomDomain
+    from app.models.enums import DomainSource
+    from app.services.tenant_service import get_tenant_owner_user_id
+    from app.models.user import User as UserModel
+    from app.services.email_service import send_domain_expiry_reminder
+
+    threshold = datetime.now(timezone.utc) + timedelta(days=20)
+
+    async with AsyncSessionLocal() as db:
+        result = await db.execute(
+            select(CustomDomain).where(
+                CustomDomain.source == DomainSource.PURCHASED,
+                CustomDomain.expires_at.isnot(None),
+                CustomDomain.expires_at <= threshold,
+            )
+        )
+        domains = result.scalars().all()
+        if not domains:
+            return
+
+        for d in domains:
+            try:
+                owner_id = await get_tenant_owner_user_id(db, d.tenant_id)
+                if not owner_id:
+                    continue
+                owner = await db.get(UserModel, owner_id)
+                if not owner or not owner.email:
+                    continue
+                await send_domain_expiry_reminder(
+                    to=owner.email,
+                    domain=d.domain,
+                    expires_at=d.expires_at.strftime("%Y-%m-%d") if d.expires_at else "soon",
+                )
+                logger.info("send_domain_renewal_reminders: sent", domain=d.domain, to=owner.email)
+            except Exception as exc:
+                logger.error("send_domain_renewal_reminders: failed", domain=d.domain, error=str(exc))
             await db.rollback()

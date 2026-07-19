@@ -109,6 +109,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
         { href: `${b}/ads`,        label: t('nav.ads'),        icon: Megaphone },
         { href: `${b}/affiliate`,  label: t('nav.affiliate'),  icon: GitBranch },
         { href: `${b}/accounting`, label: t('nav.accounting'), icon: BookOpen },
+        { href: `${b}/domains`,    label: t('nav.domains'),    icon: Globe },
       ],
     },
     {

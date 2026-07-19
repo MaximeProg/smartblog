@@ -141,6 +141,7 @@ class TransactionType(str, enum.Enum):
     PAID_ARTICLE = "paid_article"
     PAID_NEWSLETTER = "paid_newsletter"
     AD_CAMPAIGN = "ad_campaign"
+    DOMAIN_PURCHASE = "domain_purchase"
 
 
 class TransactionStatus(str, enum.Enum):
@@ -171,6 +172,21 @@ class DomainVerificationStatus(str, enum.Enum):
     PENDING = "pending"
     VERIFIED = "verified"
     FAILED = "failed"
+
+
+class DomainSource(str, enum.Enum):
+    EXTERNAL = "external"
+    PURCHASED = "purchased"
+
+
+class DomainOrderStatus(str, enum.Enum):
+    PENDING_PAYMENT = "pending_payment"
+    PAID = "paid"
+    REGISTERING = "registering"
+    REGISTERED = "registered"
+    REGISTRATION_FAILED = "registration_failed"
+    REFUND_PENDING = "refund_pending"
+    REFUNDED = "refunded"
 
 
 # ── M23 — Affiliate Program ───────────────────────────────────────

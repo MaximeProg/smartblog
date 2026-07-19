@@ -22,7 +22,11 @@ from app.core.exceptions import NotFoundException, ValidationException
 from app.models.payment import Transaction, ArticleAccess, UserSubscription
 from app.models.article import Article
 from app.models.tenant import Tenant
-from app.models.enums import PaymentGateway, TransactionType, TransactionStatus, SubscriptionStatus
+from app.models.domain import DomainOrder, CustomDomain
+from app.models.enums import (
+    PaymentGateway, TransactionType, TransactionStatus, SubscriptionStatus,
+    DomainOrderStatus, DomainSource,
+)
 from app.services.nowpayments_service import (
     create_payment, get_payment_status, generate_qr_data_uri,
     verify_ipn_signature,
@@ -45,6 +49,23 @@ class SubscriptionCheckoutRequest(BaseModel):
 
 class ArticleCheckoutRequest(BaseModel):
     article_id: str
+
+
+class RegistrantInfo(BaseModel):
+    name: str
+    email: str
+    phone: str
+    address: str
+    city: str
+    country: str  # code ISO 2 lettres, ex: "FR"
+    zipcode: str
+
+
+class DomainCheckoutRequest(BaseModel):
+    domain_name: str  # nom complet avec extension, ex: "monblog.com"
+    years: int = 1
+    auto_renew: bool = False
+    registrant: RegistrantInfo
 
 
 class CryptoPaymentResponse(BaseModel):
@@ -263,6 +284,21 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             access.amount_paid = actually_paid
         await db.commit()
 
+    elif tx.transaction_type == TransactionType.DOMAIN_PURCHASE:
+        order = await db.get(DomainOrder, tx.campaign_id) if tx.campaign_id else None
+        if order and order.status == DomainOrderStatus.PENDING_PAYMENT:
+            order.status = DomainOrderStatus.PAID
+            await db.commit()
+
+            from app.services.log_service import log_event
+            await log_event(db, "domain.payment_completed", level="success",
+                            target_type="domain_order", target_id=str(order.id),
+                            details=f"{order.domain_name} — ${actually_paid:.2f} USDT")
+
+            from app.core.arq_pool import get_arq_pool
+            pool = await get_arq_pool()
+            await pool.enqueue_job("register_purchased_domain", order_id=str(order.id))
+
 
 async def _activate_subscription(db, tenant_id: uuid.UUID, plan: str, billing: str) -> None:
     from datetime import timedelta
@@ -399,6 +435,90 @@ async def checkout_article(
         platform_fee=platform_fee,
     )
     return _crypto_response(tx, article.price)
+
+
+# ── Checkout achat de domaine ─────────────────────────────────────
+
+@router.post("/checkout-domain", response_model=CryptoPaymentResponse, status_code=201)
+async def checkout_domain(
+    tenant_id: uuid.UUID,
+    body: DomainCheckoutRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Crée un paiement NowPayments intégré pour acheter un nom de domaine.
+    L'enregistrement registrar lui-même se fait après confirmation du
+    paiement (voir _finalize_transaction + job ARQ register_purchased_domain) —
+    jamais avant, pour ne jamais facturer un domaine qui échoue à s'enregistrer
+    sans paiement confirmé au préalable."""
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+
+    domain_name = body.domain_name.strip().lower()
+    if "." not in domain_name:
+        raise ValidationException("Nom de domaine invalide.")
+    _, tld = domain_name.split(".", 1)
+
+    existing = await db.execute(select(CustomDomain).where(CustomDomain.domain == domain_name))
+    if existing.scalar_one_or_none():
+        raise ValidationException("Ce domaine est déjà enregistré sur la plateforme.")
+
+    from app.services.registrars.registry import get_registrar
+    from app.services.registrars.pricing import apply_markup
+    from app.services.registrars.base import RegistrarError
+
+    registrar = get_registrar()
+    try:
+        results = await registrar.check_availability([domain_name])
+    except RegistrarError as e:
+        raise HTTPException(status_code=502, detail=f"Registrar indisponible : {e}")
+
+    match = next((r for r in results if r.domain == domain_name), None)
+    if not match or not match.available or match.price is None:
+        raise ValidationException("Ce domaine n'est pas disponible à l'achat.")
+
+    price = await apply_markup(match.price)
+    # Le prix de renouvellement n'est pas inclus dans check_availability (voir
+    # openprovider.py) — appel dédié, une seule fois ici (checkout, pas la
+    # recherche live) pour pouvoir proposer un renouvellement plus tard.
+    try:
+        raw_renewal_price, _ = await registrar.get_renewal_price(domain=domain_name, years=body.years)
+        renewal_price = await apply_markup(raw_renewal_price)
+    except RegistrarError:
+        renewal_price = None
+
+    user_id = uuid.UUID(payload["sub"])
+    order = DomainOrder(
+        tenant_id=tenant_id,
+        user_id=user_id,
+        domain_name=domain_name,
+        tld=tld,
+        years=max(1, body.years),
+        registrar=registrar.name,
+        registrant_info=body.registrant.model_dump(),
+        status=DomainOrderStatus.PENDING_PAYMENT,
+        purchase_price=price,
+        renewal_price=renewal_price,
+        currency=match.currency,
+    )
+    db.add(order)
+    await db.flush()
+
+    order_id = f"dom_{tenant_id}_{order.id}_{uuid.uuid4().hex[:8]}"
+    tx, _ = await _create_crypto_transaction(
+        db,
+        tenant_id=tenant_id,
+        user_id=user_id,
+        transaction_type=TransactionType.DOMAIN_PURCHASE,
+        amount_usd=price,
+        order_id=order_id,
+        order_description=f"Domain {domain_name} ({body.years} an(s))",
+        campaign_id=order.id,
+    )
+    order.transaction_id = tx.id
+    order.auto_renew = body.auto_renew
+    await db.commit()
+
+    return _crypto_response(tx, price)
 
 
 # ── Statut de paiement (polling) ──────────────────────────────────

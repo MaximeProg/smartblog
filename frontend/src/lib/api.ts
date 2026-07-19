@@ -816,6 +816,34 @@ export interface CustomDomainInfo {
   created_at: string;
   verified_at: string | null;
   verification_token: string;
+  source: 'external' | 'purchased';
+  is_primary: boolean;
+  registrar: string | null;
+  purchased_at: string | null;
+  expires_at: string | null;
+  auto_renew: boolean;
+  purchase_price: number | null;
+  renewal_price: number | null;
+}
+
+export interface DomainSearchResult {
+  domain: string;
+  tld: string;
+  available: boolean;
+  is_premium: boolean;
+  price: number | null;
+  renewal_price: number | null;
+  currency: string;
+}
+
+export interface RegistrantInfo {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  country: string;
+  zipcode: string;
 }
 
 export const domainsApi = {
@@ -830,6 +858,20 @@ export const domainsApi = {
 
   remove: (tenantId: string, domainId: string) =>
     api.delete<void>(`/tenants/${tenantId}/domains/${domainId}`),
+
+  search: (tenantId: string, q: string) =>
+    api.get<DomainSearchResult[]>(`/tenants/${tenantId}/domains/search`, { params: { q } }),
+
+  setPrimary: (tenantId: string, domainId: string) =>
+    api.post<CustomDomainInfo>(`/tenants/${tenantId}/domains/${domainId}/set-primary`),
+
+  renew: (tenantId: string, domainId: string, years: number = 1) =>
+    api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/domains/${domainId}/renew`, null, { params: { years } }),
+
+  history: (tenantId: string, domainId: string) =>
+    api.get<{ action: string; level: string; details: string | null; created_at: string }[]>(
+      `/tenants/${tenantId}/domains/${domainId}/history`,
+    ),
 };
 
 // ─── AI ───────────────────────────────────────────────────────────────────────
@@ -942,6 +984,9 @@ export const paymentsApi = {
   createSubscriptionCheckout: (tenantId: string, data: { plan: string; billing?: 'monthly' | 'annual' }) =>
     api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/checkout-subscription`, data),
 
+  createDomainCheckout: (tenantId: string, data: { domain_name: string; years: number; auto_renew: boolean; registrant: RegistrantInfo }) =>
+    api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/checkout-domain`, data),
+
   getPaymentStatus: (tenantId: string, orderId: string) =>
     api.get<PaymentStatusResponse>(`/tenants/${tenantId}/payments/status/${orderId}`),
 };
@@ -1019,6 +1064,44 @@ export interface CashoutAdminView {
   processed_at: string | null;
   payout_reference: string | null;
   notes: string | null;
+}
+
+export interface SuperAdminDomainView {
+  id: string;
+  domain: string;
+  tenant_id: string;
+  tenant_name: string;
+  tenant_slug: string;
+  owner_email: string | null;
+  source: 'external' | 'purchased';
+  verification_status: string;
+  is_primary: boolean;
+  registrar: string | null;
+  purchased_at: string | null;
+  expires_at: string | null;
+  auto_renew: boolean;
+  purchase_price: number | null;
+  renewal_price: number | null;
+  last_synced_at: string | null;
+  order_id: string | null;
+  order_status: string | null;
+  transaction_id: string | null;
+  created_at: string;
+}
+
+export interface SuperAdminDomainDetail {
+  domain: {
+    id: string; domain: string; tenant_id: string; source: string;
+    registrar: string | null; registrar_domain_id: string | null;
+    expires_at: string | null; auto_renew: boolean;
+  };
+  orders: {
+    id: string; status: string; years: number;
+    purchase_price: number | null; renewal_price: number | null;
+    transaction_id: string | null; error_message: string | null;
+    created_at: string; registered_at: string | null;
+  }[];
+  logs: { action: string; level: string; details: string | null; ts: string }[];
 }
 
 export interface SuperAdminAdView {
@@ -1362,6 +1445,12 @@ export const superadminApi = {
 
   listAllAds: (params?: { status?: string; limit?: number; offset?: number }) =>
     api.get<{ items: SuperAdminAdView[]; total: number }>('/superadmin/ads', { params }),
+
+  listDomains: (params?: { search?: string; tenant_id?: string; user_id?: string; registrar?: string; source?: string; limit?: number; offset?: number }) =>
+    api.get<{ items: SuperAdminDomainView[]; total: number }>('/superadmin/domains', { params }),
+
+  getDomainDetail: (domainId: string) =>
+    api.get<SuperAdminDomainDetail>(`/superadmin/domains/${domainId}`),
 
   reviewAd: (tenantId: string, adId: string, decision: 'approved' | 'rejected', rejectionReason?: string) =>
     api.post<AdResponse>(`/tenants/${tenantId}/ads/${adId}/review`, {

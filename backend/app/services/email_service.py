@@ -468,6 +468,31 @@ async def send_login_notification(
     )
 
 
+async def send_domain_expiry_reminder(
+    to: str,
+    domain: str,
+    expires_at: str,
+) -> None:
+    """Sent to a tenant owner when a purchased domain approaches expiry and
+    auto-renew is off (crypto payments can't be auto-charged — the user must
+    actively complete a renewal checkout)."""
+    body = (
+        _h1("Your domain is expiring soon") +
+        _p(f"Your domain <strong>{domain}</strong> will expire on <strong>{expires_at}</strong>.") +
+        _p("Renew it now from your Domains page to keep your blog reachable at this address.") +
+        _note("Renewals are paid the same way as your subscription — no automatic charge is made without your action.")
+    )
+    await _send(
+        to=to,
+        subject=f"Action needed: {domain} expires soon — SmarterBloggers",
+        html=_base(
+            title="Domain expiry reminder",
+            preview=f"{domain} expires on {expires_at}",
+            body_html=body,
+        ),
+    )
+
+
 async def send_superadmin_event(
     to: list[str],
     event_type: str,

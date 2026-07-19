@@ -404,6 +404,154 @@ async def list_all_ads(
     }
 
 
+# ── Domaines (achetés + externes) ──────────────────────────────────
+
+@router.get("/domains")
+async def list_all_domains(
+    payload: TokenPayload,
+    db: DBSession,
+    search: str | None = Query(None),
+    tenant_id: str | None = Query(None),
+    user_id: str | None = Query(None),
+    registrar: str | None = Query(None),
+    source: str | None = Query(None),
+    limit: int = Query(20, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+):
+    """Liste tous les domaines (achetés + rattachés) de tous les blogs —
+    super admin seulement. Jointure DomainOrder pour retrouver l'utilisateur
+    acheteur et la commande liée (domaines achetés uniquement)."""
+    await _require_super_admin(payload, db)
+
+    from app.models.domain import CustomDomain, DomainOrder
+    from app.models.user import User as UserModel
+
+    base = (
+        select(
+            CustomDomain,
+            Tenant.name.label("tenant_name"),
+            Tenant.slug.label("tenant_slug"),
+            DomainOrder.id.label("order_id"),
+            DomainOrder.status.label("order_status"),
+            DomainOrder.transaction_id.label("transaction_id"),
+            DomainOrder.user_id.label("order_user_id"),
+            UserModel.email.label("owner_email"),
+        )
+        .join(Tenant, Tenant.id == CustomDomain.tenant_id)
+        .outerjoin(DomainOrder, DomainOrder.custom_domain_id == CustomDomain.id)
+        .outerjoin(UserModel, UserModel.id == DomainOrder.user_id)
+    )
+    if search:
+        base = base.where(CustomDomain.domain.ilike(f"%{search}%"))
+    if tenant_id:
+        base = base.where(CustomDomain.tenant_id == uuid.UUID(tenant_id))
+    if user_id:
+        base = base.where(DomainOrder.user_id == uuid.UUID(user_id))
+    if registrar:
+        base = base.where(CustomDomain.registrar == registrar)
+    if source:
+        base = base.where(CustomDomain.source == source)
+
+    total = (await db.execute(select(func.count()).select_from(base.subquery()))).scalar_one()
+    result = await db.execute(base.order_by(CustomDomain.created_at.desc()).limit(limit).offset(offset))
+    rows = result.all()
+
+    return {
+        "items": [
+            {
+                "id": str(r.CustomDomain.id),
+                "domain": r.CustomDomain.domain,
+                "tenant_id": str(r.CustomDomain.tenant_id),
+                "tenant_name": r.tenant_name,
+                "tenant_slug": r.tenant_slug,
+                "owner_email": r.owner_email,
+                "source": r.CustomDomain.source.value,
+                "verification_status": r.CustomDomain.verification_status.value,
+                "is_primary": r.CustomDomain.is_primary,
+                "registrar": r.CustomDomain.registrar,
+                "purchased_at": r.CustomDomain.purchased_at.isoformat() if r.CustomDomain.purchased_at else None,
+                "expires_at": r.CustomDomain.expires_at.isoformat() if r.CustomDomain.expires_at else None,
+                "auto_renew": r.CustomDomain.auto_renew,
+                "purchase_price": float(r.CustomDomain.purchase_price) if r.CustomDomain.purchase_price is not None else None,
+                "renewal_price": float(r.CustomDomain.renewal_price) if r.CustomDomain.renewal_price is not None else None,
+                "last_synced_at": r.CustomDomain.last_synced_at.isoformat() if r.CustomDomain.last_synced_at else None,
+                "order_id": str(r.order_id) if r.order_id else None,
+                "order_status": r.order_status.value if r.order_status else None,
+                "transaction_id": str(r.transaction_id) if r.transaction_id else None,
+                "created_at": r.CustomDomain.created_at.isoformat(),
+            }
+            for r in rows
+        ],
+        "total": total,
+    }
+
+
+@router.get("/domains/{domain_id}")
+async def get_domain_detail(
+    domain_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    """Détail d'un domaine : commandes liées (paiement + erreurs registrar) et
+    journal d'activité — pour investiguer une erreur de synchronisation."""
+    await _require_super_admin(payload, db)
+
+    from app.models.domain import CustomDomain, DomainOrder
+
+    d = await db.get(CustomDomain, domain_id)
+    if not d:
+        raise NotFoundException("Domaine")
+
+    orders_result = await db.execute(
+        select(DomainOrder).where(DomainOrder.custom_domain_id == domain_id).order_by(DomainOrder.created_at.desc())
+    )
+    orders = orders_result.scalars().all()
+
+    target_ids = [str(domain_id)] + [str(o.id) for o in orders]
+    placeholders = ", ".join(f":tid{i}" for i in range(len(target_ids)))
+    params = {f"tid{i}": v for i, v in enumerate(target_ids)}
+    logs_result = await db.execute(
+        text(f"""
+            SELECT action, level, details, ts
+            FROM activity_logs
+            WHERE target_id IN ({placeholders})
+            ORDER BY ts DESC LIMIT 100
+        """),
+        params,
+    )
+
+    return {
+        "domain": {
+            "id": str(d.id),
+            "domain": d.domain,
+            "tenant_id": str(d.tenant_id),
+            "source": d.source.value,
+            "registrar": d.registrar,
+            "registrar_domain_id": d.registrar_domain_id,
+            "expires_at": d.expires_at.isoformat() if d.expires_at else None,
+            "auto_renew": d.auto_renew,
+        },
+        "orders": [
+            {
+                "id": str(o.id),
+                "status": o.status.value,
+                "years": o.years,
+                "purchase_price": float(o.purchase_price) if o.purchase_price is not None else None,
+                "renewal_price": float(o.renewal_price) if o.renewal_price is not None else None,
+                "transaction_id": str(o.transaction_id) if o.transaction_id else None,
+                "error_message": o.error_message,
+                "created_at": o.created_at.isoformat(),
+                "registered_at": o.registered_at.isoformat() if o.registered_at else None,
+            }
+            for o in orders
+        ],
+        "logs": [
+            {"action": r.action, "level": r.level, "details": r.details, "ts": r.ts.isoformat()}
+            for r in logs_result.fetchall()
+        ],
+    }
+
+
 # ── Transactions / Paiements ──────────────────────────────────────
 
 @router.get("/transactions")
@@ -1239,6 +1387,12 @@ async def get_platform_settings(payload: TokenPayload, db: DBSession):
             "configured": bool(getattr(cfg, "OPENAI_API_KEY", "")),
             "model": overrides.get("ai_model", "gpt-4o-mini"),
         },
+        "domains": {
+            "configured": bool(getattr(cfg, "OPENPROVIDER_USERNAME", "")),
+            "sandbox": bool(getattr(cfg, "OPENPROVIDER_SANDBOX", True)),
+            "registrar": getattr(cfg, "DEFAULT_DOMAIN_REGISTRAR", "openprovider"),
+            "markup_percent": overrides.get("domain_markup_percent", 20.0),
+        },
         "env": cfg.APP_ENV,
     }
 
@@ -1258,6 +1412,7 @@ async def update_platform_settings(
     allowed_keys = {
         "platform_name", "support_email", "max_blogs_per_user",
         "maintenance_mode", "registrations_open", "ai_model",
+        "domain_markup_percent",
     }
 
     try:

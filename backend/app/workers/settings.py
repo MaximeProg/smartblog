@@ -7,15 +7,19 @@ from app.workers.tasks import (
     send_newsletter_campaign, auto_publish_scheduled,
     publish_to_social, auto_send_scheduled_newsletters,
     health_check_ping,
+    register_purchased_domain, sync_purchased_domains_status,
+    send_domain_renewal_reminders,
 )
 
 
 class WorkerSettings:
-    functions = [send_newsletter_campaign, publish_to_social]
+    functions = [send_newsletter_campaign, publish_to_social, register_purchased_domain]
     cron_jobs = [
         cron(auto_publish_scheduled, second=0),              # toutes les 60 secondes
         cron(auto_send_scheduled_newsletters, second=30),    # décalé de 30s
         cron(health_check_ping, minute=set(range(0, 60, 5))),  # toutes les 5 minutes
+        cron(sync_purchased_domains_status, hour=3, minute=0),        # 1x/jour, 3h
+        cron(send_domain_renewal_reminders, hour=9, minute=0),        # 1x/jour, 9h
     ]
     redis_settings = RedisSettings.from_dsn(settings.REDIS_URL)
     max_jobs = 10

@@ -6,11 +6,14 @@ import { useState } from 'react';
 import {
   Globe, Plus, Trash2, RefreshCw, CheckCircle2, XCircle,
   Clock, Copy, Check, Loader2, ExternalLink, ChevronDown, ChevronUp,
+  Search, ShoppingCart, Star, Shield, Link2,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { domainsApi, type CustomDomainInfo } from '@/lib/api';
+import { domainsApi, paymentsApi, type CustomDomainInfo, type DomainSearchResult, type CryptoPaymentResponse } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
+import { useAuthStore } from '@/store/auth.store';
+import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 
 const STATUS_CONFIG = {
   pending:  { icon: Clock,        cls: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',       label: 'Pending'  },
@@ -49,9 +52,20 @@ export default function DomainsPage() {
   const { toast } = useToast();
   const qc = useQueryClient();
   const t = useTranslations('domains');
+  const { user } = useAuthStore();
   const [newDomain, setNewDomain] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [guideOpen, setGuideOpen] = useState(true);
+
+  const [tab, setTab] = useState<'connect' | 'buy'>('connect');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchSubmitted, setSearchSubmitted] = useState('');
+  const [purchaseTarget, setPurchaseTarget] = useState<DomainSearchResult | null>(null);
+  const [payment, setPayment] = useState<CryptoPaymentResponse | null>(null);
+  const [purchaseForm, setPurchaseForm] = useState({
+    name: user?.display_name ?? '', email: user?.email ?? '', phone: user?.phone ?? '',
+    address: '', city: '', country: '', zipcode: '', years: 1, autoRenew: false,
+  });
 
   const { data: domains = [], isLoading } = useQuery({
     queryKey: ['domains', blogId],
@@ -89,6 +103,45 @@ export default function DomainsPage() {
     onError: () => toast({ variant: 'destructive', title: t('deleteError') }),
   });
 
+  const setPrimaryMut = useMutation({
+    mutationFn: (domainId: string) => domainsApi.setPrimary(blogId, domainId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['domains', blogId] }),
+  });
+
+  const { data: searchResults = [], isFetching: searching } = useQuery({
+    queryKey: ['domain-search', blogId, searchSubmitted],
+    queryFn: async () => { const { data } = await domainsApi.search(blogId, searchSubmitted); return data; },
+    enabled: !!searchSubmitted,
+  });
+
+  const purchaseMut = useMutation({
+    mutationFn: () => paymentsApi.createDomainCheckout(blogId, {
+      domain_name: purchaseTarget!.domain,
+      years: purchaseForm.years,
+      auto_renew: purchaseForm.autoRenew,
+      registrant: {
+        name: purchaseForm.name, email: purchaseForm.email, phone: purchaseForm.phone,
+        address: purchaseForm.address, city: purchaseForm.city,
+        country: purchaseForm.country, zipcode: purchaseForm.zipcode,
+      },
+    }).then((r) => r.data),
+    onSuccess: (data) => setPayment(data),
+    onError: (err: any) => toast({ variant: 'destructive', title: err?.response?.data?.detail ?? t('purchaseError') }),
+  });
+
+  const renewMut = useMutation({
+    mutationFn: (domainId: string) => domainsApi.renew(blogId, domainId).then((r) => r.data),
+    onSuccess: (data) => setPayment(data),
+    onError: (err: any) => toast({ variant: 'destructive', title: err?.response?.data?.detail ?? t('renewError') }),
+  });
+
+  function handlePaymentConfirmed() {
+    setPayment(null);
+    setPurchaseTarget(null);
+    qc.invalidateQueries({ queryKey: ['domains', blogId] });
+    toast({ title: t('purchaseSuccess') });
+  }
+
   return (
     <FullPageShell
       title={t('pageTitle')}
@@ -104,6 +157,101 @@ export default function DomainsPage() {
     >
       <div className="px-6 py-6 space-y-5">
 
+        {/* ── Tab switcher ─────────────────────────────────────────── */}
+        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl p-1 w-fit">
+          <button
+            onClick={() => setTab('connect')}
+            className={`flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12.5px] font-bold transition-colors ${
+              tab === 'connect' ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'
+            }`}
+          >
+            <Link2 className="h-3.5 w-3.5" /> {t('tabConnect')}
+          </button>
+          <button
+            onClick={() => setTab('buy')}
+            className={`flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12.5px] font-bold transition-colors ${
+              tab === 'buy' ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'
+            }`}
+          >
+            <ShoppingCart className="h-3.5 w-3.5" /> {t('tabBuy')}
+          </button>
+        </div>
+
+        {/* ── Buy a domain ─────────────────────────────────────────── */}
+        {tab === 'buy' && (
+          <div className="space-y-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
+              <h3 className="text-[13px] font-bold text-slate-800 dark:text-slate-200 mb-3">{t('searchTitle')}</h3>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' && searchQuery.trim()) setSearchSubmitted(searchQuery.trim()); }}
+                    placeholder={t('searchPlaceholder')}
+                    className="w-full h-10 pl-9 pr-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                  />
+                </div>
+                <button
+                  onClick={() => searchQuery.trim() && setSearchSubmitted(searchQuery.trim())}
+                  disabled={!searchQuery.trim() || searching}
+                  className="flex items-center gap-1.5 h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold disabled:opacity-50 transition-colors"
+                >
+                  {searching ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
+                  {t('searchButton')}
+                </button>
+              </div>
+            </div>
+
+            {searchSubmitted && (
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm divide-y divide-slate-100 dark:divide-slate-800 overflow-hidden">
+                {searching ? (
+                  <div className="flex justify-center py-10"><Loader2 className="h-5 w-5 text-slate-300 animate-spin" /></div>
+                ) : searchResults.length === 0 ? (
+                  <p className="text-center py-10 text-[12.5px] text-slate-400">{t('searchEmpty')}</p>
+                ) : (
+                  searchResults.map((r) => (
+                    <div key={r.domain} className="px-5 py-3.5 flex items-center gap-3">
+                      <Globe className="h-4 w-4 text-slate-400 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13.5px] font-bold text-slate-800 dark:text-slate-200">{r.domain}</p>
+                        {r.available && r.price != null && (
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            {t('priceFirstYear', { price: r.price.toFixed(2) })}
+                            {r.renewal_price != null && ` · ${t('priceRenewal', { price: r.renewal_price.toFixed(2) })}`}
+                          </p>
+                        )}
+                      </div>
+                      {r.is_premium && (
+                        <span className="h-6 px-2 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-900/20 text-amber-600 border border-amber-200 dark:border-amber-800 flex items-center">
+                          {t('premium')}
+                        </span>
+                      )}
+                      {r.available ? (
+                        <button
+                          onClick={() => {
+                            setPurchaseTarget(r);
+                            setPurchaseForm((f) => ({ ...f, years: 1 }));
+                          }}
+                          className="flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[12px] font-bold transition-colors"
+                        >
+                          <ShoppingCart className="h-3.5 w-3.5" /> {t('buyButton')}
+                        </button>
+                      ) : (
+                        <span className="h-6 px-2.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center">
+                          {t('taken')}
+                        </span>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab === 'connect' && (<>
         {/* ── Step-by-step guide ──────────────────────────────────── */}
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
           <button
@@ -223,8 +371,9 @@ export default function DomainsPage() {
             <p className="text-[11px] text-slate-400 mt-2">{t('addHint')}</p>
           </div>
         )}
+        </>)}
 
-        {/* ── Domain list ────────────────────────────────────────── */}
+        {/* ── Domain list (toujours visible, indépendamment de l'onglet) ── */}
         {isLoading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-6 w-6 text-slate-300 animate-spin" />
@@ -249,36 +398,74 @@ export default function DomainsPage() {
                   <div className="flex items-center gap-3">
                     <Globe className="h-4 w-4 text-slate-400 shrink-0" />
                     <div className="flex-1 min-w-0">
-                      {d.verification_status === 'verified' ? (
-                        <a
-                          href={`https://${d.domain}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-[14px] font-bold text-blue-600 dark:text-blue-400 hover:underline w-fit"
-                        >
-                          {d.domain}
-                          <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
-                        </a>
-                      ) : (
-                        <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200 truncate">{d.domain}</p>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {d.verification_status === 'verified' ? (
+                          <a
+                            href={`https://${d.domain}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-[14px] font-bold text-blue-600 dark:text-blue-400 hover:underline w-fit"
+                          >
+                            {d.domain}
+                            <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
+                          </a>
+                        ) : (
+                          <p className="text-[14px] font-bold text-slate-800 dark:text-slate-200 truncate">{d.domain}</p>
+                        )}
+                        {d.is_primary && (
+                          <span className="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 shrink-0">
+                            <Star className="h-2.5 w-2.5" /> {t('primaryBadge')}
+                          </span>
+                        )}
+                        {d.source === 'purchased' && (
+                          <span className="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                            <ShoppingCart className="h-2.5 w-2.5" /> {t('purchasedBadge')}
+                          </span>
+                        )}
+                      </div>
                       <p className="text-[11px] text-slate-400 mt-0.5">
                         {t('addedOn', { date: new Date(d.created_at).toLocaleDateString() })}
                         {d.ssl_enabled && <span className="ml-2 text-emerald-500 font-semibold">· SSL ✓</span>}
+                        {d.source === 'purchased' && d.registrar && <span className="ml-2">· {d.registrar}</span>}
+                        {d.source === 'purchased' && d.expires_at && (
+                          <span className="ml-2">· {t('expiresOn', { date: new Date(d.expires_at).toLocaleDateString() })}</span>
+                        )}
                       </p>
                     </div>
                     <span className={`inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[10px] font-bold border ${cfg.cls}`}>
                       <StatusIcon className="h-3 w-3" />
                       {cfg.label}
                     </span>
-                    <button
-                      onClick={() => verifyMut.mutate(d.id)}
-                      disabled={verifyMut.isPending}
-                      title={t('verifyButton')}
-                      className="h-8 w-8 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-300 transition-colors disabled:opacity-50"
-                    >
-                      {verifyMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
-                    </button>
+                    {d.source === 'external' && (
+                      <button
+                        onClick={() => verifyMut.mutate(d.id)}
+                        disabled={verifyMut.isPending}
+                        title={t('verifyButton')}
+                        className="h-8 w-8 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-300 transition-colors disabled:opacity-50"
+                      >
+                        {verifyMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+                      </button>
+                    )}
+                    {d.source === 'purchased' && (
+                      <button
+                        onClick={() => renewMut.mutate(d.id)}
+                        disabled={renewMut.isPending}
+                        title={t('renewButton')}
+                        className="h-8 w-8 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:border-emerald-300 transition-colors disabled:opacity-50"
+                      >
+                        {renewMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+                      </button>
+                    )}
+                    {!d.is_primary && (
+                      <button
+                        onClick={() => setPrimaryMut.mutate(d.id)}
+                        disabled={setPrimaryMut.isPending}
+                        title={t('setPrimaryButton')}
+                        className="h-8 w-8 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-amber-500 hover:border-amber-300 transition-colors disabled:opacity-50"
+                      >
+                        <Star className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                     <button
                       onClick={() => { if (confirm(t('deleteConfirm'))) deleteMut.mutate(d.id); }}
                       disabled={deleteMut.isPending}
@@ -352,6 +539,83 @@ export default function DomainsPage() {
           </div>
         )}
       </div>
+
+      {/* ── Purchase modal (coordonnées registrant) ─────────────────── */}
+      {purchaseTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setPurchaseTarget(null)}>
+          <div
+            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl w-full max-w-md p-5 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-[15px] font-bold text-slate-800 dark:text-slate-200 mb-1">{t('purchaseTitle', { domain: purchaseTarget.domain })}</h3>
+            <p className="text-[11.5px] text-slate-400 mb-4">{t('purchaseSubtitle')}</p>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              <input value={purchaseForm.name} onChange={(e) => setPurchaseForm(f => ({ ...f, name: e.target.value }))}
+                placeholder={t('fieldName')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+              <input value={purchaseForm.email} onChange={(e) => setPurchaseForm(f => ({ ...f, email: e.target.value }))}
+                placeholder={t('fieldEmail')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+              <input value={purchaseForm.phone} onChange={(e) => setPurchaseForm(f => ({ ...f, phone: e.target.value }))}
+                placeholder={t('fieldPhone')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+              <input value={purchaseForm.address} onChange={(e) => setPurchaseForm(f => ({ ...f, address: e.target.value }))}
+                placeholder={t('fieldAddress')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+              <input value={purchaseForm.city} onChange={(e) => setPurchaseForm(f => ({ ...f, city: e.target.value }))}
+                placeholder={t('fieldCity')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+              <input value={purchaseForm.zipcode} onChange={(e) => setPurchaseForm(f => ({ ...f, zipcode: e.target.value }))}
+                placeholder={t('fieldZip')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+              <input value={purchaseForm.country} onChange={(e) => setPurchaseForm(f => ({ ...f, country: e.target.value.toUpperCase().slice(0, 2) }))}
+                placeholder={t('fieldCountry')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+            </div>
+
+            <div className="flex items-center justify-between mt-3.5">
+              <label className="flex items-center gap-2 text-[12px] text-slate-600 dark:text-slate-400">
+                <input type="checkbox" checked={purchaseForm.autoRenew} onChange={(e) => setPurchaseForm(f => ({ ...f, autoRenew: e.target.checked }))} className="rounded" />
+                {t('autoRenewLabel')}
+              </label>
+              <select value={purchaseForm.years} onChange={(e) => setPurchaseForm(f => ({ ...f, years: Number(e.target.value) }))}
+                className="h-8 px-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px]">
+                {[1, 2, 3, 5].map(y => <option key={y} value={y}>{y} {t('years')}</option>)}
+              </select>
+            </div>
+
+            {purchaseTarget.price != null && (
+              <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-3">
+                {t('totalPrice', { price: (purchaseTarget.price * purchaseForm.years).toFixed(2) })}
+              </p>
+            )}
+
+            <div className="flex items-center gap-2 mt-4">
+              <button onClick={() => setPurchaseTarget(null)} className="flex-1 h-10 rounded-xl border border-slate-200 dark:border-slate-700 text-[12.5px] font-bold text-slate-600 dark:text-slate-300">
+                {t('cancel')}
+              </button>
+              <button
+                onClick={() => purchaseMut.mutate()}
+                disabled={purchaseMut.isPending || !purchaseForm.name || !purchaseForm.email || !purchaseForm.address || !purchaseForm.city || !purchaseForm.country || !purchaseForm.zipcode}
+                className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[12.5px] font-bold disabled:opacity-50"
+              >
+                {purchaseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
+                {t('proceedToPayment')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {payment && (
+        <CryptoPaymentPanel
+          open={!!payment}
+          onOpenChange={(o) => { if (!o) setPayment(null); }}
+          tenantId={blogId}
+          orderId={payment.order_id}
+          payAddress={payment.pay_address}
+          payAmount={payment.pay_amount}
+          payCurrency={payment.pay_currency}
+          qrCodeDataUri={payment.qr_code_data_uri}
+          expiresAt={payment.expires_at}
+          amountUsd={payment.amount_usd}
+          onConfirmed={handlePaymentConfirmed}
+        />
+      )}
     </FullPageShell>
   );
 }

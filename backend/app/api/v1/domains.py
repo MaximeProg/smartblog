@@ -2,14 +2,14 @@
 import hashlib
 import socket
 from datetime import datetime, timezone
-from fastapi import APIRouter, Query
-from sqlalchemy import select, func
+from fastapi import APIRouter, Query, HTTPException
+from sqlalchemy import select, func, text
 from pydantic import BaseModel
 
 from app.core.dependencies import TokenPayload, DBSession
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
 from app.models.domain import CustomDomain
-from app.models.enums import DomainVerificationStatus, UserRole
+from app.models.enums import DomainVerificationStatus, DomainSource, UserRole
 from app.api.v1.tenants import _assert_member, _assert_role
 
 router = APIRouter(prefix="/tenants/{tenant_id}/domains", tags=["domains"])
@@ -48,10 +48,35 @@ class DomainResponse(BaseModel):
     created_at: datetime
     verified_at: datetime | None
     verification_token: str
+    source: DomainSource
+    is_primary: bool
+    registrar: str | None
+    purchased_at: datetime | None
+    expires_at: datetime | None
+    auto_renew: bool
+    purchase_price: float | None
+    renewal_price: float | None
 
 
 class AddDomainRequest(BaseModel):
     domain: str
+
+
+class DomainSearchResult(BaseModel):
+    domain: str
+    tld: str
+    available: bool
+    is_premium: bool
+    price: float | None
+    renewal_price: float | None
+    currency: str
+
+
+class DomainHistoryEntry(BaseModel):
+    action: str
+    level: str
+    details: str | None
+    created_at: datetime
 
 
 # ── GET /domains ──────────────────────────────────────────────────
@@ -209,4 +234,164 @@ def _to_response(d: CustomDomain, tenant_id: uuid.UUID) -> DomainResponse:
         created_at=d.created_at,
         verified_at=d.verified_at,
         verification_token=_verification_token(tenant_id, d.domain),
+        source=d.source,
+        is_primary=d.is_primary,
+        registrar=d.registrar,
+        purchased_at=d.purchased_at,
+        expires_at=d.expires_at,
+        auto_renew=d.auto_renew,
+        purchase_price=float(d.purchase_price) if d.purchase_price is not None else None,
+        renewal_price=float(d.renewal_price) if d.renewal_price is not None else None,
     )
+
+
+# ── GET /domains/search — achat de domaine ────────────────────────
+
+@router.get("/search", response_model=list[DomainSearchResult])
+async def search_domains(
+    tenant_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+    q: str = Query(..., min_length=1, max_length=63),
+):
+    """Recherche de disponibilité + prix sur la liste de TLD par défaut de la
+    plateforme. Le nom saisi est nettoyé (pas d'extension attendue)."""
+    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+
+    from app.core.config import settings
+    from app.services.registrars.registry import get_registrar
+    from app.services.registrars.pricing import apply_markup
+    from app.services.registrars.base import RegistrarError
+
+    root = q.strip().lower().split(".")[0]
+    if not root or not root.replace("-", "").isalnum():
+        raise ValidationException("Nom de domaine invalide.")
+
+    candidates = [f"{root}.{tld}" for tld in settings.DOMAIN_SEARCH_TLDS]
+
+    registrar = get_registrar()
+    try:
+        results = await registrar.check_availability(candidates)
+    except RegistrarError as e:
+        raise HTTPException(status_code=502, detail=f"Registrar indisponible : {e}")
+
+    by_domain = {r.domain: r for r in results}
+    out: list[DomainSearchResult] = []
+    for domain in candidates:
+        r = by_domain.get(domain)
+        if not r:
+            continue
+        price = await apply_markup(r.price) if r.price is not None else None
+        renewal = await apply_markup(r.renewal_price) if r.renewal_price is not None else None
+        out.append(DomainSearchResult(
+            domain=domain, tld=r.tld, available=r.available, is_premium=r.is_premium,
+            price=price, renewal_price=renewal, currency=r.currency,
+        ))
+    return out
+
+
+# ── POST /domains/{id}/set-primary ─────────────────────────────────
+
+@router.post("/{domain_id}/set-primary", response_model=DomainResponse)
+async def set_primary_domain(
+    tenant_id: uuid.UUID,
+    domain_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+    d = await _get_domain(db, tenant_id, domain_id)
+
+    await db.execute(
+        text("UPDATE custom_domains SET is_primary = false WHERE tenant_id = :tid"),
+        {"tid": str(tenant_id)},
+    )
+    d.is_primary = True
+    await db.commit()
+    await db.refresh(d)
+    return _to_response(d, tenant_id)
+
+
+# ── POST /domains/{id}/renew — checkout de renouvellement ─────────
+
+@router.post("/{domain_id}/renew")
+async def renew_domain_endpoint(
+    tenant_id: uuid.UUID,
+    domain_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+    years: int = 1,
+):
+    """Crée un paiement de renouvellement — même pipeline crypto que l'achat.
+    L'appel registrar.renew_domain() a lieu après confirmation du paiement
+    (voir _finalize_transaction + register_purchased_domain, qui détecte un
+    renouvellement via custom_domain_id déjà renseigné sur la commande)."""
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+    d = await _get_domain(db, tenant_id, domain_id)
+
+    if d.source != DomainSource.PURCHASED:
+        raise ValidationException("Seuls les domaines achetés via SmarterBloggers peuvent être renouvelés ici.")
+    if d.renewal_price is None:
+        raise ValidationException("Prix de renouvellement indisponible pour ce domaine.")
+
+    from app.models.domain import DomainOrder
+    from app.models.enums import DomainOrderStatus, TransactionType
+    from app.api.v1.payments import _create_crypto_transaction, _crypto_response
+
+    user_id = uuid.UUID(payload["sub"])
+    order = DomainOrder(
+        tenant_id=tenant_id,
+        user_id=user_id,
+        custom_domain_id=d.id,
+        domain_name=d.domain,
+        tld=d.domain.split(".", 1)[1],
+        years=max(1, years),
+        registrar=d.registrar or "openprovider",
+        registrant_info={},
+        status=DomainOrderStatus.PENDING_PAYMENT,
+        renewal_price=d.renewal_price,
+        currency="USD",
+        auto_renew=d.auto_renew,
+    )
+    db.add(order)
+    await db.flush()
+
+    order_id = f"domren_{tenant_id}_{order.id}_{uuid.uuid4().hex[:8]}"
+    tx, _ = await _create_crypto_transaction(
+        db,
+        tenant_id=tenant_id,
+        user_id=user_id,
+        transaction_type=TransactionType.DOMAIN_PURCHASE,
+        amount_usd=float(d.renewal_price),
+        order_id=order_id,
+        order_description=f"Renew {d.domain} ({years} an(s))",
+        campaign_id=order.id,
+    )
+    order.transaction_id = tx.id
+    await db.commit()
+
+    return _crypto_response(tx, float(d.renewal_price))
+
+
+# ── GET /domains/{id}/history ──────────────────────────────────────
+
+@router.get("/{domain_id}/history", response_model=list[DomainHistoryEntry])
+async def get_domain_history(
+    tenant_id: uuid.UUID,
+    domain_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+    d = await _get_domain(db, tenant_id, domain_id)
+
+    rows = (await db.execute(
+        text("""
+            SELECT action, level, details, ts AS created_at
+            FROM activity_logs
+            WHERE target_type IN ('custom_domain', 'domain_order') AND target_id = :did
+            ORDER BY ts DESC LIMIT 50
+        """),
+        {"did": str(d.id)},
+    )).fetchall()
+    return [DomainHistoryEntry(action=r.action, level=r.level, details=r.details, created_at=r.created_at) for r in rows]
