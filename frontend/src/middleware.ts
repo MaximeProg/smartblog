@@ -169,12 +169,16 @@ export async function middleware(request: NextRequest) {
 
   // ── Custom domain → resolve slug from DB and rewrite ────────────
   if (isCustomDomain(host)) {
-    if (await isPlatformInMaintenance()) {
+    const slug = await resolveCustomDomain(host);
+    // On ne vérifie la maintenance qu'une fois confirmé que ce host correspond
+    // réellement à un blog tenant — sinon un domaine par défaut (Vercel, etc.)
+    // qui ne resolve à aucun tenant serait pris à tort pour un blog et
+    // bloquerait TOUT (y compris /login) pendant la maintenance.
+    if (slug && await isPlatformInMaintenance()) {
       const url = request.nextUrl.clone();
       url.pathname = '/maintenance';
       return NextResponse.rewrite(url);
     }
-    const slug = await resolveCustomDomain(host);
     if (slug) {
       return handleBlogRewrite(request, slug, pathname);
     }
