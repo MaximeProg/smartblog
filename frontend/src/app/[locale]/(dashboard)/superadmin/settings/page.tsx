@@ -137,9 +137,10 @@ export default function SettingsPage() {
           {tab === 'integrations' && (
             <div className="space-y-3">
               {[
-                { name: 'Stripe',     ok: data?.stripe.configured    ?? false, detail: data?.stripe.configured ? `Fee: ${data?.stripe.platform_fee_percent}%` : '' },
-                { name: 'Cloudinary', ok: data?.cloudinary.configured ?? false, detail: data?.cloudinary.cloud_name ?? '' },
-                { name: 'OpenAI',     ok: data?.ai.configured ?? false,        detail: data?.ai.model ?? '' },
+                { name: 'NowPayments', ok: data?.nowpayments?.configured ?? false, detail: data?.nowpayments?.configured ? `${data.nowpayments.sandbox ? 'Sandbox' : 'Production'} · Fee: ${data.nowpayments.platform_fee_percent}%` : '' },
+                { name: 'Cloudinary',  ok: data?.cloudinary?.configured ?? false, detail: data?.cloudinary?.cloud_name ?? '' },
+                { name: 'OpenAI',      ok: data?.ai?.configured ?? false,        detail: data?.ai?.model ?? '' },
+                { name: 'OpenProvider (domains)', ok: data?.domains?.configured ?? false, detail: data?.domains?.configured ? `${data.domains.sandbox ? 'Sandbox' : 'Production'} · ${data.domains.registrar}` : '' },
               ].map(int => (
                 <div key={int.name} className="flex items-center justify-between px-5 py-4 rounded-xl border"
                   style={{ background: 'var(--sa-card)', borderColor: 'var(--sa-border)' }}>

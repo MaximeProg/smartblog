@@ -1271,7 +1271,7 @@ export interface SAPlatformSettings {
     maintenance_mode: boolean;
     registrations_open: boolean;
   };
-  stripe: { configured: boolean; publishable_key: string; platform_fee_percent: number };
+  nowpayments: { configured: boolean; sandbox: boolean; platform_fee_percent: number };
   cloudinary: { configured: boolean; cloud_name: string };
   ai: { configured: boolean; model: string };
   domains: { configured: boolean; sandbox: boolean; registrar: string; markup_percent: number };
