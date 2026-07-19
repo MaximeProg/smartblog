@@ -11,6 +11,7 @@ import uuid
 from app.core.config import settings
 from app.core.exceptions import SmarterBloggersException
 from app.middleware.tenant import TenantMiddleware
+from app.middleware.maintenance import MaintenanceModeMiddleware
 from app.api.v1 import api_router
 
 logger = structlog.get_logger()
@@ -80,6 +81,8 @@ class DynamicCORSMiddleware(BaseHTTPMiddleware):
 
 
 app.add_middleware(TenantMiddleware)
+
+app.add_middleware(MaintenanceModeMiddleware)
 
 app.add_middleware(DynamicCORSMiddleware)
 

@@ -24,6 +24,19 @@ from app.services.push_service import send_push_to_user
 router = APIRouter(prefix="/platform", tags=["platform"])
 
 
+@router.get("/maintenance-status")
+async def get_maintenance_status():
+    """Public, jamais bloqué par le mode maintenance lui-même (voir
+    MaintenanceModeMiddleware) — utilisé par le middleware Next.js pour
+    savoir s'il doit rediriger les visiteurs de blogs publics."""
+    try:
+        raw = await redis.get("platform:settings")
+        overrides = json.loads(raw) if raw else {}
+        return {"maintenance": bool(overrides.get("maintenance_mode"))}
+    except Exception:
+        return {"maintenance": False}
+
+
 # ── Schémas ──────────────────────────────────────────────────────────
 
 class PublicPlan(BaseModel):

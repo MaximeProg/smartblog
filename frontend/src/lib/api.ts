@@ -96,6 +96,13 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
+    if (error.response?.status === 503 && error.response?.data?.maintenance === true) {
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/maintenance')) {
+        window.location.href = '/maintenance';
+      }
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !original._retry) {
       if (_isRefreshing) {
         return new Promise((resolve, reject) =>

@@ -37,6 +37,30 @@ function isCustomDomain(host: string): boolean {
   return true;
 }
 
+// Cache court en mémoire process — évite d'interroger le backend à chaque
+// requête de visiteur pour un état qui ne change que rarement (bascule
+// manuelle par un super admin).
+let _maintenanceCache: { value: boolean; checkedAt: number } | null = null;
+const MAINTENANCE_CACHE_MS = 10_000;
+
+async function isPlatformInMaintenance(): Promise<boolean> {
+  if (_maintenanceCache && Date.now() - _maintenanceCache.checkedAt < MAINTENANCE_CACHE_MS) {
+    return _maintenanceCache.value;
+  }
+  try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(`${API_URL}/api/v1/platform/maintenance-status`, { signal: controller.signal });
+    clearTimeout(tid);
+    const data = await res.json() as { maintenance?: boolean };
+    const value = !!data.maintenance;
+    _maintenanceCache = { value, checkedAt: Date.now() };
+    return value;
+  } catch {
+    return _maintenanceCache?.value ?? false;
+  }
+}
+
 async function resolveCustomDomain(hostname: string): Promise<string | null> {
   try {
     const controller = new AbortController();
@@ -126,14 +150,30 @@ export async function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
   const host = hostname.split(':')[0]; // strip port
 
+  // ── Maintenance page itself — never redirected/rewritten/locale-prefixed,
+  // no dependency on any backend call, must always render regardless of host.
+  if (pathname === '/maintenance') {
+    return NextResponse.next();
+  }
+
   // ── Platform subdomain → rewrite to /blog/[slug] ────────────────
   const blogSlug = getBlogSlug(hostname);
   if (blogSlug) {
+    if (await isPlatformInMaintenance()) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/maintenance';
+      return NextResponse.rewrite(url);
+    }
     return handleBlogRewrite(request, blogSlug, pathname);
   }
 
   // ── Custom domain → resolve slug from DB and rewrite ────────────
   if (isCustomDomain(host)) {
+    if (await isPlatformInMaintenance()) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/maintenance';
+      return NextResponse.rewrite(url);
+    }
     const slug = await resolveCustomDomain(host);
     if (slug) {
       return handleBlogRewrite(request, slug, pathname);
