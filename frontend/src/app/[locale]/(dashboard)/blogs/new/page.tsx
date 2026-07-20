@@ -2,18 +2,23 @@
 
 import { useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Loader2, ArrowRight, CheckCircle2, Globe, Palette,
   ArrowLeft, ImageIcon, Link2, X, Upload, ExternalLink, Check,
+  Search, ShoppingCart, SkipForward,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/auth.store';
-import { tenantsApi, mediaApi } from '@/lib/api';
+import {
+  tenantsApi, mediaApi, domainsApi, paymentsApi,
+  type DomainSearchResult, type CryptoPaymentResponse,
+} from '@/lib/api';
 import { slugify } from '@/lib/utils';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
+import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 import type { TenantInfo } from '@/types';
 
 // ── Template definitions ─────────────────────────────────────────────────────
@@ -224,6 +229,7 @@ export default function CreateBlogPage() {
   const router = useRouter();
   const { user, addTenant, setCurrentTenant } = useAuthStore();
   const t = useTranslations('onboarding');
+  const td = useTranslations('domains');
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -232,6 +238,52 @@ export default function CreateBlogPage() {
   const [slugError, setSlugError] = useState('');
   const [description, setDescription] = useState('');
   const [selectedTheme, setSelectedTheme] = useState<string>('editorial');
+
+  // ── Domain step (shown after the blog itself is created) ──────────────────
+  const [step, setStep] = useState<'form' | 'domain'>('form');
+  const [createdTenant, setCreatedTenant] = useState<TenantInfo | null>(null);
+  const [domainChoice, setDomainChoice] = useState<'buy' | 'connect' | null>(null);
+  const [domainQuery, setDomainQuery] = useState('');
+  const [domainSubmitted, setDomainSubmitted] = useState('');
+  const [selectedDomain, setSelectedDomain] = useState<DomainSearchResult | null>(null);
+  const [existingDomain, setExistingDomain] = useState('');
+  const [payment, setPayment] = useState<CryptoPaymentResponse | null>(null);
+  const [registrant, setRegistrant] = useState({
+    name: '', email: user?.email ?? '', phone: '', address: '', city: '', country: '', zipcode: '',
+  });
+  const [registrantYears, setRegistrantYears] = useState(1);
+  const [registrantAutoRenew, setRegistrantAutoRenew] = useState(false);
+
+  const { data: domainSearchResults = [], isFetching: searchingDomains } = useQuery({
+    queryKey: ['new-blog-domain-search', createdTenant?.id, domainSubmitted],
+    queryFn: async () => { const { data } = await domainsApi.search(createdTenant!.id, domainSubmitted); return data; },
+    enabled: !!createdTenant && !!domainSubmitted,
+  });
+
+  const purchaseMut = useMutation({
+    mutationFn: () => paymentsApi.createDomainCheckout(createdTenant!.id, {
+      domain_name: selectedDomain!.domain,
+      years: registrantYears,
+      auto_renew: registrantAutoRenew,
+      registrant,
+    }).then(r => r.data),
+    onSuccess: (data) => setPayment(data),
+  });
+
+  const connectMut = useMutation({
+    mutationFn: () => domainsApi.add(createdTenant!.id, existingDomain.trim()),
+    onSuccess: () => goToStudio(),
+  });
+
+  function goToStudio() {
+    if (!createdTenant) return;
+    router.push(`/${locale}/blogs/${createdTenant.id}/general`);
+  }
+
+  function handlePaymentConfirmed() {
+    setPayment(null);
+    goToStudio();
+  }
 
   const [coverTab, setCoverTab] = useState<CoverTab>('upload');
   const [coverFile, setCoverFile] = useState<File | null>(null);
@@ -322,7 +374,8 @@ export default function CreateBlogPage() {
       const tenant: TenantInfo = { id: data.id, name: data.name, slug: data.slug, plan: data.plan, role: 'TENANT_ADMIN' };
       addTenant(tenant);
       setCurrentTenant(data.id);
-      router.push(`/${locale}/blogs/${data.id}/general`);
+      setCreatedTenant(tenant);
+      setStep('domain');
     },
     onError: (err: any) => {
       if (err?.response?.data?.detail?.includes('slug')) {
@@ -353,12 +406,179 @@ export default function CreateBlogPage() {
                 <ArrowLeft className="h-3.5 w-3.5" />
                 {t('backToDashboard')}
               </Link>
-              <h1 className="text-[22px] font-black text-slate-900 dark:text-slate-100">{t('quickTitle')}</h1>
+              <h1 className="text-[22px] font-black text-slate-900 dark:text-slate-100">
+                {step === 'domain' ? t('domainStepTitle') : t('quickTitle')}
+              </h1>
               <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-1">
-                {t('quickGreeting', { name: user?.display_name?.split(' ')[0] ?? '' })}
+                {step === 'domain'
+                  ? t('domainStepSubtitle', { name: createdTenant?.name ?? '' })
+                  : t('quickGreeting', { name: user?.display_name?.split(' ')[0] ?? '' })}
               </p>
             </div>
 
+            {step === 'domain' && createdTenant && (
+              <section className="space-y-4">
+                {!domainChoice && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setDomainChoice('buy')}
+                      className="flex flex-col items-start gap-2 p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 transition-colors text-left"
+                    >
+                      <ShoppingCart className="h-5 w-5 text-blue-500" />
+                      <span className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{t('domainOptionBuyTitle')}</span>
+                      <span className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-relaxed">{t('domainOptionBuyDesc')}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDomainChoice('connect')}
+                      className="flex flex-col items-start gap-2 p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 transition-colors text-left"
+                    >
+                      <Link2 className="h-5 w-5 text-blue-500" />
+                      <span className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{t('domainOptionConnectTitle')}</span>
+                      <span className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-relaxed">{t('domainOptionConnectDesc')}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={goToStudio}
+                      className="flex flex-col items-start gap-2 p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors text-left"
+                    >
+                      <SkipForward className="h-5 w-5 text-slate-400" />
+                      <span className="text-[13px] font-bold text-slate-900 dark:text-slate-100">{t('domainOptionSkipTitle')}</span>
+                      <span className="text-[11.5px] text-slate-500 dark:text-slate-400 leading-relaxed">{t('domainOptionSkipDesc')}</span>
+                    </button>
+                  </div>
+                )}
+
+                {domainChoice === 'connect' && (
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+                    <button onClick={() => setDomainChoice(null)} className="flex items-center gap-1.5 text-[12px] text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 mb-4">
+                      <ArrowLeft className="h-3.5 w-3.5" /> {t('backToChoices')}
+                    </button>
+                    <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">
+                      {t('domainConnectLabel')}
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        value={existingDomain}
+                        onChange={e => setExistingDomain(e.target.value)}
+                        placeholder="myblog.com"
+                        className="flex-1 h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[14px] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      />
+                      <button
+                        onClick={() => connectMut.mutate()}
+                        disabled={!existingDomain.trim() || connectMut.isPending}
+                        className="h-11 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold disabled:opacity-50 flex items-center gap-2"
+                      >
+                        {connectMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                        {t('domainConnectButton')}
+                      </button>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-2">{t('domainConnectHint')}</p>
+                  </div>
+                )}
+
+                {domainChoice === 'buy' && !selectedDomain && (
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+                    <button onClick={() => setDomainChoice(null)} className="flex items-center gap-1.5 text-[12px] text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 mb-4">
+                      <ArrowLeft className="h-3.5 w-3.5" /> {t('backToChoices')}
+                    </button>
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="flex-1 relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <input
+                          value={domainQuery}
+                          onChange={e => setDomainQuery(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter' && domainQuery.trim()) setDomainSubmitted(domainQuery.trim()); }}
+                          placeholder={t('domainSearchPlaceholder')}
+                          className="w-full h-11 pl-9 pr-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[14px] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                        />
+                      </div>
+                      <button
+                        onClick={() => domainQuery.trim() && setDomainSubmitted(domainQuery.trim())}
+                        disabled={!domainQuery.trim() || searchingDomains}
+                        className="h-11 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold disabled:opacity-50"
+                      >
+                        {searchingDomains ? <Loader2 className="h-4 w-4 animate-spin" /> : t('domainSearchButton')}
+                      </button>
+                    </div>
+
+                    {domainSubmitted && (
+                      <div className="rounded-xl border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800 overflow-hidden">
+                        {searchingDomains ? (
+                          <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 text-slate-300 animate-spin" /></div>
+                        ) : domainSearchResults.length === 0 ? (
+                          <p className="text-center py-8 text-[12.5px] text-slate-400">{t('domainSearchEmpty')}</p>
+                        ) : (
+                          domainSearchResults.map(r => (
+                            <div key={r.domain} className="px-4 py-3 flex items-center gap-3">
+                              <Globe className="h-4 w-4 text-slate-400 shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[13px] font-bold text-slate-800 dark:text-slate-200">{r.domain}</p>
+                                {r.available && r.price != null && (
+                                  <p className="text-[11px] text-slate-400 mt-0.5">${r.price.toFixed(2)}</p>
+                                )}
+                              </div>
+                              {r.available ? (
+                                <button
+                                  onClick={() => setSelectedDomain(r)}
+                                  className="h-8 px-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[12px] font-bold"
+                                >
+                                  {t('domainSelectButton')}
+                                </button>
+                              ) : (
+                                <span className="h-6 px-2.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center">
+                                  {t('domainTaken')}
+                                </span>
+                              )}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {domainChoice === 'buy' && selectedDomain && (
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+                    <button onClick={() => setSelectedDomain(null)} className="flex items-center gap-1.5 text-[12px] text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 mb-4">
+                      <ArrowLeft className="h-3.5 w-3.5" /> {t('backToChoices')}
+                    </button>
+                    <h3 className="text-[14px] font-bold text-slate-800 dark:text-slate-200 mb-4">
+                      {td('purchaseTitle', { domain: selectedDomain.domain })}
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <input value={registrant.name} onChange={e => setRegistrant(r => ({ ...r, name: e.target.value }))} placeholder={td('fieldName')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      <input value={registrant.email} onChange={e => setRegistrant(r => ({ ...r, email: e.target.value }))} placeholder={td('fieldEmail')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      <input value={registrant.phone} onChange={e => setRegistrant(r => ({ ...r, phone: e.target.value }))} placeholder={td('fieldPhone')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      <input value={registrant.address} onChange={e => setRegistrant(r => ({ ...r, address: e.target.value }))} placeholder={td('fieldAddress')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      <input value={registrant.city} onChange={e => setRegistrant(r => ({ ...r, city: e.target.value }))} placeholder={td('fieldCity')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      <input value={registrant.zipcode} onChange={e => setRegistrant(r => ({ ...r, zipcode: e.target.value }))} placeholder={td('fieldZip')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      <input value={registrant.country} onChange={e => setRegistrant(r => ({ ...r, country: e.target.value.toUpperCase().slice(0, 2) }))} placeholder={td('fieldCountry')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                    </div>
+                    <div className="flex items-center justify-between mt-3.5">
+                      <label className="flex items-center gap-2 text-[12px] text-slate-600 dark:text-slate-400">
+                        <input type="checkbox" checked={registrantAutoRenew} onChange={e => setRegistrantAutoRenew(e.target.checked)} className="rounded" />
+                        {td('autoRenewLabel')}
+                      </label>
+                      <select value={registrantYears} onChange={e => setRegistrantYears(Number(e.target.value))} className="h-8 px-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px]">
+                        {[1, 2, 3, 5].map(y => <option key={y} value={y}>{y} {td('years')}</option>)}
+                      </select>
+                    </div>
+                    <button
+                      onClick={() => purchaseMut.mutate()}
+                      disabled={purchaseMut.isPending || !registrant.name || !registrant.email || !registrant.address || !registrant.city || !registrant.country || !registrant.zipcode}
+                      className="w-full mt-4 flex items-center justify-center gap-2 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-bold disabled:opacity-50"
+                    >
+                      {purchaseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
+                      {td('proceedToPayment')}
+                    </button>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {step === 'form' && (<>
             {/* ── STEP 1: Template selector ──────────────────────────────────── */}
             <section className="mb-6">
               <div className="flex items-center justify-between mb-3">
@@ -688,10 +908,27 @@ export default function CreateBlogPage() {
                 {t('domainRequiredNote')}
               </p>
             </div>
+            </>)}
 
           </div>
         </main>
       </div>
+
+      {payment && createdTenant && (
+        <CryptoPaymentPanel
+          open={!!payment}
+          onOpenChange={(o) => { if (!o) setPayment(null); }}
+          tenantId={createdTenant.id}
+          orderId={payment.order_id}
+          payAddress={payment.pay_address}
+          payAmount={payment.pay_amount}
+          payCurrency={payment.pay_currency}
+          qrCodeDataUri={payment.qr_code_data_uri}
+          expiresAt={payment.expires_at}
+          amountUsd={payment.amount_usd}
+          onConfirmed={handlePaymentConfirmed}
+        />
+      )}
     </div>
   );
 }

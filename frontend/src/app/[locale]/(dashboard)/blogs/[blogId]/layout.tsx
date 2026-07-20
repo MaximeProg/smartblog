@@ -7,6 +7,7 @@ import { StructurePanel } from './_studio/StructurePanel';
 import { PropertiesPanel } from './_studio/PropertiesPanel';
 import { StudioPreviewContext } from '@/contexts/studio-preview';
 import { TrialBanner } from '@/components/dashboard/TrialBanner';
+import { DomainRequiredBanner } from '@/components/dashboard/DomainRequiredBanner';
 import { useUIStore } from '@/store/ui.store';
 import { useCurrentTenant } from '@/store/auth.store';
 import { useEditorStore } from '@/store/editor.store';
@@ -35,6 +36,7 @@ export default function BlogStudioLayout({ children }: { children: React.ReactNo
     <StudioPreviewContext.Provider value={ctx}>
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-white dark:bg-slate-900">
         <TrialBanner />
+        <DomainRequiredBanner />
 
         {/* Mobile top bar */}
         <div className="lg:hidden flex items-center h-11 shrink-0 border-b border-slate-100 dark:border-slate-700 px-3 gap-2 bg-white dark:bg-slate-900 z-30">
