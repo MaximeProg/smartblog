@@ -7,6 +7,7 @@ import {
   sendPasswordResetEmail,
   confirmPasswordReset,
   verifyPasswordResetCode,
+  applyActionCode,
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
@@ -48,17 +49,25 @@ export async function registerWithEmail(
   email: string,
   password: string,
   displayName?: string,
+  continueUrl?: string,
 ): Promise<string> {
   const credential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
   if (displayName) {
     await updateProfile(credential.user, { displayName });
   }
-  await sendEmailVerification(credential.user);
+  // handleCodeInApp: true → le lien pointe directement vers notre propre page
+  // /verify-email (avec oobCode en query param), sans jamais passer par la
+  // page hébergée par défaut de Firebase (*.firebaseapp.com/__/auth/action).
+  // Cette dernière refuse de s'exécuter si elle est chargée dans un iframe —
+  // ce que font de nombreuses passerelles email d'entreprise (scan de liens
+  // avant affichage), d'où des inscriptions bloquées avec des adresses pro.
+  const settings = continueUrl ? { url: continueUrl, handleCodeInApp: true } : undefined;
+  await sendEmailVerification(credential.user, settings);
   return credential.user.getIdToken();
 }
 
 export async function sendPasswordReset(email: string, continueUrl?: string): Promise<void> {
-  const settings = continueUrl ? { url: continueUrl, handleCodeInApp: false } : undefined;
+  const settings = continueUrl ? { url: continueUrl, handleCodeInApp: true } : undefined;
   await sendPasswordResetEmail(getFirebaseAuth(), email, settings);
 }
 
@@ -70,9 +79,14 @@ export async function confirmPasswordResetWithCode(oobCode: string, newPassword:
   await confirmPasswordReset(getFirebaseAuth(), oobCode, newPassword);
 }
 
-export async function resendVerificationEmail(email: string, password: string): Promise<void> {
+export async function applyEmailVerificationCode(oobCode: string): Promise<void> {
+  await applyActionCode(getFirebaseAuth(), oobCode);
+}
+
+export async function resendVerificationEmail(email: string, password: string, continueUrl?: string): Promise<void> {
   const credential = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
-  await sendEmailVerification(credential.user);
+  const settings = continueUrl ? { url: continueUrl, handleCodeInApp: true } : undefined;
+  await sendEmailVerification(credential.user, settings);
 }
 
 // Opens a Google popup and returns the Firebase ID token

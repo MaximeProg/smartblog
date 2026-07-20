@@ -1,12 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
 import { Check, Copy, Loader2, XCircle, RefreshCw } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { paymentsApi } from '@/lib/api';
+import { paymentsApi, type PaymentStatusResponse } from '@/lib/api';
 
 const TERMINAL_STATUSES = new Set(['completed', 'failed']);
 
@@ -69,13 +68,36 @@ export function CryptoPaymentPanel({
   const [copied, setCopied] = useState(false);
   const countdown = useCountdown(expiresAt);
 
-  const { data } = useQuery({
-    queryKey: ['payment-status', tenantId, orderId],
-    queryFn: () => paymentsApi.getPaymentStatus(tenantId, orderId).then((r) => r.data),
-    enabled: open,
-    refetchInterval: (query) => (TERMINAL_STATUSES.has(query.state.data?.status ?? '') ? false : 5000),
-    retry: false,
-  });
+  // Polling manuel (pas de dépendance à react-query) — ce panneau est aussi
+  // monté sur des pages publiques du blog (ex: formulaire "Advertise") qui
+  // n'ont pas de QueryClientProvider dans leur arbre React.
+  const [data, setData] = useState<PaymentStatusResponse | undefined>(undefined);
+  const dataRef = useRef(data);
+  dataRef.current = data;
+
+  useEffect(() => {
+    if (!open) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    async function poll() {
+      try {
+        const { data: result } = await paymentsApi.getPaymentStatus(tenantId, orderId);
+        if (cancelled) return;
+        setData(result);
+        if (!TERMINAL_STATUSES.has(result.status)) {
+          timer = setTimeout(poll, 5000);
+        }
+      } catch {
+        if (!cancelled && !TERMINAL_STATUSES.has(dataRef.current?.status ?? '')) {
+          timer = setTimeout(poll, 5000);
+        }
+      }
+    }
+
+    poll();
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
+  }, [open, tenantId, orderId]);
 
   const status = data?.status ?? 'pending';
   const providerStatus = data?.provider_status ?? null;

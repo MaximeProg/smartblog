@@ -105,6 +105,17 @@
         "invalidCode": "This reset link is invalid or has already been used.",
         "generic": "Could not reset password. Please try again."
       }
+    },
+    "verifyEmail": {
+      "title": "Verify your email",
+      "subtitle": "Confirming your email address…",
+      "successTitle": "Email verified!",
+      "successDesc": "Your email address has been confirmed. You can now sign in to your account.",
+      "backToLogin": "Go to sign in",
+      "errors": {
+        "expiredCode": "This verification link has expired. Please request a new one from the sign-in page.",
+        "invalidCode": "This verification link is invalid or has already been used."
+      }
     }
   },
   "dashboard": {

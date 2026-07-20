@@ -72,7 +72,8 @@ export function RegisterForm({ locale }: RegisterFormProps) {
     setFormError(null);
     try {
       console.log('[Register] starting for', email);
-      await registerWithEmail(email, password, name);
+      const continueUrl = `${window.location.origin}/${locale}/verify-email`;
+      await registerWithEmail(email, password, name, continueUrl);
       console.log('[Register] success, showing verification screen');
       // Le code ref reste en localStorage — il sera envoyé automatiquement
       // par authApi.login() au premier login réussi (après vérification email)

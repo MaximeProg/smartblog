@@ -279,7 +279,8 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
               const { email, password } = getValues();
               setResendLoading(true);
               try {
-                await resendVerificationEmail(email, password);
+                const continueUrl = `${window.location.origin}/${locale}/verify-email`;
+                await resendVerificationEmail(email, password, continueUrl);
                 toast({ title: 'Email de vérification renvoyé — vérifiez votre boîte mail.' });
                 setShowResend(false);
               } catch {

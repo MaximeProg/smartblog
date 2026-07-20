@@ -105,6 +105,17 @@
         "invalidCode": "Ce lien est invalide ou a déjà été utilisé.",
         "generic": "Impossible de réinitialiser le mot de passe. Veuillez réessayer."
       }
+    },
+    "verifyEmail": {
+      "title": "Vérification de votre email",
+      "subtitle": "Confirmation de votre adresse email en cours…",
+      "successTitle": "Email vérifié !",
+      "successDesc": "Votre adresse email a été confirmée. Vous pouvez maintenant vous connecter à votre compte.",
+      "backToLogin": "Aller à la connexion",
+      "errors": {
+        "expiredCode": "Ce lien de vérification a expiré. Demandez-en un nouveau depuis la page de connexion.",
+        "invalidCode": "Ce lien de vérification est invalide ou a déjà été utilisé."
+      }
     }
   },
   "dashboard": {
