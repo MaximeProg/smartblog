@@ -18,6 +18,11 @@ router = APIRouter(
     dependencies=[Depends(check_plan_active)],
 )
 
+# Routes publiques (annonceur anonyme + tracking depuis le blog public) — sur
+# un routeur séparé sans check_plan_active, qui exige un JWT et bloquerait
+# à tort ces appels non authentifiés (bug réel : /submit renvoyait 401).
+public_ads_router = APIRouter(prefix="/tenants/{tenant_id}/ads", tags=["ads"])
+
 
 # ── Schemas ───────────────────────────────────────────────────────
 
@@ -75,7 +80,7 @@ class AdScanResponse(BaseModel):
 
 # ── Soumission publicité (public / annonceur) ─────────────────────
 
-@router.post("/submit", status_code=201)
+@public_ads_router.post("/submit", status_code=201)
 async def submit_ad(
     tenant_id: uuid.UUID,
     body: SubmitAdRequest,
@@ -288,7 +293,7 @@ async def scan_ad(
 
 # ── Tracking impression / click (public) ─────────────────────────
 
-@router.post("/{ad_id}/impression", status_code=204)
+@public_ads_router.post("/{ad_id}/impression", status_code=204)
 async def track_impression(
     tenant_id: uuid.UUID, ad_id: uuid.UUID, db: DBSession,
 ):
@@ -300,7 +305,7 @@ async def track_impression(
     await db.commit()
 
 
-@router.post("/{ad_id}/click", status_code=204)
+@public_ads_router.post("/{ad_id}/click", status_code=204)
 async def track_click(
     tenant_id: uuid.UUID, ad_id: uuid.UUID, db: DBSession,
 ):
