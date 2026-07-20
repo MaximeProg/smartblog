@@ -193,6 +193,11 @@ async def review_ad(
 
     ad = await _get_or_404(db, tenant_id, ad_id)
 
+    if ad.submission_status == AdSubmissionStatus.PAYMENT_PENDING:
+        raise ValidationException(
+            "Le paiement de cette publicité n'a pas encore été confirmé — impossible de la valider."
+        )
+
     if ad.link_safety_status == LinkSafetyStatus.DANGEROUS and body.decision == AdSubmissionStatus.APPROVED:
         raise ValidationException(
             "Impossible d'approuver une publicité dont le lien est signalé comme dangereux."
