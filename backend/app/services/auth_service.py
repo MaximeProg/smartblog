@@ -29,6 +29,65 @@ async def _get_super_admin_emails(db: AsyncSession) -> list[str]:
     return [u.email for u in result.scalars().all()]
 
 
+async def _send_new_user_emails(db: AsyncSession, email: str, display_name: str | None) -> None:
+    """Email de bienvenue + alerte super admin — factorisé car utilisé par
+    l'inscription native (immédiate) ET le premier login Firebase (le User
+    n'est créé qu'à ce moment-là pour ce flux)."""
+    try:
+        from app.services.email_service import send_welcome_email, send_superadmin_event
+        dashboard_url = f"{settings.FRONTEND_URL}/dashboard"
+        await send_welcome_email(to=email, display_name=display_name or "", dashboard_url=dashboard_url)
+        sa_emails = await _get_super_admin_emails(db)
+        if sa_emails:
+            await send_superadmin_event(
+                to=sa_emails, event_type="user.register",
+                title="New user registered", details=f"Email: {email}", actor_email=email,
+            )
+    except Exception as exc:
+        logger.warning("new user emails failed", error=str(exc), email=email)
+
+
+async def _finalize_login(
+    db: AsyncSession,
+    user: User,
+    ip_address: str | None,
+    tenant_id: str | None,
+    *,
+    send_notification: bool = True,
+) -> LoginResponse:
+    """Partie commune à toute connexion réussie (Firebase existant ou native) :
+    notification de connexion, court-circuit 2FA, émission des tokens."""
+    user.last_login_at = datetime.now(timezone.utc)
+    user.last_login_ip = ip_address
+
+    if send_notification:
+        try:
+            from app.services.email_service import send_login_notification
+            ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+            await send_login_notification(
+                to=user.email, display_name=user.display_name or "", ip=ip_address, timestamp=ts,
+            )
+        except Exception as exc:
+            logger.warning("login_notification email failed", error=str(exc), email=user.email)
+
+    # Si 2FA activé → retour sans tokens (client doit valider le code). Le
+    # challenge_token permet au flux natif (sans firebase_id_token à renvoyer)
+    # de prouver quel utilisateur termine la connexion à l'étape suivante.
+    if user.two_fa_enabled:
+        await db.commit()
+        from app.core.security import create_2fa_challenge_token
+        challenge_token = await create_2fa_challenge_token(str(user.id))
+        return LoginResponse(
+            access_token="",
+            expires_in=0,
+            user=UserInfo.model_validate(user),
+            requires_2fa=True,
+            two_fa_challenge_token=challenge_token,
+        )
+
+    return await _issue_tokens(db, user, preferred_tenant_id=tenant_id)
+
+
 async def login_with_firebase(
     db: AsyncSession,
     firebase_uid: str,
@@ -76,66 +135,206 @@ async def login_with_firebase(
                 await register_referral_for_user(db, user.id, referral_code)
             except Exception as exc:
                 logger.warning("login: referral registration failed", error=str(exc), email=email)
+
+        await _send_new_user_emails(db, email, display_name)
     else:
         if display_name and not user.display_name:
             user.display_name = display_name
         if avatar_url and not user.avatar_url:
             user.avatar_url = avatar_url
-        user.last_login_at = datetime.now(timezone.utc)
-        user.last_login_ip = ip_address
         if sign_in_provider:
             user.sign_in_provider = sign_in_provider
         user.email_verified = email_verified
 
-    # Email de bienvenue pour les nouveaux inscrits + alerte super admins
-    if is_new_user:
+    return await _finalize_login(db, user, ip_address, tenant_id, send_notification=not is_new_user)
+
+
+# ── Authentification native (email/mot de passe, sans Firebase) ───
+# Firebase reste utilisé uniquement pour la connexion Google — voir login_with_firebase.
+
+async def register_with_password(
+    db: AsyncSession,
+    *,
+    email: str,
+    password: str,
+    display_name: str | None,
+    referral_code: str | None = None,
+    locale: str = "en",
+) -> None:
+    """Crée un compte natif. Ne connecte pas immédiatement — l'utilisateur doit
+    vérifier son email puis se connecter via login_with_password."""
+    existing = await db.execute(select(User).where(User.email == email))
+    if existing.scalar_one_or_none():
+        raise ValidationException("Un compte existe déjà avec cette adresse email.")
+
+    from app.core.security import hash_password, create_email_verification_token
+
+    user = User(
+        email=email,
+        password_hash=hash_password(password),
+        display_name=display_name,
+        sign_in_provider="password",
+        email_verified=False,
+    )
+    db.add(user)
+    await db.flush()
+
+    if referral_code:
         try:
-            from app.services.email_service import send_welcome_email, send_superadmin_event
-            from app.core.config import settings as _cfg
-            dashboard_url = f"{_cfg.FRONTEND_URL}/dashboard"
-            await send_welcome_email(
-                to=email,
-                display_name=display_name or "",
-                dashboard_url=dashboard_url,
-            )
-            # Notify super admins of new registration
-            sa_emails = await _get_super_admin_emails(db)
-            if sa_emails:
-                await send_superadmin_event(
-                    to=sa_emails,
-                    event_type="user.register",
-                    title="New user registered",
-                    details=f"Email: {email}",
-                    actor_email=email,
-                )
+            from app.api.v1.affiliate import register_referral_for_user
+            await register_referral_for_user(db, user.id, referral_code)
         except Exception as exc:
-            logger.warning("login: new user emails failed", error=str(exc), email=email)
+            logger.warning("register_with_password: referral registration failed", error=str(exc), email=email)
 
-    # Login notification for existing users
-    if not is_new_user:
-        try:
-            from app.services.email_service import send_login_notification
-            ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-            await send_login_notification(
-                to=email,
-                display_name=user.display_name or "",
-                ip=ip_address,
-                timestamp=ts,
-            )
-        except Exception as exc:
-            logger.warning("login: login_notification email failed", error=str(exc), email=email)
+    await _send_new_user_emails(db, email, display_name)
 
-    # Si 2FA activé → retour sans tokens (client doit valider le code)
-    if user.two_fa_enabled:
-        await db.commit()
-        return LoginResponse(
-            access_token="",
-            expires_in=0,
-            user=UserInfo.model_validate(user),
-            requires_2fa=True,
-        )
+    token = await create_email_verification_token(str(user.id))
+    try:
+        from app.services.email_service import send_verification_email
+        verify_url = f"{settings.FRONTEND_URL}/{locale}/verify-email?token={token}"
+        await send_verification_email(to=email, display_name=display_name or "", verify_url=verify_url)
+    except Exception as exc:
+        logger.warning("register_with_password: verification email failed", error=str(exc), email=email)
 
+    await db.commit()
+
+
+async def login_with_password(
+    db: AsyncSession,
+    *,
+    email: str,
+    password: str,
+    ip_address: str | None,
+    tenant_id: str | None,
+) -> LoginResponse:
+    from app.core.security import verify_password
+
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    if not user or not user.password_hash or not verify_password(password, user.password_hash):
+        raise UnauthorizedException("Email ou mot de passe incorrect.")
+
+    require_verification = getattr(settings, "REQUIRE_EMAIL_VERIFICATION", "false").lower() == "true"
+    if require_verification and not user.email_verified:
+        raise ValidationException("Veuillez vérifier votre adresse email avant de vous connecter.")
+
+    return await _finalize_login(db, user, ip_address, tenant_id)
+
+
+async def complete_2fa_login_native(
+    db: AsyncSession,
+    *,
+    challenge_token: str,
+    code: str,
+    tenant_id: str | None,
+) -> LoginResponse:
+    from app.core.security import (
+        get_2fa_challenge_user_id, delete_2fa_challenge_token, decrypt_value, verify_totp,
+    )
+
+    user_id = await get_2fa_challenge_user_id(challenge_token)
+    if not user_id:
+        raise UnauthorizedException("Session de connexion expirée, veuillez vous reconnecter.")
+
+    result = await db.execute(select(User).where(User.id == uuid.UUID(user_id)))
+    user = result.scalar_one_or_none()
+    if not user or not user.two_fa_enabled or not user.two_fa_secret_enc:
+        raise UnauthorizedException("Compte introuvable ou 2FA non activé.")
+
+    secret = decrypt_value(user.two_fa_secret_enc)
+    if not verify_totp(secret, code.strip()):
+        if not check_backup_code(user, code.strip()):
+            raise ValidationException("Code 2FA invalide.")
+
+    await delete_2fa_challenge_token(challenge_token)
     return await _issue_tokens(db, user, preferred_tenant_id=tenant_id)
+
+
+def check_backup_code(user: User, submitted: str) -> bool:
+    """Vérifie et consomme un backup code (supprime après usage). Partagé entre
+    la 2FA Firebase (api/v1/auth.py) et la 2FA native (ci-dessus)."""
+    from app.core.security import decrypt_value
+    backup = user.two_fa_backup_codes
+    if not backup or not backup.get("confirmed"):
+        return False
+    codes = backup.get("codes", [])
+    norm = submitted.upper().replace(" ", "").replace("-", "")
+    for i, enc_code in enumerate(codes):
+        try:
+            plain = decrypt_value(enc_code)
+            plain_norm = plain.upper().replace("-", "")
+            if plain_norm == norm:
+                new_codes = [c for j, c in enumerate(codes) if j != i]
+                user.two_fa_backup_codes = {**backup, "codes": new_codes}
+                return True
+        except Exception:
+            continue
+    return False
+
+
+async def verify_email_token(db: AsyncSession, token: str) -> None:
+    from app.core.security import consume_email_verification_token
+    user_id = await consume_email_verification_token(token)
+    if not user_id:
+        raise ValidationException("Lien de vérification invalide ou expiré.")
+    user = await db.get(User, uuid.UUID(user_id))
+    if not user:
+        raise NotFoundException("Utilisateur")
+    user.email_verified = True
+    await db.commit()
+
+
+async def resend_verification_email(db: AsyncSession, email: str, locale: str = "en") -> None:
+    """Silencieux si l'email n'existe pas / est déjà vérifié / n'est pas natif
+    (anti-énumération — même comportement que forgot-password)."""
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    if not user or user.email_verified or user.sign_in_provider != "password":
+        return
+
+    from app.core.security import create_email_verification_token
+    from app.services.email_service import send_verification_email
+
+    token = await create_email_verification_token(str(user.id))
+    verify_url = f"{settings.FRONTEND_URL}/{locale}/verify-email?token={token}"
+    try:
+        await send_verification_email(to=email, display_name=user.display_name or "", verify_url=verify_url)
+    except Exception as exc:
+        logger.warning("resend_verification_email failed", error=str(exc), email=email)
+
+
+async def request_password_reset(db: AsyncSession, email: str, locale: str = "en") -> None:
+    """Toujours silencieux (anti-énumération), y compris pour les comptes Google
+    (qui n'ont pas de password_hash — rien à réinitialiser)."""
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    if not user or not user.password_hash:
+        return
+
+    from app.core.security import create_password_reset_token
+    from app.services.email_service import send_password_reset_email
+
+    token = await create_password_reset_token(str(user.id))
+    reset_url = f"{settings.FRONTEND_URL}/{locale}/reset-password?token={token}"
+    try:
+        await send_password_reset_email(to=email, display_name=user.display_name or "", reset_url=reset_url)
+    except Exception as exc:
+        logger.warning("request_password_reset failed", error=str(exc), email=email)
+
+
+async def reset_password_with_token(db: AsyncSession, token: str, new_password: str) -> None:
+    from app.core.security import consume_password_reset_token, hash_password, revoke_all_user_tokens
+
+    user_id = await consume_password_reset_token(token)
+    if not user_id:
+        raise ValidationException("Lien de réinitialisation invalide ou expiré.")
+    user = await db.get(User, uuid.UUID(user_id))
+    if not user:
+        raise NotFoundException("Utilisateur")
+
+    user.password_hash = hash_password(new_password)
+    await db.commit()
+    await revoke_all_user_tokens(str(user.id))
 
 
 async def _issue_tokens(

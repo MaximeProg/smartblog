@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 
-import { applyEmailVerificationCode } from '@/lib/firebase';
+import { authApi } from '@/lib/api';
 
 interface VerifyEmailFormProps {
   locale: string;
@@ -17,21 +17,10 @@ export function VerifyEmailForm({ locale, oobCode }: VerifyEmailFormProps) {
   const [status, setStatus] = useState<'verifying' | 'success' | 'invalid'>('verifying');
 
   useEffect(() => {
-    // Pas de oobCode = Firebase a déjà traité la vérification sur sa propre
-    // page hébergée avant de rediriger ici (comportement par défaut, même
-    // avec handleCodeInApp: true — voir Customize action URL côté console
-    // pour l'éviter complètement). Ce n'est pas un échec : l'email est déjà
-    // vérifié, on l'affiche comme un succès plutôt qu'une fausse erreur.
-    if (!oobCode) { setStatus('success'); return; }
-    applyEmailVerificationCode(oobCode)
+    if (!oobCode) { setStatus('invalid'); return; }
+    authApi.verifyEmail(oobCode)
       .then(() => setStatus('success'))
-      .catch((err: unknown) => {
-        const code = (err as { code?: string })?.code ?? '';
-        // Code déjà consommé (par la page Firebase hébergée juste avant, ou
-        // un double-clic) — l'action a très probablement déjà réussi.
-        if (code === 'auth/invalid-action-code') setStatus('success');
-        else setStatus('invalid');
-      });
+      .catch(() => setStatus('invalid'));
   }, [oobCode]);
 
   if (status === 'verifying') {

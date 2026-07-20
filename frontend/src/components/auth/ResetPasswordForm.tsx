@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,7 +11,7 @@ import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { verifyResetCode, confirmPasswordResetWithCode } from '@/lib/firebase';
+import { authApi } from '@/lib/api';
 
 const schema = z
   .object({
@@ -30,7 +30,9 @@ interface ResetPasswordFormProps {
 export function ResetPasswordForm({ locale, oobCode }: ResetPasswordFormProps) {
   const t = useTranslations('auth.resetPassword');
 
-  const [status, setStatus] = useState<'verifying' | 'ready' | 'success' | 'invalid'>('verifying');
+  // Pas d'étape de vérification séparée côté backend natif — le token n'est
+  // validé (et consommé) qu'au moment de la soumission réelle.
+  const [status, setStatus] = useState<'ready' | 'success' | 'invalid'>(oobCode ? 'ready' : 'invalid');
   const [formError, setFormError] = useState<string | null>(null);
 
   const {
@@ -39,38 +41,21 @@ export function ResetPasswordForm({ locale, oobCode }: ResetPasswordFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
-  useEffect(() => {
-    if (!oobCode) { setStatus('invalid'); return; }
-    verifyResetCode(oobCode)
-      .then(() => setStatus('ready'))
-      .catch(() => setStatus('invalid'));
-  }, [oobCode]);
-
   const onSubmit = async ({ password }: FormValues) => {
     if (!oobCode) return;
     setFormError(null);
     try {
-      await confirmPasswordResetWithCode(oobCode, password);
+      await authApi.resetPasswordNative(oobCode, password);
       setStatus('success');
     } catch (err: unknown) {
-      const code = (err as { code?: string })?.code ?? '';
-      if (code === 'auth/expired-action-code') {
-        setFormError(t('errors.expiredCode'));
-      } else if (code === 'auth/invalid-action-code') {
-        setFormError(t('errors.invalidCode'));
+      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
+      if (detail?.includes('invalide') || detail?.includes('expiré')) {
+        setStatus('invalid');
       } else {
-        setFormError(t('errors.generic'));
+        setFormError(detail || t('errors.generic'));
       }
     }
   };
-
-  if (status === 'verifying') {
-    return (
-      <div className="flex justify-center py-8">
-        <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
-      </div>
-    );
-  }
 
   if (status === 'invalid') {
     return (

@@ -3,9 +3,13 @@ import secrets
 import uuid
 from datetime import datetime, timedelta, timezone
 
+import bcrypt
 from jose import JWTError, jwt
 from app.core.config import settings
-from app.core.redis_client import redis, key_jwt_blacklist, key_refresh_token
+from app.core.redis_client import (
+    redis, key_jwt_blacklist, key_refresh_token,
+    key_email_verification, key_password_reset, key_2fa_challenge,
+)
 
 
 # ── JWT ────────────────────────────────────────────────────────────
@@ -125,6 +129,110 @@ async def revoke_all_user_tokens(user_id: str) -> None:
     # En production, on préférera une table DB pour l'index user_id → tokens
     # Pour l'instant, on passe par la DB (voir auth service)
     pass
+
+
+# ── Mot de passe (authentification native, sans Firebase) ─────────
+# bcrypt directement (pas passlib — sa détection de version de bcrypt est
+# cassée avec bcrypt>=4.1, cf. "module 'bcrypt' has no attribute '__about__'").
+# bcrypt limite les mots de passe à 72 octets : tronqué explicitement pour que
+# hash et vérification restent cohérents (pas une régression, une limite
+# inhérente à l'algorithme).
+
+def hash_password(plain: str) -> str:
+    truncated = plain.encode("utf-8")[:72]
+    return bcrypt.hashpw(truncated, bcrypt.gensalt()).decode("utf-8")
+
+
+def verify_password(plain: str, hashed: str) -> bool:
+    try:
+        truncated = plain.encode("utf-8")[:72]
+        return bcrypt.checkpw(truncated, hashed.encode("utf-8"))
+    except Exception:
+        return False
+
+
+# ── Tokens éphémères à usage unique (vérification email, reset password,
+# challenge 2FA) — même construction que les refresh tokens : token opaque
+# côté client, hash SHA256 stocké dans Redis avec TTL. ──────────────
+
+def _generate_opaque_token() -> tuple[str, str]:
+    token_plain = secrets.token_urlsafe(48)
+    token_hash = hashlib.sha256(token_plain.encode()).hexdigest()
+    return token_plain, token_hash
+
+
+async def _store_opaque_token(redis_key: str, ttl_seconds: int, payload: dict) -> None:
+    import json
+    try:
+        await redis.setex(redis_key, ttl_seconds, json.dumps(payload))
+    except Exception:
+        pass
+
+
+async def _get_opaque_token_data(redis_key: str) -> dict | None:
+    import json
+    try:
+        data = await redis.get(redis_key)
+    except Exception:
+        return None
+    return json.loads(data) if data else None
+
+
+async def _delete_opaque_token(redis_key: str) -> None:
+    try:
+        await redis.delete(redis_key)
+    except Exception:
+        pass
+
+
+async def create_email_verification_token(user_id: str) -> str:
+    token_plain, token_hash = _generate_opaque_token()
+    await _store_opaque_token(key_email_verification(token_hash), 24 * 3600, {"user_id": user_id})
+    return token_plain
+
+
+async def consume_email_verification_token(token_plain: str) -> str | None:
+    """Retourne le user_id et invalide le token (usage unique), ou None si invalide/expiré."""
+    token_hash = hashlib.sha256(token_plain.encode()).hexdigest()
+    data = await _get_opaque_token_data(key_email_verification(token_hash))
+    if not data:
+        return None
+    await _delete_opaque_token(key_email_verification(token_hash))
+    return data["user_id"]
+
+
+async def create_password_reset_token(user_id: str) -> str:
+    token_plain, token_hash = _generate_opaque_token()
+    await _store_opaque_token(key_password_reset(token_hash), 3600, {"user_id": user_id})
+    return token_plain
+
+
+async def consume_password_reset_token(token_plain: str) -> str | None:
+    token_hash = hashlib.sha256(token_plain.encode()).hexdigest()
+    data = await _get_opaque_token_data(key_password_reset(token_hash))
+    if not data:
+        return None
+    await _delete_opaque_token(key_password_reset(token_hash))
+    return data["user_id"]
+
+
+async def create_2fa_challenge_token(user_id: str) -> str:
+    token_plain, token_hash = _generate_opaque_token()
+    await _store_opaque_token(key_2fa_challenge(token_hash), 5 * 60, {"user_id": user_id})
+    return token_plain
+
+
+async def get_2fa_challenge_user_id(token_plain: str) -> str | None:
+    """Ne consomme pas le token — un code TOTP erroné doit pouvoir être retenté
+    avant expiration, sans redemander le mot de passe."""
+    token_hash = hashlib.sha256(token_plain.encode()).hexdigest()
+    data = await _get_opaque_token_data(key_2fa_challenge(token_hash))
+    return data["user_id"] if data else None
+
+
+async def delete_2fa_challenge_token(token_plain: str) -> None:
+    token_hash = hashlib.sha256(token_plain.encode()).hexdigest()
+    await _delete_opaque_token(key_2fa_challenge(token_hash))
 
 
 # ── Encryption (pour secrets sensibles en DB) ──────────────────────

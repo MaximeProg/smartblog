@@ -493,6 +493,63 @@ async def send_domain_expiry_reminder(
     )
 
 
+async def send_verification_email(
+    to: str,
+    display_name: str,
+    verify_url: str,
+) -> None:
+    """Sent right after native (email/password) registration — the user must
+    click this link before signing in (if REQUIRE_EMAIL_VERIFICATION)."""
+    name = display_name or "there"
+    body = (
+        _h1("Verify your email address") +
+        _p(f"Hello <strong>{name}</strong>,") +
+        _p("Thanks for signing up for SmarterBloggers. Click the button below to verify your email address and activate your account.") +
+        f'<div style="text-align:center;margin:28px 0;">'
+        f'<a href="{verify_url}" style="display:inline-block;background:{BRAND_DARK};color:#fff;'
+        f'padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">'
+        f'Verify my email</a></div>' +
+        _note("This link expires in 24 hours. If you didn't create this account, you can safely ignore this email.")
+    )
+    await _send(
+        to=to,
+        subject="Verify your email — SmarterBloggers",
+        html=_base(
+            title="Verify your email",
+            preview="Click to verify your email address and activate your account",
+            body_html=body,
+        ),
+    )
+
+
+async def send_password_reset_email(
+    to: str,
+    display_name: str,
+    reset_url: str,
+) -> None:
+    """Sent when a user requests a password reset via /auth/forgot-password."""
+    name = display_name or "there"
+    body = (
+        _h1("Reset your password") +
+        _p(f"Hello <strong>{name}</strong>,") +
+        _p("We received a request to reset your SmarterBloggers password. Click the button below to choose a new one.") +
+        f'<div style="text-align:center;margin:28px 0;">'
+        f'<a href="{reset_url}" style="display:inline-block;background:{BRAND_DARK};color:#fff;'
+        f'padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none;">'
+        f'Reset my password</a></div>' +
+        _note("This link expires in 1 hour. If you didn't request this, you can safely ignore this email — your password will not change.")
+    )
+    await _send(
+        to=to,
+        subject="Reset your password — SmarterBloggers",
+        html=_base(
+            title="Password reset",
+            preview="Click to choose a new password",
+            body_html=body,
+        ),
+    )
+
+
 async def send_superadmin_event(
     to: list[str],
     event_type: str,

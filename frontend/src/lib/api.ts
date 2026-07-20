@@ -214,6 +214,33 @@ export const authApi = {
 
   updateWallet: (data: { usdt_wallet_address: string }) =>
     api.patch<UserInfo>('/auth/me/wallet', data),
+
+  // ── Authentification native (email/mot de passe, sans Firebase) ──
+  // Firebase reste utilisé uniquement pour la connexion Google (authApi.login).
+  register: (email: string, password: string, displayName?: string, locale: string = 'en') => {
+    const referral_code = typeof window !== 'undefined' ? localStorage.getItem('smarterbloggers_ref') : null;
+    return api.post<{ message: string }>('/auth/register', {
+      email, password,
+      display_name: displayName || undefined,
+      ...(referral_code ? { referral_code } : {}),
+      locale,
+    });
+  },
+
+  loginPassword: (email: string, password: string) =>
+    api.post<LoginResponse>('/auth/login-password', { email, password }),
+
+  verifyEmail: (token: string) =>
+    api.post<{ message: string }>('/auth/verify-email', { token }),
+
+  resendVerification: (email: string, locale: string = 'en') =>
+    api.post<{ message: string }>('/auth/resend-verification', { email, locale }),
+
+  forgotPassword: (email: string, locale: string = 'en') =>
+    api.post<{ message: string }>('/auth/forgot-password', { email, locale }),
+
+  resetPasswordNative: (token: string, newPassword: string) =>
+    api.post<{ message: string }>('/auth/reset-password', { token, new_password: newPassword }),
 };
 
 // ─── Two-Factor Authentication ─────────────────────────────────────────────────
@@ -236,9 +263,13 @@ export const twoFactorApi = {
   disable: (code: string) =>
     api.delete<{ message: string }>('/auth/2fa', { data: { code } }),
 
-  /** Finalise la connexion quand requires_2fa = true */
+  /** Finalise la connexion quand requires_2fa = true (compte Google) */
   login: (firebase_id_token: string, code: string) =>
     api.post<LoginResponse>('/auth/2fa/login', { firebase_id_token, code }),
+
+  /** Finalise la connexion quand requires_2fa = true (compte email/mot de passe natif) */
+  loginPassword: (challenge_token: string, code: string) =>
+    api.post<LoginResponse>('/auth/2fa/login-password', { challenge_token, code }),
 };
 
 // ─── Tenants ──────────────────────────────────────────────────────────────────

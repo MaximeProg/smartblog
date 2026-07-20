@@ -11,7 +11,7 @@ import { Loader2, MailCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { sendPasswordReset } from '@/lib/firebase';
+import { authApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 
 const schema = z.object({ email: z.string().email() });
@@ -34,17 +34,12 @@ export function ForgotPasswordForm({ locale }: ForgotPasswordFormProps) {
 
   const onSubmit = async ({ email }: FormValues) => {
     try {
-      const continueUrl = `${window.location.origin}/${locale}/reset-password`;
-      await sendPasswordReset(email, continueUrl);
+      // Le backend répond toujours succès, que le compte existe ou non
+      // (anti-énumération — voir request_password_reset côté serveur).
+      await authApi.forgotPassword(email, locale);
       setSentTo(email);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : '';
-      // Don't reveal non-existence — always show success to prevent enumeration
-      if (msg.includes('user-not-found') || msg.includes('auth/user-not-found')) {
-        setSentTo(email);
-      } else {
-        toast({ variant: 'destructive', title: t('errors.generic') });
-      }
+    } catch {
+      toast({ variant: 'destructive', title: t('errors.generic') });
     }
   };
 

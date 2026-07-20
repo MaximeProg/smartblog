@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useAuthStore } from '@/store/auth.store';
 import { authApi } from '@/lib/api';
-import { registerWithEmail, signInWithGoogle } from '@/lib/firebase';
+import { signInWithGoogle } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 const schema = z.object({
@@ -71,28 +71,12 @@ export function RegisterForm({ locale }: RegisterFormProps) {
   const onSubmit = async ({ email, password, name }: FormValues) => {
     setFormError(null);
     try {
-      console.log('[Register] starting for', email);
-      const continueUrl = `${window.location.origin}/${locale}/verify-email`;
-      await registerWithEmail(email, password, name, continueUrl);
-      console.log('[Register] success, showing verification screen');
-      // Le code ref reste en localStorage — il sera envoyé automatiquement
-      // par authApi.login() au premier login réussi (après vérification email)
+      await authApi.register(email, password, name, locale);
+      // Le code ref est envoyé directement dans /auth/register (voir authApi.register)
       setVerificationEmail(email);
     } catch (err: unknown) {
-      const code = (err as { code?: string })?.code ?? '';
-      console.error('[Register] error:', code, err);
-      let msg: string;
-      if (code === 'auth/email-already-in-use') {
-        msg = t('errors.emailInUse');
-      } else if (code === 'auth/weak-password') {
-        msg = t('errors.weakPassword');
-      } else if (code === 'auth/operation-not-allowed') {
-        msg = 'Email/password sign-in is disabled. Enable it in Firebase Console → Authentication → Sign-in method.';
-      } else if (code === 'auth/network-request-failed') {
-        msg = 'Network error — cannot reach Firebase. Check your internet connection.';
-      } else {
-        msg = `${t('errors.generic')} [${code || 'unknown'}]`;
-      }
+      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
+      const msg = detail?.includes('existe déjà') ? t('errors.emailInUse') : (detail || t('errors.generic'));
       setFormError(msg);
       toast({ variant: 'destructive', title: msg });
     }

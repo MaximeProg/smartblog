@@ -31,6 +31,15 @@ def key_jwt_blacklist(jti: str) -> str:
 def key_refresh_token(token_hash: str) -> str:
     return f"refresh:{token_hash}"
 
+def key_email_verification(token_hash: str) -> str:
+    return f"emailverif:{token_hash}"
+
+def key_password_reset(token_hash: str) -> str:
+    return f"pwdreset:{token_hash}"
+
+def key_2fa_challenge(token_hash: str) -> str:
+    return f"2fachallenge:{token_hash}"
+
 def key_rate_limit(ip: str, route: str) -> str:
     return f"rate:ip:{ip}:{route}"
 

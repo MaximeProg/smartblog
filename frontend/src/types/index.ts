@@ -39,6 +39,7 @@ export interface LoginResponse {
   user: UserInfo;
   tenants: TenantInfo[];
   requires_2fa?: boolean;
+  two_fa_challenge_token?: string | null;
 }
 
 // ─── Tenants ──────────────────────────────────────────────────────────────────

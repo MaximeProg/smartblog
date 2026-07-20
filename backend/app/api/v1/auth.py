@@ -10,11 +10,17 @@ from app.schemas.auth import (
     FirebaseLoginRequest, LoginResponse, RefreshResponse,
     TwoFASetupResponse, TwoFAVerifyRequest, TwoFADisableRequest,
     TwoFALoginRequest, UpdateProfileRequest,
+    RegisterRequest, LoginPasswordRequest, TwoFALoginPasswordRequest,
+    VerifyEmailRequest, ResendVerificationRequest,
+    ForgotPasswordRequest, ResetPasswordRequest,
 )
 from app.services.firebase_service import verify_firebase_id_token
 from app.services.auth_service import (
     login_with_firebase, refresh_access_token,
-    setup_2fa, confirm_2fa, disable_2fa,
+    setup_2fa, confirm_2fa, disable_2fa, check_backup_code,
+    register_with_password, login_with_password, complete_2fa_login_native,
+    verify_email_token, resend_verification_email,
+    request_password_reset, reset_password_with_token,
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -705,7 +711,7 @@ async def login_with_2fa(
     secret = decrypt_value(user.two_fa_secret_enc)
     if not verify_totp(secret, body.code.strip()):
         # Tentative sur les backup codes
-        if not _check_backup_code(user, body.code.strip()):
+        if not check_backup_code(user, body.code.strip()):
             raise ValidationException("Code 2FA invalide.")
 
     tenant_id = str(request.state.tenant_id) if getattr(request.state, "tenant_id", None) else None
@@ -716,22 +722,85 @@ async def login_with_2fa(
     return issued
 
 
-def _check_backup_code(user, submitted: str) -> bool:
-    """Vérifie et consume un backup code (supprime après usage)."""
-    from app.core.security import decrypt_value
-    backup = user.two_fa_backup_codes
-    if not backup or not backup.get("confirmed"):
-        return False
-    codes = backup.get("codes", [])
-    norm = submitted.upper().replace(" ", "").replace("-", "")
-    for i, enc_code in enumerate(codes):
-        try:
-            plain = decrypt_value(enc_code)
-            plain_norm = plain.upper().replace("-", "")
-            if plain_norm == norm:
-                new_codes = [c for j, c in enumerate(codes) if j != i]
-                user.two_fa_backup_codes = {**backup, "codes": new_codes}
-                return True
-        except Exception:
-            continue
-    return False
+# ── Authentification native (email/mot de passe, sans Firebase) ───
+# Firebase reste utilisé uniquement pour la connexion Google (POST /auth/login).
+
+@router.post("/register", status_code=201)
+async def register(body: RegisterRequest, db: DBSession):
+    """Inscription native — crée le compte et envoie l'email de vérification
+    (Resend). Ne connecte pas immédiatement, voir /auth/login-password."""
+    await register_with_password(
+        db,
+        email=body.email,
+        password=body.password,
+        display_name=body.display_name,
+        referral_code=body.referral_code,
+        locale=body.locale,
+    )
+    return {"message": "Compte créé. Vérifiez votre boîte mail pour activer votre compte."}
+
+
+@router.post("/login-password", response_model=LoginResponse)
+async def login_password(
+    body: LoginPasswordRequest,
+    request: Request,
+    response: Response,
+    db: DBSession,
+):
+    """Connexion native (email/mot de passe géré par notre backend)."""
+    tenant_id = str(request.state.tenant_id) if getattr(request.state, "tenant_id", None) else None
+    ip = request.client.host if request.client else None
+
+    result = await login_with_password(
+        db, email=body.email, password=body.password, ip_address=ip, tenant_id=tenant_id,
+    )
+
+    from app.services.log_service import log_event
+    await log_event(db, "user.login", actor_email=body.email, level="info", details="provider=password", ip=ip)
+
+    refresh_plain = getattr(result, "_refresh_token", None)
+    if refresh_plain:
+        _set_refresh_cookie(response, refresh_plain)
+    return result
+
+
+@router.post("/2fa/login-password", response_model=LoginResponse)
+async def login_2fa_password(
+    body: TwoFALoginPasswordRequest,
+    request: Request,
+    response: Response,
+    db: DBSession,
+):
+    """Complète la connexion native pour un compte avec 2FA activé."""
+    tenant_id = str(request.state.tenant_id) if getattr(request.state, "tenant_id", None) else None
+    result = await complete_2fa_login_native(
+        db, challenge_token=body.challenge_token, code=body.code, tenant_id=tenant_id,
+    )
+    refresh_plain = getattr(result, "_refresh_token", None)
+    if refresh_plain:
+        _set_refresh_cookie(response, refresh_plain)
+    return result
+
+
+@router.post("/verify-email", status_code=200)
+async def verify_email(body: VerifyEmailRequest, db: DBSession):
+    await verify_email_token(db, body.token)
+    return {"message": "Email vérifié avec succès."}
+
+
+@router.post("/resend-verification", status_code=200)
+async def resend_verification(body: ResendVerificationRequest, db: DBSession):
+    await resend_verification_email(db, body.email, locale=body.locale)
+    return {"message": "Si ce compte existe, un email de vérification a été envoyé."}
+
+
+@router.post("/forgot-password", status_code=200)
+async def forgot_password(body: ForgotPasswordRequest, db: DBSession):
+    await request_password_reset(db, body.email, locale=body.locale)
+    return {"message": "Si ce compte existe, un email de réinitialisation a été envoyé."}
+
+
+@router.post("/reset-password", status_code=200)
+async def reset_password(body: ResetPasswordRequest, db: DBSession):
+    await reset_password_with_token(db, body.token, body.new_password)
+    return {"message": "Mot de passe réinitialisé avec succès."}

@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useAuthStore } from '@/store/auth.store';
 import { authApi, twoFactorApi } from '@/lib/api';
-import { signInWithEmail, signInWithGoogle, resendVerificationEmail } from '@/lib/firebase';
+import { signInWithGoogle } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 const schema = z.object({
@@ -40,9 +40,13 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
   const [formError, setFormError]           = useState<string | null>(null);
   const [showResend, setShowResend]         = useState(false);
   const [resendLoading, setResendLoading]   = useState(false);
-  // 2FA
+  // 2FA — la finalisation diffère selon la méthode de connexion : un compte
+  // Google renvoie le firebase_id_token, un compte natif renvoie le
+  // challenge_token émis par /auth/login-password.
   const [needs2FA, setNeeds2FA]             = useState(false);
+  const [twoFAMethod, setTwoFAMethod]       = useState<'google' | 'password'>('password');
   const [firebaseToken, setFirebaseToken]   = useState('');
+  const [challengeToken, setChallengeToken] = useState('');
   const [twoFACode, setTwoFACode]           = useState('');
   const [twoFALoading, setTwoFALoading]     = useState(false);
 
@@ -57,6 +61,7 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
     const { data } = await authApi.login(idToken);
     if (data.requires_2fa) {
       setFirebaseToken(idToken);
+      setTwoFAMethod('google');
       setNeeds2FA(true);
       return;
     }
@@ -69,7 +74,10 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
     setFormError(null);
     setTwoFALoading(true);
     try {
-      const { data } = await twoFactorApi.login(firebaseToken, twoFACode.replace(/\s/g, ''));
+      const code = twoFACode.replace(/\s/g, '');
+      const { data } = twoFAMethod === 'google'
+        ? await twoFactorApi.login(firebaseToken, code)
+        : await twoFactorApi.loginPassword(challengeToken, code);
       const tenants = data.tenants ?? [];
       setAuth(data.user, tenants, data.access_token);
       router.push(callbackUrl ?? `/${locale}/dashboard`);
@@ -83,40 +91,31 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
 
   const onSubmit = async ({ email, password }: FormValues) => {
     setFormError(null);
+    setShowResend(false);
     try {
-      console.log('[Login] starting for', email);
-      const idToken = await signInWithEmail(email, password);
-      console.log('[Login] Firebase OK, calling backend...');
-      await handleBackendLogin(idToken);
+      const { data } = await authApi.loginPassword(email, password);
+      if (data.requires_2fa) {
+        setChallengeToken(data.two_fa_challenge_token ?? '');
+        setTwoFAMethod('password');
+        setNeeds2FA(true);
+        return;
+      }
+      const tenants = data.tenants ?? [];
+      setAuth(data.user, tenants, data.access_token);
+      router.push(callbackUrl ?? `/${locale}/dashboard`);
     } catch (err: unknown) {
-      const code = (err as { code?: string })?.code ?? '';
-      const responseData = (err as { response?: { data?: Record<string, string> } })?.response?.data ?? {};
-      const serverMsg: string = responseData.message ?? responseData.detail ?? '';
-      const rawMsg = err instanceof Error ? err.message : '';
-
-      console.error('[Login] error:', code || rawMsg, serverMsg || '');
+      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? '';
 
       let msg: string;
-      if (
-        code === 'auth/invalid-credential' ||
-        code === 'auth/wrong-password' ||
-        code === 'auth/user-not-found' ||
-        code === 'auth/invalid-email'
-      ) {
-        msg = t('errors.invalidCredentials');
-      } else if (code === 'auth/too-many-requests') {
-        msg = 'Too many attempts. Try again later or reset your password.';
-      } else if (code === 'auth/network-request-failed') {
-        msg = 'Network error — cannot reach Firebase.';
-      } else if (code === 'auth/operation-not-allowed') {
-        msg = 'Email/password sign-in is disabled in Firebase Console.';
-      } else if (serverMsg.toLowerCase().includes('verify') || serverMsg.includes('EMAIL_NOT_VERIFIED')) {
+      if (detail.toLowerCase().includes('vérifier votre adresse email')) {
         msg = t('errors.emailNotVerified');
         setShowResend(true);
-      } else if (serverMsg) {
-        msg = serverMsg;
+      } else if (detail.toLowerCase().includes('incorrect')) {
+        msg = t('errors.invalidCredentials');
+      } else if (detail) {
+        msg = detail;
       } else {
-        msg = `${t('errors.generic')} [${code || rawMsg || 'unknown'}]`;
+        msg = t('errors.generic');
       }
 
       setFormError(msg);
@@ -189,7 +188,7 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
 
         <button
           type="button"
-          onClick={() => { setNeeds2FA(false); setFirebaseToken(''); setTwoFACode(''); setFormError(null); }}
+          onClick={() => { setNeeds2FA(false); setFirebaseToken(''); setChallengeToken(''); setTwoFACode(''); setFormError(null); }}
           className="w-full text-[12px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
         >
           ← {t('twoFABack')}
@@ -276,11 +275,10 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
             type="button"
             disabled={resendLoading}
             onClick={async () => {
-              const { email, password } = getValues();
+              const { email } = getValues();
               setResendLoading(true);
               try {
-                const continueUrl = `${window.location.origin}/${locale}/verify-email`;
-                await resendVerificationEmail(email, password, continueUrl);
+                await authApi.resendVerification(email, locale);
                 toast({ title: 'Email de vérification renvoyé — vérifiez votre boîte mail.' });
                 setShowResend(false);
               } catch {

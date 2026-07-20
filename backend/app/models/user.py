@@ -12,10 +12,14 @@ class User(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
-    # Firebase
-    firebase_uid: Mapped[str] = mapped_column(String(128), nullable=False, unique=True)
-    sign_in_provider: Mapped[str | None] = mapped_column(String(50))  # google.com | password | github.com …
+    # Firebase — utilisé uniquement pour la connexion Google. Nullable car les
+    # comptes email/mot de passe sont authentifiés nativement (password_hash).
+    firebase_uid: Mapped[str | None] = mapped_column(String(128), unique=True)
+    sign_in_provider: Mapped[str | None] = mapped_column(String(50))  # google.com | password
     email_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
+    # Authentification native (email/mot de passe géré par notre backend, pas Firebase)
+    password_hash: Mapped[str | None] = mapped_column(String(255))
 
     # Profil
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
