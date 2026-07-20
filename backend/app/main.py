@@ -10,6 +10,7 @@ import uuid
 
 from app.core.config import settings
 from app.core.exceptions import SmarterBloggersException
+from app.core.redis_client import redis, key_tenant_domain
 from app.middleware.tenant import TenantMiddleware
 from app.middleware.maintenance import MaintenanceModeMiddleware
 from app.api.v1 import api_router
@@ -44,20 +45,64 @@ app = FastAPI(
 
 # ── Middlewares ────────────────────────────────────────────────────
 
-def _origin_allowed(origin: str) -> bool:
+async def _is_verified_tenant_domain(host: str) -> bool:
+    """Un blog avec un domaine personnalisé (externe OU acheté) appelle l'API
+    directement depuis le navigateur avec Origin = son propre domaine
+    (ex: kaluta.tech) — jamais dans settings.cors_origins (liste statique
+    plateforme uniquement). Même cache Redis que la résolution tenant par
+    domaine (app/middleware/tenant.py) pour éviter une requête DB par preflight."""
+    try:
+        cached = await redis.get(key_tenant_domain(host))
+        if cached:
+            return True
+    except Exception:
+        pass
+
+    try:
+        from app.core.database import get_db_no_rls
+        from sqlalchemy import text
+
+        async for session in get_db_no_rls():
+            result = await session.execute(
+                text("SELECT tenant_id FROM custom_domains WHERE domain = :domain AND verification_status = 'verified'"),
+                {"domain": host},
+            )
+            row = result.fetchone()
+            if row:
+                try:
+                    await redis.setex(key_tenant_domain(host), 3600, str(row[0]))
+                except Exception:
+                    pass
+                return True
+    except Exception:
+        pass
+    return False
+
+
+async def _origin_allowed(origin: str) -> bool:
     if origin in settings.cors_origins:
         return True
+    if not origin.startswith("https://") and not origin.startswith("http://"):
+        return False
+
+    host = origin.split("://", 1)[1].split("/", 1)[0].split(":")[0]
+
     # Support wildcard subdomains: *.smarterbloggers.com
     platform = settings.PLATFORM_DOMAIN
-    if origin.startswith("https://") and origin.endswith(f".{platform}"):
+    if origin.startswith("https://") and host.endswith(f".{platform}"):
         return True
+
+    # Domaine personnalisé d'un tenant (externe ou acheté via OpenProvider)
+    if await _is_verified_tenant_domain(host):
+        return True
+
     return False
 
 
 class DynamicCORSMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         origin = request.headers.get("origin", "")
-        allowed = _origin_allowed(origin)
+        allowed = await _origin_allowed(origin)
 
         if request.method == "OPTIONS":
             if allowed:
@@ -92,9 +137,9 @@ app.add_middleware(DynamicCORSMiddleware)
 # call_next, donc les réponses d'erreur n'ont pas de headers CORS.
 # On les injecte manuellement dans chaque handler.
 
-def _cors_headers(request: Request) -> dict[str, str]:
+async def _cors_headers(request: Request) -> dict[str, str]:
     origin = request.headers.get("origin", "")
-    if _origin_allowed(origin):
+    if await _origin_allowed(origin):
         return {
             "Access-Control-Allow-Origin": origin,
             "Access-Control-Allow-Credentials": "true",
@@ -116,7 +161,7 @@ async def smarterbloggers_exception_handler(request: Request, exc: SmarterBlogge
     )
     return JSONResponse(
         status_code=exc.status_code,
-        headers=_cors_headers(request),
+        headers=await _cors_headers(request),
         content={**exc.detail, "trace_id": trace_id} if isinstance(exc.detail, dict) else {
             "error": "ERROR",
             "message": str(exc.detail),
@@ -131,7 +176,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     first = errors[0] if errors else {}
     return JSONResponse(
         status_code=422,
-        headers=_cors_headers(request),
+        headers=await _cors_headers(request),
         content={
             "error": "VALIDATION_ERROR",
             "message": first.get("msg", "Données invalides."),
@@ -146,7 +191,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
     logger.error("Unhandled exception", exc_info=exc, path=request.url.path, trace_id=trace_id)
     return JSONResponse(
         status_code=500,
-        headers=_cors_headers(request),
+        headers=await _cors_headers(request),
         content={
             "error": "INTERNAL_SERVER_ERROR",
             "message": "Une erreur interne est survenue.",
