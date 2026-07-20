@@ -10,10 +10,10 @@ import { authApi } from '@/lib/api';
 
 interface VerifyEmailFormProps {
   locale: string;
-  oobCode: string | null;
+  token: string | null;
 }
 
-export function VerifyEmailForm({ locale, oobCode }: VerifyEmailFormProps) {
+export function VerifyEmailForm({ locale, token }: VerifyEmailFormProps) {
   const t = useTranslations('auth.verifyEmail');
   const router = useRouter();
   const [status, setStatus] = useState<'verifying' | 'success' | 'invalid'>('verifying');
@@ -23,13 +23,13 @@ export function VerifyEmailForm({ locale, oobCode }: VerifyEmailFormProps) {
   const calledRef = useRef(false);
 
   useEffect(() => {
-    if (!oobCode) { setStatus('invalid'); return; }
+    if (!token) { setStatus('invalid'); return; }
     if (calledRef.current) return;
     calledRef.current = true;
-    authApi.verifyEmail(oobCode)
+    authApi.verifyEmail(token)
       .then(() => setStatus('success'))
       .catch(() => setStatus('invalid'));
-  }, [oobCode]);
+  }, [token]);
 
   // Redirection automatique vers la connexion une fois la vérification confirmée.
   useEffect(() => {

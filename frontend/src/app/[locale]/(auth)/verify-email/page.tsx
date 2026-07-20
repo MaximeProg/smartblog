@@ -20,10 +20,10 @@ export default async function VerifyEmailPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ oobCode?: string; mode?: string }>;
+  searchParams: Promise<{ token?: string }>;
 }) {
   const { locale } = await params;
-  const { oobCode } = await searchParams;
+  const { token } = await searchParams;
   const t = await getTranslations({ locale, namespace: 'auth.verifyEmail' });
 
   return (
@@ -60,7 +60,7 @@ export default async function VerifyEmailPage({
               </p>
             </div>
 
-            <VerifyEmailForm locale={locale} oobCode={oobCode ?? null} />
+            <VerifyEmailForm locale={locale} token={token ?? null} />
           </div>
         </div>
       </div>

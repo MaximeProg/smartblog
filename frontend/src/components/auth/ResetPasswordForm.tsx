@@ -24,15 +24,15 @@ type FormValues = z.infer<typeof schema>;
 
 interface ResetPasswordFormProps {
   locale: string;
-  oobCode: string | null;
+  token: string | null;
 }
 
-export function ResetPasswordForm({ locale, oobCode }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ locale, token }: ResetPasswordFormProps) {
   const t = useTranslations('auth.resetPassword');
 
   // Pas d'étape de vérification séparée côté backend natif — le token n'est
   // validé (et consommé) qu'au moment de la soumission réelle.
-  const [status, setStatus] = useState<'ready' | 'success' | 'invalid'>(oobCode ? 'ready' : 'invalid');
+  const [status, setStatus] = useState<'ready' | 'success' | 'invalid'>(token ? 'ready' : 'invalid');
   const [formError, setFormError] = useState<string | null>(null);
 
   const {
@@ -42,10 +42,10 @@ export function ResetPasswordForm({ locale, oobCode }: ResetPasswordFormProps) {
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   const onSubmit = async ({ password }: FormValues) => {
-    if (!oobCode) return;
+    if (!token) return;
     setFormError(null);
     try {
-      await authApi.resetPasswordNative(oobCode, password);
+      await authApi.resetPasswordNative(token, password);
       setStatus('success');
     } catch (err: unknown) {
       const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
