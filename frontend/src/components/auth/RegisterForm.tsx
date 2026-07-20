@@ -54,6 +54,27 @@ export function RegisterForm({ locale }: RegisterFormProps) {
     }
   }, [searchParams]);
 
+  // Pendant l'écran "vérifiez votre boîte mail", sonde périodiquement si le
+  // lien a été cliqué (potentiellement dans un autre onglet) pour rediriger
+  // automatiquement vers la connexion, sans que l'utilisateur ait à revenir
+  // manuellement sur cet onglet.
+  useEffect(() => {
+    if (!verificationEmail) return;
+    const interval = setInterval(async () => {
+      try {
+        const { data } = await authApi.emailVerifiedStatus(verificationEmail);
+        if (data.verified) {
+          clearInterval(interval);
+          toast({ title: t('verifiedRedirecting') });
+          router.push(`/${locale}/login`);
+        }
+      } catch {
+        // silencieux — on retentera au prochain intervalle
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [verificationEmail, router, locale, t, toast]);
+
   const {
     register,
     handleSubmit,

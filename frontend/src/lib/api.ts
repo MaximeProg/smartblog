@@ -241,6 +241,9 @@ export const authApi = {
 
   resetPasswordNative: (token: string, newPassword: string) =>
     api.post<{ message: string }>('/auth/reset-password', { token, new_password: newPassword }),
+
+  emailVerifiedStatus: (email: string) =>
+    api.get<{ verified: boolean }>('/auth/email-verified-status', { params: { email } }),
 };
 
 // ─── Two-Factor Authentication ─────────────────────────────────────────────────

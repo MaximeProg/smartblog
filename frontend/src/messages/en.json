@@ -66,6 +66,7 @@
       "signIn": "Sign in",
       "verificationSent": "Check your inbox",
       "verificationDesc": "We've sent a verification link to {email}. Click it to activate your account, then sign in.",
+      "verifiedRedirecting": "Email verified! Redirecting to sign in…",
       "errors": {
         "emailInUse": "This email is already registered. Try signing in instead.",
         "weakPassword": "Password must be at least 8 characters.",

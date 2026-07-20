@@ -788,6 +788,18 @@ async def verify_email(body: VerifyEmailRequest, db: DBSession):
     return {"message": "Email vérifié avec succès."}
 
 
+@router.get("/email-verified-status")
+async def email_verified_status(email: str, db: DBSession):
+    """Sondé par l'écran 'vérifiez votre boîte mail' pour rediriger
+    automatiquement vers la connexion dès que le lien est cliqué (dans un
+    autre onglet). Ne révèle jamais si le compte existe — seulement un booléen."""
+    from sqlalchemy import select
+    from app.models.user import User
+    result = await db.execute(select(User.email_verified).where(User.email == email))
+    verified = result.scalar_one_or_none()
+    return {"verified": bool(verified)}
+
+
 @router.post("/resend-verification", status_code=200)
 async def resend_verification(body: ResendVerificationRequest, db: DBSession):
     await resend_verification_email(db, body.email, locale=body.locale)

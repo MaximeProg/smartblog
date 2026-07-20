@@ -66,6 +66,7 @@
       "signIn": "Se connecter",
       "verificationSent": "Vérifiez votre boîte mail",
       "verificationDesc": "Nous avons envoyé un lien de vérification à {email}. Cliquez dessus pour activer votre compte, puis connectez-vous.",
+      "verifiedRedirecting": "Email vérifié ! Redirection vers la connexion…",
       "errors": {
         "emailInUse": "Cet email est déjà utilisé. Essayez de vous connecter.",
         "weakPassword": "Le mot de passe doit contenir au moins 8 caractères.",

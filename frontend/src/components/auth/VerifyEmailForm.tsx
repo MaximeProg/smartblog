@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 
@@ -14,14 +15,28 @@ interface VerifyEmailFormProps {
 
 export function VerifyEmailForm({ locale, oobCode }: VerifyEmailFormProps) {
   const t = useTranslations('auth.verifyEmail');
+  const router = useRouter();
   const [status, setStatus] = useState<'verifying' | 'success' | 'invalid'>('verifying');
+  // React (StrictMode en dev) peut monter/exécuter l'effet deux fois — le
+  // token étant à usage unique, un 2e appel échouerait à tort après un 1er
+  // succès. Ce ref garantit un seul appel réel par lien cliqué.
+  const calledRef = useRef(false);
 
   useEffect(() => {
     if (!oobCode) { setStatus('invalid'); return; }
+    if (calledRef.current) return;
+    calledRef.current = true;
     authApi.verifyEmail(oobCode)
       .then(() => setStatus('success'))
       .catch(() => setStatus('invalid'));
   }, [oobCode]);
+
+  // Redirection automatique vers la connexion une fois la vérification confirmée.
+  useEffect(() => {
+    if (status !== 'success') return;
+    const timer = setTimeout(() => router.push(`/${locale}/login`), 2500);
+    return () => clearTimeout(timer);
+  }, [status, router, locale]);
 
   if (status === 'verifying') {
     return (
