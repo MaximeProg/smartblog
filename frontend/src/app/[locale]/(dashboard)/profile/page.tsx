@@ -637,7 +637,7 @@ export default function ProfilePage() {
                         </button>
                         <button
                           onClick={() => walletMut.mutate()}
-                          disabled={walletInput.length !== 34 || !walletInput.startsWith('T') || walletMut.isPending}
+                          disabled={!/^0x[a-fA-F0-9]{40}$/.test(walletInput) || walletMut.isPending}
                           className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[12px] font-semibold transition-colors disabled:opacity-50"
                         >
                           {walletMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
