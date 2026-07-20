@@ -584,7 +584,7 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                {/* ── Wallet USDT TRC20 ──────────────────────────── */}
+                {/* ── Wallet USDT BSC (BEP20) ──────────────────────────── */}
                 <div className={`rounded-xl border px-4 py-3.5 ${walletAddress ? 'border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/10' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'}`}>
                   <div className="flex items-start sm:items-center justify-between gap-3 flex-col sm:flex-row">
                     <div className="flex items-center gap-2.5">

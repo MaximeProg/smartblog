@@ -239,7 +239,7 @@ async def update_wallet(
     db: DBSession,
 ):
     """
-    Enregistre ou met à jour l'adresse USDT TRC20 de l'utilisateur.
+    Enregistre ou met à jour l'adresse USDT BSC (BEP20) de l'utilisateur.
     Requis : 2FA activé + code TOTP valide.
     Déclenche le paiement des commissions PENDING si wallet était absent.
     """
@@ -252,9 +252,9 @@ async def update_wallet(
     if not wallet_address:
         raise ValidationException("Adresse USDT requise.")
 
-    # Validation basique format TRC20 (T + 33 alphanum)
-    if not re.match(r"^T[a-zA-Z0-9]{33}$", wallet_address):
-        raise ValidationException("Adresse USDT TRC20 invalide. Elle doit commencer par T et comporter 34 caractères.")
+    # Validation basique format BSC/BEP20 (adresse EVM standard : 0x + 40 hex)
+    if not re.match(r"^0x[a-fA-F0-9]{40}$", wallet_address):
+        raise ValidationException("Adresse USDT BSC invalide. Elle doit commencer par 0x et comporter 42 caractères.")
 
     user_id = uuid.UUID(payload["sub"])
     result = await db.execute(select(User).where(User.id == user_id))

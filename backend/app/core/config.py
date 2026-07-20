@@ -45,12 +45,12 @@ class Settings(BaseSettings):
     CLOUDINARY_API_KEY: str = ""
     CLOUDINARY_API_SECRET: str = ""
 
-    # NowPayments (crypto — USDT TRC20)
+    # NowPayments (crypto — USDT BSC / BEP20)
     # Dashboard : https://account.nowpayments.io/
     NOWPAYMENTS_API_KEY: str = ""           # Clé principale (créer invoices)
     NOWPAYMENTS_IPN_SECRET: str = ""        # Secret HMAC-SHA512 pour vérifier webhooks IPN
     NOWPAYMENTS_PAYOUT_API_KEY: str = ""    # Clé Payouts (envoyer USDT aux affiliés)
-    NOWPAYMENTS_WALLET_USDT: str = ""       # Wallet USDT TRC20 de la plateforme SmarterBloggers
+    NOWPAYMENTS_WALLET_USDT: str = ""       # Wallet USDT BSC de la plateforme SmarterBloggers
     NOWPAYMENTS_PLATFORM_FEE_PERCENT: int = 5  # Commission plateforme articles payants
     NOWPAYMENTS_SANDBOX: bool = True        # False en production
 

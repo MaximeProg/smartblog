@@ -1,5 +1,5 @@
 """
-M20 — Paiements via NowPayments (crypto USDT TRC20)
+M20 — Paiements via NowPayments (crypto USDT BSC / BEP20)
 Stripe et PayPal retirés suite à décision PDG 2026-07-12.
 
 Paiement intégré (sans redirection) : le checkout retourne directement
@@ -197,7 +197,7 @@ def _crypto_response(tx: Transaction, amount_usd: float) -> CryptoPaymentRespons
         order_id=tx.nowpayments_order_id or "",
         pay_address=address,
         pay_amount=float(tx.pay_amount or 0),
-        pay_currency=tx.pay_currency or "usdttrc20",
+        pay_currency=tx.pay_currency or "usdtbsc",
         qr_code_data_uri=generate_qr_data_uri(address) if address else "",
         expires_at=tx.payment_expires_at,
         amount_usd=amount_usd,

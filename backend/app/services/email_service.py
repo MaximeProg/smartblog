@@ -708,7 +708,7 @@ async def send_affiliate_commission_notification(
         f'</div>' +
         _btn("Voir mon tableau de bord affilié", dashboard_url, "#10B981") +
         _divider() +
-        _note("Les commissions sont versées automatiquement sur votre wallet USDT TRC20 enregistré.")
+        _note("Les commissions sont versées automatiquement sur votre wallet USDT BSC (BEP20) enregistré.")
     )
     await _send(
         to=to,

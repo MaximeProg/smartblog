@@ -1,5 +1,5 @@
 """
-Service NowPayments — Crypto USDT TRC20
+Service NowPayments — Crypto USDT BSC (BEP20 / BNB Smart Chain)
 Docs : https://documenter.getpostman.com/view/7907941/2s93JtP3F6
 """
 import base64
@@ -46,7 +46,7 @@ async def create_payment(
     payload = {
         "price_amount": price_amount,
         "price_currency": price_currency,
-        "pay_currency": "usdttrc20",
+        "pay_currency": "usdtbsc",
         "order_id": order_id,
         "order_description": order_description,
         "ipn_callback_url": ipn_callback_url,
@@ -117,7 +117,7 @@ def verify_ipn_signature(payload_bytes: bytes, received_sig: str) -> bool:
 
 async def send_payout(
     *,
-    withdrawals: list[dict],  # [{"address": "TXxx...", "amount": 10.50, "currency": "usdttrc20", "ipn_callback_url": "..."}]
+    withdrawals: list[dict],  # [{"address": "0xabc...", "amount": 10.50, "currency": "usdtbsc", "ipn_callback_url": "..."}]
     batch_withdrawal_id: str | None = None,
 ) -> dict:
     """
@@ -149,13 +149,13 @@ async def send_single_payout(
     extra_id: str | None = None,
 ) -> dict:
     """
-    Envoie un paiement USDT TRC20 à un seul wallet.
+    Envoie un paiement USDT BSC (BEP20) à un seul wallet.
     extra_id peut être l'ID du cashout pour tracking.
     """
     withdrawal = {
         "address": wallet_address,
         "amount": round(amount_usd, 2),
-        "currency": "usdttrc20",
+        "currency": "usdtbsc",
     }
     if extra_id:
         withdrawal["extra_id"] = extra_id
