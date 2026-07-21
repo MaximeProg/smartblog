@@ -1420,7 +1420,7 @@
           "50개의 기사",
           "뉴스레터 구독자 500명",
           "저자 1명",
-          "1 GB 저장 공간",
+          "1GB 저장 용량",
           "smarterbloggers.com 하위 도메인",
           "기업용 템플릿 포함"
         ]
@@ -1960,7 +1960,24 @@
     "placeholderPopularArticles": "인기 기사",
     "placeholderCategories": "카테고리",
     "placeholderTags": "태그",
-    "placeholderSeoDescription": "다음 주제에 관한 저희의 추천 기사를 확인해 보세요…"
+    "placeholderSeoDescription": "다음 주제에 관한 저희의 추천 기사를 확인해 보세요…",
+    "sectionDesign": "디자인",
+    "fieldLogo": "로고",
+    "fieldFavicon": "파비콘",
+    "fieldCoverImage": "표지 이미지",
+    "fieldFontFamily": "글꼴",
+    "fieldSocialLinks": "소셜 링크",
+    "fieldStatsItems": "주요 수치",
+    "fieldValuesItems": "가치",
+    "fieldEmoji": "이모지",
+    "fieldTeamMembers": "회원",
+    "fieldEmail": "이메일",
+    "fieldPhone": "전화",
+    "sectionReading": "독서",
+    "fieldTocTitle": "목차 제목",
+    "sectionEngagement": "참여",
+    "fieldShareTitle": "\"공유\" 제목",
+    "fieldAuthorBioTitle": "약력 제목"
   },
   "common": {
     "loading": "로딩 중...",

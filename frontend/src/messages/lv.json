@@ -1453,7 +1453,7 @@
           "Pielāgots domēns",
           "Pilnīga analītika + SEO",
           "API piekļuve",
-          "Speciāli pielāgots atbalsts"
+          "Speciāls atbalsts"
         ]
       },
       "business": {
@@ -1960,7 +1960,24 @@
     "placeholderPopularArticles": "Populārākie raksti",
     "placeholderCategories": "Kategorijas",
     "placeholderTags": "Atslēgvārdi",
-    "placeholderSeoDescription": "Iepazīstieties ar mūsu labākajiem rakstiem par…"
+    "placeholderSeoDescription": "Iepazīstieties ar mūsu labākajiem rakstiem par…",
+    "sectionDesign": "Dizains",
+    "fieldLogo": "Logotips",
+    "fieldFavicon": "Favikona",
+    "fieldCoverImage": "Vāka attēls",
+    "fieldFontFamily": "Fonts",
+    "fieldSocialLinks": "Saites uz sociālajiem tīkliem",
+    "fieldStatsItems": "Galvenie rādītāji",
+    "fieldValuesItems": "Vērtības",
+    "fieldEmoji": "Emoji",
+    "fieldTeamMembers": "Dalībnieki",
+    "fieldEmail": "E-pasts",
+    "fieldPhone": "Tālrunis",
+    "sectionReading": "Lasīšana",
+    "fieldTocTitle": "Satura rādītāja nosaukums",
+    "sectionEngagement": "Iesaistīšanās",
+    "fieldShareTitle": "\"Dalīties\" virsraksts",
+    "fieldAuthorBioTitle": "Biogrāfijas nosaukums"
   },
   "common": {
     "loading": "Tiek ielādēts...",

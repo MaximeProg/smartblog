@@ -10,8 +10,10 @@ export interface SelectOption {
 export interface FieldDef {
   key: string;
   type: FieldType;
-  label: string;
+  label: string;    // Repli si labelKey est absent (texte source, non traduit à l'affichage)
+  labelKey?: string; // Clé du namespace next-intl "studio" — priorité sur label
   hint?: string;
+  hintKey?: string;
   inplace?: boolean;
   options?: SelectOption[];
   itemFields?: FieldDef[];
@@ -23,6 +25,7 @@ export interface FieldDef {
 export interface SectionDef {
   id: string;
   label: string;
+  labelKey?: string;
   icon?: string;
   fields: FieldDef[];
 }
@@ -30,6 +33,7 @@ export interface SectionDef {
 export interface PageDef {
   id: string;
   label: string;
+  labelKey?: string;
   icon: string;
   canvasPath: string;
   sections: SectionDef[];

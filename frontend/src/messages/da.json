@@ -1422,7 +1422,7 @@
           "1 forfatter",
           "1 GB lagerplads",
           "smarterbloggers.com-underdomæne",
-          "Inkluderet virksomhedsskabelon"
+          "Inkluderer virksomhedsskabelon"
         ]
       },
       "starter": {
@@ -1960,7 +1960,24 @@
     "placeholderPopularArticles": "Populære artikler",
     "placeholderCategories": "Kategorier",
     "placeholderTags": "Tags",
-    "placeholderSeoDescription": "Se vores bedste artikler om…"
+    "placeholderSeoDescription": "Se vores bedste artikler om…",
+    "sectionDesign": "Design",
+    "fieldLogo": "Logo",
+    "fieldFavicon": "Favicon",
+    "fieldCoverImage": "Forsidebillede",
+    "fieldFontFamily": "Skrifttype",
+    "fieldSocialLinks": "Sociale medier",
+    "fieldStatsItems": "Nøgletal",
+    "fieldValuesItems": "Værdier",
+    "fieldEmoji": "Emoji",
+    "fieldTeamMembers": "Medlemmer",
+    "fieldEmail": "E-mail",
+    "fieldPhone": "Telefon",
+    "sectionReading": "Læsning",
+    "fieldTocTitle": "Indholdsfortegnelse – titel",
+    "sectionEngagement": "Engagement",
+    "fieldShareTitle": "\"Del\"-overskrift",
+    "fieldAuthorBioTitle": "Biografioverskrift"
   },
   "common": {
     "loading": "Indlæser...",

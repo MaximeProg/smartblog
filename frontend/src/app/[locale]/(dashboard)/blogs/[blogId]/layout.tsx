@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo } from 'react';
 import { useParams, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Menu } from 'lucide-react';
 import { StructurePanel } from './_studio/StructurePanel';
 import { PropertiesPanel } from './_studio/PropertiesPanel';
@@ -17,6 +18,7 @@ export default function BlogStudioLayout({ children }: { children: React.ReactNo
   const pathname = usePathname();
   const locale   = params.locale as string;
   const blogId   = params.blogId as string;
+  const t = useTranslations('dashboardPage');
 
   const { openBlogSidebar } = useUIStore();
   const currentTenant = useCurrentTenant();
@@ -47,7 +49,7 @@ export default function BlogStudioLayout({ children }: { children: React.ReactNo
             <Menu className="h-4 w-4" />
           </button>
           <span className="flex-1 text-[13px] font-semibold text-slate-800 dark:text-slate-200 truncate">
-            {currentTenant?.name ?? 'Studio'}
+            {currentTenant?.name ?? t('blogCardStudio')}
           </span>
         </div>
 

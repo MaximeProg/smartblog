@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { X } from 'lucide-react';
 import { useEditorStore } from '@/store/editor.store';
 import { findSection, getPath } from '@/templates/utils';
@@ -11,6 +12,7 @@ export function PropertiesPanel() {
   const locale   = params.locale as string;
   const blogId   = params.blogId as string;
   const pathname = usePathname();
+  const ts = useTranslations('studio');
 
   const { schema, selectedSectionId, selectSection, liveConfig, updateField } = useEditorStore();
 
@@ -25,7 +27,7 @@ export function PropertiesPanel() {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700 shrink-0">
         <h3 className="text-[13px] font-semibold text-slate-800 dark:text-slate-100 truncate">
-          {section.label}
+          {section.labelKey ? ts(section.labelKey as any) : section.label}
         </h3>
         <button
           type="button"

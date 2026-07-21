@@ -74,6 +74,11 @@ export function StructurePanel() {
   const blogId   = params.blogId as string;
   const base     = `/${locale}/blogs/${blogId}`;
   const t = useTranslations('blogNav');
+  const ts = useTranslations('studio');
+  // Sections/pages viennent du schéma de template (templates/_base.ts) — leur
+  // label par défaut y est en dur (texte source), résolu ici via labelKey.
+  const schemaLabel = (item: { label: string; labelKey?: string }) =>
+    item.labelKey ? ts(item.labelKey as any) : item.label;
 
   const queryClient  = useQueryClient();
   const { tenants, setCurrentTenant, user, clearAuth } = useAuthStore();
@@ -217,7 +222,7 @@ export function StructurePanel() {
             )}
           >
             <SectionIcon name={section.icon} className={selectedSectionId === section.id && isStudioRoot ? 'text-blue-500' : 'text-slate-400 dark:text-slate-500'} />
-            <span className="flex-1 text-left">{section.label}</span>
+            <span className="flex-1 text-left">{schemaLabel(section)}</span>
           </button>
         ))}
 
@@ -240,7 +245,7 @@ export function StructurePanel() {
                 )}
               >
                 {PageIcon && <PageIcon className={cn('h-3.5 w-3.5 shrink-0', isActivePage ? 'text-blue-500' : 'text-slate-400 dark:text-slate-500')} />}
-                <span className="flex-1 text-left">{page.label}</span>
+                <span className="flex-1 text-left">{schemaLabel(page)}</span>
                 {isExpanded
                   ? <ChevronDown className="h-3 w-3 text-slate-400 shrink-0" />
                   : <ChevronRight className="h-3 w-3 text-slate-400 shrink-0" />
@@ -261,7 +266,7 @@ export function StructurePanel() {
                       )}
                     >
                       <SectionIcon name={section.icon} className="h-3 w-3" />
-                      <span className="flex-1 text-left">{section.label}</span>
+                      <span className="flex-1 text-left">{schemaLabel(section)}</span>
                     </button>
                   ))}
                 </div>

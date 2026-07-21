@@ -1451,7 +1451,7 @@
           "10 autorov",
           "50 GB úložného priestoru",
           "Vlastná doména",
-          "Komplexná analýza + SEO",
+          "Komplexná analytika + SEO",
           "Prístup k API",
           "Špecializovaná podpora"
         ]
@@ -1960,7 +1960,24 @@
     "placeholderPopularArticles": "Populárne články",
     "placeholderCategories": "Kategórie",
     "placeholderTags": "Tagy",
-    "placeholderSeoDescription": "Objavte naše najlepšie články o…"
+    "placeholderSeoDescription": "Objavte naše najlepšie články o…",
+    "sectionDesign": "Dizajn",
+    "fieldLogo": "Logo",
+    "fieldFavicon": "Favikona",
+    "fieldCoverImage": "Obalová fotografia",
+    "fieldFontFamily": "Písmo",
+    "fieldSocialLinks": "Odkazy na sociálne siete",
+    "fieldStatsItems": "Kľúčové ukazovatele",
+    "fieldValuesItems": "Hodnoty",
+    "fieldEmoji": "Emoji",
+    "fieldTeamMembers": "Členovia",
+    "fieldEmail": "E-mail",
+    "fieldPhone": "Telefón",
+    "sectionReading": "Čítanie",
+    "fieldTocTitle": "Názov obsahu",
+    "sectionEngagement": "Zapojenie",
+    "fieldShareTitle": "Názov „Zdieľať“",
+    "fieldAuthorBioTitle": "Názov životopisu"
   },
   "common": {
     "loading": "Načítava sa...",
