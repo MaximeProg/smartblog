@@ -26,9 +26,7 @@ import type { TenantInfo } from '@/types';
 
 interface TemplateOption {
   id: string;
-  name: string;
-  tagline: string;
-  description: string;
+  name: string; // Nom propre du thème — jamais traduit (comme "Studio")
   accent: string;
   preview: React.ReactNode;
 }
@@ -171,53 +169,26 @@ function LuminaryPreview() {
 }
 
 const TEMPLATE_OPTIONS: TemplateOption[] = [
-  {
-    id: 'editorial',
-    name: 'Editorial',
-    tagline: 'Clean · Serif · Timeless',
-    description: 'Medium / The Atlantic style. Focused reading experience, featured hero, elegant 3-column grid.',
-    accent: '#18181b',
-    preview: <EditorialPreview />,
-  },
-  {
-    id: 'magazine',
-    name: 'Magazine',
-    tagline: 'Bold · Dense · Dynamic',
-    description: 'The Verge / Wired style. Dark header, layered grid, category sections, newsletter sidebar.',
-    accent: '#e11d48',
-    preview: <MagazinePreview />,
-  },
-  {
-    id: 'creative',
-    name: 'Creative',
-    tagline: 'Dark · Visual · Immersive',
-    description: 'Cargo Collective style. Full-bleed dark mode, masonry image grid, visual-first layout.',
-    accent: '#7c3aed',
-    preview: <CreativePreview />,
-  },
-  {
-    id: 'luminary',
-    name: 'Luminary',
-    tagline: 'Prestige · Serif · Literary',
-    description: 'The New Yorker / GQ style. Cream ivory, gold accents, drop caps, premium editorial feel.',
-    accent: '#b8960c',
-    preview: <LuminaryPreview />,
-  },
+  { id: 'editorial', name: 'Editorial', accent: '#18181b', preview: <EditorialPreview /> },
+  { id: 'magazine',  name: 'Magazine',  accent: '#e11d48', preview: <MagazinePreview /> },
+  { id: 'creative',  name: 'Creative',  accent: '#7c3aed', preview: <CreativePreview /> },
+  { id: 'luminary',  name: 'Luminary',  accent: '#b8960c', preview: <LuminaryPreview /> },
 ];
 
 // ── Color presets ─────────────────────────────────────────────────────────────
+// `key` résout le nom traduit via t(`colors.${key}`) — voir usage plus bas.
 
 const COLORS = [
-  { hex: '#2563eb', label: 'Blue'   },
-  { hex: '#7c3aed', label: 'Violet' },
-  { hex: '#db2777', label: 'Pink'   },
-  { hex: '#dc2626', label: 'Red'    },
-  { hex: '#ea580c', label: 'Orange' },
-  { hex: '#16a34a', label: 'Green'  },
-  { hex: '#0891b2', label: 'Cyan'   },
-  { hex: '#334155', label: 'Slate'  },
-  { hex: '#b8960c', label: 'Gold'   },
-  { hex: '#18181b', label: 'Black'  },
+  { hex: '#2563eb', key: 'blue'   },
+  { hex: '#7c3aed', key: 'violet' },
+  { hex: '#db2777', key: 'pink'   },
+  { hex: '#dc2626', key: 'red'    },
+  { hex: '#ea580c', key: 'orange' },
+  { hex: '#16a34a', key: 'green'  },
+  { hex: '#0891b2', key: 'cyan'   },
+  { hex: '#334155', key: 'slate'  },
+  { hex: '#b8960c', key: 'gold'   },
+  { hex: '#18181b', key: 'black'  },
 ];
 
 type CoverTab = 'upload' | 'url';
@@ -616,9 +587,9 @@ export default function CreateBlogPage() {
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <p className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-                    Step 1 — Choose your template
+                    {t('templateStep1Title')}
                   </p>
-                  <p className="text-[12px] text-slate-400 mt-0.5">Your template is permanent and defines your blog's visual identity.</p>
+                  <p className="text-[12px] text-slate-400 mt-0.5">{t('templateStep1Desc')}</p>
                 </div>
               </div>
 
@@ -649,13 +620,13 @@ export default function CreateBlogPage() {
 
                         {/* Preview link */}
                         <a
-                          href={`/en/preview/${tpl.id}`}
+                          href={`/${locale}/preview/${tpl.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={e => e.stopPropagation()}
                           className="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] font-semibold bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 rounded-full px-2.5 py-1 hover:bg-white dark:hover:bg-slate-800 transition-colors shadow-sm"
                         >
-                          Preview <ExternalLink className="h-2.5 w-2.5" />
+                          {ts('imagePreviewAlt')} <ExternalLink className="h-2.5 w-2.5" />
                         </a>
                       </div>
 
@@ -664,9 +635,9 @@ export default function CreateBlogPage() {
                         <div className="flex items-center gap-2 mb-0.5">
                           <div className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: tpl.accent }} />
                           <span className="text-[13px] font-black text-slate-900 dark:text-slate-100">{tpl.name}</span>
-                          <span className="text-[10px] text-slate-400 font-medium ml-auto">{tpl.tagline}</span>
+                          <span className="text-[10px] text-slate-400 font-medium ml-auto">{t(`templates.${tpl.id}.tagline` as any)}</span>
                         </div>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">{tpl.description}</p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">{t(`templates.${tpl.id}.description` as any)}</p>
                       </div>
 
                       {/* Selected top bar */}
@@ -682,7 +653,7 @@ export default function CreateBlogPage() {
             {/* ── STEP 2: Blog details ───────────────────────────────────────── */}
             <section>
               <p className="text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">
-                Step 2 — Blog details
+                {t('templateStep2Title')}
               </p>
 
               <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm overflow-hidden">
@@ -762,7 +733,7 @@ export default function CreateBlogPage() {
                       <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group" style={{ paddingBottom: '36%' }}>
                         <img
                           src={previewSrc}
-                          alt="Cover"
+                          alt={t('coverAlt')}
                           className="absolute inset-0 w-full h-full object-cover"
                           onError={() => setCoverPreviewError(true)}
                         />
@@ -787,7 +758,7 @@ export default function CreateBlogPage() {
                                 : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
                             }`}
                           >
-                            <Upload className="h-3 w-3" /> Upload
+                            <Upload className="h-3 w-3" /> {ts('imageFromComputer')}
                           </button>
                           <button
                             type="button"
@@ -798,7 +769,7 @@ export default function CreateBlogPage() {
                                 : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700'
                             }`}
                           >
-                            <Link2 className="h-3 w-3" /> URL
+                            <Link2 className="h-3 w-3" /> {ts('imageDirectUrl')}
                           </button>
                         </div>
 
@@ -827,7 +798,7 @@ export default function CreateBlogPage() {
                                 </div>
                                 <div className="text-center">
                                   <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">
-                                    {dragging ? 'Drop here' : 'Click or drag an image'}
+                                    {dragging ? ts('imageDropHere') : ts('imageClickOrDrag')}
                                   </p>
                                   <p className="text-[10.5px] text-slate-400 mt-0.5">{ts('imageFormats')}</p>
                                 </div>
@@ -855,7 +826,7 @@ export default function CreateBlogPage() {
                               disabled={!coverUrlInput.trim()}
                               className="h-10 px-4 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[11px] font-bold disabled:opacity-40 transition-colors shrink-0"
                             >
-                              OK
+                              {t('okButton')}
                             </button>
                           </div>
                         )}
@@ -877,7 +848,7 @@ export default function CreateBlogPage() {
                         <button
                           key={c.hex}
                           type="button"
-                          title={c.label}
+                          title={t(`colors.${c.key}` as any)}
                           onClick={() => setColor(c.hex)}
                           className="h-8 w-8 rounded-xl transition-all hover:scale-110 shrink-0"
                           style={{
@@ -887,7 +858,7 @@ export default function CreateBlogPage() {
                           }}
                         />
                       ))}
-                      <label className="h-8 w-8 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center cursor-pointer hover:border-slate-400 transition-colors shrink-0" title="Custom color">
+                      <label className="h-8 w-8 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center cursor-pointer hover:border-slate-400 transition-colors shrink-0" title={t('customColorTitle')}>
                         <input type="color" value={color} onChange={e => setColor(e.target.value)} className="sr-only" />
                         <span className="text-slate-400 text-xs font-bold">+</span>
                       </label>
@@ -912,7 +883,7 @@ export default function CreateBlogPage() {
                       style={{ backgroundColor: color }}
                     >
                       {mutation.isPending
-                        ? <><Loader2 className="h-4 w-4 animate-spin" /> Creating…</>
+                        ? <><Loader2 className="h-4 w-4 animate-spin" /> {t('quickCreating')}</>
                         : <>{t('quickCreate')} <ArrowRight className="h-4 w-4" /></>
                       }
                     </button>
@@ -927,7 +898,7 @@ export default function CreateBlogPage() {
                       href={`/${locale}/dashboard`}
                       className="h-11 px-5 rounded-xl text-[13px] font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center transition-colors"
                     >
-                      Cancel
+                      {t('cancel')}
                     </Link>
                   </div>
 
@@ -944,7 +915,7 @@ export default function CreateBlogPage() {
             <div className="mt-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/50 rounded-xl px-4 py-3 flex gap-3">
               <span className="text-amber-500 text-sm shrink-0 mt-px">⚠</span>
               <p className="text-[11.5px] text-amber-700 dark:text-amber-400 leading-relaxed">
-                <strong>Template is permanent.</strong> Your template defines the visual structure of your blog and cannot be changed after creation. You can customize colors, fonts, content and all settings in the Studio.
+                <strong>{t('templatePermanentTitle')}</strong> {t('templatePermanentDesc')}
               </p>
             </div>
 

@@ -2106,7 +2106,46 @@
     "quickSlugHint": "Od 4 do 50 znaków — wyłącznie małe litery, cyfry i łączniki.",
     "quickCoverUploadError": "Nie udało się przesłać obrazka. Spróbuj ponownie.",
     "quickGenericError": "Wystąpił błąd. Spróbuj ponownie.",
-    "quickNameTooLong": "Nazwa bloga nie może przekraczać 50 znaków."
+    "quickNameTooLong": "Nazwa bloga nie może przekraczać 50 znaków.",
+    "templateStep1Title": "Krok 1 — Wybierz szablon",
+    "templateStep1Desc": "Twój szablon jest stały i określa tożsamość wizualną Twojego bloga.",
+    "templateStep2Title": "Krok 2 — Szczegóły bloga",
+    "coverAlt": "Okładka",
+    "okButton": "OK",
+    "customColorTitle": "Kolor niestandardowy",
+    "cancel": "Anuluj",
+    "templatePermanentTitle": "Szablon jest stały.",
+    "templatePermanentDesc": "Szablon określa wygląd Twojego bloga i nie można go zmienić po utworzeniu. W Studio możesz dostosować kolory, czcionki, treść oraz wszystkie ustawienia.",
+    "colors": {
+      "blue": "Niebieski",
+      "violet": "Fiolet",
+      "pink": "Różowy",
+      "red": "Czerwony",
+      "orange": "Pomarańczowy",
+      "green": "Zielony",
+      "cyan": "Cyjan",
+      "slate": "Łupek",
+      "gold": "Złoto",
+      "black": "Czarny"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Czystość · Serifa · Ponadczasowość",
+        "description": "Styl Medium / The Atlantic. Skupiające uwagę doświadczenie czytelnicze, wyróżniony bohater, elegancki układ w trzech kolumnach."
+      },
+      "magazine": {
+        "tagline": "Odważny · Gęsty · Dynamiczny",
+        "description": "Styl serwisu The Verge / Wired. Ciemny nagłówek, układ warstwowy, sekcje kategorii, pasek boczny z biuletynem."
+      },
+      "creative": {
+        "tagline": "Mroczny · Wizualny · Wciągający",
+        "description": "Styl Cargo Collective. Tryb ciemny z obrazami na całej szerokości, siatka obrazów typu „masonry”, układ stawiający na pierwszym planie elementy wizualne."
+      },
+      "luminary": {
+        "tagline": "Prestiż · Serif · Literacki",
+        "description": "Styl magazynów „The New Yorker” i „GQ”. Kremowo-kość słoniowa, złote akcenty, inicjały, ekskluzywny styl redakcyjny."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Dane osobowe",

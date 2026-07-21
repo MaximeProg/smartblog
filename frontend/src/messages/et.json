@@ -1451,7 +1451,7 @@
           "10 autorit",
           "50 GB salvestusruumi",
           "Kohandatud domeen",
-          "Täielikud analüütilised andmed + SEO",
+          "Täielik analüütika + SEO",
           "API-juurdepääs",
           "Pühendunud tugi"
         ]
@@ -1465,7 +1465,7 @@
           "Piiramatu arv tellijaid",
           "Piiramatu arv autoreid",
           "Piiramatu salvestusruum",
-          "Mitme valdkonna",
+          "Mitme domeeni",
           "White-label",
           "Tagatud SLA",
           "Spetsiaalne sissejuhatus",
@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4–50 tähemärki — ainult väiketähed, numbrid ja sidekriipsud.",
     "quickCoverUploadError": "Pilti ei õnnestunud üles laadida. Palun proovi uuesti.",
     "quickGenericError": "Midagi läks valesti. Palun proovi uuesti.",
-    "quickNameTooLong": "Blogi nimi peab olema kuni 50 tähemärki pikk."
+    "quickNameTooLong": "Blogi nimi peab olema kuni 50 tähemärki pikk.",
+    "templateStep1Title": "1. samm — Vali mall",
+    "templateStep1Desc": "Teie mall on püsiv ja määrab teie blogi visuaalse identiteedi.",
+    "templateStep2Title": "2. samm — Blogi andmed",
+    "coverAlt": "Kaanepilt",
+    "okButton": "OK",
+    "customColorTitle": "Kohandatud värv",
+    "cancel": "Tühista",
+    "templatePermanentTitle": "Mall on püsiv.",
+    "templatePermanentDesc": "Teie mall määrab kindlaks teie blogi visuaalse struktuuri ning seda ei saa pärast loomist enam muuta. Studio keskkonnas saate kohandada värve, fonte, sisu ja kõiki seadeid.",
+    "colors": {
+      "blue": "Sinine",
+      "violet": "Violet",
+      "pink": "Roosa",
+      "red": "Punane",
+      "orange": "Oranž",
+      "green": "Roheline",
+      "cyan": "Tsüaan",
+      "slate": "Kiltkivi",
+      "gold": "Kuld",
+      "black": "Must"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Puhas · Serif · Ajatu",
+        "description": "Medium / The Atlantic’i stiil. Keskendunud lugemiskogemus, esile tõstetud peategelane, elegantne kolmekolonniline paigutus."
+      },
+      "magazine": {
+        "tagline": "Julge · Tihe · Dünaamiline",
+        "description": "The Verge / Wiredi stiilis. Tume päis, kihiline raster, kategooriate jaotised, uudiskirja külgriba."
+      },
+      "creative": {
+        "tagline": "Tume · Visuaalne · Kaasahaarav",
+        "description": "Cargo Collective’i stiil. Täisekraaniline tume režiim, piltide rasterpaigutus, visuaalsele küljele keskenduv kujundus."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Kirjanduslik",
+        "description": "„The New Yorker“ / „GQ“ stiil. Kreemikas-elevandiluu värv, kuldsed detailid, initsiaalid, kõrgetasemeline ajakirjanduslik õhkkond."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Isikuandmed",

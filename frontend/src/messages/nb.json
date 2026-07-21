@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 til 50 tegn — kun små bokstaver, tall og bindestreker.",
     "quickCoverUploadError": "Det gikk ikke å laste opp bildet. Prøv på nytt.",
     "quickGenericError": "Det oppstod en feil. Prøv på nytt.",
-    "quickNameTooLong": "Bloggnavnet må bestå av maksimalt 50 tegn."
+    "quickNameTooLong": "Bloggnavnet må bestå av maksimalt 50 tegn.",
+    "templateStep1Title": "Trinn 1 — Velg mal",
+    "templateStep1Desc": "Malen din er permanent og bestemmer bloggens visuelle utseende.",
+    "templateStep2Title": "Trinn 2 — Informasjon om bloggen",
+    "coverAlt": "Omslag",
+    "okButton": "OK",
+    "customColorTitle": "Egendefinert farge",
+    "cancel": "Avbryt",
+    "templatePermanentTitle": "Malen er permanent.",
+    "templatePermanentDesc": "Malen din bestemmer den visuelle strukturen på bloggen din og kan ikke endres etter at den er opprettet. Du kan tilpasse farger, skrifttyper, innhold og alle innstillinger i Studio.",
+    "colors": {
+      "blue": "Blå",
+      "violet": "Violet",
+      "pink": "Rosa",
+      "red": "Rød",
+      "orange": "Oransje",
+      "green": "Grønn",
+      "cyan": "Cyan",
+      "slate": "Skifer",
+      "gold": "Gull",
+      "black": "Svart"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Rent · Serif · Tidløst",
+        "description": "Medium / The Atlantic-stil. En konsentrert leseopplevelse, en fremhevet hovedartikkel og et elegant oppsett med tre spalter."
+      },
+      "magazine": {
+        "tagline": "Dristig · Konsentrert · Dynamisk",
+        "description": "I stil med The Verge / Wired. Mørk topptekst, rutenett i flere lag, kategorideler, nyhetsbrev i sidefeltet."
+      },
+      "creative": {
+        "tagline": "Mørkt · Visuelt · Oppslukende",
+        "description": "Cargo Collective-stil. Mørk modus uten kantlinjer, bilder i «masonry»-oppsett, visuell layout."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Litterær",
+        "description": "Stilen til The New Yorker / GQ. Kremhvit, gullfargede detaljer, initialbokstaver, eksklusiv redaksjonell stil."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Personopplysninger",

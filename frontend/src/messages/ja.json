@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4～50文字 — 小文字、数字、ハイフンのみ使用可能です。",
     "quickCoverUploadError": "画像をアップロードできませんでした。もう一度お試しください。",
     "quickGenericError": "問題が発生しました。もう一度お試しください。",
-    "quickNameTooLong": "ブログ名は50文字以内にしてください。"
+    "quickNameTooLong": "ブログ名は50文字以内にしてください。",
+    "templateStep1Title": "ステップ 1 — テンプレートを選択する",
+    "templateStep1Desc": "テンプレートは永続的なものであり、ブログのビジュアルイメージを決定づけるものです。",
+    "templateStep2Title": "ステップ 2 — ブログの詳細",
+    "coverAlt": "表紙",
+    "okButton": "OK",
+    "customColorTitle": "カスタムカラー",
+    "cancel": "キャンセル",
+    "templatePermanentTitle": "テンプレートは永続的です。",
+    "templatePermanentDesc": "テンプレートはブログの視覚的な構成を定義するものであり、作成後は変更できません。Studioでは、色、フォント、コンテンツ、およびすべての設定をカスタマイズできます。",
+    "colors": {
+      "blue": "ブルー",
+      "violet": "バイオレット",
+      "pink": "ピンク",
+      "red": "赤",
+      "orange": "オレンジ",
+      "green": "グリーン",
+      "cyan": "シアン",
+      "slate": "スレート",
+      "gold": "ゴールド",
+      "black": "黒"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "クリーン・セリフ・時代を超えた",
+        "description": "Medium／『アトランティック』スタイル。集中して読める環境、注目のヒーロー、洗練された3段組レイアウト。"
+      },
+      "magazine": {
+        "tagline": "大胆・凝縮・躍動感",
+        "description": "The Verge／Wired風のデザイン。ダークカラーのヘッダー、レイヤー構造のグリッド、カテゴリーセクション、ニュースレターのサイドバー。"
+      },
+      "creative": {
+        "tagline": "ダーク・ビジュアル・没入感",
+        "description": "Cargo Collectiveスタイル。画面いっぱいに広がるダークモード、メゾニー形式の画像グリッド、ビジュアル重視のレイアウト。"
+      },
+      "luminary": {
+        "tagline": "プレステージ・セリフ・文学",
+        "description": "『ニューヨーカー』／『GQ』風のスタイル。クリームアイボリー、ゴールドのアクセント、ドロップキャップ、高級感あふれる編集デザイン。"
+      }
+    }
   },
   "profile": {
     "personalInfo": "個人情報",

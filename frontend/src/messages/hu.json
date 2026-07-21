@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4–50 karakter — kizárólag kisbetűk, számok és kötőjelek.",
     "quickCoverUploadError": "A kép feltöltése nem sikerült. Kérjük, próbálja meg újra.",
     "quickGenericError": "Hiba történt. Kérjük, próbálja meg újra.",
-    "quickNameTooLong": "A blog neve legfeljebb 50 karakterből állhat."
+    "quickNameTooLong": "A blog neve legfeljebb 50 karakterből állhat.",
+    "templateStep1Title": "1. lépés — Válassza ki a sablont",
+    "templateStep1Desc": "A sablonod állandó jellegű, és meghatározza a blogod vizuális arculatát.",
+    "templateStep2Title": "2. lépés — A blog adatai",
+    "coverAlt": "Borító",
+    "okButton": "OK",
+    "customColorTitle": "Egyedi szín",
+    "cancel": "Mégse",
+    "templatePermanentTitle": "A sablon állandó.",
+    "templatePermanentDesc": "A sablon határozza meg a blogod vizuális felépítését, és létrehozása után már nem módosítható. A Studio alkalmazásban testreszabhatod a színeket, a betűtípusokat, a tartalmat és az összes beállítást.",
+    "colors": {
+      "blue": "Kék",
+      "violet": "Ibolya",
+      "pink": "Rózsaszín",
+      "red": "Piros",
+      "orange": "Narancs",
+      "green": "Zöld",
+      "cyan": "Cián",
+      "slate": "Palászkő",
+      "gold": "Arany",
+      "black": "Fekete"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Tiszta · Serif · Időtálló",
+        "description": "Medium / The Atlantic stílus. Koncentrált olvasási élmény, kiemelt főszereplő, elegáns háromoszlopos elrendezés."
+      },
+      "magazine": {
+        "tagline": "Merész · Sűrű · Dinamikus",
+        "description": "A Verge / Wired stílusa. Sötét fejléc, réteges rács, kategóriák szerinti szakaszok, hírlevél-oldalsáv."
+      },
+      "creative": {
+        "tagline": "Sötét · Vizuális · Magával ragadó",
+        "description": "Cargo Collective stílus. Teljes képernyős sötét mód, téglalap alakú képrács, vizuális elemekre összpontosító elrendezés."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Irodalmi",
+        "description": "A New Yorker / GQ stílusa. Krémes elefántcsont szín, arany díszítések, kezdőbetűk, prémium minőségű magazin-hangulat."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Személyes adatok",

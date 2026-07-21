@@ -2106,7 +2106,46 @@
     "quickSlugHint": "Da 4 a 50 caratteri — solo lettere minuscole, numeri e trattini.",
     "quickCoverUploadError": "Impossibile caricare l'immagine. Riprova.",
     "quickGenericError": "Si è verificato un errore. Riprova.",
-    "quickNameTooLong": "Il nome del blog deve contenere al massimo 50 caratteri."
+    "quickNameTooLong": "Il nome del blog deve contenere al massimo 50 caratteri.",
+    "templateStep1Title": "Passaggio 1 — Scegli il tuo modello",
+    "templateStep1Desc": "Il tuo tema è permanente e definisce l'identità visiva del tuo blog.",
+    "templateStep2Title": "Fase 2 — Dettagli del blog",
+    "coverAlt": "Copertina",
+    "okButton": "OK",
+    "customColorTitle": "Colore personalizzato",
+    "cancel": "Annulla",
+    "templatePermanentTitle": "Il modello è permanente.",
+    "templatePermanentDesc": "Il tuo template definisce la struttura visiva del tuo blog e non può essere modificato una volta creato. Puoi personalizzare i colori, i caratteri, i contenuti e tutte le impostazioni in Studio.",
+    "colors": {
+      "blue": "Blu",
+      "violet": "Violet",
+      "pink": "Rosa",
+      "red": "Rosso",
+      "orange": "Arancione",
+      "green": "Verde",
+      "cyan": "Ciano",
+      "slate": "Ardesia",
+      "gold": "Oro",
+      "black": "Nero"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Pulito · Con grazie · Intramontabile",
+        "description": "Stile Medium / The Atlantic. Esperienza di lettura mirata, protagonista in primo piano, elegante impaginazione a tre colonne."
+      },
+      "magazine": {
+        "tagline": "Audace · Intenso · Dinamico",
+        "description": "Stile alla The Verge / Wired. Intestazione scura, griglia a livelli, sezioni per categoria, barra laterale dedicata alla newsletter."
+      },
+      "creative": {
+        "tagline": "Cupo · Visivo · Coinvolgente",
+        "description": "Stile Cargo Collective. Modalità scura a tutto schermo, griglia di immagini in stile “masonry”, layout incentrato sull’aspetto visivo."
+      },
+      "luminary": {
+        "tagline": "Prestigio · Serif · Letterario",
+        "description": "Stile *The New Yorker* / *GQ*. Colore avorio crema, dettagli dorati, iniziali maiuscole, atmosfera editoriale di alta qualità."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Dati personali",

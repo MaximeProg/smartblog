@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 tot 50 tekens — uitsluitend kleine letters, cijfers en koppeltekens.",
     "quickCoverUploadError": "De afbeelding kon niet worden geüpload. Probeer het nog eens.",
     "quickGenericError": "Er is een fout opgetreden. Probeer het nog eens.",
-    "quickNameTooLong": "De naam van de blog mag maximaal 50 tekens lang zijn."
+    "quickNameTooLong": "De naam van de blog mag maximaal 50 tekens lang zijn.",
+    "templateStep1Title": "Stap 1 — Kies je sjabloon",
+    "templateStep1Desc": "Je sjabloon is permanent en bepaalt de visuele identiteit van je blog.",
+    "templateStep2Title": "Stap 2 — Bloggegevens",
+    "coverAlt": "Omslag",
+    "okButton": "Oké",
+    "customColorTitle": "Aangepaste kleur",
+    "cancel": "Annuleren",
+    "templatePermanentTitle": "Het sjabloon is permanent.",
+    "templatePermanentDesc": "Je sjabloon bepaalt de visuele opbouw van je blog en kan na het aanmaken niet meer worden gewijzigd. Je kunt kleuren, lettertypen, inhoud en alle instellingen aanpassen in de Studio.",
+    "colors": {
+      "blue": "Blauw",
+      "violet": "Violet",
+      "pink": "Roze",
+      "red": "Rood",
+      "orange": "Oranje",
+      "green": "Groen",
+      "cyan": "Cyaan",
+      "slate": "Leisteen",
+      "gold": "Goud",
+      "black": "Zwart"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Strak · Serif · Tijdloos",
+        "description": "Medium / De stijl van The Atlantic. Een gerichte leeservaring, een uitgelichte hoofdpersoon, een elegante indeling in drie kolommen."
+      },
+      "magazine": {
+        "tagline": "Gedurfd · Intens · Dynamisch",
+        "description": "In de stijl van The Verge / Wired. Donkere koptekst, gelaagde rasterindeling, categorieën, zijbalk met nieuwsbrief."
+      },
+      "creative": {
+        "tagline": "Donker · Visueel · Meeslepend",
+        "description": "Cargo Collective-stijl. Volledig donkere modus, raster met afbeeldingen in masonry-opstelling, lay-out waarin het visuele centraal staat."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Literair",
+        "description": "De stijl van The New Yorker / GQ. Crèmekleurig ivoor, gouden accenten, initialen, een hoogwaardige redactionele uitstraling."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Persoonlijke gegevens",

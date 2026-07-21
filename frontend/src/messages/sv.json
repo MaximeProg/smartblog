@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 till 50 tecken – endast gemener, siffror och bindestreck.",
     "quickCoverUploadError": "Det gick inte att ladda upp bilden. Försök igen.",
     "quickGenericError": "Något gick fel. Försök igen.",
-    "quickNameTooLong": "Bloggnamnet får innehålla högst 50 tecken."
+    "quickNameTooLong": "Bloggnamnet får innehålla högst 50 tecken.",
+    "templateStep1Title": "Steg 1 – Välj mall",
+    "templateStep1Desc": "Din mall är permanent och avgör hur din blogg ser ut.",
+    "templateStep2Title": "Steg 2 — Blogginformation",
+    "coverAlt": "Omslag",
+    "okButton": "OK",
+    "customColorTitle": "Anpassad färg",
+    "cancel": "Avbryt",
+    "templatePermanentTitle": "Mallen är permanent.",
+    "templatePermanentDesc": "Din mall avgör hur din blogg ser ut och kan inte ändras efter att den har skapats. Du kan anpassa färger, typsnitt, innehåll och alla inställningar i Studio.",
+    "colors": {
+      "blue": "Blå",
+      "violet": "Violett",
+      "pink": "Rosa",
+      "red": "Röd",
+      "orange": "Orange",
+      "green": "Grön",
+      "cyan": "Cyan",
+      "slate": "Skiffer",
+      "gold": "Guld",
+      "black": "Svart"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Ren · Serif · Tidlös",
+        "description": "Medium / The Atlantic-stil. En fokuserad läsupplevelse, en utvald huvudartikel och ett elegant upplägg i tre spalter."
+      },
+      "magazine": {
+        "tagline": "Djärv · Kraftfull · Dynamisk",
+        "description": "I stil med The Verge och Wired. Mörk sidhuvud, rutnät i flera lager, kategorisektioner, nyhetsbrev i sidfältet."
+      },
+      "creative": {
+        "tagline": "Mörkt · Visuellt · Fängslande",
+        "description": "I Cargo Collective-stil. Mörkt läge med fullskärmsläge, bildrutnät i masonry-format, layout med fokus på det visuella."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Litterär",
+        "description": "I stil med The New Yorker och GQ. Krämvit, gulddetaljer, initialbokstäver, exklusiv redaktionell känsla."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Personuppgifter",

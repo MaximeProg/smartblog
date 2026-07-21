@@ -2108,7 +2108,46 @@
     "quickSlugHint": "4 to 50 characters — lowercase letters, numbers and hyphens only.",
     "quickCoverUploadError": "Couldn't upload the image. Please try again.",
     "quickGenericError": "Something went wrong. Please try again.",
-    "quickNameTooLong": "Blog name must be 50 characters or fewer."
+    "quickNameTooLong": "Blog name must be 50 characters or fewer.",
+    "templateStep1Title": "Step 1 — Choose your template",
+    "templateStep1Desc": "Your template is permanent and defines your blog's visual identity.",
+    "templateStep2Title": "Step 2 — Blog details",
+    "coverAlt": "Cover",
+    "okButton": "OK",
+    "customColorTitle": "Custom color",
+    "cancel": "Cancel",
+    "templatePermanentTitle": "Template is permanent.",
+    "templatePermanentDesc": "Your template defines the visual structure of your blog and cannot be changed after creation. You can customize colors, fonts, content and all settings in the Studio.",
+    "colors": {
+      "blue": "Blue",
+      "violet": "Violet",
+      "pink": "Pink",
+      "red": "Red",
+      "orange": "Orange",
+      "green": "Green",
+      "cyan": "Cyan",
+      "slate": "Slate",
+      "gold": "Gold",
+      "black": "Black"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Clean · Serif · Timeless",
+        "description": "Medium / The Atlantic style. Focused reading experience, featured hero, elegant 3-column grid."
+      },
+      "magazine": {
+        "tagline": "Bold · Dense · Dynamic",
+        "description": "The Verge / Wired style. Dark header, layered grid, category sections, newsletter sidebar."
+      },
+      "creative": {
+        "tagline": "Dark · Visual · Immersive",
+        "description": "Cargo Collective style. Full-bleed dark mode, masonry image grid, visual-first layout."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Literary",
+        "description": "The New Yorker / GQ style. Cream ivory, gold accents, drop caps, premium editorial feel."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Personal information",

@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4–50 de caractere — numai litere mici, cifre și cratime.",
     "quickCoverUploadError": "Nu s-a putut încărca imaginea. Vă rugăm să încercați din nou.",
     "quickGenericError": "A apărut o eroare. Vă rugăm să încercați din nou.",
-    "quickNameTooLong": "Numele blogului trebuie să aibă cel mult 50 de caractere."
+    "quickNameTooLong": "Numele blogului trebuie să aibă cel mult 50 de caractere.",
+    "templateStep1Title": "Pasul 1 — Alegeți șablonul dorit",
+    "templateStep1Desc": "Șablonul tău este permanent și definește identitatea vizuală a blogului tău.",
+    "templateStep2Title": "Pasul 2 — Detalii despre blog",
+    "coverAlt": "Coperta",
+    "okButton": "OK",
+    "customColorTitle": "Culoare personalizată",
+    "cancel": "Anulează",
+    "templatePermanentTitle": "Șablonul este permanent.",
+    "templatePermanentDesc": "Șablonul tău definește structura vizuală a blogului tău și nu poate fi modificat după creare. Poți personaliza culorile, fonturile, conținutul și toate setările din Studio.",
+    "colors": {
+      "blue": "Albastru",
+      "violet": "Violet",
+      "pink": "Roz",
+      "red": "Roșu",
+      "orange": "Portocaliu",
+      "green": "Verde",
+      "cyan": "Cian",
+      "slate": "Ardezie",
+      "gold": "Aur",
+      "black": "Negru"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Curat · Serif · Atemporal",
+        "description": "Medium / Stilul The Atlantic. O experiență de lectură concentrată, un articol principal în prim-plan, o structură elegantă pe trei coloane."
+      },
+      "magazine": {
+        "tagline": "Îndrăzneț · Intens · Dinamic",
+        "description": "În stilul The Verge / Wired. Antet întunecat, grilă stratificată, secțiuni de categorii, bara laterală pentru newsletter."
+      },
+      "creative": {
+        "tagline": "Întunecat · Vizual · Imersiv",
+        "description": "Stilul Cargo Collective. Mod întunecat cu afișare pe toată lățimea ecranului, grilă de imagini tip „masonry”, layout care pune accentul pe elementele vizuale."
+      },
+      "luminary": {
+        "tagline": "Prestigiu · Serif · Literar",
+        "description": "Stilul revistelor „The New Yorker” și „GQ”. Culoare crem-fildeș, accente aurii, litere inițiale majuscule, aspect editorial de înaltă calitate."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Date cu caracter personal",

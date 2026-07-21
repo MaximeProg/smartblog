@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 hingga 50 karakter — hanya huruf kecil, angka, dan tanda hubung.",
     "quickCoverUploadError": "Gambar tidak dapat diunggah. Silakan coba lagi.",
     "quickGenericError": "Terjadi kesalahan. Silakan coba lagi.",
-    "quickNameTooLong": "Nama blog harus terdiri dari 50 karakter atau kurang."
+    "quickNameTooLong": "Nama blog harus terdiri dari 50 karakter atau kurang.",
+    "templateStep1Title": "Langkah 1 — Pilih templat Anda",
+    "templateStep1Desc": "Template Anda bersifat permanen dan menentukan identitas visual blog Anda.",
+    "templateStep2Title": "Langkah 2 — Detail blog",
+    "coverAlt": "Sampul",
+    "okButton": "Oke",
+    "customColorTitle": "Warna khusus",
+    "cancel": "Batal",
+    "templatePermanentTitle": "Template bersifat permanen.",
+    "templatePermanentDesc": "Template Anda menentukan struktur visual blog Anda dan tidak dapat diubah setelah dibuat. Anda dapat menyesuaikan warna, jenis huruf, konten, dan semua pengaturan di Studio.",
+    "colors": {
+      "blue": "Biru",
+      "violet": "Ungu",
+      "pink": "Merah muda",
+      "red": "Merah",
+      "orange": "Oranye",
+      "green": "Hijau",
+      "cyan": "Cyan",
+      "slate": "Batu lempeng",
+      "gold": "Emas",
+      "black": "Hitam"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Sederhana · Serif · Abadi",
+        "description": "Gaya Medium / The Atlantic. Pengalaman membaca yang terfokus, sorotan utama, tata letak tiga kolom yang elegan."
+      },
+      "magazine": {
+        "tagline": "Berani · Padat · Dinamis",
+        "description": "Gaya The Verge / Wired. Header gelap, tata letak grid berlapis, bagian kategori, bilah samping buletin."
+      },
+      "creative": {
+        "tagline": "Gelap · Visual · Imersif",
+        "description": "Gaya Cargo Collective. Mode gelap penuh, tata letak gambar bergaya masonry, tata letak yang mengutamakan unsur visual."
+      },
+      "luminary": {
+        "tagline": "Prestise · Serif · Sastra",
+        "description": "Gaya The New Yorker / GQ. Warna krem gading, aksen emas, huruf kapital besar, nuansa editorial premium."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Informasi pribadi",

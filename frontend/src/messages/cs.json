@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 až 50 znaků – pouze malá písmena, číslice a pomlčky.",
     "quickCoverUploadError": "Obrázek se nepodařilo nahrát. Zkuste to prosím znovu.",
     "quickGenericError": "Došlo k chybě. Zkuste to prosím znovu.",
-    "quickNameTooLong": "Název blogu nesmí překročit 50 znaků."
+    "quickNameTooLong": "Název blogu nesmí překročit 50 znaků.",
+    "templateStep1Title": "Krok 1 — Vyberte si šablonu",
+    "templateStep1Desc": "Vaše šablona je trvalá a určuje vizuální podobu vašeho blogu.",
+    "templateStep2Title": "Krok 2 — Údaje o blogu",
+    "coverAlt": "Obálka",
+    "okButton": "Dobře",
+    "customColorTitle": "Vlastní barva",
+    "cancel": "Zrušit",
+    "templatePermanentTitle": "Šablona je trvalá.",
+    "templatePermanentDesc": "Vaše šablona určuje vizuální strukturu vašeho blogu a po vytvoření ji již nelze změnit. V aplikaci Studio můžete přizpůsobit barvy, písma, obsah i všechna nastavení.",
+    "colors": {
+      "blue": "Modrá",
+      "violet": "Fialová",
+      "pink": "Růžová",
+      "red": "Červená",
+      "orange": "Oranžová",
+      "green": "Zelená",
+      "cyan": "Azurová",
+      "slate": "Břidlice",
+      "gold": "Zlato",
+      "black": "Černá"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Čistý · Serifový · Nadčasový",
+        "description": "Medium / Styl časopisu The Atlantic. Soustředěný zážitek z čtení, zvýrazněná hlavní postava, elegantní třísloupcová mřížka."
+      },
+      "magazine": {
+        "tagline": "Odvážný · Intenzivní · Dynamický",
+        "description": "Ve stylu The Verge / Wired. Tmavá hlavička, vrstvená mřížka, sekce kategorií, postranní panel s newsletterem."
+      },
+      "creative": {
+        "tagline": "Temné · Vizuální · Pohlcující",
+        "description": "Ve stylu Cargo Collective. Tmavý režim s plným překrytím, mřížka obrázků typu „masonry“, rozvržení s důrazem na vizuální stránku."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Literární",
+        "description": "Ve stylu časopisů The New Yorker a GQ. Krémově slonovinová barva, zlaté akcenty, iniciály, prémiový redakční styl."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Osobní údaje",

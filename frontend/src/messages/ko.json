@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4~50자 — 소문자, 숫자 및 하이픈만 사용할 수 있습니다.",
     "quickCoverUploadError": "이미지를 업로드할 수 없습니다. 다시 시도해 주세요.",
     "quickGenericError": "문제가 발생했습니다. 다시 시도해 주세요.",
-    "quickNameTooLong": "블로그 이름은 50자 이내여야 합니다."
+    "quickNameTooLong": "블로그 이름은 50자 이내여야 합니다.",
+    "templateStep1Title": "1단계 — 템플릿 선택하기",
+    "templateStep1Desc": "템플릿은 영구적으로 적용되며 블로그의 시각적 정체성을 결정합니다.",
+    "templateStep2Title": "2단계 — 블로그 상세 정보",
+    "coverAlt": "표지",
+    "okButton": "알겠습니다",
+    "customColorTitle": "사용자 지정 색상",
+    "cancel": "취소",
+    "templatePermanentTitle": "템플릿은 영구적입니다.",
+    "templatePermanentDesc": "템플릿은 블로그의 시각적 구조를 정의하며, 일단 생성된 후에는 변경할 수 없습니다. 스튜디오에서 색상, 글꼴, 콘텐츠 및 모든 설정을 사용자 지정할 수 있습니다.",
+    "colors": {
+      "blue": "파랑",
+      "violet": "바이올렛",
+      "pink": "핑크",
+      "red": "빨강",
+      "orange": "오렌지",
+      "green": "녹색",
+      "cyan": "시안",
+      "slate": "슬레이트",
+      "gold": "금",
+      "black": "검정"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "깔끔함 · 세리프 · 시대를 초월한",
+        "description": "Medium / The Atlantic 스타일. 집중적인 읽기 경험, 주요 기사 강조, 세련된 3단 레이아웃."
+      },
+      "magazine": {
+        "tagline": "대담함 · 밀도 · 역동성",
+        "description": "The Verge / Wired 스타일. 어두운 헤더, 레이어드 그리드, 카테고리 섹션, 뉴스레터 사이드바."
+      },
+      "creative": {
+        "tagline": "다크 · 비주얼 · 몰입감",
+        "description": "Cargo Collective 스타일. 화면 전체를 채우는 다크 모드, 메이슨리 이미지 그리드, 시각 중심 레이아웃."
+      },
+      "luminary": {
+        "tagline": "프리미엄 · 세리프 · 문학",
+        "description": "더 뉴요커 / GQ 스타일. 크림 아이보리 색상, 골드 액센트, 드롭 캡, 고급스러운 편집물 느낌."
+      }
+    }
   },
   "profile": {
     "personalInfo": "개인정보",

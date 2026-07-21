@@ -1462,7 +1462,7 @@
         "features": [
           "Rajoittamaton määrä blogeja",
           "Rajoittamaton määrä artikkeleita",
-          "Rajoittamaton tilaajamäärä",
+          "Rajoittamaton määrä tilaajia",
           "Rajoittamaton määrä kirjoittajia",
           "Rajoittamaton tallennustila",
           "Usean toimialueen",
@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4–50 merkkiä — vain pieniä kirjaimia, numeroita ja väliviivoja.",
     "quickCoverUploadError": "Kuvaa ei voitu ladata. Yritä uudelleen.",
     "quickGenericError": "Jotain meni pieleen. Yritä uudelleen.",
-    "quickNameTooLong": "Blogin nimen pituus saa olla enintään 50 merkkiä."
+    "quickNameTooLong": "Blogin nimen pituus saa olla enintään 50 merkkiä.",
+    "templateStep1Title": "Vaihe 1 — Valitse malli",
+    "templateStep1Desc": "Mallisi on pysyvä ja määrittää blogisi visuaalisen ilmeen.",
+    "templateStep2Title": "Vaihe 2 — Blogin tiedot",
+    "coverAlt": "Kansi",
+    "okButton": "OK",
+    "customColorTitle": "Mukautettu väri",
+    "cancel": "Peruuta",
+    "templatePermanentTitle": "Malli on pysyvä.",
+    "templatePermanentDesc": "Mallisi määrittää blogisi ulkoasun, eikä sitä voi muuttaa luomisen jälkeen. Voit muokata värejä, fontteja, sisältöä ja kaikkia asetuksia Studiossa.",
+    "colors": {
+      "blue": "Sininen",
+      "violet": "Violet",
+      "pink": "Vaaleanpunainen",
+      "red": "Punainen",
+      "orange": "Oranssi",
+      "green": "Vihreä",
+      "cyan": "Syaani",
+      "slate": "Liuskekivi",
+      "gold": "Kulta",
+      "black": "Musta"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Puhdas · Serif · Ajaton",
+        "description": "Medium / The Atlantic -tyyli. Keskittynyt lukukokemus, esillä oleva päähenkilö, tyylikäs kolmisarakkeinen asettelu."
+      },
+      "magazine": {
+        "tagline": "Rohkea · Tiivis · Dynaaminen",
+        "description": "The Verge / Wired -tyyli. Tumma otsikkokenttä, kerroksellinen ruudukko, luokkakohtaiset osiot, uutiskirjeen sivupalkki."
+      },
+      "creative": {
+        "tagline": "Tumma · Visuaalinen · Mukaansatempaava",
+        "description": "Cargo Collective -tyyli. Reunasta reunaan ulottuva tumma tila, muuraustyyppinen kuvaruudukko, visuaalisuutta korostava asettelu."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Kirjallisuus",
+        "description": "The New Yorker / GQ -tyyli. Kermanvärinen norsunluu, kultaiset korostukset, alkukirjaimet, korkealaatuinen lehtimäinen tunnelma."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Henkilötiedot",

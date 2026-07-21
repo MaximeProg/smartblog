@@ -2106,7 +2106,46 @@
     "quickSlugHint": "De 4 a 50 caracteres: solo letras minúsculas, números y guiones.",
     "quickCoverUploadError": "No se ha podido subir la imagen. Inténtalo de nuevo.",
     "quickGenericError": "Ha habido un error. Inténtalo de nuevo.",
-    "quickNameTooLong": "El nombre del blog debe tener 50 caracteres o menos."
+    "quickNameTooLong": "El nombre del blog debe tener 50 caracteres o menos.",
+    "templateStep1Title": "Paso 1 — Elige tu plantilla",
+    "templateStep1Desc": "Tu plantilla es permanente y define la identidad visual de tu blog.",
+    "templateStep2Title": "Paso 2 — Datos del blog",
+    "coverAlt": "Portada",
+    "okButton": "Vale",
+    "customColorTitle": "Color personalizado",
+    "cancel": "Cancelar",
+    "templatePermanentTitle": "La plantilla es permanente.",
+    "templatePermanentDesc": "Tu plantilla define la estructura visual de tu blog y no se puede modificar una vez creada. Puedes personalizar los colores, las fuentes, el contenido y todos los ajustes en Studio.",
+    "colors": {
+      "blue": "Azul",
+      "violet": "Violeta",
+      "pink": "Rosa",
+      "red": "Rojo",
+      "orange": "Naranja",
+      "green": "Verde",
+      "cyan": "Cian",
+      "slate": "Pizarra",
+      "gold": "Oro",
+      "black": "Negro"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Limpio · Serif · Atemporal",
+        "description": "Estilo «Medium» / «The Atlantic». Experiencia de lectura centrada, artículo destacado, elegante maquetación en tres columnas."
+      },
+      "magazine": {
+        "tagline": "Atrevido · Intenso · Dinámico",
+        "description": "Estilo de The Verge / Wired. Encabezado oscuro, cuadrícula en capas, secciones por categorías, barra lateral con el boletín informativo."
+      },
+      "creative": {
+        "tagline": "Oscuro · Visual · Inmersivo",
+        "description": "Estilo Cargo Collective. Modo oscuro a pantalla completa, cuadrícula de imágenes tipo «masonry» y diseño centrado en lo visual."
+      },
+      "luminary": {
+        "tagline": "Prestigio · Serif · Literario",
+        "description": "Estilo «The New Yorker» / «GQ». Color marfil cremoso, detalles dorados, letras capitulares, aspecto editorial de alta calidad."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Datos personales",

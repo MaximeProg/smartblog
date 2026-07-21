@@ -1447,7 +1447,7 @@
         "cta": "Auf „Pro“ umsteigen",
         "features": [
           "10 Blogs",
-          "Unbegrenzte Anzahl von Artikeln",
+          "Unbegrenzte Anzahl an Artikeln",
           "50.000 Newsletter-Abonnenten",
           "10 Autoren",
           "50 GB Speicherplatz",
@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 bis 50 Zeichen – ausschließlich Kleinbuchstaben, Zahlen und Bindestriche.",
     "quickCoverUploadError": "Das Bild konnte nicht hochgeladen werden. Bitte versuche es erneut.",
     "quickGenericError": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
-    "quickNameTooLong": "Der Name des Blogs darf maximal 50 Zeichen lang sein."
+    "quickNameTooLong": "Der Name des Blogs darf maximal 50 Zeichen lang sein.",
+    "templateStep1Title": "Schritt 1 – Wählen Sie Ihre Vorlage aus",
+    "templateStep1Desc": "Deine Vorlage ist dauerhaft und bestimmt das Erscheinungsbild deines Blogs.",
+    "templateStep2Title": "Schritt 2 – Blog-Details",
+    "coverAlt": "Umschlag",
+    "okButton": "OK",
+    "customColorTitle": "Benutzerdefinierte Farbe",
+    "cancel": "Abbrechen",
+    "templatePermanentTitle": "Die Vorlage ist dauerhaft.",
+    "templatePermanentDesc": "Ihre Vorlage legt die visuelle Struktur Ihres Blogs fest und kann nach der Erstellung nicht mehr geändert werden. Im Studio können Sie Farben, Schriftarten, Inhalte und alle Einstellungen individuell anpassen.",
+    "colors": {
+      "blue": "Blau",
+      "violet": "Violet",
+      "pink": "Rosa",
+      "red": "Rot",
+      "orange": "Orange",
+      "green": "Grün",
+      "cyan": "Cyan",
+      "slate": "Schiefer",
+      "gold": "Gold",
+      "black": "Schwarz"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Schlicht · Serif · Zeitlos",
+        "description": "Medium / Im Stil von „The Atlantic“. Konzentriertes Leseerlebnis, hervorgehobener Hauptartikel, elegantes 3-spaltiges Raster."
+      },
+      "magazine": {
+        "tagline": "Kraftvoll · Dicht · Dynamisch",
+        "description": "Im Stil von The Verge / Wired. Dunkle Kopfzeile, mehrschichtiges Raster, Kategoriebereiche, Newsletter-Seitenleiste."
+      },
+      "creative": {
+        "tagline": "Düster · Visuell · Mitreißend",
+        "description": "Im Cargo-Collective-Stil. Vollflächiger Dunkelmodus, Bildraster im Masonry-Stil, visuell orientiertes Layout."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serifenschrift · Literarisch",
+        "description": "Im Stil von „The New Yorker“ / „GQ“. Cremeweiß, goldene Akzente, Initialen, hochwertiger redaktioneller Stil."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Persönliche Daten",

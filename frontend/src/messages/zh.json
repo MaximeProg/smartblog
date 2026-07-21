@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 至 50 个字符——仅限小写字母、数字和连字符。",
     "quickCoverUploadError": "无法上传图片。请重试。",
     "quickGenericError": "出现错误。请重试。",
-    "quickNameTooLong": "博客名称必须不超过 50 个字符。"
+    "quickNameTooLong": "博客名称必须不超过 50 个字符。",
+    "templateStep1Title": "步骤 1 — 选择模板",
+    "templateStep1Desc": "您的模板是永久性的，它定义了您博客的视觉风格。",
+    "templateStep2Title": "第 2 步 — 博客详情",
+    "coverAlt": "封面",
+    "okButton": "好的",
+    "customColorTitle": "自定义颜色",
+    "cancel": "取消",
+    "templatePermanentTitle": "模板是永久的。",
+    "templatePermanentDesc": "模板定义了博客的视觉结构，创建后无法更改。您可以在“工作室”中自定义颜色、字体、内容以及所有设置。",
+    "colors": {
+      "blue": "蓝色",
+      "violet": "紫罗兰",
+      "pink": "粉色",
+      "red": "红色",
+      "orange": "橙色",
+      "green": "绿色",
+      "cyan": "青色",
+      "slate": "Slate",
+      "gold": "黄金",
+      "black": "黑色"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "简约 · 衬线体 · 经典永恒",
+        "description": "Medium / 《大西洋月刊》风格。专注的阅读体验，突出展示的主角，优雅的三栏网格布局。"
+      },
+      "magazine": {
+        "tagline": "大胆 · 浓郁 · 充满活力",
+        "description": "《The Verge》/《Wired》风格。深色页眉、分层网格、分类板块、通讯侧边栏。"
+      },
+      "creative": {
+        "tagline": "暗黑 · 视觉 · 沉浸式",
+        "description": "Cargo Collective 风格。全屏深色模式、砌砖式图片网格、视觉优先的布局。"
+      },
+      "luminary": {
+        "tagline": "尊贵 · 衬线体 · 文学体",
+        "description": "《纽约客》/《GQ》风格。象牙白底色，金色点缀，首字大写，呈现高端杂志的质感。"
+      }
+    }
   },
   "profile": {
     "personalInfo": "个人信息",

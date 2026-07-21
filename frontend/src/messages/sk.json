@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 až 50 znakov — iba malé písmená, čísla a pomlčky.",
     "quickCoverUploadError": "Obrázok sa nepodarilo nahrať. Skúste to prosím znova.",
     "quickGenericError": "Niečo sa nepodarilo. Skúste to prosím znova.",
-    "quickNameTooLong": "Názov blogu nesmie presiahnuť 50 znakov."
+    "quickNameTooLong": "Názov blogu nesmie presiahnuť 50 znakov.",
+    "templateStep1Title": "Krok 1 — Vyberte si šablónu",
+    "templateStep1Desc": "Vaša šablóna je trvalá a určuje vizuálnu identitu vášho blogu.",
+    "templateStep2Title": "Krok 2 — Údaje o blogu",
+    "coverAlt": "Obálka",
+    "okButton": "OK",
+    "customColorTitle": "Vlastná farba",
+    "cancel": "Zrušiť",
+    "templatePermanentTitle": "Šablóna je trvalá.",
+    "templatePermanentDesc": "Vaša šablóna určuje vizuálnu štruktúru vášho blogu a po vytvorení ju už nie je možné zmeniť. V aplikácii Studio si môžete prispôsobiť farby, písma, obsah a všetky nastavenia.",
+    "colors": {
+      "blue": "Modrá",
+      "violet": "Fialová",
+      "pink": "Ružová",
+      "red": "Červená",
+      "orange": "Oranžová",
+      "green": "Zelená",
+      "cyan": "Cyan",
+      "slate": "Bridlica",
+      "gold": "Zlato",
+      "black": "Čierna"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Čistý · Serif · Nadčasový",
+        "description": "Štýl Medium / The Atlantic. Sústredený čitateľský zážitok, zvýraznená hlavná postava, elegantná trojstĺpcová mriežka."
+      },
+      "magazine": {
+        "tagline": "Odvážny · Intenzívny · Dynamický",
+        "description": "Štýl The Verge / Wired. Tmavá hlavička, vrstvená mriežka, sekcie kategórií, bočný panel s newsletterom."
+      },
+      "creative": {
+        "tagline": "Temné · Vizuálne · Pohlcujúce",
+        "description": "Štýl Cargo Collective. Tmavý režim s plným prekrytím, mriežka obrázkov typu „masonry“, rozloženie s dôrazom na vizuálnu stránku."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Literárne",
+        "description": "Štýl časopisov The New Yorker / GQ. Krémovo-slonovinová farba, zlaté akcenty, iniciály, prémiový redakčný štýl."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Osobné údaje",

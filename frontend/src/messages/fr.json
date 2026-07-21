@@ -2108,7 +2108,46 @@
     "quickSlugHint": "4 à 50 caractères — lettres minuscules, chiffres et tirets uniquement.",
     "quickCoverUploadError": "Échec de l'envoi de l'image. Merci de réessayer.",
     "quickGenericError": "Une erreur est survenue. Merci de réessayer.",
-    "quickNameTooLong": "Le nom du blog ne doit pas dépasser 50 caractères."
+    "quickNameTooLong": "Le nom du blog ne doit pas dépasser 50 caractères.",
+    "templateStep1Title": "Étape 1 — Choisissez votre thème",
+    "templateStep1Desc": "Votre thème est permanent et définit l'identité visuelle de votre blog.",
+    "templateStep2Title": "Étape 2 — Détails du blog",
+    "coverAlt": "Couverture",
+    "okButton": "OK",
+    "customColorTitle": "Couleur personnalisée",
+    "cancel": "Annuler",
+    "templatePermanentTitle": "Le thème est permanent.",
+    "templatePermanentDesc": "Votre thème définit la structure visuelle de votre blog et ne peut plus être changé après la création. Vous pouvez personnaliser les couleurs, les polices, le contenu et tous les réglages dans le Studio.",
+    "colors": {
+      "blue": "Bleu",
+      "violet": "Violet",
+      "pink": "Rose",
+      "red": "Rouge",
+      "orange": "Orange",
+      "green": "Vert",
+      "cyan": "Cyan",
+      "slate": "Ardoise",
+      "gold": "Or",
+      "black": "Noir"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Épuré · Serif · Intemporel",
+        "description": "Style Medium / The Atlantic. Expérience de lecture centrée, hero en vedette, grille élégante en 3 colonnes."
+      },
+      "magazine": {
+        "tagline": "Audacieux · Dense · Dynamique",
+        "description": "Style The Verge / Wired. En-tête sombre, grille en couches, sections par catégorie, newsletter en barre latérale."
+      },
+      "creative": {
+        "tagline": "Sombre · Visuel · Immersif",
+        "description": "Style Cargo Collective. Mode sombre plein cadre, grille d'images en mosaïque, mise en page centrée sur le visuel."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Littéraire",
+        "description": "Style The New Yorker / GQ. Ivoire crème, accents dorés, lettrines, ambiance éditoriale premium."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Informations personnelles",

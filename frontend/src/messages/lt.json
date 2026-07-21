@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4–50 simbolių — tik mažosios raidės, skaičiai ir brūkšneliai.",
     "quickCoverUploadError": "Nepavyko įkelti paveikslėlio. Prašome bandyti dar kartą.",
     "quickGenericError": "Įvyko klaida. Prašome bandyti dar kartą.",
-    "quickNameTooLong": "Tinklaraščio pavadinimas turi būti ne ilgesnis kaip 50 simbolių."
+    "quickNameTooLong": "Tinklaraščio pavadinimas turi būti ne ilgesnis kaip 50 simbolių.",
+    "templateStep1Title": "1 žingsnis — Pasirinkite šabloną",
+    "templateStep1Desc": "Jūsų šablonas yra nuolatinis ir nulemia jūsų tinklaraščio vizualinį stilių.",
+    "templateStep2Title": "2 žingsnis — Tinklaraščio duomenys",
+    "coverAlt": "Viršelis",
+    "okButton": "Gerai",
+    "customColorTitle": "Pasirinkta spalva",
+    "cancel": "Atšaukti",
+    "templatePermanentTitle": "Šablonas yra nuolatinis.",
+    "templatePermanentDesc": "Jūsų šablonas apibrėžia jūsų tinklaraščio vizualinę struktūrą ir jo negalima keisti po sukūrimo. „Studio“ galite pritaikyti spalvas, šriftus, turinį ir visus nustatymus.",
+    "colors": {
+      "blue": "Mėlyna",
+      "violet": "Violet",
+      "pink": "Rožinė",
+      "red": "Raudona",
+      "orange": "Oranžinė",
+      "green": "Žalia",
+      "cyan": "Ciano",
+      "slate": "Šiferis",
+      "gold": "Auksas",
+      "black": "Juoda"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Švarus · Serifinis · Klasikinis",
+        "description": "„Medium“ / „The Atlantic“ stilius. Koncentruota skaitymo patirtis, išskirtinis pagrindinis veikėjas, elegantiškas trijų stulpelių išdėstymas."
+      },
+      "magazine": {
+        "tagline": "Ryškus · Tankus · Dinamiškas",
+        "description": "„The Verge“ / „Wired“ stilius. Tamsus antraštės fonas, sluoksniuotas tinklelis, kategorijų skyriai, naujienlaiškio šoninė juosta."
+      },
+      "creative": {
+        "tagline": "Tamsus · Vizualus · Įtraukiantis",
+        "description": "„Cargo Collective“ stilius. Tamsusis režimas be rėmelių, „masonry“ tipo paveikslėlių tinklelis, vizualiai orientuotas išdėstymas."
+      },
+      "luminary": {
+        "tagline": "Prestižinis · Serifinis · Literatūrinis",
+        "description": "„The New Yorker“ / „GQ“ stilius. Kreminė dramblio kaulo spalva, auksiniai akcentai, didžiosios raidės, aukštos kokybės leidinio stilius."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Asmens duomenys",

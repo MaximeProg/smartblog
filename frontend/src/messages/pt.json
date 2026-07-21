@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 a 50 caracteres — apenas letras minúsculas, números e hífens.",
     "quickCoverUploadError": "Não foi possível carregar a imagem. Por favor, tente novamente.",
     "quickGenericError": "Ocorreu um erro. Por favor, tente novamente.",
-    "quickNameTooLong": "O nome do blogue deve ter, no máximo, 50 caracteres."
+    "quickNameTooLong": "O nome do blogue deve ter, no máximo, 50 caracteres.",
+    "templateStep1Title": "Passo 1 — Escolha o seu modelo",
+    "templateStep1Desc": "O teu modelo é permanente e define a identidade visual do teu blogue.",
+    "templateStep2Title": "Passo 2 — Detalhes do blogue",
+    "coverAlt": "Capa",
+    "okButton": "OK",
+    "customColorTitle": "Cor personalizada",
+    "cancel": "Cancelar",
+    "templatePermanentTitle": "O modelo é permanente.",
+    "templatePermanentDesc": "O seu modelo define a estrutura visual do seu blogue e não pode ser alterado após a criação. Pode personalizar as cores, os tipos de letra, o conteúdo e todas as definições no Studio.",
+    "colors": {
+      "blue": "Azul",
+      "violet": "Violeta",
+      "pink": "Rosa",
+      "red": "Vermelho",
+      "orange": "Laranja",
+      "green": "Verde",
+      "cyan": "Ciano",
+      "slate": "Ardósia",
+      "gold": "Ouro",
+      "black": "Preto"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Simples · Serif · Intemporal",
+        "description": "Estilo «Medium» / «The Atlantic». Experiência de leitura focada, artigo em destaque, grelha elegante de três colunas."
+      },
+      "magazine": {
+        "tagline": "Ousado · Intenso · Dinâmico",
+        "description": "Estilo do The Verge / Wired. Cabeçalho escuro, grelha em camadas, secções de categorias, barra lateral com a newsletter."
+      },
+      "creative": {
+        "tagline": "Sombrio · Visual · Imersivo",
+        "description": "Estilo Cargo Collective. Modo escuro com imagens a ocupar todo o ecrã, grelha de imagens em estilo «masonry», layout que privilegia o aspeto visual."
+      },
+      "luminary": {
+        "tagline": "Prestígio · Serif · Literária",
+        "description": "Estilo da revista «The New Yorker» / «GQ». Tom creme-marfim, detalhes dourados, letras maiúsculas decorativas, estilo editorial de alta qualidade."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Informações pessoais",

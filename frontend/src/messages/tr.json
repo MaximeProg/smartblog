@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 ila 50 karakter — yalnızca küçük harfler, rakamlar ve tire işaretleri.",
     "quickCoverUploadError": "Resim yüklenemedi. Lütfen tekrar deneyin.",
     "quickGenericError": "Bir hata oluştu. Lütfen tekrar deneyin.",
-    "quickNameTooLong": "Blog adı en fazla 50 karakterden oluşmalıdır."
+    "quickNameTooLong": "Blog adı en fazla 50 karakterden oluşmalıdır.",
+    "templateStep1Title": "1. Adım — Şablonunuzu seçin",
+    "templateStep1Desc": "Şablonunuz kalıcıdır ve blogunuzun görsel kimliğini belirler.",
+    "templateStep2Title": "2. Adım — Blog bilgileri",
+    "coverAlt": "Kapak",
+    "okButton": "Tamam",
+    "customColorTitle": "Özel renk",
+    "cancel": "İptal et",
+    "templatePermanentTitle": "Şablon kalıcıdır.",
+    "templatePermanentDesc": "Şablonunuz, blogunuzun görsel yapısını belirler ve oluşturulduktan sonra değiştirilemez. Studio'da renkleri, yazı tiplerini, içeriği ve tüm ayarları özelleştirebilirsiniz.",
+    "colors": {
+      "blue": "Mavi",
+      "violet": "Menekşe",
+      "pink": "Pembe",
+      "red": "Kırmızı",
+      "orange": "Portakal",
+      "green": "Yeşil",
+      "cyan": "Camgöbeği",
+      "slate": "Arduvaz",
+      "gold": "Altın",
+      "black": "Siyah"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Sade · Serif · Zamansız",
+        "description": "Medium / The Atlantic tarzı. Odaklanmış okuma deneyimi, öne çıkan başlık, zarif 3 sütunlu düzen."
+      },
+      "magazine": {
+        "tagline": "Cesur · Yoğun · Dinamik",
+        "description": "The Verge / Wired tarzı. Koyu renkli başlık, katmanlı ızgara, kategori bölümleri, haber bülteni kenar çubuğu."
+      },
+      "creative": {
+        "tagline": "Karanlık · Görsel · Sürükleyici",
+        "description": "Cargo Collective stili. Kenar boşluğu olmayan karanlık mod, tuğla düzeninde resim ızgarası, görsel öncelikli mizanpaj."
+      },
+      "luminary": {
+        "tagline": "Prestij · Serif · Edebi",
+        "description": "The New Yorker / GQ tarzı. Krem-fildişi tonları, altın rengi vurgular, baş harf süslemeleri, birinci sınıf bir dergi havası."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Kişisel bilgiler",

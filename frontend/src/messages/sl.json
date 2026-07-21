@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 do 50 znakov — samo male črke, številke in vezaji.",
     "quickCoverUploadError": "Slike ni bilo mogoče naložiti. Poskusite še enkrat.",
     "quickGenericError": "Nastala je napaka. Poskusite še enkrat.",
-    "quickNameTooLong": "Ime bloga mora imeti največ 50 znakov."
+    "quickNameTooLong": "Ime bloga mora imeti največ 50 znakov.",
+    "templateStep1Title": "1. korak — Izberite predlogo",
+    "templateStep1Desc": "Vaša predloga je trajna in določa vizualno identiteto vašega spletnega dnevnika.",
+    "templateStep2Title": "Korak 2 — Podrobnosti o blogu",
+    "coverAlt": "Naslovnica",
+    "okButton": "OK",
+    "customColorTitle": "Barva po meri",
+    "cancel": "Prekliči",
+    "templatePermanentTitle": "Predloga je trajna.",
+    "templatePermanentDesc": "Vaša predloga določa vizualno strukturo vašega bloga in je po ustvarjanju ni mogoče spremeniti. V Studiu lahko prilagodite barve, pisave, vsebino in vse nastavitve.",
+    "colors": {
+      "blue": "Modra",
+      "violet": "Violet",
+      "pink": "Roza",
+      "red": "Rdeča",
+      "orange": "Oranžna",
+      "green": "Zelena",
+      "cyan": "Cian",
+      "slate": "Slate",
+      "gold": "Zlato",
+      "black": "Črna"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Čist · Serif · Brezčasen",
+        "description": "Slog revije Medium / The Atlantic. Osredotočena bralna izkušnja, izpostavljen glavni članek, elegantna razporeditev v treh stolpcih."
+      },
+      "magazine": {
+        "tagline": "Drzen · Izrazit · Dinamičen",
+        "description": "V slogu spletnih strani The Verge in Wired. Temna glava strani, večplastna mreža, razdelki po kategorijah, stranski stolpec za e-novice."
+      },
+      "creative": {
+        "tagline": "Temno · Vizualno · Vživajoče",
+        "description": "V slogu Cargo Collective. Temni način brez robov, mreža slik v slogu »masonry«, postavitev, ki daje prednost vizualnemu."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Literarni",
+        "description": "V slogu revij »The New Yorker« in »GQ«. Kremasto slonokoščena barva, zlati poudarki, inicialke, vrhunski uredniški videz."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Osebni podatki",

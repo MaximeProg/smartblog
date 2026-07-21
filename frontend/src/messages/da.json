@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 til 50 tegn — kun små bogstaver, tal og bindestreger.",
     "quickCoverUploadError": "Det var ikke muligt at uploade billedet. Prøv venligst igen.",
     "quickGenericError": "Der opstod en fejl. Prøv venligst igen.",
-    "quickNameTooLong": "Blognavnet må højst bestå af 50 tegn."
+    "quickNameTooLong": "Blognavnet må højst bestå af 50 tegn.",
+    "templateStep1Title": "Trin 1 — Vælg din skabelon",
+    "templateStep1Desc": "Din skabelon er fast og fastlægger din blogs visuelle identitet.",
+    "templateStep2Title": "Trin 2 — Blogoplysninger",
+    "coverAlt": "Forside",
+    "okButton": "OK",
+    "customColorTitle": "Brugerdefineret farve",
+    "cancel": "Annuller",
+    "templatePermanentTitle": "Skabelonen er permanent.",
+    "templatePermanentDesc": "Din skabelon fastlægger den visuelle struktur på din blog og kan ikke ændres, når den først er oprettet. Du kan tilpasse farver, skrifttyper, indhold og alle indstillinger i Studio.",
+    "colors": {
+      "blue": "Blå",
+      "violet": "Violet",
+      "pink": "Lyserød",
+      "red": "Rød",
+      "orange": "Orange",
+      "green": "Grøn",
+      "cyan": "Cyan",
+      "slate": "Skifer",
+      "gold": "Guld",
+      "black": "Sort"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Rent · Serif · Tidløst",
+        "description": "Medium / The Atlantic-stilen. En fokuseret læseoplevelse, en fremhævet hovedperson og et elegant layout med tre spalter."
+      },
+      "magazine": {
+        "tagline": "Modig · Kraftfuld · Dynamisk",
+        "description": "I stil med The Verge / Wired. Mørk toptekst, lagdelt gitter, kategorisektioner, nyhedsbrev i sidepanelet."
+      },
+      "creative": {
+        "tagline": "Mørkt · Visuelt · Fordybende",
+        "description": "Cargo Collective-stil. Mørk tilstand uden kantlinjer, billedgitter i »masonry«-format, layout med fokus på det visuelle."
+      },
+      "luminary": {
+        "tagline": "Prestige · Serif · Litterær",
+        "description": "I stil med The New Yorker / GQ. Cremet elfenben, gulddetaljer, initialer, eksklusivt redaktionelt udtryk."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Personoplysninger",

@@ -1453,7 +1453,7 @@
           "Pielāgots domēns",
           "Pilnīga analītika + SEO",
           "API piekļuve",
-          "Speciāls atbalsts"
+          "Speciāli pielāgots atbalsts"
         ]
       },
       "business": {
@@ -2106,7 +2106,46 @@
     "quickSlugHint": "4 līdz 50 rakstzīmes — tikai mazie burti, cipari un defises.",
     "quickCoverUploadError": "Attēlu neizdevās augšupielādēt. Lūdzu, mēģiniet vēlreiz.",
     "quickGenericError": "Kaut kas nogāja greizi. Lūdzu, mēģiniet vēlreiz.",
-    "quickNameTooLong": "Bloga nosaukumam jābūt ne garākam par 50 rakstzīmēm."
+    "quickNameTooLong": "Bloga nosaukumam jābūt ne garākam par 50 rakstzīmēm.",
+    "templateStep1Title": "1. solis — Izvēlieties veidni",
+    "templateStep1Desc": "Jūsu veidne ir pastāvīga un nosaka jūsu bloga vizuālo identitāti.",
+    "templateStep2Title": "2. solis — Blogu informācija",
+    "coverAlt": "Vāks",
+    "okButton": "Labi",
+    "customColorTitle": "Pielāgota krāsa",
+    "cancel": "Atcelt",
+    "templatePermanentTitle": "Veidne ir pastāvīga.",
+    "templatePermanentDesc": "Jūsu veidne nosaka jūsu bloga vizuālo struktūru, un to nevar mainīt pēc izveides. „Studio“ vidē varat pielāgot krāsas, fontus, saturu un visus iestatījumus.",
+    "colors": {
+      "blue": "Zils",
+      "violet": "Violeta",
+      "pink": "Rozā",
+      "red": "Sarkans",
+      "orange": "Oranža",
+      "green": "Zaļš",
+      "cyan": "Cian",
+      "slate": "Šīfera plāksne",
+      "gold": "Zelts",
+      "black": "Melna"
+    },
+    "templates": {
+      "editorial": {
+        "tagline": "Tīrs · Serifs · Mūžīgs",
+        "description": "„Medium“ / „The Atlantic“ stils. Koncentrēta lasīšanas pieredze, izcelts galvenais varonis, elegants trīs kolonnu izkārtojums."
+      },
+      "magazine": {
+        "tagline": "Drosmīgs · Blīvs · Dinamisks",
+        "description": "„The Verge“ / „Wired“ stils. Tumša galvenā josla, slāņveida izkārtojums, kategoriju sadaļas, biļetena sānu josla."
+      },
+      "creative": {
+        "tagline": "Tumšs · Vizuāls · Iemērkjošs",
+        "description": "„Cargo Collective“ stils. Tumsas režīms bez malām, attēlu izkārtojums „masonry“ stilā, vizuāli orientēts izkārtojums."
+      },
+      "luminary": {
+        "tagline": "Prestižs · Serifs · Literārais",
+        "description": "„The New Yorker“ / „GQ“ stils. Krēmkrāsas ziloņkaula toņi, zelta akcenti, iniciāļi, augstvērtīga izdevuma noskaņa."
+      }
+    }
   },
   "profile": {
     "personalInfo": "Personas dati",
