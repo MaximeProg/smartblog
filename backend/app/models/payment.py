@@ -32,13 +32,11 @@ class Transaction(Base):
     platform_fee: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
     net_amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
 
-    # Cumul confirmé pour la tentative de paiement NowPayments actuelle
-    # (mis à jour à chaque webhook/poll) + cumul figé des tentatives
-    # précédentes (alimenté uniquement lors d'une reprise de paiement
-    # partiel — voir payments.py::resume_payment). Montant total reçu =
-    # amount_received_prior_attempts + amount_received.
+    # Cumul confirmé pour cette transaction (mis à jour à chaque webhook/
+    # poll) — une seule adresse de dépôt tout du long : NowPayments détecte
+    # lui-même les dépôts complémentaires sur la même adresse ("Re-deposit"),
+    # pas besoin de suivre plusieurs tentatives séparément.
     amount_received: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
-    amount_received_prior_attempts: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False, default=0)
 
     # Référence NowPayments
     nowpayments_invoice_id: Mapped[str | None] = mapped_column(String(255))

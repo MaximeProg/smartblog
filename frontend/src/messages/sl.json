@@ -1472,7 +1472,8 @@
           "Podpora 24 ur na dan, 7 dni na teden"
         ]
       }
-    }
+    },
+    "preparingPayment": "Priprava plačila…"
   },
   "myBlogs": {
     "title": "Moji blogi",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Poslovanje",
     "supportAlertTitle": "{count, plural, one {# odpri zahtevek za podporo} other {# odprti zahtevki za podporo}}",
-    "supportAlertDesc": "Kliknite, da si ogledate svoje pogovore s podporo."
+    "supportAlertDesc": "Kliknite, da si ogledate svoje pogovore s podporo.",
+    "blogCardViews": "Ogledi",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Novo",
+    "statTotalViews": "Skupno število ogledov (30 dni)",
+    "statUniqueSessions": "Edinstvene seje (30 dni)",
+    "chartPageViews30d": "Ogledi strani — zadnjih 30 dni",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogi"
   },
   "studio": {
     "save": "Shrani",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Preden dodate naslov denarnice, morate omogočiti dvofaktorsko avtentifikacijo.",
     "avatarChange": "Zamenjaj fotografijo",
     "avatarUpdated": "Posodobljena profilna fotografija.",
-    "avatarError": "Naložitev fotografije ni uspela. Poskusite še enkrat."
+    "avatarError": "Naložitev fotografije ni uspela. Poskusite še enkrat.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarktika",
+      "AS": "Azija",
+      "EU": "Evropa",
+      "NA": "Severna Amerika",
+      "OC": "Oceanija",
+      "SA": "Južna Amerika"
+    },
+    "genders": {
+      "male": "Moški",
+      "female": "Ženska"
+    }
   },
   "notifications": {
     "title": "Obvestila",
@@ -2153,7 +2176,19 @@
     "allRead": "Vse prebrano",
     "markAllRead": "Označi vse kot prebrano",
     "noneTitle": "Ni obvestil",
-    "noneDesc": "Tukaj boste prejemali obvestila o pomembnih novostih v zvezi z vašim računom in blogi."
+    "noneDesc": "Tukaj boste prejemali obvestila o pomembnih novostih v zvezi z vašim računom in blogi.",
+    "minutesAgo": "pred {m} minutami",
+    "hoursAgo": "pred {h} urami",
+    "daysAgo": "pred {d} dnevi",
+    "pushNotSupported": "Ta brskalnik ne podpira obvestil s potisom.",
+    "pushEnabled": "Oblasti za obvestila so omogočene!",
+    "pushEnableError": "Push obvestil ni bilo mogoče omogočiti.",
+    "pushDisabled": "Opozorila so onemogočena.",
+    "pushDisableError": "Napaka pri onemogočanju obvestil »push«.",
+    "pushDisableButton": "Onemogoči obvestila",
+    "pushBlockedByBrowser": "Brskalnik je blokiral pošiljanje",
+    "pushEnableButton": "Omogoči obvestila",
+    "justNow": "pravkar"
   },
   "affiliate": {
     "title": "Partnerški program",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Pošlji povabilo",
     "inviteSentTitle": "Vabilo je poslano!",
     "inviteSentDesc": "Vaše vabilo je bilo poslano na naslov {email}.",
-    "inviteError": "Vabila ni bilo mogoče poslati."
+    "inviteError": "Vabila ni bilo mogoče poslati.",
+    "requested": "Zahtevano",
+    "processing": "Obdelava",
+    "failed": "Ni uspelo",
+    "rejected": "Zavrnjeno",
+    "filterAll": "Vse",
+    "cashoutGross": "Bruto",
+    "cashoutNet": "Neto",
+    "cashoutRequestedCol": "Zahtevano",
+    "cashoutProcessedCol": "Obdelano"
   },
   "tenantAccounting": {
     "title": "Finančni pregled",

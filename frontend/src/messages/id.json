@@ -1472,7 +1472,8 @@
           "Dukungan 24 jam sehari, 7 hari seminggu"
         ]
       }
-    }
+    },
+    "preparingPayment": "Sedang memproses pembayaran…"
   },
   "myBlogs": {
     "title": "Blog-blog saya",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Bisnis",
     "supportAlertTitle": "{count, plural, one {# buka tiket dukungan} other {# buka tiket dukungan}}",
-    "supportAlertDesc": "Klik untuk melihat riwayat percakapan dukungan Anda."
+    "supportAlertDesc": "Klik untuk melihat riwayat percakapan dukungan Anda.",
+    "blogCardViews": "Tampilan",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Baru",
+    "statTotalViews": "Jumlah penayangan (30 hari)",
+    "statUniqueSessions": "Sesi unik (30 hari)",
+    "chartPageViews30d": "Jumlah tampilan halaman — 30 hari terakhir",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blog"
   },
   "studio": {
     "save": "Simpan",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Anda harus mengaktifkan otentikasi dua faktor sebelum menambahkan alamat dompet.",
     "avatarChange": "Ganti foto",
     "avatarUpdated": "Foto profil telah diperbarui.",
-    "avatarError": "Gagal mengunggah foto. Silakan coba lagi."
+    "avatarError": "Gagal mengunggah foto. Silakan coba lagi.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antartika",
+      "AS": "Asia",
+      "EU": "Eropa",
+      "NA": "Amerika Utara",
+      "OC": "Oseania",
+      "SA": "Amerika Selatan"
+    },
+    "genders": {
+      "male": "Laki-laki",
+      "female": "Perempuan"
+    }
   },
   "notifications": {
     "title": "Pemberitahuan",
@@ -2153,7 +2176,19 @@
     "allRead": "Semuanya sudah dibaca",
     "markAllRead": "Tandai semua sebagai sudah dibaca",
     "noneTitle": "Tidak ada pemberitahuan",
-    "noneDesc": "Anda akan menerima pemberitahuan di sini mengenai pembaruan penting terkait akun dan blog Anda."
+    "noneDesc": "Anda akan menerima pemberitahuan di sini mengenai pembaruan penting terkait akun dan blog Anda.",
+    "minutesAgo": "{m} menit yang lalu",
+    "hoursAgo": "{h} jam yang lalu",
+    "daysAgo": "{d} hari yang lalu",
+    "pushNotSupported": "Pemberitahuan push tidak didukung di peramban ini.",
+    "pushEnabled": "Pemberitahuan push telah diaktifkan!",
+    "pushEnableError": "Tidak dapat mengaktifkan notifikasi push.",
+    "pushDisabled": "Pemberitahuan push dinonaktifkan.",
+    "pushDisableError": "Terjadi kesalahan saat menonaktifkan notifikasi push.",
+    "pushDisableButton": "Nonaktifkan notifikasi push",
+    "pushBlockedByBrowser": "Push diblokir oleh browser",
+    "pushEnableButton": "Aktifkan notifikasi push",
+    "justNow": "baru saja"
   },
   "affiliate": {
     "title": "Program Afiliasi",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Kirim undangan",
     "inviteSentTitle": "Undangan sudah dikirim!",
     "inviteSentDesc": "Undangan Anda telah dikirimkan ke {email}.",
-    "inviteError": "Tidak dapat mengirim undangan."
+    "inviteError": "Tidak dapat mengirim undangan.",
+    "requested": "Diminta",
+    "processing": "Pemrosesan",
+    "failed": "Gagal",
+    "rejected": "Ditolak",
+    "filterAll": "Semua",
+    "cashoutGross": "Bruto",
+    "cashoutNet": "Jaring",
+    "cashoutRequestedCol": "Diminta",
+    "cashoutProcessedCol": "Telah diproses"
   },
   "tenantAccounting": {
     "title": "Gambaran umum keuangan",

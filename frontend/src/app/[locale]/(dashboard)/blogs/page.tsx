@@ -70,7 +70,7 @@ function BlogCard({ blog, locale }: { blog: TenantInfo; locale: string }) {
             className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[12px] font-semibold transition-colors"
           >
             <Settings className="h-3.5 w-3.5" />
-            Studio
+            {t('blogCardStudio')}
           </Link>
           <a
             href={`/${locale}/${blog.slug}`}

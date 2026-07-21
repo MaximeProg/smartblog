@@ -1472,7 +1472,8 @@
           "7/24 destek"
         ]
       }
-    }
+    },
+    "preparingPayment": "Ödeme hazırlanıyor…"
   },
   "myBlogs": {
     "title": "Bloglarım",
@@ -1543,7 +1544,15 @@
     "planPro": "Artıları",
     "planBusiness": "İş",
     "supportAlertTitle": "{count, plural, one {# destek talebi aç} other {# destek talepleri aç}}",
-    "supportAlertDesc": "Destek görüşmelerinizi görüntülemek için tıklayın."
+    "supportAlertDesc": "Destek görüşmelerinizi görüntülemek için tıklayın.",
+    "blogCardViews": "Görüntüleme sayısı",
+    "blogCardStudio": "Stüdyo",
+    "newBlogShort": "Yeni",
+    "statTotalViews": "Toplam görüntüleme sayısı (30 gün)",
+    "statUniqueSessions": "Tekil oturumlar (30 gün)",
+    "chartPageViews30d": "Sayfa görüntüleme sayısı — son 30 gün",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} bloglar"
   },
   "studio": {
     "save": "Kaydet",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Bir cüzdan adresi eklemeden önce iki faktörlü kimlik doğrulamayı etkinleştirmeniz gerekir.",
     "avatarChange": "Fotoğrafı değiştir",
     "avatarUpdated": "Profil fotoğrafı güncellendi.",
-    "avatarError": "Fotoğraf yüklenemedi. Lütfen tekrar deneyin."
+    "avatarError": "Fotoğraf yüklenemedi. Lütfen tekrar deneyin.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarktika",
+      "AS": "Asya",
+      "EU": "Avrupa",
+      "NA": "Kuzey Amerika",
+      "OC": "Okyanusya",
+      "SA": "Güney Amerika"
+    },
+    "genders": {
+      "male": "Erkek",
+      "female": "Kadın"
+    }
   },
   "notifications": {
     "title": "Bildirimler",
@@ -2153,7 +2176,19 @@
     "allRead": "Hepsi okundu",
     "markAllRead": "Hepsini okundu olarak işaretle",
     "noneTitle": "Bildirim yok",
-    "noneDesc": "Hesabınız ve bloglarınızla ilgili önemli güncellemeler olduğunda buradan bilgilendirileceksiniz."
+    "noneDesc": "Hesabınız ve bloglarınızla ilgili önemli güncellemeler olduğunda buradan bilgilendirileceksiniz.",
+    "minutesAgo": "{m} dakika önce",
+    "hoursAgo": "{h} saat önce",
+    "daysAgo": "{d} gün önce",
+    "pushNotSupported": "Bu tarayıcıda anlık bildirimler desteklenmemektedir.",
+    "pushEnabled": "Anlık bildirimler etkinleştirildi!",
+    "pushEnableError": "Push bildirimleri etkinleştirilemedi.",
+    "pushDisabled": "Anlık bildirimler devre dışı bırakıldı.",
+    "pushDisableError": "Push bildirimlerini devre dışı bırakırken hata oluştu.",
+    "pushDisableButton": "Push bildirimlerini devre dışı bırak",
+    "pushBlockedByBrowser": "Tarayıcı tarafından engellendi",
+    "pushEnableButton": "Push bildirimlerini etkinleştir",
+    "justNow": "az önce"
   },
   "affiliate": {
     "title": "Ortaklık Programı",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Davetiye gönder",
     "inviteSentTitle": "Davet gönderildi!",
     "inviteSentDesc": "Davetiniz {email} adresine gönderildi.",
-    "inviteError": "Davet gönderilemedi."
+    "inviteError": "Davet gönderilemedi.",
+    "requested": "Talep edildi",
+    "processing": "İşleme",
+    "failed": "Başarısız",
+    "rejected": "Reddedildi",
+    "filterAll": "Tümü",
+    "cashoutGross": "Brüt",
+    "cashoutNet": "Net",
+    "cashoutRequestedCol": "Talep edildi",
+    "cashoutProcessedCol": "İşlendi"
   },
   "tenantAccounting": {
     "title": "Mali genel bakış",

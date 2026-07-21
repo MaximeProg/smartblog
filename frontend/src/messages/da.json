@@ -1422,7 +1422,7 @@
           "1 forfatter",
           "1 GB lagerplads",
           "smarterbloggers.com-underdomæne",
-          "Inkluderer virksomhedsskabelon"
+          "Inkluderet virksomhedsskabelon"
         ]
       },
       "starter": {
@@ -1472,7 +1472,8 @@
           "Support døgnet rundt"
         ]
       }
-    }
+    },
+    "preparingPayment": "Betalingen forberedes…"
   },
   "myBlogs": {
     "title": "Mine blogindlæg",
@@ -1543,7 +1544,15 @@
     "planPro": "Fordele",
     "planBusiness": "Erhverv",
     "supportAlertTitle": "{count, plural, one {# Opret en supportanmodning} other {# åbne supportanmodninger}}",
-    "supportAlertDesc": "Klik her for at se dine support-samtaler."
+    "supportAlertDesc": "Klik her for at se dine support-samtaler.",
+    "blogCardViews": "Visninger",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Nyt",
+    "statTotalViews": "Samlet antal visninger (30 dage)",
+    "statUniqueSessions": "Unikke sessioner (30 dage)",
+    "chartPageViews30d": "Sidevisninger — de seneste 30 dage",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogs"
   },
   "studio": {
     "save": "Gem",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Du skal aktivere tofaktorautentificering, før du tilføjer en tegnebogsadresse.",
     "avatarChange": "Skift billede",
     "avatarUpdated": "Profilbilledet er blevet opdateret.",
-    "avatarError": "Det lykkedes ikke at uploade billedet. Prøv venligst igen."
+    "avatarError": "Det lykkedes ikke at uploade billedet. Prøv venligst igen.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarktis",
+      "AS": "Asien",
+      "EU": "Europa",
+      "NA": "Nordamerika",
+      "OC": "Oceanien",
+      "SA": "Sydamerika"
+    },
+    "genders": {
+      "male": "Mand",
+      "female": "Kvinde"
+    }
   },
   "notifications": {
     "title": "Meddelelser",
@@ -2153,7 +2176,19 @@
     "allRead": "Alle læst",
     "markAllRead": "Markér alle som læst",
     "noneTitle": "Ingen meddelelser",
-    "noneDesc": "Her vil du modtage besked om vigtige opdateringer vedrørende din konto og dine blogs."
+    "noneDesc": "Her vil du modtage besked om vigtige opdateringer vedrørende din konto og dine blogs.",
+    "minutesAgo": "for {m} minutter siden",
+    "hoursAgo": "For {h} timer siden",
+    "daysAgo": "For {d} dage siden",
+    "pushNotSupported": "Push-beskeder understøttes ikke i denne browser.",
+    "pushEnabled": "Push-beskeder er aktiveret!",
+    "pushEnableError": "Det var ikke muligt at aktivere push-beskeder.",
+    "pushDisabled": "Push-beskeder er deaktiveret.",
+    "pushDisableError": "Der opstod en fejl under deaktivering af push-beskeder.",
+    "pushDisableButton": "Deaktiver push-beskeder",
+    "pushBlockedByBrowser": "Tryk blokeret af browseren",
+    "pushEnableButton": "Aktivér push-beskeder",
+    "justNow": "lige nu"
   },
   "affiliate": {
     "title": "Partnerprogram",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Send invitation",
     "inviteSentTitle": "Invitationen er sendt!",
     "inviteSentDesc": "Din invitation er blevet sendt til {email}.",
-    "inviteError": "Det var ikke muligt at sende invitationen."
+    "inviteError": "Det var ikke muligt at sende invitationen.",
+    "requested": "Anmodet om",
+    "processing": "Behandling",
+    "failed": "Mislykket",
+    "rejected": "Afvist",
+    "filterAll": "Alle",
+    "cashoutGross": "Brutto",
+    "cashoutNet": "Netto",
+    "cashoutRequestedCol": "Anmodet om",
+    "cashoutProcessedCol": "Behandlet"
   },
   "tenantAccounting": {
     "title": "Finansielt overblik",

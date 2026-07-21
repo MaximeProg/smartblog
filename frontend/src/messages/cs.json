@@ -1472,7 +1472,8 @@
           "Podpora 24 hodin denně, 7 dní v týdnu"
         ]
       }
-    }
+    },
+    "preparingPayment": "Probíhá zpracování platby…"
   },
   "myBlogs": {
     "title": "Moje blogy",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Obchod",
     "supportAlertTitle": "{count, plural, one {# otevřít žádost o podporu} other {# otevřené žádosti o podporu}}",
-    "supportAlertDesc": "Kliknutím si můžete zobrazit své konverzace s podporou."
+    "supportAlertDesc": "Kliknutím si můžete zobrazit své konverzace s podporou.",
+    "blogCardViews": "Zobrazení",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Novinka",
+    "statTotalViews": "Celkový počet zobrazení (30 dní)",
+    "statUniqueSessions": "Jedinečné relace (30 dní)",
+    "chartPageViews30d": "Počet zobrazení stránky – posledních 30 dní",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogy"
   },
   "studio": {
     "save": "Uložit",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Před přidáním adresy peněženky musíte povolit dvoufaktorové ověřování.",
     "avatarChange": "Změnit fotografii",
     "avatarUpdated": "Aktualizována profilová fotka.",
-    "avatarError": "Nahrání fotografie se nezdařilo. Zkuste to prosím znovu."
+    "avatarError": "Nahrání fotografie se nezdařilo. Zkuste to prosím znovu.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarktida",
+      "AS": "Asie",
+      "EU": "Evropa",
+      "NA": "Severní Amerika",
+      "OC": "Oceánie",
+      "SA": "Jižní Amerika"
+    },
+    "genders": {
+      "male": "Muž",
+      "female": "Žena"
+    }
   },
   "notifications": {
     "title": "Oznámení",
@@ -2153,7 +2176,19 @@
     "allRead": "Všechny přečtené",
     "markAllRead": "Označit vše jako přečtené",
     "noneTitle": "Žádná oznámení",
-    "noneDesc": "Zde budete informováni o důležitých novinkách týkajících se vašeho účtu a blogů."
+    "noneDesc": "Zde budete informováni o důležitých novinkách týkajících se vašeho účtu a blogů.",
+    "minutesAgo": "před {m} minutami",
+    "hoursAgo": "před {h} hodinami",
+    "daysAgo": "před {d} dny",
+    "pushNotSupported": "Tento prohlížeč nepodporuje push notifikace.",
+    "pushEnabled": "Push notifikace jsou zapnuté!",
+    "pushEnableError": "Nepodařilo se povolit push oznámení.",
+    "pushDisabled": "Push notifikace jsou deaktivovány.",
+    "pushDisableError": "Došlo k chybě při deaktivaci push notifikací.",
+    "pushDisableButton": "Zakázat push",
+    "pushBlockedByBrowser": "Akce byla zablokována prohlížečem",
+    "pushEnableButton": "Povolit push",
+    "justNow": "právě teď"
   },
   "affiliate": {
     "title": "Partnerský program",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Odeslat pozvánku",
     "inviteSentTitle": "Pozvánka odeslána!",
     "inviteSentDesc": "Vaše pozvánka byla odeslána na adresu {email}.",
-    "inviteError": "Nepodařilo se odeslat pozvánku."
+    "inviteError": "Nepodařilo se odeslat pozvánku.",
+    "requested": "Požadováno",
+    "processing": "Zpracování",
+    "failed": "Neúspěšné",
+    "rejected": "Zamítnuto",
+    "filterAll": "Vše",
+    "cashoutGross": "Hrubý",
+    "cashoutNet": "Čistý",
+    "cashoutRequestedCol": "Požadováno",
+    "cashoutProcessedCol": "Zpracováno"
   },
   "tenantAccounting": {
     "title": "Finanční přehled",

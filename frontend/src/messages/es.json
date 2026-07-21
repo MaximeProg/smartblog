@@ -1472,7 +1472,8 @@
           "Asistencia las 24 horas del día, los 7 días de la semana"
         ]
       }
-    }
+    },
+    "preparingPayment": "Preparando el pago…"
   },
   "myBlogs": {
     "title": "Mis blogs",
@@ -1543,7 +1544,15 @@
     "planPro": "A favor",
     "planBusiness": "Negocios",
     "supportAlertTitle": "{count, plural, one {# Abrir un ticket de asistencia} other {# abrir tickets de asistencia}}",
-    "supportAlertDesc": "Haz clic aquí para ver tus conversaciones con el servicio de asistencia."
+    "supportAlertDesc": "Haz clic aquí para ver tus conversaciones con el servicio de asistencia.",
+    "blogCardViews": "Visitas",
+    "blogCardStudio": "Estudio",
+    "newBlogShort": "Nuevo",
+    "statTotalViews": "Total de visitas (30 días)",
+    "statUniqueSessions": "Sesiones únicas (30 días)",
+    "chartPageViews30d": "Visitas a la página — últimos 30 días",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogs"
   },
   "studio": {
     "save": "Guardar",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Debes activar la autenticación de dos factores antes de añadir una dirección de monedero.",
     "avatarChange": "Cambiar foto",
     "avatarUpdated": "Se ha actualizado la foto de perfil.",
-    "avatarError": "No se ha podido subir la foto. Inténtalo de nuevo."
+    "avatarError": "No se ha podido subir la foto. Inténtalo de nuevo.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "África",
+      "AN": "Antártida",
+      "AS": "Asia",
+      "EU": "Europa",
+      "NA": "América del Norte",
+      "OC": "Oceanía",
+      "SA": "América del Sur"
+    },
+    "genders": {
+      "male": "Hombre",
+      "female": "Mujer"
+    }
   },
   "notifications": {
     "title": "Notificaciones",
@@ -2153,7 +2176,19 @@
     "allRead": "Todos leídos",
     "markAllRead": "Marcar todo como leído",
     "noneTitle": "No hay notificaciones",
-    "noneDesc": "Aquí recibirás notificaciones sobre actualizaciones importantes relacionadas con tu cuenta y tus blogs."
+    "noneDesc": "Aquí recibirás notificaciones sobre actualizaciones importantes relacionadas con tu cuenta y tus blogs.",
+    "minutesAgo": "Hace {m} m",
+    "hoursAgo": "Hace {h} horas",
+    "daysAgo": "Hace {d} días",
+    "pushNotSupported": "Este navegador no admite notificaciones push.",
+    "pushEnabled": "¡Notificaciones push activadas!",
+    "pushEnableError": "No se han podido activar las notificaciones push.",
+    "pushDisabled": "Las notificaciones push están desactivadas.",
+    "pushDisableError": "Se ha producido un error al desactivar las notificaciones push.",
+    "pushDisableButton": "Desactivar las notificaciones push",
+    "pushBlockedByBrowser": "Notificación bloqueada por el navegador",
+    "pushEnableButton": "Activar notificaciones push",
+    "justNow": "hace un momento"
   },
   "affiliate": {
     "title": "Programa de afiliados",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Enviar invitación",
     "inviteSentTitle": "¡Invitación enviada!",
     "inviteSentDesc": "Tu invitación se ha enviado a {email}.",
-    "inviteError": "No se ha podido enviar la invitación."
+    "inviteError": "No se ha podido enviar la invitación.",
+    "requested": "Solicitado",
+    "processing": "Procesamiento",
+    "failed": "Fallido",
+    "rejected": "Rechazado",
+    "filterAll": "Todos",
+    "cashoutGross": "Bruto",
+    "cashoutNet": "Neto",
+    "cashoutRequestedCol": "Solicitado",
+    "cashoutProcessedCol": "Procesado"
   },
   "tenantAccounting": {
     "title": "Resumen financiero",

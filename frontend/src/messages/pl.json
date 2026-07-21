@@ -1472,7 +1472,8 @@
           "Pomoc techniczna dostępna 24 godziny na dobę, 7 dni w tygodniu"
         ]
       }
-    }
+    },
+    "preparingPayment": "Przygotowywanie płatności…"
   },
   "myBlogs": {
     "title": "Moje blogi",
@@ -1543,7 +1544,15 @@
     "planPro": "Zalety",
     "planBusiness": "Biznes",
     "supportAlertTitle": "{count, plural, one {# otwórz zgłoszenie do pomocy technicznej} other {# zgłoszenia do pomocy technicznej}}",
-    "supportAlertDesc": "Kliknij, aby wyświetlić rozmowy dotyczące pomocy technicznej."
+    "supportAlertDesc": "Kliknij, aby wyświetlić rozmowy dotyczące pomocy technicznej.",
+    "blogCardViews": "Wyświetlenia",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Nowość",
+    "statTotalViews": "Łączna liczba wyświetleń (30 dni)",
+    "statUniqueSessions": "Unikalne sesje (30 dni)",
+    "chartPageViews30d": "Liczba wyświetleń strony — ostatnie 30 dni",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogi"
   },
   "studio": {
     "save": "Zapisz",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Przed dodaniem adresu portfela należy włączyć uwierzytelnianie dwuskładnikowe.",
     "avatarChange": "Zmień zdjęcie",
     "avatarUpdated": "Zaktualizowano zdjęcie profilowe.",
-    "avatarError": "Nie udało się przesłać zdjęcia. Spróbuj ponownie."
+    "avatarError": "Nie udało się przesłać zdjęcia. Spróbuj ponownie.",
+    "avatarAlt": "awatar",
+    "continents": {
+      "AF": "Afryka",
+      "AN": "Antarktyda",
+      "AS": "Azja",
+      "EU": "Europa",
+      "NA": "Ameryka Północna",
+      "OC": "Oceania",
+      "SA": "Ameryka Południowa"
+    },
+    "genders": {
+      "male": "Mężczyzna",
+      "female": "Kobieta"
+    }
   },
   "notifications": {
     "title": "Powiadomienia",
@@ -2153,7 +2176,19 @@
     "allRead": "Wszystkie przeczytane",
     "markAllRead": "Oznacz wszystko jako przeczytane",
     "noneTitle": "Brak powiadomień",
-    "noneDesc": "W tym miejscu będziesz otrzymywać powiadomienia o ważnych aktualizacjach dotyczących Twojego konta i blogów."
+    "noneDesc": "W tym miejscu będziesz otrzymywać powiadomienia o ważnych aktualizacjach dotyczących Twojego konta i blogów.",
+    "minutesAgo": "{m} minut temu",
+    "hoursAgo": "{h} godziny temu",
+    "daysAgo": "{d} dni temu",
+    "pushNotSupported": "Ta przeglądarka nie obsługuje powiadomień push.",
+    "pushEnabled": "Powiadomienia push są włączone!",
+    "pushEnableError": "Nie udało się włączyć powiadomień push.",
+    "pushDisabled": "Powiadomienia push są wyłączone.",
+    "pushDisableError": "Wystąpił błąd podczas wyłączania powiadomień push.",
+    "pushDisableButton": "Wyłącz powiadomienia push",
+    "pushBlockedByBrowser": "Operacja zablokowana przez przeglądarkę",
+    "pushEnableButton": "Włącz powiadomienia push",
+    "justNow": "właśnie przed chwilą"
   },
   "affiliate": {
     "title": "Program partnerski",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Wyślij zaproszenie",
     "inviteSentTitle": "Zaproszenie wysłane!",
     "inviteSentDesc": "Twoje zaproszenie zostało wysłane na adres {email}.",
-    "inviteError": "Nie udało się wysłać zaproszenia."
+    "inviteError": "Nie udało się wysłać zaproszenia.",
+    "requested": "Wniosek",
+    "processing": "Przetwarzanie",
+    "failed": "Nie powiodło się",
+    "rejected": "Odrzucono",
+    "filterAll": "Wszystkie",
+    "cashoutGross": "Brutto",
+    "cashoutNet": "Siatka",
+    "cashoutRequestedCol": "Wniosek",
+    "cashoutProcessedCol": "Przetworzone"
   },
   "tenantAccounting": {
     "title": "Przegląd finansowy",

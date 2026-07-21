@@ -1451,7 +1451,7 @@
           "10 autorov",
           "50 GB úložného priestoru",
           "Vlastná doména",
-          "Komplexná analytika + SEO",
+          "Komplexná analýza + SEO",
           "Prístup k API",
           "Špecializovaná podpora"
         ]
@@ -1472,7 +1472,8 @@
           "Podpora 24 hodín denne, 7 dní v týždni"
         ]
       }
-    }
+    },
+    "preparingPayment": "Pripravuje sa platba…"
   },
   "myBlogs": {
     "title": "Moje blogy",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Podnikanie",
     "supportAlertTitle": "{count, plural, one {# otvoriť žiadosť o podporu} other {# otvoriť žiadosti o podporu}}",
-    "supportAlertDesc": "Kliknite sem a zobrazte si svoje konverzácie s podporou."
+    "supportAlertDesc": "Kliknite sem a zobrazte si svoje konverzácie s podporou.",
+    "blogCardViews": "Počet zobrazení",
+    "blogCardStudio": "Štúdio",
+    "newBlogShort": "Nové",
+    "statTotalViews": "Celkový počet zobrazení (30 dní)",
+    "statUniqueSessions": "Jedinečné relácie (30 dní)",
+    "chartPageViews30d": "Počet zobrazení stránky — za posledných 30 dní",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogy"
   },
   "studio": {
     "save": "Uložiť",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Pred pridaním adresy peňaženky musíte aktivovať dvojfaktorovú autentifikáciu.",
     "avatarChange": "Zmeniť fotografiu",
     "avatarUpdated": "Aktualizovaná profilová fotografia.",
-    "avatarError": "Nahratie fotografie sa nepodarilo. Skúste to prosím znova."
+    "avatarError": "Nahratie fotografie sa nepodarilo. Skúste to prosím znova.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarktída",
+      "AS": "Ázia",
+      "EU": "Európa",
+      "NA": "Severná Amerika",
+      "OC": "Oceánia",
+      "SA": "Južná Amerika"
+    },
+    "genders": {
+      "male": "Muž",
+      "female": "Žena"
+    }
   },
   "notifications": {
     "title": "Oznámenia",
@@ -2153,7 +2176,19 @@
     "allRead": "Všetko prečítané",
     "markAllRead": "Označiť všetko ako prečítané",
     "noneTitle": "Žiadne upozornenia",
-    "noneDesc": "Tu budete dostávať upozornenia na dôležité aktualizácie týkajúce sa vášho účtu a blogov."
+    "noneDesc": "Tu budete dostávať upozornenia na dôležité aktualizácie týkajúce sa vášho účtu a blogov.",
+    "minutesAgo": "pred {m} minútami",
+    "hoursAgo": "pred {h} hodinami",
+    "daysAgo": "pred {d} dňami",
+    "pushNotSupported": "Tento prehliadač nepodporuje push notifikácie.",
+    "pushEnabled": "Push notifikácie sú zapnuté!",
+    "pushEnableError": "Nepodarilo sa aktivovať push notifikácie.",
+    "pushDisabled": "Push notifikácie sú vypnuté.",
+    "pushDisableError": "Pri deaktivácii push notifikácií došlo k chybe.",
+    "pushDisableButton": "Vypnúť push",
+    "pushBlockedByBrowser": "Odoslanie bolo zablokované prehliadačom",
+    "pushEnableButton": "Zapnúť push notifikácie",
+    "justNow": "práve teraz"
   },
   "affiliate": {
     "title": "Partnerský program",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Odoslať pozvánku",
     "inviteSentTitle": "Pozvánka bola odoslaná!",
     "inviteSentDesc": "Vaša pozvánka bola odoslaná na adresu {email}.",
-    "inviteError": "Nepodarilo sa odoslať pozvánku."
+    "inviteError": "Nepodarilo sa odoslať pozvánku.",
+    "requested": "Požadované",
+    "processing": "Spracovanie",
+    "failed": "Neúspešné",
+    "rejected": "Zamietnuté",
+    "filterAll": "Všetko",
+    "cashoutGross": "Hrubý",
+    "cashoutNet": "Čistý",
+    "cashoutRequestedCol": "Požadované",
+    "cashoutProcessedCol": "Spracované"
   },
   "tenantAccounting": {
     "title": "Finančný prehľad",

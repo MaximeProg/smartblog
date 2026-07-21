@@ -1472,7 +1472,8 @@
           "Support dygnet runt"
         ]
       }
-    }
+    },
+    "preparingPayment": "Förbereder betalning…"
   },
   "myBlogs": {
     "title": "Mina bloggar",
@@ -1543,7 +1544,15 @@
     "planPro": "Fördelar",
     "planBusiness": "Företag",
     "supportAlertTitle": "{count, plural, one {# skapa ett supportärende} other {# öppna supportärenden}}",
-    "supportAlertDesc": "Klicka här för att visa dina supportkonversationer."
+    "supportAlertDesc": "Klicka här för att visa dina supportkonversationer.",
+    "blogCardViews": "Visningar",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Nytt",
+    "statTotalViews": "Totalt antal visningar (30 dagar)",
+    "statUniqueSessions": "Unika sessioner (30 dagar)",
+    "chartPageViews30d": "Sidvisningar – de senaste 30 dagarna",
+    "blogCountSingular": "{count} blogg",
+    "blogCountPlural": "{count} bloggar"
   },
   "studio": {
     "save": "Spara",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Du måste aktivera tvåfaktorsautentisering innan du lägger till en plånboksadress.",
     "avatarChange": "Byt bild",
     "avatarUpdated": "Profilbilden har uppdaterats.",
-    "avatarError": "Det gick inte att ladda upp bilden. Försök igen."
+    "avatarError": "Det gick inte att ladda upp bilden. Försök igen.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarktis",
+      "AS": "Asien",
+      "EU": "Europa",
+      "NA": "Nordamerika",
+      "OC": "Oceanien",
+      "SA": "Sydamerika"
+    },
+    "genders": {
+      "male": "Man",
+      "female": "Kvinna"
+    }
   },
   "notifications": {
     "title": "Meddelanden",
@@ -2153,7 +2176,19 @@
     "allRead": "Alla har läst",
     "markAllRead": "Markera alla som lästa",
     "noneTitle": "Inga meddelanden",
-    "noneDesc": "Här får du besked om viktiga uppdateringar som rör ditt konto och dina bloggar."
+    "noneDesc": "Här får du besked om viktiga uppdateringar som rör ditt konto och dina bloggar.",
+    "minutesAgo": "för {m} minuter sedan",
+    "hoursAgo": "För {h} timmar sedan",
+    "daysAgo": "för {d} dagar sedan",
+    "pushNotSupported": "Push-meddelanden stöds inte i den här webbläsaren.",
+    "pushEnabled": "Push-meddelanden är aktiverade!",
+    "pushEnableError": "Det gick inte att aktivera push-meddelanden.",
+    "pushDisabled": "Push-meddelanden är inaktiverade.",
+    "pushDisableError": "Fel vid inaktivering av push-meddelanden.",
+    "pushDisableButton": "Inaktivera push-meddelanden",
+    "pushBlockedByBrowser": "Tryckningen blockerades av webbläsaren",
+    "pushEnableButton": "Aktivera push-meddelanden",
+    "justNow": "alldeles nyss"
   },
   "affiliate": {
     "title": "Partnerprogram",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Skicka inbjudan",
     "inviteSentTitle": "Inbjudan skickad!",
     "inviteSentDesc": "Din inbjudan har skickats till {email}.",
-    "inviteError": "Det gick inte att skicka inbjudan."
+    "inviteError": "Det gick inte att skicka inbjudan.",
+    "requested": "Begärt",
+    "processing": "Bearbetning",
+    "failed": "Misslyckades",
+    "rejected": "Avvisad",
+    "filterAll": "Alla",
+    "cashoutGross": "Brutto",
+    "cashoutNet": "Netto",
+    "cashoutRequestedCol": "Begärt",
+    "cashoutProcessedCol": "Bearbetad"
   },
   "tenantAccounting": {
     "title": "Finansiell översikt",

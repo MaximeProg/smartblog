@@ -1453,7 +1453,7 @@
           "Pielāgots domēns",
           "Pilnīga analītika + SEO",
           "API piekļuve",
-          "Speciāls atbalsts"
+          "Speciāli pielāgots atbalsts"
         ]
       },
       "business": {
@@ -1472,7 +1472,8 @@
           "Atbalsts 24 stundas diennaktī, 7 dienas nedēļā"
         ]
       }
-    }
+    },
+    "preparingPayment": "Tiek sagatavots maksājums…"
   },
   "myBlogs": {
     "title": "Mani blogi",
@@ -1543,7 +1544,15 @@
     "planPro": "Par",
     "planBusiness": "Bizness",
     "supportAlertTitle": "{count, plural, one {# atvērt atbalsta pieprasījumu} other {# atvērt atbalsta pieprasījumus}}",
-    "supportAlertDesc": "Noklikšķiniet, lai apskatītu savas sarunas ar atbalsta dienestu."
+    "supportAlertDesc": "Noklikšķiniet, lai apskatītu savas sarunas ar atbalsta dienestu.",
+    "blogCardViews": "Skatījumi",
+    "blogCardStudio": "Studija",
+    "newBlogShort": "Jauns",
+    "statTotalViews": "Kopējais skatījumu skaits (30 dienas)",
+    "statUniqueSessions": "Unikālo sesiju skaits (30 dienas)",
+    "chartPageViews30d": "Lapas skatījumi — pēdējās 30 dienas",
+    "blogCountSingular": "{count} blogs",
+    "blogCountPlural": "{count} blogi"
   },
   "studio": {
     "save": "Saglabāt",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Pirms pievienot elektroniskās naudas maciņa adresi, ir jāaktivizē divpakāpju autentifikācija.",
     "avatarChange": "Mainīt fotogrāfiju",
     "avatarUpdated": "Atjaunināta profila fotogrāfija.",
-    "avatarError": "Fotoattēla augšupielāde neizdevās. Lūdzu, mēģiniet vēlreiz."
+    "avatarError": "Fotoattēla augšupielāde neizdevās. Lūdzu, mēģiniet vēlreiz.",
+    "avatarAlt": "avatārs",
+    "continents": {
+      "AF": "Āfrika",
+      "AN": "Antarktīda",
+      "AS": "Āzija",
+      "EU": "Eiropa",
+      "NA": "Ziemeļamerika",
+      "OC": "Okeānija",
+      "SA": "Dienvidamerika"
+    },
+    "genders": {
+      "male": "Vīrietis",
+      "female": "Sieviete"
+    }
   },
   "notifications": {
     "title": "Paziņojumi",
@@ -2153,7 +2176,19 @@
     "allRead": "Visi izlasīti",
     "markAllRead": "Atzīmēt visus kā izlasītus",
     "noneTitle": "Nav paziņojumu",
-    "noneDesc": "Šeit jūs saņemsiet paziņojumus par svarīgiem atjauninājumiem saistībā ar jūsu kontu un blogiem."
+    "noneDesc": "Šeit jūs saņemsiet paziņojumus par svarīgiem atjauninājumiem saistībā ar jūsu kontu un blogiem.",
+    "minutesAgo": "Pirms {m} minūtēm",
+    "hoursAgo": "Pirms {h} stundām",
+    "daysAgo": "Pirms {d} dienām",
+    "pushNotSupported": "Šajā pārlūkprogrammā paziņojumi nav atbalstīti.",
+    "pushEnabled": "Paziņojumi ir ieslēgti!",
+    "pushEnableError": "Neizdevās ieslēgt push paziņojumus.",
+    "pushDisabled": "Paziņojumi ir atspējoti.",
+    "pushDisableError": "Radās kļūda, atspējojot push paziņojumus.",
+    "pushDisableButton": "Atspējot push paziņojumus",
+    "pushBlockedByBrowser": "Piespiedu darbība bloķēta pārlūkprogrammā",
+    "pushEnableButton": "Iespējot push paziņojumus",
+    "justNow": "tieši tagad"
   },
   "affiliate": {
     "title": "Partnerprogramma",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Nosūtīt ielūgumu",
     "inviteSentTitle": "Ielūgums nosūtīts!",
     "inviteSentDesc": "Jūsu ielūgums tika nosūtīts uz {email}.",
-    "inviteError": "Neizdevās nosūtīt uzaicinājumu."
+    "inviteError": "Neizdevās nosūtīt uzaicinājumu.",
+    "requested": "Pieprasīts",
+    "processing": "Apstrāde",
+    "failed": "Neizdevās",
+    "rejected": "Noraidīts",
+    "filterAll": "Visi",
+    "cashoutGross": "Bruto",
+    "cashoutNet": "Tīrais",
+    "cashoutRequestedCol": "Pieprasīts",
+    "cashoutProcessedCol": "Apstrādāts"
   },
   "tenantAccounting": {
     "title": "Finanšu pārskats",

@@ -68,9 +68,11 @@ export function CryptoPaymentPanel({
 }: CryptoPaymentPanelProps) {
   const [copied, setCopied] = useState(false);
 
-  // Une reprise (paiement partiel complété) écrase l'adresse/montant/QR
-  // affichés sans jamais dépendre d'un nouveau rendu du parent — le
-  // composant gère sa propre tentative de paiement "active".
+  // "Reprendre" ne crée rien côté NowPayments — la même adresse de dépôt
+  // reste valable (NowPayments détecte lui-même les dépôts complémentaires
+  // sur une adresse déjà utilisée). On rappelle juste l'API pour repasser
+  // en vue "en attente" avec un solde restant à jour, sans dépendre d'un
+  // nouveau rendu du parent.
   const [resumed, setResumed] = useState<CryptoPaymentResponse | null>(null);
   const [resuming, setResuming] = useState(false);
   useEffect(() => { setResumed(null); }, [orderId]);

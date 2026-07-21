@@ -1472,7 +1472,8 @@
           "Pagalba 24 valandas per parą, 7 dienas per savaitę"
         ]
       }
-    }
+    },
+    "preparingPayment": "Rengiamas mokėjimas…"
   },
   "myBlogs": {
     "title": "Mano tinklaraščiai",
@@ -1543,7 +1544,15 @@
     "planPro": "„Pro“",
     "planBusiness": "Verslas",
     "supportAlertTitle": "{count, plural, one {# atidaryti pagalbos užklausą} other {# atidaryti pagalbos užklausas}}",
-    "supportAlertDesc": "Spustelėkite, kad peržiūrėtumėte savo pokalbius su klientų aptarnavimo tarnyba."
+    "supportAlertDesc": "Spustelėkite, kad peržiūrėtumėte savo pokalbius su klientų aptarnavimo tarnyba.",
+    "blogCardViews": "Peržiūros",
+    "blogCardStudio": "Studija",
+    "newBlogShort": "Nauja",
+    "statTotalViews": "Bendras peržiūrų skaičius (per 30 dienų)",
+    "statUniqueSessions": "Unikalūs apsilankymai (30 dienų)",
+    "chartPageViews30d": "Puslapių peržiūros — per pastaruosius 30 dienų",
+    "blogCountSingular": "{count} tinklaraštis",
+    "blogCountPlural": "{count} tinklaraščiai"
   },
   "studio": {
     "save": "Išsaugoti",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Prieš pridėdami piniginės adresą, turite įjungti dviejų veiksnių autentifikavimą.",
     "avatarChange": "Pakeisti nuotrauką",
     "avatarUpdated": "Atnaujinta profilio nuotrauka.",
-    "avatarError": "Nepavyko įkelti nuotraukos. Prašome bandyti dar kartą."
+    "avatarError": "Nepavyko įkelti nuotraukos. Prašome bandyti dar kartą.",
+    "avatarAlt": "avataras",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarktida",
+      "AS": "Azija",
+      "EU": "Europa",
+      "NA": "Šiaurės Amerika",
+      "OC": "Okeanija",
+      "SA": "Pietų Amerika"
+    },
+    "genders": {
+      "male": "Vyras",
+      "female": "Moteris"
+    }
   },
   "notifications": {
     "title": "Pranešimai",
@@ -2153,7 +2176,19 @@
     "allRead": "Visi perskaityti",
     "markAllRead": "Pažymėti viską kaip perskaitytą",
     "noneTitle": "Pranešimų nėra",
-    "noneDesc": "Čia gausite pranešimus apie svarbius jūsų paskyros ir tinklaraščių atnaujinimus."
+    "noneDesc": "Čia gausite pranešimus apie svarbius jūsų paskyros ir tinklaraščių atnaujinimus.",
+    "minutesAgo": "Prieš {m} m",
+    "hoursAgo": "Prieš {h} val.",
+    "daysAgo": "Prieš {d} dienas",
+    "pushNotSupported": "Ši naršyklė nepalaiko stumiamųjų pranešimų.",
+    "pushEnabled": "Įjungti stumiamieji pranešimai!",
+    "pushEnableError": "Nepavyko įjungti „push“ pranešimų.",
+    "pushDisabled": "Pranešimai apie naujienas išjungti.",
+    "pushDisableError": "Įvyko klaida išjungiant „push“ pranešimus.",
+    "pushDisableButton": "Išjungti pranešimus",
+    "pushBlockedByBrowser": "Veiksmas užblokuotas naršyklės",
+    "pushEnableButton": "Įjungti „push“ funkciją",
+    "justNow": "ką tik"
   },
   "affiliate": {
     "title": "Partnerių programa",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Siųsti kvietimą",
     "inviteSentTitle": "Kvietimas išsiųstas!",
     "inviteSentDesc": "Jūsų kvietimas buvo išsiųstas adresu {email}.",
-    "inviteError": "Nepavyko išsiųsti kvietimo."
+    "inviteError": "Nepavyko išsiųsti kvietimo.",
+    "requested": "Prašoma",
+    "processing": "Apdorojimas",
+    "failed": "Nepavyko",
+    "rejected": "Atmesta",
+    "filterAll": "Visi",
+    "cashoutGross": "Bruto",
+    "cashoutNet": "Grynasis",
+    "cashoutRequestedCol": "Prašoma",
+    "cashoutProcessedCol": "Apdorota"
   },
   "tenantAccounting": {
     "title": "Finansinė apžvalga",

@@ -17,15 +17,15 @@ const TYPE_CONFIG = {
   error:   { icon: AlertTriangle, bg: 'bg-red-50 dark:bg-red-900/20',      border: 'border-red-100 dark:border-red-800',      icon_cls: 'text-red-500'              },
 };
 
-function timeAgo(iso: string): string {
+function timeAgo(iso: string, t: ReturnType<typeof useTranslations>): string {
   const diff = Date.now() - new Date(iso).getTime();
   const m = Math.floor(diff / 60000);
-  if (m < 1) return 'just now';
-  if (m < 60) return `${m}m ago`;
+  if (m < 1) return t('justNow');
+  if (m < 60) return t('minutesAgo', { m });
   const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
+  if (h < 24) return t('hoursAgo', { h });
   const d = Math.floor(h / 24);
-  return `${d}d ago`;
+  return t('daysAgo', { d });
 }
 
 // ── Web Push helper ───────────────────────────────────────────────
@@ -110,7 +110,7 @@ export default function NotificationsPage() {
 
   const enablePush = useCallback(async () => {
     if (!('Notification' in window)) {
-      toast({ variant: 'destructive', title: 'Notifications non supportées dans ce navigateur.' });
+      toast({ variant: 'destructive', title: t('pushNotSupported') });
       return;
     }
     setPushState('loading');
@@ -123,12 +123,12 @@ export default function NotificationsPage() {
 
       await registerPush(data.public_key);
       setPushState('granted');
-      toast({ title: 'Notifications push activées !' });
+      toast({ title: t('pushEnabled') });
     } catch {
       setPushState('unknown');
-      toast({ variant: 'destructive', title: 'Impossible d\'activer les notifications push.' });
+      toast({ variant: 'destructive', title: t('pushEnableError') });
     }
-  }, [toast]);
+  }, [toast, t]);
 
   const disablePush = useCallback(async () => {
     try {
@@ -139,11 +139,11 @@ export default function NotificationsPage() {
         await sub.unsubscribe();
       }
       setPushState('unknown');
-      toast({ title: 'Notifications push désactivées.' });
+      toast({ title: t('pushDisabled') });
     } catch {
-      toast({ variant: 'destructive', title: 'Erreur lors de la désactivation.' });
+      toast({ variant: 'destructive', title: t('pushDisableError') });
     }
-  }, [toast]);
+  }, [toast, t]);
 
   function markAllRead() {
     const newReadIds = new Set([...readIds, ...notifications.map(n => n.id)]);
@@ -179,11 +179,11 @@ export default function NotificationsPage() {
                       className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[12px] font-medium text-slate-600 dark:text-slate-400 transition-colors"
                     >
                       <BellOff className="h-3.5 w-3.5" />
-                      Désactiver push
+                      {t('pushDisableButton')}
                     </button>
                   ) : pushState === 'denied' ? (
                     <span className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
-                      <BellOff className="h-3 w-3" /> Push bloqué par le navigateur
+                      <BellOff className="h-3 w-3" /> {t('pushBlockedByBrowser')}
                     </span>
                   ) : (
                     <button
@@ -194,7 +194,7 @@ export default function NotificationsPage() {
                       {pushState === 'loading'
                         ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
                         : <BellRing className="h-3.5 w-3.5" />}
-                      Activer les push
+                      {t('pushEnableButton')}
                     </button>
                   )
                 )}
@@ -245,7 +245,7 @@ export default function NotificationsPage() {
                           {!notif.read && <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />}
                         </div>
                         <p className="text-[12.5px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{notif.body}</p>
-                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">{timeAgo(notif.time)}</p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">{timeAgo(notif.time, t)}</p>
                       </div>
                     </div>
                   );

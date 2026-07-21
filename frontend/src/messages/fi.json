@@ -1472,7 +1472,8 @@
           "24/7-tuki"
         ]
       }
-    }
+    },
+    "preparingPayment": "Maksua valmistellaan…"
   },
   "myBlogs": {
     "title": "Blogini",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Liiketoiminta",
     "supportAlertTitle": "{count, plural, one {# avaa tukipyyntö} other {# avoimet tukipyynnöt}}",
-    "supportAlertDesc": "Napsauta nähdäksesi tukikeskustelusi."
+    "supportAlertDesc": "Napsauta nähdäksesi tukikeskustelusi.",
+    "blogCardViews": "Näkymät",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Uusi",
+    "statTotalViews": "Katselukerrat yhteensä (30 päivää)",
+    "statUniqueSessions": "Ainutlaatuiset istunnot (30 päivää)",
+    "chartPageViews30d": "Sivun katselukerrat — viimeiset 30 päivää",
+    "blogCountSingular": "{count} blogi",
+    "blogCountPlural": "{count} blogit"
   },
   "studio": {
     "save": "Tallenna",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Sinun on otettava kaksivaiheinen todennus käyttöön ennen lompakko-osoitteen lisäämistä.",
     "avatarChange": "Vaihda kuva",
     "avatarUpdated": "Profiilikuva päivitetty.",
-    "avatarError": "Kuvan lataaminen epäonnistui. Yritä uudelleen."
+    "avatarError": "Kuvan lataaminen epäonnistui. Yritä uudelleen.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrikka",
+      "AN": "Antarktis",
+      "AS": "Aasia",
+      "EU": "Eurooppa",
+      "NA": "Pohjois-Amerikka",
+      "OC": "Oseania",
+      "SA": "Etelä-Amerikka"
+    },
+    "genders": {
+      "male": "Mies",
+      "female": "Nainen"
+    }
   },
   "notifications": {
     "title": "Ilmoitukset",
@@ -2153,7 +2176,19 @@
     "allRead": "Kaikki luettu",
     "markAllRead": "Merkitse kaikki luetuiksi",
     "noneTitle": "Ei ilmoituksia",
-    "noneDesc": "Täältä saat ilmoituksen tilisi ja blogiesi tärkeistä päivityksistä."
+    "noneDesc": "Täältä saat ilmoituksen tilisi ja blogiesi tärkeistä päivityksistä.",
+    "minutesAgo": "{m} minuuttia sitten",
+    "hoursAgo": "{h} tuntia sitten",
+    "daysAgo": "{d} päivää sitten",
+    "pushNotSupported": "Tämä selain ei tue push-ilmoituksia.",
+    "pushEnabled": "Push-ilmoitukset on otettu käyttöön!",
+    "pushEnableError": "Push-ilmoituksia ei voitu ottaa käyttöön.",
+    "pushDisabled": "Push-ilmoitukset on poistettu käytöstä.",
+    "pushDisableError": "Virhe push-ilmoitusten poistamisessa käytöstä.",
+    "pushDisableButton": "Poista push-ilmoitukset käytöstä",
+    "pushBlockedByBrowser": "Selain esti painalluksen",
+    "pushEnableButton": "Ota push-ilmoitukset käyttöön",
+    "justNow": "juuri äsken"
   },
   "affiliate": {
     "title": "Kumppaniohjelma",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Lähetä kutsu",
     "inviteSentTitle": "Kutsu lähetetty!",
     "inviteSentDesc": "Kutsusi on lähetetty osoitteeseen {email}.",
-    "inviteError": "Kutsua ei voitu lähettää."
+    "inviteError": "Kutsua ei voitu lähettää.",
+    "requested": "Pyydetty",
+    "processing": "Käsittely",
+    "failed": "Epäonnistui",
+    "rejected": "Hylätty",
+    "filterAll": "Kaikki",
+    "cashoutGross": "Brutto",
+    "cashoutNet": "Netto",
+    "cashoutRequestedCol": "Pyydetty",
+    "cashoutProcessedCol": "Käsitelty"
   },
   "tenantAccounting": {
     "title": "Taloudellinen katsaus",

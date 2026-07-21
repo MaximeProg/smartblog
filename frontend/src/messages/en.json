@@ -1398,6 +1398,7 @@
     "footerNote": "Secure payment · Cancel anytime · No hidden fees",
     "checkoutError": "Checkout failed. Please try again.",
     "checkoutSuccess": "Payment confirmed — your plan has been upgraded.",
+    "preparingPayment": "Preparing payment…",
     "needBlogTitle": "Create a blog first",
     "needBlogDesc": "You need at least one blog before you can subscribe to a paid plan.",
     "needBlogCta": "Create my blog",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Business",
     "supportAlertTitle": "{count, plural, one {# open support ticket} other {# open support tickets}}",
-    "supportAlertDesc": "Click to view your support conversations."
+    "supportAlertDesc": "Click to view your support conversations.",
+    "blogCardViews": "Views",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "New",
+    "statTotalViews": "Total views (30d)",
+    "statUniqueSessions": "Unique sessions (30d)",
+    "chartPageViews30d": "Page views — last 30 days",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogs"
   },
   "studio": {
     "save": "Save",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "You must enable two-factor authentication before adding a wallet address.",
     "avatarChange": "Change photo",
     "avatarUpdated": "Profile photo updated.",
-    "avatarError": "Failed to upload photo. Please try again."
+    "avatarError": "Failed to upload photo. Please try again.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Africa",
+      "AN": "Antarctica",
+      "AS": "Asia",
+      "EU": "Europe",
+      "NA": "North America",
+      "OC": "Oceania",
+      "SA": "South America"
+    },
+    "genders": {
+      "male": "Male",
+      "female": "Female"
+    }
   },
   "notifications": {
     "title": "Notifications",
@@ -2153,7 +2176,19 @@
     "allRead": "All read",
     "markAllRead": "Mark all as read",
     "noneTitle": "No notifications",
-    "noneDesc": "You'll be notified here for important updates to your account and blogs."
+    "noneDesc": "You'll be notified here for important updates to your account and blogs.",
+    "pushNotSupported": "Push notifications aren't supported in this browser.",
+    "pushEnabled": "Push notifications enabled!",
+    "pushEnableError": "Couldn't enable push notifications.",
+    "pushDisabled": "Push notifications disabled.",
+    "pushDisableError": "Error while disabling push notifications.",
+    "pushDisableButton": "Disable push",
+    "pushBlockedByBrowser": "Push blocked by browser",
+    "pushEnableButton": "Enable push",
+    "justNow": "just now",
+    "minutesAgo": "{m}m ago",
+    "hoursAgo": "{h}h ago",
+    "daysAgo": "{d}d ago"
   },
   "affiliate": {
     "title": "Affiliate Program",
@@ -2185,6 +2220,16 @@
     "ready": "Ready to cashout",
     "paid": "Paid",
     "cancelled": "Cancelled",
+    "requested": "Requested",
+    "processing": "Processing",
+    "failed": "Failed",
+    "rejected": "Rejected",
+    "filterAll": "All",
+    "cashoutGross": "Gross",
+    "cashoutFee": "Fee",
+    "cashoutNet": "Net",
+    "cashoutRequestedCol": "Requested",
+    "cashoutProcessedCol": "Processed",
     "howItWorks": "How it works",
     "step1": "Share your unique referral link with other bloggers",
     "step2": "When they subscribe, you earn 10% of their subscription fee",

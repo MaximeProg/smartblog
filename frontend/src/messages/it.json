@@ -1472,7 +1472,8 @@
           "Assistenza 24 ore su 24, 7 giorni su 7"
         ]
       }
-    }
+    },
+    "preparingPayment": "Preparazione del pagamento…"
   },
   "myBlogs": {
     "title": "I miei blog",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Affari",
     "supportAlertTitle": "{count, plural, one {# Apri un ticket di assistenza} other {# ticket di assistenza aperti}}",
-    "supportAlertDesc": "Clicca qui per visualizzare le tue conversazioni relative all'assistenza."
+    "supportAlertDesc": "Clicca qui per visualizzare le tue conversazioni relative all'assistenza.",
+    "blogCardViews": "Visualizzazioni",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Novità",
+    "statTotalViews": "Visualizzazioni totali (30 giorni)",
+    "statUniqueSessions": "Sessioni uniche (30 giorni)",
+    "chartPageViews30d": "Visualizzazioni di pagina — ultimi 30 giorni",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blog"
   },
   "studio": {
     "save": "Salva",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "È necessario abilitare l'autenticazione a due fattori prima di aggiungere l'indirizzo di un portafoglio.",
     "avatarChange": "Cambia foto",
     "avatarUpdated": "Foto del profilo aggiornata.",
-    "avatarError": "Impossibile caricare la foto. Riprova."
+    "avatarError": "Impossibile caricare la foto. Riprova.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Africa",
+      "AN": "Antartide",
+      "AS": "Asia",
+      "EU": "Europa",
+      "NA": "Nord America",
+      "OC": "Oceania",
+      "SA": "Sudamerica"
+    },
+    "genders": {
+      "male": "Maschio",
+      "female": "Donna"
+    }
   },
   "notifications": {
     "title": "Notifiche",
@@ -2153,7 +2176,19 @@
     "allRead": "Letti tutti",
     "markAllRead": "Contrassegna tutto come letto",
     "noneTitle": "Nessuna notifica",
-    "noneDesc": "Qui riceverai notifiche relative agli aggiornamenti importanti riguardanti il tuo account e i tuoi blog."
+    "noneDesc": "Qui riceverai notifiche relative agli aggiornamenti importanti riguardanti il tuo account e i tuoi blog.",
+    "minutesAgo": "{m} minuti fa",
+    "hoursAgo": "{h} ore fa",
+    "daysAgo": "{d} giorni fa",
+    "pushNotSupported": "Le notifiche push non sono supportate da questo browser.",
+    "pushEnabled": "Notifiche push attivate!",
+    "pushEnableError": "Non è stato possibile abilitare le notifiche push.",
+    "pushDisabled": "Notifiche push disattivate.",
+    "pushDisableError": "Errore durante la disattivazione delle notifiche push.",
+    "pushDisableButton": "Disattiva le notifiche push",
+    "pushBlockedByBrowser": "Operazione bloccata dal browser",
+    "pushEnableButton": "Abilita le notifiche push",
+    "justNow": "proprio ora"
   },
   "affiliate": {
     "title": "Programma di affiliazione",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Invia invito",
     "inviteSentTitle": "Invito inviato!",
     "inviteSentDesc": "Il tuo invito è stato inviato a {email}.",
-    "inviteError": "Impossibile inviare l'invito."
+    "inviteError": "Impossibile inviare l'invito.",
+    "requested": "Richiesto",
+    "processing": "Elaborazione",
+    "failed": "Fallito",
+    "rejected": "Rifiutato",
+    "filterAll": "Tutto",
+    "cashoutGross": "Lordo",
+    "cashoutNet": "Netto",
+    "cashoutRequestedCol": "Richiesto",
+    "cashoutProcessedCol": "Elaborato"
   },
   "tenantAccounting": {
     "title": "Panoramica finanziaria",

@@ -119,7 +119,7 @@ function BlogCard({ blog, locale, views }: { blog: TenantInfo; locale: string; v
           {[
             { icon: Newspaper, val: blog.articles_count ?? 0,    label: t('blogCardArticles') },
             { icon: Mail,      val: blog.subscribers_count ?? 0, label: t('blogCardSubscribers') },
-            { icon: Eye,       val: views,                        label: 'Views' },
+            { icon: Eye,       val: views,                        label: t('blogCardViews') },
           ].map(s => (
             <div key={s.label} className="flex flex-col items-center py-2 rounded-lg bg-slate-50 dark:bg-slate-800">
               <span className="text-[14px] font-black text-slate-800 dark:text-slate-200 leading-none">{s.val}</span>
@@ -134,7 +134,7 @@ function BlogCard({ blog, locale, views }: { blog: TenantInfo; locale: string; v
             className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[12px] font-semibold transition-colors"
           >
             <Settings className="h-3.5 w-3.5" />
-            Studio
+            {t('blogCardStudio')}
           </Link>
           <a
             href={`/${locale}/${blog.slug}`}
@@ -250,7 +250,7 @@ export default function DashboardPage() {
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">{t('newBlog')}</span>
-                <span className="sm:hidden">New</span>
+                <span className="sm:hidden">{t('newBlogShort')}</span>
               </button>
             </div>
 
@@ -279,7 +279,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                   {[
                     {
-                      label: 'Total views (30d)',
+                      label: t('statTotalViews'),
                       value: totalViews,
                       icon: Eye,
                       color: 'text-blue-600 dark:text-blue-400',
@@ -289,7 +289,7 @@ export default function DashboardPage() {
                       sparkColor: '#3b82f6',
                     },
                     {
-                      label: 'Unique sessions (30d)',
+                      label: t('statUniqueSessions'),
                       value: totalSessions,
                       icon: Users,
                       color: 'text-violet-600 dark:text-violet-400',
@@ -339,12 +339,12 @@ export default function DashboardPage() {
                   <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Page views — last 30 days</p>
+                        <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">{t('chartPageViews30d')}</p>
                         <p className="text-[22px] font-black text-slate-900 dark:text-slate-100 mt-0.5 leading-none">{totalViews.toLocaleString()}</p>
                       </div>
                       <div className="flex items-center gap-1.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-100 dark:border-emerald-800 px-2.5 py-1 rounded-full">
                         <TrendingUp className="h-3 w-3" />
-                        {blogs.length} blog{blogs.length > 1 ? 's' : ''}
+                        {blogs.length === 1 ? t('blogCountSingular', { count: blogs.length }) : t('blogCountPlural', { count: blogs.length })}
                       </div>
                     </div>
                     <div className="h-[120px] w-full">

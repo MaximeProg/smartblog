@@ -204,7 +204,7 @@ export default function SubscriptionPage() {
                       }`}
                     >
                       {checkoutLoading === planId ? (
-                        <><Loader2 className="h-4 w-4 animate-spin" /> Preparing payment…</>
+                        <><Loader2 className="h-4 w-4 animate-spin" /> {t('preparingPayment')}</>
                       ) : isCurrent || planId === 'free' ? (
                         t('currentPlanButton')
                       ) : (

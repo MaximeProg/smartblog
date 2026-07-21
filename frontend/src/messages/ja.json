@@ -1472,7 +1472,8 @@
           "24時間年中無休のサポート"
         ]
       }
-    }
+    },
+    "preparingPayment": "お支払いの処理中…"
   },
   "myBlogs": {
     "title": "私のブログ",
@@ -1543,7 +1544,15 @@
     "planPro": "プロ",
     "planBusiness": "ビジネス",
     "supportAlertTitle": "{count, plural, one {# サポートチケットを開く} other {# サポートチケットを開く}}",
-    "supportAlertDesc": "サポートとのやり取りを確認するには、ここをクリックしてください。"
+    "supportAlertDesc": "サポートとのやり取りを確認するには、ここをクリックしてください。",
+    "blogCardViews": "閲覧数",
+    "blogCardStudio": "スタジオ",
+    "newBlogShort": "新着",
+    "statTotalViews": "総閲覧数（過去30日間）",
+    "statUniqueSessions": "ユニークセッション数（30日間）",
+    "chartPageViews30d": "ページビュー — 過去30日間",
+    "blogCountSingular": "{count} ブログ",
+    "blogCountPlural": "{count} ブログ"
   },
   "studio": {
     "save": "保存",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "ウォレットアドレスを追加する前に、二段階認証を有効にする必要があります。",
     "avatarChange": "写真を変更する",
     "avatarUpdated": "プロフィール写真を更新しました。",
-    "avatarError": "写真のアップロードに失敗しました。もう一度お試しください。"
+    "avatarError": "写真のアップロードに失敗しました。もう一度お試しください。",
+    "avatarAlt": "アバター",
+    "continents": {
+      "AF": "アフリカ",
+      "AN": "南極",
+      "AS": "アジア",
+      "EU": "ヨーロッパ",
+      "NA": "北米",
+      "OC": "オセアニア",
+      "SA": "南アメリカ"
+    },
+    "genders": {
+      "male": "男性",
+      "female": "女性"
+    }
   },
   "notifications": {
     "title": "通知",
@@ -2153,7 +2176,19 @@
     "allRead": "すべて読みました",
     "markAllRead": "すべてを既読にする",
     "noneTitle": "通知はありません",
-    "noneDesc": "アカウントやブログに関する重要な更新情報については、こちらでお知らせします。"
+    "noneDesc": "アカウントやブログに関する重要な更新情報については、こちらでお知らせします。",
+    "minutesAgo": "{m}分前",
+    "hoursAgo": "{h}時間前",
+    "daysAgo": "{d}日前",
+    "pushNotSupported": "このブラウザではプッシュ通知に対応していません。",
+    "pushEnabled": "プッシュ通知が有効になりました！",
+    "pushEnableError": "プッシュ通知を有効にできませんでした。",
+    "pushDisabled": "プッシュ通知が無効になっています。",
+    "pushDisableError": "プッシュ通知の無効化中にエラーが発生しました。",
+    "pushDisableButton": "プッシュ通知を無効にする",
+    "pushBlockedByBrowser": "ブラウザによってプッシュ通知がブロックされました",
+    "pushEnableButton": "プッシュ通知を有効にする",
+    "justNow": "ついさっき"
   },
   "affiliate": {
     "title": "アフィリエイトプログラム",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "招待状を送る",
     "inviteSentTitle": "招待状を送信しました！",
     "inviteSentDesc": "ご招待状は {email} 宛てに送信されました。",
-    "inviteError": "招待状を送信できませんでした。"
+    "inviteError": "招待状を送信できませんでした。",
+    "requested": "リクエスト済み",
+    "processing": "処理",
+    "failed": "失敗しました",
+    "rejected": "却下",
+    "filterAll": "すべて",
+    "cashoutGross": "グロス",
+    "cashoutNet": "ネット",
+    "cashoutRequestedCol": "リクエスト済み",
+    "cashoutProcessedCol": "処理済み"
   },
   "tenantAccounting": {
     "title": "財務概要",

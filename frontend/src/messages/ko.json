@@ -1420,7 +1420,7 @@
           "50개의 기사",
           "뉴스레터 구독자 500명",
           "저자 1명",
-          "1GB 저장 용량",
+          "1 GB 저장 공간",
           "smarterbloggers.com 하위 도메인",
           "기업용 템플릿 포함"
         ]
@@ -1472,7 +1472,8 @@
           "연중무휴 24시간 지원"
         ]
       }
-    }
+    },
+    "preparingPayment": "결제 처리 중…"
   },
   "myBlogs": {
     "title": "내 블로그",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "비즈니스",
     "supportAlertTitle": "{count, plural, one {# 지원 티켓 열기} other {# 지원 티켓 열기}}",
-    "supportAlertDesc": "지원 관련 대화 내역을 보려면 클릭하세요."
+    "supportAlertDesc": "지원 관련 대화 내역을 보려면 클릭하세요.",
+    "blogCardViews": "조회수",
+    "blogCardStudio": "스튜디오",
+    "newBlogShort": "새로움",
+    "statTotalViews": "총 조회수 (지난 30일)",
+    "statUniqueSessions": "고유 세션 수 (30일)",
+    "chartPageViews30d": "페이지 조회수 — 지난 30일",
+    "blogCountSingular": "{count} 블로그",
+    "blogCountPlural": "{count} 블로그"
   },
   "studio": {
     "save": "저장",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "지갑 주소를 추가하기 전에 2단계 인증을 활성화해야 합니다.",
     "avatarChange": "사진 변경",
     "avatarUpdated": "프로필 사진을 업데이트했습니다.",
-    "avatarError": "사진 업로드에 실패했습니다. 다시 시도해 주세요."
+    "avatarError": "사진 업로드에 실패했습니다. 다시 시도해 주세요.",
+    "avatarAlt": "아바타",
+    "continents": {
+      "AF": "아프리카",
+      "AN": "남극",
+      "AS": "아시아",
+      "EU": "유럽",
+      "NA": "북미",
+      "OC": "오세아니아",
+      "SA": "남미"
+    },
+    "genders": {
+      "male": "남성",
+      "female": "여성"
+    }
   },
   "notifications": {
     "title": "알림",
@@ -2153,7 +2176,19 @@
     "allRead": "모두 읽음",
     "markAllRead": "모두 읽은 것으로 표시",
     "noneTitle": "알림 없음",
-    "noneDesc": "계정 및 블로그와 관련된 중요한 업데이트가 있을 경우 이곳에서 알림을 받으실 수 있습니다."
+    "noneDesc": "계정 및 블로그와 관련된 중요한 업데이트가 있을 경우 이곳에서 알림을 받으실 수 있습니다.",
+    "minutesAgo": "{m}분 전",
+    "hoursAgo": "{h}시간 전",
+    "daysAgo": "{d}일 전",
+    "pushNotSupported": "이 브라우저에서는 푸시 알림이 지원되지 않습니다.",
+    "pushEnabled": "푸시 알림이 활성화되었습니다!",
+    "pushEnableError": "푸시 알림을 활성화할 수 없습니다.",
+    "pushDisabled": "푸시 알림이 비활성화되었습니다.",
+    "pushDisableError": "푸시 알림 비활성화 중 오류가 발생했습니다.",
+    "pushDisableButton": "푸시 알림 비활성화",
+    "pushBlockedByBrowser": "브라우저에 의해 푸시가 차단되었습니다",
+    "pushEnableButton": "푸시 알림 활성화",
+    "justNow": "방금"
   },
   "affiliate": {
     "title": "제휴 프로그램",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "초대장 보내기",
     "inviteSentTitle": "초대장이 발송되었습니다!",
     "inviteSentDesc": "초대장이 {email}으로 발송되었습니다.",
-    "inviteError": "초대장을 보낼 수 없습니다."
+    "inviteError": "초대장을 보낼 수 없습니다.",
+    "requested": "요청됨",
+    "processing": "처리",
+    "failed": "실패함",
+    "rejected": "거절됨",
+    "filterAll": "전체",
+    "cashoutGross": "총액",
+    "cashoutNet": "순",
+    "cashoutRequestedCol": "요청됨",
+    "cashoutProcessedCol": "처리됨"
   },
   "tenantAccounting": {
     "title": "재무 개요",

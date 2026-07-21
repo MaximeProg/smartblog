@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Save, Loader2, User, Mail, Shield, Key, Eye, EyeOff, Phone, Globe, Lock, ShieldCheck, ShieldOff, Camera, Wallet, CheckCircle2 } from 'lucide-react';
-import { useTranslations, useLocale } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { useAuthStore } from '@/store/auth.store';
@@ -84,7 +84,7 @@ function AvatarUpload({
         {currentUrl ? (
           <img
             src={currentUrl}
-            alt="avatar"
+            alt={t('avatarAlt')}
             className="h-20 w-20 rounded-full object-cover shadow-lg"
           />
         ) : (
@@ -123,7 +123,6 @@ export default function ProfilePage() {
   const { user } = useAuthStore();
   const { toast } = useToast();
   const t = useTranslations('profile');
-  const locale = useLocale();
 
   // Champs profil
   const [displayName, setDisplayName] = useState('');
@@ -291,7 +290,7 @@ export default function ProfilePage() {
   const genderLabel = (code: string) => {
     const g = GENDERS.find(x => x.code === code);
     if (!g) return code;
-    return locale === 'fr' ? g.fr : g.en;
+    return t(`genders.${g.code}` as any);
   };
 
   const chevron = (
@@ -410,7 +409,7 @@ export default function ProfilePage() {
                     <div className="relative">
                       <SelectField value={continent} onChange={setContinent} placeholder={t('continentPlaceholder')}>
                         {CONTINENTS.map(c => (
-                          <option key={c.code} value={c.code}>{locale === 'fr' ? c.fr : c.en}</option>
+                          <option key={c.code} value={c.code}>{t(`continents.${c.code}` as any)}</option>
                         ))}
                       </SelectField>
                       {chevron}
@@ -430,7 +429,7 @@ export default function ProfilePage() {
                     <div className="relative">
                       <SelectField value={gender} onChange={setGender} placeholder={t('genderPlaceholder')}>
                         {GENDERS.map(g => (
-                          <option key={g.code} value={g.code}>{locale === 'fr' ? g.fr : g.en}</option>
+                          <option key={g.code} value={g.code}>{t(`genders.${g.code}` as any)}</option>
                         ))}
                       </SelectField>
                       {chevron}

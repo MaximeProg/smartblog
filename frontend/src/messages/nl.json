@@ -1472,7 +1472,8 @@
           "24/7 ondersteuning"
         ]
       }
-    }
+    },
+    "preparingPayment": "Betaling wordt verwerkt…"
   },
   "myBlogs": {
     "title": "Mijn blogs",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Zakelijk",
     "supportAlertTitle": "{count, plural, one {# een supportticket openen} other {# openstaande supporttickets}}",
-    "supportAlertDesc": "Klik hier om je ondersteuningsgesprekken te bekijken."
+    "supportAlertDesc": "Klik hier om je ondersteuningsgesprekken te bekijken.",
+    "blogCardViews": "Weergaven",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Nieuw",
+    "statTotalViews": "Totaal aantal weergaven (30 dagen)",
+    "statUniqueSessions": "Unieke sessies (30 dagen)",
+    "chartPageViews30d": "Paginaweergaven — afgelopen 30 dagen",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogs"
   },
   "studio": {
     "save": "Opslaan",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Je moet tweefactorauthenticatie inschakelen voordat je een walletadres toevoegt.",
     "avatarChange": "Foto wijzigen",
     "avatarUpdated": "Profielfoto bijgewerkt.",
-    "avatarError": "Het uploaden van de foto is mislukt. Probeer het nog eens."
+    "avatarError": "Het uploaden van de foto is mislukt. Probeer het nog eens.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarctica",
+      "AS": "Azië",
+      "EU": "Europa",
+      "NA": "Noord-Amerika",
+      "OC": "Oceanië",
+      "SA": "Zuid-Amerika"
+    },
+    "genders": {
+      "male": "Man",
+      "female": "Vrouw"
+    }
   },
   "notifications": {
     "title": "Meldingen",
@@ -2153,7 +2176,19 @@
     "allRead": "Alles gelezen",
     "markAllRead": "Alles als gelezen markeren",
     "noneTitle": "Geen meldingen",
-    "noneDesc": "Hier ontvang je meldingen over belangrijke updates met betrekking tot je account en blogs."
+    "noneDesc": "Hier ontvang je meldingen over belangrijke updates met betrekking tot je account en blogs.",
+    "minutesAgo": "{m} minuten geleden",
+    "hoursAgo": "{h} uur geleden",
+    "daysAgo": "{d} dagen geleden",
+    "pushNotSupported": "Pushmeldingen worden in deze browser niet ondersteund.",
+    "pushEnabled": "Pushmeldingen zijn ingeschakeld!",
+    "pushEnableError": "Het is niet gelukt om pushmeldingen in te schakelen.",
+    "pushDisabled": "Pushmeldingen zijn uitgeschakeld.",
+    "pushDisableError": "Er is een fout opgetreden bij het uitschakelen van pushmeldingen.",
+    "pushDisableButton": "Push uitschakelen",
+    "pushBlockedByBrowser": "Actie geblokkeerd door de browser",
+    "pushEnableButton": "Push inschakelen",
+    "justNow": "zojuist"
   },
   "affiliate": {
     "title": "Partnerprogramma",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Uitnodiging versturen",
     "inviteSentTitle": "Uitnodiging verzonden!",
     "inviteSentDesc": "Je uitnodiging is verzonden naar {email}.",
-    "inviteError": "De uitnodiging kon niet worden verzonden."
+    "inviteError": "De uitnodiging kon niet worden verzonden.",
+    "requested": "Aangevraagd",
+    "processing": "Verwerking",
+    "failed": "Mislukt",
+    "rejected": "Afgewezen",
+    "filterAll": "Alles",
+    "cashoutGross": "Bruto",
+    "cashoutNet": "Netto",
+    "cashoutRequestedCol": "Aangevraagd",
+    "cashoutProcessedCol": "Verwerkt"
   },
   "tenantAccounting": {
     "title": "Financieel overzicht",

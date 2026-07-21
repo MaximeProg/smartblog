@@ -1472,7 +1472,8 @@
           "Asistență 24 de ore din 24, 7 zile din 7"
         ]
       }
-    }
+    },
+    "preparingPayment": "Se pregătește plata…"
   },
   "myBlogs": {
     "title": "Blogurile mele",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Afaceri",
     "supportAlertTitle": "{count, plural, one {# deschide un tichet de asistență} other {# deschideți tichete de asistență}}",
-    "supportAlertDesc": "Faceți clic pentru a vizualiza conversațiile cu serviciul de asistență."
+    "supportAlertDesc": "Faceți clic pentru a vizualiza conversațiile cu serviciul de asistență.",
+    "blogCardViews": "Vizualizări",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Nou",
+    "statTotalViews": "Număr total de vizualizări (30 zile)",
+    "statUniqueSessions": "Sesiuni unice (30 zile)",
+    "chartPageViews30d": "Vizualizări de pagină — ultimele 30 de zile",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} bloguri"
   },
   "studio": {
     "save": "Salvare",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Trebuie să activați autentificarea în doi pași înainte de a adăuga o adresă de portofel.",
     "avatarChange": "Schimbă fotografia",
     "avatarUpdated": "Fotografia de profil a fost actualizată.",
-    "avatarError": "Nu s-a reușit încărcarea fotografiei. Vă rugăm să încercați din nou."
+    "avatarError": "Nu s-a reușit încărcarea fotografiei. Vă rugăm să încercați din nou.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Africa",
+      "AN": "Antarctica",
+      "AS": "Asia",
+      "EU": "Europa",
+      "NA": "America de Nord",
+      "OC": "Oceania",
+      "SA": "America de Sud"
+    },
+    "genders": {
+      "male": "Bărbat",
+      "female": "Femeie"
+    }
   },
   "notifications": {
     "title": "Notificări",
@@ -2153,7 +2176,19 @@
     "allRead": "Toate au fost citite",
     "markAllRead": "Marchează totul ca citit",
     "noneTitle": "Nu există notificări",
-    "noneDesc": "Aici vei primi notificări cu privire la actualizările importante referitoare la contul tău și la blogurile tale."
+    "noneDesc": "Aici vei primi notificări cu privire la actualizările importante referitoare la contul tău și la blogurile tale.",
+    "minutesAgo": "Acum {m} minute",
+    "hoursAgo": "Acum {h} ore",
+    "daysAgo": "Acum {d} zile",
+    "pushNotSupported": "Notificările push nu sunt acceptate în acest browser.",
+    "pushEnabled": "Notificările push sunt activate!",
+    "pushEnableError": "Nu s-au putut activa notificările push.",
+    "pushDisabled": "Notificările push sunt dezactivate.",
+    "pushDisableError": "A apărut o eroare la dezactivarea notificărilor push.",
+    "pushDisableButton": "Dezactivează notificările push",
+    "pushBlockedByBrowser": "Acțiunea a fost blocată de browser",
+    "pushEnableButton": "Activează notificările push",
+    "justNow": "chiar acum"
   },
   "affiliate": {
     "title": "Programul de afiliere",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Trimite invitație",
     "inviteSentTitle": "Invitația a fost trimisă!",
     "inviteSentDesc": "Invitația ta a fost trimisă la adresa {email}.",
-    "inviteError": "Nu s-a putut trimite invitația."
+    "inviteError": "Nu s-a putut trimite invitația.",
+    "requested": "Solicitat",
+    "processing": "Prelucrare",
+    "failed": "Eșec",
+    "rejected": "Respins",
+    "filterAll": "Toate",
+    "cashoutGross": "Brut",
+    "cashoutNet": "Net",
+    "cashoutRequestedCol": "Solicitat",
+    "cashoutProcessedCol": "Prelucrat"
   },
   "tenantAccounting": {
     "title": "Prezentare generală financiară",

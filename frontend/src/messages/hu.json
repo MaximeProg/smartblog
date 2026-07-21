@@ -1472,7 +1472,8 @@
           "24 órás, hétköznapi ügyfélszolgálat"
         ]
       }
-    }
+    },
+    "preparingPayment": "A fizetés előkészítése…"
   },
   "myBlogs": {
     "title": "A blogjaim",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Üzleti élet",
     "supportAlertTitle": "{count, plural, one {# támogatási jegy megnyitása} other {# nyitott ügyek}}",
-    "supportAlertDesc": "Kattintson ide a támogatási beszélgetéseinek megtekintéséhez."
+    "supportAlertDesc": "Kattintson ide a támogatási beszélgetéseinek megtekintéséhez.",
+    "blogCardViews": "Megtekintések",
+    "blogCardStudio": "Stúdió",
+    "newBlogShort": "Új",
+    "statTotalViews": "Összes megtekintés (30 nap)",
+    "statUniqueSessions": "Egyedi látogatások (30 nap)",
+    "chartPageViews30d": "Oldal megtekintések — az elmúlt 30 napban",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogok"
   },
   "studio": {
     "save": "Mentés",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "A pénztárca-cím hozzáadása előtt engedélyeznie kell a kétfaktoros hitelesítést.",
     "avatarChange": "Fotó cseréje",
     "avatarUpdated": "A profilkép frissült.",
-    "avatarError": "A fénykép feltöltése nem sikerült. Kérjük, próbálja meg újra."
+    "avatarError": "A fénykép feltöltése nem sikerült. Kérjük, próbálja meg újra.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarktisz",
+      "AS": "Ázsia",
+      "EU": "Európa",
+      "NA": "Észak-Amerika",
+      "OC": "Óceánia",
+      "SA": "Dél-Amerika"
+    },
+    "genders": {
+      "male": "Férfi",
+      "female": "Nő"
+    }
   },
   "notifications": {
     "title": "Értesítések",
@@ -2153,7 +2176,19 @@
     "allRead": "Mindet elolvastam",
     "markAllRead": "Mindent olvasottként jelölni",
     "noneTitle": "Nincs értesítés",
-    "noneDesc": "Itt kapsz értesítést a fiókoddal és a blogjaiddal kapcsolatos fontos frissítésekről."
+    "noneDesc": "Itt kapsz értesítést a fiókoddal és a blogjaiddal kapcsolatos fontos frissítésekről.",
+    "minutesAgo": "{m} perccel ezelőtt",
+    "hoursAgo": "{h} órával ezelőtt",
+    "daysAgo": "{d} napja",
+    "pushNotSupported": "Ez a böngésző nem támogatja a push-értesítéseket.",
+    "pushEnabled": "Az értesítések engedélyezve!",
+    "pushEnableError": "Nem sikerült engedélyezni a push-értesítéseket.",
+    "pushDisabled": "A push-értesítések le vannak tiltva.",
+    "pushDisableError": "Hiba történt a push-értesítések letiltása közben.",
+    "pushDisableButton": "A push-értesítések letiltása",
+    "pushBlockedByBrowser": "A böngésző blokkolta a Push-üzenetet",
+    "pushEnableButton": "Push-értesítések engedélyezése",
+    "justNow": "épp az előbb"
   },
   "affiliate": {
     "title": "Partnerprogram",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Meghívó küldése",
     "inviteSentTitle": "A meghívó elküldve!",
     "inviteSentDesc": "A meghívódat a {email} címre küldtük el.",
-    "inviteError": "Nem sikerült elküldeni a meghívót."
+    "inviteError": "Nem sikerült elküldeni a meghívót.",
+    "requested": "Kért",
+    "processing": "Feldolgozás",
+    "failed": "Sikertelen",
+    "rejected": "Elutasítva",
+    "filterAll": "Minden",
+    "cashoutGross": "Bruttó",
+    "cashoutNet": "Nettó",
+    "cashoutRequestedCol": "Kért",
+    "cashoutProcessedCol": "Feldolgozva"
   },
   "tenantAccounting": {
     "title": "Pénzügyi áttekintés",

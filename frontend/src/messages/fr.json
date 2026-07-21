@@ -1398,6 +1398,7 @@
     "footerNote": "Paiement sécurisé · Annulation possible à tout moment · Pas de frais cachés",
     "checkoutError": "Erreur lors du paiement. Veuillez réessayer.",
     "checkoutSuccess": "Paiement confirmé — votre plan a été mis à niveau.",
+    "preparingPayment": "Préparation du paiement…",
     "needBlogTitle": "Créez d'abord un blog",
     "needBlogDesc": "Vous devez avoir au moins un blog avant de pouvoir souscrire à un plan payant.",
     "needBlogCta": "Créer mon blog",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Business",
     "supportAlertTitle": "{count, plural, one {# ticket de support ouvert} other {# tickets de support ouverts}}",
-    "supportAlertDesc": "Cliquez pour voir vos conversations de support."
+    "supportAlertDesc": "Cliquez pour voir vos conversations de support.",
+    "blogCardViews": "Vues",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Nouveau",
+    "statTotalViews": "Vues totales (30j)",
+    "statUniqueSessions": "Sessions uniques (30j)",
+    "chartPageViews30d": "Pages vues — 30 derniers jours",
+    "blogCountSingular": "{count} blog",
+    "blogCountPlural": "{count} blogs"
   },
   "studio": {
     "save": "Sauvegarder",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Vous devez activer l'authentification à deux facteurs avant d'ajouter une adresse wallet.",
     "avatarChange": "Changer la photo",
     "avatarUpdated": "Photo de profil mise à jour.",
-    "avatarError": "Échec du téléchargement. Veuillez réessayer."
+    "avatarError": "Échec du téléchargement. Veuillez réessayer.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrique",
+      "AN": "Antarctique",
+      "AS": "Asie",
+      "EU": "Europe",
+      "NA": "Amérique du Nord",
+      "OC": "Océanie",
+      "SA": "Amérique du Sud"
+    },
+    "genders": {
+      "male": "Mâle",
+      "female": "Femelle"
+    }
   },
   "notifications": {
     "title": "Notifications",
@@ -2153,7 +2176,19 @@
     "allRead": "Tout est lu",
     "markAllRead": "Tout marquer comme lu",
     "noneTitle": "Aucune notification",
-    "noneDesc": "Vous serez averti ici pour les mises à jour importantes de votre compte et de vos blogs."
+    "noneDesc": "Vous serez averti ici pour les mises à jour importantes de votre compte et de vos blogs.",
+    "pushNotSupported": "Notifications non supportées dans ce navigateur.",
+    "pushEnabled": "Notifications push activées !",
+    "pushEnableError": "Impossible d'activer les notifications push.",
+    "pushDisabled": "Notifications push désactivées.",
+    "pushDisableError": "Erreur lors de la désactivation.",
+    "pushDisableButton": "Désactiver push",
+    "pushBlockedByBrowser": "Push bloqué par le navigateur",
+    "pushEnableButton": "Activer les push",
+    "justNow": "à l'instant",
+    "minutesAgo": "il y a {m}min",
+    "hoursAgo": "il y a {h}h",
+    "daysAgo": "il y a {d}j"
   },
   "affiliate": {
     "title": "Programme d'affiliation",
@@ -2185,6 +2220,16 @@
     "ready": "Prêt au retrait",
     "paid": "Versé",
     "cancelled": "Annulé",
+    "requested": "Demandé",
+    "processing": "En cours",
+    "failed": "Échoué",
+    "rejected": "Rejeté",
+    "filterAll": "Tous",
+    "cashoutGross": "Brut",
+    "cashoutFee": "Frais",
+    "cashoutNet": "Net",
+    "cashoutRequestedCol": "Demandé",
+    "cashoutProcessedCol": "Traité",
     "howItWorks": "Comment ça marche",
     "step1": "Partagez votre lien unique avec d'autres blogueurs",
     "step2": "À leur inscription, vous gagnez 10% de leur abonnement",

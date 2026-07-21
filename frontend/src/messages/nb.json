@@ -1450,7 +1450,7 @@
           "50 000 abonnenter på nyhetsbrevet",
           "10 forfattere",
           "50 GB lagringsplass",
-          "Eget domene",
+          "Egendefinert domene",
           "Fullstendig analyse + SEO",
           "API-tilgang",
           "Spesialisert støtte"
@@ -1472,7 +1472,8 @@
           "Support døgnet rundt"
         ]
       }
-    }
+    },
+    "preparingPayment": "Forbereder betaling…"
   },
   "myBlogs": {
     "title": "Bloggene mine",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Næringsliv",
     "supportAlertTitle": "{count, plural, one {# opprett en supportsak} other {# åpne supportforespørsler}}",
-    "supportAlertDesc": "Klikk her for å se dine support-samtaler."
+    "supportAlertDesc": "Klikk her for å se dine support-samtaler.",
+    "blogCardViews": "Visninger",
+    "blogCardStudio": "Studio",
+    "newBlogShort": "Nytt",
+    "statTotalViews": "Totalt antall visninger (30 dager)",
+    "statUniqueSessions": "Unike økter (30 dager)",
+    "chartPageViews30d": "Sidevisninger — de siste 30 dagene",
+    "blogCountSingular": "{count} blogg",
+    "blogCountPlural": "{count} blogger"
   },
   "studio": {
     "save": "Lagre",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Du må aktivere tofaktorautentisering før du legger til en lommebokadresse.",
     "avatarChange": "Bytt bilde",
     "avatarUpdated": "Profilbildet er oppdatert.",
-    "avatarError": "Det gikk ikke å laste opp bildet. Prøv på nytt."
+    "avatarError": "Det gikk ikke å laste opp bildet. Prøv på nytt.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Afrika",
+      "AN": "Antarktis",
+      "AS": "Asia",
+      "EU": "Europa",
+      "NA": "Nord-Amerika",
+      "OC": "Oseania",
+      "SA": "Sør-Amerika"
+    },
+    "genders": {
+      "male": "Mann",
+      "female": "Kvinne"
+    }
   },
   "notifications": {
     "title": "Varsler",
@@ -2153,7 +2176,19 @@
     "allRead": "Alle er lest",
     "markAllRead": "Merk alle som lest",
     "noneTitle": "Ingen varsler",
-    "noneDesc": "Her vil du motta varsler om viktige oppdateringer knyttet til kontoen din og bloggene dine."
+    "noneDesc": "Her vil du motta varsler om viktige oppdateringer knyttet til kontoen din og bloggene dine.",
+    "minutesAgo": "for {m} minutter siden",
+    "hoursAgo": "For {h} timer siden",
+    "daysAgo": "for {d} dager siden",
+    "pushNotSupported": "Push-varsler støttes ikke i denne nettleseren.",
+    "pushEnabled": "Push-varsler er aktivert!",
+    "pushEnableError": "Det var ikke mulig å aktivere push-varsler.",
+    "pushDisabled": "Push-varslinger er deaktivert.",
+    "pushDisableError": "Det oppstod en feil under deaktivering av push-varsler.",
+    "pushDisableButton": "Deaktiver push-varsler",
+    "pushBlockedByBrowser": "Trykk blokkert av nettleseren",
+    "pushEnableButton": "Aktiver push-varsler",
+    "justNow": "akkurat nå"
   },
   "affiliate": {
     "title": "Partnerprogram",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Send invitasjon",
     "inviteSentTitle": "Invitasjonen er sendt!",
     "inviteSentDesc": "Invitasjonen din ble sendt til {email}.",
-    "inviteError": "Det var ikke mulig å sende invitasjonen."
+    "inviteError": "Det var ikke mulig å sende invitasjonen.",
+    "requested": "Forespurt",
+    "processing": "Behandling",
+    "failed": "Mislykket",
+    "rejected": "Avvist",
+    "filterAll": "Alle",
+    "cashoutGross": "Brutto",
+    "cashoutNet": "Netto",
+    "cashoutRequestedCol": "Forespurt",
+    "cashoutProcessedCol": "Behandlet"
   },
   "tenantAccounting": {
     "title": "Finansiell oversikt",

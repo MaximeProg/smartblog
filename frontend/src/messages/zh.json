@@ -1472,7 +1472,8 @@
           "全天候支持"
         ]
       }
-    }
+    },
+    "preparingPayment": "正在处理付款……"
   },
   "myBlogs": {
     "title": "我的博客",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "商业",
     "supportAlertTitle": "{count, plural, one {# 提交支持工单} other {# 提交支持工单}}",
-    "supportAlertDesc": "点击查看您的支持对话记录。"
+    "supportAlertDesc": "点击查看您的支持对话记录。",
+    "blogCardViews": "浏览量",
+    "blogCardStudio": "工作室",
+    "newBlogShort": "新",
+    "statTotalViews": "总浏览量（30天）",
+    "statUniqueSessions": "独立会话（30天）",
+    "chartPageViews30d": "页面浏览量——过去30天",
+    "blogCountSingular": "{count} 博客",
+    "blogCountPlural": "{count} 博客"
   },
   "studio": {
     "save": "保存",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "在添加钱包地址之前，您必须启用双因素认证。",
     "avatarChange": "更换照片",
     "avatarUpdated": "头像已更新。",
-    "avatarError": "上传照片失败。请重试。"
+    "avatarError": "上传照片失败。请重试。",
+    "avatarAlt": "头像",
+    "continents": {
+      "AF": "非洲",
+      "AN": "南极洲",
+      "AS": "亚洲",
+      "EU": "欧洲",
+      "NA": "北美",
+      "OC": "大洋洲",
+      "SA": "南美洲"
+    },
+    "genders": {
+      "male": "男性",
+      "female": "女性"
+    }
   },
   "notifications": {
     "title": "通知",
@@ -2153,7 +2176,19 @@
     "allRead": "已全部阅读",
     "markAllRead": "将所有邮件标记为已读",
     "noneTitle": "没有通知",
-    "noneDesc": "您的账户和博客如有重要更新，将在此处通知您。"
+    "noneDesc": "您的账户和博客如有重要更新，将在此处通知您。",
+    "minutesAgo": "{m}分钟前",
+    "hoursAgo": "{h}小时前",
+    "daysAgo": "{d}天前",
+    "pushNotSupported": "此浏览器不支持推送通知。",
+    "pushEnabled": "已启用推送通知！",
+    "pushEnableError": "无法启用推送通知。",
+    "pushDisabled": "已禁用推送通知。",
+    "pushDisableError": "禁用推送通知时发生错误。",
+    "pushDisableButton": "禁用推送",
+    "pushBlockedByBrowser": "推送被浏览器拦截",
+    "pushEnableButton": "启用推送",
+    "justNow": "刚才"
   },
   "affiliate": {
     "title": "联盟计划",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "发送邀请",
     "inviteSentTitle": "邀请已发送！",
     "inviteSentDesc": "您的邀请已发送至 {email}。",
-    "inviteError": "无法发送邀请。"
+    "inviteError": "无法发送邀请。",
+    "requested": "已请求",
+    "processing": "处理",
+    "failed": "失败",
+    "rejected": "被拒绝",
+    "filterAll": "全部",
+    "cashoutGross": "总计",
+    "cashoutNet": "Net",
+    "cashoutRequestedCol": "已请求",
+    "cashoutProcessedCol": "已处理"
   },
   "tenantAccounting": {
     "title": "财务概况",

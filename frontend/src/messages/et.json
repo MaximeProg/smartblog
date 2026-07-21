@@ -1472,7 +1472,8 @@
           "24/7 tugi"
         ]
       }
-    }
+    },
+    "preparingPayment": "Makse ettevalmistamine…"
   },
   "myBlogs": {
     "title": "Minu blogid",
@@ -1543,7 +1544,15 @@
     "planPro": "Pro",
     "planBusiness": "Äri",
     "supportAlertTitle": "{count, plural, one {# ava tugipäring} other {# avatud tugipäringud}}",
-    "supportAlertDesc": "Klõpsake siin, et vaadata oma klienditoe vestlusi."
+    "supportAlertDesc": "Klõpsake siin, et vaadata oma klienditoe vestlusi.",
+    "blogCardViews": "Vaated",
+    "blogCardStudio": "Stuudio",
+    "newBlogShort": "Uus",
+    "statTotalViews": "Koguarv (30 päeva)",
+    "statUniqueSessions": "Unikaalsed seansid (30 päeva)",
+    "chartPageViews30d": "Lehekülgede vaatamised — viimased 30 päeva",
+    "blogCountSingular": "{count} blogi",
+    "blogCountPlural": "{count} blogid"
   },
   "studio": {
     "save": "Salvesta",
@@ -2145,7 +2154,21 @@
     "walletRequires2FA": "Enne rahakoti aadressi lisamist peate aktiveerima kahefaktorilise autentimise.",
     "avatarChange": "Vaheta fotot",
     "avatarUpdated": "Profiilipilt on uuendatud.",
-    "avatarError": "Foto üleslaadimine ebaõnnestus. Palun proovi uuesti."
+    "avatarError": "Foto üleslaadimine ebaõnnestus. Palun proovi uuesti.",
+    "avatarAlt": "avatar",
+    "continents": {
+      "AF": "Aafrika",
+      "AN": "Antarktika",
+      "AS": "Aasia",
+      "EU": "Euroopa",
+      "NA": "Põhja-Ameerika",
+      "OC": "Okeaania",
+      "SA": "Lõuna-Ameerika"
+    },
+    "genders": {
+      "male": "Mees",
+      "female": "Naine"
+    }
   },
   "notifications": {
     "title": "Teated",
@@ -2153,7 +2176,19 @@
     "allRead": "Kõik on läbi loetud",
     "markAllRead": "Märgi kõik loetuks",
     "noneTitle": "Teateid pole",
-    "noneDesc": "Siit saad teateid oma konto ja blogide oluliste uuenduste kohta."
+    "noneDesc": "Siit saad teateid oma konto ja blogide oluliste uuenduste kohta.",
+    "minutesAgo": "{m} minutit tagasi",
+    "hoursAgo": "{h} tundi tagasi",
+    "daysAgo": "{d} päeva tagasi",
+    "pushNotSupported": "Selles brauseris ei toetata push-teateid.",
+    "pushEnabled": "Push-teated on sisse lülitatud!",
+    "pushEnableError": "Push-teateid ei õnnestunud aktiveerida.",
+    "pushDisabled": "Push-teated on välja lülitatud.",
+    "pushDisableError": "Push-teavituste keelamisel tekkis viga.",
+    "pushDisableButton": "Lülita push-teated välja",
+    "pushBlockedByBrowser": "Veebibrauser blokeeris nupu vajutamise",
+    "pushEnableButton": "Luba push-teated",
+    "justNow": "just äsja"
   },
   "affiliate": {
     "title": "Partnerprogramm",
@@ -2212,7 +2247,16 @@
     "inviteFriendSend": "Saada kutse",
     "inviteSentTitle": "Kutse on saadetud!",
     "inviteSentDesc": "Teie kutse saadeti aadressile {email}.",
-    "inviteError": "Kutset ei õnnestunud saata."
+    "inviteError": "Kutset ei õnnestunud saata.",
+    "requested": "Nõutud",
+    "processing": "Töötlemine",
+    "failed": "Ebaõnnestus",
+    "rejected": "Tagasi lükatud",
+    "filterAll": "Kõik",
+    "cashoutGross": "Bruto",
+    "cashoutNet": "Net",
+    "cashoutRequestedCol": "Nõutud",
+    "cashoutProcessedCol": "Töödeldud"
   },
   "tenantAccounting": {
     "title": "Finantsülevaade",
