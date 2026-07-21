@@ -2075,11 +2075,12 @@
     "quickSlugTaken": "This slug is already taken, please choose another.",
     "quickDescriptionLabel": "Description",
     "quickDescriptionPlaceholder": "A blog about tech, design and entrepreneurship...",
-    "quickNameHint": "Shown as your blog's public name. Keep it under 100 characters.",
+    "quickNameHint": "Shown as your blog's public name. Maximum 50 characters.",
     "quickDescriptionHint": "Appears in search results and social shares. Recommended under 300 characters.",
     "quickSlugHint": "4 to 50 characters — lowercase letters, numbers and hyphens only.",
     "quickCoverUploadError": "Couldn't upload the image. Please try again.",
-    "quickGenericError": "Something went wrong. Please try again."
+    "quickGenericError": "Something went wrong. Please try again.",
+    "quickNameTooLong": "Blog name must be 50 characters or fewer."
   },
   "profile": {
     "personalInfo": "Personal information",
@@ -2794,7 +2795,9 @@
         "platformNameHint": "Displayed on public pages and emails",
         "supportEmail": "Support Email",
         "domainMarkup": "Domain Purchase Markup (%)",
-        "domainMarkupHint": "Added on top of the registrar's price for every domain purchase and renewal — 0 means resale at cost"
+        "domainMarkupHint": "Added on top of the registrar's price for every domain purchase and renewal — 0 means resale at cost",
+        "paymentTolerance": "Crypto Payment Tolerance ($)",
+        "paymentToleranceHint": "A payment received within this margin of the expected amount (network fees, rate variance) is still considered complete"
       },
       "tabs": {
         "general": "General",

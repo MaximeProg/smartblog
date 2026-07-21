@@ -1378,6 +1378,7 @@ async def get_platform_settings(payload: TokenPayload, db: DBSession):
             "configured": bool(getattr(cfg, "NOWPAYMENTS_API_KEY", "")),
             "sandbox": bool(getattr(cfg, "NOWPAYMENTS_SANDBOX", True)),
             "platform_fee_percent": getattr(cfg, "NOWPAYMENTS_PLATFORM_FEE_PERCENT", 20),
+            "tolerance_usd": overrides.get("nowpayments_tolerance_usd", getattr(cfg, "NOWPAYMENTS_TOLERANCE_USD", 0.50)),
         },
         "cloudinary": {
             "configured": bool(cfg.CLOUDINARY_CLOUD_NAME),
@@ -1412,7 +1413,7 @@ async def update_platform_settings(
     allowed_keys = {
         "platform_name", "support_email", "max_blogs_per_user",
         "maintenance_mode", "registrations_open", "ai_model",
-        "domain_markup_percent",
+        "domain_markup_percent", "nowpayments_tolerance_usd",
     }
 
     try:

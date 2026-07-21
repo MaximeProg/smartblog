@@ -128,6 +128,13 @@ export default function SettingsPage() {
                   className="h-9 w-24 px-3 rounded-xl border bg-transparent text-[12px] focus:outline-none"
                   style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text)' }} />
               </Field>
+              <Field label={ts('field.paymentTolerance')} hint={ts('field.paymentToleranceHint')}>
+                <input defaultValue={data?.nowpayments.tolerance_usd ?? 0.5}
+                  type="number" min={0} step={0.1}
+                  onBlur={e => save({ nowpayments_tolerance_usd: Number(e.target.value) })}
+                  className="h-9 w-24 px-3 rounded-xl border bg-transparent text-[12px] focus:outline-none"
+                  style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text)' }} />
+              </Field>
               <div className="py-4">
                 <p className="text-[10px]" style={{ color: 'var(--sa-text-3)' }}>{ts('autoSaveNote')}</p>
               </div>

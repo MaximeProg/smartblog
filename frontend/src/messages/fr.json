@@ -2075,11 +2075,12 @@
     "quickSlugTaken": "Ce slug est déjà utilisé, choisissez-en un autre.",
     "quickDescriptionLabel": "Description",
     "quickDescriptionPlaceholder": "Un blog sur la tech, le design et l’entrepreneuriat...",
-    "quickNameHint": "Affiché comme nom public de votre blog. Restez sous les 100 caractères.",
+    "quickNameHint": "Affiché comme nom public de votre blog. Maximum 50 caractères.",
     "quickDescriptionHint": "Apparaît dans les résultats de recherche et les partages. Recommandé : moins de 300 caractères.",
     "quickSlugHint": "4 à 50 caractères — lettres minuscules, chiffres et tirets uniquement.",
     "quickCoverUploadError": "Échec de l'envoi de l'image. Merci de réessayer.",
-    "quickGenericError": "Une erreur est survenue. Merci de réessayer."
+    "quickGenericError": "Une erreur est survenue. Merci de réessayer.",
+    "quickNameTooLong": "Le nom du blog ne doit pas dépasser 50 caractères."
   },
   "profile": {
     "personalInfo": "Informations personnelles",
@@ -2794,7 +2795,9 @@
         "platformNameHint": "Affiché sur les pages publiques et les emails",
         "supportEmail": "Email de support",
         "domainMarkup": "Marge sur l'achat de domaines (%)",
-        "domainMarkupHint": "Ajoutée au prix du registrar pour chaque achat/renouvellement de domaine — 0 = revente au prix coûtant"
+        "domainMarkupHint": "Ajoutée au prix du registrar pour chaque achat/renouvellement de domaine — 0 = revente au prix coûtant",
+        "paymentTolerance": "Tolérance paiement crypto ($)",
+        "paymentToleranceHint": "Un paiement reçu dans cette marge par rapport au montant attendu (frais réseau, variation de cours) est quand même considéré comme complet"
       },
       "tabs": {
         "general": "Général",

@@ -351,8 +351,12 @@ export default function CreateBlogPage() {
   const previewSrc = coverFilePreview || coverUrl;
   const hasCover = Boolean(previewSrc) && !coverPreviewError;
 
+  const [formError, setFormError] = useState('');
+
   const mutation = useMutation({
     mutationFn: async () => {
+      setFormError('');
+      setSlugError('');
       const { data } = await tenantsApi.create({
         name: name.trim(),
         slug: slug.trim(),
@@ -383,11 +387,32 @@ export default function CreateBlogPage() {
       setStep('domain');
     },
     onError: (err: any) => {
-      const message: string | undefined = err?.response?.data?.message;
-      if (message?.toLowerCase().includes('slug')) {
-        setSlugError(message);
+      // On ne fait jamais confiance au texte brut renvoyé par le backend pour
+      // l'affichage (toujours en français côté serveur, quelle que soit la
+      // locale de l'utilisateur) — on ne lit que le code d'erreur stable et
+      // les champs en échec (`details[].loc`), et on choisit nous-mêmes le
+      // message traduit à afficher.
+      const errorCode: string | undefined = err?.response?.data?.error;
+      const details: any[] = err?.response?.data?.details ?? [];
+      const hasFieldError = (field: string) =>
+        details.some((d) => Array.isArray(d?.loc) && d.loc.includes(field));
+
+      let slugMsg = '';
+      let generalMsg = t('quickGenericError');
+
+      if (errorCode === 'SLUG_ALREADY_EXISTS') {
+        slugMsg = t('quickSlugTaken');
+        generalMsg = slugMsg;
+      } else if (hasFieldError('slug')) {
+        slugMsg = t('quickSlugHint');
+        generalMsg = slugMsg;
+      } else if (hasFieldError('name')) {
+        generalMsg = t('quickNameTooLong');
       }
-      toast({ variant: 'destructive', title: message || t('quickGenericError') });
+
+      setSlugError(slugMsg);
+      setFormError(generalMsg);
+      toast({ variant: 'destructive', title: generalMsg });
     },
   });
 
@@ -676,7 +701,7 @@ export default function CreateBlogPage() {
                       onChange={e => handleNameChange(e.target.value)}
                       placeholder={t('quickNamePlaceholder')}
                       autoFocus
-                      maxLength={100}
+                      maxLength={50}
                       className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[14px] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
                     />
                     <p className="text-[11px] text-slate-400 mt-1.5">{t('quickNameHint')}</p>
@@ -870,6 +895,12 @@ export default function CreateBlogPage() {
                   </div>
 
                   <div className="border-t border-slate-100 dark:border-slate-800" />
+
+                  {formError && (
+                    <div className="rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-3 py-2 text-sm text-red-600 dark:text-red-400">
+                      {formError}
+                    </div>
+                  )}
 
                   {/* Summary + Submit */}
                   <div className="flex items-center gap-4 flex-wrap">

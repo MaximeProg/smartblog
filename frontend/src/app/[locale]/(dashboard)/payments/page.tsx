@@ -10,7 +10,7 @@ import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 import { paymentsApi, type UserPaymentItem, type CryptoPaymentResponse } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 
-type FilterKey = 'all' | 'completed' | 'pending' | 'partially_paid' | 'failed';
+type FilterKey = 'all' | 'completed' | 'pending' | 'partially_paid';
 
 const STATUS_STYLE: Record<string, string> = {
   completed: 'text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/30',
@@ -60,7 +60,6 @@ export default function PaymentsPage() {
     { key: 'completed', label: t('filterCompleted') },
     { key: 'pending', label: t('filterPending') },
     { key: 'partially_paid', label: t('filterPartial') },
-    { key: 'failed', label: t('filterFailed') },
   ];
 
   return (
@@ -71,7 +70,7 @@ export default function PaymentsPage() {
         <TopBar />
 
         <main className="flex-1 overflow-y-auto">
-          <div className="px-8 py-8 max-w-5xl mx-auto">
+          <div className="px-8 py-8">
             <div className="mb-6">
               <h2 className="text-[20px] font-black text-slate-900 dark:text-slate-100">{t('title')}</h2>
               <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-0.5">{t('subtitle')}</p>

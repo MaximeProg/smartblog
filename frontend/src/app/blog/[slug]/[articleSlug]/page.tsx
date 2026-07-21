@@ -77,7 +77,8 @@ export default async function ArticlePage({ params, searchParams }: Props) {
 
     // ── Paywall: article payant — renvoyer la page de déverrouillage ──
     if (article.is_paid) {
-      const loginLocale = (blog.language || 'en').toLowerCase() === 'fr' ? 'fr' : 'en';
+      const blogLang = (blog.language || 'en').toLowerCase();
+      const loginLocale = CMS_SUPPORTED_LANGS.some((l) => l.code === blogLang) ? blogLang : 'en';
       return (
         <ArticlePaywall
           blog={blog}

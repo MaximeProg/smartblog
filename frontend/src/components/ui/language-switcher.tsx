@@ -7,11 +7,9 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { CMS_SUPPORTED_LANGS } from '@/config/cms';
 
-const LOCALES = [
-  { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'fr', label: 'Français', flag: '🇫🇷' },
-];
+const LOCALES = CMS_SUPPORTED_LANGS;
 
 interface LanguageSwitcherProps {
   locale: string;
@@ -54,7 +52,7 @@ export function LanguageSwitcher({ locale, className, align = 'end' }: LanguageS
         <Globe className="h-3.5 w-3.5" />
         <span className="text-xs font-semibold uppercase tracking-wide">{locale}</span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={align} className="min-w-[140px]">
+      <DropdownMenuContent align={align} className="min-w-[140px] max-h-[320px] overflow-y-auto">
         {LOCALES.map((l) => (
           <DropdownMenuItem
             key={l.code}

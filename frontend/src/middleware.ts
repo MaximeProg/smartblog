@@ -14,6 +14,12 @@ const LANG_CODES: Set<string> = new Set(CMS_SUPPORTED_LANGS.map((l) => l.code));
 const CONTENT_LANG_COOKIE = 'sb_content_lang';
 const CMS_LANG_COOKIE = 'sb_cms_lang';
 
+// Préfixe de locale applicatif (dashboard/Studio/marketing) — toutes les
+// locales next-intl (routing.locales), pas seulement en/fr.
+const APP_LOCALE_PATTERN = routing.locales.join('|');
+const APP_LOCALE_PREFIX_RE = new RegExp(`^/(${APP_LOCALE_PATTERN})`);
+const APP_LOCALE_MATCH_RE = new RegExp(`^/(${APP_LOCALE_PATTERN})(/.*)?$`);
+
 function getBlogSlug(hostname: string): string | null {
   // Production: football.smarterbloggers.com
   if (hostname.endsWith(`.${ROOT_DOMAIN}`)) {
@@ -102,7 +108,7 @@ function stripLangPrefix(pathname: string): { lang: string | null; rest: string 
 }
 
 function isProtectedPath(pathname: string): boolean {
-  const withoutLocale = pathname.replace(/^\/(en|fr)/, '') || '/';
+  const withoutLocale = pathname.replace(APP_LOCALE_PREFIX_RE, '') || '/';
   return PROTECTED_PATHS.some((p) => withoutLocale.startsWith(p));
 }
 
@@ -202,7 +208,7 @@ export async function middleware(request: NextRequest) {
   // Miroir du cookie sb_content_lang des blogs tenant : mémorise le choix
   // de langue du visiteur sur les pages marketing (?cmsLang=) pour qu'il
   // n'ait pas à le resélectionner à chaque navigation.
-  const appLocaleMatch = pathname.match(/^\/(en|fr)(\/.*)?$/);
+  const appLocaleMatch = pathname.match(APP_LOCALE_MATCH_RE);
   if (appLocaleMatch && !isProtectedPath(pathname)) {
     const cmsLangParam = request.nextUrl.searchParams.get('cmsLang');
     if (cmsLangParam && LANG_CODES.has(cmsLangParam)) {

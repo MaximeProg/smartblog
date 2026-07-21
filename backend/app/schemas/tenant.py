@@ -19,6 +19,16 @@ class CreateTenantRequest(BaseModel):
     social_links: dict | None = None
     template_config: dict | None = None
 
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("Le nom du blog est requis.")
+        if len(v) > 50:
+            raise ValueError("Le nom du blog ne doit pas dépasser 50 caractères.")
+        return v
+
     @field_validator("slug")
     @classmethod
     def validate_slug(cls, v: str) -> str:

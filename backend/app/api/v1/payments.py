@@ -206,6 +206,21 @@ def _crypto_response(tx: Transaction, amount_usd: float) -> CryptoPaymentRespons
     )
 
 
+async def _get_payment_tolerance_usd() -> float:
+    """Marge de tolérance sur les paiements "partially_paid", configurable
+    par le Super Admin (platform:settings en Redis) — même mécanisme que
+    domain_markup_percent (voir app.services.registrars.pricing)."""
+    from app.core.redis_client import redis
+    import json
+    try:
+        raw = await redis.get("platform:settings")
+        overrides = json.loads(raw) if raw else {}
+        value = overrides.get("nowpayments_tolerance_usd")
+        return float(value) if value is not None else settings.NOWPAYMENTS_TOLERANCE_USD
+    except Exception:
+        return settings.NOWPAYMENTS_TOLERANCE_USD
+
+
 async def _apply_provider_update(db, tx: Transaction, payment_status: str, actually_paid: float) -> None:
     """
     Logique partagée webhook + polling : décide si la transaction doit être
@@ -219,8 +234,9 @@ async def _apply_provider_update(db, tx: Transaction, payment_status: str, actua
 
     total_confirmed = float(tx.amount_received_prior_attempts or 0) + float(tx.amount_received or 0)
     shortfall = float(tx.amount) - total_confirmed
+    tolerance = await _get_payment_tolerance_usd()
 
-    if payment_status == "finished" or (payment_status == "partially_paid" and shortfall <= settings.NOWPAYMENTS_TOLERANCE_USD):
+    if payment_status == "finished" or (payment_status == "partially_paid" and shortfall <= tolerance):
         await _finalize_transaction(db, tx, total_confirmed)
     elif payment_status == "partially_paid":
         tx.status = TransactionStatus.PARTIALLY_PAID
@@ -758,7 +774,10 @@ async def list_my_payments(
     result = await db.execute(
         select(Transaction, Tenant.name)
         .join(Tenant, Tenant.id == Transaction.tenant_id)
-        .where(Transaction.user_id == user_id)
+        .where(
+            Transaction.user_id == user_id,
+            Transaction.status != TransactionStatus.FAILED,
+        )
         .order_by(Transaction.created_at.desc())
         .limit(limit)
     )
