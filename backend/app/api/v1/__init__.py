@@ -13,7 +13,7 @@ from app.api.v1.oauth import router as oauth_router
 from app.api.v1.ads import router as ads_router, public_ads_router
 from app.api.v1.analytics import router as analytics_router
 from app.api.v1.search import router as search_router
-from app.api.v1.payments import router as payments_router
+from app.api.v1.payments import router as payments_router, me_payments_router
 from app.api.v1.push import router as push_router
 from app.api.v1.ai import router as ai_router
 from app.api.v1.superadmin import router as superadmin_router
@@ -48,6 +48,7 @@ api_router.include_router(public_ads_router)
 api_router.include_router(analytics_router)
 api_router.include_router(search_router)
 api_router.include_router(payments_router)
+api_router.include_router(me_payments_router)
 api_router.include_router(push_router)
 api_router.include_router(ai_router)
 api_router.include_router(superadmin_router)

@@ -146,6 +146,7 @@ class TransactionType(str, enum.Enum):
 
 class TransactionStatus(str, enum.Enum):
     PENDING = "pending"
+    PARTIALLY_PAID = "partially_paid"
     COMPLETED = "completed"
     FAILED = "failed"
     REFUNDED = "refunded"
@@ -199,6 +200,9 @@ class AffiliateCommissionSource(str, enum.Enum):
 class AffiliateCommissionStatus(str, enum.Enum):
     PENDING = "pending"
     READY = "ready"
+    RESERVED = "reserved"  # Obsolète (décision PDG : pas de wallet = pas de commission) — conservé
+                           # car retirer une valeur d'un ENUM Postgres exige de recréer le type ;
+                           # plus jamais produit par le code, gardé pour compat des lignes existantes.
     PAID = "paid"
     CANCELLED = "cancelled"
 
@@ -209,6 +213,12 @@ class CashoutStatus(str, enum.Enum):
     PAID = "paid"
     FAILED = "failed"
     REJECTED = "rejected"
+
+
+class AdRevenueShareStatus(str, enum.Enum):
+    PENDING = "pending"    # Obsolète — voir AffiliateCommissionStatus.RESERVED ci-dessus
+    RESERVED = "reserved"  # Obsolète — idem
+    PAID = "paid"
 
 
 # ── M24 — Accounting (Singapore SFRS) ────────────────────────────

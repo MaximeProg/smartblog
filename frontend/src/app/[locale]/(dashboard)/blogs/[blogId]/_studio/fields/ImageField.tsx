@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { Upload, Loader2, X, Image } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { mediaApi } from '@/lib/api';
 import type { FieldDef } from '@/templates/types';
 
@@ -15,6 +16,7 @@ interface Props {
 export function ImageField({ field, value, onChange }: Props) {
   const params = useParams();
   const blogId = params.blogId as string;
+  const t = useTranslations('studio');
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const url = (value as string) ?? '';
@@ -58,7 +60,7 @@ export function ImageField({ field, value, onChange }: Props) {
               disabled={uploading}
               className="px-2.5 py-1 text-[11px] font-semibold bg-white text-slate-800 rounded-md hover:bg-slate-100 transition"
             >
-              Changer
+              {t('imageFieldChange')}
             </button>
             <button
               onClick={() => onChange('')}
@@ -85,7 +87,7 @@ export function ImageField({ field, value, onChange }: Props) {
             : <Image className="h-4 w-4" />
           }
           <span className="text-[11px] font-medium">
-            {uploading ? 'Upload en cours…' : 'Ajouter une image'}
+            {uploading ? t('imageFieldUploading') : t('imageFieldAdd')}
           </span>
         </button>
       )}

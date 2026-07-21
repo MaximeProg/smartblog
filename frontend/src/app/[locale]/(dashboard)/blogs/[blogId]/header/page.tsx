@@ -32,11 +32,17 @@ interface HeaderConfig {
   };
 }
 
-const DEFAULT: HeaderConfig = {
-  topBar: { enabled: true, showDate: true, showSocial: true, showNewsletter: true, showRss: true },
-  subscribe: { enabled: true, label: "S'abonner" },
-  nav: { links: [{ label: 'Accueil', url: '/' }, { label: 'À propos', url: '/about' }, { label: 'Contact', url: '/contact' }] },
-};
+function buildDefault(ts: (key: string) => string, tn: (key: string) => string): HeaderConfig {
+  return {
+    topBar: { enabled: true, showDate: true, showSocial: true, showNewsletter: true, showRss: true },
+    subscribe: { enabled: true, label: ts('defaultSubscribeLabel') },
+    nav: { links: [
+      { label: tn('pageHome'), url: '/' },
+      { label: tn('pageAbout'), url: '/about' },
+      { label: tn('pageContact'), url: '/contact' },
+    ] },
+  };
+}
 
 export default function HeaderPage() {
   const params = useParams();
@@ -44,22 +50,23 @@ export default function HeaderPage() {
   const { toast } = useToast();
   const qc = useQueryClient();
   const ts = useTranslations('studio');
+  const tn = useTranslations('blogNav');
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const [cfg, setCfg] = useState<HeaderConfig>(DEFAULT);
+  const [cfg, setCfg] = useState<HeaderConfig>(() => buildDefault(ts, tn));
   const [serverLoaded, setServerLoaded] = useState(false);
   const isDirtyRef = useRef(false);
 
   useEffect(() => {
     if (!isDirtyRef.current && tenant?.template_config?.header) {
-      setCfg({ ...DEFAULT, ...(tenant.template_config.header as any) });
+      setCfg({ ...buildDefault(ts, tn), ...(tenant.template_config.header as any) });
       setServerLoaded(true);
     }
-  }, [tenant]);
+  }, [tenant]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const patch = (fn: (c: HeaderConfig) => HeaderConfig) => {
     isDirtyRef.current = true;

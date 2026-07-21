@@ -1002,6 +1002,21 @@ export interface PaymentStatusResponse {
   pay_address: string | null;
   pay_amount: number | null;
   expires_at: string | null;
+  amount_received: number;
+  amount_due: number;
+}
+
+export interface UserPaymentItem {
+  id: string;
+  order_id: string;
+  tenant_id: string;
+  tenant_name: string;
+  transaction_type: string;
+  status: string;
+  amount: number;
+  amount_received: number;
+  currency: string;
+  created_at: string;
 }
 
 export const bookmarkApi = {
@@ -1030,6 +1045,12 @@ export const paymentsApi = {
 
   getPaymentStatus: (tenantId: string, orderId: string) =>
     api.get<PaymentStatusResponse>(`/tenants/${tenantId}/payments/status/${orderId}`),
+
+  resumePayment: (tenantId: string, transactionId: string, orderId: string) =>
+    api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/${transactionId}/resume`, { order_id: orderId }),
+
+  listMyPayments: () =>
+    api.get<UserPaymentItem[]>('/users/me/payments'),
 };
 
 // ── Super Admin API ───────────────────────────────────────────────────────────

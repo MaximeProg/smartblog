@@ -241,7 +241,12 @@ async def update_wallet(
     """
     Enregistre ou met à jour l'adresse USDT BSC (BEP20) de l'utilisateur.
     Requis : 2FA activé + code TOTP valide.
-    Déclenche le paiement des commissions PENDING si wallet était absent.
+
+    Décision PDG : sans wallet enregistré, un utilisateur ne participe pas au
+    programme d'affiliation et ne reçoit pas sa part de revenu publicitaire —
+    aucune commission n'est jamais mise de côté en attendant qu'il en ajoute
+    un. Cet endpoint ne fait donc qu'enregistrer l'adresse, sans déclencher de
+    règlement rétroactif.
     """
     from sqlalchemy import select
     from app.models.user import User
@@ -267,77 +272,11 @@ async def update_wallet(
     if not user.two_fa_enabled:
         raise ValidationException("Vous devez activer la double authentification (2FA) avant d'enregistrer votre adresse wallet.")
 
-    had_wallet = bool(user.usdt_wallet_address)
     user.usdt_wallet_address = wallet_address
     await db.commit()
 
-    # Si l'utilisateur n'avait pas de wallet, payer les commissions PENDING
-    if not had_wallet:
-        await _pay_pending_commissions_for_user(db, user_id, wallet_address)
-
     from app.schemas.auth import UserInfo
     return UserInfo.model_validate(user)
-
-
-async def _pay_pending_commissions_for_user(db, user_id, wallet_address: str):
-    """Paie automatiquement toutes les commissions PENDING de l'utilisateur après ajout du wallet."""
-    from sqlalchemy import select
-    from app.models.affiliate import AffiliateCommission, AffiliateCashoutRequest
-    from app.models.enums import AffiliateCommissionStatus, CashoutStatus
-    from app.models.user import User
-    from app.services.nowpayments_service import send_single_payout
-    from app.core.config import settings as _cfg
-    from datetime import datetime, timezone
-
-    pending_q = await db.execute(
-        select(AffiliateCommission).where(
-            AffiliateCommission.affiliate_user_id == user_id,
-            AffiliateCommission.status == AffiliateCommissionStatus.PENDING,
-        )
-    )
-    pending = pending_q.scalars().all()
-    if not pending:
-        return
-
-    total = sum(float(c.commission_amount) for c in pending)
-    if total <= 0 or not _cfg.NOWPAYMENTS_PAYOUT_API_KEY:
-        # Marquer READY sans payer
-        for c in pending:
-            c.status = AffiliateCommissionStatus.READY
-        await db.commit()
-        return
-
-    try:
-        result = await send_single_payout(
-            wallet_address=wallet_address,
-            amount_usd=total,
-            extra_id=f"bulk_{user_id}",
-        )
-        payout_ref = str(result.get("id", ""))
-        cashout = AffiliateCashoutRequest(
-            user_id=user_id,
-            gross_amount=total,
-            fee=0.00,
-            net_amount=total,
-            payout_method="nowpayments_crypto",
-            payout_reference=payout_ref,
-            usdt_wallet_snapshot=wallet_address,
-            status=CashoutStatus.PROCESSING,
-        )
-        db.add(cashout)
-        await db.flush()
-        for c in pending:
-            c.status = AffiliateCommissionStatus.PAID
-            c.paid_at = datetime.now(timezone.utc)
-            c.cashout_request_id = cashout.id
-        user = await db.get(User, user_id)
-        if user:
-            user.affiliate_balance = 0
-    except Exception:
-        for c in pending:
-            c.status = AffiliateCommissionStatus.READY
-
-    await db.commit()
 
 
 # ── GET /auth/me/notifications ─────────────────────────────────────

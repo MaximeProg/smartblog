@@ -19,6 +19,7 @@ import { slugify } from '@/lib/utils';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
+import { useToast } from '@/hooks/use-toast';
 import type { TenantInfo } from '@/types';
 
 // ── Template definitions ─────────────────────────────────────────────────────
@@ -230,6 +231,8 @@ export default function CreateBlogPage() {
   const { user, addTenant, setCurrentTenant } = useAuthStore();
   const t = useTranslations('onboarding');
   const td = useTranslations('domains');
+  const ts = useTranslations('studio');
+  const { toast } = useToast();
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -357,7 +360,7 @@ export default function CreateBlogPage() {
         description: description.trim() || undefined,
         cover_image_url: coverUrl || undefined,
         theme: selectedTheme,
-        language: 'en',
+        language: locale,
         template_config: {},
       } as any);
 
@@ -365,7 +368,9 @@ export default function CreateBlogPage() {
         try {
           const upload = await mediaApi.upload(data.id, coverFile);
           await tenantsApi.update(data.id, { cover_image_url: upload.data.cloudinary_secure_url });
-        } catch {}
+        } catch {
+          toast({ variant: 'destructive', title: t('quickCoverUploadError') });
+        }
       }
 
       return data;
@@ -378,9 +383,11 @@ export default function CreateBlogPage() {
       setStep('domain');
     },
     onError: (err: any) => {
-      if (err?.response?.data?.detail?.includes('slug')) {
-        setSlugError(t('quickSlugTaken'));
+      const message: string | undefined = err?.response?.data?.message;
+      if (message?.toLowerCase().includes('slug')) {
+        setSlugError(message);
       }
+      toast({ variant: 'destructive', title: message || t('quickGenericError') });
     },
   });
 
@@ -669,8 +676,10 @@ export default function CreateBlogPage() {
                       onChange={e => handleNameChange(e.target.value)}
                       placeholder={t('quickNamePlaceholder')}
                       autoFocus
+                      maxLength={100}
                       className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[14px] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
                     />
+                    <p className="text-[11px] text-slate-400 mt-1.5">{t('quickNameHint')}</p>
                   </div>
 
                   {/* Slug */}
@@ -686,10 +695,15 @@ export default function CreateBlogPage() {
                         value={slug}
                         onChange={e => handleSlugChange(e.target.value)}
                         placeholder="my-blog"
+                        maxLength={50}
                         className="flex-1 h-11 px-3 text-[13px] font-mono bg-transparent outline-none text-slate-900 dark:text-slate-100"
                       />
                     </div>
-                    {slugError && <p className="text-[11px] text-red-500 mt-1.5">{slugError}</p>}
+                    {slugError ? (
+                      <p className="text-[11px] text-red-500 mt-1.5">{slugError}</p>
+                    ) : (
+                      <p className="text-[11px] text-slate-400 mt-1.5">{t('quickSlugHint')}</p>
+                    )}
                     {slug && !slugError && (
                       <p className="text-[11px] text-slate-400 mt-1.5 font-mono">smarterbloggers.com/{slug}</p>
                     )}
@@ -705,8 +719,10 @@ export default function CreateBlogPage() {
                       onChange={e => setDescription(e.target.value)}
                       placeholder={t('quickDescriptionPlaceholder')}
                       rows={2}
+                      maxLength={500}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors resize-none"
                     />
+                    <p className="text-[11px] text-slate-400 mt-1.5">{t('quickDescriptionHint')}</p>
                   </div>
 
                   {/* Cover image */}
@@ -788,7 +804,7 @@ export default function CreateBlogPage() {
                                   <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">
                                     {dragging ? 'Drop here' : 'Click or drag an image'}
                                   </p>
-                                  <p className="text-[10.5px] text-slate-400 mt-0.5">JPG, PNG, WebP — max 10 MB</p>
+                                  <p className="text-[10.5px] text-slate-400 mt-0.5">{ts('imageFormats')}</p>
                                 </div>
                               </div>
                             </button>
@@ -919,6 +935,7 @@ export default function CreateBlogPage() {
           open={!!payment}
           onOpenChange={(o) => { if (!o) setPayment(null); }}
           tenantId={createdTenant.id}
+          transactionId={payment.transaction_id}
           orderId={payment.order_id}
           payAddress={payment.pay_address}
           payAmount={payment.pay_amount}

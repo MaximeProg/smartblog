@@ -5,7 +5,7 @@ import { Check, Copy, Loader2, XCircle, RefreshCw } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
-import { paymentsApi, type PaymentStatusResponse } from '@/lib/api';
+import { paymentsApi, type PaymentStatusResponse, type CryptoPaymentResponse } from '@/lib/api';
 
 const TERMINAL_STATUSES = new Set(['completed', 'failed']);
 
@@ -24,6 +24,7 @@ interface CryptoPaymentPanelProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   tenantId: string;
+  transactionId: string;
   orderId: string;
   payAddress: string;
   payAmount: number;
@@ -62,11 +63,24 @@ function useCountdown(expiresAt: string | null) {
 }
 
 export function CryptoPaymentPanel({
-  open, onOpenChange, tenantId, orderId, payAddress, payAmount, payCurrency,
+  open, onOpenChange, tenantId, transactionId, orderId, payAddress, payAmount, payCurrency,
   qrCodeDataUri, expiresAt, amountUsd, onConfirmed, onRetry,
 }: CryptoPaymentPanelProps) {
   const [copied, setCopied] = useState(false);
-  const countdown = useCountdown(expiresAt);
+
+  // Une reprise (paiement partiel complété) écrase l'adresse/montant/QR
+  // affichés sans jamais dépendre d'un nouveau rendu du parent — le
+  // composant gère sa propre tentative de paiement "active".
+  const [resumed, setResumed] = useState<CryptoPaymentResponse | null>(null);
+  const [resuming, setResuming] = useState(false);
+  useEffect(() => { setResumed(null); }, [orderId]);
+
+  const eff = resumed ?? {
+    order_id: orderId, pay_address: payAddress, pay_amount: payAmount,
+    pay_currency: payCurrency, qr_code_data_uri: qrCodeDataUri,
+    expires_at: expiresAt, amount_usd: amountUsd,
+  };
+  const countdown = useCountdown(eff.expires_at);
 
   // Polling manuel (pas de dépendance à react-query) — ce panneau est aussi
   // monté sur des pages publiques du blog (ex: formulaire "Advertise") qui
@@ -82,7 +96,7 @@ export function CryptoPaymentPanel({
 
     async function poll() {
       try {
-        const { data: result } = await paymentsApi.getPaymentStatus(tenantId, orderId);
+        const { data: result } = await paymentsApi.getPaymentStatus(tenantId, eff.order_id);
         if (cancelled) return;
         setData(result);
         if (!TERMINAL_STATUSES.has(result.status)) {
@@ -97,20 +111,34 @@ export function CryptoPaymentPanel({
 
     poll();
     return () => { cancelled = true; if (timer) clearTimeout(timer); };
-  }, [open, tenantId, orderId]);
+  }, [open, tenantId, eff.order_id]);
 
   const status = data?.status ?? 'pending';
   const providerStatus = data?.provider_status ?? null;
+  const remaining = Math.max(0, (data?.amount_due ?? eff.amount_usd) - (data?.amount_received ?? 0));
 
   useEffect(() => {
     if (status === 'completed') onConfirmed();
   }, [status, onConfirmed]);
 
   function handleCopy() {
-    navigator.clipboard.writeText(payAddress).then(() => {
+    navigator.clipboard.writeText(eff.pay_address).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
+  }
+
+  async function handleResume() {
+    setResuming(true);
+    try {
+      const { data: result } = await paymentsApi.resumePayment(tenantId, transactionId, eff.order_id);
+      setResumed(result);
+      setData(undefined);
+    } catch {
+      // L'utilisateur peut réessayer — le bouton reste affiché.
+    } finally {
+      setResuming(false);
+    }
   }
 
   if (status === 'failed') {
@@ -145,44 +173,66 @@ export function CryptoPaymentPanel({
         </DialogHeader>
 
         <div className="flex flex-col items-center gap-4 py-2">
-          {qrCodeDataUri && (
-            <img
-              src={qrCodeDataUri}
-              alt="Payment QR code"
-              className="h-48 w-48 rounded-xl border border-slate-200 dark:border-slate-700"
-            />
-          )}
+          {status === 'partially_paid' ? (
+            <div className="flex flex-col items-center text-center gap-3 w-full">
+              <p className="text-sm text-amber-600 dark:text-amber-400 font-semibold">
+                {PROVIDER_STATUS_LABELS.partially_paid}
+              </p>
+              <p className="text-xs text-slate-400">
+                Remaining: <span className="font-bold text-slate-700 dark:text-slate-300">${remaining.toFixed(2)} USD</span>
+              </p>
+              <button
+                type="button"
+                onClick={handleResume}
+                disabled={resuming}
+                className="flex items-center gap-2 h-10 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold disabled:opacity-50"
+              >
+                {resuming ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                Complete payment
+              </button>
+            </div>
+          ) : (
+            <>
+              {eff.qr_code_data_uri && (
+                <img
+                  src={eff.qr_code_data_uri}
+                  alt="Payment QR code"
+                  className="h-48 w-48 rounded-xl border border-slate-200 dark:border-slate-700"
+                />
+              )}
 
-          <div className="text-center">
-            <p className="text-2xl font-black text-slate-900 dark:text-slate-100">
-              {payAmount} <span className="text-sm font-semibold text-slate-400">{payCurrency.toUpperCase()}</span>
-            </p>
-            <p className="text-xs text-slate-400 mt-0.5">≈ ${amountUsd.toFixed(2)} USD</p>
-          </div>
+              <div className="text-center">
+                <p className="text-2xl font-black text-slate-900 dark:text-slate-100">
+                  {eff.pay_amount} <span className="text-sm font-semibold text-slate-400">{eff.pay_currency.toUpperCase()}</span>
+                </p>
+                <p className="text-xs text-slate-400 mt-0.5">≈ ${eff.amount_usd.toFixed(2)} USD</p>
+              </div>
 
-          <div className="w-full">
-            <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">
-              Deposit address
-            </label>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="w-full flex items-center gap-2 px-3 h-11 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-left"
-            >
-              <span className="flex-1 text-xs font-mono truncate text-slate-700 dark:text-slate-300">{payAddress}</span>
-              {copied ? <Check className="h-4 w-4 text-emerald-500 shrink-0" /> : <Copy className="h-4 w-4 text-slate-400 shrink-0" />}
-            </button>
-          </div>
+              <div className="w-full">
+                <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">
+                  Deposit address
+                </label>
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="w-full flex items-center gap-2 px-3 h-11 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-left"
+                >
+                  <span className="flex-1 text-xs font-mono truncate text-slate-700 dark:text-slate-300">{eff.pay_address}</span>
+                  {copied ? <Check className="h-4 w-4 text-emerald-500 shrink-0" /> : <Copy className="h-4 w-4 text-slate-400 shrink-0" />}
+                </button>
+              </div>
 
-          <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            {PROVIDER_STATUS_LABELS[providerStatus ?? 'waiting'] ?? 'Waiting for payment…'}
-          </div>
+              <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                {PROVIDER_STATUS_LABELS[providerStatus ?? 'waiting'] ?? 'Waiting for payment…'}
+              </div>
 
-          {countdown && (
-            <p className="text-[11px] text-slate-400">
-              {countdown === 'expired' ? 'Payment window expired' : `Expires in ${countdown}`}
-            </p>
+              {countdown && (
+                <p className="text-[11px] text-slate-400">
+                  {countdown === 'expired' ? 'Payment window expired' : `Expires in ${countdown}`}
+                </p>
+              )}
+            </>
           )}
         </div>
       </DialogContent>

@@ -35,28 +35,30 @@ interface HomeConfig {
   };
 }
 
-const DEFAULT: HomeConfig = {
-  hero: { enabled: true, sectionTitle: 'À la une' },
-  categoriesStrip: { enabled: true, label: 'Explorer' },
-  newsletter: {
-    enabled: true,
-    title: '',
-    description: '',
-    buttonLabel: '',
-    placeholder: 'votre@email.com',
-    disclaimer: '',
-  },
-  latest: { enabled: true, sectionTitle: 'Derniers articles', postsPerPage: 12 },
-  sidebar: {
-    popularArticles: true,
-    popularTitle: '',
-    categories: true,
-    categoriesTitle: '',
-    tags: true,
-    tagsTitle: '',
-    newsletterMini: true,
-  },
-};
+function buildDefault(ts: (key: string) => string): HomeConfig {
+  return {
+    hero: { enabled: true, sectionTitle: ts('placeholderHeroTitle') },
+    categoriesStrip: { enabled: true, label: ts('placeholderExplore') },
+    newsletter: {
+      enabled: true,
+      title: '',
+      description: '',
+      buttonLabel: '',
+      placeholder: ts('placeholderEmailExample'),
+      disclaimer: '',
+    },
+    latest: { enabled: true, sectionTitle: ts('placeholderLatestArticles'), postsPerPage: 12 },
+    sidebar: {
+      popularArticles: true,
+      popularTitle: '',
+      categories: true,
+      categoriesTitle: '',
+      tags: true,
+      tagsTitle: '',
+      newsletterMini: true,
+    },
+  };
+}
 
 export default function HomePage() {
   const params = useParams();
@@ -70,16 +72,16 @@ export default function HomePage() {
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const [cfg, setCfg] = useState<HomeConfig>(DEFAULT);
+  const [cfg, setCfg] = useState<HomeConfig>(() => buildDefault(ts));
   const [serverLoaded, setServerLoaded] = useState(false);
   const isDirtyRef = useRef(false);
 
   useEffect(() => {
     if (!isDirtyRef.current && tenant?.template_config?.home) {
-      setCfg({ ...DEFAULT, ...(tenant.template_config.home as any) });
+      setCfg({ ...buildDefault(ts), ...(tenant.template_config.home as any) });
       setServerLoaded(true);
     }
-  }, [tenant]);
+  }, [tenant]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const patch = (fn: (c: HomeConfig) => HomeConfig) => {
     isDirtyRef.current = true;
@@ -115,7 +117,7 @@ export default function HomePage() {
         <StudioSwitch label={ts('switchShowSection')} checked={cfg.hero.enabled} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, enabled: v } }))} />
         {cfg.hero.enabled && (
           <StudioField label={ts('fieldSectionTitle')}>
-            <StudioInput value={cfg.hero.sectionTitle} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, sectionTitle: v } }))} placeholder="À la une" />
+            <StudioInput value={cfg.hero.sectionTitle} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, sectionTitle: v } }))} placeholder={ts('placeholderHeroTitle')} />
           </StudioField>
         )}
       </StudioSection>
@@ -124,7 +126,7 @@ export default function HomePage() {
         <StudioSwitch label={ts('switchShowStrip')} checked={cfg.categoriesStrip.enabled} onChange={v => patch(c => ({ ...c, categoriesStrip: { ...c.categoriesStrip, enabled: v } }))} />
         {cfg.categoriesStrip.enabled && (
           <StudioField label={ts('seeAllLabel')}>
-            <StudioInput value={cfg.categoriesStrip.label} onChange={v => patch(c => ({ ...c, categoriesStrip: { ...c.categoriesStrip, label: v } }))} placeholder="Explorer" />
+            <StudioInput value={cfg.categoriesStrip.label} onChange={v => patch(c => ({ ...c, categoriesStrip: { ...c.categoriesStrip, label: v } }))} placeholder={ts('placeholderExplore')} />
           </StudioField>
         )}
       </StudioSection>
@@ -134,19 +136,19 @@ export default function HomePage() {
         {cfg.newsletter.enabled && (
           <>
             <StudioField label={ts('fieldTitle')}>
-              <StudioInput value={cfg.newsletter.title} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, title: v } }))} placeholder="Restez toujours informé" />
+              <StudioInput value={cfg.newsletter.title} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, title: v } }))} placeholder={ts('placeholderNewsletterTitle')} />
             </StudioField>
             <StudioField label={ts('fieldDescription')}>
-              <StudioInput value={cfg.newsletter.description} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, description: v } }))} multiline rows={2} placeholder="Rejoignez nos abonnés…" />
+              <StudioInput value={cfg.newsletter.description} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, description: v } }))} multiline rows={2} placeholder={ts('placeholderNewsletterDesc')} />
             </StudioField>
             <StudioField label={ts('fieldButtonText')}>
-              <StudioInput value={cfg.newsletter.buttonLabel} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, buttonLabel: v } }))} placeholder="S'abonner" />
+              <StudioInput value={cfg.newsletter.buttonLabel} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, buttonLabel: v } }))} placeholder={ts('defaultSubscribeLabel')} />
             </StudioField>
             <StudioField label={ts('fieldEmailPlaceholder')}>
-              <StudioInput value={cfg.newsletter.placeholder} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, placeholder: v } }))} placeholder="votre@email.com" />
+              <StudioInput value={cfg.newsletter.placeholder} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, placeholder: v } }))} placeholder={ts('placeholderEmailExample')} />
             </StudioField>
             <StudioField label={ts('fieldReassuranceText')}>
-              <StudioInput value={cfg.newsletter.disclaimer} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, disclaimer: v } }))} placeholder="Pas de spam…" />
+              <StudioInput value={cfg.newsletter.disclaimer} onChange={v => patch(c => ({ ...c, newsletter: { ...c.newsletter, disclaimer: v } }))} placeholder={ts('placeholderNoSpam')} />
             </StudioField>
           </>
         )}
@@ -157,7 +159,7 @@ export default function HomePage() {
         {cfg.latest.enabled && (
           <>
             <StudioField label={ts('fieldSectionTitle')}>
-              <StudioInput value={cfg.latest.sectionTitle} onChange={v => patch(c => ({ ...c, latest: { ...c.latest, sectionTitle: v } }))} placeholder="Derniers articles" />
+              <StudioInput value={cfg.latest.sectionTitle} onChange={v => patch(c => ({ ...c, latest: { ...c.latest, sectionTitle: v } }))} placeholder={ts('placeholderLatestArticles')} />
             </StudioField>
             <StudioField label={ts('fieldPostsPerPage')}>
               <select
@@ -178,19 +180,19 @@ export default function HomePage() {
         <StudioSwitch label={ts('switchPopularArticles')} checked={cfg.sidebar.popularArticles} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, popularArticles: v } }))} />
         {cfg.sidebar.popularArticles && (
           <StudioField label={ts('fieldBlockTitle')}>
-            <StudioInput value={cfg.sidebar.popularTitle} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, popularTitle: v } }))} placeholder="Articles populaires" />
+            <StudioInput value={cfg.sidebar.popularTitle} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, popularTitle: v } }))} placeholder={ts('placeholderPopularArticles')} />
           </StudioField>
         )}
         <StudioSwitch label={ts('switchCategories')} checked={cfg.sidebar.categories} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, categories: v } }))} />
         {cfg.sidebar.categories && (
           <StudioField label={ts('fieldBlockTitle')}>
-            <StudioInput value={cfg.sidebar.categoriesTitle} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, categoriesTitle: v } }))} placeholder="Catégories" />
+            <StudioInput value={cfg.sidebar.categoriesTitle} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, categoriesTitle: v } }))} placeholder={ts('placeholderCategories')} />
           </StudioField>
         )}
         <StudioSwitch label={ts('switchTags')} checked={cfg.sidebar.tags} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, tags: v } }))} />
         {cfg.sidebar.tags && (
           <StudioField label={ts('fieldBlockTitle')}>
-            <StudioInput value={cfg.sidebar.tagsTitle} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, tagsTitle: v } }))} placeholder="Tags" />
+            <StudioInput value={cfg.sidebar.tagsTitle} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, tagsTitle: v } }))} placeholder={ts('placeholderTags')} />
           </StudioField>
         )}
         <StudioSwitch label={ts('switchMiniNewsletter')} checked={cfg.sidebar.newsletterMini} onChange={v => patch(c => ({ ...c, sidebar: { ...c.sidebar, newsletterMini: v } }))} />

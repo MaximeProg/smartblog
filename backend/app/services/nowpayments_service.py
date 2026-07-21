@@ -163,4 +163,5 @@ async def send_single_payout(
     return await send_payout(
         withdrawals=[withdrawal],
         batch_withdrawal_id=str(uuid.uuid4()),
+        api_key=api_key,
     )

@@ -1,6 +1,7 @@
 'use client';
 
 import { Plus, Trash2, GripVertical } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { FieldDef } from '@/templates/types';
 
 interface NavLink { label: string; url: string }
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function NavLinksField({ field, value, onChange }: Props) {
+  const t = useTranslations('studio');
   const links: NavLink[] = Array.isArray(value) ? (value as NavLink[]) : [];
 
   const update = (index: number, key: keyof NavLink, val: string) => {
@@ -38,14 +40,14 @@ export function NavLinksField({ field, value, onChange }: Props) {
                 type="text"
                 value={link.label}
                 onChange={(e) => update(i, 'label', e.target.value)}
-                placeholder="Libellé"
+                placeholder={t('navLinkLabel')}
                 className="w-full text-[12px] px-2 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 placeholder-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-400 transition"
               />
               <input
                 type="text"
                 value={link.url}
                 onChange={(e) => update(i, 'url', e.target.value)}
-                placeholder="/page ou https://..."
+                placeholder={t('navLinkUrlPlaceholder')}
                 className="w-full text-[12px] px-2 py-1.5 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 placeholder-slate-300 focus:outline-none focus:ring-1 focus:ring-blue-400 transition"
               />
             </div>
@@ -66,7 +68,7 @@ export function NavLinksField({ field, value, onChange }: Props) {
         className="flex items-center gap-1.5 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 transition"
       >
         <Plus className="h-3.5 w-3.5" />
-        Ajouter un lien
+        {t('navLinkAdd')}
       </button>
     </div>
   );

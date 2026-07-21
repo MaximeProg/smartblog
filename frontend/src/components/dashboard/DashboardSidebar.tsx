@@ -5,7 +5,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard, Newspaper, User, Bell, CreditCard, Gift,
-  Plus, LogOut, Zap, X, ShieldCheck, LifeBuoy,
+  Plus, LogOut, Zap, X, ShieldCheck, LifeBuoy, Wallet,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -69,6 +69,7 @@ export function DashboardSidebar() {
     { seg: 'profile',       icon: User,       label: t('profile') },
     { seg: 'notifications', icon: Bell,       label: t('notifications') },
     { seg: 'subscription',  icon: CreditCard, label: t('subscription') },
+    { seg: 'payments',      icon: Wallet,     label: t('payments') },
     { seg: 'affiliate',     icon: Gift,       label: t('affiliate') },
   ];
   const supportHref = firstTenantId ? `/${locale}/blogs/${firstTenantId}/support` : '#';

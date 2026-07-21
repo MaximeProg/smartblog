@@ -53,6 +53,7 @@ class Settings(BaseSettings):
     NOWPAYMENTS_WALLET_USDT: str = ""       # Wallet USDT BSC de la plateforme SmarterBloggers
     NOWPAYMENTS_PLATFORM_FEE_PERCENT: int = 5  # Commission plateforme articles payants
     NOWPAYMENTS_SANDBOX: bool = True        # False en production
+    NOWPAYMENTS_TOLERANCE_USD: float = 0.50  # Marge acceptée sur un paiement "partially_paid" (frais/variation crypto)
 
     # Registrar de domaines — OpenProvider (achat automatisé de noms de domaine)
     OPENPROVIDER_USERNAME: str = ""

@@ -8,8 +8,8 @@ from app.core.config import settings
 from fastapi import Depends
 from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
-from app.models.ad import Ad, AdLinkScan
-from app.models.enums import AdSubmissionStatus, AdCampaignStatus, LinkSafetyStatus, UserRole
+from app.models.ad import Ad, AdLinkScan, AdRevenueShare
+from app.models.enums import AdSubmissionStatus, AdCampaignStatus, LinkSafetyStatus, UserRole, AdRevenueShareStatus
 from app.api.v1.tenants import _assert_member, _assert_role
 
 router = APIRouter(
@@ -216,8 +216,13 @@ async def review_ad(
             try:
                 from app.api.v1.affiliate import compute_and_accrue_commissions
                 from app.services.tenant_service import get_tenant_owner_user_id
+                from app.services.nowpayments_service import send_single_payout
+                from app.api.v1.accounting import book_ad_slot_payment
+                from app.models.user import User
+
                 source_user_id = await get_tenant_owner_user_id(db, tenant_id)
                 if source_user_id:
+                    # 10% commission d'affiliation (inchangé)
                     await compute_and_accrue_commissions(
                         db=db,
                         source_user_id=source_user_id,
@@ -225,6 +230,42 @@ async def review_ad(
                         source_transaction_id=str(ad.id),
                         gross_amount=float(ad.amount_paid),
                     )
+
+                    # 80% dus au propriétaire du blog (RG-AD-01) — payé
+                    # directement s'il a un wallet enregistré. Décision PDG :
+                    # sans wallet, il ne participe pas, rien n'est calculé ni
+                    # mis de côté pour lui.
+                    owner = await db.get(User, source_user_id)
+                    if owner and owner.usdt_wallet_address and settings.NOWPAYMENTS_PAYOUT_API_KEY:
+                        owner_share = round(float(ad.amount_paid) * 0.80, 2)
+                        try:
+                            result = await send_single_payout(
+                                wallet_address=owner.usdt_wallet_address,
+                                amount_usd=owner_share,
+                                extra_id=f"ad_owner_{ad.id}",
+                            )
+                            share = AdRevenueShare(
+                                ad_id=ad.id,
+                                tenant_id=tenant_id,
+                                owner_user_id=source_user_id,
+                                gross_amount=float(ad.amount_paid),
+                                owner_share_amount=owner_share,
+                                status=AdRevenueShareStatus.PAID,
+                                payout_reference=str(result.get("id", "")),
+                                paid_at=datetime.now(timezone.utc),
+                            )
+                            db.add(share)
+
+                            # Écriture comptable 10/10/80 (RG-AD-01)
+                            await book_ad_slot_payment(
+                                db=db,
+                                amount=float(ad.amount_paid),
+                                ad_id=str(ad.id),
+                                transaction_id=str(ad.id),
+                                created_by_system_user_id=uuid.UUID(payload["sub"]),
+                            )
+                        except Exception:
+                            pass  # Échec NowPayments — rien n'est enregistré, pas de retry automatique
             except Exception:
                 pass
         elif not (ad.amount_paid and float(ad.amount_paid) > 0):

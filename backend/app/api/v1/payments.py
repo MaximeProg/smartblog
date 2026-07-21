@@ -85,6 +85,8 @@ class PaymentStatusResponse(BaseModel):
     pay_address: str | None
     pay_amount: float | None
     expires_at: datetime | None
+    amount_received: float = 0
+    amount_due: float = 0
 
 
 class TransactionResponse(BaseModel):
@@ -202,6 +204,30 @@ def _crypto_response(tx: Transaction, amount_usd: float) -> CryptoPaymentRespons
         expires_at=tx.payment_expires_at,
         amount_usd=amount_usd,
     )
+
+
+async def _apply_provider_update(db, tx: Transaction, payment_status: str, actually_paid: float) -> None:
+    """
+    Logique partagée webhook + polling : décide si la transaction doit être
+    finalisée, marquée PARTIALLY_PAID, ou FAILED — avec une marge de
+    tolérance sur les écarts crypto (frais réseau/variation de cours) pour
+    ne jamais bloquer un paiement à quelques centimes près.
+    """
+    tx.provider_status = payment_status
+    if actually_paid > 0:
+        tx.amount_received = actually_paid  # cumul absolu pour la tentative active, pas un delta
+
+    total_confirmed = float(tx.amount_received_prior_attempts or 0) + float(tx.amount_received or 0)
+    shortfall = float(tx.amount) - total_confirmed
+
+    if payment_status == "finished" or (payment_status == "partially_paid" and shortfall <= settings.NOWPAYMENTS_TOLERANCE_USD):
+        await _finalize_transaction(db, tx, total_confirmed)
+    elif payment_status == "partially_paid":
+        tx.status = TransactionStatus.PARTIALLY_PAID
+    elif payment_status in _TERMINAL_PROVIDER_STATUSES:
+        # Ne pas perdre un paiement partiel déjà reçu : récupérable via
+        # reprise plutôt que marqué FAILED s'il y a déjà de l'argent dessus.
+        tx.status = TransactionStatus.PARTIALLY_PAID if total_confirmed > 0 else TransactionStatus.FAILED
 
 
 async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> None:
@@ -549,15 +575,11 @@ async def get_payment_status_endpoint(
     if not tx:
         raise NotFoundException("Paiement")
 
-    if tx.status == TransactionStatus.PENDING and tx.nowpayments_payment_id:
+    if tx.status in (TransactionStatus.PENDING, TransactionStatus.PARTIALLY_PAID) and tx.nowpayments_payment_id:
         try:
             live = await get_payment_status(tx.nowpayments_payment_id)
             live_status = live.get("payment_status") or tx.provider_status
-            tx.provider_status = live_status
-            if live_status == "finished":
-                await _finalize_transaction(db, tx, float(live.get("actually_paid", 0) or 0))
-            elif live_status in _TERMINAL_PROVIDER_STATUSES:
-                tx.status = TransactionStatus.FAILED
+            await _apply_provider_update(db, tx, live_status, float(live.get("actually_paid", 0) or 0))
             await db.commit()
         except Exception:
             # L'appel direct a échoué (NowPayments down, réseau, ...) — le
@@ -570,7 +592,80 @@ async def get_payment_status_endpoint(
         pay_address=tx.pay_address,
         pay_amount=float(tx.pay_amount) if tx.pay_amount is not None else None,
         expires_at=tx.payment_expires_at,
+        amount_received=float(tx.amount_received_prior_attempts or 0) + float(tx.amount_received or 0),
+        amount_due=float(tx.amount),
     )
+
+
+# ── Reprise d'un paiement partiel ──────────────────────────────────
+
+class ResumePaymentRequest(BaseModel):
+    order_id: str  # doit correspondre à tx.nowpayments_order_id actuel
+
+
+@router.post("/{transaction_id}/resume", response_model=CryptoPaymentResponse)
+async def resume_payment(
+    tenant_id: uuid.UUID,
+    transaction_id: uuid.UUID,
+    body: ResumePaymentRequest,
+    db: DBSession,
+):
+    """
+    Public — même modèle de confiance que /status/{order_id} (order_id agit
+    comme jeton opaque déjà visible du payeur). Complète un paiement resté
+    PARTIALLY_PAID au-delà de la marge de tolérance : crée un nouveau
+    paiement NowPayments pour le montant restant seulement, en réutilisant
+    la même Transaction (jamais une nouvelle ligne) — le composant
+    CryptoPaymentPanel existant peut donc afficher la réponse tel quel.
+    """
+    tx = await db.get(Transaction, transaction_id)
+    if not tx or tx.tenant_id != tenant_id or tx.nowpayments_order_id != body.order_id:
+        raise NotFoundException("Paiement")
+
+    if tx.status != TransactionStatus.PARTIALLY_PAID:
+        raise ValidationException("Ce paiement n'est pas en attente de complément.")
+
+    total_confirmed = float(tx.amount_received_prior_attempts or 0) + float(tx.amount_received or 0)
+    remaining = round(float(tx.amount) - total_confirmed, 2)
+    if remaining <= 0:
+        raise ValidationException("Aucun montant restant à payer.")
+
+    # Fige la tentative actuelle avant d'en ouvrir une nouvelle
+    tx.amount_received_prior_attempts = total_confirmed
+    tx.amount_received = 0
+
+    # SUBSCRIPTION : _finalize_transaction reparse plan/billing depuis
+    # nowpayments_order_id (format sub_{tenant}_{plan}_{billing}_{hex}) — le
+    # nouveau order_id doit garder ce même format. Les autres types
+    # retrouvent leur objet via campaign_id, pas via l'order_id.
+    new_hex = uuid.uuid4().hex[:8]
+    old_parts = (tx.nowpayments_order_id or "").split("_")
+    if tx.transaction_type == TransactionType.SUBSCRIPTION and len(old_parts) >= 5:
+        new_order_id = "_".join(old_parts[:-1] + [new_hex])
+    else:
+        prefix = (tx.nowpayments_order_id or "").rsplit("_", 1)[0]
+        new_order_id = f"{prefix}_{new_hex}" if prefix else f"resume_{tenant_id}_{new_hex}"
+
+    payment = await create_payment(
+        price_amount=remaining,
+        price_currency="usd",
+        order_id=new_order_id,
+        order_description=f"Resume payment — {tx.transaction_type.value}",
+        ipn_callback_url=_ipn_callback_url(tenant_id),
+    )
+
+    tx.nowpayments_order_id = new_order_id
+    tx.nowpayments_payment_id = str(payment.get("payment_id", ""))
+    tx.pay_address = payment.get("pay_address")
+    tx.pay_amount = payment.get("pay_amount")
+    tx.pay_currency = payment.get("pay_currency")
+    tx.payment_expires_at = _parse_expiration(payment.get("expiration_estimate_date"))
+    tx.provider_status = payment.get("payment_status")
+
+    await db.commit()
+    await db.refresh(tx)
+
+    return _crypto_response(tx, remaining)
 
 
 # ── Webhook IPN NowPayments ───────────────────────────────────────
@@ -607,11 +702,7 @@ async def nowpayments_webhook(
     if not tx:
         return {"received": True, "action": "ignored", "reason": "unknown_order_id"}
 
-    tx.provider_status = payment_status
-    if payment_status == "finished":
-        await _finalize_transaction(db, tx, actually_paid)
-    elif payment_status in _TERMINAL_PROVIDER_STATUSES:
-        tx.status = TransactionStatus.FAILED
+    await _apply_provider_update(db, tx, payment_status, actually_paid)
     await db.commit()
 
     return {"received": True, "action": "processed", "status": payment_status}
@@ -634,6 +725,58 @@ async def list_transactions(
         .limit(limit)
     )
     return [_tx_response(t) for t in result.scalars().all()]
+
+
+# ── Centre de paiements (vue utilisateur, tous blogs confondus) ────
+
+me_payments_router = APIRouter(prefix="/users/me/payments", tags=["payments"])
+
+
+class UserPaymentItem(BaseModel):
+    id: str
+    order_id: str
+    tenant_id: str
+    tenant_name: str
+    transaction_type: str
+    status: str
+    amount: float
+    amount_received: float
+    currency: str
+    created_at: datetime
+
+
+@me_payments_router.get("", response_model=list[UserPaymentItem])
+async def list_my_payments(
+    payload: TokenPayload,
+    db: DBSession,
+    limit: int = 50,
+):
+    """Tous les paiements de l'utilisateur, tous blogs confondus — contrairement
+    à /tenants/{tenant_id}/payments/transactions (scopé à un blog, rôle EDITOR+),
+    cette vue sert le \"centre de paiements\" du dashboard principal."""
+    user_id = uuid.UUID(payload["sub"])
+    result = await db.execute(
+        select(Transaction, Tenant.name)
+        .join(Tenant, Tenant.id == Transaction.tenant_id)
+        .where(Transaction.user_id == user_id)
+        .order_by(Transaction.created_at.desc())
+        .limit(limit)
+    )
+    return [
+        UserPaymentItem(
+            id=str(tx.id),
+            order_id=tx.nowpayments_order_id or "",
+            tenant_id=str(tx.tenant_id),
+            tenant_name=tenant_name,
+            transaction_type=tx.transaction_type.value,
+            status=tx.status.value,
+            amount=float(tx.amount),
+            amount_received=float(tx.amount_received_prior_attempts or 0) + float(tx.amount_received or 0),
+            currency=tx.currency,
+            created_at=tx.created_at,
+        )
+        for tx, tenant_name in result.all()
+    ]
 
 
 @router.get("/access/{article_id}")

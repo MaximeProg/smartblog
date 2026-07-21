@@ -4,7 +4,7 @@ from sqlalchemy import String, Text, Integer, Boolean, DateTime, ForeignKey, Enu
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from app.models.base import Base
-from app.models.enums import AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus, ENUM_VALUES
+from app.models.enums import AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus, AdRevenueShareStatus, ENUM_VALUES
 
 
 class Ad(Base):
@@ -67,6 +67,35 @@ class Ad(Base):
 
     def __repr__(self) -> str:
         return f"<Ad {self.title} ({self.submission_status})>"
+
+
+class AdRevenueShare(Base):
+    """Part (80%) du montant d'une pub approuvée due au propriétaire du blog.
+    Payée directement s'il a un wallet USDT BSC enregistré. Décision PDG :
+    sans wallet, il ne participe pas — aucune ligne n'est créée pour lui."""
+    __tablename__ = "ad_revenue_shares"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    ad_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ads.id", ondelete="CASCADE"), nullable=False)
+    tenant_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("tenants.id", ondelete="CASCADE"), nullable=False)
+    owner_user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    gross_amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    owner_share_amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+
+    status: Mapped[AdRevenueShareStatus] = mapped_column(
+        SAEnum(AdRevenueShareStatus, name="ad_revenue_share_status", create_type=False, values_callable=ENUM_VALUES),
+        nullable=False, default=AdRevenueShareStatus.PENDING,
+    )
+
+    payout_reference: Mapped[str | None] = mapped_column(String(255))
+    reserve_payout_reference: Mapped[str | None] = mapped_column(String(255))
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+    paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    def __repr__(self) -> str:
+        return f"<AdRevenueShare ad={self.ad_id} owner={self.owner_user_id} ({self.status})>"
 
 
 class AdLinkScan(Base):

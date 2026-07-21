@@ -533,6 +533,12 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
     if not user:
         return
 
+    # Décision PDG : un affilié qui n'a pas encore enregistré son wallet USDT
+    # BSC ne participe pas au programme d'affiliation — aucune commission
+    # n'est calculée ni suivie pour lui (pas de mise en réserve, rien dû).
+    if not user.usdt_wallet_address:
+        return
+
     commission = AffiliateCommission(
         affiliate_user_id=affiliate_user_id,
         source_user_id=source_user_id,
@@ -549,14 +555,11 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
     new_balance = float(user.affiliate_balance or 0) + float(commission_amount)
     user.affiliate_balance = new_balance
 
-    wallet_address = user.usdt_wallet_address
-
-    # Paiement immédiat si wallet disponible
-    if wallet_address and float(commission_amount) > 0:
+    # Paiement immédiat (le wallet est garanti présent à ce stade)
+    if float(commission_amount) > 0:
         commission.status = AffiliateCommissionStatus.READY
         await db.flush()
-        await _trigger_auto_payout(db, user, commission, wallet_address)
-    # Sinon reste PENDING jusqu'à ce que l'affilié ajoute son wallet
+        await _trigger_auto_payout(db, user, commission, user.usdt_wallet_address)
 
     # Email de notification
     try:
@@ -580,7 +583,6 @@ async def _trigger_auto_payout(db, user: User, commission: AffiliateCommission, 
     Déclenche un payout NowPayments immédiat pour une commission.
     Si NowPayments n'est pas configuré, passe silencieusement.
     """
-    from datetime import timezone as _tz
     from app.services.nowpayments_service import send_single_payout
 
     if not settings.NOWPAYMENTS_PAYOUT_API_KEY:
@@ -606,7 +608,7 @@ async def _trigger_auto_payout(db, user: User, commission: AffiliateCommission, 
         )
         db.add(cashout)
         commission.status = AffiliateCommissionStatus.PAID
-        commission.paid_at = datetime.now(_tz.utc)
+        commission.paid_at = datetime.now(timezone.utc)
 
         user.affiliate_balance = max(0, float(user.affiliate_balance or 0) - float(commission.commission_amount))
     except Exception:

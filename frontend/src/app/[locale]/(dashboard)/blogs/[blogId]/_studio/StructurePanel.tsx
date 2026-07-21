@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   Globe, Palette, Share2, PanelTop, PanelBottom,
   Home, Info, Phone, FileText, Tag, Mail, LayoutList,
@@ -11,7 +12,7 @@ import {
   Megaphone, BarChart2, Search, DollarSign, Settings,
   Key, LifeBuoy, Sparkles, ChevronDown, ChevronRight,
   ExternalLink, Zap, Plus, LogOut, Languages,
-  X,
+  X, ArrowLeft,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useEditorStore } from '@/store/editor.store';
@@ -72,6 +73,7 @@ export function StructurePanel() {
   const locale   = params.locale as string;
   const blogId   = params.blogId as string;
   const base     = `/${locale}/blogs/${blogId}`;
+  const t = useTranslations('blogNav');
 
   const queryClient  = useQueryClient();
   const { tenants, setCurrentTenant, user, clearAuth } = useAuthStore();
@@ -135,13 +137,19 @@ export function StructurePanel() {
 
       {/* Header */}
       <div className="flex h-12 shrink-0 items-center justify-between border-b border-slate-100 dark:border-slate-700 px-3.5">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="h-6 w-6 rounded-md bg-blue-600 flex items-center justify-center text-white text-xs font-black shadow-sm shrink-0">N</div>
-          <span className="font-bold text-[13px] text-slate-900 dark:text-slate-100 truncate">NexusBlog</span>
+        <Link href={`/${locale}/dashboard`} className="flex items-center gap-2 min-w-0 group">
+          <div className="h-6 w-6 rounded-md bg-blue-600 flex items-center justify-center text-white text-xs font-black shadow-sm shrink-0">S</div>
+          <span className="font-bold text-[13px] text-slate-900 dark:text-slate-100 truncate group-hover:text-blue-600 transition-colors">SmarterBloggers</span>
+        </Link>
+        <div className="flex items-center gap-2 shrink-0">
+          <Link href={`/${locale}/dashboard`} className="hidden lg:flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+            <ArrowLeft className="h-3 w-3" />
+            {t('back')}
+          </Link>
+          <button onClick={closeBlogSidebar} className="lg:hidden h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <X className="h-4 w-4" />
+          </button>
         </div>
-        <button onClick={closeBlogSidebar} className="lg:hidden h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-          <X className="h-4 w-4" />
-        </button>
       </div>
 
       {/* Blog selector */}
@@ -158,14 +166,14 @@ export function StructurePanel() {
             <ChevronDown className="h-3 w-3 text-slate-400 shrink-0" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56">
-            <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Changer de blog</div>
-            {tenants.map((t) => (
-              <DropdownMenuItem key={t.id} onClick={() => { setCurrentTenant(t.id); router.push(`/${locale}/blogs/${t.id}`); }} className="gap-2 cursor-pointer">
-                <div className={`h-5 w-5 rounded-md bg-gradient-to-br ${PLAN_GRADIENT[t.plan?.toLowerCase() ?? 'free'] ?? PLAN_GRADIENT.free} flex items-center justify-center text-white text-[9px] font-bold shrink-0`}>
-                  {t.name[0].toUpperCase()}
+            <div className="px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{t('switchBlog')}</div>
+            {tenants.map((tn) => (
+              <DropdownMenuItem key={tn.id} onClick={() => { setCurrentTenant(tn.id); router.push(`/${locale}/blogs/${tn.id}`); }} className="gap-2 cursor-pointer">
+                <div className={`h-5 w-5 rounded-md bg-gradient-to-br ${PLAN_GRADIENT[tn.plan?.toLowerCase() ?? 'free'] ?? PLAN_GRADIENT.free} flex items-center justify-center text-white text-[9px] font-bold shrink-0`}>
+                  {tn.name[0].toUpperCase()}
                 </div>
-                <span className="truncate text-sm flex-1">{t.name}</span>
-                {t.id === currentTenant?.id && <ChevronRight className="h-3 w-3 text-blue-500 shrink-0" />}
+                <span className="truncate text-sm flex-1">{tn.name}</span>
+                {tn.id === currentTenant?.id && <ChevronRight className="h-3 w-3 text-blue-500 shrink-0" />}
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
@@ -174,7 +182,7 @@ export function StructurePanel() {
                 <div className="h-5 w-5 rounded-md border border-dashed border-slate-300 dark:border-slate-600 flex items-center justify-center shrink-0">
                   <Plus className="h-3 w-3 text-slate-400" />
                 </div>
-                <span className="text-sm">Nouveau blog</span>
+                <span className="text-sm">{t('newBlog')}</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -191,12 +199,12 @@ export function StructurePanel() {
             className="w-full flex items-center gap-2 rounded-xl px-2.5 py-2 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-[12px] font-bold shadow-sm hover:from-violet-700 hover:to-blue-700 transition"
           >
             <Sparkles className="h-3.5 w-3.5 shrink-0" />
-            IA Builder
+            {t('aiBuilder')}
           </button>
         </div>
 
         {/* SITE — global sections */}
-        <NavLabel label="Site" />
+        <NavLabel label={t('sectionSite')} />
         {schema?.global.map((section) => (
           <button
             key={section.id}
@@ -214,7 +222,7 @@ export function StructurePanel() {
         ))}
 
         {/* PAGES */}
-        <NavLabel label="Pages" />
+        <NavLabel label={t('sectionPages')} />
         {schema?.pages.map((page) => {
           const isActivePage = activePage === page.id && isStudioRoot;
           const isExpanded   = expandedPages.has(page.id);
@@ -263,15 +271,15 @@ export function StructurePanel() {
         })}
 
         {/* CONTENU */}
-        <NavLabel label="Contenu" />
+        <NavLabel label={t('sectionContent')} />
         {[
-          { href: 'articles',   icon: FileText,      label: 'Articles' },
-          { href: 'categories', icon: Tag,           label: 'Catégories' },
-          { href: 'tags',       icon: Tags,          label: 'Tags' },
-          { href: 'media',      icon: Images,        label: 'Médias' },
-          { href: 'newsletter', icon: Mail,          label: 'Newsletter' },
-          { href: 'comments',   icon: MessageSquare, label: 'Commentaires' },
-          { href: 'ads',        icon: Megaphone,     label: 'Publicités' },
+          { href: 'articles',   icon: FileText,      label: t('articles') },
+          { href: 'categories', icon: Tag,           label: t('categories') },
+          { href: 'tags',       icon: Tags,          label: t('tags') },
+          { href: 'media',      icon: Images,        label: t('media') },
+          { href: 'newsletter', icon: Mail,          label: t('newsletter') },
+          { href: 'comments',   icon: MessageSquare, label: t('comments') },
+          { href: 'ads',        icon: Megaphone,     label: t('ads') },
         ].map(({ href, icon: Icon, label }) => {
           const full = `${base}/${href}`;
           const active = pathname.startsWith(full);
@@ -293,13 +301,13 @@ export function StructurePanel() {
         })}
 
         {/* CROISSANCE */}
-        <NavLabel label="Croissance" />
+        <NavLabel label={t('sectionGrowth')} />
         {[
-          { href: 'analytics',  icon: BarChart2,  label: 'Analytics' },
-          { href: 'seo',        icon: Search,     label: 'SEO' },
-          { href: 'social',     icon: Share2,     label: 'Social' },
-          { href: 'languages',  icon: Languages,  label: 'Langues' },
-          { href: 'accounting', icon: DollarSign, label: 'Comptabilité' },
+          { href: 'analytics',  icon: BarChart2,  label: t('analytics') },
+          { href: 'seo',        icon: Search,     label: t('seo') },
+          { href: 'social',     icon: Share2,     label: t('social') },
+          { href: 'languages',  icon: Languages,  label: t('languages') },
+          { href: 'accounting', icon: DollarSign, label: t('accounting') },
         ].map(({ href, icon: Icon, label }) => {
           const full = `${base}/${href}`;
           const active = pathname.startsWith(full);
@@ -317,13 +325,13 @@ export function StructurePanel() {
         })}
 
         {/* RÉGLAGES */}
-        <NavLabel label="Réglages" />
+        <NavLabel label={t('sectionSettings')} />
         {[
-          { href: 'general',       icon: Settings,  label: 'Général' },
-          { href: 'collaborators', icon: Users,     label: 'Collaborateurs' },
-          { href: 'domains',       icon: Globe,     label: 'Domaines' },
-          { href: 'api-keys',      icon: Key,       label: 'Clés API' },
-          { href: 'support',       icon: LifeBuoy,  label: 'Support' },
+          { href: 'general',       icon: Settings,  label: t('generalSettings') },
+          { href: 'collaborators', icon: Users,     label: t('collaborators') },
+          { href: 'domains',       icon: Globe,     label: t('domains') },
+          { href: 'api-keys',      icon: Key,       label: t('apiKeys') },
+          { href: 'support',       icon: LifeBuoy,  label: t('support') },
         ].map(({ href, icon: Icon, label }) => {
           const full = `${base}/${href}`;
           const active = pathname.startsWith(full);
@@ -350,7 +358,7 @@ export function StructurePanel() {
               className="flex items-center gap-2 rounded-lg px-2.5 py-[6px] text-[12px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition mt-0.5"
             >
               <ExternalLink className="h-3.5 w-3.5 shrink-0" />
-              <span className="flex-1">Voir le blog</span>
+              <span className="flex-1">{t('viewBlog')}</span>
             </a>
           </div>
         )}
@@ -364,7 +372,7 @@ export function StructurePanel() {
             <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 capitalize">{currentTenant?.plan ?? 'Free'}</span>
           </div>
           <Link href={`/${locale}/subscription`} className="text-[10px] font-bold text-blue-600 hover:text-blue-700 border border-blue-200 dark:border-blue-700 px-2 py-0.5 rounded-full transition">
-            Améliorer
+            {t('improve')}
           </Link>
         </div>
 

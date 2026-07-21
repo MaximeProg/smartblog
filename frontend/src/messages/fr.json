@@ -21,7 +21,8 @@
     "user": "Utilisateur",
     "ads": "Publicité",
     "affiliate": "Programme d'affiliation",
-    "support": "Support"
+    "support": "Support",
+    "payments": "Paiements"
   },
   "auth": {
     "login": {
@@ -221,6 +222,14 @@
       "approved": "Approuvé",
       "rejected": "Rejeté",
       "unpublished": "Dépublié"
+    },
+    "type": {
+      "article": "Article",
+      "photo": "Photo",
+      "video": "Vidéo",
+      "audio": "Audio",
+      "podcast": "Podcast",
+      "mixed": "Mixte"
     },
     "actions": {
       "edit": "Modifier",
@@ -816,7 +825,9 @@
     "accounting": "Finances",
     "support": "Support",
     "aiBuilder": "Créateur IA",
-    "languages": "Langues"
+    "languages": "Langues",
+    "sectionSite": "Site",
+    "sectionSettings": "Réglages"
   },
   "menus": {
     "locationPrimary": "Navigation principale",
@@ -1538,6 +1549,7 @@
     "save": "Sauvegarder",
     "saving": "Sauvegarde…",
     "saved": "Paramètres sauvegardés !",
+    "savedShort": "Enregistré",
     "saveError": "Erreur lors de la sauvegarde.",
     "sectionIdentity": "Identité du blog",
     "sectionUrl": "URL du blog",
@@ -1919,7 +1931,27 @@
     "articleTypeLabel": "Type de contenu",
     "articleTypeHint": "Sélectionne un type pour afficher les champs media correspondants en haut de l'article.",
     "analyticsDevices": "Appareils",
-    "analyticsCountries": "Pays sources"
+    "analyticsCountries": "Pays sources",
+    "imageFieldChange": "Changer",
+    "imageFieldUploading": "Envoi en cours…",
+    "imageFieldAdd": "Ajouter une image",
+    "navLinkLabel": "Libellé",
+    "navLinkUrlPlaceholder": "/page ou https://...",
+    "navLinkAdd": "Ajouter un lien",
+    "arrayItemDefault": "Élément {n}",
+    "arrayAdd": "Ajouter",
+    "defaultSubscribeLabel": "S'abonner",
+    "placeholderHeroTitle": "À la une",
+    "placeholderExplore": "Explorer",
+    "placeholderNewsletterTitle": "Restez toujours informé",
+    "placeholderNewsletterDesc": "Rejoignez nos abonnés…",
+    "placeholderEmailExample": "votre@email.com",
+    "placeholderNoSpam": "Pas de spam…",
+    "placeholderLatestArticles": "Derniers articles",
+    "placeholderPopularArticles": "Articles populaires",
+    "placeholderCategories": "Catégories",
+    "placeholderTags": "Tags",
+    "placeholderSeoDescription": "Découvrez nos meilleurs articles sur…"
   },
   "common": {
     "loading": "Chargement...",
@@ -2042,7 +2074,12 @@
     "domainTaken": "Pris",
     "quickSlugTaken": "Ce slug est déjà utilisé, choisissez-en un autre.",
     "quickDescriptionLabel": "Description",
-    "quickDescriptionPlaceholder": "Un blog sur la tech, le design et l’entrepreneuriat..."
+    "quickDescriptionPlaceholder": "Un blog sur la tech, le design et l’entrepreneuriat...",
+    "quickNameHint": "Affiché comme nom public de votre blog. Restez sous les 100 caractères.",
+    "quickDescriptionHint": "Apparaît dans les résultats de recherche et les partages. Recommandé : moins de 300 caractères.",
+    "quickSlugHint": "4 à 50 caractères — lettres minuscules, chiffres et tirets uniquement.",
+    "quickCoverUploadError": "Échec de l'envoi de l'image. Merci de réessayer.",
+    "quickGenericError": "Une erreur est survenue. Merci de réessayer."
   },
   "profile": {
     "personalInfo": "Informations personnelles",
@@ -3168,5 +3205,33 @@
     "acceptBtn": "Accepter l'invitation",
     "acceptError": "Impossible d'accepter l'invitation.",
     "expires": "Cette invitation expire le {date}."
+  },
+  "paymentCenter": {
+    "title": "Paiements",
+    "subtitle": "Tous vos paiements, tous blogs confondus.",
+    "filterAll": "Tous",
+    "filterCompleted": "Terminés",
+    "filterPending": "En attente",
+    "filterPartial": "Partiels",
+    "filterFailed": "Échoués",
+    "empty": "Aucun paiement pour l'instant.",
+    "received": "{amount}$ reçus jusqu'ici",
+    "resume": "Reprendre",
+    "resumeError": "Impossible de reprendre ce paiement. Merci de réessayer.",
+    "type": {
+      "subscription": "Abonnement",
+      "paid_article": "Article payant",
+      "paid_newsletter": "Newsletter payante",
+      "ad_campaign": "Publicité",
+      "domain_purchase": "Achat de domaine"
+    },
+    "status": {
+      "pending": "En attente",
+      "partially_paid": "Partiel",
+      "completed": "Terminé",
+      "failed": "Échoué",
+      "refunded": "Remboursé",
+      "disputed": "Contesté"
+    }
   }
 }

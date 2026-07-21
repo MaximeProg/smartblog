@@ -125,7 +125,7 @@ export default function SeoPage() {
           <StudioInput
             value={form.seo_meta_description}
             onChange={v => patchForm(f => ({ ...f, seo_meta_description: v }))}
-            placeholder="Découvrez nos meilleurs articles sur…"
+            placeholder={ts('placeholderSeoDescription')}
             multiline
             rows={3}
           />

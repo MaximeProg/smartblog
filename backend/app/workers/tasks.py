@@ -513,3 +513,4 @@ async def send_domain_renewal_reminders(ctx: dict) -> None:
             except Exception as exc:
                 logger.error("send_domain_renewal_reminders: failed", domain=d.domain, error=str(exc))
             await db.rollback()
+

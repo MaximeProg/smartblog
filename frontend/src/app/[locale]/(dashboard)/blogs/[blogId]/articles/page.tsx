@@ -18,13 +18,13 @@ import type { ArticleListItem, ArticleStatus } from '@/types';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useStudioPreview } from '@/contexts/studio-preview';
 
-const TYPE_ICON: Record<string, { icon: typeof FileText; color: string; label: string }> = {
-  article: { icon: FileText, color: 'text-slate-400',   label: 'Article' },
-  photo:   { icon: Camera,   color: 'text-pink-500',    label: 'Photo' },
-  video:   { icon: Video,    color: 'text-violet-500',  label: 'Vidéo' },
-  audio:   { icon: Mic,      color: 'text-blue-500',    label: 'Audio' },
-  podcast: { icon: Radio,    color: 'text-amber-500',   label: 'Podcast' },
-  mixed:   { icon: Layers,   color: 'text-emerald-500', label: 'Mixed' },
+const TYPE_ICON: Record<string, { icon: typeof FileText; color: string }> = {
+  article: { icon: FileText, color: 'text-slate-400' },
+  photo:   { icon: Camera,   color: 'text-pink-500' },
+  video:   { icon: Video,    color: 'text-violet-500' },
+  audio:   { icon: Mic,      color: 'text-blue-500' },
+  podcast: { icon: Radio,    color: 'text-amber-500' },
+  mixed:   { icon: Layers,   color: 'text-emerald-500' },
 };
 
 function ArticleRow({
@@ -56,9 +56,10 @@ function ArticleRow({
   const sc = STATUS_CONFIG[article.status] ?? STATUS_CONFIG.draft;
   const tc = TYPE_ICON[article.article_type] ?? TYPE_ICON.article;
   const TypeIcon = tc.icon;
+  const typeLabel = t(`type.${article.article_type}` as any);
 
   const dateStr = article.published_at
-    ? new Date(article.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: '2-digit' })
+    ? new Date(article.published_at).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: '2-digit' })
     : formatRelativeTime(article.created_at);
 
   return (
@@ -79,7 +80,7 @@ function ArticleRow({
       <div className="min-w-0">
         <div className="flex items-center gap-1.5 min-w-0 mb-0.5">
           <TypeIcon className={`h-3 w-3 shrink-0 ${tc.color}`} />
-          <span className={`text-[9px] font-bold uppercase tracking-wider ${tc.color}`}>{tc.label}</span>
+          <span className={`text-[9px] font-bold uppercase tracking-wider ${tc.color}`}>{typeLabel}</span>
         </div>
         <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200 truncate leading-snug">{article.title}</p>
         {article.excerpt && (

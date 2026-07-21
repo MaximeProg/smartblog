@@ -226,6 +226,7 @@ export default function SubscriptionPage() {
           open={!!payment}
           onOpenChange={(o) => { if (!o) setPayment(null); }}
           tenantId={tenant.id}
+          transactionId={payment.transaction_id}
           orderId={payment.order_id}
           payAddress={payment.pay_address}
           payAmount={payment.pay_amount}

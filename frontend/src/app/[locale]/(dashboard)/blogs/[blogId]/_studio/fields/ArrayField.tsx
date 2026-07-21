@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { ChevronDown, ChevronRight, GripVertical, Plus, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors,
   type DragEndEvent,
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function ArrayField({ field, value, onChange }: Props) {
+  const t = useTranslations('studio');
   const items = Array.isArray(value) ? (value as Record<string, unknown>[]) : [];
   const [expanded, setExpanded] = useState<Set<number>>(new Set([0]));
 
@@ -70,7 +72,7 @@ export function ArrayField({ field, value, onChange }: Props) {
 
   const getItemLabel = (item: Record<string, unknown>, index: number): string => {
     const first = field.itemFields?.[0]?.key;
-    return (first && (item[first] as string)) || `Élément ${index + 1}`;
+    return (first && (item[first] as string)) || t('arrayItemDefault', { n: index + 1 });
   };
 
   const handleDragEnd = (e: DragEndEvent) => {
@@ -152,7 +154,7 @@ export function ArrayField({ field, value, onChange }: Props) {
         className="flex items-center gap-1.5 text-[12px] font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 transition"
       >
         <Plus className="h-3.5 w-3.5" />
-        Ajouter
+        {t('arrayAdd')}
       </button>
     </div>
   );

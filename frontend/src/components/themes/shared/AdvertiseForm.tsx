@@ -643,6 +643,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
           open={!!payment}
           onOpenChange={(o) => { if (!o) setPayment(null); }}
           tenantId={tenantId}
+          transactionId={payment.transaction_id}
           orderId={payment.order_id}
           payAddress={payment.pay_address}
           payAmount={payment.pay_amount}

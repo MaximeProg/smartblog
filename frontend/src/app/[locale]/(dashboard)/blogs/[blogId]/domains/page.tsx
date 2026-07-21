@@ -606,6 +606,7 @@ export default function DomainsPage() {
           open={!!payment}
           onOpenChange={(o) => { if (!o) setPayment(null); }}
           tenantId={blogId}
+          transactionId={payment.transaction_id}
           orderId={payment.order_id}
           payAddress={payment.pay_address}
           payAmount={payment.pay_amount}

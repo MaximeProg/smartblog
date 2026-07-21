@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { ArrowLeft, Monitor, Tablet, Smartphone, ExternalLink, Save, Loader2, CheckCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { useEditorStore } from '@/store/editor.store';
 import { useCurrentTenant } from '@/store/auth.store';
@@ -15,20 +16,22 @@ interface TopbarProps {
   onDeviceChange: (m: DeviceMode) => void;
 }
 
-const DEVICES: { mode: DeviceMode; icon: React.ElementType; label: string }[] = [
-  { mode: 'desktop', icon: Monitor,    label: 'Bureau' },
-  { mode: 'tablet',  icon: Tablet,     label: 'Tablette' },
-  { mode: 'mobile',  icon: Smartphone, label: 'Mobile' },
-];
-
 export function Topbar({ deviceMode, onDeviceChange }: TopbarProps) {
   const params  = useParams();
   const locale  = params.locale as string;
   const pathname = usePathname();
+  const t = useTranslations('studio');
+  const tn = useTranslations('nav');
 
   const { dirty, saving, save, tenantSlug } = useEditorStore();
   const currentTenant = useCurrentTenant();
   const [saved, setSaved] = useState(false);
+
+  const DEVICES: { mode: DeviceMode; icon: React.ElementType; label: string }[] = [
+    { mode: 'desktop', icon: Monitor,    label: t('deviceDesktop') },
+    { mode: 'tablet',  icon: Tablet,     label: t('deviceTablet') },
+    { mode: 'mobile',  icon: Smartphone, label: t('deviceMobile') },
+  ];
 
   const isStudioRoot = pathname === `/${locale}/blogs/${params.blogId as string}`;
 
@@ -50,7 +53,7 @@ export function Topbar({ deviceMode, onDeviceChange }: TopbarProps) {
         className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 transition shrink-0"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        <span className="hidden sm:inline">Dashboard</span>
+        <span className="hidden sm:inline">{tn('dashboard')}</span>
       </Link>
 
       <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1 shrink-0" />
@@ -113,7 +116,7 @@ export function Topbar({ deviceMode, onDeviceChange }: TopbarProps) {
         ) : (
           <Save className="h-3.5 w-3.5" />
         )}
-        <span>{saving ? 'Enregistrement…' : saved ? 'Enregistré' : 'Enregistrer'}</span>
+        <span>{saving ? t('saving') : saved ? t('savedShort') : t('save')}</span>
       </button>
     </div>
   );

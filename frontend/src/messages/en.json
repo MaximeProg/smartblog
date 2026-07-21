@@ -21,7 +21,8 @@
     "user": "User",
     "ads": "Advertising",
     "affiliate": "Affiliate Program",
-    "support": "Support"
+    "support": "Support",
+    "payments": "Payments"
   },
   "auth": {
     "login": {
@@ -221,6 +222,14 @@
       "approved": "Approved",
       "rejected": "Rejected",
       "unpublished": "Unpublished"
+    },
+    "type": {
+      "article": "Article",
+      "photo": "Photo",
+      "video": "Video",
+      "audio": "Audio",
+      "podcast": "Podcast",
+      "mixed": "Mixed"
     },
     "actions": {
       "edit": "Edit",
@@ -816,7 +825,9 @@
     "accounting": "Financials",
     "support": "Support",
     "aiBuilder": "AI Blog Builder",
-    "languages": "Languages"
+    "languages": "Languages",
+    "sectionSite": "Site",
+    "sectionSettings": "Settings"
   },
   "menus": {
     "locationPrimary": "Main navigation",
@@ -1538,6 +1549,7 @@
     "save": "Save",
     "saving": "Saving…",
     "saved": "Settings saved!",
+    "savedShort": "Saved",
     "saveError": "Failed to save. Please try again.",
     "sectionIdentity": "Blog identity",
     "sectionUrl": "Blog URL",
@@ -1919,7 +1931,27 @@
     "articleTypeLabel": "Content type",
     "articleTypeHint": "Select a type to display the matching media fields at the top of your article.",
     "analyticsDevices": "Device breakdown",
-    "analyticsCountries": "Top countries"
+    "analyticsCountries": "Top countries",
+    "imageFieldChange": "Change",
+    "imageFieldUploading": "Uploading…",
+    "imageFieldAdd": "Add an image",
+    "navLinkLabel": "Label",
+    "navLinkUrlPlaceholder": "/page or https://...",
+    "navLinkAdd": "Add a link",
+    "arrayItemDefault": "Item {n}",
+    "arrayAdd": "Add",
+    "defaultSubscribeLabel": "Subscribe",
+    "placeholderHeroTitle": "Featured",
+    "placeholderExplore": "Explore",
+    "placeholderNewsletterTitle": "Stay in the loop",
+    "placeholderNewsletterDesc": "Join our subscribers…",
+    "placeholderEmailExample": "your@email.com",
+    "placeholderNoSpam": "No spam…",
+    "placeholderLatestArticles": "Latest articles",
+    "placeholderPopularArticles": "Popular articles",
+    "placeholderCategories": "Categories",
+    "placeholderTags": "Tags",
+    "placeholderSeoDescription": "Discover our best articles about…"
   },
   "common": {
     "loading": "Loading...",
@@ -2042,7 +2074,12 @@
     "domainTaken": "Taken",
     "quickSlugTaken": "This slug is already taken, please choose another.",
     "quickDescriptionLabel": "Description",
-    "quickDescriptionPlaceholder": "A blog about tech, design and entrepreneurship..."
+    "quickDescriptionPlaceholder": "A blog about tech, design and entrepreneurship...",
+    "quickNameHint": "Shown as your blog's public name. Keep it under 100 characters.",
+    "quickDescriptionHint": "Appears in search results and social shares. Recommended under 300 characters.",
+    "quickSlugHint": "4 to 50 characters — lowercase letters, numbers and hyphens only.",
+    "quickCoverUploadError": "Couldn't upload the image. Please try again.",
+    "quickGenericError": "Something went wrong. Please try again."
   },
   "profile": {
     "personalInfo": "Personal information",
@@ -3168,5 +3205,33 @@
     "acceptBtn": "Accept invitation",
     "acceptError": "Could not accept the invitation.",
     "expires": "This invitation expires on {date}."
+  },
+  "paymentCenter": {
+    "title": "Payments",
+    "subtitle": "All your payments across every blog you own.",
+    "filterAll": "All",
+    "filterCompleted": "Completed",
+    "filterPending": "Pending",
+    "filterPartial": "Partial",
+    "filterFailed": "Failed",
+    "empty": "No payments yet.",
+    "received": "${amount} received so far",
+    "resume": "Resume",
+    "resumeError": "Couldn't resume this payment. Please try again.",
+    "type": {
+      "subscription": "Subscription",
+      "paid_article": "Paid article",
+      "paid_newsletter": "Paid newsletter",
+      "ad_campaign": "Advertisement",
+      "domain_purchase": "Domain purchase"
+    },
+    "status": {
+      "pending": "Pending",
+      "partially_paid": "Partial",
+      "completed": "Completed",
+      "failed": "Failed",
+      "refunded": "Refunded",
+      "disputed": "Disputed"
+    }
   }
 }
