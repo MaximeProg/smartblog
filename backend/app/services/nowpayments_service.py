@@ -28,7 +28,6 @@ def _headers(api_key: str) -> dict:
 async def create_payment(
     *,
     price_amount: float,
-    price_currency: str = "usd",
     order_id: str,
     order_description: str,
     ipn_callback_url: str,
@@ -37,20 +36,28 @@ async def create_payment(
     Crée un paiement NowPayments direct (API "Payment", pas "Invoice") :
     retourne l'adresse de dépôt et le montant à envoyer, sans jamais rediriger
     l'utilisateur hors de la plateforme.
-    Retourne notamment : { payment_id, pay_address, pay_amount, pay_currency,
-    payment_status, expiration_estimate_date, ... }
+
+    Cote directement en USDT-BSC (price_currency = pay_currency), sans passer
+    par un montant fiat ("usd") : coter en fiat impose un plancher NowPayments
+    d'environ 18$ (vérifié empiriquement sur /v1/min-amount), quels que soient
+    is_fixed_rate/is_fee_paid_by_user, alors que USDT ≈ USD (stablecoin) rend
+    cette conversion fiat inutile. is_fixed_rate=False car il n'y a aucun taux
+    à figer entre deux fois la même devise — le laisser à True remonte le
+    plancher à ~7$ (confirmé : un paiement de 1$ est alors rejeté avec
+    "amountFrom is too small"). Avec ces deux réglages, le plancher réel tombe
+    à ~0.05$ (frais réseau BEP20), ce qui permet des paiements dès 1$.
     """
     if not settings.NOWPAYMENTS_API_KEY:
         raise RuntimeError("NOWPAYMENTS_API_KEY non configuré.")
 
     payload = {
         "price_amount": price_amount,
-        "price_currency": price_currency,
+        "price_currency": "usdtbsc",
         "pay_currency": "usdtbsc",
         "order_id": order_id,
         "order_description": order_description,
         "ipn_callback_url": ipn_callback_url,
-        "is_fixed_rate": True,
+        "is_fixed_rate": False,
         "is_fee_paid_by_user": False,
     }
 

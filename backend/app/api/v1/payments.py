@@ -160,7 +160,6 @@ async def _create_crypto_transaction(
 
     payment = await create_payment(
         price_amount=amount_usd,
-        price_currency="usd",
         order_id=order_id,
         order_description=order_description,
         ipn_callback_url=_ipn_callback_url(tenant_id),
