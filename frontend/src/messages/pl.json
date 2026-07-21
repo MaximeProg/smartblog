@@ -3336,5 +3336,23 @@
       "refunded": "Zwrot kosztów",
       "disputed": "Kwestia sporna"
     }
+  },
+  "cryptoPayment": {
+    "title": "Zapłać kryptowalutą (USDT)",
+    "statusWaiting": "Oczekiwanie na płatność…",
+    "statusConfirming": "Wykryto płatność — potwierdzanie w łańcuchu bloków…",
+    "statusConfirmed": "Potwierdzono — trwają prace nad finalizacją…",
+    "statusSending": "Kończenie…",
+    "statusPartiallyPaid": "Otrzymano częściową płatność — czekamy na resztę…",
+    "statusFinished": "Płatność została zrealizowana!",
+    "statusFailed": "Płatność nie powiodła się.",
+    "statusExpired": "Termin płatności upłynął.",
+    "remainingLabel": "Pozostało:",
+    "completeButton": "Dokonaj płatności",
+    "tryAgain": "Spróbuj ponownie",
+    "qrAlt": "Kod QR do płatności",
+    "depositAddressLabel": "Adres do wpłaty",
+    "expiresIn": "Wygasają za{time}",
+    "countdownExpired": "Termin płatności upłynął"
   }
 }

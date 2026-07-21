@@ -54,6 +54,7 @@ class Settings(BaseSettings):
     NOWPAYMENTS_PLATFORM_FEE_PERCENT: int = 5  # Commission plateforme articles payants
     NOWPAYMENTS_SANDBOX: bool = True        # False en production
     NOWPAYMENTS_TOLERANCE_USD: float = 0.50  # Marge acceptée sur un paiement "partially_paid" (frais/variation crypto)
+    NOWPAYMENTS_PAYMENT_WINDOW_HOURS: float = 3.0  # Durée d'affichage/validité de la fenêtre de paiement (l'adresse NowPayments reste utilisable ~7 jours ; expiration_estimate_date n'est qu'un délai de rafraîchissement de cours, non pertinent pour un stablecoin)
 
     # Registrar de domaines — OpenProvider (achat automatisé de noms de domaine)
     OPENPROVIDER_USERNAME: str = ""

@@ -3336,5 +3336,23 @@
       "refunded": "Terugbetaald",
       "disputed": "Omstreden"
     }
+  },
+  "cryptoPayment": {
+    "title": "Betaal met cryptovaluta (USDT)",
+    "statusWaiting": "In afwachting van betaling…",
+    "statusConfirming": "Betaling gedetecteerd — wordt op de blockchain bevestigd…",
+    "statusConfirmed": "Bevestigd — wordt afgerond…",
+    "statusSending": "Bezig met afronden…",
+    "statusPartiallyPaid": "Gedeeltelijke betaling ontvangen — in afwachting van de rest…",
+    "statusFinished": "Betaling voltooid!",
+    "statusFailed": "De betaling is mislukt.",
+    "statusExpired": "De betalingstermijn is verstreken.",
+    "remainingLabel": "Resterend:",
+    "completeButton": "Betaling voltooien",
+    "tryAgain": "Probeer het nog eens",
+    "qrAlt": "QR-code voor betaling",
+    "depositAddressLabel": "Stortingsadres",
+    "expiresIn": "Vervalt over {time}",
+    "countdownExpired": "De betalingstermijn is verstreken"
   }
 }

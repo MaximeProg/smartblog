@@ -1434,7 +1434,7 @@
           "500 straipsnių",
           "5 000 naujienlaiškio prenumeratorių",
           "3 autoriai",
-          "5 GB saugyklos vietos",
+          "5 GB saugyklos talpa",
           "Pasirinktinis domenas",
           "Išplėstinė analizė",
           "Pirmenybinė pagalba"
@@ -3336,5 +3336,23 @@
       "refunded": "Grąžinta",
       "disputed": "Ginčytinas"
     }
+  },
+  "cryptoPayment": {
+    "title": "Apmokėkite kriptovaliuta (USDT)",
+    "statusWaiting": "Laukiama mokėjimo…",
+    "statusConfirming": "Aptiktas mokėjimas — patvirtinama grandinėje…",
+    "statusConfirmed": "Patvirtinta — baigiama…",
+    "statusSending": "Baigiama…",
+    "statusPartiallyPaid": "Gauta dalinė įmoka — laukiame likusios dalies…",
+    "statusFinished": "Mokėjimas atliktas!",
+    "statusFailed": "Mokėjimas nepavyko.",
+    "statusExpired": "Mokėjimo terminas pasibaigė.",
+    "remainingLabel": "Liko:",
+    "completeButton": "Atlikti mokėjimą",
+    "tryAgain": "Pabandykite dar kartą",
+    "qrAlt": "Mokėjimo QR kodas",
+    "depositAddressLabel": "Įmokos adresas",
+    "expiresIn": "Galioja iki „{time}“",
+    "countdownExpired": "Mokėjimo terminas pasibaigė"
   }
 }

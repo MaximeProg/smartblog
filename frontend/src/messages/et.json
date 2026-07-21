@@ -1451,7 +1451,7 @@
           "10 autorit",
           "50 GB salvestusruumi",
           "Kohandatud domeen",
-          "Täielik analüütika + SEO",
+          "Täielikud analüütilised andmed + SEO",
           "API-juurdepääs",
           "Pühendunud tugi"
         ]
@@ -3336,5 +3336,23 @@
       "refunded": "Tagasimakstud",
       "disputed": "Vaidlusalune"
     }
+  },
+  "cryptoPayment": {
+    "title": "Maksa krüptovaluutaga (USDT)",
+    "statusWaiting": "Oodatakse makset…",
+    "statusConfirming": "Makse tuvastatud — kinnitatakse ahelas…",
+    "statusConfirmed": "Kinnitatud — lõpetamisel…",
+    "statusSending": "Lõpetamine…",
+    "statusPartiallyPaid": "Osaline makse on laekunud — ootame ülejäänud summat…",
+    "statusFinished": "Makse on sooritatud!",
+    "statusFailed": "Makse ebaõnnestus.",
+    "statusExpired": "Makse tähtaeg on möödunud.",
+    "remainingLabel": "Järelejäänud:",
+    "completeButton": "Tee makse lõpuni",
+    "tryAgain": "Proovi uuesti",
+    "qrAlt": "Makse QR-kood",
+    "depositAddressLabel": "Sissemakse aadress",
+    "expiresIn": "Aegub {time}",
+    "countdownExpired": "Makse tähtaeg on möödunud"
   }
 }

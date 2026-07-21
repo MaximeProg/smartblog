@@ -3312,6 +3312,24 @@
     "acceptError": "Impossible d'accepter l'invitation.",
     "expires": "Cette invitation expire le {date}."
   },
+  "cryptoPayment": {
+    "title": "Payer en crypto (USDT)",
+    "statusWaiting": "En attente du paiement…",
+    "statusConfirming": "Paiement détecté — confirmation on-chain…",
+    "statusConfirmed": "Confirmé — finalisation…",
+    "statusSending": "Finalisation…",
+    "statusPartiallyPaid": "Paiement partiel reçu — en attente du solde…",
+    "statusFinished": "Paiement terminé !",
+    "statusFailed": "Le paiement a échoué.",
+    "statusExpired": "La fenêtre de paiement a expiré.",
+    "remainingLabel": "Restant :",
+    "completeButton": "Compléter le paiement",
+    "tryAgain": "Réessayer",
+    "qrAlt": "QR code de paiement",
+    "depositAddressLabel": "Adresse de dépôt",
+    "expiresIn": "Expire dans {time}",
+    "countdownExpired": "La fenêtre de paiement a expiré"
+  },
   "paymentCenter": {
     "title": "Paiements",
     "subtitle": "Tous vos paiements, tous blogs confondus.",

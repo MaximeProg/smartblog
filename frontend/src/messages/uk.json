@@ -3336,5 +3336,23 @@
       "refunded": "Повернено",
       "disputed": "Спірне"
     }
+  },
+  "cryptoPayment": {
+    "title": "Оплатити криптовалютою (USDT)",
+    "statusWaiting": "Очікування оплати…",
+    "statusConfirming": "Виявлено платіж — підтверджується в ланцюжку…",
+    "statusConfirmed": "Підтверджено — завершується…",
+    "statusSending": "Завершується…",
+    "statusPartiallyPaid": "Отримано частину оплати — чекаємо на решту…",
+    "statusFinished": "Оплата здійснена!",
+    "statusFailed": "Оплата не вдалася.",
+    "statusExpired": "Термін оплати закінчився.",
+    "remainingLabel": "Залишилося:",
+    "completeButton": "Оформити оплату",
+    "tryAgain": "Спробуйте ще раз",
+    "qrAlt": "QR-код для оплати",
+    "depositAddressLabel": "Адреса для поповнення рахунку",
+    "expiresIn": "Термін дії закінчується через {time}",
+    "countdownExpired": "Термін оплати закінчився"
   }
 }

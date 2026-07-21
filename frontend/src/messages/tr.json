@@ -3336,5 +3336,23 @@
       "refunded": "Geri Ödenen",
       "disputed": "Tartışmalı"
     }
+  },
+  "cryptoPayment": {
+    "title": "Kripto para (USDT) ile ödeme yapın",
+    "statusWaiting": "Ödeme bekleniyor…",
+    "statusConfirming": "Ödeme algılandı — zincir üzerinde onaylanıyor…",
+    "statusConfirmed": "Onaylandı — son aşamada…",
+    "statusSending": "Sonlandırılıyor…",
+    "statusPartiallyPaid": "Ödemenin bir kısmı alındı — geri kalanı bekleniyor…",
+    "statusFinished": "Ödeme tamamlandı!",
+    "statusFailed": "Ödeme başarısız oldu.",
+    "statusExpired": "Ödeme süresi doldu.",
+    "remainingLabel": "Kalan:",
+    "completeButton": "Ödemeyi tamamla",
+    "tryAgain": "Tekrar deneyin",
+    "qrAlt": "Ödeme QR kodu",
+    "depositAddressLabel": "Para yatırma adresi",
+    "expiresIn": "{time}'da sona erecek",
+    "countdownExpired": "Ödeme süresi doldu"
   }
 }

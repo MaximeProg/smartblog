@@ -11,7 +11,7 @@ direct depuis NowPayments (GET /v1/payment/{id}). Les deux convergent vers
 la même fonction idempotente `_finalize_transaction`.
 """
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Request, Header, HTTPException
 from sqlalchemy import select, text
 from pydantic import BaseModel
@@ -127,13 +127,13 @@ def _ipn_callback_url(tenant_id: uuid.UUID) -> str:
     return f"{base.rstrip('/')}/api/v1/tenants/{tenant_id}/payments/webhook/nowpayments"
 
 
-def _parse_expiration(raw: str | None) -> datetime | None:
-    if not raw:
-        return None
-    try:
-        return datetime.fromisoformat(raw.replace("Z", "+00:00"))
-    except ValueError:
-        return None
+def _payment_window_expiry() -> datetime:
+    """`expiration_estimate_date` renvoyé par NowPayments n'est que le délai de
+    rafraîchissement du cours (quelques minutes) — sans pertinence pour un
+    paiement en USDT (stablecoin) où l'adresse de dépôt reste utilisable
+    plusieurs jours côté NowPayments. On affiche donc notre propre fenêtre,
+    réglable via NOWPAYMENTS_PAYMENT_WINDOW_HOURS."""
+    return datetime.now(timezone.utc) + timedelta(hours=settings.NOWPAYMENTS_PAYMENT_WINDOW_HOURS)
 
 
 async def _create_crypto_transaction(
@@ -181,7 +181,7 @@ async def _create_crypto_transaction(
         pay_address=payment.get("pay_address"),
         pay_amount=payment.get("pay_amount"),
         pay_currency=payment.get("pay_currency"),
-        payment_expires_at=_parse_expiration(payment.get("expiration_estimate_date")),
+        payment_expires_at=_payment_window_expiry(),
         provider_status=payment.get("payment_status"),
         article_id=article_id,
         campaign_id=campaign_id,
@@ -658,6 +658,10 @@ async def resume_payment(
     remaining = round(float(tx.amount) - float(tx.amount_received or 0), 2)
     if remaining <= 0:
         raise ValidationException("Aucun montant restant à payer.")
+
+    tx.payment_expires_at = _payment_window_expiry()
+    await db.commit()
+    await db.refresh(tx)
 
     return _crypto_response(tx, remaining)
 

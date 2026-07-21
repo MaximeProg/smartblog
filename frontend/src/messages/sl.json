@@ -3336,5 +3336,23 @@
       "refunded": "Vračilo",
       "disputed": "Sporno"
     }
+  },
+  "cryptoPayment": {
+    "title": "Plačaj s kriptovaluto (USDT)",
+    "statusWaiting": "Čakam na plačilo…",
+    "statusConfirming": "Zaznano plačilo — potrjuje se v verigi…",
+    "statusConfirmed": "Potrjeno — v zaključni fazi…",
+    "statusSending": "Dokončanje…",
+    "statusPartiallyPaid": "Prejeto je bilo delno plačilo — čakamo na preostanek…",
+    "statusFinished": "Plačilo je zaključeno!",
+    "statusFailed": "Plačilo ni uspelo.",
+    "statusExpired": "Rok za plačilo je potekel.",
+    "remainingLabel": "Preostalo:",
+    "completeButton": "Dokončaj plačilo",
+    "tryAgain": "Poskusi še enkrat",
+    "qrAlt": "QR-koda za plačilo",
+    "depositAddressLabel": "Naslov za nakazilo",
+    "expiresIn": "Potek veljavnosti: {time}",
+    "countdownExpired": "Rok za plačilo je potekel"
   }
 }

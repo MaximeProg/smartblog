@@ -3336,5 +3336,23 @@
       "refunded": "返金済み",
       "disputed": "係争中"
     }
+  },
+  "cryptoPayment": {
+    "title": "仮想通貨（USDT）でお支払い",
+    "statusWaiting": "お支払いを待っています…",
+    "statusConfirming": "支払いが検出されました — オンチェーンで確認中…",
+    "statusConfirmed": "確認済み — 最終調整中…",
+    "statusSending": "最終調整中…",
+    "statusPartiallyPaid": "一部のお支払いをいただきました — 残りの支払いを待っています…",
+    "statusFinished": "お支払いが完了しました！",
+    "statusFailed": "支払いが失敗しました。",
+    "statusExpired": "お支払いの期限が切れました。",
+    "remainingLabel": "残り：",
+    "completeButton": "お支払いを完了する",
+    "tryAgain": "もう一度試してみてください",
+    "qrAlt": "支払い用QRコード",
+    "depositAddressLabel": "入金先アドレス",
+    "expiresIn": "有効期限まであと{time}",
+    "countdownExpired": "お支払い期間が終了しました"
   }
 }

@@ -3336,5 +3336,23 @@
       "refunded": "Visszatérítve",
       "disputed": "Vitás"
     }
+  },
+  "cryptoPayment": {
+    "title": "Fizessen kriptovalutával (USDT)",
+    "statusWaiting": "A fizetésre várunk…",
+    "statusConfirming": "Fizetés észlelve — láncon belüli megerősítés folyamatban…",
+    "statusConfirmed": "Megerősítve — véglegesítés folyamatban…",
+    "statusSending": "Befejezés alatt…",
+    "statusPartiallyPaid": "Részleges befizetés beérkezett — a fennmaradó összegre várunk…",
+    "statusFinished": "A fizetés sikeresen lezárult!",
+    "statusFailed": "A fizetés nem sikerült.",
+    "statusExpired": "A fizetési határidő lejárt.",
+    "remainingLabel": "Maradt:",
+    "completeButton": "Fizetés teljesítése",
+    "tryAgain": "Próbáld meg újra",
+    "qrAlt": "Fizetési QR-kód",
+    "depositAddressLabel": "Befizetési cím",
+    "expiresIn": "{time}-ig érvényes",
+    "countdownExpired": "A fizetési határidő lejárt"
   }
 }

@@ -1453,7 +1453,7 @@
           "Pielāgots domēns",
           "Pilnīga analītika + SEO",
           "API piekļuve",
-          "Speciāli pielāgots atbalsts"
+          "Speciāls atbalsts"
         ]
       },
       "business": {
@@ -3336,5 +3336,23 @@
       "refunded": "Atmaksāts",
       "disputed": "Apstrīdēts"
     }
+  },
+  "cryptoPayment": {
+    "title": "Maksājiet ar kriptovalūtu (USDT)",
+    "statusWaiting": "Gaida maksājumu…",
+    "statusConfirming": "Konstatēts maksājums — tiek veikta apstiprināšana ķēdē…",
+    "statusConfirmed": "Apstiprināts — tiek pabeigta…",
+    "statusSending": "Pabeigšana…",
+    "statusPartiallyPaid": "Saņemta daļēja maksājuma summa — gaidām atlikumu…",
+    "statusFinished": "Maksājums veikts!",
+    "statusFailed": "Maksājums neizdevās.",
+    "statusExpired": "Maksājuma termiņš ir beidzies.",
+    "remainingLabel": "Atlikums:",
+    "completeButton": "Veikt maksājumu",
+    "tryAgain": "Mēģini vēlreiz",
+    "qrAlt": "Maksājuma QR kods",
+    "depositAddressLabel": "Iemaksas adrese",
+    "expiresIn": "Derīguma termiņš beidzas pēc {time}",
+    "countdownExpired": "Maksājuma termiņš ir beidzies"
   }
 }

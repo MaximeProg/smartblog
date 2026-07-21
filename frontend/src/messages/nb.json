@@ -3336,5 +3336,23 @@
       "refunded": "Refusert",
       "disputed": "Omstridt"
     }
+  },
+  "cryptoPayment": {
+    "title": "Betal med kryptovaluta (USDT)",
+    "statusWaiting": "Venter på betaling…",
+    "statusConfirming": "Betaling oppdaget — bekrefter på blokkjeden…",
+    "statusConfirmed": "Bekreftet — fullfører…",
+    "statusSending": "Fullfører…",
+    "statusPartiallyPaid": "Delbetaling mottatt — venter på resten…",
+    "statusFinished": "Betalingen er fullført!",
+    "statusFailed": "Betalingen mislyktes.",
+    "statusExpired": "Betalingsfristen har gått ut.",
+    "remainingLabel": "Gjenværende:",
+    "completeButton": "Fullfør betalingen",
+    "tryAgain": "Prøv på nytt",
+    "qrAlt": "QR-kode for betaling",
+    "depositAddressLabel": "Innskuddsadresse",
+    "expiresIn": "Utløper om {time}",
+    "countdownExpired": "Betalingsfristen har utløpt"
   }
 }

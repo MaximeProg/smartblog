@@ -3336,5 +3336,23 @@
       "refunded": "Rambursat",
       "disputed": "Contestat"
     }
+  },
+  "cryptoPayment": {
+    "title": "Plătește cu criptomonede (USDT)",
+    "statusWaiting": "În așteptarea plății…",
+    "statusConfirming": "S-a detectat o plată — se confirmă pe lanț…",
+    "statusConfirmed": "Confirmat — se finalizează…",
+    "statusSending": "Se finalizează…",
+    "statusPartiallyPaid": "S-a primit o plată parțială — se așteaptă restul…",
+    "statusFinished": "Plata s-a efectuat!",
+    "statusFailed": "Plata nu s-a efectuat.",
+    "statusExpired": "Termenul de plată a expirat.",
+    "remainingLabel": "Rămân:",
+    "completeButton": "Finalizează plata",
+    "tryAgain": "Încearcă din nou",
+    "qrAlt": "Cod QR de plată",
+    "depositAddressLabel": "Adresa de depozit",
+    "expiresIn": "Expiră în{time}",
+    "countdownExpired": "Termenul de plată a expirat"
   }
 }

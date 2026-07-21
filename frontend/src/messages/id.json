@@ -3336,5 +3336,23 @@
       "refunded": "Dikembalikan",
       "disputed": "Dipersengketakan"
     }
+  },
+  "cryptoPayment": {
+    "title": "Bayar dengan kripto (USDT)",
+    "statusWaiting": "Menunggu pembayaran…",
+    "statusConfirming": "Pembayaran terdeteksi — sedang dikonfirmasi di blockchain…",
+    "statusConfirmed": "Telah dikonfirmasi — sedang diselesaikan…",
+    "statusSending": "Sedang diselesaikan…",
+    "statusPartiallyPaid": "Sebagian pembayaran telah diterima — sedang menunggu sisanya…",
+    "statusFinished": "Pembayaran telah selesai!",
+    "statusFailed": "Pembayaran gagal.",
+    "statusExpired": "Jangka waktu pembayaran telah berakhir.",
+    "remainingLabel": "Sisa:",
+    "completeButton": "Selesaikan pembayaran",
+    "tryAgain": "Coba lagi",
+    "qrAlt": "Kode QR pembayaran",
+    "depositAddressLabel": "Alamat dompet",
+    "expiresIn": "Akan kedaluwarsa dalam {time}",
+    "countdownExpired": "Jangka waktu pembayaran telah berakhir"
   }
 }

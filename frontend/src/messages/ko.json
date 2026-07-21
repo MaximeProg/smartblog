@@ -3336,5 +3336,23 @@
       "refunded": "환불됨",
       "disputed": "논란이 있는"
     }
+  },
+  "cryptoPayment": {
+    "title": "암호화폐(USDT)로 결제하기",
+    "statusWaiting": "결제 대기 중…",
+    "statusConfirming": "결제 감지됨 — 온체인 확인 중…",
+    "statusConfirmed": "확인됨 — 마무리 중…",
+    "statusSending": "마무리 중…",
+    "statusPartiallyPaid": "일부 대금 수령 — 나머지 대금 대기 중…",
+    "statusFinished": "결제가 완료되었습니다!",
+    "statusFailed": "결제가 실패했습니다.",
+    "statusExpired": "결제 기간이 만료되었습니다.",
+    "remainingLabel": "남은 수량:",
+    "completeButton": "결제 완료",
+    "tryAgain": "다시 시도해 보세요",
+    "qrAlt": "결제용 QR 코드",
+    "depositAddressLabel": "입금 주소",
+    "expiresIn": "{time} 후 만료됩니다.",
+    "countdownExpired": "결제 기간이 만료되었습니다."
   }
 }

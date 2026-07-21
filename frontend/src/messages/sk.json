@@ -3336,5 +3336,23 @@
       "refunded": "Vrátené",
       "disputed": "Sporné"
     }
+  },
+  "cryptoPayment": {
+    "title": "Zaplaťte kryptomenou (USDT)",
+    "statusWaiting": "Čakáme na platbu…",
+    "statusConfirming": "Zistená platba — potvrdzuje sa v reťazci…",
+    "statusConfirmed": "Potvrdené — dokončuje sa…",
+    "statusSending": "Dokončuje sa…",
+    "statusPartiallyPaid": "Čiastočná platba prijatá — čakáme na zvyšok…",
+    "statusFinished": "Platba bola úspešne vykonaná!",
+    "statusFailed": "Platba sa nepodarila.",
+    "statusExpired": "Lehota na platbu uplynula.",
+    "remainingLabel": "Zostáva:",
+    "completeButton": "Dokončiť platbu",
+    "tryAgain": "Skúste to znova",
+    "qrAlt": "QR kód na platbu",
+    "depositAddressLabel": "Adresa pre vklad",
+    "expiresIn": "Platnosť vyprší o{time}",
+    "countdownExpired": "Lehota na platbu uplynula"
   }
 }

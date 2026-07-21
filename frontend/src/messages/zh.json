@@ -3336,5 +3336,23 @@
       "refunded": "已退款",
       "disputed": "有争议的"
     }
+  },
+  "cryptoPayment": {
+    "title": "使用加密货币（USDT）支付",
+    "statusWaiting": "等待付款……",
+    "statusConfirming": "检测到付款——正在确认链上交易……",
+    "statusConfirmed": "已确认——正在最终确认中……",
+    "statusSending": "正在完成……",
+    "statusPartiallyPaid": "已收到部分款项——等待余款……",
+    "statusFinished": "付款已完成！",
+    "statusFailed": "支付失败。",
+    "statusExpired": "付款期限已过。",
+    "remainingLabel": "剩余：",
+    "completeButton": "完成付款",
+    "tryAgain": "请重试",
+    "qrAlt": "支付二维码",
+    "depositAddressLabel": "充值地址",
+    "expiresIn": "距离过期还有{time}",
+    "countdownExpired": "付款期限已过"
   }
 }

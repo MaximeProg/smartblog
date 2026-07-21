@@ -1462,7 +1462,7 @@
         "features": [
           "Rajoittamaton määrä blogeja",
           "Rajoittamaton määrä artikkeleita",
-          "Rajoittamaton määrä tilaajia",
+          "Rajoittamaton tilaajamäärä",
           "Rajoittamaton määrä kirjoittajia",
           "Rajoittamaton tallennustila",
           "Usean toimialueen",
@@ -3336,5 +3336,23 @@
       "refunded": "Hyvitetty",
       "disputed": "Kiistanalainen"
     }
+  },
+  "cryptoPayment": {
+    "title": "Maksa kryptovaluutalla (USDT)",
+    "statusWaiting": "Odotetaan maksua…",
+    "statusConfirming": "Maksu havaittu — vahvistetaan lohkoketjussa…",
+    "statusConfirmed": "Vahvistettu — viimeistellään…",
+    "statusSending": "Viimeistellään…",
+    "statusPartiallyPaid": "Osa maksusta on saatu — odotamme loput…",
+    "statusFinished": "Maksu on suoritettu!",
+    "statusFailed": "Maksu epäonnistui.",
+    "statusExpired": "Maksuaika on päättynyt.",
+    "remainingLabel": "Jäljellä:",
+    "completeButton": "Suorita maksu",
+    "tryAgain": "Yritä uudelleen",
+    "qrAlt": "Maksun QR-koodi",
+    "depositAddressLabel": "Talletusosoite",
+    "expiresIn": "Voimassaolo päättyy{time}",
+    "countdownExpired": "Maksuaika on päättynyt"
   }
 }

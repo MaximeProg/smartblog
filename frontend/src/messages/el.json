@@ -3336,5 +3336,23 @@
       "refunded": "Επιστροφή χρημάτων",
       "disputed": "Αμφισβητούμενο"
     }
+  },
+  "cryptoPayment": {
+    "title": "Πληρωμή με κρυπτονόμισμα (USDT)",
+    "statusWaiting": "Αναμονή για πληρωμή…",
+    "statusConfirming": "Εντοπίστηκε πληρωμή — επιβεβαίωση στην αλυσίδα…",
+    "statusConfirmed": "Επιβεβαιώθηκε — ολοκληρώνεται…",
+    "statusSending": "Ολοκλήρωση…",
+    "statusPartiallyPaid": "Λάβαμε μέρος της πληρωμής — περιμένουμε το υπόλοιπο…",
+    "statusFinished": "Η πληρωμή ολοκληρώθηκε!",
+    "statusFailed": "Η πληρωμή απέτυχε.",
+    "statusExpired": "Η προθεσμία πληρωμής έληξε.",
+    "remainingLabel": "Υπόλοιπο:",
+    "completeButton": "Ολοκλήρωση πληρωμής",
+    "tryAgain": "Προσπάθησε ξανά",
+    "qrAlt": "Κωδικός QR πληρωμής",
+    "depositAddressLabel": "Διεύθυνση κατάθεσης",
+    "expiresIn": "Λήγει σε{time}",
+    "countdownExpired": "Η προθεσμία πληρωμής έληξε"
   }
 }

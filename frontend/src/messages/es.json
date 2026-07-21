@@ -3336,5 +3336,23 @@
       "refunded": "Reembolsado",
       "disputed": "En disputa"
     }
+  },
+  "cryptoPayment": {
+    "title": "Pagar con criptomonedas (USDT)",
+    "statusWaiting": "A la espera del pago…",
+    "statusConfirming": "Se ha detectado un pago — confirmando en la cadena de bloques…",
+    "statusConfirmed": "Confirmado — en proceso de finalización…",
+    "statusSending": "Finalizando…",
+    "statusPartiallyPaid": "Se ha recibido un pago parcial; a la espera del resto…",
+    "statusFinished": "¡Pago completado!",
+    "statusFailed": "El pago no se ha realizado correctamente.",
+    "statusExpired": "El plazo de pago ha vencido.",
+    "remainingLabel": "Restantes:",
+    "completeButton": "Realizar el pago",
+    "tryAgain": "Inténtalo de nuevo",
+    "qrAlt": "Código QR de pago",
+    "depositAddressLabel": "Dirección de depósito",
+    "expiresIn": "Caduca en {time}",
+    "countdownExpired": "El plazo de pago ha vencido"
   }
 }
