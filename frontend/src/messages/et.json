@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Soovitatav formaat: SVG või PNG, mõõtmetega 200×50",
         "faviconUrl": "Faviconi URL",
         "mainFont": "Põhifont"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPaymentsi väljamakse 2FA-kood",
+      "nowpaymentsTotpHint": "Reaalajas kinnituskood käsitsi teostatavate toimingute jaoks NowPaymentsi juhtpaneelis (lubatud nimekiri, väljamaksed jne). Uuendub automaatselt.",
+      "copyCode": "Kopeeri",
+      "codeCopied": "Kopeeritud!"
     },
     "logs": {
       "title": "Tegevuslogi",

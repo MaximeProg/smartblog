@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Format yang disarankan: SVG atau PNG 200×50",
         "faviconUrl": "URL Favicon",
         "mainFont": "Font Utama"
-      }
+      },
+      "nowpaymentsTotpTitle": "Kode 2FA penarikan dana NowPayments",
+      "nowpaymentsTotpHint": "Kode verifikasi real-time untuk tindakan manual di dasbor NowPayments (daftar putih, pencairan dana, dll.). Diperbarui secara otomatis.",
+      "copyCode": "Salin",
+      "codeCopied": "Sudah disalin!"
     },
     "logs": {
       "title": "Catatan Aktivitas",

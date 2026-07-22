@@ -1559,6 +1559,9 @@ export const superadminApi = {
   updateSettings: (body: Record<string, unknown>) =>
     api.patch<{ ok: boolean }>('/superadmin/settings', body),
 
+  getNowPaymentsTotpCode: () =>
+    api.get<{ code: string; seconds_remaining: number }>('/superadmin/nowpayments/totp-code'),
+
   listSupportTickets: (params?: { status?: string; tenant_id?: string; limit?: number; offset?: number }) =>
     api.get<{ tickets: SupportTicketItem[]; total: number }>('/superadmin/support/tickets', { params }),
 

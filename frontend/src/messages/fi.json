@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Suositeltu tiedostomuoto: SVG tai PNG, koko 200×50",
         "faviconUrl": "Faviconin URL-osoite",
         "mainFont": "Pääfontti"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPaymentsin 2FA-koodi",
+      "nowpaymentsTotpHint": "Reaaliaikainen vahvistuskoodi manuaalisiin toimintoihin NowPayments-hallintapaneelissa (sallittujen luettelo, maksut jne.). Päivittyy automaattisesti.",
+      "copyCode": "Kopioi",
+      "codeCopied": "Kopioitu!"
     },
     "logs": {
       "title": "Toimintaloki",

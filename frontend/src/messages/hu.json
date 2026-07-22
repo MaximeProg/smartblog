@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Ajánlott formátum: SVG vagy PNG, 200×50",
         "faviconUrl": "Favicon URL-je",
         "mainFont": "Fő betűtípus"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPayments kifizetési 2FA-kód",
+      "nowpaymentsTotpHint": "Élő ellenőrző kód a NowPayments irányítópulton végzett kézi műveletekhez (fehérlista, kifizetések stb.). Automatikusan frissül.",
+      "copyCode": "Másolás",
+      "codeCopied": "Másolva!"
     },
     "logs": {
       "title": "Tevékenységi napló",

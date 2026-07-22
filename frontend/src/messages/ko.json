@@ -2951,7 +2951,11 @@
         "logoUrlHint": "권장 형식: SVG 또는 PNG, 200×50",
         "faviconUrl": "파비콘 URL",
         "mainFont": "기본 글꼴"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPayments 출금 2단계 인증 코드",
+      "nowpaymentsTotpHint": "NowPayments 대시보드에서 수동 작업(화이트리스트, 지급 등)을 수행할 때 사용되는 실시간 인증 코드입니다. 자동으로 새로 고쳐집니다.",
+      "copyCode": "복사",
+      "codeCopied": "복사했습니다!"
     },
     "logs": {
       "title": "활동 기록",

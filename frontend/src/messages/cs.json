@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Doporučený formát: SVG nebo PNG, rozměry 200×50",
         "faviconUrl": "URL faviconu",
         "mainFont": "Hlavní písmo"
-      }
+      },
+      "nowpaymentsTotpTitle": "Kód pro dvoufaktorové ověření (2FA) pro výplatu přes NowPayments",
+      "nowpaymentsTotpHint": "Aktuální ověřovací kód pro ruční operace v ovládacím panelu NowPayments (seznam povolených adres, výplaty atd.). Obnovuje se automaticky.",
+      "copyCode": "Kopírovat",
+      "codeCopied": "Zkopírováno!"
     },
     "logs": {
       "title": "Protokol aktivit",

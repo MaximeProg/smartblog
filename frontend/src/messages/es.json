@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Formato recomendado: SVG o PNG, 200×50",
         "faviconUrl": "URL del favicon",
         "mainFont": "Fuente principal"
-      }
+      },
+      "nowpaymentsTotpTitle": "Código de autenticación de dos factores (2FA) de NowPayments",
+      "nowpaymentsTotpHint": "Código de verificación en tiempo real para acciones manuales en el panel de control de NowPayments (lista blanca, pagos, etc.). Se actualiza automáticamente.",
+      "copyCode": "Copiar",
+      "codeCopied": "¡Copiado!"
     },
     "logs": {
       "title": "Registro de actividades",

@@ -1422,7 +1422,7 @@
           "1 autor",
           "1 GB úložného priestoru",
           "subdoména smarterbloggers.com",
-          "Súčasťou je firemná šablóna"
+          "Súčasťou balíka je firemná šablóna"
         ]
       },
       "starter": {
@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Odporúčaný formát: SVG alebo PNG, rozmery 200×50",
         "faviconUrl": "URL faviconu",
         "mainFont": "Hlavné písmo"
-      }
+      },
+      "nowpaymentsTotpTitle": "Kód 2FA pre výplatu v službe NowPayments",
+      "nowpaymentsTotpHint": "Aktívny overovací kód pre ručné operácie v riadiacom paneli NowPayments (zoznam povolených adries, výplaty atď.). Automaticky sa aktualizuje.",
+      "copyCode": "Kopírovať",
+      "codeCopied": "Skopírované!"
     },
     "logs": {
       "title": "Záznam aktivít",

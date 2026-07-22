@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Empfohlenes Format: SVG oder PNG, 200×50",
         "faviconUrl": "Favicon-URL",
         "mainFont": "Hauptschriftart"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPayments-Auszahlungs-2FA-Code",
+      "nowpaymentsTotpHint": "Live-Verifizierungscode für manuelle Vorgänge im NowPayments-Dashboard (Whitelist, Auszahlungen usw.). Wird automatisch aktualisiert.",
+      "copyCode": "Kopieren",
+      "codeCopied": "Kopiert!"
     },
     "logs": {
       "title": "Aktivitätsprotokoll",

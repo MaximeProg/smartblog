@@ -1347,6 +1347,33 @@ async def list_roles(payload: TokenPayload, db: DBSession):
     }
 
 
+# ── NowPayments — code 2FA (TOTP) à la demande ────────────────────
+#
+# Le compte NowPayments utilise un 2FA "Authenticator App" sur les payouts
+# (voir nowpayments_service.py) — notre backend génère déjà ce code tout
+# seul pour les payouts automatiques via l'API, mais certaines actions ne
+# se font qu'à la main sur le dashboard NowPayments lui-même (ex : gérer la
+# whitelist IP/wallets). Cet endpoint évite d'avoir à redemander le secret
+# à chaque fois : n'importe quel super admin peut lire le code courant.
+
+@router.get("/nowpayments/totp-code")
+async def get_nowpayments_totp_code(payload: TokenPayload, db: DBSession):
+    """Code TOTP à 6 chiffres courant, pour confirmer manuellement une action
+    sur le dashboard NowPayments (payouts, whitelist IP/wallets, etc.)."""
+    await _require_super_admin(payload, db)
+
+    from app.core.exceptions import ValidationException
+    from app.core.config import settings as cfg
+    import pyotp
+    import time
+
+    if not cfg.NOWPAYMENTS_PAYOUT_TOTP_SECRET:
+        raise ValidationException("NOWPAYMENTS_PAYOUT_TOTP_SECRET non configuré.")
+
+    code = pyotp.TOTP(cfg.NOWPAYMENTS_PAYOUT_TOTP_SECRET).now()
+    return {"code": code, "seconds_remaining": 30 - (int(time.time()) % 30)}
+
+
 # ── Paramètres plateforme ─────────────────────────────────────────
 
 @router.get("/settings")

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { Settings, Globe, Key, Plug, CheckCircle, AlertTriangle, Save, Eye, EyeOff, RefreshCw } from 'lucide-react';
+import { Settings, Globe, Key, Plug, CheckCircle, AlertTriangle, Save, Eye, EyeOff, RefreshCw, Copy, Check } from 'lucide-react';
 import { superadminApi, type SAPlatformSettings } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 
@@ -21,6 +21,22 @@ export default function SettingsPage() {
   const [maintenance, setMaintenance] = useState<boolean | null>(null);
   const [registrations, setRegistrations] = useState<boolean | null>(null);
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  const { data: totp } = useQuery({
+    queryKey: ['sa-nowpayments-totp'],
+    queryFn: () => superadminApi.getNowPaymentsTotpCode().then(r => r.data),
+    refetchInterval: 4000,
+    enabled: tab === 'integrations',
+  });
+
+  function copyTotpCode() {
+    if (!totp?.code) return;
+    navigator.clipboard.writeText(totp.code).then(() => {
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    });
+  }
 
   const maintenanceValue    = maintenance    ?? data?.general.maintenance_mode    ?? false;
   const registrationsValue  = registrations  ?? data?.general.registrations_open  ?? true;
@@ -143,6 +159,26 @@ export default function SettingsPage() {
 
           {tab === 'integrations' && (
             <div className="space-y-3">
+              {totp?.code && (
+                <div className="flex items-center justify-between px-5 py-4 rounded-xl border"
+                  style={{ background: 'var(--sa-card)', borderColor: 'var(--sa-border)' }}>
+                  <div>
+                    <p className="text-[12px] font-semibold" style={{ color: 'var(--sa-text)' }}>{ts('nowpaymentsTotpTitle')}</p>
+                    <p className="text-[10px] mt-0.5 max-w-md" style={{ color: 'var(--sa-text-3)' }}>{ts('nowpaymentsTotpHint')}</p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[20px] font-black tabular-nums tracking-widest" style={{ color: 'var(--sa-text)' }}>
+                      {totp.code}
+                    </span>
+                    <span className="text-[10px] w-6 text-right" style={{ color: 'var(--sa-text-3)' }}>{totp.seconds_remaining}s</span>
+                    <button onClick={copyTotpCode} className="flex items-center gap-1.5 h-8 px-3 rounded-lg border text-[11px]"
+                      style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text-3)' }}>
+                      {codeCopied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                      {codeCopied ? ts('codeCopied') : ts('copyCode')}
+                    </button>
+                  </div>
+                </div>
+              )}
               {[
                 { name: 'NowPayments', ok: data?.nowpayments?.configured ?? false, detail: data?.nowpayments?.configured ? `${data.nowpayments.sandbox ? 'Sandbox' : 'Production'} · Fee: ${data.nowpayments.platform_fee_percent}%` : '' },
                 { name: 'Cloudinary',  ok: data?.cloudinary?.configured ?? false, detail: data?.cloudinary?.cloud_name ?? '' },

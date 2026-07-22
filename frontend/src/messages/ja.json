@@ -1463,7 +1463,7 @@
           "ブログ数無制限",
           "記事数無制限",
           "無制限の加入者数",
-          "著者数無制限",
+          "著者の数に制限なし",
           "容量無制限",
           "マルチドメイン",
           "ホワイトラベル",
@@ -2951,7 +2951,11 @@
         "logoUrlHint": "推奨形式：SVG または PNG（200×50）",
         "faviconUrl": "ファビコンのURL",
         "mainFont": "メインフォント"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPaymentsの支払い用2FAコード",
+      "nowpaymentsTotpHint": "NowPaymentsダッシュボードにおける手動操作（ホワイトリスト登録、支払いなど）用のリアルタイム認証コード。自動的に更新されます。",
+      "copyCode": "コピー",
+      "codeCopied": "コピーしました！"
     },
     "logs": {
       "title": "アクティビティログ",

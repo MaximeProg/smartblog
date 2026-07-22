@@ -50,6 +50,9 @@ class Settings(BaseSettings):
     NOWPAYMENTS_API_KEY: str = ""           # Clé principale (créer invoices)
     NOWPAYMENTS_IPN_SECRET: str = ""        # Secret HMAC-SHA512 pour vérifier webhooks IPN
     NOWPAYMENTS_PAYOUT_API_KEY: str = ""    # Clé Payouts (envoyer USDT aux affiliés)
+    NOWPAYMENTS_EMAIL: str = ""             # Identifiants du compte dashboard — requis pour POST /v1/auth (JWT obligatoire sur les payouts, contrairement aux paiements entrants)
+    NOWPAYMENTS_PASSWORD: str = ""
+    NOWPAYMENTS_PAYOUT_TOTP_SECRET: str = ""  # Secret TOTP affiché lors de l'activation du 2FA "Authenticator app" sur les payouts (permet de générer le code de vérification automatiquement, sans email)
     NOWPAYMENTS_WALLET_USDT: str = ""       # Wallet USDT BSC de la plateforme SmarterBloggers
     NOWPAYMENTS_PLATFORM_FEE_PERCENT: int = 5  # Commission plateforme articles payants
     NOWPAYMENTS_SANDBOX: bool = True        # False en production

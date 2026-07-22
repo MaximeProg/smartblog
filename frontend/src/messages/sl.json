@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Priporočena oblika: SVG ali PNG 200×50",
         "faviconUrl": "URL favicona",
         "mainFont": "Glavna pisava"
-      }
+      },
+      "nowpaymentsTotpTitle": "Koda za dvofaktorsko avtentifikacijo (2FA) za izplačilo prek NowPayments",
+      "nowpaymentsTotpHint": "Koda za preverjanje v realnem času za ročne postopke v nadzorni plošči NowPayments (belo listo, izplačila itd.). Samodejno se osvežuje.",
+      "copyCode": "Kopiraj",
+      "codeCopied": "Kopirano!"
     },
     "logs": {
       "title": "Dnevnik dejavnosti",

@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Zalecany format: SVG lub PNG, rozmiar 200×50",
         "faviconUrl": "Adres URL favikony",
         "mainFont": "Główna czcionka"
-      }
+      },
+      "nowpaymentsTotpTitle": "Kod 2FA do wypłaty w serwisie NowPayments",
+      "nowpaymentsTotpHint": "Aktualny kod weryfikacyjny do czynności wykonywanych ręcznie w panelu NowPayments (biała lista, wypłaty itp.). Odświeża się automatycznie.",
+      "copyCode": "Kopiuj",
+      "codeCopied": "Skopiowano!"
     },
     "logs": {
       "title": "Dziennik działań",

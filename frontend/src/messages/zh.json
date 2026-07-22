@@ -2951,7 +2951,11 @@
         "logoUrlHint": "推荐格式：SVG 或 PNG，尺寸为 200×50",
         "faviconUrl": "网站图标网址",
         "mainFont": "主字体"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPayments 提现双因素认证码",
+      "nowpaymentsTotpHint": "NowPayments 控制台中用于手动操作（白名单、款项支付等）的实时验证码。会自动刷新。",
+      "copyCode": "复制",
+      "codeCopied": "已复制！"
     },
     "logs": {
       "title": "活动日志",

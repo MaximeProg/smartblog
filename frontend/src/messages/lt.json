@@ -1434,7 +1434,7 @@
           "500 straipsnių",
           "5 000 naujienlaiškio prenumeratorių",
           "3 autoriai",
-          "5 GB saugyklos talpa",
+          "5 GB saugyklos vietos",
           "Pasirinktinis domenas",
           "Išplėstinė analizė",
           "Pirmenybinė pagalba"
@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Rekomenduojamas formatas: SVG arba PNG, 200×50",
         "faviconUrl": "Favikono URL",
         "mainFont": "Pagrindinis šriftas"
-      }
+      },
+      "nowpaymentsTotpTitle": "„NowPayments“ išmokėjimo 2FA kodas",
+      "nowpaymentsTotpHint": "Tikrasis patvirtinimo kodas, skirtas rankiniams veiksmams „NowPayments“ valdymo skydelyje (įtraukimas į baltąjį sąrašą, išmokos ir pan.). Atnaujinamas automatiškai.",
+      "copyCode": "Kopijuoti",
+      "codeCopied": "Nukopijuota!"
     },
     "logs": {
       "title": "Veiklos žurnalas",

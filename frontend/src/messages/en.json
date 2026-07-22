@@ -2889,6 +2889,10 @@
       "autoSaveNote": "Settings are saved automatically on change.",
       "envNote": "Integration credentials are configured via environment variables (.env).",
       "saveBtn": "Save",
+      "nowpaymentsTotpTitle": "NowPayments payout 2FA code",
+      "nowpaymentsTotpHint": "Live verification code for manual actions in the NowPayments dashboard (whitelist, payouts, etc.). Refreshes automatically.",
+      "copyCode": "Copy",
+      "codeCopied": "Copied!",
       "field": {
         "maintenance": "Maintenance Mode",
         "maintenanceHint": "Displays a maintenance page for all users",

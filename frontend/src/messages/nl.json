@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Aanbevolen formaat: SVG of PNG 200×50",
         "faviconUrl": "URL van het favicon",
         "mainFont": "Hoofdlettertype"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPayments-uitbetalingscode voor tweefactorauthenticatie",
+      "nowpaymentsTotpHint": "Live verificatiecode voor handmatige acties in het NowPayments-dashboard (whitelist, uitbetalingen, enz.). Wordt automatisch vernieuwd.",
+      "copyCode": "Kopiëren",
+      "codeCopied": "Gekopieerd!"
     },
     "logs": {
       "title": "Activiteitenlogboek",

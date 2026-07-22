@@ -1,3 +1,4 @@
+import logging
 import uuid
 from datetime import datetime, timezone
 from fastapi import APIRouter, Query, BackgroundTasks
@@ -11,6 +12,8 @@ from app.core.exceptions import NotFoundException, ValidationException, Forbidde
 from app.models.ad import Ad, AdLinkScan, AdRevenueShare
 from app.models.enums import AdSubmissionStatus, AdCampaignStatus, LinkSafetyStatus, UserRole, AdRevenueShareStatus
 from app.api.v1.tenants import _assert_member, _assert_role
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/tenants/{tenant_id}/ads",
@@ -265,9 +268,12 @@ async def review_ad(
                                 created_by_system_user_id=uuid.UUID(payload["sub"]),
                             )
                         except Exception:
-                            pass  # Échec NowPayments — rien n'est enregistré, pas de retry automatique
+                            logger.exception(
+                                "Échec du payout NowPayments (part propriétaire) pour l'ad %s (owner=%s, montant=%s) — rien n'est enregistré, pas de retry automatique",
+                                ad.id, source_user_id, owner_share,
+                            )
             except Exception:
-                pass
+                logger.exception("Échec du calcul/paiement des commissions pour l'ad %s", ad.id)
         elif not (ad.amount_paid and float(ad.amount_paid) > 0):
             # Paiement non encore confirmé — campagne activée automatiquement par le webhook
             ad.campaign_status = AdCampaignStatus.PAUSED

@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Format recomandat: SVG sau PNG 200×50",
         "faviconUrl": "URL-ul faviconului",
         "mainFont": "Fontul principal"
-      }
+      },
+      "nowpaymentsTotpTitle": "Codul 2FA pentru plăți prin NowPayments",
+      "nowpaymentsTotpHint": "Cod de verificare în timp real pentru acțiunile manuale din panoul de control NowPayments (lista albă, plăți etc.). Se actualizează automat.",
+      "copyCode": "Copiere",
+      "codeCopied": "S-a copiat!"
     },
     "logs": {
       "title": "Jurnal de activitate",

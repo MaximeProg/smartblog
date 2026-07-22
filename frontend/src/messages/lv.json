@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Ieteicamais formāts: SVG vai PNG, izmērs 200×50",
         "faviconUrl": "Favikona URL",
         "mainFont": "Galvenais fonts"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPayments izmaksas 2FA kods",
+      "nowpaymentsTotpHint": "Reāllaika verifikācijas kods manuālām darbībām „NowPayments“ vadības panelī (baltajā sarakstā iekļaušana, izmaksas utt.). Atjaunojas automātiski.",
+      "copyCode": "Kopēt",
+      "codeCopied": "Kopēts!"
     },
     "logs": {
       "title": "Darbību žurnāls",

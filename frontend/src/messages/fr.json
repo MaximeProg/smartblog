@@ -2889,6 +2889,10 @@
       "autoSaveNote": "Les paramètres sont sauvegardés automatiquement à la modification.",
       "envNote": "Les identifiants des intégrations sont configurés via les variables d'environnement (.env).",
       "saveBtn": "Sauvegarder",
+      "nowpaymentsTotpTitle": "Code 2FA des payouts NowPayments",
+      "nowpaymentsTotpHint": "Code de vérification en direct pour les actions manuelles sur le dashboard NowPayments (whitelist, payouts, etc.). Se rafraîchit automatiquement.",
+      "copyCode": "Copier",
+      "codeCopied": "Copié !",
       "field": {
         "maintenance": "Mode maintenance",
         "maintenanceHint": "Affiche une page de maintenance pour tous les utilisateurs",

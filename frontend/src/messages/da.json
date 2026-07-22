@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Anbefalet format: SVG eller PNG 200×50",
         "faviconUrl": "Favicon-URL",
         "mainFont": "Hovedskrifttype"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPayments-udbetalingskode til tofaktorautentificering",
+      "nowpaymentsTotpHint": "Live-bekræftelseskode til manuelle handlinger i NowPayments-dashboardet (hvidliste, udbetalinger osv.). Opdateres automatisk.",
+      "copyCode": "Kopier",
+      "codeCopied": "Kopieret!"
     },
     "logs": {
       "title": "Aktivitetslog",

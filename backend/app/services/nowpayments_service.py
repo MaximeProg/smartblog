@@ -2,15 +2,17 @@
 Service NowPayments — Crypto USDT BSC (BEP20 / BNB Smart Chain)
 Docs : https://documenter.getpostman.com/view/7907941/2s93JtP3F6
 """
+import asyncio
 import base64
 import hashlib
 import hmac
 import io
 import json
-import uuid
+import time
 from typing import Any
 
 import httpx
+import pyotp
 import qrcode
 
 from app.core.config import settings
@@ -21,6 +23,51 @@ _PAYOUT_BASE = "https://api-sandbox.nowpayments.io/v1" if settings.NOWPAYMENTS_S
 
 def _headers(api_key: str) -> dict:
     return {"x-api-key": api_key, "Content-Type": "application/json"}
+
+
+# ── Auth JWT (requis uniquement pour les endpoints Payout) ────────
+#
+# Contrairement à /v1/payment (simple x-api-key), /v1/payout exige en plus
+# un token JWT obtenu via POST /v1/auth avec l'email/mot de passe du compte
+# dashboard NowPayments. Le token est valable 5 min — mis en cache process
+# et renouvelé avec une marge de sécurité (comme le pattern déjà utilisé
+# pour OpenProvider, voir app/services/registrars/openprovider.py).
+
+_jwt_cache: dict[str, float | str | None] = {"token": None, "expires_at": 0.0}
+_jwt_lock = asyncio.Lock()
+
+
+async def _get_payout_jwt() -> str:
+    if not settings.NOWPAYMENTS_EMAIL or not settings.NOWPAYMENTS_PASSWORD:
+        raise RuntimeError("NOWPAYMENTS_EMAIL/NOWPAYMENTS_PASSWORD non configurés (requis pour les payouts).")
+
+    async with _jwt_lock:
+        if _jwt_cache["token"] and time.time() < float(_jwt_cache["expires_at"] or 0):
+            return str(_jwt_cache["token"])
+
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.post(
+                f"{_PAYOUT_BASE}/auth",
+                json={"email": settings.NOWPAYMENTS_EMAIL, "password": settings.NOWPAYMENTS_PASSWORD},
+            )
+        resp.raise_for_status()
+        token = resp.json().get("token")
+        if not token:
+            raise RuntimeError("NowPayments /v1/auth: token absent de la réponse.")
+
+        _jwt_cache["token"] = token
+        # Valable 5 min d'après la doc — marge de sécurité de 30s.
+        _jwt_cache["expires_at"] = time.time() + 4.5 * 60
+        return str(token)
+
+
+async def _payout_headers() -> dict:
+    token = await _get_payout_jwt()
+    return {
+        "x-api-key": settings.NOWPAYMENTS_PAYOUT_API_KEY,
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+    }
 
 
 # ── Payment (paiement intégré, sans redirection) ──────────────────
@@ -125,25 +172,48 @@ def verify_ipn_signature(payload_bytes: bytes, received_sig: str) -> bool:
 async def send_payout(
     *,
     withdrawals: list[dict],  # [{"address": "0xabc...", "amount": 10.50, "currency": "usdtbsc", "ipn_callback_url": "..."}]
-    batch_withdrawal_id: str | None = None,
 ) -> dict:
     """
     Envoie des USDT à plusieurs wallets en un appel.
-    Nécessite NOWPAYMENTS_PAYOUT_API_KEY (clé dédiée payouts).
-    Retourne : { id, batch_withdrawal_id, withdrawals: [...] }
+    Nécessite NOWPAYMENTS_PAYOUT_API_KEY + NOWPAYMENTS_EMAIL/PASSWORD (JWT).
+    Retourne : { id (= batch_withdrawal_id), status, withdrawals: [...] }
+    Le payout reste en statut "creating" tant qu'il n'est pas confirmé via
+    `verify_payout` — voir cette fonction pour la suite du flux.
     """
     if not settings.NOWPAYMENTS_PAYOUT_API_KEY:
         raise RuntimeError("NOWPAYMENTS_PAYOUT_API_KEY non configuré.")
 
     payload: dict[str, Any] = {"withdrawals": withdrawals}
-    if batch_withdrawal_id:
-        payload["ipn_callback_url"] = f"{settings.FRONTEND_URL.rstrip('/')}/api/nowpayments/payout-ipn"
 
     async with httpx.AsyncClient(timeout=30) as client:
         resp = await client.post(
             f"{_PAYOUT_BASE}/payout",
-            headers=_headers(settings.NOWPAYMENTS_PAYOUT_API_KEY),
+            headers=await _payout_headers(),
             json=payload,
+        )
+        resp.raise_for_status()
+        return resp.json()
+
+
+async def verify_payout(batch_withdrawal_id: str) -> dict:
+    """
+    Confirme un payout avec le code 2FA — obligatoire dans l'heure suivant sa
+    création, sinon NowPayments le rejette automatiquement. Le code est ici
+    généré automatiquement via TOTP (NOWPAYMENTS_PAYOUT_TOTP_SECRET), à
+    condition que le 2FA "Authenticator app" (pas "Email") soit activé sur les
+    payouts dans le dashboard NowPayments — c'est ce réglage qui permet de ne
+    dépendre d'aucune boîte mail pour automatiser entièrement le versement.
+    """
+    if not settings.NOWPAYMENTS_PAYOUT_TOTP_SECRET:
+        raise RuntimeError("NOWPAYMENTS_PAYOUT_TOTP_SECRET non configuré (2FA authenticator requis pour les payouts).")
+
+    code = pyotp.TOTP(settings.NOWPAYMENTS_PAYOUT_TOTP_SECRET).now()
+
+    async with httpx.AsyncClient(timeout=15) as client:
+        resp = await client.post(
+            f"{_PAYOUT_BASE}/payout/{batch_withdrawal_id}/verify",
+            headers=await _payout_headers(),
+            json={"verification_code": code},
         )
         resp.raise_for_status()
         return resp.json()
@@ -156,8 +226,10 @@ async def send_single_payout(
     extra_id: str | None = None,
 ) -> dict:
     """
-    Envoie un paiement USDT BSC (BEP20) à un seul wallet.
-    extra_id peut être l'ID du cashout pour tracking.
+    Envoie un paiement USDT BSC (BEP20) à un seul wallet, puis confirme
+    immédiatement via le 2FA automatique (TOTP) — un seul appel de haut
+    niveau qui couvre tout le cycle création + vérification.
+    extra_id peut être l'ID de la commission/cashout pour tracking.
     """
     withdrawal = {
         "address": wallet_address,
@@ -167,8 +239,10 @@ async def send_single_payout(
     if extra_id:
         withdrawal["extra_id"] = extra_id
 
-    return await send_payout(
-        withdrawals=[withdrawal],
-        batch_withdrawal_id=str(uuid.uuid4()),
-        api_key=api_key,
-    )
+    created = await send_payout(withdrawals=[withdrawal])
+    batch_withdrawal_id = str(created.get("id") or created.get("batch_withdrawal_id") or "")
+    if not batch_withdrawal_id:
+        raise RuntimeError("NowPayments payout: id absent de la réponse de création.")
+
+    await verify_payout(batch_withdrawal_id)
+    return created

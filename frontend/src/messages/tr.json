@@ -2951,7 +2951,11 @@
         "logoUrlHint": "Önerilen format: SVG veya PNG, 200×50",
         "faviconUrl": "Favicon URL'si",
         "mainFont": "Ana Yazı Tipi"
-      }
+      },
+      "nowpaymentsTotpTitle": "NowPayments ödeme 2FA kodu",
+      "nowpaymentsTotpHint": "NowPayments kontrol panelinde manuel işlemler (beyaz liste, ödeme işlemleri vb.) için canlı doğrulama kodu. Otomatik olarak yenilenir.",
+      "copyCode": "Kopyala",
+      "codeCopied": "Kopyalandı!"
     },
     "logs": {
       "title": "Etkinlik Günlüğü",

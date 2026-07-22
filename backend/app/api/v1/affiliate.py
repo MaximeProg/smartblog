@@ -5,6 +5,7 @@ code, balance, and commission tree belong to the PERSON, not to whichever blog
 happened to be used to generate a shared link. See migration 047."""
 import csv
 import io
+import logging
 import uuid
 import random
 import string
@@ -20,6 +21,8 @@ from app.core.exceptions import NotFoundException, ValidationException, Forbidde
 from app.models.affiliate import AffiliateRelationship, AffiliateCommission, AffiliateCashoutRequest, AffiliateCodeAlias
 from app.models.user import User
 from app.models.enums import AffiliateCommissionStatus, CashoutStatus
+
+logger = logging.getLogger(__name__)
 
 user_router = APIRouter(prefix="/users/me/affiliate", tags=["affiliate"])
 superadmin_router = APIRouter(prefix="/superadmin/affiliate", tags=["affiliate-admin"])
@@ -580,8 +583,12 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
 
 async def _trigger_auto_payout(db, user: User, commission: AffiliateCommission, wallet_address: str):
     """
-    Déclenche un payout NowPayments immédiat pour une commission.
-    Si NowPayments n'est pas configuré, passe silencieusement.
+    Déclenche un payout NowPayments immédiat pour une commission (création +
+    confirmation 2FA automatique via TOTP, voir nowpayments_service.py).
+    Si NowPayments n'est pas configuré, passe silencieusement — mais toute
+    autre erreur (auth JWT, TOTP, API) est loggée : un échec silencieux ici
+    est exactement ce qui a fait croire que "les commissions ne partent pas"
+    sans qu'on puisse savoir pourquoi (voir historique du 2026-07-21/22).
     """
     from app.services.nowpayments_service import send_single_payout
 
@@ -612,7 +619,10 @@ async def _trigger_auto_payout(db, user: User, commission: AffiliateCommission, 
 
         user.affiliate_balance = max(0, float(user.affiliate_balance or 0) - float(commission.commission_amount))
     except Exception:
-        pass  # Échec NowPayments — commission reste READY, retry possible
+        logger.exception(
+            "Échec du payout NowPayments pour la commission %s (user=%s, montant=%s) — reste READY, retry possible",
+            commission.id, user.id, commission.commission_amount,
+        )
 
 
 # ── Register referral (called at user registration, first login) ──
