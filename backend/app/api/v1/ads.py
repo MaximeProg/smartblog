@@ -1,7 +1,7 @@
 import logging
 import uuid
 from datetime import datetime, timezone
-from fastapi import APIRouter, Query, BackgroundTasks
+from fastapi import APIRouter, Query
 from sqlalchemy import select
 from pydantic import BaseModel, HttpUrl
 
@@ -87,11 +87,16 @@ class AdScanResponse(BaseModel):
 async def submit_ad(
     tenant_id: uuid.UUID,
     body: SubmitAdRequest,
-    background: BackgroundTasks,
     db: DBSession,
 ):
     """Soumission d'une publicité + paiement NowPayments intégré (adresse +
-    QR affichés directement). Sans auth requise."""
+    QR affichés directement). Sans auth requise.
+
+    Le scan de sécurité du lien et la notification aux super admins ne se
+    déclenchent qu'une fois le paiement confirmé (_finalize_transaction) —
+    pas ici : ce endpoint public sans auth serait sinon un vecteur de spam
+    gratuit (déclencher un scan + un email à chaque soumission, payée ou
+    non — voir remontée du 2026-07-22)."""
     from app.api.v1.payments import _create_crypto_transaction, _crypto_response
     from app.models.enums import TransactionType
 
@@ -118,8 +123,6 @@ async def submit_ad(
     await db.commit()
     await db.refresh(ad)
 
-    background.add_task(_scan_ad_link, str(ad.id), ad.click_url)
-
     order_id = f"ad_{tenant_id}_{ad.id}_{uuid.uuid4().hex[:8]}"
     tx, _ = await _create_crypto_transaction(
         db,
@@ -131,25 +134,6 @@ async def submit_ad(
         order_description=f"Ad slot: {body.title[:80]}",
         campaign_id=ad.id,
     )
-
-    # Notify super admins of new ad submission
-    try:
-        from app.services.email_service import send_superadmin_event
-        from app.services.auth_service import _get_super_admin_emails
-        from sqlalchemy import select as _select
-        from app.models.tenant import Tenant as _Tenant
-        sa_emails = await _get_super_admin_emails(db)
-        tenant_res = await db.execute(_select(_Tenant).where(_Tenant.id == tenant_id))
-        tenant_obj = tenant_res.scalar_one_or_none()
-        await send_superadmin_event(
-            to=sa_emails,
-            event_type="ad.submitted",
-            title=f"New ad submission — {body.title}",
-            details=f"Budget: {body.total_budget} {body.currency} · Blog: {tenant_obj.slug if tenant_obj else tenant_id}",
-            actor_email=body.advertiser_email,
-        )
-    except Exception:
-        pass
 
     payment = _crypto_response(tx, body.total_budget)
     return {"ad_id": str(ad.id), **payment.model_dump()}
@@ -415,7 +399,8 @@ async def _run_scan(db, ad: Ad) -> dict:
 
 
 async def _scan_ad_link(ad_id: str, url: str) -> None:
-    """Background task : scan initial au moment de la soumission."""
+    """Scan initial du lien — déclenché depuis _finalize_transaction une fois
+    le paiement confirmé (pas à la soumission, voir submit_ad)."""
     from app.core.database import get_db
     from sqlalchemy import select
     async for db in get_db():

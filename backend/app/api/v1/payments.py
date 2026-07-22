@@ -313,7 +313,31 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
         if ad_obj and ad_obj.submission_status == ADS.PAYMENT_PENDING:
             ad_obj.submission_status = ADS.PENDING
             ad_obj.amount_paid = actually_paid
-        await db.commit()
+            await db.commit()
+
+            # Le scan de sécurité du lien et la notification aux super admins
+            # n'ont lieu qu'ici, une fois le paiement confirmé — pas à la
+            # soumission brute (endpoint public sans auth, sinon n'importe
+            # qui pouvait déclencher un scan + un email sans jamais payer).
+            from app.api.v1.ads import _scan_ad_link
+            await _scan_ad_link(str(ad_obj.id), ad_obj.click_url)
+
+            try:
+                from app.services.email_service import send_superadmin_event
+                from app.services.auth_service import _get_super_admin_emails
+                tenant_obj = await db.get(Tenant, tx.tenant_id)
+                sa_emails = await _get_super_admin_emails(db)
+                await send_superadmin_event(
+                    to=sa_emails,
+                    event_type="ad.submitted",
+                    title=f"New ad submission — {ad_obj.title}",
+                    details=f"Budget: {actually_paid:.2f} USDT · Blog: {tenant_obj.slug if tenant_obj else tx.tenant_id}",
+                    actor_email=ad_obj.advertiser_email,
+                )
+            except Exception:
+                pass
+        else:
+            await db.commit()
 
     elif tx.transaction_type == TransactionType.PAID_NEWSLETTER:
         from app.models.newsletter import NewsletterAccess
