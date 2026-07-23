@@ -539,7 +539,7 @@ async def checkout_domain(
         raise HTTPException(status_code=502, detail=f"Registrar indisponible : {e}")
 
     match = next((r for r in results if r.domain == domain_name), None)
-    if not match or not match.available or match.price is None:
+    if not match or not match.available or match.price is None or match.price <= 0:
         raise ValidationException("Ce domaine n'est pas disponible à l'achat.")
 
     price = await apply_markup(match.price)

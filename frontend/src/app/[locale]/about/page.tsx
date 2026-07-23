@@ -80,6 +80,11 @@ const FALLBACK: any = {
       { value: '10 levels', label: "Extended referral network — earn a share from your referrals' own referrals too" },
       { value: 'Unlimited', label: 'No cap on how many people you can refer' },
     ],
+    revenue_note: "Commissions are funded directly from platform revenue — never from other members' payments or funds. There are two verified revenue sources:",
+    revenue_breakdown: [
+      { source: 'Subscription payments', pool: '20% of every payment is allocated to the affiliate program', l1: '10% goes to your direct referral (Level 1)', rest: 'the remaining 10% is split equally across Levels 2–10 (~1.11% each)' },
+      { source: 'Advertising revenue', pool: '10% of every ad payment is allocated to the affiliate program', l1: '5% goes to your direct referral (Level 1)', rest: 'the remaining 5% is split equally across Levels 2–10 (~0.56% each)' },
+    ],
     cta_label: 'Start earning today',
   },
 };
@@ -291,6 +296,24 @@ export default async function AboutPage({
               </div>
             ))}
           </div>
+
+          {(c.affiliate as any).revenue_breakdown && (
+            <div className="max-w-3xl mx-auto mb-12 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 md:p-8">
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6 text-center">
+                {(c.affiliate as any).revenue_note}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {((c.affiliate as any).revenue_breakdown as { source: string; pool: string; l1: string; rest: string }[]).map(({ source, pool, l1, rest }) => (
+                  <div key={source} className="rounded-xl bg-slate-50 dark:bg-slate-800/60 p-4">
+                    <p className="font-bold text-slate-900 dark:text-white mb-1">{source}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">{pool}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 mb-1">→ {l1}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">→ {rest}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="text-center">
             <Link
