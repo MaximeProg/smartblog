@@ -77,5 +77,9 @@ class DomainRegistrarProvider(ABC):
         disponibilité en masse (coût registrar, sans marge)."""
 
     @abstractmethod
-    async def configure_dns(self, *, domain: str, records: list[dict]) -> None:
-        """`records` = [{"type": "CNAME", "name": "@", "value": "cname.vercel-dns.com"}, ...]."""
+    async def configure_dns(self, *, domain: str, records: list[dict] | None = None, template_name: str | None = None) -> None:
+        """`records` = [{"type": "CNAME", "name": "@", "value": "cname.vercel-dns.com"}, ...].
+        Si `template_name` est fourni, un registrar qui supporte les templates
+        DNS réutilisables peut l'utiliser à la place de `records` lors de la
+        création d'une zone — évite de renvoyer les mêmes enregistrements à
+        chaque nouveau domaine et centralise leur mise à jour future."""

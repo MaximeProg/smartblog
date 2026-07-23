@@ -63,6 +63,8 @@ class Settings(BaseSettings):
     OPENPROVIDER_USERNAME: str = ""
     OPENPROVIDER_PASSWORD: str = ""
     OPENPROVIDER_SANDBOX: bool = True        # False en production (compte reseller réel requis)
+    OPENPROVIDER_PRIVATE_WHOIS_ENABLED: bool = False  # Nécessite d'avoir signé le contrat WPP (WHOIS Privacy Protection) sur le dashboard OpenProvider — sinon l'enregistrement échoue avec "Wpp contract is not signed". Repasser à True une fois signé.
+    OPENPROVIDER_DNS_TEMPLATE_NAME: str = "smarterbloggers-vercel"  # Template DNS créé une fois sur le compte (POST /dns/templates, id 149570 le 2026-07-23) — A @ -> 76.76.21.21, CNAME www -> cname.vercel-dns.com
     DEFAULT_DOMAIN_REGISTRAR: str = "openprovider"
     DOMAIN_SEARCH_TLDS: list[str] = ["com", "net", "org", "blog", "ai", "io", "co", "dev"]
 

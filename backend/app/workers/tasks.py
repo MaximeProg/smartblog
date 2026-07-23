@@ -296,6 +296,7 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
     correspondante. Idempotent : ignore les commandes qui ne sont plus en
     statut PAID (déjà traitées ou en échec)."""
     from sqlalchemy import text
+    from app.core.config import settings
     from app.core.database import AsyncSessionLocal
     from app.models.domain import DomainOrder, CustomDomain
     from app.models.enums import DomainOrderStatus, DomainSource, DomainVerificationStatus
@@ -352,10 +353,7 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                 )
                 await registrar.configure_dns(
                     domain=order.domain_name,
-                    records=[
-                        {"type": "CNAME", "name": "@", "value": "cname.vercel-dns.com"},
-                        {"type": "CNAME", "name": "www", "value": "cname.vercel-dns.com"},
-                    ],
+                    template_name=settings.OPENPROVIDER_DNS_TEMPLATE_NAME,
                 )
 
                 expires_at = None
