@@ -50,7 +50,8 @@ async def _get_payout_jwt() -> str:
                 f"{_PAYOUT_BASE}/auth",
                 json={"email": settings.NOWPAYMENTS_EMAIL, "password": settings.NOWPAYMENTS_PASSWORD},
             )
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise RuntimeError(f"NowPayments POST /auth -> {resp.status_code}: {resp.text[:300]}")
         token = resp.json().get("token")
         if not token:
             raise RuntimeError("NowPayments /v1/auth: token absent de la réponse.")
@@ -114,7 +115,12 @@ async def create_payment(
             headers=_headers(settings.NOWPAYMENTS_API_KEY),
             json=payload,
         )
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            # resp.raise_for_status() seul ne logge que le code HTTP, jamais
+            # le corps de la réponse — qui contient le vrai message NowPayments
+            # (ex: AMOUNT_MINIMAL_ERROR). Sans ça, un échec en production ne
+            # laisse dans les logs qu'un "400 Bad Request" inexploitable.
+            raise RuntimeError(f"NowPayments POST /payment -> {resp.status_code}: {resp.text[:300]}")
         return resp.json()
 
 
@@ -131,7 +137,8 @@ async def get_payment_status(payment_id: str) -> dict:
             f"{_BASE}/payment/{payment_id}",
             headers=_headers(settings.NOWPAYMENTS_API_KEY),
         )
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise RuntimeError(f"NowPayments GET /payment/{payment_id} -> {resp.status_code}: {resp.text[:300]}")
         return resp.json()
 
 
@@ -191,7 +198,8 @@ async def send_payout(
             headers=await _payout_headers(),
             json=payload,
         )
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise RuntimeError(f"NowPayments POST /payout -> {resp.status_code}: {resp.text[:300]}")
         return resp.json()
 
 
@@ -215,7 +223,8 @@ async def verify_payout(batch_withdrawal_id: str) -> dict:
             headers=await _payout_headers(),
             json={"verification_code": code},
         )
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            raise RuntimeError(f"NowPayments POST /payout/{batch_withdrawal_id}/verify -> {resp.status_code}: {resp.text[:300]}")
         return resp.json()
 
 
