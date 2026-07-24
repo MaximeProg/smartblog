@@ -225,28 +225,38 @@ async def verify_payout(batch_withdrawal_id: str) -> dict:
         )
         if resp.status_code >= 400:
             raise RuntimeError(f"NowPayments POST /payout/{batch_withdrawal_id}/verify -> {resp.status_code}: {resp.text[:300]}")
-        return resp.json()
+        # Contrairement aux autres endpoints, /verify répond en text/plain
+        # ("OK") et non en JSON quand la confirmation est acceptée.
+        try:
+            return resp.json()
+        except ValueError:
+            return {"raw": resp.text}
 
 
 async def send_single_payout(
     *,
     wallet_address: str,
     amount_usd: float,
-    extra_id: str | None = None,
 ) -> dict:
     """
     Envoie un paiement USDT BSC (BEP20) à un seul wallet, puis confirme
     immédiatement via le 2FA automatique (TOTP) — un seul appel de haut
     niveau qui couvre tout le cycle création + vérification.
-    extra_id peut être l'ID de la commission/cashout pour tracking.
+
+    Ne jamais envoyer `extra_id` ici : BEP20/USDT-BSC ne supporte pas ce
+    champ (contrairement aux réseaux à memo/tag comme XRP), et le renseigner
+    fait échouer le virement en silence — NowPayments répond quand même
+    HTTP 200 à la création et à la vérification 2FA, mais le withdrawal
+    finit en status "REJECTED" sans aucun message d'erreur (`error: null`).
+    Confirmé le 2026-07-24 : un appel identique sans extra_id passe en
+    WAITING → SENDING normalement. Le tracking se fait via le
+    batch_withdrawal_id stocké dans `payout_reference`, pas via extra_id.
     """
     withdrawal = {
         "address": wallet_address,
         "amount": round(amount_usd, 2),
         "currency": "usdtbsc",
     }
-    if extra_id:
-        withdrawal["extra_id"] = extra_id
 
     created = await send_payout(withdrawals=[withdrawal])
     batch_withdrawal_id = str(created.get("id") or created.get("batch_withdrawal_id") or "")

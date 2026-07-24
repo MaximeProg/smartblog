@@ -635,7 +635,6 @@ async def _trigger_auto_payout(db, user: User, commission: AffiliateCommission, 
         result = await send_single_payout(
             wallet_address=wallet_address,
             amount_usd=float(commission.commission_amount),
-            extra_id=str(commission.id),
         )
         payout_ref = str(result.get("id", ""))
 

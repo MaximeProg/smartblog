@@ -465,7 +465,6 @@ async def review_ad(
                                 result = await send_single_payout(
                                     wallet_address=owner.usdt_wallet_address,
                                     amount_usd=owner_share,
-                                    extra_id=f"ad_owner_{ad.id}",
                                 )
                                 share = AdRevenueShare(
                                     ad_id=ad.id,
