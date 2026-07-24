@@ -36,15 +36,15 @@ const PLATFORMS: Partial<Record<SocialPlatform, PlatformMeta>> = {
 };
 
 const PLATFORM_FALLBACK: PlatformMeta = {
-  label: 'Unknown', bg: 'bg-slate-50 dark:bg-slate-800', iconBg: 'bg-slate-400', color: 'text-slate-500', icon: '?',
+  label: 'unknownPlatform', bg: 'bg-slate-50 dark:bg-slate-800', iconBg: 'bg-slate-400', color: 'text-slate-500', icon: '?',
 };
 
-const POST_STATUS_COLOR: Record<SocialPostStatus, { label: string; cls: string; icon: React.ElementType }> = {
-  pending:   { label: 'Pending',   cls: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800', icon: Clock },
-  scheduled: { label: 'Scheduled', cls: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800', icon: Clock },
-  published: { label: 'Published', cls: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800', icon: CheckCircle2 },
-  failed:    { label: 'Failed',    cls: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800', icon: AlertCircle },
-  canceled:  { label: 'Canceled',  cls: 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600', icon: X },
+const POST_STATUS_COLOR: Record<SocialPostStatus, { labelKey: string; cls: string; icon: React.ElementType }> = {
+  pending:   { labelKey: 'status_pending',   cls: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800', icon: Clock },
+  scheduled: { labelKey: 'status_scheduled', cls: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800', icon: Clock },
+  published: { labelKey: 'status_published', cls: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800', icon: CheckCircle2 },
+  failed:    { labelKey: 'status_failed',    cls: 'bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800', icon: AlertCircle },
+  canceled:  { labelKey: 'status_canceled',  cls: 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600', icon: X },
 };
 
 function fmtDate(iso: string) {
@@ -103,7 +103,7 @@ function AccountCard({
       <div className="flex items-start gap-3">
         <PlatformIcon platform={platform} size="md" />
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-bold text-slate-800 dark:text-slate-200">{meta.label}</p>
+          <p className="text-[13px] font-bold text-slate-800 dark:text-slate-200">{meta.label === 'unknownPlatform' ? t('unknownPlatform') : meta.label}</p>
           {account ? (
             <>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
@@ -215,7 +215,7 @@ function PostModal({ blogId, accounts, onClose }: { blogId: string; accounts: So
               className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
               {accounts.map(a => (
                 <option key={a.id} value={a.id}>
-                  {(PLATFORMS[a.platform] ?? PLATFORM_FALLBACK).label} — {a.platform_username || a.platform_display_name || a.id.slice(0, 8)}
+                  {(() => { const l = (PLATFORMS[a.platform] ?? PLATFORM_FALLBACK).label; return l === 'unknownPlatform' ? t('unknownPlatform') : l; })()} — {a.platform_username || a.platform_display_name || a.id.slice(0, 8)}
                 </option>
               ))}
             </select>
@@ -268,7 +268,8 @@ function SocialPageInner() {
     const error     = searchParams.get('error');
     if (connected) {
       const meta = PLATFORMS[connected as SocialPlatform] ?? PLATFORM_FALLBACK;
-      toast({ title: `${meta.label} connecté avec succès !` });
+      const platformName = meta.label === 'unknownPlatform' ? t('unknownPlatform') : meta.label;
+      toast({ title: t('connectSuccess', { platform: platformName }) });
       qc.invalidateQueries({ queryKey: ['social-accounts', blogId] });
       // Remove query params from URL without reloading
       const url = new URL(window.location.href);
@@ -276,7 +277,7 @@ function SocialPageInner() {
       router.replace(url.pathname);
     }
     if (error) {
-      toast({ variant: 'destructive', title: `Erreur OAuth : ${error}` });
+      toast({ variant: 'destructive', title: t('oauthError', { error }) });
       const url = new URL(window.location.href);
       url.searchParams.delete('error');
       router.replace(url.pathname);
@@ -405,9 +406,9 @@ function SocialPageInner() {
                       <PlatformIcon platform={p.platform} size="sm" />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400">{getPlatformMeta(p.platform).label}</span>
+                          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400">{getPlatformMeta(p.platform).label === 'unknownPlatform' ? t('unknownPlatform') : getPlatformMeta(p.platform).label}</span>
                           <span className={`inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold border ${st.cls}`}>
-                            <StatusIcon className="h-3 w-3" /> {st.label}
+                            <StatusIcon className="h-3 w-3" /> {t(st.labelKey as any)}
                           </span>
                           {p.scheduled_at && (
                             <span className="text-[10px] text-slate-400 dark:text-slate-500">{fmtDate(p.scheduled_at)}</span>

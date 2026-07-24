@@ -1,6 +1,6 @@
 import uuid
-from datetime import datetime
-from sqlalchemy import String, Text, Integer, Boolean, DateTime, ForeignKey, Enum as SAEnum, Numeric
+from datetime import datetime, date
+from sqlalchemy import String, Text, Integer, Boolean, Date, DateTime, ForeignKey, Enum as SAEnum, Numeric, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from app.models.base import Base
@@ -62,6 +62,10 @@ class Ad(Base):
     # Placement
     placement: Mapped[str | None] = mapped_column(String(50))  # sidebar | header | footer | in_article
 
+    # Pub achetée sur smarterbloggers.com lui-même (tenant_id = PLATFORM_TENANT_ID),
+    # par opposition à une pub sur le blog d'un membre — voir migration 058.
+    is_platform_ad: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -96,6 +100,22 @@ class AdRevenueShare(Base):
 
     def __repr__(self) -> str:
         return f"<AdRevenueShare ad={self.ad_id} owner={self.owner_user_id} ({self.status})>"
+
+
+class AdDailyStats(Base):
+    """Agrégat journalier impressions/clics par pub — permet un graphique
+    d'évolution sur le dashboard annonceur (voir StatCard/MiniBarChart de la
+    page analytics blog). Alimenté par upsert directement depuis
+    track_impression/track_click plutôt qu'un job d'agrégation séparé (volume
+    trop faible pour le justifier)."""
+    __tablename__ = "ad_daily_stats"
+    __table_args__ = (UniqueConstraint("ad_id", "date", name="uq_ad_daily_stats_ad_date"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    ad_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ads.id", ondelete="CASCADE"), nullable=False)
+    date: Mapped[date] = mapped_column(Date, nullable=False)
+    impressions: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    clicks: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
 
 class AdLinkScan(Base):

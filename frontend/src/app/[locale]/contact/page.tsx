@@ -3,8 +3,18 @@ import { Mail, MessageSquare, Headphones, type LucideIcon } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { siteConfig } from '@/config/site';
-import { getPlatformPage } from '@/lib/platform-api';
-import { ContactForm } from './ContactForm';
+import { getPlatformPage, getUiTranslations } from '@/lib/platform-api';
+import { ContactForm, type ContactFormErrors } from './ContactForm';
+
+const EN_CONTACT_ERRORS: ContactFormErrors = {
+  rateLimited: 'Too many messages sent. Please try again in an hour.',
+  generic: 'Something went wrong. Please try again or email us directly.',
+};
+
+const FR_CONTACT_ERRORS: ContactFormErrors = {
+  rateLimited: 'Trop de messages envoyés. Réessayez dans une heure.',
+  generic: 'Une erreur est survenue. Réessayez ou écrivez-nous directement par email.',
+};
 
 export const dynamic = 'force-dynamic';
 
@@ -64,6 +74,12 @@ export default async function ContactPage({
   const lang = cmsLang || locale;
   const cms = (await getPlatformPage('contact', lang)) as typeof FALLBACK | null;
   const c = cms ?? FALLBACK;
+
+  let formErrors: ContactFormErrors = lang === 'fr' ? FR_CONTACT_ERRORS : EN_CONTACT_ERRORS;
+  if (lang !== 'en' && lang !== 'fr') {
+    const translated = await getUiTranslations('marketing', lang);
+    if (translated?.contactErrors) formErrors = { ...EN_CONTACT_ERRORS, ...(translated.contactErrors as Partial<ContactFormErrors>) };
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
@@ -129,7 +145,7 @@ export default async function ContactPage({
 
           {/* Right: form (client component — interactive state) */}
           <div>
-            <ContactForm config={c.form} initialSubject={subject ?? ''} />
+            <ContactForm config={c.form} errors={formErrors} initialSubject={subject ?? ''} />
           </div>
         </div>
       </div>

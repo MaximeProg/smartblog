@@ -38,7 +38,7 @@ function TagRow({
       toast({ title: t('save') });
       setEditing(false);
     },
-    onError: () => toast({ variant: 'destructive', title: 'Error renaming tag' }),
+    onError: () => toast({ variant: 'destructive', title: t('renameError') }),
   });
 
   const deleteMut = useMutation({
@@ -47,7 +47,7 @@ function TagRow({
       qc.invalidateQueries({ queryKey: ['tags', blogId] });
       toast({ title: t('delete') });
     },
-    onError: () => toast({ variant: 'destructive', title: 'Error deleting tag' }),
+    onError: () => toast({ variant: 'destructive', title: t('deleteError') }),
   });
 
   function startEdit() {
@@ -178,7 +178,7 @@ export default function TagsPage() {
       toast({ title: t('create') });
       setNewName('');
     },
-    onError: () => toast({ variant: 'destructive', title: 'Error creating tag' }),
+    onError: () => toast({ variant: 'destructive', title: t('createError') }),
   });
 
   const mergeMut = useMutation({
@@ -190,7 +190,7 @@ export default function TagsPage() {
       setShowMerge(false);
       setMergeTarget('');
     },
-    onError: () => toast({ variant: 'destructive', title: 'Error merging tags' }),
+    onError: () => toast({ variant: 'destructive', title: t('mergeError') }),
   });
 
   function toggleSelect(id: string) {

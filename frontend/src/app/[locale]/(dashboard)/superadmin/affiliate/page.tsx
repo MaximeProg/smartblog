@@ -156,9 +156,9 @@ export default function AffiliatePage() {
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ['superadmin-cashouts'] });
       setModal(null);
-      toast({ title: '✓', description: vars.action === 'approve' ? 'Cashout approved.' : 'Cashout rejected.' });
+      toast({ title: '✓', description: vars.action === 'approve' ? ta('cashoutApprovedToast') : ta('cashoutRejectedToast') });
     },
-    onError: () => toast({ title: 'Error', description: t('common.error'), variant: 'destructive' }),
+    onError: () => toast({ title: t('common.errorTitle'), description: t('common.error'), variant: 'destructive' }),
   });
 
   const CASHOUT_STATUS: Record<string, { icon: typeof CheckCircle; cls: string; label: string }> = {

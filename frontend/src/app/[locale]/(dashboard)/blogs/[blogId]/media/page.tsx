@@ -143,7 +143,7 @@ function DetailPanel({ item, blogId, onClose }: { item: MediaItem; blogId: strin
       qc.invalidateQueries({ queryKey: ['media', blogId] });
       toast({ title: t('metaSaved') });
     },
-    onError: () => toast({ variant: 'destructive', title: 'Save failed' }),
+    onError: () => toast({ variant: 'destructive', title: t('saveFailed') }),
   });
 
   const deleteMut = useMutation({
@@ -339,7 +339,7 @@ function UploadZone({ blogId, onDone }: { blogId: string; onDone: () => void }) 
       toast({ title: t('upload') });
       onDone();
     } catch (e: unknown) {
-      const msg = (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? 'Upload failed';
+      const msg = (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? t('uploadFailed');
       setError(msg);
     } finally {
       setUploading(false);
@@ -376,7 +376,7 @@ function UploadZone({ blogId, onDone }: { blogId: string; onDone: () => void }) 
           </div>
           <div className="text-center">
             <p className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">{t('uploadDragDrop')}</p>
-            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Images · Vidéos · Audio · PDF</p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{t('supportedFormats')}</p>
           </div>
         </>
       )}

@@ -15,16 +15,22 @@ const PLAN_COLORS: Record<string, string> = {
 };
 
 // Hardcoded plan limits — comparison table always shows these regardless of API status
+// (la clé "analytics" est une clé de traduction, résolue au rendu — pas les autres,
+// qui sont déjà des valeurs affichables telles quelles : nombres, tailles, "∞".)
 const PLAN_LIMITS: Record<string, Record<string, string>> = {
-  free:       { articles: '10',  storage: '500 MB', members: '1',  ai: '10/mo',   domain: '—',  analytics: 'Basic' },
-  starter:    { articles: '100', storage: '2 GB',   members: '3',  ai: '100/mo',  domain: '1',  analytics: 'Standard' },
-  pro:        { articles: '∞',   storage: '10 GB',  members: '10', ai: '500/mo',  domain: '5',  analytics: 'Advanced' },
-  business:   { articles: '∞',   storage: '50 GB',  members: '∞',  ai: '2000/mo', domain: '∞',  analytics: 'Full' },
-  enterprise: { articles: '∞',   storage: '∞',      members: '∞',  ai: '∞',       domain: '∞',  analytics: 'Full+API' },
+  free:       { articles: '10',  storage: '500 MB', members: '1',  ai: '10/mo',   domain: '—',  analytics: 'analyticsBasic' },
+  starter:    { articles: '100', storage: '2 GB',   members: '3',  ai: '100/mo',  domain: '1',  analytics: 'analyticsStandard' },
+  pro:        { articles: '∞',   storage: '10 GB',  members: '10', ai: '500/mo',  domain: '5',  analytics: 'analyticsAdvanced' },
+  business:   { articles: '∞',   storage: '50 GB',  members: '∞',  ai: '2000/mo', domain: '∞',  analytics: 'analyticsFull' },
+  enterprise: { articles: '∞',   storage: '∞',      members: '∞',  ai: '∞',       domain: '∞',  analytics: 'analyticsFullApi' },
 };
 
 const PLAN_ORDER = ['free', 'starter', 'pro', 'business', 'enterprise'] as const;
-const FEATURE_KEYS = ['articles', 'storage', 'members', 'ai', 'domain', 'analytics'];
+const FEATURE_KEYS = ['articles', 'storage', 'members', 'ai', 'domain', 'analytics'] as const;
+const FEATURE_LABEL_KEYS: Record<string, string> = {
+  articles: 'featureArticles', storage: 'featureStorage', members: 'featureMembers',
+  ai: 'featureAi', domain: 'featureDomain', analytics: 'featureAnalytics',
+};
 
 type ModalMode = 'create' | 'edit' | null;
 
@@ -383,7 +389,7 @@ export default function PlansPage() {
               <table className="w-full text-[12px]">
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--sa-border)' }}>
-                    <th className="px-5 py-3 text-left font-semibold" style={{ color: 'var(--sa-text-3)', minWidth: '110px' }}>Feature</th>
+                    <th className="px-5 py-3 text-left font-semibold" style={{ color: 'var(--sa-text-3)', minWidth: '110px' }}>{tp('featureHeader')}</th>
                     {PLAN_ORDER.map(planId => (
                       <th key={planId} className="px-5 py-3 text-center font-semibold capitalize" style={{ color: PLAN_COLORS[planId] }}>
                         {tp(planId as Parameters<typeof tp>[0])}
@@ -394,10 +400,12 @@ export default function PlansPage() {
                 <tbody>
                   {FEATURE_KEYS.map(feat => (
                     <tr key={feat} style={{ borderBottom: '1px solid var(--sa-border)' }}>
-                      <td className="px-5 py-2.5 font-medium capitalize" style={{ color: 'var(--sa-text-2)' }}>{feat}</td>
+                      <td className="px-5 py-2.5 font-medium capitalize" style={{ color: 'var(--sa-text-2)' }}>{tp(FEATURE_LABEL_KEYS[feat] as any)}</td>
                       {PLAN_ORDER.map(planId => (
                         <td key={planId} className="px-5 py-2.5 text-center tabular-nums" style={{ color: 'var(--sa-text-3)' }}>
-                          {PLAN_LIMITS[planId]?.[feat] ?? '—'}
+                          {feat === 'analytics'
+                            ? tp((PLAN_LIMITS[planId]?.[feat] ?? 'analyticsBasic') as any)
+                            : PLAN_LIMITS[planId]?.[feat] ?? '—'}
                         </td>
                       ))}
                     </tr>
@@ -418,8 +426,8 @@ export default function PlansPage() {
         ) : dbPlans.length === 0 ? (
           <div className="rounded-xl border p-12 text-center" style={{ borderColor: 'var(--sa-border)', background: 'var(--sa-card)' }}>
             <Layers className="h-10 w-10 mx-auto mb-3" style={{ color: 'var(--sa-text-3)' }} />
-            <p className="text-[14px] font-semibold" style={{ color: 'var(--sa-text)' }}>No plans found</p>
-            <p className="text-[12px] mt-1 mb-4" style={{ color: 'var(--sa-text-3)' }}>Run migration 019 to seed default plans, or create one manually.</p>
+            <p className="text-[14px] font-semibold" style={{ color: 'var(--sa-text)' }}>{tp('noPlansFound')}</p>
+            <p className="text-[12px] mt-1 mb-4" style={{ color: 'var(--sa-text-3)' }}>{tp('noPlansFoundDesc')}</p>
             <button
               onClick={() => { setEditingPlan(undefined); setModal('create'); }}
               className="h-9 px-5 rounded-xl text-[13px] font-bold text-white"
@@ -459,10 +467,10 @@ export default function PlansPage() {
                   {/* Limits summary */}
                   <div className="hidden lg:flex items-center gap-5 text-[11px]">
                     {[
-                      { label: 'Articles', v: fmtLimit(plan.max_articles) },
-                      { label: 'Storage',  v: fmtStorage(plan.max_storage_mb) },
-                      { label: 'Members',  v: fmtLimit(plan.max_members) },
-                      { label: 'AI',       v: fmtLimit(plan.max_ai_requests) + '/mo' },
+                      { label: tp('featureArticles'), v: fmtLimit(plan.max_articles) },
+                      { label: tp('featureStorage'),  v: fmtStorage(plan.max_storage_mb) },
+                      { label: tp('featureMembers'),  v: fmtLimit(plan.max_members) },
+                      { label: tp('featureAi'),       v: fmtLimit(plan.max_ai_requests) + '/mo' },
                     ].map(item => (
                       <div key={item.label} className="text-center">
                         <p className="font-black tabular-nums" style={{ color: 'var(--sa-text)' }}>{item.v}</p>
@@ -471,7 +479,7 @@ export default function PlansPage() {
                     ))}
                     <div className="text-center">
                       <p className="font-black tabular-nums" style={{ color: 'var(--sa-text)' }}>{plan.subscriber_count}</p>
-                      <p style={{ color: 'var(--sa-text-3)' }}>Subscribers</p>
+                      <p style={{ color: 'var(--sa-text-3)' }}>{tp('subscribersLabel')}</p>
                     </div>
                   </div>
 

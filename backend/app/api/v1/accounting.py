@@ -491,15 +491,15 @@ async def book_ad_slot_payment(
     created_by_system_user_id: uuid.UUID,
 ):
     """
-    Books an ad slot payment:
-    Dr 1020 (amount)
-    Cr 4101 (10% — SmarterBloggers commission)
+    Books an ad slot payment (split revised 2026-07-23 — platform share 10% -> 30%):
+    Dr 1010 (amount)
+    Cr 4101 (30% — SmarterBloggers commission)
     Cr 2810 (10% — Affiliate pool)
-    Cr 4102 (80% — Blog owner net revenue)
+    Cr 4102 (60% — Blog owner net revenue)
     """
-    smarterbloggers_commission = round(amount * 0.10, 4)
+    smarterbloggers_commission = round(amount * 0.30, 4)
     affiliate_pool = round(amount * 0.10, 4)
-    blog_owner_net = round(amount * 0.80, 4)
+    blog_owner_net = round(amount * 0.60, 4)
 
     entry_number = await _get_next_entry_number(db)
 
@@ -524,6 +524,50 @@ async def book_ad_slot_payment(
         JournalEntryLine(entry_id=entry.id, line_number=2, account_code="4101", debit=0, credit=smarterbloggers_commission),
         JournalEntryLine(entry_id=entry.id, line_number=3, account_code="2810", debit=0, credit=affiliate_pool),
         JournalEntryLine(entry_id=entry.id, line_number=4, account_code="4102", debit=0, credit=blog_owner_net),
+    ]
+    for ln in lines:
+        db.add(ln)
+
+
+async def book_platform_ad_payment(
+    db,
+    amount: float,
+    ad_id: str,
+    transaction_id: str,
+    created_by_system_user_id: uuid.UUID,
+):
+    """
+    Books a payment for an ad bought on the main SmarterBloggers site itself
+    (no blog owner involved — see ads.py::platform_ads_router):
+    Dr 1010 (amount)
+    Cr 4103 (81% — SmarterBloggers, main site ad revenue)
+    Cr 2810 (19% — Affiliate pool, paid to the advertiser's own referral chain)
+    """
+    platform_commission = round(amount * 0.81, 4)
+    affiliate_pool = round(amount * 0.19, 4)
+
+    entry_number = await _get_next_entry_number(db)
+
+    entry = JournalEntry(
+        entry_number=entry_number,
+        journal_type=JournalType.SALES,
+        description=f"Main site ad payment — Ad {ad_id}",
+        entry_date=date.today(),
+        reference=transaction_id,
+        status=JournalEntryStatus.APPROVED,
+        source_type=JournalEntrySource.NOWPAYMENTS_WEBHOOK,
+        source_id=transaction_id,
+        created_by=created_by_system_user_id,
+        approved_by=created_by_system_user_id,
+        approved_at=datetime.now(timezone.utc),
+    )
+    db.add(entry)
+    await db.flush()
+
+    lines = [
+        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1010", debit=round(amount, 4), credit=0),
+        JournalEntryLine(entry_id=entry.id, line_number=2, account_code="4103", debit=0, credit=platform_commission),
+        JournalEntryLine(entry_id=entry.id, line_number=3, account_code="2810", debit=0, credit=affiliate_pool),
     ]
     for ln in lines:
         db.add(ln)

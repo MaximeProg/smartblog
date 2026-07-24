@@ -105,7 +105,7 @@ export default function UsersPage() {
   function fmtProvider(p: string) {
     if (p === 'google.com') return 'Google';
     if (p === 'github.com') return 'GitHub';
-    return 'Email';
+    return tu('providerEmail');
   }
 
   function handleSearch(e: React.FormEvent) {
@@ -173,7 +173,7 @@ export default function UsersPage() {
         {/* Header row */}
         <div className="grid grid-cols-[1fr_70px_60px_100px_90px_120px_60px_110px] gap-3 px-5 py-2.5 border-b"
           style={{ borderColor: 'var(--sa-border)', background: 'var(--sa-surface)' }}>
-          {[tu('table.user'), tu('table.plan'), tu('table.blogs'), tu('table.provider'), tu('table.twoFA'), tu('table.joined'), 'Role', tu('table.actions')].map((h, i) => (
+          {[tu('table.user'), tu('table.plan'), tu('table.blogs'), tu('table.provider'), tu('table.twoFA'), tu('table.joined'), tu('roleColumnHeader'), tu('table.actions')].map((h, i) => (
             <span key={i} className="text-[9px] font-bold uppercase tracking-widest" style={{ color: 'var(--sa-text-3)' }}>{h}</span>
           ))}
         </div>
@@ -263,7 +263,7 @@ export default function UsersPage() {
                         title={tu('actions.makeSuperAdmin')}
                       >
                         <ShieldCheck className="h-3 w-3" />
-                        <span className="hidden lg:inline">SA</span>
+                        <span className="hidden lg:inline">{tu('superAdminBadge')}</span>
                       </button>
                     )}
                     {!isMe && u.is_super_admin && (
@@ -277,7 +277,7 @@ export default function UsersPage() {
                         title={tu('actions.revokeSuperAdmin')}
                       >
                         <Shield className="h-3 w-3" />
-                        <span className="hidden lg:inline">Revoke</span>
+                        <span className="hidden lg:inline">{tu('revokeButtonShort')}</span>
                       </button>
                     )}
                     <button

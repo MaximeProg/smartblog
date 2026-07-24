@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Lock, Clock, User, ArrowLeft } from 'lucide-react';
 import type { BlogInfo, PublicArticleFull } from '@/lib/public-api';
 
@@ -12,9 +13,9 @@ interface ArticlePaywallProps {
   locale: string;
 }
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', {
+  return new Date(d).toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -37,6 +38,7 @@ export default function ArticlePaywall({
   basePath,
   locale,
 }: ArticlePaywallProps) {
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#3b82f6';
   const price = article.price ? `$${Number(article.price).toFixed(2)}` : null;
   const preview = textPreview(article.content);
@@ -104,7 +106,7 @@ export default function ArticlePaywall({
           {article.published_at && (
             <>
               <span>·</span>
-              <span>{formatDate(article.published_at)}</span>
+              <span>{formatDate(article.published_at, locale)}</span>
             </>
           )}
           {article.reading_time_minutes && (
@@ -112,7 +114,7 @@ export default function ArticlePaywall({
               <span>·</span>
               <span className="flex items-center gap-1">
                 <Clock className="h-3.5 w-3.5" />
-                {article.reading_time_minutes} min read
+                {t('minRead', { min: article.reading_time_minutes })}
               </span>
             </>
           )}
@@ -138,7 +140,7 @@ export default function ArticlePaywall({
           </div>
 
           <h2 className="text-xl font-bold text-zinc-900 mb-2">
-            {price ? `Unlock this article` : 'Members-only content'}
+            {price ? t('unlockArticle') : t('membersOnlyContent')}
           </h2>
 
           {price && (
@@ -146,14 +148,12 @@ export default function ArticlePaywall({
               className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold mb-4"
               style={{ backgroundColor: `${primaryColor}12`, color: primaryColor }}
             >
-              {price} one-time
+              {price} {t('oneTime')}
             </div>
           )}
 
           <p className="text-zinc-500 text-sm leading-relaxed mb-7">
-            {price
-              ? `Purchase once, read anytime. No subscription required.`
-              : `Sign in to access this exclusive content.`}
+            {price ? t('purchaseOnceDesc') : t('signInToAccessDesc')}
           </p>
 
           <div className="flex flex-col gap-3">
@@ -163,7 +163,7 @@ export default function ArticlePaywall({
               style={{ backgroundColor: primaryColor }}
             >
               <Lock className="h-4 w-4" />
-              {price ? `Buy for ${price}` : 'Sign in to read'}
+              {price ? t('buyFor', { price }) : t('signInToRead')}
             </Link>
 
             {price && (
@@ -171,7 +171,7 @@ export default function ArticlePaywall({
                 href={loginUrl}
                 className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl border border-zinc-200 text-zinc-600 text-sm font-medium hover:bg-zinc-50 transition-colors"
               >
-                Sign in (already purchased)
+                {t('signInAlreadyPurchased')}
               </Link>
             )}
 
@@ -179,14 +179,14 @@ export default function ArticlePaywall({
               href={basePath || "/"}
               className="text-xs text-zinc-400 hover:text-zinc-600 transition-colors mt-1"
             >
-              ← Back to {blog.name}
+              ← {t('backToBlogName', { blog: blog.name })}
             </Link>
           </div>
         </div>
 
         {/* Social proof / trust */}
         <p className="text-xs text-zinc-400 text-center mt-5">
-          Secure payment · Instant access · Read on any device
+          {t('secureBadges')}
         </p>
       </div>
     </div>

@@ -173,7 +173,7 @@ function CommentItem({
     setRepliesCount(n => n + 1);
   }
 
-  const authorName = comment.author.display_name ?? 'Anonymous';
+  const authorName = comment.author.display_name ?? t('anonymousAuthor');
 
   return (
     <div className="py-5 first:pt-0">
@@ -237,11 +237,11 @@ function CommentItem({
             <div className="mt-3 ml-5 border-l-2 pl-4 space-y-3" style={{ borderColor: `${primaryColor}30` }}>
               {repliesLoading && (
                 <div className="flex items-center gap-2 text-xs text-slate-400">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Chargement…
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> {t('loading')}
                 </div>
               )}
               {replies.map(r => {
-                const rAuthor = r.author.display_name ?? 'Anonymous';
+                const rAuthor = r.author.display_name ?? t('anonymousAuthor');
                 return (
                   <div key={r.id} className="flex items-start gap-2.5">
                     <SmallAvatar name={rAuthor} color={primaryColor} />

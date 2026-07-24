@@ -3,12 +3,12 @@ import { PublicNavClient, type NavLabels } from './PublicNavClient';
 
 const EN_LABELS: NavLabels = {
   home: 'Home', blogs: 'Blogs', features: 'Features', pricing: 'Pricing',
-  about: 'About', contact: 'Contact', signIn: 'Sign In',
+  about: 'About', contact: 'Contact', advertise: 'Advertise', signIn: 'Sign In',
 };
 
 const FR_LABELS: NavLabels = {
   home: 'Accueil', blogs: 'Blogs', features: 'Fonctionnalités', pricing: 'Tarifs',
-  about: 'À propos', contact: 'Contact', signIn: 'Connexion',
+  about: 'À propos', contact: 'Contact', advertise: 'Annonceurs', signIn: 'Connexion',
 };
 
 interface PublicNavProps {

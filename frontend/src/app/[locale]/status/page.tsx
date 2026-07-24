@@ -2,16 +2,44 @@ import { CheckCircle2, AlertTriangle, XCircle, Clock } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
-import { getPlatformPage, getPlatformStats } from '@/lib/platform-api';
+import { getPlatformPage, getPlatformStats, getUiTranslations } from '@/lib/platform-api';
 
 export const dynamic = 'force-dynamic';
 
-const statusCfg = {
-  operational: { icon: CheckCircle2, color: 'text-emerald-500', label: 'Operational' },
-  degraded:    { icon: AlertTriangle, color: 'text-amber-500',  label: 'Degraded' },
-  outage:      { icon: XCircle,       color: 'text-red-500',    label: 'Outage' },
-  maintenance: { icon: Clock,         color: 'text-blue-500',   label: 'Maintenance' },
+interface StatusLabels {
+  allOperational: string; ongoingDisruption: string; statusUpdateNote: string;
+  servicesHeading: string;
+  statusOperational: string; statusDegraded: string; statusOutage: string; statusMaintenance: string;
+  uptimeHeading: string; collectingData: string; platformWideAvailability: string;
+  incidentHistoryHeading: string; noIncidents: string; resolved: string;
+}
+
+const EN_STATUS: StatusLabels = {
+  allOperational: 'All Systems Operational', ongoingDisruption: 'Ongoing Disruption',
+  statusUpdateNote: 'Status is updated manually by our team when incidents occur.',
+  servicesHeading: 'Services',
+  statusOperational: 'Operational', statusDegraded: 'Degraded', statusOutage: 'Outage', statusMaintenance: 'Maintenance',
+  uptimeHeading: 'Uptime — Last 30 days', collectingData: 'Collecting data', platformWideAvailability: 'Platform-wide availability',
+  incidentHistoryHeading: 'Incident History', noIncidents: 'No incidents reported.', resolved: 'Resolved',
 };
+
+const FR_STATUS: StatusLabels = {
+  allOperational: 'Tous les systèmes sont opérationnels', ongoingDisruption: 'Perturbation en cours',
+  statusUpdateNote: 'Le statut est mis à jour manuellement par notre équipe en cas d’incident.',
+  servicesHeading: 'Services',
+  statusOperational: 'Opérationnel', statusDegraded: 'Dégradé', statusOutage: 'Panne', statusMaintenance: 'Maintenance',
+  uptimeHeading: 'Disponibilité — 30 derniers jours', collectingData: 'Collecte des données…', platformWideAvailability: 'Disponibilité de la plateforme',
+  incidentHistoryHeading: 'Historique des incidents', noIncidents: 'Aucun incident signalé.', resolved: 'Résolu',
+};
+
+function buildStatusCfg(l: StatusLabels) {
+  return {
+    operational: { icon: CheckCircle2, color: 'text-emerald-500', label: l.statusOperational },
+    degraded:    { icon: AlertTriangle, color: 'text-amber-500',  label: l.statusDegraded },
+    outage:      { icon: XCircle,       color: 'text-red-500',    label: l.statusOutage },
+    maintenance: { icon: Clock,         color: 'text-blue-500',   label: l.statusMaintenance },
+  };
+}
 
 const FALLBACK = {
   hero: { title: 'System Status', subtitle: 'Real-time availability and performance of SmarterBloggers.' },
@@ -43,6 +71,13 @@ export default async function StatusPage({
   const incidents = c.incidents as typeof FALLBACK.incidents;
   const allOK = services.every((s) => s.status === 'operational');
 
+  let l: StatusLabels = lang === 'fr' ? FR_STATUS : EN_STATUS;
+  if (lang !== 'en' && lang !== 'fr') {
+    const translated = await getUiTranslations('marketing', lang);
+    if (translated?.status) l = { ...EN_STATUS, ...(translated.status as Partial<StatusLabels>) };
+  }
+  const statusCfg = buildStatusCfg(l);
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
       <PublicNav locale={locale} lang={lang} />
@@ -62,16 +97,16 @@ export default async function StatusPage({
           </div>
           <div>
             <h2 className="text-xl font-bold">
-              {allOK ? 'All Systems Operational' : 'Ongoing Disruption'}
+              {allOK ? l.allOperational : l.ongoingDisruption}
             </h2>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              Status is updated manually by our team when incidents occur.
+              {l.statusUpdateNote}
             </p>
           </div>
         </div>
 
         <div>
-          <h2 className="text-xl font-bold mb-5">Services</h2>
+          <h2 className="text-xl font-bold mb-5">{l.servicesHeading}</h2>
           <div className="rounded-2xl bg-slate-50 dark:bg-slate-900 overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
             {services.map((service) => {
               const cfg = statusCfg[service.status as keyof typeof statusCfg] ?? statusCfg.operational;
@@ -91,19 +126,19 @@ export default async function StatusPage({
 
         {/* Uptime réel — calculé depuis health_check_log, pas de chiffre inventé */}
         <div>
-          <h2 className="text-xl font-bold mb-5">Uptime — Last 30 days</h2>
+          <h2 className="text-xl font-bold mb-5">{l.uptimeHeading}</h2>
           <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-6 text-center max-w-xs">
             <p className="text-3xl font-black text-emerald-500 mb-1">
-              {stats?.uptime_pct != null ? `${stats.uptime_pct}%` : 'Collecting data'}
+              {stats?.uptime_pct != null ? `${stats.uptime_pct}%` : l.collectingData}
             </p>
-            <p className="text-sm text-slate-500">Platform-wide availability</p>
+            <p className="text-sm text-slate-500">{l.platformWideAvailability}</p>
           </div>
         </div>
 
         <div>
-          <h2 className="text-xl font-bold mb-5">Incident History</h2>
+          <h2 className="text-xl font-bold mb-5">{l.incidentHistoryHeading}</h2>
           {incidents.length === 0 ? (
-            <p className="text-sm text-slate-500 dark:text-slate-400">No incidents reported.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{l.noIncidents}</p>
           ) : (
             <div className="space-y-4">
               {incidents.map((inc) => (
@@ -116,7 +151,7 @@ export default async function StatusPage({
                   {inc.resolved && (
                     <div className="flex items-center gap-1.5 mt-3">
                       <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                      <span className="text-xs text-emerald-500 font-medium">Resolved</span>
+                      <span className="text-xs text-emerald-500 font-medium">{l.resolved}</span>
                     </div>
                   )}
                 </div>

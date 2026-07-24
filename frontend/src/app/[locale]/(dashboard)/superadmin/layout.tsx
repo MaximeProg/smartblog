@@ -163,7 +163,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[13px] font-black leading-none truncate" style={{ color: 'var(--sa-text)' }}>SmarterBloggers</p>
-                <p className="text-[10px] font-bold leading-none mt-0.5 tracking-widest uppercase" style={{ color: 'var(--sa-accent)' }}>Console</p>
+                <p className="text-[10px] font-bold leading-none mt-0.5 tracking-widest uppercase" style={{ color: 'var(--sa-accent)' }}>{t('common.consoleLabel')}</p>
               </div>
             </div>
           )}
@@ -258,7 +258,7 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
               onClick={() => setCollapsed(v => !v)}
               className="h-8 w-8 flex items-center justify-center rounded-lg transition-colors hover:bg-[var(--sa-surface)] shrink-0"
               style={{ color: 'var(--sa-text-3)', border: '1px solid var(--sa-border)' }}
-              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              title={collapsed ? t('common.expandSidebar') : t('common.collapseSidebar')}
             >
               <PanelLeft className={cn('h-4 w-4 transition-transform', collapsed && 'rotate-180')} />
             </button>

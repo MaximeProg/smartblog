@@ -3,6 +3,7 @@ import { useState, useCallback, type CSSProperties, type FormEvent } from 'react
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { ArrowRight, ChevronRight } from 'lucide-react';
 import type { HomeProps } from '../ThemeRenderer';
 import type { PublicArticle, PublicCategory } from '@/lib/public-api';
@@ -24,14 +25,14 @@ function grad(id: string): string {
   return GRADIENTS[id.charCodeAt(0) % GRADIENTS.length];
 }
 
-function formatDate(d: string | null): string {
+function formatDate(d: string | null, locale: string): string {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-function shortDate(d: string | null): string {
+function shortDate(d: string | null, locale: string): string {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function padNum(n: number): string {
@@ -46,6 +47,7 @@ interface ArticleRowProps {
 }
 
 function ArticleRow({ article, index, href, primaryColor }: ArticleRowProps) {
+  const t = useTranslations('publicBlog');
   return (
     <Link
       href={href}
@@ -59,7 +61,7 @@ function ArticleRow({ article, index, href, primaryColor }: ArticleRowProps) {
         <p className="font-sans text-xs text-zinc-400">
           {article.author_name && <span>{article.author_name} &middot; </span>}
           {article.category_name && <span>{article.category_name} &middot; </span>}
-          {article.reading_time_minutes && <span>{article.reading_time_minutes} min read</span>}
+          {article.reading_time_minutes && <span>{t('minRead', { min: article.reading_time_minutes })}</span>}
         </p>
       </div>
       <ChevronRight
@@ -73,9 +75,10 @@ interface DepartmentCardProps {
   article: PublicArticle;
   href: string;
   primaryColor: string;
+  locale: string;
 }
 
-function DepartmentCard({ article, href, primaryColor }: DepartmentCardProps) {
+function DepartmentCard({ article, href, primaryColor, locale }: DepartmentCardProps) {
   return (
     <Link href={href} className="group flex flex-col">
       <div className="relative aspect-[4/3] overflow-hidden mb-4">
@@ -98,7 +101,7 @@ function DepartmentCard({ article, href, primaryColor }: DepartmentCardProps) {
       </h3>
       <p className="font-sans text-xs text-zinc-400 mt-auto">
         {article.author_name && <span>{article.author_name} &middot; </span>}
-        {shortDate(article.published_at)}
+        {shortDate(article.published_at, locale)}
       </p>
     </Link>
   );
@@ -120,6 +123,7 @@ export default function LuminaryHome({
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const basePath = baseProp !== undefined
     ? baseProp
     : previewSlug
@@ -159,15 +163,15 @@ export default function LuminaryHome({
 
   const homeCfg = blog.template_config?.home;
   const showHero = homeCfg?.hero?.enabled !== false;
-  const heroTitle = homeCfg?.hero?.sectionTitle || 'Featured';
+  const heroTitle = homeCfg?.hero?.sectionTitle || t('featuredNews');
   const showNewsletter = homeCfg?.newsletter?.enabled !== false;
-  const newsletterTitle = homeCfg?.newsletter?.title || 'Stay well-read.';
-  const newsletterDesc = homeCfg?.newsletter?.description || `Thoughtful stories from ${blog.name}, delivered to your inbox. No noise, no filler.`;
-  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
-  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
-  const newsletterDisclaimer = homeCfg?.newsletter?.disclaimer || 'No spam. Unsubscribe anytime.';
+  const newsletterTitle = homeCfg?.newsletter?.title || t('stayInformed');
+  const newsletterDesc = homeCfg?.newsletter?.description || t('subscribeDesc');
+  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || t('subscribeButton');
+  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || t('emailPlaceholder');
+  const newsletterDisclaimer = homeCfg?.newsletter?.disclaimer || t('noSpam');
   const showLatest = homeCfg?.latest?.enabled !== false;
-  const latestTitle = homeCfg?.latest?.sectionTitle || 'Latest';
+  const latestTitle = homeCfg?.latest?.sectionTitle || t('recentArticles');
 
   const isFiltered = !!(currentCategory || searchQuery);
   const filteredCategory = categories.find(c => c.slug === currentCategory);
@@ -241,9 +245,9 @@ export default function LuminaryHome({
               )}
               <p className="font-sans text-xs uppercase tracking-widest text-white/60">
                 {coverArticle.author_name && <span>{coverArticle.author_name} &middot; </span>}
-                {shortDate(coverArticle.published_at)}
+                {shortDate(coverArticle.published_at, locale)}
                 {coverArticle.reading_time_minutes && (
-                  <span> &middot; {coverArticle.reading_time_minutes} min read</span>
+                  <span> &middot; {t('minRead', { min: coverArticle.reading_time_minutes })}</span>
                 )}
               </p>
             </div>
@@ -264,13 +268,13 @@ export default function LuminaryHome({
             href={basePath || "/"}
             className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-colors inline-flex items-center gap-1 mb-8"
           >
-            &larr; All Stories
+            &larr; {t('backToHome')}
           </Link>
           <h2 className="font-serif text-4xl text-zinc-900 mb-2">
-            {filteredCategory?.name ?? searchQuery ?? 'Results'}
+            {filteredCategory?.name ?? searchQuery ?? t('searchResults')}
           </h2>
           <p className="font-sans text-sm text-zinc-400 mb-8">
-            {articles.length} article{articles.length !== 1 ? 's' : ''} found
+            {articles.length !== 1 ? t('articleCountPlural', { count: articles.length }) : t('articleCount', { count: articles.length })}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {articles.map(a => (
@@ -279,6 +283,7 @@ export default function LuminaryHome({
                 article={a}
                 href={aHref(a.slug)}
                 primaryColor={primaryColor}
+                locale={locale}
               />
             ))}
           </div>
@@ -287,8 +292,8 @@ export default function LuminaryHome({
 
       {!isFiltered && articles.length === 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-32 text-center">
-          <p className="font-serif italic text-3xl text-zinc-300 mb-4">No stories yet.</p>
-          <p className="font-sans text-sm text-zinc-400">Check back soon.</p>
+          <p className="font-serif italic text-3xl text-zinc-300 mb-4">{t('noArticles')}</p>
+          <p className="font-sans text-sm text-zinc-400">{t('noArticlesDesc')}</p>
         </div>
       )}
 
@@ -320,7 +325,7 @@ export default function LuminaryHome({
                   href={basePath || "/"}
                   className="font-sans text-xs uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors inline-flex items-center gap-2"
                 >
-                  View all stories <ArrowRight className="h-3.5 w-3.5" />
+                  {t('seeAllArticles')} <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             )}
@@ -348,6 +353,7 @@ export default function LuminaryHome({
                       article={a}
                       href={aHref(a.slug)}
                       primaryColor={primaryColor}
+                      locale={locale}
                     />
                   ))}
                 </div>
@@ -356,7 +362,7 @@ export default function LuminaryHome({
                     href={`${basePath}/categories/${category.slug}`}
                     className="font-sans text-[10px] uppercase tracking-widest text-zinc-400 hover:text-[var(--cp)] transition-colors inline-flex items-center gap-1.5"
                   >
-                    More in {category.name} <ArrowRight className="h-3 w-3" />
+                    {t('articlesInCategory', { category: category.name })} <ArrowRight className="h-3 w-3" />
                   </Link>
                 </div>
               </div>
@@ -371,7 +377,7 @@ export default function LuminaryHome({
                 <div className="flex items-center gap-4 mb-10">
                   <div className="flex-1 h-px bg-zinc-300" />
                   <span className="font-sans text-xs uppercase tracking-[0.25em] text-zinc-900 whitespace-nowrap font-semibold">
-                    More Reading
+                    {t('youMightAlsoLike')}
                   </span>
                   <div className="flex-1 h-px bg-zinc-300" />
                 </div>
@@ -382,6 +388,7 @@ export default function LuminaryHome({
                       article={a}
                       href={aHref(a.slug)}
                       primaryColor={primaryColor}
+                      locale={locale}
                     />
                   ))}
                 </div>
@@ -396,11 +403,11 @@ export default function LuminaryHome({
         <EditableSection id="home.newsletter" {...editProps}>
         <section id="newsletter" className="bg-zinc-950 py-24">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-            <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-4">Newsletter</p>
+            <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-4">{t('subscribe')}</p>
             <InlineEditable path="template_config.home.newsletter.title" value={newsletterTitle} editMode={editMode} tag="h2" className="font-serif italic text-4xl sm:text-5xl text-white mb-4" />
             <InlineEditable path="template_config.home.newsletter.description" value={newsletterDesc} editMode={editMode} tag="p" className="font-sans text-sm text-zinc-400 mb-10 leading-relaxed" multiline />
             {subStatus === 'ok' ? (
-              <p className="font-serif italic text-xl text-white">Thank you for subscribing.</p>
+              <p className="font-serif italic text-xl text-white">{t('subscribeSuccess')}</p>
             ) : (
               <form onSubmit={handleSubscribe} className="flex items-end gap-0 max-w-sm mx-auto border-b border-zinc-600 pb-px">
                 <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
@@ -412,7 +419,7 @@ export default function LuminaryHome({
                 </button>
               </form>
             )}
-            {subStatus === 'error' && <p className="font-sans text-xs text-red-400 mt-3">Something went wrong. Please try again.</p>}
+            {subStatus === 'error' && <p className="font-sans text-xs text-red-400 mt-3">{t('subscribeError')}</p>}
             {newsletterDisclaimer && <p className="font-sans text-xs text-zinc-600 mt-6">{newsletterDisclaimer}</p>}
           </div>
         </section>

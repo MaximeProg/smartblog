@@ -11,6 +11,7 @@ import {
   Heading2, Heading3, Minus, ImageIcon, Quote, MousePointer2, Eye, Pencil,
 } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface Props {
   value: string;
@@ -60,6 +61,7 @@ const PREVIEW_WRAP = (body: string) => `<!DOCTYPE html>
 <body><div class="email-body">${body}</div></body></html>`;
 
 export default function NewsletterBodyEditor({ value, onChange, placeholder }: Props) {
+  const t = useTranslations('newsletter');
   const [mode, setMode] = useState<'edit' | 'preview'>('edit');
 
   const editor = useEditor({
@@ -68,7 +70,7 @@ export default function NewsletterBodyEditor({ value, onChange, placeholder }: P
       Underline,
       Link.configure({ openOnClick: false }),
       Image.configure({ inline: false, allowBase64: false }),
-      Placeholder.configure({ placeholder: placeholder ?? 'Rédigez le contenu de votre email…' }),
+      Placeholder.configure({ placeholder: placeholder ?? t('editorPlaceholder') }),
     ],
     content: value || '',
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
@@ -82,30 +84,30 @@ export default function NewsletterBodyEditor({ value, onChange, placeholder }: P
   const setLink = useCallback(() => {
     if (!editor) return;
     const prev = editor.getAttributes('link').href as string | undefined;
-    const url = window.prompt('URL du lien', prev ?? 'https://');
+    const url = window.prompt(t('editorLinkPrompt'), prev ?? 'https://');
     if (url === null) return;
     if (!url) { editor.chain().focus().extendMarkRange('link').unsetLink().run(); return; }
     editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-  }, [editor]);
+  }, [editor, t]);
 
   const insertImage = useCallback(() => {
     if (!editor) return;
-    const url = window.prompt('URL de l\'image');
+    const url = window.prompt(t('editorImagePrompt'));
     if (!url) return;
-    const alt = window.prompt('Texte alternatif (optionnel)', '') ?? '';
+    const alt = window.prompt(t('editorImageAltPrompt'), '') ?? '';
     editor.chain().focus().setImage({ src: url, alt }).run();
-  }, [editor]);
+  }, [editor, t]);
 
   const insertCTA = useCallback(() => {
     if (!editor) return;
-    const label = window.prompt('Texte du bouton', 'Lire la suite →');
+    const label = window.prompt(t('editorCtaLabelPrompt'), t('editorCtaLabelDefault'));
     if (!label) return;
-    const url = window.prompt('URL du bouton', 'https://');
+    const url = window.prompt(t('editorCtaUrlPrompt'), 'https://');
     if (!url) return;
     editor.chain().focus().insertContent(
       `<p><a class="cta-btn" href="${url}">${label}</a></p>`
     ).run();
-  }, [editor]);
+  }, [editor, t]);
 
   if (!editor) return null;
 
@@ -117,49 +119,49 @@ export default function NewsletterBodyEditor({ value, onChange, placeholder }: P
       <div className="flex items-center gap-0.5 flex-wrap px-2 py-1.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60">
         {mode === 'edit' && (
           <>
-            <ToolBtn title="Gras" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
+            <ToolBtn title={t('editorBold')} active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
               <Bold className="h-3.5 w-3.5" />
             </ToolBtn>
-            <ToolBtn title="Italique" active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}>
+            <ToolBtn title={t('editorItalic')} active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}>
               <Italic className="h-3.5 w-3.5" />
             </ToolBtn>
-            <ToolBtn title="Souligné" active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()}>
+            <ToolBtn title={t('editorUnderline')} active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()}>
               <UnderlineIcon className="h-3.5 w-3.5" />
             </ToolBtn>
 
             <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
 
-            <ToolBtn title="Titre H2" active={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
+            <ToolBtn title={t('editorH2')} active={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
               <Heading2 className="h-3.5 w-3.5" />
             </ToolBtn>
-            <ToolBtn title="Titre H3" active={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
+            <ToolBtn title={t('editorH3')} active={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
               <Heading3 className="h-3.5 w-3.5" />
             </ToolBtn>
 
             <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
 
-            <ToolBtn title="Liste à puces" active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>
+            <ToolBtn title={t('editorBulletList')} active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>
               <List className="h-3.5 w-3.5" />
             </ToolBtn>
-            <ToolBtn title="Liste numérotée" active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+            <ToolBtn title={t('editorOrderedList')} active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
               <ListOrdered className="h-3.5 w-3.5" />
             </ToolBtn>
 
             <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1" />
 
-            <ToolBtn title="Citation" active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+            <ToolBtn title={t('editorQuote')} active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
               <Quote className="h-3.5 w-3.5" />
             </ToolBtn>
-            <ToolBtn title="Image" active={false} onClick={insertImage}>
+            <ToolBtn title={t('editorImage')} active={false} onClick={insertImage}>
               <ImageIcon className="h-3.5 w-3.5" />
             </ToolBtn>
-            <ToolBtn title="Bouton CTA" active={false} onClick={insertCTA}>
+            <ToolBtn title={t('editorCta')} active={false} onClick={insertCTA}>
               <MousePointer2 className="h-3.5 w-3.5" />
             </ToolBtn>
-            <ToolBtn title="Lien" active={editor.isActive('link')} onClick={setLink}>
+            <ToolBtn title={t('editorLink')} active={editor.isActive('link')} onClick={setLink}>
               <Link2 className="h-3.5 w-3.5" />
             </ToolBtn>
-            <ToolBtn title="Séparateur" active={false} onClick={() => editor.chain().focus().setHorizontalRule().run()}>
+            <ToolBtn title={t('editorDivider')} active={false} onClick={() => editor.chain().focus().setHorizontalRule().run()}>
               <Minus className="h-3.5 w-3.5" />
             </ToolBtn>
           </>
@@ -175,7 +177,7 @@ export default function NewsletterBodyEditor({ value, onChange, placeholder }: P
             className={`flex items-center gap-1 h-6 px-2 rounded-md text-[10px] font-semibold transition-colors ${mode === 'edit' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}`}
           >
             <Pencil className="h-3 w-3" />
-            Edit
+            {t('editorEdit')}
           </button>
           <button
             type="button"
@@ -183,7 +185,7 @@ export default function NewsletterBodyEditor({ value, onChange, placeholder }: P
             className={`flex items-center gap-1 h-6 px-2 rounded-md text-[10px] font-semibold transition-colors ${mode === 'preview' ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}`}
           >
             <Eye className="h-3 w-3" />
-            Preview
+            {t('editorPreview')}
           </button>
         </div>
       </div>
@@ -204,7 +206,7 @@ export default function NewsletterBodyEditor({ value, onChange, placeholder }: P
               frame.style.height = `${doc.body.scrollHeight + 40}px`;
             }
           }}
-          title="Email preview"
+          title={t('editorPreviewTitle')}
         />
       )}
     </div>

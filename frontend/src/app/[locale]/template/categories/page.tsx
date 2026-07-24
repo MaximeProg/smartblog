@@ -2,13 +2,14 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { useLocale } from 'next-intl';
 import { MOCK_BLOG, MOCK_CATEGORIES, MOCK_ARTICLES } from '@/components/themes/corporate/mock-data';
 import { publicApi, type BlogInfo, type PublicCategory, type PublicArticle } from '@/lib/public-api';
 import CorporateCategoriesPage from '@/components/themes/corporate/CorporateCategories';
 
-const templateBasePath = '/en/template';
-
 export default function CategoriesPage() {
+  const locale = useLocale();
+  const templateBasePath = `/${locale}/template`;
   const searchParams = useSearchParams();
   const preview = searchParams.get('preview');
 

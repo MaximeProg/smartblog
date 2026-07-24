@@ -107,7 +107,7 @@ export default function CorporateArticle({
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
   const t = useTranslations('publicBlog');
-  const basePath = baseProp ?? (getArticleHref || blog.slug === 'demo' ? '/en/template' : `/${locale}/${blog.slug}`);
+  const basePath = baseProp ?? (getArticleHref || blog.slug === 'demo' ? `/${locale}/template` : `/${locale}/${blog.slug}`);
 
   const articleCfg = blog.template_config?.article as Record<string, any> | undefined;
   const showProgressBar = articleCfg?.progressBar?.enabled !== false;

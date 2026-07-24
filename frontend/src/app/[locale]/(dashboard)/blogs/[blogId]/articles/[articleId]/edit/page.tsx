@@ -175,7 +175,7 @@ export default function EditArticlePage() {
 
   const unpublishMut = useMutation({
     mutationFn: () => articlesApi.unpublish(blogId, articleId),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['article', blogId, articleId] }); toast({ title: 'Dépublié' }); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['article', blogId, articleId] }); toast({ title: te('unpublishedToast') }); },
   });
 
   const archiveMut = useMutation({
@@ -225,15 +225,15 @@ export default function EditArticlePage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['article', blogId, articleId] });
       setShowSchedule(false);
-      toast({ title: 'Article programmé !' });
+      toast({ title: te('scheduledToast') });
     },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur lors de la programmation.' }),
+    onError: () => toast({ variant: 'destructive', title: te('scheduleError') }),
   });
 
   const cancelScheduleMut = useMutation({
     mutationFn: () => articleScheduleApi.cancelSchedule(blogId, articleId),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['article', blogId, articleId] }); toast({ title: 'Programmation annulée.' }); },
-    onError: () => toast({ variant: 'destructive', title: 'Erreur.' }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['article', blogId, articleId] }); toast({ title: te('scheduleCancelledToast') }); },
+    onError: () => toast({ variant: 'destructive', title: te('genericError') }),
   });
 
   const handleSeoScore = useCallback(async () => {
@@ -245,9 +245,9 @@ export default function EditArticlePage() {
       setSeoScore({ score: data.score, suggestions: data.suggestions });
       if (data.seo_title && !seoTitle) { setSeoTitle(data.seo_title); mark(); }
       if (data.seo_description && !seoDesc) { setSeoDesc(data.seo_description); mark(); }
-      toast({ title: `Score SEO : ${data.score}/100` });
+      toast({ title: te('seoScoreToast', { score: data.score }) });
     } catch {
-      toast({ variant: 'destructive', title: 'Erreur IA SEO.' });
+      toast({ variant: 'destructive', title: te('seoAiError') });
     } finally {
       setSeoLoading(false);
     }
@@ -261,9 +261,9 @@ export default function EditArticlePage() {
       const { data } = await aiApi.translate(blogId, { text: plainText.slice(0, 5000), target_lang: translateLang });
       setContent(data.result);
       mark();
-      toast({ title: 'Traduction appliquée.' });
+      toast({ title: te('translationAppliedToast') });
     } catch {
-      toast({ variant: 'destructive', title: 'Erreur de traduction.' });
+      toast({ variant: 'destructive', title: te('translationError') });
     } finally {
       setTranslateLoading(false);
     }
@@ -279,9 +279,9 @@ export default function EditArticlePage() {
       });
       setContent(data.content);
       mark();
-      toast({ title: 'Contenu amélioré par l\'IA !' });
+      toast({ title: te('contentImprovedToast') });
     } catch {
-      toast({ variant: 'destructive', title: 'Erreur lors de l\'amélioration.' });
+      toast({ variant: 'destructive', title: te('improveError') });
     } finally {
       setImproveLoading(false);
     }
@@ -297,9 +297,9 @@ export default function EditArticlePage() {
       });
       setExcerpt(data.excerpt);
       mark();
-      toast({ title: 'Extrait généré !' });
+      toast({ title: te('excerptGeneratedToast') });
     } catch {
-      toast({ variant: 'destructive', title: 'Erreur lors de la génération de l\'extrait.' });
+      toast({ variant: 'destructive', title: te('excerptError') });
     } finally {
       setSummarizeLoading(false);
     }
@@ -312,9 +312,9 @@ export default function EditArticlePage() {
       const { data } = await aiApi.cover(blogId, { prompt: coverPrompt.trim() });
       setCoverImageUrl(data.image_url);
       mark();
-      toast({ title: 'Image de couverture générée !' });
+      toast({ title: te('coverGeneratedToast') });
     } catch {
-      toast({ variant: 'destructive', title: 'Erreur lors de la génération d\'image.' });
+      toast({ variant: 'destructive', title: te('coverError') });
     } finally {
       setCoverLoading(false);
     }
@@ -354,7 +354,7 @@ export default function EditArticlePage() {
         <div className="shrink-0 h-14 border-b border-slate-200/70 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-between px-6 gap-4 shadow-sm">
           <div className="flex items-center gap-3 min-w-0">
             <Link href={`/${locale}/blogs/${blogId}/articles`} className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-800 transition-colors shrink-0">
-              <ArrowLeft className="h-3.5 w-3.5" /> Articles
+              <ArrowLeft className="h-3.5 w-3.5" /> {te('articlesBreadcrumb')}
             </Link>
             <span className="text-slate-300 dark:text-slate-600">/</span>
             <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300 truncate max-w-[240px]">
@@ -415,7 +415,7 @@ export default function EditArticlePage() {
             {article?.status === 'published' && (
               <button onClick={() => unpublishMut.mutate()} disabled={isPending}
                 className="flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-[12px] font-semibold text-slate-500 hover:bg-slate-50 transition-colors disabled:opacity-60">
-                <EyeOff className="h-3.5 w-3.5" /> Dépublier
+                <EyeOff className="h-3.5 w-3.5" /> {te('unpublishButton')}
               </button>
             )}
           </div>
@@ -470,11 +470,11 @@ export default function EditArticlePage() {
                 type="button"
                 onClick={handleSummarize}
                 disabled={summarizeLoading || !content || aiBlocked}
-                title={aiBlocked ? 'Disponible à partir du plan Starter' : 'Générer l\'extrait depuis le contenu'}
+                title={aiBlocked ? te('planStarterRequired') : te('generateExcerptTitle')}
                 className="flex items-center gap-1 h-6 px-2 rounded-lg bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 text-[10px] font-bold border border-violet-200 dark:border-violet-800 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors disabled:opacity-40"
               >
                 {summarizeLoading ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : aiBlocked ? <Lock className="h-2.5 w-2.5" /> : <Sparkles className="h-2.5 w-2.5" />}
-                {aiBlocked ? 'Plan requis' : 'Générer'}
+                {aiBlocked ? te('planRequiredShort') : te('generateButton')}
               </button>
             </div>
             <textarea
@@ -500,7 +500,7 @@ export default function EditArticlePage() {
           {/* Rejection reason display */}
           {article?.status === 'rejected' && article.rejection_reason && (
             <div className="mt-6 p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-800">
-              <p className="text-[11px] font-bold text-red-700 dark:text-red-400 mb-1">Rejeté</p>
+              <p className="text-[11px] font-bold text-red-700 dark:text-red-400 mb-1">{te('statusRejected')}</p>
               <p className="text-[13px] text-red-600 dark:text-red-300">{article.rejection_reason}</p>
             </div>
           )}
@@ -515,7 +515,7 @@ export default function EditArticlePage() {
               {(['meta', 'seo', 'workflow'] as const).map(tab => (
                 <button key={tab} onClick={() => setSidebarTab(tab)}
                   className={`flex-1 py-2.5 text-[11px] font-bold uppercase tracking-wide transition-colors ${sidebarTab === tab ? 'text-blue-600 border-b-2 border-blue-500' : 'text-slate-400 hover:text-slate-600'}`}>
-                  {tab === 'meta' ? 'Contenu' : tab === 'seo' ? 'SEO' : 'Workflow'}
+                  {tab === 'meta' ? te('tabContent') : tab === 'seo' ? te('seo') : te('tabWorkflow')}
                 </button>
               ))}
             </div>
@@ -572,28 +572,28 @@ export default function EditArticlePage() {
                       type="button"
                       onClick={handleGenerateTts}
                       disabled={ttsLoading || !content || aiBlocked}
-                      title={aiBlocked ? 'Disponible à partir du plan Starter' : undefined}
+                      title={aiBlocked ? te('planStarterRequired') : undefined}
                       className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40"
                     >
                       {ttsLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : aiBlocked ? <Lock className="h-3.5 w-3.5" /> : <Headphones className="h-3.5 w-3.5" />}
-                      {ttsLoading ? te('ttsGenerating') : aiBlocked ? 'Plan Starter requis' : te('ttsGenerate')}
+                      {ttsLoading ? te('ttsGenerating') : aiBlocked ? te('planStarterRequiredShort') : te('ttsGenerate')}
                     </button>
                   </div>
 
                   {/* Améliorer le contenu */}
                   <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Améliorer le contenu</p>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{te('improveContentTitle')}</p>
                     {aiBlocked ? (
                       <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-400 text-[12px]">
                         <Lock className="h-3.5 w-3.5 shrink-0" />
-                        <span>Disponible à partir du plan Starter</span>
+                        <span>{te('planStarterRequired')}</span>
                       </div>
                     ) : (
                       <>
                         <input
                           value={improveInstruction}
                           onChange={e => setImproveInstruction(e.target.value)}
-                          placeholder="Ex : Rends plus formel, ajoute des exemples…"
+                          placeholder={te('improveInstructionPlaceholder')}
                           className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 mb-2"
                         />
                         <button
@@ -603,7 +603,7 @@ export default function EditArticlePage() {
                           className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-400 text-[12px] font-semibold hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors disabled:opacity-40"
                         >
                           {improveLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                          {improveLoading ? 'Amélioration…' : 'Améliorer avec l\'IA'}
+                          {improveLoading ? te('improvingButton') : te('improveWithAiButton')}
                         </button>
                       </>
                     )}
@@ -633,14 +633,14 @@ export default function EditArticlePage() {
                           value={coverPrompt}
                           onChange={e => setCoverPrompt(e.target.value)}
                           disabled={aiBlocked}
-                          placeholder={aiBlocked ? 'Plan Starter requis' : 'Décris l\'image à générer…'}
+                          placeholder={aiBlocked ? te('planStarterRequiredShort') : te('generateImagePlaceholder')}
                           className="flex-1 h-8 px-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[11px] text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/20 disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                         <button
                           type="button"
                           onClick={handleGenerateCover}
                           disabled={coverLoading || !coverPrompt.trim() || aiBlocked}
-                          title={aiBlocked ? 'Disponible à partir du plan Starter' : 'Générer avec DALL-E 3'}
+                          title={aiBlocked ? te('planStarterRequired') : te('generateWithDalleTitle')}
                           className="h-8 w-8 shrink-0 rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400 hover:bg-violet-100 dark:hover:bg-violet-900/30 transition-colors flex items-center justify-center disabled:opacity-40"
                         >
                           {coverLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : aiBlocked ? <Lock className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
@@ -666,14 +666,14 @@ export default function EditArticlePage() {
               {sidebarTab === 'seo' && (
                 <>
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Meta Title</label>
-                    <input value={seoTitle} onChange={e => { setSeoTitle(e.target.value); mark(); }} placeholder="SEO title (60 chars max)"
+                    <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">{te('seoMetaTitle')}</label>
+                    <input value={seoTitle} onChange={e => { setSeoTitle(e.target.value); mark(); }} placeholder={te('seoMetaTitlePlaceholder')}
                       className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
                     <p className="mt-1 text-[10px] text-slate-400">{seoTitle.length}/60</p>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Meta Description</label>
-                    <textarea value={seoDesc} onChange={e => { setSeoDesc(e.target.value); mark(); }} placeholder="Brief description (160 chars max)" rows={3}
+                    <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">{te('seoMetaDescription')}</label>
+                    <textarea value={seoDesc} onChange={e => { setSeoDesc(e.target.value); mark(); }} placeholder={te('seoMetaDescriptionPlaceholder')} rows={3}
                       className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none" />
                     <p className="mt-1 text-[10px] text-slate-400">{seoDesc.length}/160</p>
                   </div>
@@ -690,11 +690,11 @@ export default function EditArticlePage() {
 
                   {/* SEO AI Score */}
                   <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Analyse SEO IA</p>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">{te('aiSeoAnalysisTitle')}</p>
                     {seoScore && (
                       <div className="mb-3">
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400">Score</span>
+                          <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-400">{te('scoreLabel')}</span>
                           <span className={`text-[13px] font-black ${seoScore.score >= 70 ? 'text-emerald-600' : seoScore.score >= 40 ? 'text-amber-600' : 'text-red-600'}`}>
                             {seoScore.score}/100
                           </span>
@@ -715,35 +715,35 @@ export default function EditArticlePage() {
                       </div>
                     )}
                     <button onClick={handleSeoScore} disabled={seoLoading || !title || !content || aiBlocked}
-                      title={aiBlocked ? 'Disponible à partir du plan Starter' : undefined}
+                      title={aiBlocked ? te('planStarterRequired') : undefined}
                       className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40">
                       {seoLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : aiBlocked ? <Lock className="h-3.5 w-3.5" /> : <Sparkles className="h-3.5 w-3.5" />}
-                      {seoLoading ? 'Analyse…' : aiBlocked ? 'Plan Starter requis' : 'Analyser avec l\'IA'}
+                      {seoLoading ? te('analyzingButton') : aiBlocked ? te('planStarterRequiredShort') : te('analyzeWithAiButton')}
                     </button>
                   </div>
 
                   {/* Translation */}
                   <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Traduction (DeepL)</p>
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">{te('deeplTranslationTitle')}</p>
                     <div className="flex gap-2">
                       <select value={translateLang} onChange={e => setTranslateLang(e.target.value)}
                         className="flex-1 h-9 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 focus:outline-none">
-                        <option value="en">Anglais</option>
-                        <option value="fr">Français</option>
-                        <option value="es">Espagnol</option>
-                        <option value="de">Allemand</option>
-                        <option value="pt">Portugais</option>
-                        <option value="it">Italien</option>
-                        <option value="zh">Chinois</option>
-                        <option value="ar">Arabe</option>
+                        <option value="en">{te('langEnglish')}</option>
+                        <option value="fr">{te('langFrench')}</option>
+                        <option value="es">{te('langSpanish')}</option>
+                        <option value="de">{te('langGerman')}</option>
+                        <option value="pt">{te('langPortuguese')}</option>
+                        <option value="it">{te('langItalian')}</option>
+                        <option value="zh">{te('langChinese')}</option>
+                        <option value="ar">{te('langArabic')}</option>
                       </select>
                       <button onClick={handleTranslate} disabled={translateLoading || !content || aiBlocked}
-                        title={aiBlocked ? 'Disponible à partir du plan Starter' : undefined}
+                        title={aiBlocked ? te('planStarterRequired') : undefined}
                         className="flex items-center gap-1 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-40">
                         {translateLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : aiBlocked ? <Lock className="h-3.5 w-3.5" /> : <Languages className="h-3.5 w-3.5" />}
                       </button>
                     </div>
-                    <p className="mt-1 text-[10px] text-slate-400">Le contenu de l'éditeur sera remplacé par la traduction.</p>
+                    <p className="mt-1 text-[10px] text-slate-400">{te('translationHint')}</p>
                   </div>
                 </>
               )}
@@ -753,7 +753,7 @@ export default function EditArticlePage() {
                 <div className="space-y-4">
                   {/* Status badge */}
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-slate-500">Statut</span>
+                    <span className="text-[11px] font-bold text-slate-500">{te('statusLabel')}</span>
                     {article && (
                       <span className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${STATUS_COLORS[article.status] ?? STATUS_COLORS.draft}`}>
                         {statusLabel}
@@ -783,7 +783,7 @@ export default function EditArticlePage() {
                             className="w-full px-3 py-2 rounded-xl border border-red-200 bg-red-50 text-[12px] text-red-700 placeholder-red-300 focus:outline-none resize-none mb-2" />
                           <button onClick={() => rejectMut.mutate()} disabled={isPending}
                             className="w-full h-8 rounded-xl bg-red-600 hover:bg-red-700 text-white text-[12px] font-bold transition-colors disabled:opacity-50">
-                            Confirmer le rejet
+                            {te('confirmRejectButton')}
                           </button>
                         </div>
                       )}
@@ -799,7 +799,7 @@ export default function EditArticlePage() {
                   {article?.status === 'published' && (
                     <button onClick={() => unpublishMut.mutate()} disabled={isPending}
                       className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 text-slate-600 text-[12px] font-semibold hover:bg-slate-50 transition-colors disabled:opacity-50">
-                      <EyeOff className="h-4 w-4" /> Dépublier
+                      <EyeOff className="h-4 w-4" /> {te('unpublishButton')}
                     </button>
                   )}
                   {['published', 'unpublished', 'approved', 'rejected'].includes(article?.status ?? '') && (
@@ -814,8 +814,8 @@ export default function EditArticlePage() {
                     <div className="flex items-start gap-2 text-[11px] bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-xl p-3">
                       <Clock className="h-3.5 w-3.5 text-blue-500 shrink-0 mt-0.5" />
                       <div className="flex-1 min-w-0">
-                        <span className="text-blue-700 dark:text-blue-400 font-semibold block">Publication programmée</span>
-                        <span className="text-blue-600 dark:text-blue-300">{new Date(article.scheduled_at).toLocaleString('fr-FR')}</span>
+                        <span className="text-blue-700 dark:text-blue-400 font-semibold block">{te('scheduledPublicationLabel')}</span>
+                        <span className="text-blue-600 dark:text-blue-300">{new Date(article.scheduled_at).toLocaleString(locale)}</span>
                       </div>
                       <button onClick={() => cancelScheduleMut.mutate()} disabled={cancelScheduleMut.isPending}
                         className="shrink-0 text-blue-400 hover:text-red-500 transition-colors">
@@ -828,11 +828,11 @@ export default function EditArticlePage() {
                         <>
                           <button onClick={() => setShowSchedule(v => !v)}
                             className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-[12px] font-semibold hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
-                            <CalendarClock className="h-4 w-4" /> Programmer la publication
+                            <CalendarClock className="h-4 w-4" /> {te('schedulePublicationButton')}
                           </button>
                           {showSchedule && (
                             <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3 space-y-2">
-                              <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400">Date et heure</label>
+                              <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-400">{te('dateTimeLabel')}</label>
                               <input
                                 type="datetime-local"
                                 value={scheduleDate}
@@ -842,7 +842,7 @@ export default function EditArticlePage() {
                               />
                               <button onClick={() => scheduleMut.mutate()} disabled={!scheduleDate || scheduleMut.isPending}
                                 className="w-full h-8 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold transition-colors disabled:opacity-40">
-                                {scheduleMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mx-auto" /> : 'Confirmer'}
+                                {scheduleMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin mx-auto" /> : te('confirmButton')}
                               </button>
                             </div>
                           )}

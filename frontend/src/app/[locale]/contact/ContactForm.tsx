@@ -15,9 +15,19 @@ interface FormConfig {
   success_message: string;
 }
 
+export interface ContactFormErrors {
+  rateLimited: string;
+  generic: string;
+}
+
+const EN_ERRORS: ContactFormErrors = {
+  rateLimited: 'Too many messages sent. Please try again in an hour.',
+  generic: 'Something went wrong. Please try again or email us directly.',
+};
+
 export function ContactForm({
-  config, channel = 'general', initialSubject = '',
-}: { config: FormConfig; channel?: string; initialSubject?: string }) {
+  config, errors = EN_ERRORS, channel = 'general', initialSubject = '',
+}: { config: FormConfig; errors?: ContactFormErrors; channel?: string; initialSubject?: string }) {
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,11 +41,7 @@ export function ContactForm({
       await platformApi.sendContactMessage({ channel, ...form });
       setSubmitted(true);
     } catch (err: any) {
-      setError(
-        err?.response?.status === 429
-          ? "Trop de messages envoyés. Réessayez dans une heure."
-          : "Une erreur est survenue. Réessayez ou écrivez-nous directement par email."
-      );
+      setError(err?.response?.status === 429 ? errors.rateLimited : errors.generic);
     } finally {
       setSending(false);
     }

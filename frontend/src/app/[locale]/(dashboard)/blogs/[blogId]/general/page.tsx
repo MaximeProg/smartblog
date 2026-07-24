@@ -126,14 +126,14 @@ export default function GeneralPage() {
           <StudioInput
             value={form.name}
             onChange={v => patchForm(f => ({ ...f, name: v }))}
-            placeholder="Mon blog"
+            placeholder={ts('placeholderMyBlog')}
           />
         </StudioField>
         <StudioField label={ts('fieldDescription')} hint={ts('fieldDescriptionHint')}>
           <StudioInput
             value={form.description}
             onChange={v => patchForm(f => ({ ...f, description: v }))}
-            placeholder="Un blog sur…"
+            placeholder={ts('placeholderBlogAbout')}
             multiline
             rows={3}
           />

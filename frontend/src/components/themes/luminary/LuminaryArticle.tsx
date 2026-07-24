@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useMemo, type CSSProperties } from 'r
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Heart, Bookmark } from 'lucide-react';
 import type { ArticleProps } from '../ThemeRenderer';
 import type { PublicArticle } from '@/lib/public-api';
@@ -27,9 +28,9 @@ function grad(id: string): string {
   return GRADIENTS[id.charCodeAt(0) % GRADIENTS.length];
 }
 
-function formatDate(d: string | null): string {
+function formatDate(d: string | null, locale: string): string {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function initials(name: string | null): string {
@@ -45,9 +46,11 @@ function initials(name: string | null): string {
 interface RelatedCardProps {
   article: PublicArticle;
   href: string;
+  locale: string;
 }
 
-function RelatedCard({ article, href }: RelatedCardProps) {
+function RelatedCard({ article, href, locale }: RelatedCardProps) {
+  const t = useTranslations('publicBlog');
   return (
     <Link href={href} className="group flex flex-col">
       <div className="relative aspect-[4/3] overflow-hidden mb-4">
@@ -79,7 +82,7 @@ function RelatedCard({ article, href }: RelatedCardProps) {
       <p className="font-sans text-xs text-zinc-400 mt-auto">
         {article.author_name && <span>{article.author_name} &middot; </span>}
         {article.published_at
-          ? new Date(article.published_at).toLocaleDateString('en-US', {
+          ? new Date(article.published_at).toLocaleDateString(locale, {
               month: 'short',
               day: 'numeric',
               year: 'numeric',
@@ -102,13 +105,14 @@ export default function LuminaryArticle({
 }: ArticleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const basePath = _basePath ?? `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#b8960c';
 
   const articleCfg = blog.template_config?.article as Record<string, any> | undefined;
   const showProgressBar = articleCfg?.progressBar?.enabled !== false;
   const showRelated = articleCfg?.relatedArticles?.enabled !== false;
-  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || 'More to Read';
+  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || t('relatedArticles');
   const showComments = articleCfg?.comments?.enabled !== false;
 
   const [progress, setProgress] = useState(0);
@@ -174,7 +178,7 @@ export default function LuminaryArticle({
       <div className="max-w-3xl mx-auto px-4 sm:px-6 pt-12">
         <nav className="flex items-center gap-2 font-sans text-xs text-zinc-400 mb-8 uppercase tracking-widest">
           <Link href={basePath || "/"} className="hover:text-zinc-700 transition-colors">
-            Home
+            {t('navHome')}
           </Link>
           {article.category_name && article.category_slug && (
             <>
@@ -219,11 +223,11 @@ export default function LuminaryArticle({
             <p className="font-sans text-xs text-zinc-400">{blog.name}</p>
           </div>
           <div className="ml-auto flex items-center gap-3 text-xs text-zinc-400 font-sans flex-wrap justify-end">
-            <span>{formatDate(article.published_at)}</span>
+            <span>{formatDate(article.published_at, locale)}</span>
             {article.reading_time_minutes && (
               <>
                 <span className="text-zinc-300">&middot;</span>
-                <span>{article.reading_time_minutes} min read</span>
+                <span>{t('minRead', { min: article.reading_time_minutes })}</span>
               </>
             )}
           </div>
@@ -250,7 +254,7 @@ export default function LuminaryArticle({
             }`}
           >
             <Bookmark className={`h-3.5 w-3.5 ${bookmarked ? 'fill-zinc-900' : ''}`} />
-            {bookmarked ? 'Saved' : 'Save'}
+            {bookmarked ? t('savedArticle') : t('saveArticle')}
           </button>
           <div className="flex items-center gap-3">
             <ShareButtons url={articleUrl} title={article.title} primaryColor={primaryColor} />
@@ -317,13 +321,13 @@ export default function LuminaryArticle({
           </div>
           <div>
             <p className="font-sans text-[10px] uppercase tracking-widest text-zinc-500 mb-1">
-              Written by
+              {t('authorLabel')}
             </p>
             <p className="font-serif text-lg text-white mb-2">
               {article.author_name || blog.name}
             </p>
             <p className="font-sans text-sm text-zinc-400 leading-relaxed">
-              A contributor to {blog.name}, writing on topics that matter.
+              {t('aboutAuthor')}
             </p>
           </div>
         </div>
@@ -355,6 +359,7 @@ export default function LuminaryArticle({
                   key={ra.id}
                   article={ra}
                   href={aHref(ra.slug)}
+                  locale={locale}
                 />
               ))}
             </div>

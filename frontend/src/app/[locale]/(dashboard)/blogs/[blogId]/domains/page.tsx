@@ -16,20 +16,21 @@ import { useAuthStore } from '@/store/auth.store';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 
 const STATUS_CONFIG = {
-  pending:  { icon: Clock,        cls: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',       label: 'Pending'  },
-  verified: { icon: CheckCircle2, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800', label: 'Verified' },
-  failed:   { icon: XCircle,      cls: 'text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',                 label: 'Failed'   },
+  pending:  { icon: Clock,        cls: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',       labelKey: 'status_pending'  },
+  verified: { icon: CheckCircle2, cls: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800', labelKey: 'status_verified' },
+  failed:   { icon: XCircle,      cls: 'text-red-600 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',                 labelKey: 'status_failed'   },
 };
 
 const PLATFORM_CNAME = 'cname.vercel-dns.com';
 
 function CopyButton({ text }: { text: string }) {
+  const t = useTranslations('domains');
   const [copied, setCopied] = useState(false);
   return (
     <button
       onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
       className="shrink-0 h-7 w-7 rounded-lg flex items-center justify-center border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
-      title="Copy"
+      title={t('copyLabel')}
     >
       {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
     </button>
@@ -292,9 +293,9 @@ export default function DomainsPage() {
                       <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCname')}</p>
                     </div>
                     <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
-                      <DnsRow label="Type"  value="CNAME" />
-                      <DnsRow label="Name"  value="@" />
-                      <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
+                      <DnsRow label={t('dnsType')}  value="CNAME" />
+                      <DnsRow label={t('dnsName')}  value="@" />
+                      <DnsRow label={t('dnsValue')} value={PLATFORM_CNAME} copyable />
                     </div>
                   </div>
 
@@ -304,9 +305,9 @@ export default function DomainsPage() {
                       <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCnameWww')}</p>
                     </div>
                     <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
-                      <DnsRow label="Type"  value="CNAME" />
-                      <DnsRow label="Name"  value="www" />
-                      <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
+                      <DnsRow label={t('dnsType')}  value="CNAME" />
+                      <DnsRow label={t('dnsName')}  value="www" />
+                      <DnsRow label={t('dnsValue')} value={PLATFORM_CNAME} copyable />
                     </div>
                   </div>
 
@@ -356,7 +357,7 @@ export default function DomainsPage() {
                 value={newDomain}
                 onChange={e => setNewDomain(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter' && newDomain.trim()) addMut.mutate(); }}
-                placeholder="blog.monsite.com"
+                placeholder={t('placeholderCustomDomainExample')}
                 className="flex-1 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
               />
               <button
@@ -425,7 +426,7 @@ export default function DomainsPage() {
                       </div>
                       <p className="text-[11px] text-slate-400 mt-0.5">
                         {t('addedOn', { date: new Date(d.created_at).toLocaleDateString() })}
-                        {d.ssl_enabled && <span className="ml-2 text-emerald-500 font-semibold">· SSL ✓</span>}
+                        {d.ssl_enabled && <span className="ml-2 text-emerald-500 font-semibold">· {t('sslActive')} ✓</span>}
                         {d.source === 'purchased' && d.registrar && <span className="ml-2">· {d.registrar}</span>}
                         {d.source === 'purchased' && d.expires_at && (
                           <span className="ml-2">· {t('expiresOn', { date: new Date(d.expires_at).toLocaleDateString() })}</span>
@@ -434,7 +435,7 @@ export default function DomainsPage() {
                     </div>
                     <span className={`inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[10px] font-bold border ${cfg.cls}`}>
                       <StatusIcon className="h-3 w-3" />
-                      {cfg.label}
+                      {t(cfg.labelKey as any)}
                     </span>
                     {d.source === 'external' && (
                       <button
@@ -485,9 +486,9 @@ export default function DomainsPage() {
                           <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCname')}</p>
                         </div>
                         <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
-                          <DnsRow label="Type"  value="CNAME" />
-                          <DnsRow label="Name"  value="@" />
-                          <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
+                          <DnsRow label={t('dnsType')}  value="CNAME" />
+                          <DnsRow label={t('dnsName')}  value="@" />
+                          <DnsRow label={t('dnsValue')} value={PLATFORM_CNAME} copyable />
                         </div>
                       </div>
 
@@ -497,9 +498,9 @@ export default function DomainsPage() {
                           <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">{t('recordCnameWww')}</p>
                         </div>
                         <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
-                          <DnsRow label="Type"  value="CNAME" />
-                          <DnsRow label="Name"  value="www" />
-                          <DnsRow label="Value" value={PLATFORM_CNAME} copyable />
+                          <DnsRow label={t('dnsType')}  value="CNAME" />
+                          <DnsRow label={t('dnsName')}  value="www" />
+                          <DnsRow label={t('dnsValue')} value={PLATFORM_CNAME} copyable />
                         </div>
                       </div>
 
@@ -509,9 +510,9 @@ export default function DomainsPage() {
                           <p className="text-[10px] font-bold text-violet-700 dark:text-violet-400 uppercase tracking-wider">{t('recordTxt')}</p>
                         </div>
                         <div className="p-3 space-y-1.5 bg-white dark:bg-slate-900">
-                          <DnsRow label="Type"  value="TXT" />
-                          <DnsRow label="Name"  value="@" />
-                          <DnsRow label="Value" value={d.verification_token} copyable />
+                          <DnsRow label={t('dnsType')}  value="TXT" />
+                          <DnsRow label={t('dnsName')}  value="@" />
+                          <DnsRow label={t('dnsValue')} value={d.verification_token} copyable />
                         </div>
                       </div>
 

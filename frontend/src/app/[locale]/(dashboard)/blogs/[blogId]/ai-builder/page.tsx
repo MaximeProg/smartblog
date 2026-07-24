@@ -3,7 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   Sparkles, Wand2, ChevronRight, Loader2, Check,
   Globe, Users, Mic2, Palette,
@@ -23,21 +23,21 @@ interface BuilderForm {
 }
 
 const TONES = [
-  { value: 'professional', label: 'Professional' },
-  { value: 'friendly', label: 'Friendly & Casual' },
-  { value: 'inspiring', label: 'Inspiring' },
-  { value: 'educational', label: 'Educational' },
-  { value: 'bold', label: 'Bold & Direct' },
-];
+  { value: 'professional', labelKey: 'toneProfessional' },
+  { value: 'friendly', labelKey: 'toneFriendly' },
+  { value: 'inspiring', labelKey: 'toneInspiring' },
+  { value: 'educational', labelKey: 'toneEducational' },
+  { value: 'bold', labelKey: 'toneBold' },
+] as const;
 
 const COLORS = [
-  { value: 'blue', hex: '#2563eb', label: 'Blue' },
-  { value: 'violet', hex: '#7c3aed', label: 'Violet' },
-  { value: 'emerald', hex: '#059669', label: 'Emerald' },
-  { value: 'rose', hex: '#e11d48', label: 'Rose' },
-  { value: 'amber', hex: '#d97706', label: 'Amber' },
-  { value: 'slate', hex: '#475569', label: 'Slate' },
-];
+  { value: 'blue', hex: '#2563eb', labelKey: 'colorBlue' },
+  { value: 'violet', hex: '#7c3aed', labelKey: 'colorViolet' },
+  { value: 'emerald', hex: '#059669', labelKey: 'colorEmerald' },
+  { value: 'rose', hex: '#e11d48', labelKey: 'colorRose' },
+  { value: 'amber', hex: '#d97706', labelKey: 'colorAmber' },
+  { value: 'slate', hex: '#475569', labelKey: 'colorSlate' },
+] as const;
 
 // ── Main component ─────────────────────────────────────────────────
 
@@ -45,6 +45,7 @@ export default function AiBuilderPage() {
   const params = useParams();
   const blogId = params.blogId as string;
   const locale = useLocale();
+  const t = useTranslations('aiBuilder');
   const router = useRouter();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -107,25 +108,19 @@ export default function AiBuilderPage() {
       await qc.invalidateQueries({ queryKey: ['tenant', blogId] });
       setDone(true);
 
-      toast({ title: locale === 'fr' ? 'Blog configuré avec succès !' : 'Blog configured successfully!' });
+      toast({ title: t('successToast') });
     } catch (e: any) {
       const detail = e?.response?.data?.detail;
       const isPlanError = e?.response?.status === 402;
       toast({
         variant: 'destructive',
-        title: isPlanError
-          ? (locale === 'fr' ? 'Plan insuffisant' : 'Plan required')
-          : (locale === 'fr' ? 'Erreur de génération' : 'Generation failed'),
-        description: typeof detail === 'string'
-          ? detail
-          : (locale === 'fr' ? 'Vérifiez votre quota IA ou réessayez.' : 'Check your AI quota or try again.'),
+        title: isPlanError ? t('planRequiredError') : t('generationFailedError'),
+        description: typeof detail === 'string' ? detail : t('checkQuotaError'),
       });
     } finally {
       setLoading(false);
     }
   };
-
-  const isFr = locale === 'fr';
 
   if (done) {
     return (
@@ -134,25 +129,23 @@ export default function AiBuilderPage() {
           <Check className="h-8 w-8 text-emerald-600" />
         </div>
         <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
-          {isFr ? 'Votre blog est prêt !' : 'Your blog is ready!'}
+          {t('doneTitle')}
         </h2>
         <p className="text-slate-500 dark:text-slate-400 text-sm mb-8 max-w-sm">
-          {isFr
-            ? "Tous les textes ont été générés et enregistrés. Vous pouvez maintenant affiner chaque section dans le studio."
-            : "All content has been generated and saved. You can now fine-tune each section in the studio."}
+          {t('doneDesc')}
         </p>
         <div className="flex gap-3">
           <button
             onClick={() => router.push(`/${locale}/blogs/${blogId}/general`)}
             className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold transition-colors"
           >
-            {isFr ? 'Voir les paramètres généraux' : 'View general settings'}
+            {t('viewGeneralSettings')}
           </button>
           <button
             onClick={() => router.push(`/${locale}/blogs/${blogId}/home`)}
             className="px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-bold transition-colors"
           >
-            {isFr ? "Voir l'accueil" : 'View home'}
+            {t('viewHome')}
           </button>
         </div>
       </div>
@@ -170,12 +163,10 @@ export default function AiBuilderPage() {
           <Wand2 className="h-7 w-7 text-white" />
         </div>
         <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
-          {isFr ? 'Créateur IA' : 'AI Blog Builder'}
+          {t('title')}
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-          {isFr
-            ? "Répondez à quelques questions et l'IA configurera entièrement votre blog : accueil, à propos, contact, SEO, header, footer et plus."
-            : "Answer a few questions and the AI will fully configure your blog: home, about, contact, SEO, header, footer and more."}
+          {t('subtitle')}
         </p>
       </div>
 
@@ -186,13 +177,13 @@ export default function AiBuilderPage() {
         <div>
           <label className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
             <Sparkles className="h-3.5 w-3.5 text-violet-500" />
-            {isFr ? 'Nom du blog / marque' : 'Blog / brand name'}
+            {t('brandNameLabel')}
             <span className="text-red-500">*</span>
           </label>
           <input
             value={form.brand_name}
             onChange={e => set('brand_name', e.target.value)}
-            placeholder={isFr ? 'Ex: TechFlow, Cuisine Facile, Voyage Zéro…' : 'e.g. TechFlow, Easy Cooking, Zero Travel…'}
+            placeholder={t('brandNamePlaceholder')}
             className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/25 focus:border-violet-400 transition-all"
           />
         </div>
@@ -201,15 +192,13 @@ export default function AiBuilderPage() {
         <div>
           <label className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
             <ChevronRight className="h-3.5 w-3.5 text-blue-500" />
-            {isFr ? 'Sujet / niche du blog' : 'Blog topic / niche'}
+            {t('nicheLabel')}
             <span className="text-red-500">*</span>
           </label>
           <textarea
             value={form.niche}
             onChange={e => set('niche', e.target.value)}
-            placeholder={isFr
-              ? 'Ex: Conseils marketing pour startups, Recettes végétariennes rapides, Voyages en Asie du Sud-Est…'
-              : 'e.g. Marketing tips for startups, Quick vegetarian recipes, Backpacking in Southeast Asia…'}
+            placeholder={t('nichePlaceholder')}
             rows={2}
             className="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/25 focus:border-violet-400 transition-all resize-none"
           />
@@ -219,15 +208,13 @@ export default function AiBuilderPage() {
         <div>
           <label className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
             <Users className="h-3.5 w-3.5 text-emerald-500" />
-            {isFr ? 'Audience cible' : 'Target audience'}
+            {t('audienceLabel')}
             <span className="text-red-500">*</span>
           </label>
           <input
             value={form.audience}
             onChange={e => set('audience', e.target.value)}
-            placeholder={isFr
-              ? 'Ex: Développeurs juniors, Mères de famille pressées, Voyageurs budget 25-35 ans…'
-              : 'e.g. Junior developers, Busy moms, Budget travelers 25-35…'}
+            placeholder={t('audiencePlaceholder')}
             className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/25 focus:border-violet-400 transition-all"
           />
         </div>
@@ -236,20 +223,20 @@ export default function AiBuilderPage() {
         <div>
           <label className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
             <Mic2 className="h-3.5 w-3.5 text-amber-500" />
-            {isFr ? 'Ton rédactionnel' : 'Writing tone'}
+            {t('toneLabel')}
           </label>
           <div className="flex flex-wrap gap-2">
-            {TONES.map(t => (
+            {TONES.map(tone => (
               <button
-                key={t.value}
-                onClick={() => set('tone', t.value)}
+                key={tone.value}
+                onClick={() => set('tone', tone.value)}
                 className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold border transition-all ${
-                  form.tone === t.value
+                  form.tone === tone.value
                     ? 'bg-violet-600 border-violet-600 text-white shadow-sm'
                     : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'
                 }`}
               >
-                {t.label}
+                {t(tone.labelKey)}
               </button>
             ))}
           </div>
@@ -259,7 +246,7 @@ export default function AiBuilderPage() {
         <div>
           <label className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
             <Globe className="h-3.5 w-3.5 text-blue-500" />
-            {isFr ? 'Langue du blog' : 'Blog language'}
+            {t('languageLabel')}
           </label>
           <div className="flex gap-2">
             {[{ value: 'fr', label: '🇫🇷 Français' }, { value: 'en', label: '🇬🇧 English' }].map(l => (
@@ -282,14 +269,14 @@ export default function AiBuilderPage() {
         <div>
           <label className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide mb-1.5">
             <Palette className="h-3.5 w-3.5 text-rose-500" />
-            {isFr ? 'Couleur principale' : 'Primary color'}
+            {t('colorLabel')}
           </label>
           <div className="flex gap-2.5">
             {COLORS.map(c => (
               <button
                 key={c.value}
                 onClick={() => set('color_preference', c.value)}
-                title={c.label}
+                title={t(c.labelKey)}
                 className={`h-8 w-8 rounded-full border-2 transition-transform ${
                   form.color_preference === c.value
                     ? 'border-slate-900 dark:border-white scale-110'
@@ -310,26 +297,24 @@ export default function AiBuilderPage() {
           {loading ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              {isFr ? 'Génération en cours…' : 'Generating…'}
+              {t('generatingButton')}
             </>
           ) : (
             <>
               <Wand2 className="h-5 w-5" />
-              {isFr ? 'Générer mon blog' : 'Generate my blog'}
+              {t('generateButton')}
             </>
           )}
         </button>
 
         {!isValid && (
           <p className="text-[11px] text-center text-slate-400 dark:text-slate-500">
-            {isFr ? '* Les champs marqués sont obligatoires.' : '* Required fields must be filled.'}
+            {t('requiredFieldsNote')}
           </p>
         )}
 
         <p className="text-[11px] text-center text-slate-400 dark:text-slate-500">
-          {isFr
-            ? "Cette action utilise des crédits IA. La génération prend environ 15-30 secondes."
-            : "This action uses AI credits. Generation takes about 15-30 seconds."}
+          {t('aiCreditsNote')}
         </p>
       </div>
     </div>

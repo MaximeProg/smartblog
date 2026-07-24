@@ -6,6 +6,7 @@
     "pricing": "Pricing",
     "about": "About",
     "contact": "Contact",
+    "advertise": "Advertise",
     "signIn": "Sign In"
   },
   "footer": {
@@ -17,6 +18,7 @@
     "featuresLink": "Features",
     "pricingLink": "Pricing",
     "categoriesLink": "Categories",
+    "advertiseLink": "Advertise with us",
     "aboutLink": "About",
     "careersLink": "Careers",
     "privacyLink": "Privacy Policy",
@@ -26,7 +28,18 @@
     "emailPlaceholder": "your@email.com",
     "subscribe": "Subscribe",
     "allRightsReserved": "All rights reserved.",
-    "allSystemsOperational": "All systems operational"
+    "allSystemsOperational": "All systems operational",
+    "blogLink": "Blog",
+    "changelogLink": "Changelog",
+    "pressLink": "Press",
+    "contactLink": "Contact",
+    "cookiesLink": "Cookies",
+    "securityLink": "Security",
+    "dataDeletionLink": "Data Deletion",
+    "documentationLink": "Documentation",
+    "apiReferenceLink": "API Reference",
+    "guidesLink": "Guides",
+    "statusLink": "Status"
   },
   "blogExplore": {
     "heroTitle": "Blogs",
@@ -52,5 +65,225 @@
     "noCategoriesDesc": "Categories will be available here soon.",
     "articlesLabel": "articles",
     "viewArticles": "View articles"
+  },
+  "status": {
+    "allOperational": "All Systems Operational",
+    "ongoingDisruption": "Ongoing Disruption",
+    "statusUpdateNote": "Status is updated manually by our team when incidents occur.",
+    "servicesHeading": "Services",
+    "statusOperational": "Operational",
+    "statusDegraded": "Degraded",
+    "statusOutage": "Outage",
+    "statusMaintenance": "Maintenance",
+    "uptimeHeading": "Uptime — Last 30 days",
+    "collectingData": "Collecting data",
+    "platformWideAvailability": "Platform-wide availability",
+    "incidentHistoryHeading": "Incident History",
+    "noIncidents": "No incidents reported.",
+    "resolved": "Resolved"
+  },
+  "contactErrors": {
+    "rateLimited": "Too many messages sent. Please try again in an hour.",
+    "generic": "Something went wrong. Please try again or email us directly."
+  },
+  "templateArticle": {
+    "contentComingSoon": "Content for article \"{title}\" coming soon.",
+    "blogDescription": "In-depth analysis, strategies and insights for ambitious professionals.",
+    "title": "How to Build a Content Strategy That Drives Real Results in 2026",
+    "excerpt": "Content marketing has fundamentally changed. Discover the new rules that separate companies that succeed from those that stagnate, and how to put an effective strategy in place today.",
+    "content": "\n    <h2>Why content strategy has changed</h2>\n    <p>For years, content boiled down to a simple equation: publish a lot, optimize for keywords, and wait for traffic to arrive. That approach is <strong>over</strong>.</p>\n    <p>In 2026, search engine and social media algorithms have evolved to reward above all <em>depth</em>, <em>relevance</em>, and <em>credibility</em>. A 500-word article written to please the bots no longer converts — it simply gets ignored.</p>\n    <blockquote>\n      <p>The content that performs isn't the one that's most optimized for search engines. It's the one that best answers a real question a real human being is asking.</p>\n    </blockquote>\n    <h2>The 3 pillars of a modern strategy</h2>\n    <h3>1. Topical authority above all</h3>\n    <p>Rather than covering 50 topics superficially, successful brands position themselves as the undisputed reference on a specific scope. This focus creates what SEO experts call <strong>topical authority</strong> — an authority Google rewards with lasting rankings.</p>\n    <p>In concrete terms, this means:</p>\n    <ul>\n      <li>Choosing 3 to 5 core themes directly tied to your added value</li>\n      <li>Creating a comprehensive pillar piece of content for each theme</li>\n      <li>Weaving a dense network of supporting articles that go deeper on every aspect</li>\n      <li>Intelligently linking all of this content together</li>\n    </ul>\n    <h3>2. Intentional distribution</h3>\n    <p>Creating content without a distribution strategy is like writing a book and leaving it in a drawer. In 2026, every article must be designed for multiple formats and multiple channels from the moment it's conceived.</p>\n    <pre><code>Example of a multi-channel distribution plan:\nLong-form article (2000+ words)\n  → Newsletter (excerpt + link)\n  → LinkedIn (key insight reworded)\n  → Twitter/X (10-point thread)\n  → Podcast (interview based on the article)\n  → Infographic (visual data)\n  → Short video (60-second tip)</code></pre>\n    <h3>3. Measuring real impact</h3>\n    <p>Too many content teams measure <em>vanity metrics</em> — visits, likes, shares — without ever tracing the link to revenue. High-performing teams, on the other hand, track:</p>\n    <ul>\n      <li><strong>The content-to-lead conversion rate</strong></li>\n      <li><strong>Content's contribution across the buyer's journey</strong></li>\n      <li><strong>Cost per lead by channel</strong></li>\n      <li><strong>Subscriber reader retention</strong></li>\n    </ul>\n    <h2>Where to start?</h2>\n    <p>If you're starting from scratch or want to overhaul your existing strategy, here's the recommended action plan for the first 90 days:</p>\n    <ol>\n      <li><strong>Weeks 1-2:</strong> Audit of existing content and identification of topical gaps</li>\n      <li><strong>Weeks 3-4:</strong> Defining personas and the questions they're asking</li>\n      <li><strong>Weeks 5-8:</strong> Creating pillar content (one per theme)</li>\n      <li><strong>Weeks 9-12:</strong> Building the network of supporting articles and setting up distribution</li>\n    </ol>\n    <p>The 90-day result won't be spectacular in terms of traffic — SEO takes time — but you'll have laid <strong>solid foundations</strong> that will pay off over 12 to 24 months.</p>\n    <h2>Conclusion</h2>\n    <p>An effective content strategy in 2026 isn't more complicated than before — it's different. It demands more discipline, more focus, and an obsession with quality over quantity. Brands that have understood this build loyal, lasting audiences that convert.</p>\n    <p>If you want to go further, explore our other guides on <a href=\"#\">content audits</a>, <a href=\"#\">topical authority</a>, and <a href=\"#\">multi-channel distribution</a>.</p>\n  ",
+    "authorName": "Marie Dupont",
+    "categoryName": "Marketing",
+    "tags": [
+      "strategy",
+      "content",
+      "SEO",
+      "digital marketing"
+    ],
+    "related1Title": "AI Is Redefining the Rules of the Game for SMEs",
+    "related1Excerpt": "SMEs that adopt AI now have a significant competitive advantage.",
+    "related1Category": "Technology",
+    "related1Tags": [
+      "AI",
+      "SMEs"
+    ],
+    "related2Title": "Leadership 2026: The 7 Skills of High-Performing Executives",
+    "related2Excerpt": "The best leaders share common habits. Discover the 7 key skills.",
+    "related2Category": "Leadership",
+    "related2Tags": [
+      "management",
+      "leadership"
+    ],
+    "related3Title": "Technical SEO: Google's New Requirements in 2026",
+    "related3Excerpt": "Core Web Vitals, generative AI, voice search... Here's what really matters.",
+    "related3Category": "Marketing",
+    "related3Tags": [
+      "SEO",
+      "Google"
+    ]
+  },
+  "templateAbout": {
+    "heroTitleLine1": "Insights that make",
+    "heroTitleHighlight": "a real difference",
+    "heroSubtitle": "SmarterBloggers Insights is the go-to media outlet for ambitious professionals. In-depth analysis, proven strategies, expert perspectives — without the noise.",
+    "meetTeamButton": "Meet the team",
+    "readArticlesButton": "Read our articles",
+    "stat1Label": "Published articles",
+    "stat2Label": "Newsletter subscribers",
+    "stat3Label": "Areas of expertise",
+    "stat4Label": "Years of editorial experience",
+    "missionTitle": "Democratizing access to the best professional practices",
+    "missionPara1": "Large companies have entire teams dedicated to market intelligence, training, and strategy. Independent professionals and SMEs don't always have access to these resources.",
+    "missionPara2": "SmarterBloggers Insights bridges that gap. We synthesize the best research, our experts' field experience, and emerging trends to give you a real competitive edge.",
+    "missionBullet1": "Content written by experts recognized in their field",
+    "missionBullet2": "Analysis based on real data, not opinions",
+    "missionBullet3": "Actionable format: every article = at least one immediately applicable idea",
+    "missionBullet4": "Regular updates to our evergreen content",
+    "missionImageAlt": "Our team at work",
+    "missionBadgeTitle": "Top 10 B2B media outlets",
+    "missionBadgeSubtitle": "France — 2025 & 2026",
+    "valuesHeading": "What guides us every day",
+    "value1Title": "Relevance above all",
+    "value1Desc": "Every article we publish answers a real question our readers are asking. No generic content, no filler.",
+    "value2Title": "Rigorous accuracy",
+    "value2Desc": "Our experts verify every fact, every statistic. When we're not certain, we say so clearly.",
+    "value3Title": "Editorial independence",
+    "value3Desc": "No sponsor, no ad agency influences our editorial line. We write what we think, not what sells.",
+    "value4Title": "Concrete impact",
+    "value4Desc": "Our goal: that you finish every article with at least one actionable idea you can apply today.",
+    "teamHeading": "Passionate experts",
+    "teamSubheading": "Every member of our team is a practitioner — someone who has done it, not just someone who knows about it.",
+    "member1Role": "Editorial Director",
+    "member1Bio": "A former journalist at Le Monde, Sophie has led SmarterBloggers' editorial strategy since 2022. She ensures every article delivers real value to professionals.",
+    "member2Role": "Technology & AI Expert",
+    "member2Bio": "An engineer turned content expert, Thomas decodes technological shifts to make them accessible and actionable.",
+    "member3Role": "Digital Marketing Expert",
+    "member3Bio": "10 years of experience in content strategy and SEO for companies ranging from CAC 40 giants to startups. Marie shares what actually works on the ground.",
+    "member4Role": "Entrepreneurship Expert",
+    "member4Bio": "Founder of 3 startups including one exited in 2023, Lucas brings a ground-level perspective on entrepreneurship, funding, and growth.",
+    "ctaHeading": "Ready to take it to the next level?",
+    "ctaSubheading": "Join 12,000 professionals who receive our analysis every week.",
+    "ctaSubscribeButton": "Subscribe to the newsletter",
+    "ctaReadButton": "Read the articles"
+  },
+  "templateContact": {
+    "heroTitleLine1": "Got a question?",
+    "heroTitleHighlight": "Let's talk.",
+    "heroSubtitle": "Our team responds to every request within 2 business days. We're always happy to hear from our readers.",
+    "sendMessageHeading": "Send a message",
+    "requiredFieldsNote": "All fields marked * are required.",
+    "successHeading": "Message sent!",
+    "successMessage": "Thank you for your message. Our team will get back to you within 2 business days.",
+    "sendAnotherButton": "Send another message",
+    "fullNameLabel": "Full name",
+    "fullNamePlaceholder": "John Smith",
+    "emailLabel": "Email",
+    "emailPlaceholder": "john@example.com",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Select a subject…",
+    "subjectOption1": "Editorial question",
+    "subjectOption2": "Submit an article",
+    "subjectOption3": "Partnership / advertising",
+    "subjectOption4": "Report an error",
+    "subjectOption5": "Premium subscription",
+    "subjectOption6": "Technical issue",
+    "subjectOption7": "Other",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Describe your request in detail…",
+    "newsletterCheckboxLabel": "I want to receive the SmarterBloggers Insights newsletter (1 email per week, unsubscribe with one click)",
+    "submitButton": "Send message",
+    "submitLoading": "Sending…",
+    "privacyNote": "Your data is processed in accordance with our privacy policy. It is never sold to third parties.",
+    "directContactHeading": "Reach us directly",
+    "emailResponseNote": "Response within 2 business days",
+    "phoneLabel": "Phone",
+    "phoneResponseNote": "Mon–Fri, 9am–6pm (CET)",
+    "addressLabel": "Address",
+    "addressLine1": "15 rue de Rivoli",
+    "addressLine2": "75001 Paris, France",
+    "followUsHeading": "Follow us",
+    "responseTimeHeading": "Response times",
+    "responseTime1Label": "General questions",
+    "responseTime2Label": "Partnerships",
+    "responseTime3Label": "Technical emergencies",
+    "faqHeading": "Frequently asked questions",
+    "faqNotFoundText": "Can't find your answer?",
+    "faqHelpCenterLink": "Check out our help center",
+    "faq1Q": "How can I submit an article to SmarterBloggers Insights?",
+    "faq1A": "We welcome contributions from experts with at least 5 years of experience in their field. Send us a topic + outline + 2-3 references at contributors@smarterbloggers.com. Our editorial committee will respond within 5 business days.",
+    "faq2Q": "Can I republish your articles on other media outlets?",
+    "faq2A": "Our content is copyright protected. However, we allow partial republishing (up to 300 words) with clear attribution and a link to the original article. For full republishing, contact us to obtain a license.",
+    "faq3Q": "How do I access Premium content?",
+    "faq3A": "Premium articles are accessible via a monthly or annual subscription. You can subscribe from any Premium article page. The subscription gives you access to the entire Premium catalog + archives.",
+    "faq4Q": "Do you offer partnerships or sponsored content?",
+    "faq4A": "We work with a limited number of partners whose products and services are relevant to our audience. Any commercial content is clearly identified as such. Contact us via the form to discuss opportunities.",
+    "faq5Q": "How do I report an error in an article?",
+    "faq5A": "Accuracy is our priority. If you spot an inaccuracy, contact us specifying the article in question, the error identified, and your source. We verify and correct within 48h with a transparent correction note."
+  },
+  "homePricingPlans": {
+    "free": {
+      "name": "Free",
+      "desc": "Perfect to start blogging.",
+      "features": [
+        "1 blog",
+        "10 articles / month",
+        "1 author",
+        "smarterbloggers.com subdomain"
+      ]
+    },
+    "starter": {
+      "name": "Starter",
+      "desc": "For serious bloggers.",
+      "features": [
+        "2 blogs",
+        "Unlimited articles",
+        "3 authors",
+        "Custom domain",
+        "Newsletter — 1,000 subscribers"
+      ]
+    },
+    "pro": {
+      "name": "Pro",
+      "desc": "For creative teams.",
+      "features": [
+        "5 blogs",
+        "Unlimited articles",
+        "10 authors",
+        "Custom domain",
+        "Newsletter — 10,000 subscribers",
+        "AI — 50 articles / month",
+        "Advanced analytics"
+      ]
+    },
+    "business": {
+      "name": "Business",
+      "desc": "For large organizations.",
+      "features": [
+        "Unlimited blogs",
+        "Unlimited articles",
+        "Unlimited authors",
+        "Unlimited domains",
+        "Unlimited newsletter",
+        "Unlimited AI",
+        "API access",
+        "White label"
+      ]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "desc": "For large enterprises.",
+      "features": [
+        "Everything in Business",
+        "Dedicated SLA",
+        "Priority support",
+        "Custom onboarding"
+      ]
+    }
+  },
+  "homeMisc": {
+    "freeLabel": "Free",
+    "perMonthSuffix": "/mo",
+    "popularBadge": "Popular",
+    "collectingData": "Collecting data"
   }
 }

@@ -27,11 +27,12 @@ const STATUS_BADGE: Record<string, string> = {
 };
 
 function FileAttachment({ url, name, type, isOwn }: { url: string; name?: string | null; type?: string | null; isOwn: boolean }) {
+  const t = useTranslations('support');
   const mime = type || '';
   if (mime.startsWith('image/')) {
     return (
       <a href={url} target="_blank" rel="noopener noreferrer" className="block mt-2">
-        <img src={url} alt={name || 'image'} className="max-w-[260px] max-h-[200px] rounded-xl object-cover border border-white/20" />
+        <img src={url} alt={name || t('attachmentImage')} className="max-w-[260px] max-h-[200px] rounded-xl object-cover border border-white/20" />
       </a>
     );
   }
@@ -55,7 +56,7 @@ function FileAttachment({ url, name, type, isOwn }: { url: string; name?: string
       className={`flex items-center gap-2 mt-2 px-3 py-2 rounded-xl border text-[12px] font-medium hover:opacity-80 transition-opacity max-w-[260px]
         ${isOwn ? 'border-white/30 text-white bg-white/10' : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800'}`}>
       <Icon className="h-4 w-4 shrink-0" />
-      <span className="truncate flex-1">{name || 'Download'}</span>
+      <span className="truncate flex-1">{name || t('downloadFile')}</span>
       <Download className="h-3 w-3 shrink-0 opacity-60" />
     </a>
   );

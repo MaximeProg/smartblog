@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { Bookmark, Trash2, ArrowLeft, BookOpen } from 'lucide-react';
 import type { BlogInfo } from '@/lib/public-api';
 import { useAllBookmarks } from '@/hooks/useBookmark';
@@ -13,8 +14,8 @@ interface Props {
   basePath?: string;
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('fr-FR', {
+function formatDate(iso: string, locale: string) {
+  return new Date(iso).toLocaleDateString(locale, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -22,6 +23,7 @@ function formatDate(iso: string) {
 }
 
 export default function BookmarksClientPage({ blog, slug, locale, basePath: baseProp }: Props) {
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#3b82f6';
   const basePath = baseProp !== undefined ? baseProp : `/${locale}/${slug}`;
   const { bookmarks, remove } = useAllBookmarks();
@@ -63,14 +65,14 @@ export default function BookmarksClientPage({ blog, slug, locale, basePath: base
             style={{ backgroundColor: `${primaryColor}14`, color: primaryColor }}
           >
             <Bookmark className="h-3.5 w-3.5" />
-            Articles sauvegardés
+            {t('savedArticlesLabel')}
           </div>
           <h1 className="text-3xl font-bold text-zinc-900 leading-tight">
-            Mes sauvegardes
+            {t('myBookmarks')}
           </h1>
           {bookmarks.length > 0 && (
             <p className="text-sm text-zinc-400 mt-2">
-              {bookmarks.length} article{bookmarks.length > 1 ? 's' : ''} sauvegardé{bookmarks.length > 1 ? 's' : ''}
+              {bookmarks.length > 1 ? t('savedCountPlural', { count: bookmarks.length }) : t('savedCount', { count: bookmarks.length })}
             </p>
           )}
         </div>
@@ -85,17 +87,17 @@ export default function BookmarksClientPage({ blog, slug, locale, basePath: base
               <BookOpen className="h-7 w-7" style={{ color: primaryColor }} />
             </div>
             <h2 className="text-lg font-bold text-zinc-800 mb-2">
-              Aucune sauvegarde pour l&apos;instant
+              {t('noBookmarksYet')}
             </h2>
             <p className="text-sm text-zinc-400 max-w-xs leading-relaxed mb-6">
-              Cliquez sur le bouton &quot;Sauvegarder&quot; sur un article pour le retrouver ici.
+              {t('noBookmarksDesc')}
             </p>
             <Link
               href={basePath || "/"}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
               style={{ backgroundColor: primaryColor }}
             >
-              Explorer les articles
+              {t('exploreArticles')}
             </Link>
           </div>
         ) : (
@@ -119,14 +121,14 @@ export default function BookmarksClientPage({ blog, slug, locale, basePath: base
                     {item.title}
                   </Link>
                   <p className="text-xs text-zinc-400 mt-1">
-                    Sauvegardé le {formatDate(item.savedAt)}
+                    {t('savedOn', { date: formatDate(item.savedAt, locale) })}
                   </p>
                 </div>
 
                 <button
                   onClick={() => remove(item.slug, item.blogSlug)}
                   className="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg text-zinc-300 hover:text-red-500 hover:bg-red-50 transition-colors"
-                  title="Supprimer la sauvegarde"
+                  title={t('deleteBookmark')}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

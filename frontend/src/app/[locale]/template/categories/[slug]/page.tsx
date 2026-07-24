@@ -3,13 +3,14 @@
 import { notFound } from 'next/navigation';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { useLocale } from 'next-intl';
 import { MOCK_BLOG, MOCK_CATEGORIES, MOCK_ARTICLES } from '@/components/themes/corporate/mock-data';
 import { publicApi, type BlogInfo, type PublicCategory, type PublicArticle } from '@/lib/public-api';
 import CorporateCategoryPage from '@/components/themes/corporate/CorporateCategoryPage';
 
-const templateBasePath = '/en/template';
-
 export default function CategoryPage() {
+  const locale = useLocale();
+  const templateBasePath = `/${locale}/template`;
   const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
   const preview = searchParams.get('preview');

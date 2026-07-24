@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { X, ExternalLink, ChevronDown, ChevronUp, Info } from 'lucide-react';
 
 const ROTATE_INTERVAL_MS = 30_000;
@@ -33,6 +34,7 @@ function getDomain(url: string): string {
 }
 
 export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', excludeId, onAdLoaded }: Props) {
+  const t = useTranslations('publicBlog');
   const [ad, setAd] = useState<AdData | null>(null);
   const [dismissed, setDismissed] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
@@ -94,7 +96,7 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
           style={{ borderBottomColor: 'white' }}
         >
           {collapsed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          {collapsed ? 'Afficher l\'annonce' : 'Réduire'}
+          {collapsed ? t('showAd') : t('collapseAd')}
         </button>
 
         {!collapsed && (
@@ -135,14 +137,14 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
               onClick={handleClick}
               className="shrink-0 flex items-center gap-2 bg-slate-900 hover:bg-slate-700 text-white text-sm font-bold px-6 py-2.5 rounded-full transition-colors whitespace-nowrap"
             >
-              Ouvrir <ExternalLink className="w-3.5 h-3.5" />
+              {t('openAd')} <ExternalLink className="w-3.5 h-3.5" />
             </button>
 
             {/* Fermer */}
             <button
               onClick={() => setDismissed(true)}
               className="shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
-              aria-label="Fermer l'annonce"
+              aria-label={t('closeAd')}
             >
               <X className="w-4 h-4" />
             </button>
@@ -202,7 +204,7 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
               <button
                 onClick={() => setDismissed(true)}
                 className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors"
-                aria-label="Fermer"
+                aria-label={t('close')}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -213,7 +215,7 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
               <span className="shrink-0 inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide bg-slate-100 text-slate-500 px-2 py-1 rounded">
-                Annonce
+                {t('adLabel')}
               </span>
               {domain && (
                 <span className="text-xs text-slate-400 truncate">{domain}</span>
@@ -223,7 +225,7 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
               onClick={handleClick}
               className="shrink-0 px-5 py-2 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              Ouvrir
+              {t('openAd')}
             </button>
           </div>
         </div>

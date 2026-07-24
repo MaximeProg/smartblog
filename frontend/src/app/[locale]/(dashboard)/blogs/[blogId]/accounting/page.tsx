@@ -17,11 +17,11 @@ function fmtAmount(n: number, currency = 'USDT') {
   return `${n.toFixed(2)} ${currency}`;
 }
 
-const TYPE_LABEL: Record<string, string> = {
-  subscription:     'Subscription',
-  paid_article:     'Paid article',
-  paid_newsletter:  'Paid newsletter',
-  ad_campaign:      'Ad revenue',
+const TYPE_LABEL_KEY: Record<string, string> = {
+  subscription:     'type_subscription',
+  paid_article:     'type_paid_article',
+  paid_newsletter:  'type_paid_newsletter',
+  ad_campaign:      'type_ad_campaign',
 };
 
 const STATUS_CFG: Record<string, { cls: string; icon: React.ElementType }> = {
@@ -119,7 +119,7 @@ export default function TenantAccountingPage() {
                   return (
                     <div key={txn.id} className="grid grid-cols-[1fr_140px_120px_100px_90px] px-5 py-3 items-center hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
                       <span className="text-[12px] font-medium text-slate-800 dark:text-slate-200">
-                        {TYPE_LABEL[txn.type] ?? txn.type}
+                        {TYPE_LABEL_KEY[txn.type] ? t(TYPE_LABEL_KEY[txn.type] as any) : txn.type}
                       </span>
                       <span className="text-[11px] text-slate-400 dark:text-slate-500 font-mono truncate">
                         {txn.reference ?? '—'}
@@ -129,7 +129,7 @@ export default function TenantAccountingPage() {
                       </span>
                       <span className={`inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold border w-fit ${sc.cls}`}>
                         <StatusIcon className="h-2.5 w-2.5" />
-                        {txn.status}
+                        {t(`status_${txn.status}` as any)}
                       </span>
                       <span className="text-[11px] text-slate-400 dark:text-slate-500">{fmtDate(txn.created_at)}</span>
                     </div>

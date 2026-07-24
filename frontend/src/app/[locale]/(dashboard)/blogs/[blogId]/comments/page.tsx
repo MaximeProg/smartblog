@@ -13,13 +13,13 @@ import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import type { CommentStatus, CommentsMode, CommentBanInfo } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 
-const STATUS_TABS: { key: CommentStatus | 'all'; label: string; icon: React.ElementType; color: string }[] = [
-  { key: 'all',      label: 'All',      icon: MessageSquare, color: 'text-slate-500' },
-  { key: 'pending',  label: 'Pending',  icon: Clock,         color: 'text-amber-500' },
-  { key: 'approved', label: 'Approved', icon: Check,         color: 'text-emerald-500' },
-  { key: 'rejected', label: 'Rejected', icon: X,             color: 'text-red-500' },
-  { key: 'spam',     label: 'Spam',     icon: AlertTriangle, color: 'text-orange-500' },
-  { key: 'shadow_banned', label: 'Shadow', icon: EyeOff, color: 'text-slate-500' },
+const STATUS_TABS: { key: CommentStatus | 'all'; labelKey: string; icon: React.ElementType; color: string }[] = [
+  { key: 'all',      labelKey: 'all',                  icon: MessageSquare, color: 'text-slate-500' },
+  { key: 'pending',  labelKey: 'status_pending',        icon: Clock,         color: 'text-amber-500' },
+  { key: 'approved', labelKey: 'status_approved',       icon: Check,         color: 'text-emerald-500' },
+  { key: 'rejected', labelKey: 'status_rejected',       icon: X,             color: 'text-red-500' },
+  { key: 'spam',     labelKey: 'status_spam',           icon: AlertTriangle, color: 'text-orange-500' },
+  { key: 'shadow_banned', labelKey: 'status_shadow_banned', icon: EyeOff,    color: 'text-slate-500' },
 ];
 
 function fmtDate(iso: string) {
@@ -38,16 +38,17 @@ function Avatar({ name }: { name: string }) {
 }
 
 function StatusBadge({ status }: { status: CommentStatus }) {
-  const map: Record<CommentStatus, { label: string; cls: string }> = {
-    pending:      { label: 'Pending',  cls: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800' },
-    approved:     { label: 'Approved', cls: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' },
-    rejected:     { label: 'Rejected', cls: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800' },
-    spam:         { label: 'Spam',     cls: 'bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800' },
-    shadow_banned:{ label: 'Shadow',   cls: 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600' },
+  const t = useTranslations('comments');
+  const map: Record<CommentStatus, { labelKey: string; cls: string }> = {
+    pending:      { labelKey: 'status_pending',  cls: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800' },
+    approved:     { labelKey: 'status_approved', cls: 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800' },
+    rejected:     { labelKey: 'status_rejected', cls: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800' },
+    spam:         { labelKey: 'status_spam',     cls: 'bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800' },
+    shadow_banned:{ labelKey: 'status_shadow_banned', cls: 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600' },
   };
-  const { label, cls } = map[status] ?? { label: status, cls: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-600' };
+  const { labelKey, cls } = map[status] ?? { labelKey: '', cls: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-600' };
   return (
-    <span className={`inline-flex items-center h-5 px-2 rounded-full text-[10px] font-bold border ${cls}`}>{label}</span>
+    <span className={`inline-flex items-center h-5 px-2 rounded-full text-[10px] font-bold border ${cls}`}>{labelKey ? t(labelKey as any) : status}</span>
   );
 }
 
@@ -240,7 +241,7 @@ export default function CommentsPage() {
 
   const banMutation = useMutation({
     mutationFn: ({ email, ip }: { email?: string; ip?: string }) =>
-      moderationApi.ban(blogId, { email, ip_address: ip, reason: 'Banni depuis le dashboard' }),
+      moderationApi.ban(blogId, { email, ip_address: ip, reason: t('banReasonDashboard') }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['bans', blogId] });
       toast({ title: t('banSuccess') });
@@ -308,7 +309,7 @@ export default function CommentsPage() {
                 }`}
               >
                 <tab.icon className={`h-3.5 w-3.5 shrink-0 ${activeTab === tab.key ? tab.color : ''}`} />
-                {tab.label}
+                {t(tab.labelKey as any)}
                 {tab.key !== 'all' && stats && (stats as unknown as Record<string, number>)[tab.key] > 0 && (
                   <span className="ml-0.5 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-full px-1.5 py-px text-[9px] font-bold">
                     {(stats as unknown as Record<string, number>)[tab.key]}

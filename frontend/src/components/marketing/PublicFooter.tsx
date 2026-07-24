@@ -2,6 +2,7 @@
 import { PenLine, Twitter, Github, Linkedin, Mail } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { getUiTranslations } from '@/lib/platform-api';
+import { PlatformAdSlot } from '@/components/marketing/PlatformAdSlot';
 
 interface PublicFooterProps {
   locale: string;
@@ -13,30 +14,39 @@ interface PublicFooterProps {
 interface FooterLabels {
   tagline: string;
   platformHeading: string; companyHeading: string; resourcesHeading: string; legalHeading: string;
-  featuresLink: string; pricingLink: string; categoriesLink: string;
+  featuresLink: string; pricingLink: string; categoriesLink: string; advertiseLink: string;
   aboutLink: string; careersLink: string; privacyLink: string; termsLink: string;
   stayInLoop: string; stayInLoopDesc: string; emailPlaceholder: string; subscribe: string;
   allRightsReserved: string; allSystemsOperational: string;
+  blogLink: string; changelogLink: string; pressLink: string; contactLink: string;
+  cookiesLink: string; securityLink: string; dataDeletionLink: string;
+  documentationLink: string; apiReferenceLink: string; guidesLink: string; statusLink: string;
 }
 
 const EN_FOOTER: FooterLabels = {
   tagline: 'The next-generation blogging platform built for creators who demand excellence.',
   platformHeading: 'Platform', companyHeading: 'Company', resourcesHeading: 'Resources', legalHeading: 'Legal',
-  featuresLink: 'Features', pricingLink: 'Pricing', categoriesLink: 'Categories',
+  featuresLink: 'Features', pricingLink: 'Pricing', categoriesLink: 'Categories', advertiseLink: 'Advertise with us',
   aboutLink: 'About', careersLink: 'Careers', privacyLink: 'Privacy Policy', termsLink: 'Terms of Service',
   stayInLoop: 'Stay in the loop', stayInLoopDesc: 'Get the latest updates delivered straight to your inbox.',
   emailPlaceholder: 'your@email.com', subscribe: 'Subscribe',
   allRightsReserved: 'All rights reserved.', allSystemsOperational: 'All systems operational',
+  blogLink: 'Blog', changelogLink: 'Changelog', pressLink: 'Press', contactLink: 'Contact',
+  cookiesLink: 'Cookies', securityLink: 'Security', dataDeletionLink: 'Data Deletion',
+  documentationLink: 'Documentation', apiReferenceLink: 'API Reference', guidesLink: 'Guides', statusLink: 'Status',
 };
 
 const FR_FOOTER: FooterLabels = {
   tagline: "La plateforme de blog nouvelle génération pour les créateurs qui exigent l'excellence.",
   platformHeading: 'Platform', companyHeading: 'Entreprise', resourcesHeading: 'Ressources', legalHeading: 'Legal',
-  featuresLink: 'Fonctionnalités', pricingLink: 'Tarifs', categoriesLink: 'Catégories',
+  featuresLink: 'Fonctionnalités', pricingLink: 'Tarifs', categoriesLink: 'Catégories', advertiseLink: 'Annonceurs',
   aboutLink: 'À propos', careersLink: 'Carrières', privacyLink: 'Confidentialité', termsLink: 'Conditions',
   stayInLoop: 'Restez informé', stayInLoopDesc: 'Recevez les dernières mises à jour directement dans votre boîte mail.',
   emailPlaceholder: 'votre@email.com', subscribe: "S'abonner",
   allRightsReserved: 'Tous droits réservés.', allSystemsOperational: 'Tous les systèmes sont opérationnels',
+  blogLink: 'Blog', changelogLink: 'Journal des modifications', pressLink: 'Presse', contactLink: 'Contact',
+  cookiesLink: 'Cookies', securityLink: 'Sécurité', dataDeletionLink: 'Suppression des données',
+  documentationLink: 'Documentation', apiReferenceLink: 'Référence API', guidesLink: 'Guides', statusLink: 'Statut',
 };
 
 export async function PublicFooter({ locale, lang: langProp }: PublicFooterProps) {
@@ -53,28 +63,29 @@ export async function PublicFooter({ locale, lang: langProp }: PublicFooterProps
     platform: [
       { label: l.featuresLink, href: `/${locale}#features` },
       { label: l.pricingLink, href: `/${locale}#pricing` },
-      { label: 'Blog', href: `/${locale}/blog` },
+      { label: l.blogLink, href: `/${locale}/blog` },
       { label: l.categoriesLink, href: `/${locale}/categories` },
-      { label: 'Changelog', href: `/${locale}/changelog` },
+      { label: l.advertiseLink, href: `/${locale}/advertise-with-us` },
+      { label: l.changelogLink, href: `/${locale}/changelog` },
     ],
     company: [
       { label: l.aboutLink, href: `/${locale}/about` },
       { label: l.careersLink, href: `/${locale}/careers` },
-      { label: 'Press', href: `/${locale}/press` },
-      { label: 'Contact', href: `/${locale}/contact` },
+      { label: l.pressLink, href: `/${locale}/press` },
+      { label: l.contactLink, href: `/${locale}/contact` },
     ],
     legal: [
       { label: l.privacyLink, href: `/${locale}/legal/privacy` },
       { label: l.termsLink, href: `/${locale}/legal/terms` },
-      { label: 'Cookies', href: `/${locale}/legal/cookies` },
-      { label: 'Security', href: `/${locale}/legal/security` },
-      { label: 'Data Deletion', href: `/${locale}/legal/data-deletion` },
+      { label: l.cookiesLink, href: `/${locale}/legal/cookies` },
+      { label: l.securityLink, href: `/${locale}/legal/security` },
+      { label: l.dataDeletionLink, href: `/${locale}/legal/data-deletion` },
     ],
     resources: [
-      { label: 'Documentation', href: `/${locale}/docs` },
-      { label: 'API Reference', href: `/${locale}/docs/api` },
-      { label: 'Guides', href: `/${locale}/guides` },
-      { label: 'Status', href: `/${locale}/status` },
+      { label: l.documentationLink, href: `/${locale}/docs` },
+      { label: l.apiReferenceLink, href: `/${locale}/docs/api` },
+      { label: l.guidesLink, href: `/${locale}/guides` },
+      { label: l.statusLink, href: `/${locale}/status` },
     ],
   };
 
@@ -179,6 +190,11 @@ export async function PublicFooter({ locale, lang: langProp }: PublicFooterProps
           </div>
         </div>
       </div>
+
+      {/* Pub site principal — second emplacement, visible sur toutes les pages
+          publiques partageant ce footer (contrairement au premier, monté une
+          seule fois sur la page d'accueil) */}
+      <PlatformAdSlot />
 
       {/* Newsletter bar */}
       <div className="border-t border-slate-200 dark:border-slate-800">

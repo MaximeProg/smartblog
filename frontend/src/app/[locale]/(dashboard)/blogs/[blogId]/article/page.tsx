@@ -20,14 +20,16 @@ interface ArticlePageConfig {
   relatedArticles: { enabled: boolean; title: string; count: number };
 }
 
-const DEFAULT: ArticlePageConfig = {
-  progressBar: { enabled: true },
-  tableOfContents: { enabled: true, title: 'Dans cet article', minHeadings: 3 },
-  share: { enabled: true, title: 'Partager', platforms: { twitter: true, linkedin: true, facebook: true, copyLink: true } },
-  authorBio: { enabled: true, title: "À propos de l'auteur" },
-  comments: { enabled: false },
-  relatedArticles: { enabled: true, title: 'Articles similaires', count: 3 },
-};
+function buildDefault(ts: (key: any) => string): ArticlePageConfig {
+  return {
+    progressBar: { enabled: true },
+    tableOfContents: { enabled: true, title: ts('placeholderTocTitle'), minHeadings: 3 },
+    share: { enabled: true, title: ts('placeholderShareTitle'), platforms: { twitter: true, linkedin: true, facebook: true, copyLink: true } },
+    authorBio: { enabled: true, title: ts('placeholderAuthorBioTitle') },
+    comments: { enabled: false },
+    relatedArticles: { enabled: true, title: ts('placeholderRelatedTitle'), count: 3 },
+  };
+}
 
 export default function ArticlePage() {
   const params = useParams();
@@ -41,13 +43,13 @@ export default function ArticlePage() {
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const [cfg, setCfg] = useState<ArticlePageConfig>(DEFAULT);
+  const [cfg, setCfg] = useState<ArticlePageConfig>(() => buildDefault(ts));
 
   useEffect(() => {
     if (tenant?.template_config?.article) {
-      setCfg({ ...DEFAULT, ...(tenant.template_config.article as any) });
+      setCfg({ ...buildDefault(ts), ...(tenant.template_config.article as any) });
     }
-  }, [tenant]);
+  }, [tenant]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const patch = (fn: (c: ArticlePageConfig) => ArticlePageConfig) => setCfg(fn);
 
@@ -80,7 +82,7 @@ export default function ArticlePage() {
         {cfg.tableOfContents.enabled && (
           <>
             <StudioField label={ts('fieldTitle')}>
-              <StudioInput value={cfg.tableOfContents.title} onChange={v => patch(c => ({ ...c, tableOfContents: { ...c.tableOfContents, title: v } }))} placeholder="Dans cet article" />
+              <StudioInput value={cfg.tableOfContents.title} onChange={v => patch(c => ({ ...c, tableOfContents: { ...c.tableOfContents, title: v } }))} placeholder={ts('placeholderTocTitle')} />
             </StudioField>
             <StudioField label={ts('fieldMinHeadings')} hint={ts('fieldMinHeadingsHint')}>
               <input
@@ -99,7 +101,7 @@ export default function ArticlePage() {
         {cfg.share.enabled && (
           <>
             <StudioField label={ts('fieldTitle')}>
-              <StudioInput value={cfg.share.title} onChange={v => patch(c => ({ ...c, share: { ...c.share, title: v } }))} placeholder="Partager" />
+              <StudioInput value={cfg.share.title} onChange={v => patch(c => ({ ...c, share: { ...c.share, title: v } }))} placeholder={ts('placeholderShareTitle')} />
             </StudioField>
             <StudioSwitch label="Twitter / X" checked={cfg.share.platforms.twitter} onChange={v => patch(c => ({ ...c, share: { ...c.share, platforms: { ...c.share.platforms, twitter: v } } }))} />
             <StudioSwitch label="LinkedIn" checked={cfg.share.platforms.linkedin} onChange={v => patch(c => ({ ...c, share: { ...c.share, platforms: { ...c.share.platforms, linkedin: v } } }))} />
@@ -113,7 +115,7 @@ export default function ArticlePage() {
         <StudioSwitch label={ts('switchShowAuthorBio')} description={ts('switchShowAuthorBioDesc')} checked={cfg.authorBio.enabled} onChange={v => patch(c => ({ ...c, authorBio: { ...c.authorBio, enabled: v } }))} />
         {cfg.authorBio.enabled && (
           <StudioField label={ts('fieldTitle')}>
-            <StudioInput value={cfg.authorBio.title} onChange={v => patch(c => ({ ...c, authorBio: { ...c.authorBio, title: v } }))} placeholder="À propos de l'auteur" />
+            <StudioInput value={cfg.authorBio.title} onChange={v => patch(c => ({ ...c, authorBio: { ...c.authorBio, title: v } }))} placeholder={ts('placeholderAuthorBioTitle')} />
           </StudioField>
         )}
       </StudioSection>
@@ -123,7 +125,7 @@ export default function ArticlePage() {
         {cfg.relatedArticles.enabled && (
           <>
             <StudioField label={ts('fieldTitle')}>
-              <StudioInput value={cfg.relatedArticles.title} onChange={v => patch(c => ({ ...c, relatedArticles: { ...c.relatedArticles, title: v } }))} placeholder="Articles similaires" />
+              <StudioInput value={cfg.relatedArticles.title} onChange={v => patch(c => ({ ...c, relatedArticles: { ...c.relatedArticles, title: v } }))} placeholder={ts('placeholderRelatedTitle')} />
             </StudioField>
             <StudioField label={ts('fieldArticleCount')}>
               <input

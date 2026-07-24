@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { EditorialHeader, EditorialFooter } from '../editorial/EditorialShared';
 import { MagazineHeader, MagazineFooter } from '../magazine/MagazineShared';
@@ -15,12 +16,13 @@ interface Props {
 }
 
 const STEPS = [
-  { step: '1', title: 'Submit your ad', desc: 'Fill in the form below with your ad details and target URL.' },
-  { step: '2', title: 'Manual review', desc: 'The blog owner reviews your submission and approves or rejects it.' },
-  { step: '3', title: 'Go live', desc: "Once approved, your ad goes live and starts reaching readers." },
+  { step: '1', titleKey: 'advertiseStep1Title', descKey: 'advertiseStep1Desc' },
+  { step: '2', titleKey: 'advertiseStep2Title', descKey: 'advertiseStep2Desc' },
+  { step: '3', titleKey: 'advertiseStep3Title', descKey: 'advertiseStep3Desc' },
 ];
 
 export default function AdvertisePage({ blog, categories, basePath }: Props) {
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#6366f1';
   const shared = { blog, categories, basePath, primaryColor };
 
@@ -67,12 +69,12 @@ export default function AdvertisePage({ blog, categories, basePath }: Props) {
               <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
               </svg>
-              Advertise with us
+              {t('advertiseWithUsBadge')}
             </div>
             <h1 className="text-3xl sm:text-4xl font-black text-zinc-900 leading-tight mb-4">
-              Reach the{' '}
+              {t('advertiseHeroTitlePrefix')}{' '}
               <span style={{ color: primaryColor }}>{blog.name}</span>{' '}
-              audience
+              {t('advertiseHeroTitleSuffix')}
             </h1>
             {blog.description && (
               <p className="text-base text-zinc-500 max-w-lg mx-auto leading-relaxed">
@@ -91,8 +93,8 @@ export default function AdvertisePage({ blog, categories, basePath }: Props) {
                 >
                   {s.step}
                 </div>
-                <p className="text-sm font-bold text-zinc-800 mb-1.5">{s.title}</p>
-                <p className="text-xs text-zinc-400 leading-relaxed">{s.desc}</p>
+                <p className="text-sm font-bold text-zinc-800 mb-1.5">{t(s.titleKey)}</p>
+                <p className="text-xs text-zinc-400 leading-relaxed">{t(s.descKey)}</p>
               </div>
             ))}
           </div>

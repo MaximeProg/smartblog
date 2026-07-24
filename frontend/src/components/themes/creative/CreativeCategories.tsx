@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { type CSSProperties } from 'react';
+import { useTranslations } from 'next-intl';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
 import { AdRotator } from '../shared/AdRotator';
@@ -24,6 +25,7 @@ const GRADIENTS = [
 ];
 
 export default function CreativeCategories({ blog, categories, articles: _articles, basePath }: Props) {
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#7c3aed';
 
   return (
@@ -40,17 +42,17 @@ export default function CreativeCategories({ blog, categories, articles: _articl
             className="text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full mb-6 inline-block text-zinc-950"
             style={{ backgroundColor: primaryColor }}
           >
-            Explore
+            {t('explore')}
           </span>
-          <h1 className="text-6xl font-black text-white leading-none">Our Topics</h1>
+          <h1 className="text-6xl font-black text-white leading-none">{t('categoriesHeroTitle')}</h1>
         </div>
       </section>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
         {categories.length === 0 ? (
           <div className="bg-zinc-950 rounded-2xl p-20 text-center">
-            <p className="text-5xl font-black text-white mb-4">No topics yet</p>
-            <p className="text-zinc-500 text-lg">Categories will appear here once created.</p>
+            <p className="text-5xl font-black text-white mb-4">{t('noCategoriesYet')}</p>
+            <p className="text-zinc-500 text-lg">{t('noCategoriesYetDesc')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -83,7 +85,7 @@ export default function CreativeCategories({ blog, categories, articles: _articl
                 <div className="absolute bottom-0 left-0 right-0 p-6">
                   <h2 className="text-2xl font-black text-white mb-1">{c.name}</h2>
                   <p className="text-white/60 text-sm">
-                    {c.articles_count} {c.articles_count === 1 ? 'article' : 'articles'}
+                    {c.articles_count !== 1 ? t('articleCountPlural', { count: c.articles_count }) : t('articleCount', { count: c.articles_count })}
                   </p>
                   {c.description && (
                     <p className="text-white/50 text-xs line-clamp-1 mt-1">{c.description}</p>

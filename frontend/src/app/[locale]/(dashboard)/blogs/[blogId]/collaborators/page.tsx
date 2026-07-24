@@ -10,10 +10,10 @@ import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
 import type { UserRole } from '@/types';
 
-const ROLES: { value: UserRole; labelKey: string; desc: string; icon: React.ElementType; color: string; bg: string; border: string }[] = [
-  { value: 'EDITOR',  labelKey: 'collabRoleEditor',  desc: 'Crée, édite et publie directement.',          icon: Edit3,   color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/30', border: 'border-violet-200 dark:border-violet-700' },
-  { value: 'AUTHOR',  labelKey: 'collabRoleAuthor',  desc: 'Rédige et soumet pour approbation.',           icon: Feather,  color: 'text-blue-600 dark:text-blue-400',   bg: 'bg-blue-50 dark:bg-blue-900/30',     border: 'border-blue-200 dark:border-blue-700'   },
-  { value: 'VIEWER',  labelKey: 'collabRoleViewer',  desc: 'Accès lecture seule au dashboard.',            icon: Eye,      color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-100 dark:bg-slate-700',     border: 'border-slate-200 dark:border-slate-600' },
+const ROLES: { value: UserRole; labelKey: string; descKey: string; icon: React.ElementType; color: string; bg: string; border: string }[] = [
+  { value: 'EDITOR',  labelKey: 'collabRoleEditor',  descKey: 'collabRoleEditorDesc',  icon: Edit3,   color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/30', border: 'border-violet-200 dark:border-violet-700' },
+  { value: 'AUTHOR',  labelKey: 'collabRoleAuthor',  descKey: 'collabRoleAuthorDesc',  icon: Feather,  color: 'text-blue-600 dark:text-blue-400',   bg: 'bg-blue-50 dark:bg-blue-900/30',     border: 'border-blue-200 dark:border-blue-700'   },
+  { value: 'VIEWER',  labelKey: 'collabRoleViewer',  descKey: 'collabRoleViewerDesc',  icon: Eye,      color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-100 dark:bg-slate-700',     border: 'border-slate-200 dark:border-slate-600' },
 ];
 
 function getInitials(name: string | null, email: string) {
@@ -176,7 +176,7 @@ export default function CollaboratorsPage() {
                   type="email"
                   value={inviteEmail}
                   onChange={e => setInviteEmail(e.target.value)}
-                  placeholder="collaborateur@email.com"
+                  placeholder={ts('placeholderCollaboratorEmail')}
                   className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900/30 focus:border-blue-400 dark:focus:border-blue-600 transition-colors"
                 />
               </div>
@@ -207,7 +207,7 @@ export default function CollaboratorsPage() {
                   onClick={() => setShowInviteForm(false)}
                   className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 text-[12px] text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                 >
-                  Annuler
+                  {ts('cancel')}
                 </button>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function CollaboratorsPage() {
                     </div>
                     <div>
                       <p className={`text-[11px] font-bold ${inviteRole === r.value ? r.color : 'text-slate-700 dark:text-slate-300'}`}>{ts(r.labelKey)}</p>
-                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 leading-snug">{r.desc}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 leading-snug">{ts(r.descKey)}</p>
                     </div>
                   </div>
                 );
@@ -237,7 +237,7 @@ export default function CollaboratorsPage() {
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden">
             <div className="px-5 py-3.5 border-b border-slate-100 dark:border-slate-700/60 flex items-center gap-2">
               <Crown className="h-3.5 w-3.5 text-amber-500" />
-              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Administrateurs</p>
+              <p className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{ts('administrators')}</p>
             </div>
             <div className="divide-y divide-slate-100 dark:divide-slate-700/60">
               {adminMembers.map(m => (
@@ -320,7 +320,7 @@ export default function CollaboratorsPage() {
                       <button
                         onClick={() => { setEditingUserId(m.user_id); setEditingRole(m.role); }}
                         className="flex items-center gap-1.5"
-                        title="Changer le rôle"
+                        title={ts('changeRole')}
                       >
                         <RoleBadge role={m.role} ts={ts} />
                       </button>
@@ -370,7 +370,7 @@ export default function CollaboratorsPage() {
                   </div>
                   <RoleBadge role={inv.role} ts={ts} />
                   <span className="text-[9px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded-full ml-1">
-                    En attente
+                    {ts('pendingInvite')}
                   </span>
                 </div>
               ))}

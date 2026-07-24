@@ -11,27 +11,27 @@ const PAGE_SIZE = 15;
 
 type Level = 'info' | 'success' | 'warning' | 'error';
 
-const ACTION_LABELS: Record<string, string> = {
-  'user.login':          'User login',
-  'user.logout':         'User logout',
-  'user.register':       'New registration',
-  'user.password_reset': 'Password reset',
-  'tenant.created':      'Blog created',
-  'tenant.deleted':      'Blog deleted',
-  'tenant.suspended':    'Blog suspended',
-  'tenant.reactivated':  'Blog reactivated',
-  'plan.upgraded':       'Plan upgrade',
-  'plan.downgraded':     'Plan downgrade',
-  'payment.completed':   'Payment completed',
-  'payment.pending':     'Payment pending',
-  'payment.failed':      'Payment failed',
-  'payment.refunded':    'Payment refunded',
-  'affiliate.cashout_requested': 'Cashout requested',
-  'affiliate.cashout_approved':  'Cashout approved',
-  'affiliate.cashout_rejected':  'Cashout rejected',
-  'admin.settings_updated':      'Settings updated',
-  'admin.plan_updated':          'Plan updated',
-  'admin.plan_created':          'Plan created',
+const ACTION_LABEL_KEYS: Record<string, string> = {
+  'user.login':          'action_user_login',
+  'user.logout':         'action_user_logout',
+  'user.register':       'action_user_register',
+  'user.password_reset': 'action_user_password_reset',
+  'tenant.created':      'action_tenant_created',
+  'tenant.deleted':      'action_tenant_deleted',
+  'tenant.suspended':    'action_tenant_suspended',
+  'tenant.reactivated':  'action_tenant_reactivated',
+  'plan.upgraded':       'action_plan_upgraded',
+  'plan.downgraded':     'action_plan_downgraded',
+  'payment.completed':   'action_payment_completed',
+  'payment.pending':     'action_payment_pending',
+  'payment.failed':      'action_payment_failed',
+  'payment.refunded':    'action_payment_refunded',
+  'affiliate.cashout_requested': 'action_affiliate_cashout_requested',
+  'affiliate.cashout_approved':  'action_affiliate_cashout_approved',
+  'affiliate.cashout_rejected':  'action_affiliate_cashout_rejected',
+  'admin.settings_updated':      'action_admin_settings_updated',
+  'admin.plan_updated':          'action_admin_plan_updated',
+  'admin.plan_created':          'action_admin_plan_created',
 };
 
 const LEVEL_META: Record<Level, { icon: typeof Info; cls: string }> = {
@@ -135,7 +135,7 @@ export default function LogsPage() {
                   </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-semibold" style={{ color: 'var(--sa-text)' }}>{ACTION_LABELS[log.action] ?? log.action}</span>
+                      <span className="text-[11px] font-semibold" style={{ color: 'var(--sa-text)' }}>{ACTION_LABEL_KEYS[log.action] ? tl(ACTION_LABEL_KEYS[log.action] as any) : log.action}</span>
                       <span className="text-[10px]" style={{ color: 'var(--sa-text-3)' }}>— {log.actor}</span>
                     </div>
                     <p className="text-[10px] mt-0.5" style={{ color: 'var(--sa-text-3)' }}>{log.details}</p>

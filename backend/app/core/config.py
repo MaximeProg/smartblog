@@ -117,6 +117,12 @@ class Settings(BaseSettings):
     # Plateforme
     PLATFORM_DOMAIN: str = "smarterbloggers.com"
     PLATFORM_API_DOMAIN: str = "api.smarterbloggers.com"
+    # Tenant "sentinelle" représentant le site principal lui-même — permet aux
+    # pubs achetées sur smarterbloggers.com de réutiliser tel quel toute la
+    # chaîne de paiement/modération construite autour d'un tenant_id (voir
+    # migration 058_main_site_ads.py). Jamais de TenantUser créé pour ce
+    # tenant : seul un super admin peut le gérer (voir tenants.py::_assert_member).
+    PLATFORM_TENANT_ID: str = "00000000-0000-0000-0000-000000000001"
 
     # Vercel (custom domain registration)
     VERCEL_TOKEN: str = ""

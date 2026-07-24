@@ -141,15 +141,15 @@ export default function TenantsPage() {
 
   const mutSuspend  = useMutation({
     mutationFn: (id: string) => superadminApi.suspendTenant(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['superadmin-tenants'] }); setCfm(null); toast({ title: '✓', description: 'Blog suspended.' }); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['superadmin-tenants'] }); setCfm(null); toast({ title: '✓', description: t('tenants.blogSuspendedToast') }); },
   });
   const mutActivate = useMutation({
     mutationFn: (id: string) => superadminApi.activateTenant(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['superadmin-tenants'] }); setCfm(null); toast({ title: '✓', description: 'Blog activated.' }); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['superadmin-tenants'] }); setCfm(null); toast({ title: '✓', description: t('tenants.blogActivatedToast') }); },
   });
   const mutDelete   = useMutation({
     mutationFn: (id: string) => superadminApi.deleteTenant(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['superadmin-tenants'] }); setCfm(null); toast({ title: '✓', description: 'Blog deleted.' }); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['superadmin-tenants'] }); setCfm(null); toast({ title: '✓', description: t('tenants.blogDeletedToast') }); },
   });
   const mutPlan = useMutation({
     mutationFn: ({ id, plan }: { id: string; plan: string }) => superadminApi.changePlan(id, plan),

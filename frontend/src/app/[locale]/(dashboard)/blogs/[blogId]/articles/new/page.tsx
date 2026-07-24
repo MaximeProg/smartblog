@@ -21,20 +21,20 @@ const RichEditor = dynamic(() => import('@/components/editor/RichEditor').then(m
 import type { ArticleType } from '@/types';
 
 const TONES = [
-  { value: 'professional', label: 'Professionnel' },
-  { value: 'casual',       label: 'Décontracté' },
-  { value: 'educational',  label: 'Éducatif' },
-  { value: 'persuasive',   label: 'Persuasif' },
-  { value: 'informative',  label: 'Informatif' },
-];
+  { value: 'professional', labelKey: 'toneProfessional2' },
+  { value: 'casual',       labelKey: 'toneCasual' },
+  { value: 'educational',  labelKey: 'toneEducational2' },
+  { value: 'persuasive',   labelKey: 'tonePersuasive' },
+  { value: 'informative',  labelKey: 'toneInformative' },
+] as const;
 
 const LANGUAGES = [
-  { value: 'fr', label: 'Français' },
-  { value: 'en', label: 'Anglais' },
-  { value: 'es', label: 'Espagnol' },
-  { value: 'de', label: 'Allemand' },
-  { value: 'pt', label: 'Portugais' },
-];
+  { value: 'fr', labelKey: 'langFrench' },
+  { value: 'en', labelKey: 'langEnglish' },
+  { value: 'es', labelKey: 'langSpanish' },
+  { value: 'de', labelKey: 'langGerman' },
+  { value: 'pt', labelKey: 'langPortuguese' },
+] as const;
 
 const WORD_COUNTS = [500, 800, 1200, 2000];
 
@@ -119,9 +119,9 @@ export default function NewArticlePage() {
       if (generated.excerpt) setExcerpt(generated.excerpt);
       if (generated.content) setContent(generated.content);
       setShowAiPanel(false);
-      toast({ title: 'Article généré ! Relisez et ajustez avant de publier.' });
+      toast({ title: te('articleGeneratedToast') });
     } catch {
-      toast({ variant: 'destructive', title: 'Erreur lors de la génération IA.' });
+      toast({ variant: 'destructive', title: te('aiGenerationError') });
     } finally {
       setAiLoading(false);
     }
@@ -162,10 +162,10 @@ export default function NewArticlePage() {
       <div className="shrink-0 h-14 border-b border-slate-200/70 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-between px-6 gap-4 shadow-sm">
         <div className="flex items-center gap-3">
           <Link href={`/${locale}/blogs/${blogId}/articles`} className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-800 transition-colors">
-            <ArrowLeft className="h-3.5 w-3.5" /> Articles
+            <ArrowLeft className="h-3.5 w-3.5" /> {te('articlesBreadcrumb')}
           </Link>
           <span className="text-slate-300 dark:text-slate-600">/</span>
-          <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">Nouvel article</span>
+          <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">{te('newArticleBreadcrumb')}</span>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => { setPublish(false); mutation.mutate(); }} disabled={!canSave}
@@ -191,9 +191,9 @@ export default function NewArticlePage() {
           {aiBlocked ? (
             <div className="mb-8 w-full flex items-center gap-3 px-4 h-11 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30 text-slate-400 text-[13px]">
               <Lock className="h-4 w-4 shrink-0" />
-              <span className="font-semibold">Générer avec l'IA</span>
+              <span className="font-semibold">{te('generateWithAiBadge')}</span>
               <Link href={`/${locale}/subscription`} className="ml-auto text-[11px] font-bold text-blue-600 hover:underline whitespace-nowrap">
-                Passer au plan Starter →
+                {te('upgradeToStarterLink')}
               </Link>
             </div>
           ) : showAiPanel ? (
@@ -203,7 +203,7 @@ export default function NewArticlePage() {
                   <div className="h-7 w-7 rounded-xl bg-violet-600 flex items-center justify-center">
                     <Sparkles className="h-3.5 w-3.5 text-white" />
                   </div>
-                  <h3 className="text-[13px] font-bold text-violet-900 dark:text-violet-200">Générer un article avec l'IA</h3>
+                  <h3 className="text-[13px] font-bold text-violet-900 dark:text-violet-200">{te('generateArticleWithAiTitle')}</h3>
                 </div>
                 <button onClick={() => setShowAiPanel(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
                   <XIcon className="h-4 w-4" />
@@ -212,11 +212,11 @@ export default function NewArticlePage() {
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">Sujet de l'article *</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">{te('articleSubjectLabel')}</label>
                   <textarea
                     value={aiPrompt}
                     onChange={e => setAiPrompt(e.target.value)}
-                    placeholder="Ex : Les avantages du marketing de contenu pour les petites entreprises en 2025..."
+                    placeholder={te('articleSubjectPlaceholder')}
                     rows={3}
                     className="w-full px-3 py-2.5 rounded-xl border border-violet-200 dark:border-violet-700 bg-white dark:bg-slate-800 text-[13px] text-slate-700 dark:text-slate-300 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-none"
                   />
@@ -224,28 +224,28 @@ export default function NewArticlePage() {
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">Ton</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">{te('toneLabel')}</label>
                     <select value={aiTone} onChange={e => setAiTone(e.target.value)}
                       className="w-full h-9 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
-                      {TONES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                      {TONES.map(t => <option key={t.value} value={t.value}>{te(t.labelKey)}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">Langue</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">{te('aiLanguageLabel')}</label>
                     <select value={aiLang} onChange={e => setAiLang(e.target.value)}
                       className="w-full h-9 px-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
-                      {LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
+                      {LANGUAGES.map(l => <option key={l.value} value={l.value}>{te(l.labelKey)}</option>)}
                     </select>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">Longueur</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400 mb-1.5">{te('lengthLabel')}</label>
                   <div className="flex gap-1.5">
                     {WORD_COUNTS.map(n => (
                       <button key={n} type="button" onClick={() => setAiWords(n)}
                         className={`flex-1 h-8 rounded-xl text-[11px] font-bold border transition-all ${aiWords === n ? 'bg-violet-600 border-violet-600 text-white' : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-violet-300 bg-white dark:bg-slate-800'}`}>
-                        ~{n} mots
+                        {te('wordsUnit', { n })}
                       </button>
                     ))}
                   </div>
@@ -257,11 +257,11 @@ export default function NewArticlePage() {
                   className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-[13px] font-bold transition-colors disabled:opacity-50 shadow-sm"
                 >
                   {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                  {aiLoading ? 'Génération en cours…' : 'Générer l\'article'}
+                  {aiLoading ? te('generatingInProgress') : te('generateArticleButton')}
                 </button>
 
                 <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center">
-                  Relisez et ajustez toujours le contenu généré avant de publier.
+                  {te('reviewGeneratedContentHint')}
                 </p>
               </div>
             </div>
@@ -271,7 +271,7 @@ export default function NewArticlePage() {
               className="mb-8 w-full flex items-center justify-center gap-2 h-11 rounded-2xl border-2 border-dashed border-violet-200 dark:border-violet-800 text-violet-600 dark:text-violet-400 hover:border-violet-400 dark:hover:border-violet-600 hover:bg-violet-50/50 dark:hover:bg-violet-950/20 transition-all text-[13px] font-semibold"
             >
               <Sparkles className="h-4 w-4" />
-              Générer avec l'IA
+              {te('generateWithAiBadge')}
             </button>
           )}
 
@@ -285,11 +285,11 @@ export default function NewArticlePage() {
 
           {/* Slug */}
           <div className="flex items-center gap-2 mb-6">
-            <span className="text-[11px] text-slate-400">Slug :</span>
+            <span className="text-[11px] text-slate-400">{te('slugLabel')}</span>
             <input
               value={slug}
               onChange={e => { setSlug(e.target.value); setSlugManual(true); }}
-              placeholder="mon-article"
+              placeholder={te('slugPlaceholder')}
               className="flex-1 h-7 px-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-mono text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>

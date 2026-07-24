@@ -202,11 +202,11 @@ function CampaignModal({ blogId, onClose, initialName = '', initialSubject = '',
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 type Tab = 'subscribers' | 'campaigns';
-const SUB_FILTERS: { key: SubscriberStatus | 'all'; label: string }[] = [
-  { key: 'all',          label: 'All' },
-  { key: 'active',       label: 'Active' },
-  { key: 'pending',      label: 'Pending' },
-  { key: 'unsubscribed', label: 'Unsubscribed' },
+const SUB_FILTERS: { key: SubscriberStatus | 'all'; labelKey: string }[] = [
+  { key: 'all',          labelKey: 'filterAll' },
+  { key: 'active',       labelKey: 'status_active' },
+  { key: 'pending',      labelKey: 'status_pending' },
+  { key: 'unsubscribed', labelKey: 'status_unsubscribed' },
 ];
 
 interface ModalPrefill { name: string; subject: string; body: string }
@@ -389,7 +389,7 @@ function NewsletterPageInner() {
                   {SUB_FILTERS.map(f => (
                     <button key={f.key} onClick={() => setSubFilter(f.key)}
                       className={`h-7 px-3 rounded-lg text-[11px] font-semibold transition-all ${subFilter === f.key ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}>
-                      {f.label}
+                      {t(f.labelKey as any)}
                     </button>
                   ))}
                 </div>
@@ -449,7 +449,7 @@ function NewsletterPageInner() {
                           {[s.first_name, s.last_name].filter(Boolean).join(' ') || '—'}
                         </span>
                         <span className={`inline-flex items-center h-5 px-2 rounded-full text-[10px] font-bold border w-fit ${STATUS_COLOR[s.status]}`}>
-                          {s.status}
+                          {t(`status_${s.status}` as any)}
                         </span>
                         <span className="text-[11px] text-slate-400 dark:text-slate-500">{fmtDate(s.created_at)}</span>
                       </div>
@@ -484,7 +484,7 @@ function NewsletterPageInner() {
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="text-[13px] font-bold text-slate-800 dark:text-slate-200 truncate">{c.name}</p>
                         <span className={`inline-flex items-center h-5 px-2 rounded-full text-[10px] font-bold border shrink-0 ${CAMPAIGN_STATUS_COLOR[c.status]}`}>
-                          {c.status}
+                          {t(`status_${c.status}` as any)}
                         </span>
                         {c.is_paid && (
                           <span className="inline-flex items-center gap-1 h-5 px-2 rounded-full text-[10px] font-bold border shrink-0 bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800">

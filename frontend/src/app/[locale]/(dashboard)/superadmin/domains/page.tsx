@@ -28,6 +28,7 @@ const ORDER_STATUS_COLOR: Record<string, string> = {
 };
 
 function DomainRow({ d }: { d: SuperAdminDomainView }) {
+  const t = useTranslations('superAdmin');
   const [expanded, setExpanded] = useState(false);
 
   const { data: detail, isFetching } = useQuery({
@@ -68,7 +69,7 @@ function DomainRow({ d }: { d: SuperAdminDomainView }) {
         )}
         {d.order_status && (
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${ORDER_STATUS_COLOR[d.order_status] ?? ''}`}>
-            {d.order_status}
+            {t(`domains.status_${d.order_status}` as any)}
           </span>
         )}
         {expanded ? <ChevronUp className="h-4 w-4 shrink-0" style={{ color: 'var(--sa-text-3)' }} />
@@ -84,23 +85,23 @@ function DomainRow({ d }: { d: SuperAdminDomainView }) {
               {failed && (
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-[12px] text-red-500">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
-                  Registration failed — see order details below.
+                  {t('domains.registrationFailedNote')}
                 </div>
               )}
 
               {detail.orders.length > 0 && (
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: 'var(--sa-text-3)' }}>Orders</p>
+                  <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: 'var(--sa-text-3)' }}>{t('domains.ordersLabel')}</p>
                   <div className="space-y-1.5">
                     {detail.orders.map((o) => (
                       <div key={o.id} className="flex items-center gap-2 text-[12px] p-2 rounded-lg" style={{ background: 'var(--sa-surface)' }}>
-                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${ORDER_STATUS_COLOR[o.status] ?? ''}`}>{o.status}</span>
-                        <span style={{ color: 'var(--sa-text-2)' }}>{o.years} yr</span>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${ORDER_STATUS_COLOR[o.status] ?? ''}`}>{t(`domains.status_${o.status}` as any)}</span>
+                        <span style={{ color: 'var(--sa-text-2)' }}>{o.years} {t('domains.yearsUnit')}</span>
                         {o.purchase_price != null && <span style={{ color: 'var(--sa-text-2)' }}>${o.purchase_price.toFixed(2)}</span>}
                         <span style={{ color: 'var(--sa-text-3)' }}>{fmtDate(o.created_at)}</span>
                         {o.transaction_id && (
                           <span className="flex items-center gap-1 text-[11px]" style={{ color: 'var(--sa-text-3)' }}>
-                            <ExternalLink className="h-3 w-3" /> tx {o.transaction_id.slice(0, 8)}
+                            <ExternalLink className="h-3 w-3" /> {t('domains.txLabel')} {o.transaction_id.slice(0, 8)}
                           </span>
                         )}
                         {o.error_message && <span className="text-red-500 truncate">{o.error_message}</span>}
@@ -112,7 +113,7 @@ function DomainRow({ d }: { d: SuperAdminDomainView }) {
 
               {detail.logs.length > 0 && (
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: 'var(--sa-text-3)' }}>Activity log</p>
+                  <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: 'var(--sa-text-3)' }}>{t('domains.activityLogLabel')}</p>
                   <div className="space-y-1">
                     {detail.logs.map((l, i) => (
                       <div key={i} className="text-[11.5px] flex items-start gap-2" style={{ color: 'var(--sa-text-3)' }}>
@@ -156,8 +157,8 @@ export default function SuperAdminDomainsPage() {
 
   const TABS = [
     { key: '', label: t('common.all') },
-    { key: 'purchased', label: 'Purchased' },
-    { key: 'external', label: 'External' },
+    { key: 'purchased', label: t('domains.tabPurchased') },
+    { key: 'external', label: t('domains.tabExternal') },
   ];
 
   return (
@@ -169,9 +170,9 @@ export default function SuperAdminDomainsPage() {
             <Globe className="h-5 w-5" style={{ color: '#6366f1' }} />
           </div>
           <div>
-            <h1 className="text-[20px] font-black" style={{ color: 'var(--sa-text)' }}>Domains</h1>
+            <h1 className="text-[20px] font-black" style={{ color: 'var(--sa-text)' }}>{t('domains.title')}</h1>
             <p className="text-[12px] mt-0.5" style={{ color: 'var(--sa-text-3)' }}>
-              {isLoading ? t('common.loading') : `${total} domain(s) across all blogs`}
+              {isLoading ? t('common.loading') : t('domains.domainsCount', { count: total })}
             </p>
           </div>
         </div>
@@ -201,7 +202,7 @@ export default function SuperAdminDomainsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') { setSearchSubmitted(search.trim()); setPage(1); } }}
-            placeholder="Search domain…"
+            placeholder={t('domains.searchPlaceholder')}
             className="h-8 pl-8 pr-3 rounded-lg border text-[12px] bg-transparent focus:outline-none"
             style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text)' }}
           />
@@ -216,7 +217,7 @@ export default function SuperAdminDomainsPage() {
       ) : domains.length === 0 ? (
         <div className="py-24 text-center">
           <Globe className="h-12 w-12 mx-auto mb-4" style={{ color: 'var(--sa-border)' }} />
-          <p className="text-[14px] font-bold" style={{ color: 'var(--sa-text-3)' }}>No domains found.</p>
+          <p className="text-[14px] font-bold" style={{ color: 'var(--sa-text-3)' }}>{t('domains.noDomainsFound')}</p>
         </div>
       ) : (
         <>

@@ -531,6 +531,42 @@ async def compute_and_accrue_commissions(
             await _accrue_commission(db, rel.ancestor_user_id, source_user_id, commission_source, source_transaction_id, rel.level, gross_amount, per_level_amount)
 
 
+async def compute_and_accrue_fixed_level_commissions(
+    db,
+    source_user_id: uuid.UUID,
+    source_type,
+    source_transaction_id: str,
+    gross_amount: float,
+    level_percentages: dict[int, float],
+):
+    """
+    Variante de compute_and_accrue_commissions pour les pubs achetées sur le
+    site principal smarterbloggers.com (voir ads.py::platform_ads_router).
+    Contrairement au modèle "pool" ci-dessus (20%/10% du montant, splitté
+    50/50 entre L1 et L2-10), ici chaque niveau reçoit un pourcentage fixe et
+    indépendant du gross_amount (ex: {1: 0.10, 2: 0.01, ..., 10: 0.01}) — pas
+    de pool à répartir. Un niveau sans ancêtre (annonceur avec moins de 10
+    parrains dans sa lignée) ne redistribue rien : sa part reste simplement
+    à la plateforme, exactement comme pour la fonction existante ci-dessus.
+
+    Ne modifie ni compute_and_accrue_commissions ni ses appelants existants.
+    """
+    ancestors_q = await db.execute(
+        select(AffiliateRelationship)
+        .where(AffiliateRelationship.descendant_user_id == source_user_id)
+        .order_by(AffiliateRelationship.level)
+    )
+    ancestors = {a.level: a for a in ancestors_q.scalars().all()}
+
+    for level, pct in level_percentages.items():
+        rel = ancestors.get(level)
+        if not rel or pct <= 0:
+            continue
+        amount = round(gross_amount * pct, 4)
+        if amount > 0:
+            await _accrue_commission(db, rel.ancestor_user_id, source_user_id, source_type, source_transaction_id, level, gross_amount, amount)
+
+
 async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type, source_transaction_id, level, gross_amount, commission_amount):
     user = await db.get(User, affiliate_user_id)
     if not user:

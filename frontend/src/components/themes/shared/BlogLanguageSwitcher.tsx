@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Languages, Check, Search } from 'lucide-react';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
@@ -31,6 +32,7 @@ interface Props {
  * prop-driller `lang` à travers chaque page/thème.
  */
 export function BlogLanguageSwitcher({ sourceLang, enabledLanguages, basePath = '', className }: Props) {
+  const t = useTranslations('publicBlog');
   const pathname = usePathname() || '/';
   const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState('');
@@ -109,13 +111,13 @@ export function BlogLanguageSwitcher({ sourceLang, enabledLanguages, basePath = 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.stopPropagation()}
-            placeholder="Search..."
+            placeholder={t('searchPlaceholder')}
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </div>
         <div className="max-h-64 overflow-y-auto p-1">
           {filteredLangs.length === 0 && (
-            <p className="px-2.5 py-2 text-sm text-muted-foreground">No match</p>
+            <p className="px-2.5 py-2 text-sm text-muted-foreground">{t('noMatch')}</p>
           )}
           {filteredLangs.map((l) => (
             <DropdownMenuItem key={l.code} asChild className="flex items-center gap-2.5 cursor-pointer">

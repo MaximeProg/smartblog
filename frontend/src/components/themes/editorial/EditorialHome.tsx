@@ -3,6 +3,7 @@ import { useState, useCallback, type CSSProperties, type FormEvent } from 'react
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { ArrowRight, BookOpen, Clock } from 'lucide-react';
 import type { HomeProps } from '../ThemeRenderer';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
@@ -20,9 +21,9 @@ const cardGradients = [
   'from-rose-50 to-rose-100',
 ];
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function initials(name: string | null) {
@@ -51,6 +52,7 @@ export default function EditorialHome({
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const basePath = baseProp !== undefined
     ? baseProp
     : previewSlug
@@ -88,17 +90,17 @@ export default function EditorialHome({
 
   const homeCfg = blog.template_config?.home;
   const showHero = homeCfg?.hero?.enabled !== false;
-  const heroTitle = homeCfg?.hero?.sectionTitle || 'Featured Story';
+  const heroTitle = homeCfg?.hero?.sectionTitle || t('featuredNews');
   const showLatest = homeCfg?.latest?.enabled !== false;
-  const latestTitle = homeCfg?.latest?.sectionTitle || 'Latest Stories';
+  const latestTitle = homeCfg?.latest?.sectionTitle || t('recentArticles');
   const showNewsletter = homeCfg?.newsletter?.enabled !== false;
-  const newsletterTitle = homeCfg?.newsletter?.title || 'Never miss a story';
-  const newsletterDesc = homeCfg?.newsletter?.description || `Get the best of ${blog.name} delivered to your inbox every week.`;
-  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
-  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
-  const newsletterDisclaimer = homeCfg?.newsletter?.disclaimer || 'No spam. Unsubscribe anytime.';
+  const newsletterTitle = homeCfg?.newsletter?.title || t('stayInformed');
+  const newsletterDesc = homeCfg?.newsletter?.description || t('subscribeDesc');
+  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || t('subscribeButton');
+  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || t('emailPlaceholder');
+  const newsletterDisclaimer = homeCfg?.newsletter?.disclaimer || t('noSpam');
   const showCategoriesStrip = homeCfg?.categoriesStrip?.enabled !== false;
-  const categoriesStripLabel = homeCfg?.categoriesStrip?.label || 'Explore Topics';
+  const categoriesStripLabel = homeCfg?.categoriesStrip?.label || t('explore');
 
   const sidebarCfg = homeCfg?.sidebar;
 
@@ -181,7 +183,7 @@ export default function EditorialHome({
                   <p className="font-semibold text-sm text-zinc-900 leading-tight">
                     {featuredArticle.author_name || blog.name}
                   </p>
-                  <p className="text-xs text-zinc-400">{formatDate(featuredArticle.published_at)}</p>
+                  <p className="text-xs text-zinc-400">{formatDate(featuredArticle.published_at, locale)}</p>
                 </div>
               </div>
               <Link
@@ -189,7 +191,7 @@ export default function EditorialHome({
                 className="inline-flex items-center gap-2 mt-5 text-sm font-bold hover:gap-3 transition-all"
                 style={{ color: primaryColor }}
               >
-                Read Article <ArrowRight className="h-4 w-4" />
+                {t('readMore')} <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
@@ -203,13 +205,13 @@ export default function EditorialHome({
             href={basePath || "/"}
             className="text-xs text-zinc-400 hover:text-zinc-900 transition-colors inline-flex items-center gap-1 mb-6"
           >
-            ← All stories
+            ← {t('backToHome')}
           </Link>
           <h2 className="text-3xl font-bold text-zinc-900 mb-2">
-            {filteredCategory?.name ?? searchQuery ?? 'Results'}
+            {filteredCategory?.name ?? searchQuery ?? t('searchResults')}
           </h2>
           <p className="text-sm text-zinc-400">
-            {articles.length} article{articles.length !== 1 ? 's' : ''} found
+            {articles.length} {articles.length !== 1 ? t('articleCountPlural', { count: '' }).replace('{count} ', '') : t('articleCount', { count: '' }).replace('{count} ', '')}
           </p>
         </div>
       )}
@@ -217,20 +219,20 @@ export default function EditorialHome({
       {articles.length === 0 && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-24 text-center">
           <BookOpen className="h-14 w-14 mx-auto mb-5 text-zinc-200" />
-          <p className="text-xl font-bold text-zinc-400 mb-2">No articles yet</p>
-          <p className="text-sm text-zinc-400">Check back soon for new stories.</p>
+          <p className="text-xl font-bold text-zinc-400 mb-2">{t('noArticles')}</p>
+          <p className="text-sm text-zinc-400">{t('noArticlesDesc')}</p>
         </div>
       )}
 
       {articles.length > 0 && showLatest && (
         <div className="max-w-6xl mx-auto px-4 sm:px-6 mt-14 mb-8 flex items-center gap-4">
           {isFiltered ? (
-            <h2 className="text-xs font-black uppercase tracking-widest text-zinc-900 whitespace-nowrap">Results</h2>
+            <h2 className="text-xs font-black uppercase tracking-widest text-zinc-900 whitespace-nowrap">{t('searchResults')}</h2>
           ) : (
             <InlineEditable path="template_config.home.latest.sectionTitle" value={latestTitle} editMode={editMode} tag="h2" className="text-xs font-black uppercase tracking-widest text-zinc-900 whitespace-nowrap" />
           )}
           <div className="flex-1 h-px bg-zinc-200" />
-          <span className="text-xs text-zinc-400">{gridArticles.length} articles</span>
+          <span className="text-xs text-zinc-400">{gridArticles.length !== 1 ? t('articleCountPlural', { count: gridArticles.length }) : t('articleCount', { count: gridArticles.length })}</span>
         </div>
       )}
 
@@ -282,12 +284,12 @@ export default function EditorialHome({
               <div className="flex items-center gap-2 text-xs text-zinc-400 mt-auto pt-2 border-t border-zinc-100 flex-wrap">
                 {a.author_name && <span>{a.author_name}</span>}
                 {a.author_name && <span>·</span>}
-                <span>{formatDate(a.published_at)}</span>
+                <span>{formatDate(a.published_at, locale)}</span>
                 {a.reading_time_minutes && (
                   <>
                     <span>·</span>
                     <Clock className="h-3 w-3" />
-                    <span>{a.reading_time_minutes} min read</span>
+                    <span>{t('minRead', { min: a.reading_time_minutes })}</span>
                   </>
                 )}
               </div>
@@ -318,7 +320,7 @@ export default function EditorialHome({
             <InlineEditable path="template_config.home.newsletter.title" value={newsletterTitle} editMode={editMode} tag="h2" className="text-3xl font-bold text-white mb-3" />
             <InlineEditable path="template_config.home.newsletter.description" value={newsletterDesc} editMode={editMode} tag="p" className="text-zinc-400 text-base mb-8 max-w-md mx-auto" multiline />
             {subStatus === 'ok' ? (
-              <p className="text-sm font-medium text-emerald-400">You&apos;re subscribed. Thank you!</p>
+              <p className="text-sm font-medium text-emerald-400">{t('subscribeSuccess')}</p>
             ) : (
               <form onSubmit={handleSubscribe} className="flex max-w-md mx-auto gap-0">
                 <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
@@ -331,7 +333,7 @@ export default function EditorialHome({
                 </button>
               </form>
             )}
-            {subStatus === 'error' && <p className="text-xs text-red-400 mt-3">Something went wrong. Please try again.</p>}
+            {subStatus === 'error' && <p className="text-xs text-red-400 mt-3">{t('subscribeError')}</p>}
             {newsletterDisclaimer && <p className="text-xs text-zinc-600 mt-4">{newsletterDisclaimer}</p>}
           </div>
         </div>

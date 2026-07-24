@@ -2,6 +2,7 @@
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { AdRotator } from '../shared/AdRotator';
@@ -14,6 +15,7 @@ interface CategoriesProps {
 }
 
 export default function MagazineCategories({ blog, categories, articles, basePath }: CategoriesProps) {
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#e11d48';
 
   return (
@@ -27,9 +29,9 @@ export default function MagazineCategories({ blog, categories, articles, basePat
       <div className="border-t-4" style={{ borderColor: primaryColor }}>
         <div className="bg-zinc-950 py-12">
           <div className="max-w-6xl mx-auto px-4 sm:px-6">
-            <span className="text-[10px] font-black uppercase tracking-widest mb-4 block" style={{ color: primaryColor }}>All Topics</span>
-            <h1 className="text-5xl font-black text-white leading-tight mb-3">Explore Our Coverage</h1>
-            <p className="text-zinc-400 text-lg">{categories.length} topic{categories.length !== 1 ? 's' : ''} — {articles.length} article{articles.length !== 1 ? 's' : ''}</p>
+            <span className="text-[10px] font-black uppercase tracking-widest mb-4 block" style={{ color: primaryColor }}>{t('allCategoriesLink')}</span>
+            <h1 className="text-5xl font-black text-white leading-tight mb-3">{t('categoriesHeroTitle')}</h1>
+            <p className="text-zinc-400 text-lg">{categories.length} {categories.length !== 1 ? t('topics') : t('topic')} — {articles.length !== 1 ? t('articleCountPlural', { count: articles.length }) : t('articleCount', { count: articles.length })}</p>
           </div>
         </div>
       </div>
@@ -37,7 +39,7 @@ export default function MagazineCategories({ blog, categories, articles, basePat
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
         {categories.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-lg font-bold text-zinc-300">No topics yet. Check back soon.</p>
+            <p className="text-lg font-bold text-zinc-300">{t('noCategoriesYet')}. {t('noCategoriesYetDesc')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -69,9 +71,9 @@ export default function MagazineCategories({ blog, categories, articles, basePat
                     )}
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100">
                       <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: primaryColor }}>
-                        {c.articles_count} {c.articles_count === 1 ? 'article' : 'articles'}
+                        {c.articles_count !== 1 ? t('articleCountPlural', { count: c.articles_count }) : t('articleCount', { count: c.articles_count })}
                       </span>
-                      <span className="text-xs text-zinc-400 group-hover:text-zinc-900 transition-colors">Explore →</span>
+                      <span className="text-xs text-zinc-400 group-hover:text-zinc-900 transition-colors">{t('exploreCategory')} →</span>
                     </div>
                   </div>
                 </Link>

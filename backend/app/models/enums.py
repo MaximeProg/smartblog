@@ -195,6 +195,7 @@ class DomainOrderStatus(str, enum.Enum):
 class AffiliateCommissionSource(str, enum.Enum):
     SUBSCRIPTION = "subscription"
     AD_SLOT = "ad_slot"
+    MAIN_SITE_AD = "main_site_ad"
 
 
 class AffiliateCommissionStatus(str, enum.Enum):

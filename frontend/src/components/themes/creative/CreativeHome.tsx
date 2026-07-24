@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useCallback, type CSSProperties } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { HomeProps } from '../ThemeRenderer';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
 import { EditableSection } from '../shared/EditableSection';
@@ -20,9 +21,9 @@ const GRADIENTS = [
   'from-zinc-800 to-zinc-700',
 ];
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 export default function CreativeHome({
@@ -41,6 +42,7 @@ export default function CreativeHome({
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
   const primaryColor = blog.primary_color || '#7c3aed';
 
@@ -61,14 +63,14 @@ export default function CreativeHome({
 
   const homeCfg = blog.template_config?.home;
   const showHero = homeCfg?.hero?.enabled !== false;
-  const heroTitle = homeCfg?.hero?.sectionTitle || 'Featured';
+  const heroTitle = homeCfg?.hero?.sectionTitle || t('featuredNews');
   const showLatest = homeCfg?.latest?.enabled !== false;
-  const latestTitle = homeCfg?.latest?.sectionTitle || 'Latest Work';
+  const latestTitle = homeCfg?.latest?.sectionTitle || t('recentArticles');
   const showNewsletter = homeCfg?.newsletter?.enabled !== false;
   const newsletterTitle = homeCfg?.newsletter?.title || blog.name;
-  const newsletterDesc = homeCfg?.newsletter?.description || 'Join the creative community';
-  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
-  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
+  const newsletterDesc = homeCfg?.newsletter?.description || t('joinCommunity');
+  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || t('subscribeButton');
+  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || t('emailPlaceholder');
 
   const isFiltered = !!(currentCategory || searchQuery);
   const heroArticle = !isFiltered && showHero && articles.length > 0 ? articles[0] : null;
@@ -119,13 +121,13 @@ export default function CreativeHome({
                 </h1>
                 <div className="flex items-center gap-4 text-white/60 text-sm flex-wrap">
                   {heroArticle.author_name && <span>{heroArticle.author_name}</span>}
-                  {heroArticle.published_at && <span>{formatDate(heroArticle.published_at)}</span>}
+                  {heroArticle.published_at && <span>{formatDate(heroArticle.published_at, locale)}</span>}
                   {heroArticle.reading_time_minutes && (
-                    <span>{heroArticle.reading_time_minutes} min read</span>
+                    <span>{t('minRead', { min: heroArticle.reading_time_minutes })}</span>
                   )}
                 </div>
                 <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-white hover:text-[var(--cp)] transition-colors">
-                  Read Article →
+                  {t('readMore')} →
                 </span>
               </div>
             </div>
@@ -143,8 +145,8 @@ export default function CreativeHome({
       {articles.length === 0 ? (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 py-20">
           <div className="bg-zinc-950 rounded-2xl p-20 text-center">
-            <p className="text-5xl font-black text-white mb-4">No articles yet</p>
-            <p className="text-zinc-500 text-lg">Check back soon for new creative work.</p>
+            <p className="text-5xl font-black text-white mb-4">{t('noArticles')}</p>
+            <p className="text-zinc-500 text-lg">{t('noArticlesDesc')}</p>
           </div>
         </section>
       ) : (
@@ -154,21 +156,21 @@ export default function CreativeHome({
             <div className="flex items-center justify-between mb-8">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">
-                  {searchQuery ? `Results for "${searchQuery}"` : `Topic: ${currentCategory}`}
+                  {searchQuery ? `${t('searchResults')}: "${searchQuery}"` : `${t('categoryLabel')}: ${currentCategory}`}
                 </p>
-                <p className="text-xs text-zinc-300 mt-1">{articles.length} articles</p>
+                <p className="text-xs text-zinc-300 mt-1">{articles.length !== 1 ? t('articleCountPlural', { count: articles.length }) : t('articleCount', { count: articles.length })}</p>
               </div>
               <Link
                 href={basePath || "/"}
                 className="text-xs font-bold text-zinc-500 hover:text-zinc-900 transition-colors border border-zinc-200 rounded-full px-4 py-2"
               >
-                ← Back to all
+                ← {t('backToArticles')}
               </Link>
             </div>
           ) : (
             <div className="flex items-center justify-between mb-8">
               <InlineEditable path="template_config.home.latest.sectionTitle" value={latestTitle} editMode={editMode} tag="p" className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400" />
-              <p className="text-xs text-zinc-300">{gridArticles.length} articles</p>
+              <p className="text-xs text-zinc-300">{gridArticles.length !== 1 ? t('articleCountPlural', { count: gridArticles.length }) : t('articleCount', { count: gridArticles.length })}</p>
             </div>
           )}
 
@@ -215,7 +217,7 @@ export default function CreativeHome({
                     <p className="text-white/50 text-xs mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       {a.author_name && <span>{a.author_name}</span>}
                       {a.author_name && a.published_at && <span> · </span>}
-                      {a.published_at && <span>{formatDate(a.published_at)}</span>}
+                      {a.published_at && <span>{formatDate(a.published_at, locale)}</span>}
                     </p>
                   </div>
                 </Link>
@@ -231,7 +233,7 @@ export default function CreativeHome({
         <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 border-t border-zinc-100">
           <div className="flex items-center gap-3 overflow-x-auto pb-1">
             <span className="text-xs font-black uppercase tracking-widest text-zinc-400 shrink-0 mr-3">
-              Topics:
+              {t('topics')}:
             </span>
             {categories.map((cat) => (
               <Link

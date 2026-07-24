@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   CheckCircle2, AlertCircle, Loader2, ChevronLeft, ChevronRight,
   Globe, MapPin, CreditCard, FileText,
@@ -73,10 +74,10 @@ const COUNTRIES = [
 ];
 
 const STEPS = [
-  { id: 1, label: 'Ad Details',   icon: FileText },
-  { id: 2, label: 'Targeting',    icon: MapPin },
-  { id: 3, label: 'Payment',      icon: CreditCard },
-  { id: 4, label: 'Confirmation', icon: CheckCircle2 },
+  { id: 1, labelKey: 'adDetailsStepLabel',   icon: FileText },
+  { id: 2, labelKey: 'targetingStepLabel',   icon: MapPin },
+  { id: 3, labelKey: 'paymentStepLabel',     icon: CreditCard },
+  { id: 4, labelKey: 'confirmationStepLabel', icon: CheckCircle2 },
 ];
 
 // ── Small helpers ────────────────────────────────────────────────────────────
@@ -107,6 +108,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 // ── Step indicator ────────────────────────────────────────────────────────────
 
 function StepIndicator({ current, primaryColor }: { current: number; primaryColor: string }) {
+  const t = useTranslations('publicBlog');
   return (
     <div className="px-6 pt-6 pb-5 border-b border-zinc-100">
       <div className="flex items-center justify-between">
@@ -130,7 +132,7 @@ function StepIndicator({ current, primaryColor }: { current: number; primaryColo
                   className="hidden sm:block text-[10px] font-semibold whitespace-nowrap transition-colors duration-300"
                   style={{ color: active ? primaryColor : done ? '#64748b' : '#cbd5e1' }}
                 >
-                  {step.label}
+                  {t(step.labelKey)}
                 </span>
               </div>
               {i < STEPS.length - 1 && (
@@ -150,60 +152,61 @@ function StepIndicator({ current, primaryColor }: { current: number; primaryColo
 // ── Step 1 — Ad Details ───────────────────────────────────────────────────────
 
 function Step1({ form, set }: { form: FormState; set: (k: keyof FormState, v: string) => void }) {
+  const t = useTranslations('publicBlog');
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-[18px] font-black text-slate-900 mb-1">Ad Details</h2>
-        <p className="text-[13px] text-slate-400">Tell us about your ad and how to reach you.</p>
+        <h2 className="text-[18px] font-black text-slate-900 mb-1">{t('adDetailsStepLabel')}</h2>
+        <p className="text-[13px] text-slate-400">{t('adDetailsSubtitle')}</p>
       </div>
 
       <div className="space-y-4">
-        <SectionTitle>Your contact</SectionTitle>
+        <SectionTitle>{t('yourContactSectionTitle')}</SectionTitle>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Full name" required>
+          <Field label={t('contactNameLabel')} required>
             <input required value={form.advertiser_name} onChange={e => set('advertiser_name', e.target.value)}
-              placeholder="John Doe" className={INPUT} />
+              placeholder={t('contactNamePlaceholder')} className={INPUT} />
           </Field>
-          <Field label="Email address" required>
+          <Field label={t('emailAddressLabel')} required>
             <input required type="email" value={form.advertiser_email} onChange={e => set('advertiser_email', e.target.value)}
-              placeholder="john@company.com" className={INPUT} />
+              placeholder={t('contactEmailPlaceholder')} className={INPUT} />
           </Field>
         </div>
-        <Field label="Company / Brand">
+        <Field label={t('companyBrandLabel')}>
           <input value={form.advertiser_company} onChange={e => set('advertiser_company', e.target.value)}
-            placeholder="Acme Corp (optional)" className={INPUT} />
+            placeholder={t('companyBrandPlaceholder')} className={INPUT} />
         </Field>
       </div>
 
       <div className="space-y-4">
-        <SectionTitle>Ad content</SectionTitle>
-        <Field label="Ad headline" required hint="Short, catchy title (max 80 characters).">
+        <SectionTitle>{t('adContentSectionTitle')}</SectionTitle>
+        <Field label={t('adHeadlineLabel')} required hint={t('adHeadlineHint')}>
           <input required maxLength={80} value={form.title} onChange={e => set('title', e.target.value)}
-            placeholder="Discover the best tool for..." className={INPUT} />
+            placeholder={t('adHeadlinePlaceholder')} className={INPUT} />
         </Field>
-        <Field label="Description" hint="Brief description of your offer (max 200 characters).">
+        <Field label={t('adDescriptionLabel')} hint={t('adDescriptionHint')}>
           <textarea maxLength={200} rows={3} value={form.description}
             onChange={e => set('description', e.target.value)}
-            placeholder="Boost your productivity with our award-winning app…"
+            placeholder={t('adDescriptionPlaceholder')}
             className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-white text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors resize-none" />
         </Field>
-        <Field label="Ad image URL" hint="Direct link to your banner (recommended: 1200×628 px).">
+        <Field label={t('adImageUrlLabel')} hint={t('adImageUrlHint')}>
           <input type="url" value={form.image_url} onChange={e => set('image_url', e.target.value)}
             placeholder="https://yoursite.com/banner.jpg" className={INPUT} />
         </Field>
-        <Field label="Destination URL" required hint="Where should readers land when they click your ad?">
+        <Field label={t('destinationUrlLabel')} required hint={t('destinationUrlHint')}>
           <input required type="url" value={form.click_url} onChange={e => set('click_url', e.target.value)}
             placeholder="https://yoursite.com/landing" className={INPUT} />
         </Field>
       </div>
 
       <div className="space-y-4">
-        <SectionTitle>Campaign (optional)</SectionTitle>
+        <SectionTitle>{t('campaignOptionalSectionTitle')}</SectionTitle>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Start date">
+          <Field label={t('startDateLabel')}>
             <input type="date" value={form.starts_at} onChange={e => set('starts_at', e.target.value)} className={INPUT} />
           </Field>
-          <Field label="End date">
+          <Field label={t('endDateLabel')}>
             <input type="date" value={form.ends_at} onChange={e => set('ends_at', e.target.value)}
               min={form.starts_at || undefined} className={INPUT} />
           </Field>
@@ -215,28 +218,35 @@ function Step1({ form, set }: { form: FormState; set: (k: keyof FormState, v: st
 
 // ── Step 2 — Ad Targeting ────────────────────────────────────────────────────
 
-const SCOPE_OPTIONS: { value: TargetingScope; label: string; desc: string; icon: string }[] = [
-  { value: 'global',  label: 'Global',  desc: 'Your ad reaches all readers, everywhere.', icon: '🌍' },
-  { value: 'country', label: 'Country', desc: 'Target readers in a specific country.',     icon: '🏳️' },
-  { value: 'region',  label: 'Region',  desc: 'Focus on a state, province, or region.',   icon: '📍' },
-  { value: 'city',    label: 'City',    desc: 'Hyper-local targeting within a city.',      icon: '🏙️' },
+const SCOPE_OPTIONS: { value: TargetingScope; labelKey: string; descKey: string; icon: string }[] = [
+  { value: 'global',  labelKey: 'scopeGlobalLabel',  descKey: 'scopeGlobalDesc',  icon: '🌍' },
+  { value: 'country', labelKey: 'scopeCountryLabel', descKey: 'scopeCountryDesc', icon: '🏳️' },
+  { value: 'region',  labelKey: 'scopeRegionLabel',  descKey: 'scopeRegionDesc',  icon: '📍' },
+  { value: 'city',    labelKey: 'scopeCityLabel',    descKey: 'scopeCityDesc',    icon: '🏙️' },
 ];
+
+// Fixed English labels used only for the plain-text note sent to the backend API
+// (not user-facing UI — keep untranslated so submissions stay consistent for blog owners).
+const SCOPE_LABELS_EN: Record<TargetingScope, string> = {
+  global: 'Global', country: 'Country', region: 'Region', city: 'City',
+};
 
 function Step2({ form, set, primaryColor }: {
   form: FormState;
   set: (k: keyof FormState, v: string) => void;
   primaryColor: string;
 }) {
+  const t = useTranslations('publicBlog');
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-[18px] font-black text-slate-900 mb-1">Ad Targeting</h2>
-        <p className="text-[13px] text-slate-400">Choose where your ad should be displayed and your preferred currency.</p>
+        <h2 className="text-[18px] font-black text-slate-900 mb-1">{t('adTargetingTitle')}</h2>
+        <p className="text-[13px] text-slate-400">{t('adTargetingSubtitle')}</p>
       </div>
 
       {/* Scope selector */}
       <div className="space-y-3">
-        <SectionTitle>Display scope</SectionTitle>
+        <SectionTitle>{t('displayScopeSectionTitle')}</SectionTitle>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {SCOPE_OPTIONS.map(opt => {
             const active = form.targeting_scope === opt.value;
@@ -253,8 +263,8 @@ function Step2({ form, set, primaryColor }: {
               >
                 <span className="text-xl leading-none mt-0.5 shrink-0">{opt.icon}</span>
                 <div>
-                  <p className="text-sm font-bold text-slate-800">{opt.label}</p>
-                  <p className="text-xs text-slate-400 leading-snug mt-0.5">{opt.desc}</p>
+                  <p className="text-sm font-bold text-slate-800">{t(opt.labelKey)}</p>
+                  <p className="text-xs text-slate-400 leading-snug mt-0.5">{t(opt.descKey)}</p>
                 </div>
                 {active && (
                   <div
@@ -273,34 +283,34 @@ function Step2({ form, set, primaryColor }: {
       {/* Geo fields — shown based on scope */}
       {form.targeting_scope !== 'global' && (
         <div className="space-y-4">
-          <SectionTitle>Location details</SectionTitle>
-          <Field label="Country" required>
+          <SectionTitle>{t('locationDetailsSectionTitle')}</SectionTitle>
+          <Field label={t('scopeCountryLabel')} required>
             <select
               value={form.targeting_country}
               onChange={e => set('targeting_country', e.target.value)}
               className={SELECT}
               required
             >
-              <option value="">— Select a country —</option>
+              <option value="">{t('selectCountryPlaceholder')}</option>
               {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </Field>
           {(form.targeting_scope === 'region' || form.targeting_scope === 'city') && (
-            <Field label="Region / State / Province">
+            <Field label={t('regionFieldLabel')}>
               <input
                 value={form.targeting_region}
                 onChange={e => set('targeting_region', e.target.value)}
-                placeholder="e.g. California, Île-de-France, Lagos State…"
+                placeholder={t('regionPlaceholder')}
                 className={INPUT}
               />
             </Field>
           )}
           {form.targeting_scope === 'city' && (
-            <Field label="City" required>
+            <Field label={t('scopeCityLabel')} required>
               <input
                 value={form.targeting_city}
                 onChange={e => set('targeting_city', e.target.value)}
-                placeholder="e.g. Paris, New York, Lagos…"
+                placeholder={t('cityPlaceholder')}
                 className={INPUT}
                 required
               />
@@ -311,13 +321,13 @@ function Step2({ form, set, primaryColor }: {
 
       {/* Currency */}
       <div className="space-y-3">
-        <SectionTitle>Preferred currency</SectionTitle>
-        <Field label="Currency" hint="Used to communicate your budget. No payment is collected today.">
+        <SectionTitle>{t('preferredCurrencySectionTitle')}</SectionTitle>
+        <Field label={t('currencyLabel')} hint={t('currencyHint')}>
           <select value={form.currency} onChange={e => set('currency', e.target.value)} className={SELECT}>
             {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.label}</option>)}
           </select>
         </Field>
-        <Field label="Total budget" required hint="This is the amount you'll pay to run your ad.">
+        <Field label={t('totalBudgetLabel')} required hint={t('totalBudgetHint')}>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
               {form.currency}
@@ -339,14 +349,15 @@ function Step2({ form, set, primaryColor }: {
 // ── Step 3 — Payment ─────────────────────────────────────────────────────────
 
 function Step3({ form, primaryColor }: { form: FormState; primaryColor: string }) {
+  const t = useTranslations('publicBlog');
   const budget = parseFloat(form.total_budget || '0');
   const hasBudget = budget > 0;
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-[18px] font-black text-slate-900 mb-1">Payment</h2>
-        <p className="text-[13px] text-slate-400">Your ad slot is paid securely via NowPayments — crypto or card.</p>
+        <h2 className="text-[18px] font-black text-slate-900 mb-1">{t('paymentStepLabel')}</h2>
+        <p className="text-[13px] text-slate-400">{t('paymentSubtitle')}</p>
       </div>
 
       {/* Budget summary */}
@@ -354,27 +365,27 @@ function Step3({ form, primaryColor }: { form: FormState; primaryColor: string }
         className="rounded-2xl p-5 text-center"
         style={{ backgroundColor: `${primaryColor}10`, border: `2px solid ${primaryColor}30` }}
       >
-        <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Total to pay</p>
+        <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">{t('totalToPayLabel')}</p>
         {hasBudget ? (
           <p className="text-[32px] font-black" style={{ color: primaryColor }}>
             {budget.toLocaleString()} <span className="text-[18px]">{form.currency}</span>
           </p>
         ) : (
           <p className="text-sm font-semibold text-red-500">
-            ⚠ Please go back and enter your budget to continue.
+            ⚠ {t('missingBudgetWarning')}
           </p>
         )}
       </div>
 
       {/* How it works */}
       <div className="space-y-3">
-        <SectionTitle>What happens next</SectionTitle>
+        <SectionTitle>{t('whatHappensNextSectionTitle')}</SectionTitle>
         {[
-          { step: '1', text: 'Click "Review & Pay" below — you\'ll see your ad summary.' },
-          { step: '2', text: 'Click "Pay Now" — you\'re redirected to NowPayments\' secure page.' },
-          { step: '3', text: 'Pay by crypto (USDT, BTC, ETH…) or by card via their platform.' },
-          { step: '4', text: 'Payment confirmed → your ad is sent to the blog owner for review.' },
-          { step: '5', text: 'Once approved, your ad goes live automatically.' },
+          { step: '1', textKey: 'paymentStep1Text' },
+          { step: '2', textKey: 'paymentStep2Text' },
+          { step: '3', textKey: 'paymentStep3Text' },
+          { step: '4', textKey: 'paymentStep4Text' },
+          { step: '5', textKey: 'paymentStep5Text' },
         ].map(s => (
           <div key={s.step} className="flex items-start gap-3">
             <div
@@ -383,7 +394,7 @@ function Step3({ form, primaryColor }: { form: FormState; primaryColor: string }
             >
               {s.step}
             </div>
-            <p className="text-sm text-slate-600 leading-relaxed">{s.text}</p>
+            <p className="text-sm text-slate-600 leading-relaxed">{t(s.textKey)}</p>
           </div>
         ))}
       </div>
@@ -393,7 +404,7 @@ function Step3({ form, primaryColor }: { form: FormState; primaryColor: string }
           <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <p className="text-[12px] text-blue-700 leading-relaxed">
-          <strong>Secure payment.</strong> Your ad slot is reserved only after payment is confirmed. NowPayments accepts 150+ cryptocurrencies and major cards.
+          <strong>{t('securePaymentBold')}</strong> {t('securePaymentDesc')}
         </p>
       </div>
     </div>
@@ -413,40 +424,42 @@ function ReviewRow({ label, value }: { label: string; value?: string }) {
 }
 
 function Step4({ form, blogName, primaryColor }: { form: FormState; blogName: string; primaryColor: string }) {
-  const scopeLabel = SCOPE_OPTIONS.find(o => o.value === form.targeting_scope)?.label ?? 'Global';
+  const t = useTranslations('publicBlog');
+  const scopeLabelKey = SCOPE_OPTIONS.find(o => o.value === form.targeting_scope)?.labelKey ?? 'scopeGlobalLabel';
+  const scopeLabel = t(scopeLabelKey);
   const targetingSummary = form.targeting_scope === 'global'
-    ? 'Global (all readers)'
+    ? t('globalAllReadersLabel')
     : [scopeLabel, form.targeting_country, form.targeting_region, form.targeting_city].filter(Boolean).join(', ');
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-[18px] font-black text-slate-900 mb-1">Review your submission</h2>
-        <p className="text-[13px] text-slate-400">Double-check everything before sending your ad request to <strong>{blogName}</strong>.</p>
+        <h2 className="text-[18px] font-black text-slate-900 mb-1">{t('reviewSubmissionTitle')}</h2>
+        <p className="text-[13px] text-slate-400">{t('reviewSubmissionSubtitlePrefix')} <strong>{blogName}</strong>{t('reviewSubmissionSubtitleSuffix')}</p>
       </div>
 
       <div className="space-y-4">
         <div className="bg-slate-50 rounded-xl p-4">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Contact</p>
-          <ReviewRow label="Name" value={form.advertiser_name} />
-          <ReviewRow label="Email" value={form.advertiser_email} />
-          <ReviewRow label="Company" value={form.advertiser_company} />
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{t('contactSubtitle')}</p>
+          <ReviewRow label={t('commentFormNameLabel')} value={form.advertiser_name} />
+          <ReviewRow label={t('commentFormEmailLabel')} value={form.advertiser_email} />
+          <ReviewRow label={t('companyLabel')} value={form.advertiser_company} />
         </div>
 
         <div className="bg-slate-50 rounded-xl p-4">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Ad content</p>
-          <ReviewRow label="Headline" value={form.title} />
-          <ReviewRow label="Description" value={form.description} />
-          <ReviewRow label="Destination URL" value={form.click_url} />
-          <ReviewRow label="Image URL" value={form.image_url} />
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{t('adContentSectionTitle')}</p>
+          <ReviewRow label={t('headlineLabel')} value={form.title} />
+          <ReviewRow label={t('adDescriptionLabel')} value={form.description} />
+          <ReviewRow label={t('destinationUrlLabel')} value={form.click_url} />
+          <ReviewRow label={t('imageUrlLabel')} value={form.image_url} />
         </div>
 
         <div className="bg-slate-50 rounded-xl p-4">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Campaign &amp; Targeting</p>
-          <ReviewRow label="Targeting" value={targetingSummary} />
-          <ReviewRow label="Start date" value={form.starts_at} />
-          <ReviewRow label="End date" value={form.ends_at} />
-          <ReviewRow label="Budget" value={form.total_budget ? `${form.total_budget} ${form.currency}` : undefined} />
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">{t('campaignTargetingSectionLabel')}</p>
+          <ReviewRow label={t('targetingStepLabel')} value={targetingSummary} />
+          <ReviewRow label={t('startDateLabel')} value={form.starts_at} />
+          <ReviewRow label={t('endDateLabel')} value={form.ends_at} />
+          <ReviewRow label={t('budgetLabel')} value={form.total_budget ? `${form.total_budget} ${form.currency}` : undefined} />
         </div>
       </div>
     </div>
@@ -456,6 +469,7 @@ function Step4({ form, blogName, primaryColor }: { form: FormState; blogName: st
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
+  const t = useTranslations('publicBlog');
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormState>(EMPTY);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -492,7 +506,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
   const buildTargetingNote = () => {
     if (form.targeting_scope === 'global') return 'Targeting: Global';
     const parts = [
-      `Targeting: ${SCOPE_OPTIONS.find(o => o.value === form.targeting_scope)?.label}`,
+      `Targeting: ${SCOPE_LABELS_EN[form.targeting_scope]}`,
       form.targeting_country && `Country: ${form.targeting_country}`,
       form.targeting_region && `Region: ${form.targeting_region}`,
       form.targeting_city && `City: ${form.targeting_city}`,
@@ -533,7 +547,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
       setStatus('idle');
     } catch (err: unknown) {
       setStatus('error');
-      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setErrorMsg(err instanceof Error ? err.message : t('genericSubmitError'));
     }
   };
 
@@ -547,18 +561,18 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
         >
           <CheckCircle2 className="h-8 w-8" style={{ color: primaryColor }} />
         </div>
-        <h2 className="text-xl font-black text-slate-900 mb-2">Payment received!</h2>
+        <h2 className="text-xl font-black text-slate-900 mb-2">{t('paymentReceivedTitle')}</h2>
         <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed mb-2">
-          Your payment was confirmed. Your ad has been submitted to <strong>{blogName}</strong> for review.
+          {t('paymentReceivedDescPrefix')} <strong>{blogName}</strong> {t('paymentReceivedDescSuffix')}
         </p>
         <p className="text-sm text-slate-400 max-w-sm mx-auto leading-relaxed mb-6">
-          Once approved, your ad will go live automatically. You&apos;ll hear from the blog owner if any changes are needed.
+          {t('paymentReceivedNote')}
         </p>
         <button
           onClick={() => { setForm(EMPTY); setStep(1); window.history.replaceState(null, '', window.location.pathname); setStatus('idle'); }}
           className="text-[13px] font-semibold px-5 h-10 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
         >
-          Submit another ad
+          {t('submitAnotherAdButton')}
         </button>
       </div>
     );
@@ -584,7 +598,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
         <div className="px-6 sm:px-8 pb-4">
           <p className="text-xs text-red-500 flex items-center gap-1.5">
             <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-            Please fill in all required fields before continuing.
+            {t('fillRequiredFieldsError')}
           </p>
         </div>
       )}
@@ -607,7 +621,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
             onClick={back}
             className="flex items-center gap-1.5 h-10 px-4 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
           >
-            <ChevronLeft className="h-4 w-4" /> Back
+            <ChevronLeft className="h-4 w-4" /> {t('backButton')}
           </button>
         ) : (
           <span />
@@ -620,7 +634,7 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
             className="flex items-center gap-1.5 h-10 px-5 rounded-xl text-sm font-bold text-white hover:opacity-90 transition-opacity"
             style={{ backgroundColor: primaryColor }}
           >
-            Continue <ChevronRight className="h-4 w-4" />
+            {t('continueButton')} <ChevronRight className="h-4 w-4" />
           </button>
         ) : (
           <button
@@ -631,8 +645,8 @@ export function AdvertiseForm({ tenantId, blogName, primaryColor }: Props) {
             style={{ backgroundColor: primaryColor }}
           >
             {status === 'loading'
-              ? <><Loader2 className="h-4 w-4 animate-spin" /> Preparing payment…</>
-              : <><CreditCard className="h-4 w-4" /> Pay now — {form.total_budget} {form.currency}</>
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> {t('preparingPaymentButton')}</>
+              : <><CreditCard className="h-4 w-4" /> {t('payNowButton', { budget: form.total_budget, currency: form.currency })}</>
             }
           </button>
         )}

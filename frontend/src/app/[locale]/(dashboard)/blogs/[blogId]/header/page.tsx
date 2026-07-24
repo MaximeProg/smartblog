@@ -148,7 +148,7 @@ export default function HeaderPage() {
         <StudioSwitch label={ts('switchShowButton')} checked={cfg.subscribe.enabled} onChange={v => patch(c => ({ ...c, subscribe: { ...c.subscribe, enabled: v } }))} />
         {cfg.subscribe.enabled && (
           <StudioField label={ts('fieldButtonText')}>
-            <StudioInput value={cfg.subscribe.label} onChange={v => patch(c => ({ ...c, subscribe: { ...c.subscribe, label: v } }))} placeholder="S'abonner" />
+            <StudioInput value={cfg.subscribe.label} onChange={v => patch(c => ({ ...c, subscribe: { ...c.subscribe, label: v } }))} placeholder={ts('defaultSubscribeLabel')} />
           </StudioField>
         )}
       </StudioSection>

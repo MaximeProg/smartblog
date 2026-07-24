@@ -3,6 +3,7 @@ import { useState, useCallback, type CSSProperties, type FormEvent } from 'react
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { HomeProps } from '../ThemeRenderer';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { EditableSection } from '../shared/EditableSection';
@@ -10,9 +11,9 @@ import { InlineEditable } from '../shared/InlineEditable';
 import { AdRotator } from '../shared/AdRotator';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 export default function MagazineHome({
@@ -31,6 +32,7 @@ export default function MagazineHome({
 }: HomeProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const basePath = baseProp !== undefined
     ? baseProp
     : previewSlug
@@ -70,10 +72,10 @@ export default function MagazineHome({
   const homeCfg = blog.template_config?.home;
   const showHero = homeCfg?.hero?.enabled !== false;
   const showNewsletter = homeCfg?.newsletter?.enabled !== false;
-  const newsletterTitle = homeCfg?.newsletter?.title || 'Stay in the know';
-  const newsletterDesc = homeCfg?.newsletter?.description || `Get ${blog.name} delivered weekly.`;
-  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || 'Subscribe';
-  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || 'your@email.com';
+  const newsletterTitle = homeCfg?.newsletter?.title || t('stayInformed');
+  const newsletterDesc = homeCfg?.newsletter?.description || t('weeklyNewsletterDesc');
+  const newsletterBtn = homeCfg?.newsletter?.buttonLabel || t('subscribeButton');
+  const newsletterPlaceholder = homeCfg?.newsletter?.placeholder || t('emailPlaceholder');
 
   const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
   const isFiltered = !!currentCategory || !!searchQuery;
@@ -106,17 +108,17 @@ export default function MagazineHome({
             <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: primaryColor }}>
               {currentCategory
                 ? categories.find(c => c.slug === currentCategory)?.name ?? currentCategory
-                : `Search: "${searchQuery}"`}
+                : `${t('searchResults')}: "${searchQuery}"`}
             </span>
-            <span className="text-xs text-zinc-400">— {articles.length} article{articles.length !== 1 ? 's' : ''}</span>
+            <span className="text-xs text-zinc-400">— {articles.length !== 1 ? t('articleCountPlural', { count: articles.length }) : t('articleCount', { count: articles.length })}</span>
             <Link href={basePath || "/"} className="ml-auto text-xs text-zinc-400 hover:text-zinc-900 transition-colors">
-              ← Clear filter
+              ← {t('backToHome')}
             </Link>
           </div>
 
           {articles.length === 0 ? (
             <div className="py-24 text-center">
-              <p className="text-lg font-bold text-zinc-300">No articles found.</p>
+              <p className="text-lg font-bold text-zinc-300">{t('noArticlesFound')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -146,7 +148,7 @@ export default function MagazineHome({
                       <span className="text-[10px] font-black uppercase tracking-wider" style={{ color: primaryColor }}>{a.category_name}</span>
                     )}
                     <h3 className="font-bold text-zinc-900 text-sm leading-snug mt-1 mb-2 line-clamp-2 group-hover:text-[var(--cp)] transition-colors">{a.title}</h3>
-                    <p className="text-xs text-zinc-400">{a.author_name} · {formatDate(a.published_at)}</p>
+                    <p className="text-xs text-zinc-400">{a.author_name} · {formatDate(a.published_at, locale)}</p>
                   </div>
                 </Link>
               ))}
@@ -157,7 +159,7 @@ export default function MagazineHome({
         <>
           {articles.length === 0 ? (
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-24 text-center">
-              <p className="text-lg font-bold text-zinc-300">No articles yet. Check back soon.</p>
+              <p className="text-lg font-bold text-zinc-300">{t('noArticles')}. {t('noArticlesDesc')}</p>
             </div>
           ) : (
             <>
@@ -194,8 +196,8 @@ export default function MagazineHome({
                           <div className="text-white/60 text-xs flex items-center gap-2 flex-wrap">
                             {hero.author_name && <span>{hero.author_name}</span>}
                             {hero.author_name && <span>·</span>}
-                            <span>{formatDate(hero.published_at)}</span>
-                            {hero.reading_time_minutes && <><span>·</span><span>{hero.reading_time_minutes} min read</span></>}
+                            <span>{formatDate(hero.published_at, locale)}</span>
+                            {hero.reading_time_minutes && <><span>·</span><span>{t('minRead', { min: hero.reading_time_minutes })}</span></>}
                           </div>
                         </div>
                       </Link>
@@ -204,10 +206,10 @@ export default function MagazineHome({
 
                   <div className="lg:col-span-1 bg-white border border-zinc-200 rounded overflow-hidden">
                     <div className="border-b-2 px-4 py-3" style={{ borderColor: primaryColor }}>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Trending</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{t('popularArticles')}</span>
                     </div>
                     {trending.length === 0 ? (
-                      <p className="px-4 py-6 text-sm text-zinc-400">More articles coming soon.</p>
+                      <p className="px-4 py-6 text-sm text-zinc-400">{t('noArticlesDesc')}</p>
                     ) : (
                       trending.map((a, i) => (
                         <Link key={a.id} href={aHref(a.slug)} className="flex gap-3 items-start py-4 px-4 border-b border-zinc-100 last:border-0 group">
@@ -219,7 +221,7 @@ export default function MagazineHome({
                               <span className="text-[10px] font-black uppercase tracking-wider block" style={{ color: primaryColor }}>{a.category_name}</span>
                             )}
                             <p className="text-sm font-bold text-zinc-900 leading-snug group-hover:text-[var(--cp)] transition-colors line-clamp-2">{a.title}</p>
-                            <p className="text-xs text-zinc-400 mt-1">{formatDate(a.published_at)}</p>
+                            <p className="text-xs text-zinc-400 mt-1">{formatDate(a.published_at, locale)}</p>
                           </div>
                         </Link>
                       ))
@@ -243,7 +245,7 @@ export default function MagazineHome({
                         )}
                       </div>
                       <Link href={`${basePath}/categories/${cat.slug}`} className="text-xs text-zinc-400 hover:text-zinc-900 transition-colors">
-                        View all →
+                        {t('seeAll')} →
                       </Link>
                     </div>
 
@@ -271,7 +273,7 @@ export default function MagazineHome({
                             {featured.excerpt && (
                               <p className="text-sm text-zinc-500 line-clamp-2 mb-2">{featured.excerpt}</p>
                             )}
-                            <p className="text-xs text-zinc-400">{featured.author_name} · {formatDate(featured.published_at)}</p>
+                            <p className="text-xs text-zinc-400">{featured.author_name} · {formatDate(featured.published_at, locale)}</p>
                           </div>
                         </Link>
                       )}
@@ -297,7 +299,7 @@ export default function MagazineHome({
                             <div className="flex-1 min-w-0">
                               <span className="text-[10px] font-black uppercase block" style={{ color: primaryColor }}>{a.category_name}</span>
                               <p className="text-sm font-bold text-zinc-900 leading-snug line-clamp-2 group-hover:text-[var(--cp)] transition-colors">{a.title}</p>
-                              <p className="text-[11px] text-zinc-400 mt-0.5">{formatDate(a.published_at)}</p>
+                              <p className="text-[11px] text-zinc-400 mt-0.5">{formatDate(a.published_at, locale)}</p>
                             </div>
                           </Link>
                         ))}
@@ -321,7 +323,7 @@ export default function MagazineHome({
                   </div>
                   <div className="w-full sm:max-w-sm">
                     {subStatus === 'ok' ? (
-                      <p className="text-white font-bold text-sm">You&apos;re subscribed. Thank you!</p>
+                      <p className="text-white font-bold text-sm">{t('subscribeSuccess')}</p>
                     ) : (
                       <form onSubmit={handleSubscribe} className="flex gap-0 w-full">
                         <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
@@ -334,7 +336,7 @@ export default function MagazineHome({
                         </button>
                       </form>
                     )}
-                    {subStatus === 'error' && <p className="text-white/70 text-xs mt-2">Something went wrong. Please try again.</p>}
+                    {subStatus === 'error' && <p className="text-white/70 text-xs mt-2">{t('subscribeError')}</p>}
                   </div>
                 </div>
               </div>

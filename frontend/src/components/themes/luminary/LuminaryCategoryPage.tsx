@@ -2,6 +2,8 @@
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
 import { AdRotator } from '../shared/AdRotator';
@@ -19,9 +21,9 @@ function grad(id: string): string {
   return GRADIENTS[id.charCodeAt(0) % GRADIENTS.length];
 }
 
-function shortDate(d: string | null): string {
+function shortDate(d: string | null, locale: string): string {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 interface Props {
@@ -39,6 +41,9 @@ export default function LuminaryCategoryPage({
   categories,
   basePath,
 }: Props) {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#b8960c';
 
   return (
@@ -74,7 +79,7 @@ export default function LuminaryCategoryPage({
 
         <div className="absolute bottom-0 left-0 right-0 max-w-7xl mx-auto px-6 sm:px-10 pb-10">
           <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-white/60 mb-2">
-            Topic
+            {t('categoryLabel')}
           </p>
           <h1 className="font-serif italic text-4xl sm:text-5xl text-white leading-tight mb-2">
             {category.name}
@@ -85,7 +90,7 @@ export default function LuminaryCategoryPage({
             </p>
           )}
           <p className="font-sans text-xs text-white/50 uppercase tracking-widest">
-            {articles.length} article{articles.length !== 1 ? 's' : ''}
+            {articles.length !== 1 ? t('articleCountPlural', { count: articles.length }) : t('articleCount', { count: articles.length })}
           </p>
         </div>
       </div>
@@ -95,20 +100,20 @@ export default function LuminaryCategoryPage({
           href={`${basePath}/categories`}
           className="font-sans text-xs uppercase tracking-widest text-zinc-400 hover:text-zinc-900 transition-colors inline-flex items-center gap-1 mb-12"
         >
-          &larr; All Topics
+          &larr; {t('allCategoriesLink')}
         </Link>
 
         {articles.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="font-serif italic text-3xl text-zinc-300 mb-4">No articles yet.</p>
+            <p className="font-serif italic text-3xl text-zinc-300 mb-4">{t('noArticles')}</p>
             <p className="font-sans text-sm text-zinc-400 mb-8">
-              Articles in {category.name} will appear here once published.
+              {t('noArticlesInCategoryDesc')}
             </p>
             <Link
               href={`${basePath}/categories`}
               className="font-sans text-xs uppercase tracking-widest text-zinc-500 hover:text-zinc-900 transition-colors underline underline-offset-4"
             >
-              Browse all topics
+              {t('allCategoriesLink')}
             </Link>
           </div>
         ) : (
@@ -144,9 +149,9 @@ export default function LuminaryCategoryPage({
                 )}
                 <p className="font-sans text-xs text-zinc-400 mt-auto">
                   {a.author_name && <span>{a.author_name} &middot; </span>}
-                  {shortDate(a.published_at)}
+                  {shortDate(a.published_at, locale)}
                   {a.reading_time_minutes && (
-                    <span> &middot; {a.reading_time_minutes} min read</span>
+                    <span> &middot; {t('minRead', { min: a.reading_time_minutes })}</span>
                   )}
                 </p>
               </Link>

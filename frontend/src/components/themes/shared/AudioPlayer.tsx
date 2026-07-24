@@ -1,8 +1,10 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 
 export function AudioPlayer({ url, title }: { url: string; title: string }) {
+  const t = useTranslations('publicBlog');
   const ref = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [current, setCurrent] = useState(0);
@@ -48,7 +50,7 @@ export function AudioPlayer({ url, title }: { url: string; title: string }) {
           onClick={toggle}
           className="h-11 w-11 rounded-full flex items-center justify-center shrink-0 shadow-md transition-transform hover:scale-105 active:scale-95"
           style={{ backgroundColor: 'var(--blog-primary)' }}
-          aria-label={playing ? 'Pause' : 'Lecture'}
+          aria-label={playing ? t('pause') : t('play')}
         >
           {playing
             ? <Pause className="h-4 w-4 text-white" />
@@ -59,7 +61,7 @@ export function AudioPlayer({ url, title }: { url: string; title: string }) {
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate flex items-center gap-1.5">
               <Volume2 className="h-3 w-3 shrink-0" />
-              Écouter l&apos;article
+              {t('listenToArticle')}
             </span>
             <span className="text-xs text-gray-400 shrink-0 ml-2">
               {fmt(current)} / {fmt(duration)}

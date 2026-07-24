@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { publicApi, type BlogInfo } from '@/lib/public-api';
 import { Search, Clock, Tag, ArrowLeft, Loader2, Mic, MicOff } from 'lucide-react';
@@ -41,9 +42,9 @@ const LOCALE_LANG: Record<string, string> = {
   pt: 'pt-PT',
 };
 
-function formatDate(iso?: string) {
+function formatDate(iso: string | undefined, locale: string) {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  return new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 function HighlightSnippet({ hit }: { hit: SearchHit }) {
@@ -60,6 +61,7 @@ function HighlightSnippet({ hit }: { hit: SearchHit }) {
 }
 
 export default function SearchClientPage({ blog, slug, locale, initialQuery, initialResults, basePath: baseProp }: Props) {
+  const t = useTranslations('publicBlog');
   const router = useRouter();
   const pathname = usePathname();
   const [query, setQuery] = useState(initialQuery);
@@ -125,7 +127,7 @@ export default function SearchClientPage({ blog, slug, locale, initialQuery, ini
           <Link
             href={basePath || "/"}
             className="shrink-0 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-            aria-label="Back to blog"
+            aria-label={t('backToBlog')}
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
@@ -142,7 +144,7 @@ export default function SearchClientPage({ blog, slug, locale, initialQuery, ini
               type="search"
               value={query}
               onChange={e => setQuery(e.target.value)}
-              placeholder={listening ? 'Écoute en cours…' : `Rechercher sur ${blog.name}…`}
+              placeholder={listening ? t('listeningPlaceholder') : t('searchOnBlogPlaceholder', { blog: blog.name })}
               className="flex-1 bg-transparent text-sm text-gray-900 dark:text-gray-100 placeholder:text-gray-400 outline-none"
             />
             {loading && !listening && (
@@ -166,7 +168,7 @@ export default function SearchClientPage({ blog, slug, locale, initialQuery, ini
             <button
               type="button"
               onClick={toggle}
-              aria-label={listening ? 'Arrêter la recherche vocale' : 'Recherche vocale'}
+              aria-label={listening ? t('stopVoiceSearch') : t('startVoiceSearch')}
               className={`relative shrink-0 flex items-center justify-center h-9 w-9 rounded-full transition-colors ${
                 listening
                   ? 'bg-red-100 dark:bg-red-900/40 text-red-500'
@@ -191,9 +193,9 @@ export default function SearchClientPage({ blog, slug, locale, initialQuery, ini
         {!query.trim() && !listening && (
           <div className="text-center py-20 text-gray-400">
             <Search className="h-10 w-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">Tapez ou parlez pour rechercher des articles</p>
+            <p className="text-sm">{t('typeOrSpeakHint')}</p>
             {supported && (
-              <p className="text-xs mt-1 opacity-60">Utilisez le bouton micro pour une recherche vocale</p>
+              <p className="text-xs mt-1 opacity-60">{t('useMicHint')}</p>
             )}
           </div>
         )}
@@ -205,23 +207,25 @@ export default function SearchClientPage({ blog, slug, locale, initialQuery, ini
               <span className="absolute inset-2 rounded-full bg-red-400/20 animate-ping" style={{ animationDelay: '150ms' }} />
               <Mic className="relative h-7 w-7 text-red-500" />
             </div>
-            <p className="text-sm font-medium text-red-500">Parlez maintenant…</p>
-            <p className="text-xs mt-1 opacity-60">Votre voix sera transcrite automatiquement</p>
+            <p className="text-sm font-medium text-red-500">{t('speakNowHint')}</p>
+            <p className="text-xs mt-1 opacity-60">{t('voiceTranscribedHint')}</p>
           </div>
         )}
 
         {query.trim() && !loading && results && results.total === 0 && (
           <div className="text-center py-20 text-gray-400">
             <Search className="h-10 w-10 mx-auto mb-3 opacity-30" />
-            <p className="font-medium text-gray-600 dark:text-gray-300">Aucun résultat pour «{query}»</p>
-            <p className="text-sm mt-1">Essayez d'autres mots-clés ou vérifiez l'orthographe.</p>
+            <p className="font-medium text-gray-600 dark:text-gray-300">{t('noResultsForQuery', { query })}</p>
+            <p className="text-sm mt-1">{t('tryOtherKeywords')}</p>
           </div>
         )}
 
         {results && results.total > 0 && (
           <>
             <p className="text-xs text-gray-400 mb-4">
-              {results.total} résultat{results.total !== 1 ? 's' : ''} pour «{results.query ?? query}»
+              {results.total !== 1
+                ? t('resultsForQueryPlural', { count: results.total, query: results.query ?? query })
+                : t('resultsForQuery', { count: results.total, query: results.query ?? query })}
             </p>
             <ul className="space-y-0 divide-y divide-gray-100 dark:divide-gray-800">
               {results.hits.map(hit => (
@@ -252,7 +256,7 @@ export default function SearchClientPage({ blog, slug, locale, initialQuery, ini
                         {hit.published_at && (
                           <span className="flex items-center gap-1">
                             <Clock className="h-3 w-3" />
-                            {formatDate(hit.published_at)}
+                            {formatDate(hit.published_at, locale)}
                           </span>
                         )}
                       </div>

@@ -70,7 +70,7 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
         <input
           value={slug}
           onChange={e => { setSlugManual(true); setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-')); }}
-          placeholder="mon-slug"
+          placeholder={ts('placeholderSlugExample')}
           className="flex-1 h-9 px-2 text-[12px] font-mono bg-transparent outline-none text-slate-700 dark:text-slate-300"
         />
       </div>
@@ -115,7 +115,7 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
           {createMut.isPending ? ts('catCreating') : ts('catCreate')}
         </button>
         <button onClick={onDone} className="h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-600 text-[12px] text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5">
-          <X className="h-3.5 w-3.5" /> Cancel
+          <X className="h-3.5 w-3.5" /> {ts('cancel')}
         </button>
       </div>
     </div>
@@ -201,7 +201,7 @@ function CategoryCard({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
           </button>
           <button onClick={() => setEditing(false)}
             className="h-7 px-3 rounded-lg border border-slate-200 dark:border-slate-600 text-[11px] text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-1">
-            <X className="h-3 w-3" /> Cancel
+            <X className="h-3 w-3" /> {ts('cancel')}
           </button>
         </div>
       </div>

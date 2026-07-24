@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { TrendingUp, BookOpen, Hash, Mail } from 'lucide-react';
 import type { BlogInfo, PublicArticle, PublicCategory, TemplateConfig } from '@/lib/public-api';
 import { AdRotator } from './AdRotator';
@@ -31,6 +32,7 @@ export function ThemeSidebar({
   basePath,
   variant = 'light',
 }: ThemeSidebarProps) {
+  const t = useTranslations('publicBlog');
   const [email, setEmail]         = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
 
@@ -41,9 +43,9 @@ export function ThemeSidebar({
   const showCategories   = config?.categories      !== false;
   const showTags         = config?.tags            !== false;
   const showNewsletter   = config?.newsletterMini  !== false;
-  const popularTitle     = config?.popularTitle    || 'Articles populaires';
-  const categoriesTitle  = config?.categoriesTitle || 'Catégories';
-  const tagsTitle        = config?.tagsTitle       || 'Tags';
+  const popularTitle     = config?.popularTitle    || t('popularArticles');
+  const categoriesTitle  = config?.categoriesTitle || t('categories');
+  const tagsTitle        = config?.tagsTitle       || t('tagsLabel');
 
   // Computed data
   const popular = [...articles].sort((a, b) => (b.views_count ?? 0) - (a.views_count ?? 0)).slice(0, 5);
@@ -173,12 +175,12 @@ export function ThemeSidebar({
           <div className="h-9 w-9 rounded-xl bg-white/20 flex items-center justify-center mb-3">
             <Mail className="h-4 w-4 text-white" />
           </div>
-          <h3 className="font-black text-[15px] mb-1 leading-tight">Rejoindre la communauté</h3>
+          <h3 className="font-black text-[15px] mb-1 leading-tight">{t('joinCommunity')}</h3>
           <p className="text-white/75 text-[12px] leading-relaxed mb-4">
-            Les meilleurs articles de {blog.name} directement dans votre boîte mail.
+            {t('weeklyNewsletterDesc')}
           </p>
           {subStatus === 'ok' ? (
-            <p className="text-[12px] font-bold text-white/80">Vous êtes abonné(e) !</p>
+            <p className="text-[12px] font-bold text-white/80">{t('subscribeSuccess')}</p>
           ) : (
             <form onSubmit={handleSubscribe} className="flex gap-0">
               <input
@@ -186,7 +188,7 @@ export function ThemeSidebar({
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="votre@email.com"
+                placeholder={t('emailPlaceholder')}
                 className="flex-1 min-w-0 h-9 rounded-l-xl bg-white/20 border-0 px-3 text-[12px] text-white placeholder:text-white/50 focus:outline-none focus:ring-1 focus:ring-white/40"
               />
               <button
@@ -195,7 +197,7 @@ export function ThemeSidebar({
                 className="h-9 px-3 rounded-r-xl bg-white text-[12px] font-black transition-colors disabled:opacity-60 shrink-0"
                 style={{ color: primaryColor }}
               >
-                {subStatus === 'loading' ? '…' : 'OK'}
+                {subStatus === 'loading' ? '…' : t('subscribeButton')}
               </button>
             </form>
           )}

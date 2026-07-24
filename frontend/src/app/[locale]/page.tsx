@@ -6,9 +6,32 @@ import {
 } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
-import { getPricingPlans, getPlatformStats, getPlatformPage, type PricingPlan } from '@/lib/platform-api';
+import { getPricingPlans, getPlatformStats, getPlatformPage, getUiTranslations, type PricingPlan } from '@/lib/platform-api';
 
 export const dynamic = 'force-dynamic';
+
+interface PlanStatic { name: string; desc: string; features: string[]; }
+
+const EN_PLAN_STATIC: Record<string, PlanStatic> = {
+  free: { name: 'Free', desc: 'Perfect to start blogging.', features: ['1 blog', '10 articles / month', '1 author', 'smarterbloggers.com subdomain'] },
+  starter: { name: 'Starter', desc: 'For serious bloggers.', features: ['2 blogs', 'Unlimited articles', '3 authors', 'Custom domain', 'Newsletter — 1,000 subscribers'] },
+  pro: { name: 'Pro', desc: 'For creative teams.', features: ['5 blogs', 'Unlimited articles', '10 authors', 'Custom domain', 'Newsletter — 10,000 subscribers', 'AI — 50 articles / month', 'Advanced analytics'] },
+  business: { name: 'Business', desc: 'For large organizations.', features: ['Unlimited blogs', 'Unlimited articles', 'Unlimited authors', 'Unlimited domains', 'Unlimited newsletter', 'Unlimited AI', 'API access', 'White label'] },
+  enterprise: { name: 'Enterprise', desc: 'For large enterprises.', features: ['Everything in Business', 'Dedicated SLA', 'Priority support', 'Custom onboarding'] },
+};
+
+interface HomeMisc { freeLabel: string; perMonthSuffix: string; popularBadge: string; collectingData: string; }
+
+const EN_HOME_MISC: HomeMisc = { freeLabel: 'Free', perMonthSuffix: '/mo', popularBadge: 'Popular', collectingData: 'Collecting data' };
+const FR_HOME_MISC: HomeMisc = { freeLabel: 'Gratuit', perMonthSuffix: '/mois', popularBadge: 'Populaire', collectingData: 'Collecte en cours' };
+
+const FR_PLAN_STATIC: Record<string, PlanStatic> = {
+  free: { name: 'Gratuit', desc: 'Parfait pour commencer à bloguer.', features: ['1 blog', '10 articles / mois', '1 auteur', 'Sous-domaine smarterbloggers.com'] },
+  starter: { name: 'Starter', desc: 'Pour les blogueurs sérieux.', features: ['2 blogs', 'Articles illimités', '3 auteurs', 'Domaine personnalisé', 'Newsletter — 1 000 abonnés'] },
+  pro: { name: 'Pro', desc: 'Pour les équipes créatives.', features: ['5 blogs', 'Articles illimités', '10 auteurs', 'Domaine personnalisé', 'Newsletter — 10 000 abonnés', 'IA — 50 articles / mois', 'Analytics avancés'] },
+  business: { name: 'Business', desc: 'Pour les grandes organisations.', features: ['Blogs illimités', 'Articles illimités', 'Auteurs illimités', 'Domaines illimités', 'Newsletter illimitée', 'IA illimitée', 'Accès API', 'White label'] },
+  enterprise: { name: 'Enterprise', desc: 'Pour les grandes entreprises.', features: ['Tout Business', 'SLA dédié', 'Support prioritaire', 'Onboarding personnalisé'] },
+};
 
 export default async function HomePage({
   params,
@@ -19,13 +42,20 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const { cmsLang } = await searchParams;
-  const isFr = locale === 'fr';
   const lang = cmsLang || locale;
   const [pricingPlans, stats, cms] = await Promise.all([
     getPricingPlans(lang),
     getPlatformStats(),
     getPlatformPage('home', lang),
   ]);
+
+  let planStatic: Record<string, PlanStatic> = lang === 'fr' ? FR_PLAN_STATIC : EN_PLAN_STATIC;
+  let homeMisc: HomeMisc = lang === 'fr' ? FR_HOME_MISC : EN_HOME_MISC;
+  if (lang !== 'en' && lang !== 'fr') {
+    const translated = await getUiTranslations('marketing', lang);
+    if (translated?.homePricingPlans) planStatic = { ...EN_PLAN_STATIC, ...(translated.homePricingPlans as Record<string, PlanStatic>) };
+    if (translated?.homeMisc) homeMisc = { ...EN_HOME_MISC, ...(translated.homeMisc as Partial<HomeMisc>) };
+  }
 
   // Fallback EN codé en dur si le backend CMS est indisponible — jamais de page cassée.
   const cmsStatsLabels = (cms?.stats as any)?.labels ?? {
@@ -115,44 +145,8 @@ export default async function HomePage({
     color: FEATURE_COLORS[i] ?? FEATURE_COLORS[0],
   }));
 
-  // Static text/features per plan (EN/FR) — display text stays in code, prices come from API
-  const PLAN_STATIC: Record<string, { name: string; desc: string; features: string[] }> = {
-    free: {
-      name: isFr ? 'Gratuit' : 'Free',
-      desc: isFr ? 'Parfait pour commencer à bloguer.' : 'Perfect to start blogging.',
-      features: isFr
-        ? ['1 blog', '10 articles / mois', '1 auteur', 'Sous-domaine smarterbloggers.com']
-        : ['1 blog', '10 articles / month', '1 author', 'smarterbloggers.com subdomain'],
-    },
-    starter: {
-      name: 'Starter',
-      desc: isFr ? 'Pour les blogueurs sérieux.' : 'For serious bloggers.',
-      features: isFr
-        ? ['2 blogs', 'Articles illimités', '3 auteurs', 'Domaine personnalisé', 'Newsletter — 1 000 abonnés']
-        : ['2 blogs', 'Unlimited articles', '3 authors', 'Custom domain', 'Newsletter — 1,000 subscribers'],
-    },
-    pro: {
-      name: 'Pro',
-      desc: isFr ? 'Pour les équipes créatives.' : 'For creative teams.',
-      features: isFr
-        ? ['5 blogs', 'Articles illimités', '10 auteurs', 'Domaine personnalisé', 'Newsletter — 10 000 abonnés', 'IA — 50 articles / mois', 'Analytics avancés']
-        : ['5 blogs', 'Unlimited articles', '10 authors', 'Custom domain', 'Newsletter — 10,000 subscribers', 'AI — 50 articles / month', 'Advanced analytics'],
-    },
-    business: {
-      name: 'Business',
-      desc: isFr ? 'Pour les grandes organisations.' : 'For large organizations.',
-      features: isFr
-        ? ['Blogs illimités', 'Articles illimités', 'Auteurs illimités', 'Domaines illimités', 'Newsletter illimitée', 'IA illimitée', 'Accès API', 'White label']
-        : ['Unlimited blogs', 'Unlimited articles', 'Unlimited authors', 'Unlimited domains', 'Unlimited newsletter', 'Unlimited AI', 'API access', 'White label'],
-    },
-    enterprise: {
-      name: 'Enterprise',
-      desc: isFr ? 'Pour les grandes entreprises.' : 'For large enterprises.',
-      features: isFr
-        ? ['Tout Business', 'SLA dédié', 'Support prioritaire', 'Onboarding personnalisé']
-        : ['Everything in Business', 'Dedicated SLA', 'Priority support', 'Custom onboarding'],
-    },
-  };
+  // Static text/features per plan — translated via the `marketing` DeepL mechanism; prices come from API
+  const PLAN_STATIC = planStatic;
 
   // Lookup API prices by plan ID (case-insensitive); static text always shown regardless of API
   const apiById = Object.fromEntries(
@@ -172,13 +166,13 @@ export default async function HomePage({
     return {
       id,
       name: api?.name || fallback.name,
-      price: priceNum === 0 ? (isFr ? 'Gratuit' : 'Free') : `$${priceNum}`,
-      period: priceNum > 0 ? (isFr ? '/mois' : '/mo') : undefined,
+      price: priceNum === 0 ? homeMisc.freeLabel : `$${priceNum}`,
+      period: priceNum > 0 ? homeMisc.perMonthSuffix : undefined,
       desc: api?.description || fallback.desc,
       features: api?.features?.length ? api.features : fallback.features,
       cta: priceNum === 0 ? pricingHeaders.ctaFree : pricingHeaders.cta,
       highlight: api != null ? api.is_highlighted : id === 'pro',
-      badge: (api != null ? api.is_highlighted : id === 'pro') ? (isFr ? 'Populaire' : 'Popular') : null,
+      badge: (api != null ? api.is_highlighted : id === 'pro') ? homeMisc.popularBadge : null,
     };
   });
 
@@ -239,7 +233,7 @@ export default async function HomePage({
               { value: stats ? stats.active_blogs.toLocaleString(locale) : '—', label: cmsStatsLabels.active_blogs },
               { value: stats ? stats.published_articles.toLocaleString(locale) : '—', label: cmsStatsLabels.articles_published },
               { value: stats ? stats.monthly_readers.toLocaleString(locale) : '—', label: cmsStatsLabels.monthly_readers },
-              { value: stats?.uptime_pct != null ? `${stats.uptime_pct}%` : (isFr ? 'Collecte en cours' : 'Collecting data'), label: cmsStatsLabels.uptime },
+              { value: stats?.uptime_pct != null ? `${stats.uptime_pct}%` : homeMisc.collectingData, label: cmsStatsLabels.uptime },
             ].map(({ value, label }) => (
               <div key={label}>
                 <p className="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white mb-1">{value}</p>

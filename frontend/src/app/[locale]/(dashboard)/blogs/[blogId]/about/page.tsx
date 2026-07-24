@@ -27,14 +27,16 @@ interface AboutConfig {
   cta: { enabled: boolean; title: string; description: string; primaryLabel: string; secondaryLabel: string };
 }
 
-const DEFAULT: AboutConfig = {
-  hero: { enabled: true, subtitle: 'À propos', title: 'À propos de nous', description: '', cover_image_url: '' },
-  stats: { enabled: true, items: [{ value: '0', label: 'Articles' }, { value: '0', label: 'Abonnés' }] },
-  mission: { enabled: true, title: '', description: '', image_url: '' },
-  values: { enabled: true, title: '', items: [{ icon: '🎯', title: 'Expertise', description: '' }] },
-  team: { enabled: false, title: '', members: [] },
-  cta: { enabled: true, title: '', description: '', primaryLabel: '', secondaryLabel: '' },
-};
+function buildDefault(ts: (key: any) => string): AboutConfig {
+  return {
+    hero: { enabled: true, subtitle: ts('placeholderAboutSubtitle'), title: ts('placeholderAboutTitle'), description: '', cover_image_url: '' },
+    stats: { enabled: true, items: [{ value: '0', label: ts('statLabelArticles') }, { value: '0', label: ts('statLabelSubscribers') }] },
+    mission: { enabled: true, title: '', description: '', image_url: '' },
+    values: { enabled: true, title: '', items: [{ icon: '🎯', title: ts('valueTitleExpertise'), description: '' }] },
+    team: { enabled: false, title: '', members: [] },
+    cta: { enabled: true, title: '', description: '', primaryLabel: '', secondaryLabel: '' },
+  };
+}
 
 export default function AboutPage() {
   const params = useParams();
@@ -48,13 +50,13 @@ export default function AboutPage() {
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const [cfg, setCfg] = useState<AboutConfig>(DEFAULT);
+  const [cfg, setCfg] = useState<AboutConfig>(() => buildDefault(ts));
 
   useEffect(() => {
     if (tenant?.template_config?.about) {
-      setCfg({ ...DEFAULT, ...(tenant.template_config.about as any) });
+      setCfg({ ...buildDefault(ts), ...(tenant.template_config.about as any) });
     }
-  }, [tenant]);
+  }, [tenant]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const patch = (fn: (c: AboutConfig) => AboutConfig) => setCfg(fn);
 
@@ -92,10 +94,10 @@ export default function AboutPage() {
               />
             </StudioField>
             <StudioField label={ts('fieldSubtitle')}>
-              <StudioInput value={cfg.hero.subtitle} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, subtitle: v } }))} placeholder="À propos" />
+              <StudioInput value={cfg.hero.subtitle} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, subtitle: v } }))} placeholder={ts('placeholderAboutSubtitle')} />
             </StudioField>
             <StudioField label={ts('fieldTitle')}>
-              <StudioInput value={cfg.hero.title} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, title: v } }))} placeholder="À propos de nous" />
+              <StudioInput value={cfg.hero.title} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, title: v } }))} placeholder={ts('placeholderAboutTitle')} />
             </StudioField>
             <StudioField label={ts('fieldDescription')}>
               <StudioRichText
@@ -141,7 +143,7 @@ export default function AboutPage() {
         {cfg.mission.enabled && (
           <>
             <StudioField label={ts('fieldTitle')}>
-              <StudioInput value={cfg.mission.title} onChange={v => patch(c => ({ ...c, mission: { ...c.mission, title: v } }))} placeholder="Notre mission" />
+              <StudioInput value={cfg.mission.title} onChange={v => patch(c => ({ ...c, mission: { ...c.mission, title: v } }))} placeholder={ts('placeholderMissionTitle')} />
             </StudioField>
             <StudioField label={ts('fieldContent')}>
               <StudioRichText
@@ -170,7 +172,7 @@ export default function AboutPage() {
         {cfg.values.enabled && (
           <>
             <StudioField label={ts('fieldSectionTitle')}>
-              <StudioInput value={cfg.values.title} onChange={v => patch(c => ({ ...c, values: { ...c.values, title: v } }))} placeholder="Nos valeurs" />
+              <StudioInput value={cfg.values.title} onChange={v => patch(c => ({ ...c, values: { ...c.values, title: v } }))} placeholder={ts('placeholderValuesTitle')} />
             </StudioField>
             <div className="space-y-3">
               {cfg.values.items.map((item, i) => (
@@ -203,7 +205,7 @@ export default function AboutPage() {
       <StudioSection id="team" title={ts('sectionTeam')} defaultOpen={false}>
         <StudioSwitch label={ts('switchShowTeamOnBlog')} checked={cfg.team.enabled} onChange={v => patch(c => ({ ...c, team: { ...c.team, enabled: v } }))} />
         <StudioField label={ts('fieldSectionTitle')}>
-          <StudioInput value={cfg.team.title} onChange={v => patch(c => ({ ...c, team: { ...c.team, title: v } }))} placeholder="Notre équipe" />
+          <StudioInput value={cfg.team.title} onChange={v => patch(c => ({ ...c, team: { ...c.team, title: v } }))} placeholder={ts('placeholderTeamTitle')} />
         </StudioField>
         <div className="space-y-3">
           {cfg.team.members.map((m, i) => (
@@ -246,7 +248,7 @@ export default function AboutPage() {
         {cfg.cta.enabled && (
           <>
             <StudioField label={ts('fieldTitle')}>
-              <StudioInput value={cfg.cta.title} onChange={v => patch(c => ({ ...c, cta: { ...c.cta, title: v } }))} placeholder="Rejoignez notre communauté" />
+              <StudioInput value={cfg.cta.title} onChange={v => patch(c => ({ ...c, cta: { ...c.cta, title: v } }))} placeholder={ts('placeholderCtaJoinTitle')} />
             </StudioField>
             <StudioField label={ts('fieldDescription')}>
               <StudioRichText
@@ -257,10 +259,10 @@ export default function AboutPage() {
               />
             </StudioField>
             <StudioField label={ts('fieldButtonPrimary')}>
-              <StudioInput value={cfg.cta.primaryLabel} onChange={v => patch(c => ({ ...c, cta: { ...c.cta, primaryLabel: v } }))} placeholder="S'abonner" />
+              <StudioInput value={cfg.cta.primaryLabel} onChange={v => patch(c => ({ ...c, cta: { ...c.cta, primaryLabel: v } }))} placeholder={ts('defaultSubscribeLabel')} />
             </StudioField>
             <StudioField label={ts('fieldButtonSecondary')}>
-              <StudioInput value={cfg.cta.secondaryLabel} onChange={v => patch(c => ({ ...c, cta: { ...c.cta, secondaryLabel: v } }))} placeholder="Nos articles" />
+              <StudioInput value={cfg.cta.secondaryLabel} onChange={v => patch(c => ({ ...c, cta: { ...c.cta, secondaryLabel: v } }))} placeholder={ts('placeholderOurArticles')} />
             </StudioField>
           </>
         )}

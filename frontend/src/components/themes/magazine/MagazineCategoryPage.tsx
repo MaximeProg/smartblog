@@ -3,6 +3,7 @@ import { useCallback, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { AdRotator } from '../shared/AdRotator';
@@ -16,9 +17,9 @@ interface CategoryPageProps {
   basePath: string;
 }
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 export default function MagazineCategoryPage({
@@ -30,6 +31,7 @@ export default function MagazineCategoryPage({
 }: CategoryPageProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#e11d48';
 
   const aHref = useCallback(
@@ -55,14 +57,14 @@ export default function MagazineCategoryPage({
               href={`${basePath}/categories`}
               className="text-zinc-400 hover:text-white text-sm transition-colors inline-block mb-3"
             >
-              ← All Topics
+              ← {t('allCategoriesLink')}
             </Link>
             <h1 className="text-5xl font-black text-white mt-3 mb-2">{category.name}</h1>
             {category.description && (
               <p className="text-zinc-400 text-base mt-2 max-w-xl">{category.description}</p>
             )}
             <p className="text-zinc-500 text-sm mt-3">
-              {articles.length} article{articles.length !== 1 ? 's' : ''}
+              {articles.length !== 1 ? t('articleCountPlural', { count: articles.length }) : t('articleCount', { count: articles.length })}
             </p>
           </div>
         </div>
@@ -71,9 +73,9 @@ export default function MagazineCategoryPage({
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         {articles.length === 0 ? (
           <div className="py-24 text-center">
-            <p className="text-lg font-bold text-zinc-300">No articles in this topic yet.</p>
+            <p className="text-lg font-bold text-zinc-300">{t('noArticlesInCategoryDesc')}</p>
             <Link href={basePath || "/"} className="mt-4 inline-block text-sm text-zinc-400 hover:text-zinc-900 transition-colors">
-              ← Back to home
+              ← {t('backToHome')}
             </Link>
           </div>
         ) : (
@@ -120,9 +122,9 @@ export default function MagazineCategoryPage({
                   <div className="flex items-center gap-2 text-xs text-zinc-400">
                     {featured.author_name && <span>{featured.author_name}</span>}
                     {featured.author_name && <span>·</span>}
-                    <span>{formatDate(featured.published_at)}</span>
+                    <span>{formatDate(featured.published_at, locale)}</span>
                     {featured.reading_time_minutes && (
-                      <><span>·</span><span>{featured.reading_time_minutes} min read</span></>
+                      <><span>·</span><span>{t('minRead', { min: featured.reading_time_minutes })}</span></>
                     )}
                   </div>
                 </div>
@@ -167,9 +169,9 @@ export default function MagazineCategoryPage({
                       <div className="flex items-center gap-2 text-xs text-zinc-400">
                         {a.author_name && <span>{a.author_name}</span>}
                         {a.author_name && <span>·</span>}
-                        <span>{formatDate(a.published_at)}</span>
+                        <span>{formatDate(a.published_at, locale)}</span>
                         {a.reading_time_minutes && (
-                          <><span>·</span><span>{a.reading_time_minutes} min</span></>
+                          <><span>·</span><span>{t('minRead', { min: a.reading_time_minutes })}</span></>
                         )}
                       </div>
                     </div>

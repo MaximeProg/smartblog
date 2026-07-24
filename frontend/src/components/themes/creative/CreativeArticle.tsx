@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect, useCallback, useMemo, type CSSProperties } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { ArticleProps } from '../ThemeRenderer';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
 import { renderContent } from '../shared/renderContent';
@@ -23,9 +24,9 @@ const GRADIENTS = [
   'from-zinc-800 to-zinc-700',
 ];
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 function initials(name: string | null) {
@@ -50,11 +51,12 @@ export default function CreativeArticle({
 }: ArticleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#7c3aed';
 
   const articleCfg = blog.template_config?.article as Record<string, any> | undefined;
   const showRelated = articleCfg?.relatedArticles?.enabled !== false;
-  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || 'More';
+  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || t('relatedArticles');
   const showComments = articleCfg?.comments?.enabled !== false;
 
   const basePath = baseProp !== undefined
@@ -134,8 +136,8 @@ export default function CreativeArticle({
                     {article.author_name}
                   </span>
                 )}
-                {article.published_at && <span>{formatDate(article.published_at)}</span>}
-                {article.reading_time_minutes && <span>{article.reading_time_minutes} min read</span>}
+                {article.published_at && <span>{formatDate(article.published_at, locale)}</span>}
+                {article.reading_time_minutes && <span>{t('minRead', { min: article.reading_time_minutes })}</span>}
               </div>
             </div>
           </div>
@@ -186,11 +188,11 @@ export default function CreativeArticle({
                   {article.author_name}
                 </span>
               )}
-              {article.published_at && <span>{formatDate(article.published_at)}</span>}
+              {article.published_at && <span>{formatDate(article.published_at, locale)}</span>}
               {article.reading_time_minutes && (
-                <span>{article.reading_time_minutes} min read</span>
+                <span>{t('minRead', { min: article.reading_time_minutes })}</span>
               )}
-              <span>{article.views_count} views</span>
+              <span>{article.views_count} {t('viewsLabel')}</span>
             </div>
           </div>
         </div>
@@ -227,11 +229,11 @@ export default function CreativeArticle({
                   {article.author_name}
                 </span>
               )}
-              {article.published_at && <span>{formatDate(article.published_at)}</span>}
+              {article.published_at && <span>{formatDate(article.published_at, locale)}</span>}
               {article.reading_time_minutes && (
-                <span>{article.reading_time_minutes} min read</span>
+                <span>{t('minRead', { min: article.reading_time_minutes })}</span>
               )}
-              <span>{article.views_count} views</span>
+              <span>{article.views_count} {t('viewsLabel')}</span>
             </div>
           </div>
         </div>
@@ -286,9 +288,9 @@ export default function CreativeArticle({
                 <svg xmlns="http://www.w3.org/2000/svg" className={`h-3.5 w-3.5 ${bookmarked ? 'fill-zinc-900' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                 </svg>
-                {bookmarked ? 'Saved' : 'Save'}
+                {bookmarked ? t('savedArticle') : t('saveArticle')}
               </button>
-              <span className="text-sm text-zinc-400">{article.views_count} views</span>
+              <span className="text-sm text-zinc-400">{article.views_count} {t('viewsLabel')}</span>
             </div>
             <div className="flex items-center gap-3">
               <ShareButtons url={articleUrl} title={article.title} primaryColor={primaryColor} />
@@ -302,7 +304,7 @@ export default function CreativeArticle({
             href={basePath || "/"}
             className="text-sm font-bold text-zinc-500 hover:text-zinc-900 transition-colors"
           >
-            ← Back to all articles
+            ← {t('backToArticles')}
           </Link>
         </div>
       </div>

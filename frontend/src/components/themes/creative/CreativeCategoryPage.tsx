@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { type CSSProperties } from 'react';
+import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
@@ -24,9 +26,9 @@ const GRADIENTS = [
   'from-zinc-800 to-zinc-700',
 ];
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 export default function CreativeCategoryPage({
@@ -36,6 +38,9 @@ export default function CreativeCategoryPage({
   categories,
   basePath,
 }: Props) {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#7c3aed';
 
   return (
@@ -48,7 +53,7 @@ export default function CreativeCategoryPage({
             href={`${basePath}/categories`}
             className="text-zinc-400 hover:text-white text-sm transition-colors inline-flex items-center gap-1"
           >
-            ← All Topics
+            ← {t('allCategoriesLink')}
           </Link>
           <h1 className="text-5xl font-black text-white mt-4 mb-3">{category.name}</h1>
           <div className="flex flex-wrap items-center gap-3">
@@ -59,7 +64,7 @@ export default function CreativeCategoryPage({
               className="text-xs font-black px-3 py-1 rounded-full text-zinc-950"
               style={{ backgroundColor: primaryColor }}
             >
-              {category.articles_count} {category.articles_count === 1 ? 'article' : 'articles'}
+              {category.articles_count !== 1 ? t('articleCountPlural', { count: category.articles_count }) : t('articleCount', { count: category.articles_count })}
             </span>
           </div>
         </div>
@@ -68,9 +73,9 @@ export default function CreativeCategoryPage({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
         {articles.length === 0 ? (
           <div className="bg-zinc-950 rounded-2xl p-20 text-center">
-            <p className="text-5xl font-black text-white mb-4">No articles yet</p>
+            <p className="text-5xl font-black text-white mb-4">{t('noArticles')}</p>
             <p className="text-zinc-500 text-lg">
-              Check back soon for new content in this topic.
+              {t('noArticlesInCategoryDesc')}
             </p>
           </div>
         ) : (
@@ -117,7 +122,7 @@ export default function CreativeCategoryPage({
                     <p className="text-white/50 text-xs mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       {a.author_name && <span>{a.author_name}</span>}
                       {a.author_name && a.published_at && <span> · </span>}
-                      {a.published_at && <span>{formatDate(a.published_at)}</span>}
+                      {a.published_at && <span>{formatDate(a.published_at, locale)}</span>}
                     </p>
                   </div>
                 </Link>

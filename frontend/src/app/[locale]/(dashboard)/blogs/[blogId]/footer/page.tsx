@@ -24,16 +24,22 @@ interface FooterConfig {
   showPoweredBy: boolean;
 }
 
-const DEFAULT: FooterConfig = {
-  description: '',
-  showCategories: true,
-  navLinks: [{ label: 'Accueil', url: '/' }, { label: 'À propos', url: '/about' }, { label: 'Contact', url: '/contact' }],
-  showSocialLinks: true,
-  showNewsletterMini: true,
-  newsletterMiniText: '',
-  copyrightText: '',
-  showPoweredBy: true,
-};
+function buildDefault(ts: (key: any) => string, tn: (key: any) => string): FooterConfig {
+  return {
+    description: '',
+    showCategories: true,
+    navLinks: [
+      { label: tn('pageHome'), url: '/' },
+      { label: tn('pageAbout'), url: '/about' },
+      { label: tn('pageContact'), url: '/contact' },
+    ],
+    showSocialLinks: true,
+    showNewsletterMini: true,
+    newsletterMiniText: '',
+    copyrightText: '',
+    showPoweredBy: true,
+  };
+}
 
 export default function FooterPage() {
   const params = useParams();
@@ -41,22 +47,23 @@ export default function FooterPage() {
   const { toast } = useToast();
   const qc = useQueryClient();
   const ts = useTranslations('studio');
+  const tn = useTranslations('blogNav');
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const [cfg, setCfg] = useState<FooterConfig>(DEFAULT);
+  const [cfg, setCfg] = useState<FooterConfig>(() => buildDefault(ts, tn));
   const [serverLoaded, setServerLoaded] = useState(false);
   const isDirtyRef = useRef(false);
 
   useEffect(() => {
     if (!isDirtyRef.current && tenant?.template_config?.footer) {
-      setCfg({ ...DEFAULT, ...(tenant.template_config.footer as any) });
+      setCfg({ ...buildDefault(ts, tn), ...(tenant.template_config.footer as any) });
       setServerLoaded(true);
     }
-  }, [tenant]);
+  }, [tenant]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const patch = (fn: (c: FooterConfig) => FooterConfig) => {
     isDirtyRef.current = true;
@@ -95,7 +102,7 @@ export default function FooterPage() {
     >
       <StudioSection id="brand" title={ts('sectionBrand')} defaultOpen>
         <StudioField label={ts('fieldDescription')} hint={ts('fieldDescriptionFooter')}>
-          <StudioInput value={cfg.description} onChange={v => patch(c => ({ ...c, description: v }))} placeholder="Votre blog — insights et analyses." multiline rows={3} />
+          <StudioInput value={cfg.description} onChange={v => patch(c => ({ ...c, description: v }))} placeholder={ts('placeholderFooterDescription')} multiline rows={3} />
         </StudioField>
         <StudioSwitch label={ts('switchShowSocialLinks')} description={ts('switchShowSocialFooterDesc')} checked={cfg.showSocialLinks} onChange={v => patch(c => ({ ...c, showSocialLinks: v }))} />
       </StudioSection>
@@ -134,14 +141,14 @@ export default function FooterPage() {
         <StudioSwitch label={ts('switchShowNewsletterForm')} checked={cfg.showNewsletterMini} onChange={v => patch(c => ({ ...c, showNewsletterMini: v }))} />
         {cfg.showNewsletterMini && (
           <StudioField label={ts('fieldNewsletterTeaser')}>
-            <StudioInput value={cfg.newsletterMiniText} onChange={v => patch(c => ({ ...c, newsletterMiniText: v }))} placeholder="Recevez nos meilleurs articles…" />
+            <StudioInput value={cfg.newsletterMiniText} onChange={v => patch(c => ({ ...c, newsletterMiniText: v }))} placeholder={ts('placeholderFooterNewsletterTeaser')} />
           </StudioField>
         )}
       </StudioSection>
 
       <StudioSection id="copyright" title={ts('sectionCopyright')} defaultOpen={false}>
         <StudioField label={ts('fieldCopyright')}>
-          <StudioInput value={cfg.copyrightText} onChange={v => patch(c => ({ ...c, copyrightText: v }))} placeholder="Tous droits réservés." />
+          <StudioInput value={cfg.copyrightText} onChange={v => patch(c => ({ ...c, copyrightText: v }))} placeholder={ts('placeholderCopyright')} />
         </StudioField>
         <StudioSwitch label={ts('switchPoweredBy')} checked={cfg.showPoweredBy} onChange={v => patch(c => ({ ...c, showPoweredBy: v }))} />
       </StudioSection>

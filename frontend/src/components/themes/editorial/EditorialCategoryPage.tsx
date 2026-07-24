@@ -2,6 +2,8 @@
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { BookOpen, Clock } from 'lucide-react';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
@@ -16,9 +18,9 @@ const cardGradients = [
   'from-rose-50 to-rose-100',
 ];
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 interface CategoryPageProps {
@@ -36,6 +38,9 @@ export default function EditorialCategoryPage({
   categories,
   basePath,
 }: CategoryPageProps) {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#18181b';
 
   return (
@@ -52,7 +57,7 @@ export default function EditorialCategoryPage({
           href={`${basePath}/categories`}
           className="text-sm text-zinc-400 hover:text-zinc-900 transition-colors mb-6 inline-flex items-center gap-2"
         >
-          ← All Topics
+          ← {t('allCategoriesLink')}
         </Link>
 
         {category.cover_image_url && (
@@ -75,28 +80,28 @@ export default function EditorialCategoryPage({
         )}
         <div className="inline-flex items-center gap-1.5 mt-4 rounded-full bg-zinc-100 px-4 py-1.5 text-sm font-bold text-zinc-600">
           <BookOpen className="h-4 w-4" />
-          {articles.length} article{articles.length !== 1 ? 's' : ''}
+          {articles.length !== 1 ? t('articleCountPlural', { count: articles.length }) : t('articleCount', { count: articles.length })}
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
         <p className="text-xs font-black uppercase tracking-widest text-zinc-400 mb-8 mt-8">
-          Articles in {category.name}
+          {t('articlesInCategory', { category: category.name })}
         </p>
 
         {articles.length === 0 ? (
           <div className="py-24 text-center">
             <BookOpen className="h-14 w-14 mx-auto mb-5 text-zinc-200" />
-            <p className="text-xl font-bold text-zinc-400 mb-2">No articles yet</p>
+            <p className="text-xl font-bold text-zinc-400 mb-2">{t('noArticles')}</p>
             <p className="text-sm text-zinc-400 mb-6">
-              Articles in this category will appear here once they&apos;ve been published.
+              {t('noArticlesInCategoryDesc')}
             </p>
             <Link
               href={basePath || "/"}
               className="inline-flex items-center gap-2 text-sm font-bold hover:underline"
               style={{ color: primaryColor }}
             >
-              ← Back to Home
+              ← {t('backToHome')}
             </Link>
           </div>
         ) : (
@@ -146,12 +151,12 @@ export default function EditorialCategoryPage({
                 <div className="flex items-center gap-2 text-xs text-zinc-400 mt-auto pt-2 border-t border-zinc-100 flex-wrap">
                   {a.author_name && <span>{a.author_name}</span>}
                   {a.author_name && <span>·</span>}
-                  <span>{formatDate(a.published_at)}</span>
+                  <span>{formatDate(a.published_at, locale)}</span>
                   {a.reading_time_minutes && (
                     <>
                       <span>·</span>
                       <Clock className="h-3 w-3" />
-                      <span>{a.reading_time_minutes} min read</span>
+                      <span>{t('minRead', { min: a.reading_time_minutes })}</span>
                     </>
                   )}
                 </div>

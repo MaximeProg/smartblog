@@ -2,6 +2,7 @@
 
 import { Headphones, Pause, X } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { useAudioPlayer } from './PersistentAudioPlayer';
 
 interface ArticleListenBannerProps {
@@ -21,6 +22,7 @@ export default function ArticleListenBanner({
 }: ArticleListenBannerProps) {
   const { play, pause, track, playing } = useAudioPlayer();
   const [dismissed, setDismissed] = useState(false);
+  const t = useTranslations('publicBlog');
 
   const isActive = track?.url === audioUrl;
 
@@ -48,7 +50,7 @@ export default function ArticleListenBanner({
       <button
         onClick={handleClick}
         className="flex items-center gap-2"
-        aria-label="Listen to this article"
+        aria-label={t('listenToArticle')}
       >
         <div
           className="flex items-center justify-center w-7 h-7 rounded-full shrink-0"
@@ -56,13 +58,13 @@ export default function ArticleListenBanner({
         >
           <Headphones className="h-3.5 w-3.5" />
         </div>
-        <span className="pr-1 max-w-[140px] truncate text-zinc-700">Listen</span>
+        <span className="pr-1 max-w-[140px] truncate text-zinc-700">{t('listen')}</span>
       </button>
 
       <button
         onClick={() => setDismissed(true)}
         className="flex items-center justify-center w-6 h-6 rounded-full text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100 transition-colors shrink-0"
-        aria-label="Dismiss"
+        aria-label={t('dismiss')}
       >
         <X className="h-3 w-3" />
       </button>

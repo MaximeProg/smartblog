@@ -4,6 +4,30 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Rss, Mic, Clock, Play } from 'lucide-react';
 import { publicApi } from '@/lib/public-api';
+import { getUiTranslations } from '@/lib/platform-api';
+import { CMS_SUPPORTED_LANGS } from '@/config/cms';
+
+/* eslint-disable @typescript-eslint/no-require-imports */
+const enMessages = require('@/messages/en.json').publicBlog;
+const frMessages = require('@/messages/fr.json').publicBlog;
+/* eslint-enable @typescript-eslint/no-require-imports */
+const STATIC_MESSAGES: Record<string, typeof enMessages> = { en: enMessages, fr: frMessages };
+const CMS_LANG_CODES: Set<string> = new Set(CMS_SUPPORTED_LANGS.map((l) => l.code));
+
+/** Résout les chaînes du namespace publicBlog pour ce composant serveur —
+ * cette route (rendu par domaine personnalisé) n'a pas de segment [locale]
+ * dans l'URL, donc pas de NextIntlClientProvider ambiant : on reproduit ici
+ * le même mécanisme que blog/[slug]/layout.tsx (fichiers statiques en/fr,
+ * sinon DeepL à la demande via getUiTranslations pour les 27 autres langues). */
+async function resolvePublicBlogMessages(lang: string | undefined, sourceLang: string) {
+  const requested = (lang || sourceLang).toLowerCase();
+  if (STATIC_MESSAGES[requested]) return STATIC_MESSAGES[requested];
+  if (CMS_LANG_CODES.has(requested)) {
+    const translated = await getUiTranslations('publicBlog', requested);
+    if (translated) return { ...enMessages, ...translated };
+  }
+  return STATIC_MESSAGES[sourceLang] ?? enMessages;
+}
 
 export const revalidate = 60;
 
@@ -23,21 +47,31 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   }
 }
 
-function formatDate(d: string | null) {
+/** Les messages publicBlog résolus ici sont un objet brut (pas le hook next-intl
+ * useTranslations) — cette route serveur n'a pas de segment [locale], voir
+ * resolvePublicBlogMessages ci-dessus. Cette fonction reproduit juste
+ * l'interpolation {placeholder} que next-intl ferait normalement. */
+function fmt(template: string, vars: Record<string, string | number>) {
+  return template.replace(/\{(\w+)\}/g, (_, k) => String(vars[k] ?? ''));
+}
+
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function EpisodeCard({
   article,
   href,
   primaryColor,
-  index,
+  locale,
+  pb,
 }: {
   article: Awaited<ReturnType<typeof publicApi.getArticles>>[number];
   href: string;
   primaryColor: string;
-  index: number;
+  locale: string;
+  pb: typeof enMessages;
 }) {
   const ep = (article as any).episode_number as number | null;
   const season = (article as any).season as number | null;
@@ -55,13 +89,13 @@ function EpisodeCard({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
           {season && <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">S{season}</span>}
-          <span className="text-xs text-zinc-400">{formatDate(article.published_at)}</span>
+          <span className="text-xs text-zinc-400">{formatDate(article.published_at, locale)}</span>
           {article.reading_time_minutes && (
             <>
               <span className="text-zinc-300">·</span>
               <span className="text-xs text-zinc-400 flex items-center gap-1">
                 <Clock className="h-3 w-3" />
-                {article.reading_time_minutes} min
+                {fmt(pb.minRead, { min: article.reading_time_minutes })}
               </span>
             </>
           )}
@@ -107,6 +141,9 @@ export default async function PodcastPage({ params, searchParams }: { params: Pa
   const basePath = '';
   const primaryColor = blog.primary_color || '#18181b';
   const rssUrl = `${process.env.NEXT_PUBLIC_API_URL ?? 'https://api.smarterbloggers.com'}/api/v1/public/${slug}/podcast/rss`;
+  const sourceLang = (blog.language || 'en').toLowerCase();
+  const locale = (lang || sourceLang).toLowerCase();
+  const pb = await resolvePublicBlogMessages(lang, sourceLang);
 
   return (
     <div className="bg-white min-h-screen" style={{ '--cp': primaryColor } as React.CSSProperties}>
@@ -123,7 +160,7 @@ export default async function PodcastPage({ params, searchParams }: { params: Pa
             className="inline-flex items-center gap-2 text-xs font-medium text-zinc-500 hover:text-orange-500 transition-colors"
           >
             <Rss className="h-4 w-4" />
-            RSS Feed
+            {pb.rssFeed}
           </a>
         </div>
       </header>
@@ -144,7 +181,7 @@ export default async function PodcastPage({ params, searchParams }: { params: Pa
             </div>
           )}
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">Podcast</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-1">{pb.podcastLabel}</p>
             <h1 className="text-2xl font-bold text-zinc-900 mb-2">{blog.name}</h1>
             {blog.description && (
               <p className="text-sm text-zinc-500 leading-relaxed line-clamp-3">{blog.description}</p>
@@ -158,7 +195,7 @@ export default async function PodcastPage({ params, searchParams }: { params: Pa
                 rel="noopener noreferrer"
               >
                 <Rss className="h-3 w-3" />
-                Subscribe via RSS
+                {pb.subscribeViaRss}
               </a>
             </div>
           </div>
@@ -168,21 +205,22 @@ export default async function PodcastPage({ params, searchParams }: { params: Pa
         {episodes.length === 0 ? (
           <div className="text-center py-16 text-zinc-400">
             <Mic className="h-12 w-12 mx-auto mb-4 opacity-30" />
-            <p className="font-medium">No episodes yet</p>
-            <p className="text-sm mt-1">Check back soon.</p>
+            <p className="font-medium">{pb.noEpisodesYet}</p>
+            <p className="text-sm mt-1">{pb.noArticlesDesc}</p>
           </div>
         ) : (
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-4">
-              {episodes.length} episode{episodes.length !== 1 ? 's' : ''}
+              {episodes.length !== 1 ? fmt(pb.episodeCountPlural, { count: episodes.length }) : fmt(pb.episodeCount, { count: episodes.length })}
             </p>
-            {episodes.map((ep, i) => (
+            {episodes.map((ep) => (
               <EpisodeCard
                 key={ep.id}
                 article={ep}
                 href={`${basePath}/${ep.slug}${lang ? `?lang=${lang}` : ''}`}
                 primaryColor={primaryColor}
-                index={i}
+                locale={locale}
+                pb={pb}
               />
             ))}
           </div>

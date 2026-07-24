@@ -32,15 +32,15 @@ export default function CorporateHome({
 
   const basePath = baseProp !== undefined
     ? baseProp
-    : isPreview ? '/en/template' : `/${locale}/${blog.slug}`;
+    : isPreview ? `/${locale}/template` : `/${locale}/${blog.slug}`;
 
   const aHref = useCallback(
     (articleSlug: string) => {
       if (getArticleHref) return getArticleHref(articleSlug);
-      if (previewSlug) return `/en/template/${articleSlug}?preview=${previewSlug}`;
+      if (previewSlug) return `/${locale}/template/${articleSlug}?preview=${previewSlug}`;
       return `${basePath}/${articleSlug}`;
     },
-    [getArticleHref, previewSlug, basePath],
+    [getArticleHref, previewSlug, basePath, locale],
   );
 
   const featuredTitle = homeConfig?.hero?.sectionTitle || legacyContent?.featuredSectionTitle || t('featuredNews');

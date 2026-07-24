@@ -10,7 +10,7 @@ from app.api.v1.comments import router as comments_router, tenant_comments_route
 from app.api.v1.newsletter import router as newsletter_router
 from app.api.v1.social import router as social_router
 from app.api.v1.oauth import router as oauth_router
-from app.api.v1.ads import router as ads_router, public_ads_router
+from app.api.v1.ads import router as ads_router, public_ads_router, platform_ads_router
 from app.api.v1.analytics import router as analytics_router
 from app.api.v1.search import router as search_router
 from app.api.v1.payments import router as payments_router, me_payments_router
@@ -45,6 +45,7 @@ api_router.include_router(social_router)
 api_router.include_router(oauth_router)
 api_router.include_router(ads_router)
 api_router.include_router(public_ads_router)
+api_router.include_router(platform_ads_router)
 api_router.include_router(analytics_router)
 api_router.include_router(search_router)
 api_router.include_router(payments_router)

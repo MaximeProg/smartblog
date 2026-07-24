@@ -62,7 +62,7 @@ export function MediaFilePicker({
 
   async function upload(file: File) {
     if (!file.type.startsWith(mimePrefix) && file.type !== '') {
-      setUploadError(mediaType === 'video' ? 'Format vidéo non supporté (MP4, WebM, MOV)' : 'Format audio non supporté (MP3, WAV, OGG, AAC)');
+      setUploadError(mediaType === 'video' ? ts('mediaVideoFormatError') : ts('mediaAudioFormatError'));
       return;
     }
     setUploading(true);
@@ -73,8 +73,8 @@ export function MediaFilePicker({
       onChange(data.cloudinary_secure_url);
     } catch (err: any) {
       const msg = err?.code === 'ECONNABORTED'
-        ? 'Délai dépassé. Essaie avec une connexion plus rapide ou un fichier plus petit.'
-        : 'Erreur lors de l\'upload. Réessaie.';
+        ? ts('mediaUploadTimeoutError')
+        : ts('mediaUploadError');
       setUploadError(msg);
     } finally {
       setUploading(false);
@@ -104,9 +104,9 @@ export function MediaFilePicker({
   const PreviewIcon = mediaType === 'video' ? Play : Music;
 
   const tabs: { id: Tab; label: string; icon: typeof Upload }[] = [
-    { id: 'gallery', label: 'Galerie', icon: Grid3X3 },
-    { id: 'upload',  label: 'Upload',  icon: Upload },
-    { id: 'url',     label: 'URL',     icon: Link2 },
+    { id: 'gallery', label: ts('mediaTabGallery'), icon: Grid3X3 },
+    { id: 'upload',  label: ts('mediaTabUpload'),  icon: Upload },
+    { id: 'url',     label: ts('mediaTabUrl'),     icon: Link2 },
   ];
 
   const videoEmbed = useMemo(() => {
@@ -132,7 +132,7 @@ export function MediaFilePicker({
               className="absolute inset-0 w-full h-full border-0"
               allowFullScreen
               loading="lazy"
-              title="Preview"
+              title={ts('mediaPreviewTitle')}
             />
           )}
           <button
@@ -208,8 +208,8 @@ export function MediaFilePicker({
           ) : mediaItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Icon className="h-8 w-8 text-slate-300 dark:text-slate-600 mb-2" />
-              <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium">Aucun fichier {mediaType === 'video' ? 'vidéo' : 'audio'}</p>
-              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">Utilise "Upload" pour en ajouter un</p>
+              <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium">{mediaType === 'video' ? ts('mediaNoFilesVideo') : ts('mediaNoFilesAudio')}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">{ts('mediaUseUploadHint')}</p>
             </div>
           ) : (
             <div className="space-y-1.5 max-h-56 overflow-y-auto pr-1">
@@ -273,7 +273,7 @@ export function MediaFilePicker({
               <div className="flex flex-col items-center gap-2 w-full px-4">
                 <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
                 <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                  {uploadPct > 0 ? `Envoi… ${uploadPct}%` : 'Connexion…'}
+                  {uploadPct > 0 ? ts('mediaUploadingPct', { pct: uploadPct }) : ts('mediaConnecting')}
                 </span>
                 {uploadPct > 0 && (
                   <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -291,10 +291,10 @@ export function MediaFilePicker({
                 </div>
                 <div className="text-center">
                   <p className="text-[12px] font-semibold text-slate-700 dark:text-slate-300">
-                    {dragging ? 'Dépose ici' : 'Clique ou glisse-dépose'}
+                    {dragging ? ts('mediaDropHere') : ts('mediaClickOrDrag')}
                   </p>
                   <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
-                    {mediaType === 'video' ? 'MP4, WebM, MOV — max 100 MB' : 'MP3, WAV, OGG, AAC — max 50 MB'}
+                    {mediaType === 'video' ? ts('mediaVideoHint') : ts('mediaAudioHint')}
                   </p>
                 </div>
               </>
@@ -312,8 +312,8 @@ export function MediaFilePicker({
             onChange={e => setUrlInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') handleUrlConfirm(); }}
             placeholder={mediaType === 'video'
-              ? 'https://youtube.com/watch?v=… ou https://…/video.mp4'
-              : 'https://…/audio.mp3 ou https://soundcloud.com/…'
+              ? ts('mediaVideoUrlPlaceholder')
+              : ts('mediaAudioUrlPlaceholder')
             }
             className="w-full h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[12px] text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 font-mono"
           />
@@ -323,10 +323,10 @@ export function MediaFilePicker({
             disabled={!urlInput.trim()}
             className="w-full h-9 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-semibold flex items-center justify-center gap-1.5 disabled:opacity-40 transition-colors"
           >
-            <Check className="h-3.5 w-3.5" /> Utiliser cette URL
+            <Check className="h-3.5 w-3.5" /> {ts('mediaUseThisUrl')}
           </button>
           {mediaType === 'video' && (
-            <p className="text-[10px] text-slate-400 dark:text-slate-500">YouTube et Vimeo sont automatiquement convertis en embed.</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500">{ts('mediaEmbedHint')}</p>
           )}
         </div>
       )}

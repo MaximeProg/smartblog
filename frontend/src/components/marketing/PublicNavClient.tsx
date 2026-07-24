@@ -15,6 +15,7 @@ export interface NavLabels {
   pricing: string;
   about: string;
   contact: string;
+  advertise: string;
   signIn: string;
 }
 
@@ -54,6 +55,7 @@ export function PublicNavClient({ locale, lang, labels, transparent = false }: P
     { href: `/${locale}#features`, label: labels.features, anchor: true },
     { href: `/${locale}#pricing`, label: labels.pricing, anchor: true },
     { href: `/${locale}/about`, label: labels.about, exact: false },
+    { href: `/${locale}/advertise-with-us`, label: labels.advertise, exact: false },
     { href: `/${locale}/contact`, label: labels.contact, exact: false },
   ];
 

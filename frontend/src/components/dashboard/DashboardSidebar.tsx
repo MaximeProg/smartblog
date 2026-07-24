@@ -5,7 +5,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard, Newspaper, User, Bell, CreditCard, Gift,
-  Plus, LogOut, Zap, X, ShieldCheck, LifeBuoy, Wallet,
+  Plus, LogOut, Zap, X, ShieldCheck, LifeBuoy, Wallet, Megaphone,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -71,6 +71,7 @@ export function DashboardSidebar() {
     { seg: 'subscription',  icon: CreditCard, label: t('subscription') },
     { seg: 'payments',      icon: Wallet,     label: t('payments') },
     { seg: 'affiliate',     icon: Gift,       label: t('affiliate') },
+    { seg: 'advertiser',    icon: Megaphone,  label: t('advertiser') },
   ];
   const supportHref = firstTenantId ? `/${locale}/blogs/${firstTenantId}/support` : '#';
   const isSupportActive = pathname.includes('/support');
@@ -179,8 +180,8 @@ export function DashboardSidebar() {
                 <ShieldCheck className="h-4 w-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[12px] font-black text-white leading-none">Admin Console</p>
-                <p className="text-[10px] text-rose-200 mt-0.5 leading-none">Plateforme SmarterBloggers</p>
+                <p className="text-[12px] font-black text-white leading-none">{t('adminConsole')}</p>
+                <p className="text-[10px] text-rose-200 mt-0.5 leading-none">{t('adminConsolePlatform')}</p>
               </div>
               <div className="h-5 w-5 rounded-full bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
                 <span className="text-[10px] font-black text-white">→</span>

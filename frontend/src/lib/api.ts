@@ -683,6 +683,46 @@ export const adsApi = {
     api.post<AdResponse>(`/tenants/${tenantId}/ads/${adId}/resume`),
 };
 
+// ─── Pubs sur le site principal smarterbloggers.com (annonceur connecté) ────
+// Même compte que partout ailleurs sur la plateforme — voir /advertiser.
+
+export interface PlatformAdSubmitData {
+  title: string;
+  description?: string;
+  image_url?: string;
+  click_url: string;
+  starts_at?: string;
+  ends_at?: string;
+  price_per_day?: number;
+  total_budget: number;
+  currency?: string;
+}
+
+export interface PlatformAdStats {
+  ad_id: string;
+  total_impressions: number;
+  total_clicks: number;
+  ctr_pct: number;
+  amount_paid: number;
+  total_budget: number | null;
+  days_remaining: number | null;
+  daily: { date: string; impressions: number; clicks: number }[];
+}
+
+export const platformAdsApi = {
+  submit: (data: PlatformAdSubmitData) =>
+    api.post<{ ad_id: string; transaction_id: string; order_id: string; pay_address: string; pay_amount: number; pay_currency: string; qr_code_data_uri: string; expires_at: string | null; amount_usd: number }>('/platform/ads/submit', data),
+
+  mine: () =>
+    api.get<AdResponse[]>('/platform/ads/mine'),
+
+  active: (exclude?: string) =>
+    api.get<{ id: string; title: string; description: string | null; image_url: string | null; click_url: string } | null>('/platform/ads/active', { params: exclude ? { exclude } : undefined }),
+
+  stats: (adId: string, days = 30) =>
+    api.get<PlatformAdStats>(`/platform/ads/${adId}/stats`, { params: { days } }),
+};
+
 // ── M23 — Affiliate API ─────────────────────────────────────────────────────
 // Un seul code/solde/arbre par UTILISATEUR (pas par blog) — voir migration 047.
 

@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Check, Copy, Link2 } from 'lucide-react';
 
 // ── Platform icon SVGs (inline, no CDN) ───────────────────────────────────────
@@ -50,6 +51,7 @@ interface ShareButtonsProps {
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export function ShareButtons({ url, title, primaryColor = '#18181b', variant = 'article', className }: ShareButtonsProps) {
+  const t = useTranslations('publicBlog');
   const [copied, setCopied] = useState(false);
 
   const encoded = encodeURIComponent(url);
@@ -98,14 +100,14 @@ export function ShareButtons({ url, title, primaryColor = '#18181b', variant = '
 
   return (
     <div className={`flex items-center gap-2 flex-wrap ${className ?? ''}`}>
-      <span className="text-xs text-zinc-400 font-medium mr-1">Share</span>
+      <span className="text-xs text-zinc-400 font-medium mr-1">{t('shareLabel')}</span>
       {visiblePlatforms.map(({ key, label, Icon, href, color }) => (
         <a
           key={key}
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          title={`Share on ${label}`}
+          title={`${t('shareOn')} ${label}`}
           className="w-8 h-8 rounded-full flex items-center justify-center text-white transition-all hover:scale-110 hover:opacity-90"
           style={{ backgroundColor: color }}
         >
@@ -114,7 +116,7 @@ export function ShareButtons({ url, title, primaryColor = '#18181b', variant = '
       ))}
       <button
         onClick={copyLink}
-        title="Copy link"
+        title={t('copyLink')}
         className="w-8 h-8 rounded-full flex items-center justify-center border transition-all hover:scale-110"
         style={{
           borderColor: copied ? primaryColor : '#d4d4d8',
@@ -130,6 +132,7 @@ export function ShareButtons({ url, title, primaryColor = '#18181b', variant = '
 // ── Floating share bar (right side, article pages) ─────────────────────────────
 
 export function FloatingShareBar({ url, title, primaryColor = '#18181b' }: { url: string; title: string; primaryColor?: string }) {
+  const t = useTranslations('publicBlog');
   const [copied, setCopied] = useState(false);
   const encoded = encodeURIComponent(url);
   const encodedTitle = encodeURIComponent(title);
@@ -153,7 +156,7 @@ export function FloatingShareBar({ url, title, primaryColor = '#18181b' }: { url
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          title={`Share on ${label}`}
+          title={`${t('shareOn')} ${label}`}
           className="w-9 h-9 rounded-full flex items-center justify-center text-white shadow-md transition-all hover:scale-110 hover:shadow-lg"
           style={{ backgroundColor: color }}
         >
@@ -162,7 +165,7 @@ export function FloatingShareBar({ url, title, primaryColor = '#18181b' }: { url
       ))}
       <button
         onClick={copyLink}
-        title="Copy link"
+        title={t('copyLink')}
         className="w-9 h-9 rounded-full flex items-center justify-center bg-white border shadow-md transition-all hover:scale-110"
         style={{ borderColor: copied ? primaryColor : '#e4e4e7', color: copied ? primaryColor : '#71717a' }}
       >

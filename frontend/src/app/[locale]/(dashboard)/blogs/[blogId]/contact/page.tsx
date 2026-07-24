@@ -37,29 +37,31 @@ interface ContactConfig {
   };
 }
 
-const DEFAULT: ContactConfig = {
-  hero: { enabled: true, subtitle: 'Contact', title: 'Prenons contact', description: '', cover_image_url: '' },
-  form: {
-    enabled: true,
-    title: '',
-    namePlaceholder: '',
-    emailPlaceholder: 'votre@email.com',
-    subjectPlaceholder: '',
-    messagePlaceholder: '',
-    submitLabel: '',
-    successMessage: '',
-  },
-  info: {
-    enabled: true,
-    title: 'Contact',
-    email: '',
-    phone: '',
-    responseTime: '',
-    showAddress: false,
-    address: '',
-    mapEmbedUrl: '',
-  },
-};
+function buildDefault(ts: (key: any) => string, tn: (key: any) => string): ContactConfig {
+  return {
+    hero: { enabled: true, subtitle: tn('pageContact'), title: ts('placeholderContactHeroTitle'), description: '', cover_image_url: '' },
+    form: {
+      enabled: true,
+      title: '',
+      namePlaceholder: '',
+      emailPlaceholder: ts('placeholderEmailExample'),
+      subjectPlaceholder: '',
+      messagePlaceholder: '',
+      submitLabel: '',
+      successMessage: '',
+    },
+    info: {
+      enabled: true,
+      title: tn('pageContact'),
+      email: '',
+      phone: '',
+      responseTime: '',
+      showAddress: false,
+      address: '',
+      mapEmbedUrl: '',
+    },
+  };
+}
 
 export default function ContactPage() {
   const params = useParams();
@@ -67,19 +69,20 @@ export default function ContactPage() {
   const { toast } = useToast();
   const qc = useQueryClient();
   const ts = useTranslations('studio');
+  const tn = useTranslations('blogNav');
 
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
   });
 
-  const [cfg, setCfg] = useState<ContactConfig>(DEFAULT);
+  const [cfg, setCfg] = useState<ContactConfig>(() => buildDefault(ts, tn));
 
   useEffect(() => {
     if (tenant?.template_config?.contact) {
-      setCfg({ ...DEFAULT, ...(tenant.template_config.contact as any) });
+      setCfg({ ...buildDefault(ts, tn), ...(tenant.template_config.contact as any) });
     }
-  }, [tenant]);
+  }, [tenant]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const patch = (fn: (c: ContactConfig) => ContactConfig) => setCfg(fn);
 
@@ -117,10 +120,10 @@ export default function ContactPage() {
               />
             </StudioField>
             <StudioField label={ts('fieldSubtitle')}>
-              <StudioInput value={cfg.hero.subtitle} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, subtitle: v } }))} placeholder="Contact" />
+              <StudioInput value={cfg.hero.subtitle} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, subtitle: v } }))} placeholder={tn('pageContact')} />
             </StudioField>
             <StudioField label={ts('fieldTitle')}>
-              <StudioInput value={cfg.hero.title} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, title: v } }))} placeholder="Prenons contact" />
+              <StudioInput value={cfg.hero.title} onChange={v => patch(c => ({ ...c, hero: { ...c.hero, title: v } }))} placeholder={ts('placeholderContactHeroTitle')} />
             </StudioField>
             <StudioField label={ts('fieldDescription')}>
               <StudioRichText
@@ -141,25 +144,25 @@ export default function ContactPage() {
         {cfg.form.enabled && (
           <>
             <StudioField label={ts('fieldFormTitle')}>
-              <StudioInput value={cfg.form.title} onChange={v => patch(c => ({ ...c, form: { ...c.form, title: v } }))} placeholder="Envoyez-nous un message" />
+              <StudioInput value={cfg.form.title} onChange={v => patch(c => ({ ...c, form: { ...c.form, title: v } }))} placeholder={ts('placeholderContactFormTitle')} />
             </StudioField>
             <StudioField label={ts('fieldNamePlaceholder')}>
-              <StudioInput value={cfg.form.namePlaceholder} onChange={v => patch(c => ({ ...c, form: { ...c.form, namePlaceholder: v } }))} placeholder="Votre nom" />
+              <StudioInput value={cfg.form.namePlaceholder} onChange={v => patch(c => ({ ...c, form: { ...c.form, namePlaceholder: v } }))} placeholder={ts('placeholderYourName')} />
             </StudioField>
             <StudioField label={ts('fieldEmailPlaceholder')}>
-              <StudioInput value={cfg.form.emailPlaceholder} onChange={v => patch(c => ({ ...c, form: { ...c.form, emailPlaceholder: v } }))} placeholder="votre@email.com" />
+              <StudioInput value={cfg.form.emailPlaceholder} onChange={v => patch(c => ({ ...c, form: { ...c.form, emailPlaceholder: v } }))} placeholder={ts('placeholderEmailExample')} />
             </StudioField>
             <StudioField label={ts('fieldSubjectPlaceholder')}>
-              <StudioInput value={cfg.form.subjectPlaceholder} onChange={v => patch(c => ({ ...c, form: { ...c.form, subjectPlaceholder: v } }))} placeholder="Sujet" />
+              <StudioInput value={cfg.form.subjectPlaceholder} onChange={v => patch(c => ({ ...c, form: { ...c.form, subjectPlaceholder: v } }))} placeholder={ts('placeholderSubject')} />
             </StudioField>
             <StudioField label={ts('fieldMessagePlaceholder')}>
-              <StudioInput value={cfg.form.messagePlaceholder} onChange={v => patch(c => ({ ...c, form: { ...c.form, messagePlaceholder: v } }))} placeholder="Votre message…" />
+              <StudioInput value={cfg.form.messagePlaceholder} onChange={v => patch(c => ({ ...c, form: { ...c.form, messagePlaceholder: v } }))} placeholder={ts('placeholderYourMessage')} />
             </StudioField>
             <StudioField label={ts('fieldSubmitLabel')}>
-              <StudioInput value={cfg.form.submitLabel} onChange={v => patch(c => ({ ...c, form: { ...c.form, submitLabel: v } }))} placeholder="Envoyer" />
+              <StudioInput value={cfg.form.submitLabel} onChange={v => patch(c => ({ ...c, form: { ...c.form, submitLabel: v } }))} placeholder={ts('placeholderSend')} />
             </StudioField>
             <StudioField label={ts('fieldSuccessMessage')}>
-              <StudioInput value={cfg.form.successMessage} onChange={v => patch(c => ({ ...c, form: { ...c.form, successMessage: v } }))} placeholder="Message envoyé, merci !" />
+              <StudioInput value={cfg.form.successMessage} onChange={v => patch(c => ({ ...c, form: { ...c.form, successMessage: v } }))} placeholder={ts('placeholderMessageSentThanks')} />
             </StudioField>
           </>
         )}
@@ -171,22 +174,22 @@ export default function ContactPage() {
         {cfg.info.enabled && (
           <>
             <StudioField label={ts('fieldTitle')}>
-              <StudioInput value={cfg.info.title} onChange={v => patch(c => ({ ...c, info: { ...c.info, title: v } }))} placeholder="Contact" />
+              <StudioInput value={cfg.info.title} onChange={v => patch(c => ({ ...c, info: { ...c.info, title: v } }))} placeholder={tn('pageContact')} />
             </StudioField>
             <StudioField label={ts('fieldContactEmail')}>
-              <StudioInput value={cfg.info.email} onChange={v => patch(c => ({ ...c, info: { ...c.info, email: v } }))} placeholder="contact@monblog.com" />
+              <StudioInput value={cfg.info.email} onChange={v => patch(c => ({ ...c, info: { ...c.info, email: v } }))} placeholder={ts('placeholderContactEmailExample')} />
             </StudioField>
             <StudioField label={ts('fieldContactPhone')}>
-              <StudioInput value={cfg.info.phone ?? ''} onChange={v => patch(c => ({ ...c, info: { ...c.info, phone: v } }))} placeholder="+33 1 23 45 67 89" />
+              <StudioInput value={cfg.info.phone ?? ''} onChange={v => patch(c => ({ ...c, info: { ...c.info, phone: v } }))} placeholder={ts('placeholderPhoneExample')} />
             </StudioField>
             <StudioField label={ts('fieldResponseTime')}>
-              <StudioInput value={cfg.info.responseTime} onChange={v => patch(c => ({ ...c, info: { ...c.info, responseTime: v } }))} placeholder="Réponse sous 48h" />
+              <StudioInput value={cfg.info.responseTime} onChange={v => patch(c => ({ ...c, info: { ...c.info, responseTime: v } }))} placeholder={ts('placeholderResponseTime')} />
             </StudioField>
             <StudioSwitch label={ts('switchShowAddress')} checked={cfg.info.showAddress} onChange={v => patch(c => ({ ...c, info: { ...c.info, showAddress: v } }))} />
             {cfg.info.showAddress && (
               <>
                 <StudioField label={ts('fieldAddress')}>
-                  <StudioInput value={cfg.info.address} onChange={v => patch(c => ({ ...c, info: { ...c.info, address: v } }))} multiline rows={2} placeholder="1 rue de la Paix, Paris" />
+                  <StudioInput value={cfg.info.address} onChange={v => patch(c => ({ ...c, info: { ...c.info, address: v } }))} multiline rows={2} placeholder={ts('placeholderAddressExample')} />
                 </StudioField>
                 <StudioField label={ts('fieldMapEmbed')}>
                   <StudioInput value={cfg.info.mapEmbedUrl ?? ''} onChange={v => patch(c => ({ ...c, info: { ...c.info, mapEmbedUrl: v } }))} placeholder="https://maps.google.com/maps?..." />

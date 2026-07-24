@@ -10,11 +10,11 @@ import {
 import { superadminApi, type SASurveillanceEvent, type SASurveillanceOnlineUser } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
-const TYPE_META: Record<string, { label: string; color: string; icon: typeof Activity }> = {
-  login:        { label: 'Sign-in',      color: '#6366f1', icon: LogIn },
-  registration: { label: 'Registration', color: '#10b981', icon: UserPlus },
-  payment:      { label: 'Payment',      color: '#f59e0b', icon: CreditCard },
-  article:      { label: 'Article',      color: '#3b82f6', icon: FileText },
+const TYPE_META: Record<string, { labelKey: string; color: string; icon: typeof Activity }> = {
+  login:        { labelKey: 'typeSignIn',      color: '#6366f1', icon: LogIn },
+  registration: { labelKey: 'typeRegistration', color: '#10b981', icon: UserPlus },
+  payment:      { labelKey: 'typePayment',      color: '#f59e0b', icon: CreditCard },
+  article:      { labelKey: 'typeArticle',      color: '#3b82f6', icon: FileText },
 };
 
 const LEVEL_DOT: Record<string, string> = {
@@ -27,11 +27,11 @@ const LEVEL_DOT: Record<string, string> = {
 function fmtTime(s: string) {
   return new Date(s).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
-function timeSince(s: string) {
+function timeSince(s: string, t: (key: any, vars?: any) => string) {
   const diff = Math.floor((Date.now() - new Date(s).getTime()) / 1000);
-  if (diff < 60) return `${diff}s ago`;
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  return `${Math.floor(diff / 3600)}h ago`;
+  if (diff < 60) return t('timeAgoSeconds', { n: diff });
+  if (diff < 3600) return t('timeAgoMinutes', { n: Math.floor(diff / 60) });
+  return t('timeAgoHours', { n: Math.floor(diff / 3600) });
 }
 
 function StatCard({ icon: Icon, label, value, sub, color }: {
@@ -54,6 +54,7 @@ function StatCard({ icon: Icon, label, value, sub, color }: {
 }
 
 function OnlineUserRow({ user }: { user: SASurveillanceOnlineUser }) {
+  const ts = useTranslations('superAdmin.surveillance');
   const initials = (user.display_name ?? user.email).slice(0, 2).toUpperCase();
   return (
     <div className="flex items-center gap-3 px-4 py-2.5 border-b last:border-b-0"
@@ -78,7 +79,7 @@ function OnlineUserRow({ user }: { user: SASurveillanceOnlineUser }) {
           {user.plan}
         </span>
         <p className="text-[10px] mt-0.5 font-mono" style={{ color: 'var(--sa-text-3)' }}>
-          {timeSince(user.last_seen)}
+          {timeSince(user.last_seen, ts)}
         </p>
       </div>
     </div>
@@ -86,6 +87,7 @@ function OnlineUserRow({ user }: { user: SASurveillanceOnlineUser }) {
 }
 
 function EventRow({ event }: { event: SASurveillanceEvent }) {
+  const ts = useTranslations('superAdmin.surveillance');
   const meta = TYPE_META[event.type] ?? TYPE_META.login;
   const Icon = meta.icon;
   return (
@@ -98,7 +100,7 @@ function EventRow({ event }: { event: SASurveillanceEvent }) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: meta.color }}>
-            {meta.label}
+            {ts(meta.labelKey as any)}
           </span>
           <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', LEVEL_DOT[event.level] ?? 'bg-blue-500')} />
         </div>
@@ -165,7 +167,7 @@ export default function SurveillancePage() {
             onClick={() => refetch()}
             className="h-8 w-8 flex items-center justify-center rounded-lg border transition-colors hover:bg-[var(--sa-surface)]"
             style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text-3)' }}
-            title="Refresh"
+            title={ts('refreshTitle')}
           >
             <RefreshCw className="h-3.5 w-3.5" />
           </button>
@@ -189,7 +191,7 @@ export default function SurveillancePage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <StatCard icon={Users}      label={ts('stats.online')}   value={data?.online_count ?? 0}                                  color="#6366f1" />
         <StatCard icon={LogIn}      label={ts('stats.logins')}   value={stats?.logins_today ?? 0}                                 color="#10b981" />
-        <StatCard icon={UserPlus}   label={ts('stats.newUsers')} value={stats?.users_today ?? 0}   sub={`/ ${stats?.total_users ?? 0} total`} color="#f59e0b" />
+        <StatCard icon={UserPlus}   label={ts('stats.newUsers')} value={stats?.users_today ?? 0}   sub={ts('ofTotal', { n: stats?.total_users ?? 0 })} color="#f59e0b" />
         <StatCard icon={DollarSign} label={ts('stats.revenue')}  value={`$${(stats?.revenue_today ?? 0).toFixed(2)}`}             color="#3b82f6" />
       </div>
 
@@ -242,7 +244,7 @@ export default function SurveillancePage() {
                   <div key={key} className="flex items-center gap-1">
                     <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ background: m.color }} />
                     <span className="text-[9px] font-semibold uppercase tracking-wide" style={{ color: 'var(--sa-text-3)' }}>
-                      {m.label}
+                      {ts(m.labelKey as any)}
                     </span>
                   </div>
                 ))}

@@ -1,6 +1,6 @@
 import logging
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date, timedelta
 from fastapi import APIRouter, Query
 from sqlalchemy import select
 from pydantic import BaseModel, HttpUrl
@@ -9,7 +9,7 @@ from app.core.config import settings
 from fastapi import Depends
 from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
-from app.models.ad import Ad, AdLinkScan, AdRevenueShare
+from app.models.ad import Ad, AdLinkScan, AdRevenueShare, AdDailyStats
 from app.models.enums import AdSubmissionStatus, AdCampaignStatus, LinkSafetyStatus, UserRole, AdRevenueShareStatus
 from app.api.v1.tenants import _assert_member, _assert_role
 
@@ -25,6 +25,13 @@ router = APIRouter(
 # un routeur séparé sans check_plan_active, qui exige un JWT et bloquerait
 # à tort ces appels non authentifiés (bug réel : /submit renvoyait 401).
 public_ads_router = APIRouter(prefix="/tenants/{tenant_id}/ads", tags=["ads"])
+
+# Pubs achetées directement sur smarterbloggers.com (pas sur un blog membre).
+# Aucun tenant_id dans l'URL : le tenant sentinelle (settings.PLATFORM_TENANT_ID)
+# est fixé côté serveur, jamais choisi par le client. Auth requise pour
+# submit/mine (même compte que partout ailleurs sur la plateforme — voir
+# plan) ; /active est public pour l'affichage sur la page d'accueil.
+platform_ads_router = APIRouter(prefix="/platform/ads", tags=["platform-ads"])
 
 
 # ── Schemas ───────────────────────────────────────────────────────
@@ -68,6 +75,31 @@ class AdResponse(BaseModel):
     impressions_count: int
     clicks_count: int
     created_at: datetime
+
+
+class PlatformAdSubmitRequest(BaseModel):
+    """Pas de placement (un seul emplacement site principal, pas de ciblage) ni
+    advertiser_name/email : renseignés côté serveur depuis le compte connecté."""
+    title: str
+    description: str | None = None
+    image_url: str | None = None
+    click_url: str
+    starts_at: datetime | None = None
+    ends_at: datetime | None = None
+    price_per_day: float | None = None
+    total_budget: float
+    currency: str = "USD"
+
+
+class PlatformAdStatsResponse(BaseModel):
+    ad_id: str
+    total_impressions: int
+    total_clicks: int
+    ctr_pct: float
+    amount_paid: float
+    total_budget: float | None
+    days_remaining: int | None
+    daily: list[dict]  # [{"date": "2026-07-01", "impressions": 12, "clicks": 1}, ...]
 
 
 class AdScanResponse(BaseModel):
@@ -139,6 +171,177 @@ async def submit_ad(
     return {"ad_id": str(ad.id), **payment.model_dump()}
 
 
+# ── Pubs sur le site principal smarterbloggers.com ────────────────
+# Aucun nouveau système d'inscription : l'annonceur est un utilisateur déjà
+# connecté via /login ou /register, exactement comme pour /affiliate ou
+# /payments (voir plan). Le tenant_id (sentinelle) est fixé côté serveur.
+
+class PlatformAdCard(BaseModel):
+    id: str
+    title: str
+    description: str | None
+    image_url: str | None
+    click_url: str
+
+
+@platform_ads_router.post("/submit", status_code=201)
+async def submit_platform_ad(
+    body: PlatformAdSubmitRequest,
+    payload: TokenPayload,
+    db: DBSession,
+):
+    from app.api.v1.payments import _create_crypto_transaction, _crypto_response
+    from app.models.enums import TransactionType
+    from app.models.user import User
+
+    if body.total_budget <= 0:
+        raise ValidationException("Le budget doit être supérieur à 0.")
+
+    user = await db.get(User, uuid.UUID(payload["sub"]))
+    if not user:
+        raise NotFoundException("Utilisateur")
+
+    tenant_id = uuid.UUID(settings.PLATFORM_TENANT_ID)
+    ad = Ad(
+        tenant_id=tenant_id,
+        is_platform_ad=True,
+        advertiser_user_id=user.id,
+        # Renseignés depuis le compte connecté, jamais saisis par le client
+        # (anti-usurpation — voir plan).
+        advertiser_name=user.display_name or user.email,
+        advertiser_email=user.email,
+        title=body.title,
+        description=body.description,
+        image_url=body.image_url,
+        click_url=body.click_url,
+        starts_at=body.starts_at,
+        ends_at=body.ends_at,
+        price_per_day=body.price_per_day,
+        total_budget=body.total_budget,
+        submission_status=AdSubmissionStatus.PAYMENT_PENDING,
+    )
+    db.add(ad)
+    await db.commit()
+    await db.refresh(ad)
+
+    order_id = f"ad_{tenant_id}_{ad.id}_{uuid.uuid4().hex[:8]}"
+    tx, _ = await _create_crypto_transaction(
+        db,
+        tenant_id=tenant_id,
+        user_id=user.id,
+        transaction_type=TransactionType.AD_CAMPAIGN,
+        amount_usd=body.total_budget,
+        order_id=order_id,
+        order_description=f"Platform ad slot: {body.title[:80]}",
+        campaign_id=ad.id,
+    )
+
+    payment = _crypto_response(tx, body.total_budget)
+    return {"ad_id": str(ad.id), **payment.model_dump()}
+
+
+@platform_ads_router.get("/mine", response_model=list[AdResponse])
+async def list_my_platform_ads(
+    payload: TokenPayload,
+    db: DBSession,
+):
+    tenant_id = uuid.UUID(settings.PLATFORM_TENANT_ID)
+    result = await db.execute(
+        select(Ad)
+        .where(Ad.tenant_id == tenant_id, Ad.advertiser_user_id == uuid.UUID(payload["sub"]))
+        .order_by(Ad.created_at.desc())
+    )
+    return [_ad_response(a) for a in result.scalars().all()]
+
+
+@platform_ads_router.get("/active", response_model=PlatformAdCard | None)
+async def get_active_platform_ad(db: DBSession, exclude: str | None = Query(None)):
+    """Pub à afficher sur la page d'accueil publique — même algorithme de
+    rotation pondérée par budget que public.py::get_rotator_ad (rotation
+    entre blogs), appliqué ici au tenant sentinelle."""
+    import random
+
+    tenant_id = uuid.UUID(settings.PLATFORM_TENANT_ID)
+    now = datetime.now(timezone.utc)
+    conditions = [
+        Ad.tenant_id == tenant_id,
+        Ad.submission_status == AdSubmissionStatus.APPROVED,
+        Ad.campaign_status == AdCampaignStatus.ACTIVE,
+        Ad.link_safety_status != LinkSafetyStatus.DANGEROUS,
+        (Ad.starts_at.is_(None) | (Ad.starts_at <= now)),
+        (Ad.ends_at.is_(None) | (Ad.ends_at >= now)),
+    ]
+    if exclude:
+        try:
+            conditions.append(Ad.id != uuid.UUID(exclude))
+        except ValueError:
+            pass
+
+    result = await db.execute(select(Ad).where(*conditions))
+    ads = result.scalars().all()
+    if not ads:
+        return None
+
+    weights = [float(a.total_budget or 1) for a in ads]
+    selected: Ad = random.choices(ads, weights=weights, k=1)[0]
+    return PlatformAdCard(
+        id=str(selected.id),
+        title=selected.title,
+        description=selected.description,
+        image_url=selected.image_url,
+        click_url=selected.click_url,
+    )
+
+
+@platform_ads_router.get("/{ad_id}/stats", response_model=PlatformAdStatsResponse)
+async def get_platform_ad_stats(
+    ad_id: uuid.UUID,
+    payload: TokenPayload,
+    db: DBSession,
+    days: int = Query(default=30, le=90),
+):
+    tenant_id = uuid.UUID(settings.PLATFORM_TENANT_ID)
+    result = await db.execute(
+        select(Ad).where(Ad.id == ad_id, Ad.tenant_id == tenant_id, Ad.advertiser_user_id == uuid.UUID(payload["sub"]))
+    )
+    ad = result.scalar_one_or_none()
+    if not ad:
+        raise NotFoundException("Publicité")
+
+    since = date.today() - timedelta(days=days - 1)
+    stats_result = await db.execute(
+        select(AdDailyStats)
+        .where(AdDailyStats.ad_id == ad_id, AdDailyStats.date >= since)
+        .order_by(AdDailyStats.date)
+    )
+    by_date = {s.date: s for s in stats_result.scalars().all()}
+    daily = []
+    for i in range(days):
+        d = since + timedelta(days=i)
+        s = by_date.get(d)
+        daily.append({"date": d.isoformat(), "impressions": s.impressions if s else 0, "clicks": s.clicks if s else 0})
+
+    total_impressions = ad.impressions_count
+    total_clicks = ad.clicks_count
+    ctr_pct = round((total_clicks / total_impressions) * 100, 2) if total_impressions else 0.0
+
+    days_remaining = None
+    if ad.ends_at:
+        remaining = (ad.ends_at - datetime.now(timezone.utc)).days
+        days_remaining = max(0, remaining)
+
+    return PlatformAdStatsResponse(
+        ad_id=str(ad.id),
+        total_impressions=total_impressions,
+        total_clicks=total_clicks,
+        ctr_pct=ctr_pct,
+        amount_paid=float(ad.amount_paid or 0),
+        total_budget=float(ad.total_budget) if ad.total_budget is not None else None,
+        days_remaining=days_remaining,
+        daily=daily,
+    )
+
+
 # ── Listing ads (admin) ───────────────────────────────────────────
 
 @router.get("", response_model=list[AdResponse])
@@ -200,64 +403,97 @@ async def review_ad(
         # que lors de la transition PAUSED/PENDING → ACTIVE.
         if ad.amount_paid and float(ad.amount_paid) > 0 and ad.campaign_status != AdCampaignStatus.ACTIVE:
             ad.campaign_status = AdCampaignStatus.ACTIVE
-            try:
-                from app.api.v1.affiliate import compute_and_accrue_commissions
-                from app.services.tenant_service import get_tenant_owner_user_id
-                from app.services.nowpayments_service import send_single_payout
-                from app.api.v1.accounting import book_ad_slot_payment
-                from app.models.user import User
 
-                source_user_id = await get_tenant_owner_user_id(db, tenant_id)
-                if source_user_id:
-                    # 10% commission d'affiliation (inchangé)
-                    await compute_and_accrue_commissions(
+            if ad.is_platform_ad:
+                # Pub achetée sur smarterbloggers.com lui-même : pas de
+                # propriétaire de blog à payer — la commission part vers la
+                # lignée de parrainage de l'annonceur (10% L1 + 1%×9 L2-10),
+                # le reste (81%) reste à la plateforme (compte 4103).
+                try:
+                    from app.api.v1.affiliate import compute_and_accrue_fixed_level_commissions
+                    from app.api.v1.accounting import book_platform_ad_payment
+                    from app.models.enums import AffiliateCommissionSource
+
+                    if ad.advertiser_user_id:
+                        level_percentages = {1: 0.10, **{lvl: 0.01 for lvl in range(2, 11)}}
+                        await compute_and_accrue_fixed_level_commissions(
+                            db=db,
+                            source_user_id=ad.advertiser_user_id,
+                            source_type=AffiliateCommissionSource.MAIN_SITE_AD,
+                            source_transaction_id=str(ad.id),
+                            gross_amount=float(ad.amount_paid),
+                            level_percentages=level_percentages,
+                        )
+
+                    await book_platform_ad_payment(
                         db=db,
-                        source_user_id=source_user_id,
-                        source_type="ad_slot",
-                        source_transaction_id=str(ad.id),
-                        gross_amount=float(ad.amount_paid),
+                        amount=float(ad.amount_paid),
+                        ad_id=str(ad.id),
+                        transaction_id=str(ad.id),
+                        created_by_system_user_id=uuid.UUID(payload["sub"]),
                     )
+                except Exception:
+                    logger.exception("Échec du calcul/paiement des commissions (pub site principal) pour l'ad %s", ad.id)
+            else:
+                try:
+                    from app.api.v1.affiliate import compute_and_accrue_commissions
+                    from app.services.tenant_service import get_tenant_owner_user_id
+                    from app.services.nowpayments_service import send_single_payout
+                    from app.api.v1.accounting import book_ad_slot_payment
+                    from app.models.user import User
 
-                    # 80% dus au propriétaire du blog (RG-AD-01) — payé
-                    # directement s'il a un wallet enregistré. Décision PDG :
-                    # sans wallet, il ne participe pas, rien n'est calculé ni
-                    # mis de côté pour lui.
-                    owner = await db.get(User, source_user_id)
-                    if owner and owner.usdt_wallet_address and settings.NOWPAYMENTS_PAYOUT_API_KEY:
-                        owner_share = round(float(ad.amount_paid) * 0.80, 2)
-                        try:
-                            result = await send_single_payout(
-                                wallet_address=owner.usdt_wallet_address,
-                                amount_usd=owner_share,
-                                extra_id=f"ad_owner_{ad.id}",
-                            )
-                            share = AdRevenueShare(
-                                ad_id=ad.id,
-                                tenant_id=tenant_id,
-                                owner_user_id=source_user_id,
-                                gross_amount=float(ad.amount_paid),
-                                owner_share_amount=owner_share,
-                                status=AdRevenueShareStatus.PAID,
-                                payout_reference=str(result.get("id", "")),
-                                paid_at=datetime.now(timezone.utc),
-                            )
-                            db.add(share)
+                    source_user_id = await get_tenant_owner_user_id(db, tenant_id)
+                    if source_user_id:
+                        # 10% commission d'affiliation (inchangé)
+                        await compute_and_accrue_commissions(
+                            db=db,
+                            source_user_id=source_user_id,
+                            source_type="ad_slot",
+                            source_transaction_id=str(ad.id),
+                            gross_amount=float(ad.amount_paid),
+                        )
 
-                            # Écriture comptable 10/10/80 (RG-AD-01)
-                            await book_ad_slot_payment(
-                                db=db,
-                                amount=float(ad.amount_paid),
-                                ad_id=str(ad.id),
-                                transaction_id=str(ad.id),
-                                created_by_system_user_id=uuid.UUID(payload["sub"]),
-                            )
-                        except Exception:
-                            logger.exception(
-                                "Échec du payout NowPayments (part propriétaire) pour l'ad %s (owner=%s, montant=%s) — rien n'est enregistré, pas de retry automatique",
-                                ad.id, source_user_id, owner_share,
-                            )
-            except Exception:
-                logger.exception("Échec du calcul/paiement des commissions pour l'ad %s", ad.id)
+                        # 60% dus au propriétaire du blog (RG-AD-01, révisé 2026-07-23 :
+                        # 80/10/10 -> 60/10/30, la part plateforme passe de 10% à 30%,
+                        # l'affiliation reste inchangée à 10%) — payé directement s'il a
+                        # un wallet enregistré. Décision PDG : sans wallet, il ne
+                        # participe pas, rien n'est calculé ni mis de côté pour lui.
+                        owner = await db.get(User, source_user_id)
+                        if owner and owner.usdt_wallet_address and settings.NOWPAYMENTS_PAYOUT_API_KEY:
+                            owner_share = round(float(ad.amount_paid) * 0.60, 2)
+                            try:
+                                result = await send_single_payout(
+                                    wallet_address=owner.usdt_wallet_address,
+                                    amount_usd=owner_share,
+                                    extra_id=f"ad_owner_{ad.id}",
+                                )
+                                share = AdRevenueShare(
+                                    ad_id=ad.id,
+                                    tenant_id=tenant_id,
+                                    owner_user_id=source_user_id,
+                                    gross_amount=float(ad.amount_paid),
+                                    owner_share_amount=owner_share,
+                                    status=AdRevenueShareStatus.PAID,
+                                    payout_reference=str(result.get("id", "")),
+                                    paid_at=datetime.now(timezone.utc),
+                                )
+                                db.add(share)
+
+                                # Écriture comptable 10/10/80 (RG-AD-01)
+                                await book_ad_slot_payment(
+                                    db=db,
+                                    amount=float(ad.amount_paid),
+                                    ad_id=str(ad.id),
+                                    transaction_id=str(ad.id),
+                                    created_by_system_user_id=uuid.UUID(payload["sub"]),
+                                )
+                            except Exception:
+                                logger.exception(
+                                    "Échec du payout NowPayments (part propriétaire) pour l'ad %s (owner=%s, montant=%s) — rien n'est enregistré, pas de retry automatique",
+                                    ad.id, source_user_id, owner_share,
+                                )
+                except Exception:
+                    logger.exception("Échec du calcul/paiement des commissions pour l'ad %s", ad.id)
         elif not (ad.amount_paid and float(ad.amount_paid) > 0):
             # Paiement non encore confirmé — campagne activée automatiquement par le webhook
             ad.campaign_status = AdCampaignStatus.PAUSED
@@ -268,6 +504,21 @@ async def review_ad(
 
     await db.commit()
     await db.refresh(ad)
+
+    # Notification in-app à l'annonceur connecté (impossible pour le flux
+    # anonyme des pubs de blog, qui n'a qu'un email de contact) — voir
+    # exigence PDG "vraiment penser à tout" côté annonceur.
+    if ad.is_platform_ad and ad.advertiser_user_id:
+        try:
+            from app.services.push_service import send_push_to_user
+            if body.decision == AdSubmissionStatus.APPROVED:
+                title, msg = "Publicité approuvée", f"Votre publicité « {ad.title} » est maintenant active sur SmarterBloggers."
+            else:
+                title, msg = "Publicité rejetée", f"Votre publicité « {ad.title} » a été rejetée." + (f" Motif : {body.rejection_reason}" if body.rejection_reason else "")
+            await send_push_to_user(db, ad.advertiser_user_id, title, msg, url="/advertiser")
+        except Exception:
+            pass
+
     return _ad_response(ad)
 
 
@@ -338,6 +589,7 @@ async def track_impression(
         text("UPDATE ads SET impressions_count = impressions_count + 1 WHERE id = :id AND tenant_id = :tid"),
         {"id": str(ad_id), "tid": str(tenant_id)},
     )
+    await _bump_daily_stat(db, ad_id, "impressions")
     await db.commit()
 
 
@@ -356,7 +608,20 @@ async def track_click(
         text("UPDATE ads SET clicks_count = clicks_count + 1 WHERE id = :id AND tenant_id = :tid"),
         {"id": str(ad_id), "tid": str(tenant_id)},
     )
+    await _bump_daily_stat(db, ad_id, "clicks")
     await db.commit()
+
+
+async def _bump_daily_stat(db, ad_id: uuid.UUID, column: str) -> None:
+    from sqlalchemy import text
+    await db.execute(
+        text(f"""
+            INSERT INTO ad_daily_stats (ad_id, date, {column})
+            VALUES (:ad_id, :today, 1)
+            ON CONFLICT (ad_id, date) DO UPDATE SET {column} = ad_daily_stats.{column} + 1
+        """),
+        {"ad_id": str(ad_id), "today": date.today()},
+    )
 
 
 # ── Helpers ───────────────────────────────────────────────────────

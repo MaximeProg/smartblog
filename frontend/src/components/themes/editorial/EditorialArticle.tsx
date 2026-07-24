@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useMemo, type CSSProperties } from 'r
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Heart, Bookmark, Clock } from 'lucide-react';
 import type { ArticleProps } from '../ThemeRenderer';
 import type { PublicArticle } from '@/lib/public-api';
@@ -24,9 +25,9 @@ const cardGradients = [
   'from-rose-50 to-rose-100',
 ];
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function initials(name: string | null) {
@@ -44,9 +45,11 @@ interface RelatedCardProps {
   href: string;
   index: number;
   primaryColor: string;
+  locale: string;
 }
 
-function RelatedCard({ article, href, index, primaryColor }: RelatedCardProps) {
+function RelatedCard({ article, href, index, primaryColor, locale }: RelatedCardProps) {
+  const t = useTranslations('publicBlog');
   return (
     <Link href={href} className="group flex flex-col" style={{ '--cp': primaryColor } as CSSProperties}>
       <div className="relative aspect-[4/3] rounded-xl overflow-hidden mb-4 ring-0 group-hover:ring-2 transition-all ring-offset-2 ring-[var(--cp)]">
@@ -76,12 +79,12 @@ function RelatedCard({ article, href, index, primaryColor }: RelatedCardProps) {
         <p className="text-sm text-zinc-500 leading-relaxed mb-3 line-clamp-2">{article.excerpt}</p>
       )}
       <div className="flex items-center gap-2 text-xs text-zinc-400 mt-auto pt-2 border-t border-zinc-100 flex-wrap">
-        <span>{formatDate(article.published_at)}</span>
+        <span>{formatDate(article.published_at, locale)}</span>
         {article.reading_time_minutes && (
           <>
             <span>·</span>
             <Clock className="h-3 w-3" />
-            <span>{article.reading_time_minutes} min read</span>
+            <span>{t('minRead', { min: article.reading_time_minutes })}</span>
           </>
         )}
       </div>
@@ -101,6 +104,7 @@ export default function EditorialArticle({
 }: ArticleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const basePath = _basePath ?? `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#18181b';
 
@@ -108,7 +112,7 @@ export default function EditorialArticle({
   const showProgressBar = articleCfg?.progressBar?.enabled !== false;
   const showShare = articleCfg?.share?.enabled !== false;
   const showRelated = articleCfg?.relatedArticles?.enabled !== false;
-  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || 'More to Read';
+  const relatedTitle = articleCfg?.relatedArticles?.sectionTitle || t('relatedArticles');
   const showComments = articleCfg?.comments?.enabled !== false;
   const showAuthorBio = articleCfg?.authorBio?.enabled !== false;
 
@@ -172,7 +176,7 @@ export default function EditorialArticle({
       <div className="max-w-2xl mx-auto px-4 sm:px-6 pt-10">
         <nav className="flex items-center gap-2 text-xs text-zinc-400 mb-6">
           <Link href={basePath || "/"} className="hover:text-zinc-700 transition-colors">
-            Home
+            {t('navHome')}
           </Link>
           {article.category_name && article.category_slug && (
             <>
@@ -214,20 +218,20 @@ export default function EditorialArticle({
           </div>
           <div>
             <p className="font-semibold text-zinc-900 text-sm">{article.author_name || blog.name}</p>
-            <p className="text-xs text-zinc-400">Author · {blog.name}</p>
+            <p className="text-xs text-zinc-400">{t('authorLabel')} · {blog.name}</p>
           </div>
           <div className="ml-auto flex items-center gap-4 text-xs text-zinc-400 flex-wrap justify-end">
-            <span>{formatDate(article.published_at)}</span>
+            <span>{formatDate(article.published_at, locale)}</span>
             {article.reading_time_minutes && (
               <>
                 <span>·</span>
-                <span>{article.reading_time_minutes} min read</span>
+                <span>{t('minRead', { min: article.reading_time_minutes })}</span>
               </>
             )}
             {article.views_count > 0 && (
               <>
                 <span>·</span>
-                <span>{article.views_count.toLocaleString()} views</span>
+                <span>{article.views_count.toLocaleString()} {t('viewsLabel')}</span>
               </>
             )}
           </div>
@@ -290,7 +294,7 @@ export default function EditorialArticle({
               }`}
             >
               <Bookmark className={`h-4 w-4 ${bookmarked ? 'fill-zinc-900' : ''}`} />
-              {bookmarked ? 'Saved' : 'Save'}
+              {bookmarked ? t('savedArticle') : t('saveArticle')}
             </button>
           </div>
           <div className="flex items-center gap-3">
@@ -317,6 +321,7 @@ export default function EditorialArticle({
                 href={aHref(ra.slug)}
                 index={i}
                 primaryColor={primaryColor}
+                locale={locale}
               />
             ))}
           </div>

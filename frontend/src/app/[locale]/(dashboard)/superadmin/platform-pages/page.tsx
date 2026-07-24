@@ -3,30 +3,33 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
 import { FileText, ChevronRight, RefreshCw } from 'lucide-react';
 import { superadminApi } from '@/lib/api';
 
-const PAGE_LABELS: Record<string, string> = {
-  home: 'Accueil',
-  about: 'À propos',
-  contact: 'Contact',
-  careers: 'Carrières',
-  press: 'Presse',
-  changelog: 'Changelog',
-  status: 'Statut',
-  'legal-privacy': 'Confidentialité',
-  'legal-terms': "Conditions d'utilisation",
-  'legal-cookies': 'Cookies',
-  'legal-security': 'Sécurité',
-  'legal-data-deletion': 'Suppression de données',
-  docs: 'Documentation',
-  'docs-api': "Documentation — Référence d'API",
-  guides: 'Guides',
+const PAGE_LABEL_KEYS: Record<string, string> = {
+  home: 'pageLabel_home',
+  about: 'pageLabel_about',
+  contact: 'pageLabel_contact',
+  careers: 'pageLabel_careers',
+  press: 'pageLabel_press',
+  changelog: 'pageLabel_changelog',
+  status: 'pageLabel_status',
+  'legal-privacy': 'pageLabel_legalPrivacy',
+  'legal-terms': 'pageLabel_legalTerms',
+  'legal-cookies': 'pageLabel_legalCookies',
+  'legal-security': 'pageLabel_legalSecurity',
+  'legal-data-deletion': 'pageLabel_legalDataDeletion',
+  docs: 'pageLabel_docs',
+  'docs-api': 'pageLabel_docsApi',
+  guides: 'pageLabel_guides',
+  'advertise-with-us': 'pageLabel_advertiseWithUs',
 };
 
 export default function PlatformPagesListPage() {
   const params = useParams();
   const locale = params.locale as string;
+  const t = useTranslations('superAdmin.platformPages');
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['sa-platform-pages'],
@@ -40,12 +43,12 @@ export default function PlatformPagesListPage() {
           <div className="flex items-center gap-2 mb-1">
             <FileText className="h-4 w-4" style={{ color: 'var(--sa-text-3)' }} />
             <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--sa-text-3)' }}>
-              CMS
+              {t('cmsLabel')}
             </span>
           </div>
-          <h1 className="text-[22px] font-black" style={{ color: 'var(--sa-text)' }}>Pages publiques</h1>
+          <h1 className="text-[22px] font-black" style={{ color: 'var(--sa-text)' }}>{t('title')}</h1>
           <p className="text-[12px] mt-0.5" style={{ color: 'var(--sa-text-3)' }}>
-            Contenu des pages marketing pilotes (Home, About, Contact) — traduit automatiquement via DeepL.
+            {t('subtitle')}
           </p>
         </div>
         <button
@@ -72,10 +75,10 @@ export default function PlatformPagesListPage() {
             >
               <div>
                 <p className="text-[14px] font-bold" style={{ color: 'var(--sa-text)' }}>
-                  {PAGE_LABELS[p.slug] ?? p.slug}
+                  {PAGE_LABEL_KEYS[p.slug] ? t(PAGE_LABEL_KEYS[p.slug] as any) : p.slug}
                 </p>
                 <p className="text-[12px] mt-0.5" style={{ color: 'var(--sa-text-3)' }}>
-                  {p.updated_at ? `Modifié le ${new Date(p.updated_at).toLocaleString(locale)}` : 'Jamais modifié'}
+                  {p.updated_at ? t('modifiedOn', { date: new Date(p.updated_at).toLocaleString(locale) }) : t('neverModified')}
                 </p>
               </div>
               <ChevronRight className="h-4 w-4" style={{ color: 'var(--sa-text-3)' }} />

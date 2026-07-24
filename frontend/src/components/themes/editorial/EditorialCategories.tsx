@@ -2,6 +2,7 @@
 import { type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { BookOpen } from 'lucide-react';
 import type { BlogInfo, PublicCategory, PublicArticle } from '@/lib/public-api';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
@@ -29,6 +30,7 @@ export default function EditorialCategories({
   articles,
   basePath,
 }: CategoriesProps) {
+  const t = useTranslations('publicBlog');
   const primaryColor = blog.primary_color || '#18181b';
 
   return (
@@ -45,11 +47,11 @@ export default function EditorialCategories({
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 pb-8">
-        <h1 className="text-5xl font-bold text-zinc-900 mb-3">Explore Topics</h1>
-        <p className="text-zinc-400 text-lg">Discover stories across all our categories</p>
+        <h1 className="text-5xl font-bold text-zinc-900 mb-3">{t('categoriesHeroTitle')}</h1>
+        <p className="text-zinc-400 text-lg">{t('categoriesHeroDesc')}</p>
         <p className="text-sm text-zinc-400 mt-2">
-          {categories.length} topic{categories.length !== 1 ? 's' : ''} &middot;{' '}
-          {articles.length} article{articles.length !== 1 ? 's' : ''}
+          {categories.length} {categories.length !== 1 ? t('topics') : t('topic')} &middot;{' '}
+          {articles.length !== 1 ? t('articleCountPlural', { count: articles.length }) : t('articleCount', { count: articles.length })}
         </p>
       </div>
 
@@ -57,16 +59,16 @@ export default function EditorialCategories({
         {categories.length === 0 ? (
           <div className="py-24 text-center">
             <BookOpen className="h-14 w-14 mx-auto mb-5 text-zinc-200" />
-            <p className="text-xl font-bold text-zinc-400 mb-2">No topics yet</p>
+            <p className="text-xl font-bold text-zinc-400 mb-2">{t('noCategoriesYet')}</p>
             <p className="text-sm text-zinc-400 mb-6">
-              Categories will appear here once they&apos;ve been created.
+              {t('noCategoriesYetDesc')}
             </p>
             <Link
               href={basePath || "/"}
               className="inline-flex items-center gap-2 text-sm font-bold hover:underline"
               style={{ color: primaryColor }}
             >
-              ← Back to Home
+              ← {t('backToHome')}
             </Link>
           </div>
         ) : (
@@ -96,7 +98,7 @@ export default function EditorialCategories({
                 <div className="absolute bottom-0 left-0 right-0 p-5">
                   <p className="text-white font-bold text-xl leading-snug mb-1">{c.name}</p>
                   <p className="text-white/70 text-sm">
-                    {c.articles_count} article{c.articles_count !== 1 ? 's' : ''}
+                    {c.articles_count !== 1 ? t('articleCountPlural', { count: c.articles_count }) : t('articleCount', { count: c.articles_count })}
                   </p>
                   {c.description && (
                     <p className="text-white/50 text-xs line-clamp-1 mt-1">{c.description}</p>

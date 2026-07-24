@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useMemo, type CSSProperties, type For
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import type { ArticleProps } from '../ThemeRenderer';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { renderContent } from '../shared/renderContent';
@@ -13,9 +14,9 @@ import { ShareButtons, FloatingShareBar } from '../shared/ShareButtons';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 import { useBookmark } from '@/hooks/useBookmark';
 
-function formatDate(d: string | null) {
+function formatDate(d: string | null, locale: string) {
   if (!d) return '';
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return new Date(d).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function initials(name: string | null) {
@@ -53,6 +54,7 @@ export default function MagazineArticle({
 }: ArticleProps) {
   const params = useParams();
   const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('publicBlog');
   const basePath = _basePath ?? `/${locale}/${blog.slug}`;
   const primaryColor = blog.primary_color || '#e11d48';
 
@@ -139,9 +141,9 @@ export default function MagazineArticle({
                 <p className="text-xs text-zinc-400">{blog.name}</p>
               </div>
               <div className="ml-auto text-xs text-zinc-400 text-right">
-                <p>{formatDate(article.published_at)}</p>
+                <p>{formatDate(article.published_at, locale)}</p>
                 {article.reading_time_minutes && (
-                  <p>{article.reading_time_minutes} min read</p>
+                  <p>{t('minRead', { min: article.reading_time_minutes })}</p>
                 )}
               </div>
             </div>
@@ -215,7 +217,7 @@ export default function MagazineArticle({
                   <svg xmlns="http://www.w3.org/2000/svg" className={`h-4 w-4 ${bookmarked ? 'fill-zinc-900' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                   </svg>
-                  {bookmarked ? 'Saved' : 'Save'}
+                  {bookmarked ? t('savedArticle') : t('saveArticle')}
                 </button>
               </div>
               <div className="flex items-center gap-3">
@@ -233,7 +235,7 @@ export default function MagazineArticle({
             {showRelated && relatedArticles.length > 0 && (
               <div>
                 <div className="border-b-2 pb-2 mb-4" style={{ borderColor: primaryColor }}>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Related</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{t('relatedArticles')}</span>
                 </div>
                 {relatedArticles.slice(0, 5).map(a => (
                   <Link key={a.id} href={aHref(a.slug)} className="flex gap-3 py-4 border-b border-zinc-100 last:border-0 group">
@@ -255,7 +257,7 @@ export default function MagazineArticle({
                         <span className="text-[10px] font-black uppercase block" style={{ color: primaryColor }}>{a.category_name}</span>
                       )}
                       <p className="text-sm font-bold text-zinc-900 leading-snug group-hover:text-[var(--cp)] transition-colors line-clamp-2">{a.title}</p>
-                      <p className="text-xs text-zinc-400 mt-1">{formatDate(a.published_at)}</p>
+                      <p className="text-xs text-zinc-400 mt-1">{formatDate(a.published_at, locale)}</p>
                     </div>
                   </Link>
                 ))}
@@ -264,7 +266,7 @@ export default function MagazineArticle({
 
             <div>
               <div className="border-b-2 pb-2 mb-3" style={{ borderColor: primaryColor }}>
-                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Topics</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{t('topics')}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {([] as { slug: string; name: string }[])
@@ -287,7 +289,7 @@ export default function MagazineArticle({
                   href={`${basePath}/categories`}
                   className="border border-zinc-200 rounded px-3 py-1.5 text-xs font-bold text-zinc-700 hover:bg-zinc-950 hover:text-white hover:border-zinc-950 transition-colors"
                 >
-                  All Topics →
+                  {t('allCategoriesLink')} →
                 </Link>
               </div>
             </div>
@@ -295,10 +297,10 @@ export default function MagazineArticle({
             <AdRotator slug={blog.slug} primaryColor={primaryColor} />
 
             <div className="rounded-lg p-5 text-white" style={{ backgroundColor: primaryColor }}>
-              <p className="text-sm font-black mb-2">Get the newsletter</p>
-              <p className="text-xs text-white/70 mb-3">Top stories from {blog.name} in your inbox.</p>
+              <p className="text-sm font-black mb-2">{t('joinNewsletter')}</p>
+              <p className="text-xs text-white/70 mb-3">{t('weeklyNewsletterDesc')}</p>
               {subStatus === 'ok' ? (
-                <p className="text-white font-bold text-xs">You&apos;re subscribed!</p>
+                <p className="text-white font-bold text-xs">{t('subscribeSuccess')}</p>
               ) : (
                 <>
                   <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
@@ -307,7 +309,7 @@ export default function MagazineArticle({
                       required
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      placeholder="your@email.com"
+                      placeholder={t('emailPlaceholder')}
                       className="w-full bg-white/10 border border-white/20 rounded px-3 py-2 text-white text-xs placeholder:text-white/50 focus:outline-none"
                     />
                     <button
@@ -316,11 +318,11 @@ export default function MagazineArticle({
                       className="w-full bg-white rounded py-2 text-xs font-black hover:opacity-90 disabled:opacity-60 transition-opacity"
                       style={{ color: primaryColor }}
                     >
-                      {subStatus === 'loading' ? '…' : 'Subscribe Free'}
+                      {subStatus === 'loading' ? '…' : t('subscribeFree')}
                     </button>
                   </form>
                   {subStatus === 'error' && (
-                    <p className="text-white/70 text-xs mt-2">Something went wrong.</p>
+                    <p className="text-white/70 text-xs mt-2">{t('subscribeError')}</p>
                   )}
                 </>
               )}

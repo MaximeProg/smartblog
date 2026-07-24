@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Search, X, Bookmark, Mic, MicOff } from 'lucide-react';
 import Link from 'next/link';
 import { useAllBookmarks } from '@/hooks/useBookmark';
@@ -21,6 +22,7 @@ const LOCALE_LANG: Record<string, string> = {
 };
 
 export default function FloatingSearch({ basePath, locale = 'fr' }: Props) {
+  const t = useTranslations('publicBlog');
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -71,7 +73,7 @@ export default function FloatingSearch({ basePath, locale = 'fr' }: Props) {
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 z-40 flex items-center justify-center h-12 w-12 rounded-full shadow-lg text-white transition-transform hover:scale-105 active:scale-95"
         style={{ backgroundColor: 'var(--blog-primary, #6366f1)' }}
-        aria-label="Search"
+        aria-label={t('searchLabel')}
       >
         <Search className="h-5 w-5" />
       </button>
@@ -91,7 +93,7 @@ export default function FloatingSearch({ basePath, locale = 'fr' }: Props) {
                 <button
                   type="button"
                   onClick={toggle}
-                  aria-label={listening ? 'Stop voice search' : 'Start voice search'}
+                  aria-label={listening ? t('stopVoiceSearch') : t('startVoiceSearch')}
                   className={`relative shrink-0 flex items-center justify-center h-8 w-8 rounded-full transition-colors ${
                     listening
                       ? 'text-red-500'
@@ -117,7 +119,7 @@ export default function FloatingSearch({ basePath, locale = 'fr' }: Props) {
                 value={q}
                 onChange={e => setQ(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') submit(); }}
-                placeholder={listening ? 'Écoute en cours…' : 'Rechercher des articles…'}
+                placeholder={listening ? t('listeningPlaceholder') : t('searchArticlesPlaceholder')}
                 className="flex-1 bg-transparent text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-400 outline-none"
               />
 
@@ -142,7 +144,7 @@ export default function FloatingSearch({ basePath, locale = 'fr' }: Props) {
                   ))}
                 </span>
                 <p className="text-xs text-red-600 dark:text-red-400 font-medium">
-                  Parlez maintenant — cliquez sur le micro pour arrêter
+                  {t('voiceSearchHint')}
                 </p>
               </div>
             )}
@@ -155,7 +157,7 @@ export default function FloatingSearch({ basePath, locale = 'fr' }: Props) {
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-100 transition-colors"
               >
                 <Bookmark className="h-3.5 w-3.5" />
-                Mes sauvegardes
+                {t('myBookmarks')}
                 {bookmarks.length > 0 && (
                   <span
                     className="inline-flex items-center justify-center w-4 h-4 rounded-full text-white text-[9px] font-bold"
@@ -166,14 +168,14 @@ export default function FloatingSearch({ basePath, locale = 'fr' }: Props) {
                 )}
               </Link>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400 hidden sm:block">Entrée · Échap</span>
+                <span className="text-xs text-gray-400 hidden sm:block">{t('enterEscHint')}</span>
                 <button
                   onClick={submit}
                   disabled={!q.trim()}
                   className="text-xs font-semibold px-3 py-1.5 rounded-lg text-white disabled:opacity-40 transition-opacity"
                   style={{ backgroundColor: 'var(--blog-primary, #6366f1)' }}
                 >
-                  Rechercher
+                  {t('searchLabel')}
                 </button>
               </div>
             </div>

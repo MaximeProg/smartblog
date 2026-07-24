@@ -1,6 +1,7 @@
 'use client';
 
 import { Plus, Trash2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { deepSet, getPath } from '@/templates/utils';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
 
@@ -40,6 +41,7 @@ export function PlatformPageJsonEditor({ content, onChange }: Props) {
 }
 
 function NodeEditor({ path, value, onSet }: { path: string; value: unknown; onSet: (path: string, value: unknown) => void }) {
+  const t = useTranslations('superAdmin.platformPages');
   if (typeof value === 'boolean') {
     return (
       <button
@@ -132,7 +134,7 @@ function NodeEditor({ path, value, onSet }: { path: string; value: unknown; onSe
             onClick={() => onSet(path, [...value, ''])}
             className="flex items-center gap-1.5 text-[12px] font-medium text-[#6366f1] hover:opacity-80 transition"
           >
-            <Plus className="h-3.5 w-3.5" /> Ajouter
+            <Plus className="h-3.5 w-3.5" /> {t('addButton')}
           </button>
         </div>
       );
@@ -178,7 +180,7 @@ function NodeEditor({ path, value, onSet }: { path: string; value: unknown; onSe
           }}
           className="flex items-center gap-1.5 text-[12px] font-medium text-[#6366f1] hover:opacity-80 transition"
         >
-          <Plus className="h-3.5 w-3.5" /> Ajouter un élément
+          <Plus className="h-3.5 w-3.5" /> {t('addItemButton')}
         </button>
       </div>
     );
