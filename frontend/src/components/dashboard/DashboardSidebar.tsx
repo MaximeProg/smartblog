@@ -5,13 +5,13 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard, Newspaper, User, Bell, CreditCard, Gift,
-  Plus, LogOut, Zap, X, ShieldCheck, LifeBuoy, Wallet, Megaphone,
+  Plus, LogOut, Zap, X, Wallet, Megaphone,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
-import { authApi, supportApi } from '@/lib/api';
+import { authApi } from '@/lib/api';
 import { firebaseSignOut } from '@/lib/firebase';
 
 function UserAvatar({ avatarUrl, initials, size = 7 }: { avatarUrl?: string | null; initials: string; size?: number }) {
@@ -38,23 +38,13 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const router   = useRouter();
   const queryClient = useQueryClient();
-  const { user, clearAuth, tenants } = useAuthStore();
+  const { user, clearAuth } = useAuthStore();
   const { mobileSidebarOpen, closeSidebar } = useUIStore();
   const t  = useTranslations('nav');
   const td = useTranslations('dashboardPage');
 
   const plan     = user?.plan ?? 'free';
   const initials = user ? getInitials(user.display_name ?? user.email).slice(0, 2) : 'U';
-  const firstTenantId = tenants[0]?.id ?? '';
-
-  const { data: supportData } = useQuery({
-    queryKey: ['sidebar-support-count', firstTenantId],
-    queryFn: () => supportApi.listTickets(firstTenantId, { status: 'open', limit: 1 }).then(r => r.data.total ?? 0),
-    enabled: !!firstTenantId,
-    refetchInterval: 60000,
-    retry: false,
-  });
-  const openTickets = supportData ?? 0;
 
   const PLAN_LABELS: Record<string, string> = {
     free: td('planFree'), starter: td('planStarter'), pro: td('planPro'), business: td('planBusiness'),
@@ -73,9 +63,6 @@ export function DashboardSidebar() {
     { seg: 'affiliate',     icon: Gift,       label: t('affiliate') },
     { seg: 'advertiser',    icon: Megaphone,  label: t('advertiser') },
   ];
-  const supportHref = firstTenantId ? `/${locale}/blogs/${firstTenantId}/support` : '#';
-  const isSupportActive = pathname.includes('/support');
-
   const isActive = (seg: string, exact = false) => {
     const full = `/${locale}/${seg}`;
     return exact ? pathname === full : pathname.startsWith(`${full}`);
@@ -146,49 +133,7 @@ export function DashboardSidebar() {
               {isActive(item.seg) && <div className="h-1.5 w-1.5 rounded-full bg-blue-500 shrink-0" />}
             </Link>
           ))}
-          {/* Support link with open-ticket badge */}
-          <Link
-            href={supportHref}
-            onClick={handleNavClick}
-            className={cn(
-              'group flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all',
-              isSupportActive
-                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-100',
-            )}
-          >
-            <LifeBuoy className={cn('h-4 w-4 shrink-0 transition-colors', isSupportActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300')} />
-            <span className="flex-1">{t('support')}</span>
-            {openTickets > 0 && (
-              <span className="inline-flex items-center justify-center h-4 min-w-[16px] px-1 rounded-full bg-blue-600 text-white text-[10px] font-bold shrink-0">
-                {openTickets > 9 ? '9+' : openTickets}
-              </span>
-            )}
-            {isSupportActive && openTickets === 0 && <div className="h-1.5 w-1.5 rounded-full bg-blue-500 shrink-0" />}
-          </Link>
         </div>
-
-        {/* Admin Console entry — visible seulement pour is_super_admin */}
-        {user?.is_super_admin && (
-          <div className="pt-5">
-            <Link
-              href={`/${locale}/superadmin`}
-              onClick={handleNavClick}
-              className="mx-0.5 flex items-center gap-3 px-3 py-3 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white shadow-lg shadow-rose-600/20 transition-all group"
-            >
-              <div className="h-7 w-7 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
-                <ShieldCheck className="h-4 w-4 text-white" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[12px] font-black text-white leading-none">{t('adminConsole')}</p>
-                <p className="text-[10px] text-rose-200 mt-0.5 leading-none">{t('adminConsolePlatform')}</p>
-              </div>
-              <div className="h-5 w-5 rounded-full bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-colors">
-                <span className="text-[10px] font-black text-white">→</span>
-              </div>
-            </Link>
-          </div>
-        )}
       </nav>
 
       {/* Footer */}

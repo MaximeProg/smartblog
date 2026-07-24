@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { Bell, LogOut, User, CreditCard, Menu } from 'lucide-react';
+import { Bell, LogOut, User, ShieldCheck, Menu } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -140,12 +140,14 @@ export function TopBar() {
                 {t('profile')}
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href={`/${locale}/subscription`} className="gap-2.5 cursor-pointer">
-                <CreditCard className="h-3.5 w-3.5 text-slate-500" />
-                {t('subscription')}
-              </Link>
-            </DropdownMenuItem>
+            {user?.is_super_admin && (
+              <DropdownMenuItem asChild>
+                <Link href={`/${locale}/superadmin`} className="gap-2.5 cursor-pointer text-rose-600 focus:text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-900/20">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  {t('adminConsole')}
+                </Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleSignOut}
