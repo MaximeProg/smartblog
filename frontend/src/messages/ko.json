@@ -2646,7 +2646,12 @@
     "cashoutGross": "총액",
     "cashoutNet": "순",
     "cashoutRequestedCol": "요청됨",
-    "cashoutProcessedCol": "처리됨"
+    "cashoutProcessedCol": "처리됨",
+    "walletRequiredTitle": "USDT-BSC 지갑을 등록하고 보상을 받으세요",
+    "walletRequiredDesc": "제휴 프로그램에 참여하고 수수료를 받으려면 등록된 USDT (BEP20/BSC) 지갑 주소가 필요합니다.",
+    "walletRequiredCta": "내 지갑 추가하기",
+    "waitingThresholdTitle": "이제 거의 다 왔어요!",
+    "waitingThresholdDesc": "잔액이 {min}에 도달하는 즉시 수수료가 자동으로 지급됩니다."
   },
   "tenantAccounting": {
     "title": "재무 개요",

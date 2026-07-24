@@ -2646,7 +2646,12 @@
     "cashoutGross": "Bruto",
     "cashoutNet": "Netto",
     "cashoutRequestedCol": "Aangevraagd",
-    "cashoutProcessedCol": "Verwerkt"
+    "cashoutProcessedCol": "Verwerkt",
+    "walletRequiredTitle": "Voeg je USDT-BSC-portemonnee toe om uitbetaald te worden",
+    "walletRequiredDesc": "Je moet een USDT (BEP20/BSC)-walletadres in ons systeem hebben geregistreerd om deel te nemen aan het partnerprogramma en commissies te ontvangen.",
+    "walletRequiredCta": "Mijn portemonnee toevoegen",
+    "waitingThresholdTitle": "We zijn er bijna!",
+    "waitingThresholdDesc": "Je commissies worden automatisch uitbetaald zodra je saldo {min} bereikt."
   },
   "tenantAccounting": {
     "title": "Financieel overzicht",

@@ -2646,7 +2646,12 @@
     "cashoutGross": "Брутто",
     "cashoutNet": "Нетто",
     "cashoutRequestedCol": "Запрошено",
-    "cashoutProcessedCol": "Оброблено"
+    "cashoutProcessedCol": "Оброблено",
+    "walletRequiredTitle": "Додайте свій гаманець USDT-BSC, щоб отримувати виплати",
+    "walletRequiredDesc": "Для участі в партнерській програмі та отримання комісій вам необхідно зареєструвати адресу гаманця USDT (BEP20/BSC).",
+    "walletRequiredCta": "Додати мій гаманець",
+    "waitingThresholdTitle": "Вже майже готово!",
+    "waitingThresholdDesc": "Ваші комісійні будуть перераховані автоматично, щойно ваш баланс досягне {min}."
   },
   "tenantAccounting": {
     "title": "Фінансовий огляд",

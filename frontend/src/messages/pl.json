@@ -2646,7 +2646,12 @@
     "cashoutGross": "Brutto",
     "cashoutNet": "Siatka",
     "cashoutRequestedCol": "Wniosek",
-    "cashoutProcessedCol": "Przetworzone"
+    "cashoutProcessedCol": "Przetworzone",
+    "walletRequiredTitle": "Dodaj swój portfel USDT-BSC, aby otrzymywać płatności",
+    "walletRequiredDesc": "Aby wziąć udział w programie partnerskim i otrzymywać prowizje, musisz posiadać zarejestrowany adres portfela USDT (BEP20/BSC).",
+    "walletRequiredCta": "Dodaj mój portfel",
+    "waitingThresholdTitle": "Już prawie!",
+    "waitingThresholdDesc": "Twoje prowizje zostaną wypłacone automatycznie, gdy tylko saldo na Twoim koncie osiągnie {min}."
   },
   "tenantAccounting": {
     "title": "Przegląd finansowy",

@@ -3,6 +3,7 @@
 Keyed on USERS, not tenants: a person can own several blogs, but the referral
 code, balance, and commission tree belong to the PERSON, not to whichever blog
 happened to be used to generate a shared link. See migration 047."""
+import asyncio
 import csv
 import io
 import logging
@@ -27,9 +28,14 @@ logger = logging.getLogger(__name__)
 user_router = APIRouter(prefix="/users/me/affiliate", tags=["affiliate"])
 superadmin_router = APIRouter(prefix="/superadmin/affiliate", tags=["affiliate-admin"])
 
-# Plus de seuil minimum ni de frais — paiement immédiat en USDT (décision PDG 2026-07-12)
+# Pas de frais de retrait (décision PDG 2026-07-12). Un seuil minimum de 1$ a
+# dû être réintroduit le 2026-07-24 : NowPayments rejette silencieusement
+# (`error: null`) tout virement USDT-BSC/BEP20 dont le montant net ne couvre
+# pas ses frais réseau (~0.02$) — confirmé empiriquement (0.01$ rejeté,
+# 1$ accepté). MIN_CASHOUT sert à la fois de plancher pour le retrait manuel
+# et de seuil de déclenchement du paiement automatique (voir _accrue_commission).
 CASHOUT_FEE = 0.00
-MIN_CASHOUT = 0.00
+MIN_CASHOUT = 1.00
 
 
 # ── Schemas ───────────────────────────────────────────────────────
@@ -40,6 +46,7 @@ class AffiliateDashboardResponse(BaseModel):
     balance: float
     cashout_threshold: float
     can_cashout: bool
+    has_wallet: bool
     total_earned: float
     total_paid_out: float
     total_referrals: int
@@ -164,6 +171,7 @@ async def get_affiliate_dashboard(payload: TokenPayload, db: DBSession):
         balance=balance,
         cashout_threshold=threshold,
         can_cashout=balance >= threshold,
+        has_wallet=bool(user.usdt_wallet_address),
         total_earned=total_earned,
         total_paid_out=total_paid_out,
         total_referrals=total_referrals,
@@ -593,12 +601,14 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
     # Update balance
     new_balance = float(user.affiliate_balance or 0) + float(commission_amount)
     user.affiliate_balance = new_balance
+    await db.flush()
 
-    # Paiement immédiat (le wallet est garanti présent à ce stade)
-    if float(commission_amount) > 0:
-        commission.status = AffiliateCommissionStatus.READY
-        await db.flush()
-        await _trigger_auto_payout(db, user, commission, user.usdt_wallet_address)
+    # Paiement automatique dès que le solde cumulé atteint MIN_CASHOUT (1$) —
+    # en dessous, NowPayments rejette silencieusement le virement (voir
+    # MIN_CASHOUT ci-dessus). Une seule commission peut suffire à franchir le
+    # seuil, ou plusieurs petites commissions accumulées au fil du temps.
+    if new_balance >= MIN_CASHOUT:
+        await _trigger_auto_payout_for_user(db, user)
 
     # Email de notification
     try:
@@ -617,47 +627,157 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
         pass
 
 
-async def _trigger_auto_payout(db, user: User, commission: AffiliateCommission, wallet_address: str):
+async def _trigger_auto_payout_for_user(db, user: User):
     """
-    Déclenche un payout NowPayments immédiat pour une commission (création +
-    confirmation 2FA automatique via TOTP, voir nowpayments_service.py).
-    Si NowPayments n'est pas configuré, passe silencieusement — mais toute
-    autre erreur (auth JWT, TOTP, API) est loggée : un échec silencieux ici
-    est exactement ce qui a fait croire que "les commissions ne partent pas"
-    sans qu'on puisse savoir pourquoi (voir historique du 2026-07-21/22).
+    Regroupe toutes les commissions PENDING de l'utilisateur (leur somme vient
+    de franchir MIN_CASHOUT) et tente UN seul virement NowPayments pour le
+    total — pas un virement par commission, pour éviter d'en envoyer plusieurs
+    en dessous du plancher réseau.
+
+    Ne marque PAS les commissions comme payées ici : `send_payout`/
+    `verify_payout` ne renvoient qu'une confirmation HTTP de la demande,
+    jamais une garantie que l'argent est réellement parti — NowPayments peut
+    encore rejeter le virement après coup, silencieusement (`error: null`,
+    voir historique 2026-07-24). Les commissions passent à READY (en attente
+    de confirmation réelle) et c'est `_confirm_payout_and_finalize`, lancé en
+    tâche de fond, qui les marquera PAID (ou les remettra PENDING) une fois le
+    statut définitif connu via `get_payout_status`.
     """
     from app.services.nowpayments_service import send_single_payout
 
     if not settings.NOWPAYMENTS_PAYOUT_API_KEY:
         return
 
+    wallet_address = user.usdt_wallet_address
+    if not wallet_address:
+        return
+
+    # Évite un second virement pendant qu'un premier est déjà en cours de confirmation.
+    pending_cashout_q = await db.execute(
+        select(func.count()).where(
+            AffiliateCashoutRequest.user_id == user.id,
+            AffiliateCashoutRequest.status == CashoutStatus.PROCESSING,
+        )
+    )
+    if (pending_cashout_q.scalar() or 0) > 0:
+        return
+
+    commissions_q = await db.execute(
+        select(AffiliateCommission).where(
+            AffiliateCommission.affiliate_user_id == user.id,
+            AffiliateCommission.status == AffiliateCommissionStatus.PENDING,
+        )
+    )
+    commissions = commissions_q.scalars().all()
+    attempt_amount = round(sum(float(c.commission_amount) for c in commissions), 2)
+    if attempt_amount < MIN_CASHOUT:
+        return
+
+    cashout = AffiliateCashoutRequest(
+        user_id=user.id,
+        gross_amount=attempt_amount,
+        fee=0.00,
+        net_amount=attempt_amount,
+        payout_method="nowpayments_crypto",
+        usdt_wallet_snapshot=wallet_address,
+        status=CashoutStatus.PROCESSING,
+    )
+    db.add(cashout)
+    await db.flush()
+
+    for c in commissions:
+        c.status = AffiliateCommissionStatus.READY
+        c.cashout_request_id = cashout.id
+    await db.flush()
+
     try:
-        result = await send_single_payout(
-            wallet_address=wallet_address,
-            amount_usd=float(commission.commission_amount),
-        )
-        payout_ref = str(result.get("id", ""))
-
-        cashout = AffiliateCashoutRequest(
-            user_id=user.id,
-            gross_amount=float(commission.commission_amount),
-            fee=0.00,
-            net_amount=float(commission.commission_amount),
-            payout_method="nowpayments_crypto",
-            payout_reference=payout_ref,
-            usdt_wallet_snapshot=wallet_address,
-            status=CashoutStatus.PROCESSING,
-        )
-        db.add(cashout)
-        commission.status = AffiliateCommissionStatus.PAID
-        commission.paid_at = datetime.now(timezone.utc)
-
-        user.affiliate_balance = max(0, float(user.affiliate_balance or 0) - float(commission.commission_amount))
+        result = await send_single_payout(wallet_address=wallet_address, amount_usd=attempt_amount)
+        batch_id = str(result.get("id") or "")
+        if not batch_id:
+            raise RuntimeError("NowPayments payout: id de batch absent de la réponse.")
+        cashout.payout_reference = batch_id
+        commission_ids = [c.id for c in commissions]
+        await db.commit()
     except Exception:
         logger.exception(
-            "Échec du payout NowPayments pour la commission %s (user=%s, montant=%s) — reste READY, retry possible",
-            commission.id, user.id, commission.commission_amount,
+            "Échec de la création du payout NowPayments pour user=%s (montant=%s) — commissions remises en PENDING, retry possible",
+            user.id, attempt_amount,
         )
+        cashout.status = CashoutStatus.FAILED
+        for c in commissions:
+            c.status = AffiliateCommissionStatus.PENDING
+            c.cashout_request_id = None
+        await db.commit()
+        return
+
+    # Confirmation asynchrone : NowPayments met de 10s à ~1min pour finaliser
+    # (WAITING -> SENDING -> FINISHED), largement au-delà de ce qu'on peut
+    # attendre dans le flux qui a déclenché cette commission (souvent un
+    # webhook de paiement lui-même soumis à son propre timeout).
+    asyncio.create_task(_confirm_payout_and_finalize(batch_id, cashout.id, commission_ids, user.id, attempt_amount))
+
+
+async def _confirm_payout_and_finalize(
+    batch_id: str, cashout_id: uuid.UUID, commission_ids: list[uuid.UUID], user_id: uuid.UUID, attempt_amount: float,
+):
+    """Tâche de fond : sonde le statut réel du batch jusqu'à un état définitif,
+    puis met à jour la base en conséquence. Voir `_trigger_auto_payout_for_user`
+    pour le pourquoi (jamais marquer payé sur la seule foi d'un HTTP 200)."""
+    from app.core.database import get_db_no_rls
+    from app.services.nowpayments_service import get_payout_status
+
+    FINAL_OK = {"FINISHED"}
+    FINAL_FAILED = {"REJECTED", "REJECTED_NOT_CHECKED", "FAILED"}
+
+    for _ in range(20):  # ~20 x 6s = 2 minutes max
+        await asyncio.sleep(6)
+        try:
+            status_data = await get_payout_status(batch_id)
+        except Exception:
+            logger.exception("Erreur pendant le sondage du statut payout %s", batch_id)
+            continue
+
+        withdrawal = (status_data.get("withdrawals") or [{}])[0]
+        wstatus = withdrawal.get("status")
+
+        if wstatus in FINAL_OK:
+            async for db in get_db_no_rls():
+                cashout = await db.get(AffiliateCashoutRequest, cashout_id)
+                user = await db.get(User, user_id)
+                now = datetime.now(timezone.utc)
+                if cashout:
+                    cashout.status = CashoutStatus.PAID
+                    cashout.processed_at = now
+                    hash_ = withdrawal.get("hash")
+                    cashout.notes = f"Confirmé FINISHED, hash={hash_}" if hash_ else "Confirmé FINISHED"
+                for cid in commission_ids:
+                    commission = await db.get(AffiliateCommission, cid)
+                    if commission:
+                        commission.status = AffiliateCommissionStatus.PAID
+                        commission.paid_at = now
+                if user:
+                    user.affiliate_balance = max(0, float(user.affiliate_balance or 0) - attempt_amount)
+                await db.commit()
+                break
+            return
+
+        if wstatus in FINAL_FAILED:
+            async for db in get_db_no_rls():
+                cashout = await db.get(AffiliateCashoutRequest, cashout_id)
+                if cashout:
+                    cashout.status = CashoutStatus.REJECTED
+                    cashout.notes = f"NowPayments a rejeté le virement (status={wstatus})"
+                for cid in commission_ids:
+                    commission = await db.get(AffiliateCommission, cid)
+                    if commission:
+                        commission.status = AffiliateCommissionStatus.PENDING
+                        commission.cashout_request_id = None
+                await db.commit()
+                break
+            logger.warning("Payout %s rejeté par NowPayments (status=%s) — commissions remises en PENDING pour retry.", batch_id, wstatus)
+            return
+
+    logger.warning("Payout %s non confirmé après 2 minutes de sondage — reste PROCESSING, vérification manuelle requise.", batch_id)
 
 
 # ── Register referral (called at user registration, first login) ──

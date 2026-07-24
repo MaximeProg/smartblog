@@ -2646,7 +2646,12 @@
     "cashoutGross": "Brutto",
     "cashoutNet": "Netto",
     "cashoutRequestedCol": "Begärt",
-    "cashoutProcessedCol": "Bearbetad"
+    "cashoutProcessedCol": "Bearbetad",
+    "walletRequiredTitle": "Lägg till din USDT-BSC-plånbok för att ta emot betalningar",
+    "walletRequiredDesc": "Du måste ha en USDT-plånboksadress (BEP20/BSC) registrerad för att kunna delta i partnerprogrammet och få provision.",
+    "walletRequiredCta": "Lägg till min plånbok",
+    "waitingThresholdTitle": "Snart klart!",
+    "waitingThresholdDesc": "Dina provisioner kommer att betalas ut automatiskt så snart ditt saldo uppgår till {min}."
   },
   "tenantAccounting": {
     "title": "Finansiell översikt",

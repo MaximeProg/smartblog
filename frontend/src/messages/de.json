@@ -1721,7 +1721,7 @@
         "cta": "Auf „Pro“ umsteigen",
         "features": [
           "10 Blogs",
-          "Unbegrenzte Anzahl an Artikeln",
+          "Unbegrenzte Anzahl von Artikeln",
           "50.000 Newsletter-Abonnenten",
           "10 Autoren",
           "50 GB Speicherplatz",
@@ -2646,7 +2646,12 @@
     "inviteFriendSend": "Einladung versenden",
     "inviteSentTitle": "Einladung verschickt!",
     "inviteSentDesc": "Ihre Einladung wurde an {email} gesendet.",
-    "inviteError": "Die Einladung konnte nicht gesendet werden."
+    "inviteError": "Die Einladung konnte nicht gesendet werden.",
+    "walletRequiredTitle": "Füge deine USDT-BSC-Wallet hinzu, um Auszahlungen zu erhalten",
+    "walletRequiredDesc": "Um am Partnerprogramm teilzunehmen und Provisionen zu erhalten, müssen Sie eine USDT-Wallet-Adresse (BEP20/BSC) hinterlegt haben.",
+    "walletRequiredCta": "Meine Geldbörse hinzufügen",
+    "waitingThresholdTitle": "Fast geschafft!",
+    "waitingThresholdDesc": "Ihre Provisionen werden automatisch ausgezahlt, sobald Ihr Guthaben {min} erreicht hat."
   },
   "tenantAccounting": {
     "title": "Finanzüberblick",

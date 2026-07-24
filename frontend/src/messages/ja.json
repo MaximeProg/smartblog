@@ -1721,7 +1721,7 @@
         "features": [
           "10のブログ",
           "記事数無制限",
-          "ニュースレターの購読者数5万人",
+          "ニュースレターの購読者数50,000人",
           "著者10名",
           "50 GBのストレージ",
           "カスタムドメイン",
@@ -2646,7 +2646,12 @@
     "cashoutGross": "グロス",
     "cashoutNet": "ネット",
     "cashoutRequestedCol": "リクエスト済み",
-    "cashoutProcessedCol": "処理済み"
+    "cashoutProcessedCol": "処理済み",
+    "walletRequiredTitle": "USDT-BSCウォレットを追加して、報酬を受け取りましょう",
+    "walletRequiredDesc": "アフィリエイトプログラムに参加し、コミッションを受け取るには、登録済みのUSDT（BEP20/BSC）ウォレットアドレスが必要です。",
+    "walletRequiredCta": "ウォレットを追加する",
+    "waitingThresholdTitle": "あと少しだ！",
+    "waitingThresholdDesc": "残高が{min}に達し次第、報酬は自動的に送金されます。"
   },
   "tenantAccounting": {
     "title": "財務概要",

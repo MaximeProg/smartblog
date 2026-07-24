@@ -2646,7 +2646,12 @@
     "cashoutGross": "Bruto",
     "cashoutNet": "Tīrais",
     "cashoutRequestedCol": "Pieprasīts",
-    "cashoutProcessedCol": "Apstrādāts"
+    "cashoutProcessedCol": "Apstrādāts",
+    "walletRequiredTitle": "Pievienojiet savu USDT-BSC maku, lai saņemtu maksājumus",
+    "walletRequiredDesc": "Lai piedalītos partnerprogrammā un saņemtu komisijas maksas, jums ir jāreģistrē USDT (BEP20/BSC) maku adrese.",
+    "walletRequiredCta": "Pievienot manu elektronisko maku",
+    "waitingThresholdTitle": "Vairs nav tālu!",
+    "waitingThresholdDesc": "Jūsu komisijas tiks nosūtītas automātiski, tiklīdz jūsu atlikums sasniegs {min}."
   },
   "tenantAccounting": {
     "title": "Finanšu pārskats",

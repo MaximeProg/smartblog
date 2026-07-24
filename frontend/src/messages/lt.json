@@ -2646,7 +2646,12 @@
     "cashoutGross": "Bruto",
     "cashoutNet": "Grynasis",
     "cashoutRequestedCol": "Prašoma",
-    "cashoutProcessedCol": "Apdorota"
+    "cashoutProcessedCol": "Apdorota",
+    "walletRequiredTitle": "Pridėkite savo USDT-BSC piniginę, kad galėtumėte gauti mokėjimus",
+    "walletRequiredDesc": "Norėdami dalyvauti partnerių programoje ir gauti komisinius, turite turėti užregistruotą USDT (BEP20/BSC) piniginės adresą.",
+    "walletRequiredCta": "Pridėti mano piniginę",
+    "waitingThresholdTitle": "Jau beveik pasiekėme tikslą!",
+    "waitingThresholdDesc": "Jūsų komisiniai bus pervesti automatiškai, kai tik jūsų sąskaitos likutis pasieks {min}."
   },
   "tenantAccounting": {
     "title": "Finansinė apžvalga",

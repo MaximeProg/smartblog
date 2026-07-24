@@ -2646,7 +2646,12 @@
     "cashoutGross": "总计",
     "cashoutNet": "Net",
     "cashoutRequestedCol": "已请求",
-    "cashoutProcessedCol": "已处理"
+    "cashoutProcessedCol": "已处理",
+    "walletRequiredTitle": "添加您的 USDT-BSC 钱包以接收付款",
+    "walletRequiredDesc": "您需要在系统中登记一个 USDT（BEP20/BSC）钱包地址，才能参与联盟计划并获得佣金。",
+    "walletRequiredCta": "添加我的钱包",
+    "waitingThresholdTitle": "快到了！",
+    "waitingThresholdDesc": "一旦您的余额达到{min}，佣金将自动发放。"
   },
   "tenantAccounting": {
     "title": "财务概况",

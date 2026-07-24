@@ -2646,7 +2646,12 @@
     "cashoutGross": "Бруто",
     "cashoutNet": "Нетно",
     "cashoutRequestedCol": "Заявено",
-    "cashoutProcessedCol": "Обработено"
+    "cashoutProcessedCol": "Обработено",
+    "walletRequiredTitle": "Добавете портфейла си за USDT-BSC, за да получавате плащания",
+    "walletRequiredDesc": "За да участвате в партньорската програма и да получавате комисионни, е необходимо да имате регистриран адрес на портфейл за USDT (BEP20/BSC).",
+    "walletRequiredCta": "Добави портфейла ми",
+    "waitingThresholdTitle": "Почти стигнахме!",
+    "waitingThresholdDesc": "Комисионните ви ще бъдат изпратени автоматично, веднага щом балансът ви достигне {min}."
   },
   "tenantAccounting": {
     "title": "Финансов обзор",

@@ -2646,7 +2646,12 @@
     "cashoutGross": "Bruto",
     "cashoutNet": "Líquido",
     "cashoutRequestedCol": "Solicitado",
-    "cashoutProcessedCol": "Processado"
+    "cashoutProcessedCol": "Processado",
+    "walletRequiredTitle": "Adicione a sua carteira USDT-BSC para receber pagamentos",
+    "walletRequiredDesc": "É necessário ter um endereço de carteira USDT (BEP20/BSC) registado para participar no programa de afiliados e receber comissões.",
+    "walletRequiredCta": "Adicionar a minha carteira",
+    "waitingThresholdTitle": "Já quase lá!",
+    "waitingThresholdDesc": "As suas comissões serão enviadas automaticamente assim que o seu saldo atingir {min}."
   },
   "tenantAccounting": {
     "title": "Panorâmica financeira",

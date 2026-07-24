@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, type ElementType } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import {
@@ -47,6 +49,8 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function AffiliatePage() {
   const t = useTranslations('affiliate');
+  const params = useParams();
+  const locale = params.locale as string;
   const { toast } = useToast();
   const qc = useQueryClient();
   const [copied, setCopied] = useState(false);
@@ -174,6 +178,46 @@ export default function AffiliatePage() {
               </div>
             ) : (
               <>
+                {/* Wallet required banner */}
+                {!dashboard?.has_wallet && (
+                  <div className="relative overflow-hidden bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div className="relative h-11 w-11 shrink-0">
+                      <span className="absolute inset-0 rounded-xl bg-amber-500 animate-ping opacity-30" />
+                      <div className="relative h-11 w-11 rounded-xl bg-amber-500 flex items-center justify-center">
+                        <Wallet className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-amber-900 dark:text-amber-200 text-[14px]">{t('walletRequiredTitle')}</p>
+                      <p className="text-[12.5px] text-amber-700 dark:text-amber-400 mt-0.5">{t('walletRequiredDesc')}</p>
+                    </div>
+                    <Link
+                      href={`/${locale}/profile`}
+                      className="shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl bg-amber-600 text-white text-[12.5px] font-semibold hover:bg-amber-700 transition-colors"
+                    >
+                      {t('walletRequiredCta')}
+                    </Link>
+                  </div>
+                )}
+
+                {/* Waiting for auto-payout threshold banner */}
+                {dashboard?.has_wallet && balance > 0 && balance < threshold && (
+                  <div className="relative overflow-hidden bg-gradient-to-r from-blue-50 to-violet-50 dark:from-blue-900/20 dark:to-violet-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-5 flex items-center gap-4">
+                    <div className="relative h-11 w-11 shrink-0">
+                      <span className="absolute inset-0 rounded-xl bg-blue-500 animate-ping opacity-30" />
+                      <div className="relative h-11 w-11 rounded-xl bg-blue-600 flex items-center justify-center">
+                        <Clock className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-blue-900 dark:text-blue-200 text-[14px]">{t('waitingThresholdTitle')}</p>
+                      <p className="text-[12.5px] text-blue-700 dark:text-blue-400 mt-0.5">
+                        {t('waitingThresholdDesc', { min: fmtCurrency(threshold) })}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Stats */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   {[

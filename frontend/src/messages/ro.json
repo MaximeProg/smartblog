@@ -2646,7 +2646,12 @@
     "cashoutGross": "Brut",
     "cashoutNet": "Net",
     "cashoutRequestedCol": "Solicitat",
-    "cashoutProcessedCol": "Prelucrat"
+    "cashoutProcessedCol": "Prelucrat",
+    "walletRequiredTitle": "Adaugă-ți portofelul USDT-BSC pentru a primi plăți",
+    "walletRequiredDesc": "Pentru a participa la programul de afiliere și a primi comisioane, trebuie să aveți înregistrată o adresă de portofel USDT (BEP20/BSC).",
+    "walletRequiredCta": "Adaugă-mi portofelul",
+    "waitingThresholdTitle": "Aproape am ajuns!",
+    "waitingThresholdDesc": "Comisioanele dvs. vor fi trimise automat imediat ce soldul dvs. va ajunge la {min}."
   },
   "tenantAccounting": {
     "title": "Prezentare generală financiară",

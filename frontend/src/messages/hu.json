@@ -2646,7 +2646,12 @@
     "cashoutGross": "Bruttó",
     "cashoutNet": "Nettó",
     "cashoutRequestedCol": "Kért",
-    "cashoutProcessedCol": "Feldolgozva"
+    "cashoutProcessedCol": "Feldolgozva",
+    "walletRequiredTitle": "Adja hozzá az USDT-BSC pénztárcáját, hogy kifizetést kapjon",
+    "walletRequiredDesc": "Ahhoz, hogy részt vehessen az affiliate programban és jutalékot kapjon, regisztrálnia kell egy USDT (BEP20/BSC) pénztárca-címet.",
+    "walletRequiredCta": "Pénztárcám hozzáadása",
+    "waitingThresholdTitle": "Már majdnem ott vagyunk!",
+    "waitingThresholdDesc": "A jutalékod automatikusan kifizetésre kerül, amint egyenleged eléri a {min} összeget."
   },
   "tenantAccounting": {
     "title": "Pénzügyi áttekintés",

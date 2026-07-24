@@ -2646,7 +2646,12 @@
     "cashoutGross": "Bruto",
     "cashoutNet": "Net",
     "cashoutRequestedCol": "Nõutud",
-    "cashoutProcessedCol": "Töödeldud"
+    "cashoutProcessedCol": "Töödeldud",
+    "walletRequiredTitle": "Lisa oma USDT-BSC-rahakott, et saada makseid",
+    "walletRequiredDesc": "Partnerprogrammis osalemiseks ja komisjonitasude saamiseks peab teie andmetes olema registreeritud USDT (BEP20/BSC) rahakoti aadress.",
+    "walletRequiredCta": "Lisa minu rahakott",
+    "waitingThresholdTitle": "Peaaegu kohal!",
+    "waitingThresholdDesc": "Teie komisjonitasud makstakse välja automaatselt niipea, kui teie saldo jõuab {min}."
   },
   "tenantAccounting": {
     "title": "Finantsülevaade",

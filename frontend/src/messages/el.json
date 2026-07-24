@@ -2646,7 +2646,12 @@
     "cashoutGross": "Μικτό",
     "cashoutNet": "Καθαρό",
     "cashoutRequestedCol": "Ζητήθηκε",
-    "cashoutProcessedCol": "Επεξεργασμένο"
+    "cashoutProcessedCol": "Επεξεργασμένο",
+    "walletRequiredTitle": "Προσθέστε το πορτοφόλι σας USDT-BSC για να λάβετε πληρωμές",
+    "walletRequiredDesc": "Για να συμμετάσχετε στο πρόγραμμα συνεργατών και να λάβετε προμήθειες, πρέπει να έχετε καταχωρήσει μια διεύθυνση πορτοφολιού USDT (BEP20/BSC).",
+    "walletRequiredCta": "Προσθήκη του πορτοφολιού μου",
+    "waitingThresholdTitle": "Σχεδόν φτάσαμε!",
+    "waitingThresholdDesc": "Οι προμήθειές σας θα αποστέλλονται αυτόματα μόλις το υπόλοιπό σας φτάσει το ποσό των {min}."
   },
   "tenantAccounting": {
     "title": "Οικονομική επισκόπηση",

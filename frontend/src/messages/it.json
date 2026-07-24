@@ -2646,7 +2646,12 @@
     "cashoutGross": "Lordo",
     "cashoutNet": "Netto",
     "cashoutRequestedCol": "Richiesto",
-    "cashoutProcessedCol": "Elaborato"
+    "cashoutProcessedCol": "Elaborato",
+    "walletRequiredTitle": "Aggiungi il tuo portafoglio USDT-BSC per ricevere i pagamenti",
+    "walletRequiredDesc": "Per partecipare al programma di affiliazione e ricevere le commissioni, è necessario avere registrato un indirizzo di portafoglio USDT (BEP20/BSC).",
+    "walletRequiredCta": "Aggiungi il mio portafoglio",
+    "waitingThresholdTitle": "Ci siamo quasi!",
+    "waitingThresholdDesc": "Le tue commissioni ti saranno inviate automaticamente non appena il tuo saldo raggiungerà l'{min}e."
   },
   "tenantAccounting": {
     "title": "Panoramica finanziaria",

@@ -1742,7 +1742,7 @@
           "Multidominio",
           "Marca blanca",
           "Acuerdo de nivel de servicio (SLA) garantizado",
-          "Proceso de incorporación específico",
+          "Proceso de incorporación personalizado",
           "Asistencia las 24 horas del día, los 7 días de la semana"
         ]
       }
@@ -2646,7 +2646,12 @@
     "cashoutGross": "Bruto",
     "cashoutNet": "Neto",
     "cashoutRequestedCol": "Solicitado",
-    "cashoutProcessedCol": "Procesado"
+    "cashoutProcessedCol": "Procesado",
+    "walletRequiredTitle": "Añade tu monedero USDT-BSC para recibir tus pagos",
+    "walletRequiredDesc": "Para participar en el programa de afiliados y recibir comisiones, es necesario que tengas registrada una dirección de monedero de USDT (BEP20/BSC).",
+    "walletRequiredCta": "Añadir mi cartera",
+    "waitingThresholdTitle": "¡Ya casi estamos!",
+    "waitingThresholdDesc": "Tus comisiones se enviarán automáticamente en cuanto tu saldo alcance los {min}."
   },
   "tenantAccounting": {
     "title": "Resumen financiero",

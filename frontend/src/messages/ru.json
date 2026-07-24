@@ -1696,7 +1696,7 @@
           "1 автор",
           "1 ГБ памяти",
           "поддомен smarterbloggers.com",
-          "В комплект входит корпоративный шаблон"
+          "Включен корпоративный шаблон"
         ]
       },
       "starter": {
@@ -2646,7 +2646,12 @@
     "cashoutGross": "Брутто",
     "cashoutNet": "Чистый",
     "cashoutRequestedCol": "Запрошено",
-    "cashoutProcessedCol": "Обработано"
+    "cashoutProcessedCol": "Обработано",
+    "walletRequiredTitle": "Добавьте свой кошелек USDT-BSC, чтобы получать выплаты",
+    "walletRequiredDesc": "Для участия в партнерской программе и получения комиссионных у вас должен быть зарегистрирован адрес кошелька USDT (BEP20/BSC).",
+    "walletRequiredCta": "Добавить мой кошелек",
+    "waitingThresholdTitle": "Уже почти готово!",
+    "waitingThresholdDesc": "Ваши комиссионные будут перечислены автоматически, как только ваш баланс достигнет {min}."
   },
   "tenantAccounting": {
     "title": "Финансовый обзор",

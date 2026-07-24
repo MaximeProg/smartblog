@@ -2646,7 +2646,12 @@
     "cashoutGross": "Hrubý",
     "cashoutNet": "Čistý",
     "cashoutRequestedCol": "Požadováno",
-    "cashoutProcessedCol": "Zpracováno"
+    "cashoutProcessedCol": "Zpracováno",
+    "walletRequiredTitle": "Přidejte si peněženku USDT-BSC, abyste mohli přijímat platby",
+    "walletRequiredDesc": "Abyste se mohli zapojit do partnerského programu a dostávat provize, musíte mít v systému uloženou adresu peněženky pro USDT (BEP20/BSC).",
+    "walletRequiredCta": "Přidat mou peněženku",
+    "waitingThresholdTitle": "Už to skoro máme!",
+    "waitingThresholdDesc": "Vaše provize budou odeslány automaticky, jakmile váš zůstatek dosáhne částky {min}."
   },
   "tenantAccounting": {
     "title": "Finanční přehled",

@@ -2646,7 +2646,12 @@
     "cashoutGross": "Bruto",
     "cashoutNet": "Jaring",
     "cashoutRequestedCol": "Diminta",
-    "cashoutProcessedCol": "Telah diproses"
+    "cashoutProcessedCol": "Telah diproses",
+    "walletRequiredTitle": "Tambahkan dompet USDT-BSC Anda untuk menerima pembayaran",
+    "walletRequiredDesc": "Anda harus sudah mendaftarkan alamat dompet USDT (BEP20/BSC) untuk dapat berpartisipasi dalam program afiliasi dan menerima komisi.",
+    "walletRequiredCta": "Tambahkan dompet saya",
+    "waitingThresholdTitle": "Sudah hampir sampai!",
+    "waitingThresholdDesc": "Komisi Anda akan dikirimkan secara otomatis begitu saldo Anda mencapai {min}."
   },
   "tenantAccounting": {
     "title": "Gambaran umum keuangan",

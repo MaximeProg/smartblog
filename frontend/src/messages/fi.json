@@ -1696,7 +1696,7 @@
           "1 kirjoittaja",
           "1 GB tallennustilaa",
           "smarterbloggers.com-aliverkkotunnus",
-          "Mukana yritysmalli"
+          "Mukana yrityskäyttöön tarkoitettu malli"
         ]
       },
       "starter": {
@@ -2646,7 +2646,12 @@
     "cashoutGross": "Brutto",
     "cashoutNet": "Netto",
     "cashoutRequestedCol": "Pyydetty",
-    "cashoutProcessedCol": "Käsitelty"
+    "cashoutProcessedCol": "Käsitelty",
+    "walletRequiredTitle": "Lisää USDT-BSC-lompakkosi, jotta saat maksun",
+    "walletRequiredDesc": "Jotta voit osallistua kumppaniohjelmaan ja saada provisioita, sinulla on oltava rekisteröity USDT (BEP20/BSC) -lompakko-osoite.",
+    "walletRequiredCta": "Lisää lompakkoni",
+    "waitingThresholdTitle": "Melkein perillä!",
+    "waitingThresholdDesc": "Palkkiosi maksetaan automaattisesti heti, kun saldosi nousee vähintään {min}."
   },
   "tenantAccounting": {
     "title": "Taloudellinen katsaus",

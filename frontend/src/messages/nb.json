@@ -2646,7 +2646,12 @@
     "cashoutGross": "Brutto",
     "cashoutNet": "Netto",
     "cashoutRequestedCol": "Forespurt",
-    "cashoutProcessedCol": "Behandlet"
+    "cashoutProcessedCol": "Behandlet",
+    "walletRequiredTitle": "Legg til USDT-BSC-lommeboken din for å motta utbetalinger",
+    "walletRequiredDesc": "Du må ha registrert en USDT (BEP20/BSC)-lommebokadresse for å kunne delta i partnerprogrammet og motta provisjon.",
+    "walletRequiredCta": "Legg til lommeboken min",
+    "waitingThresholdTitle": "Nesten i mål!",
+    "waitingThresholdDesc": "Provisjonene dine vil bli utbetalt automatisk så snart saldoen din når {min}."
   },
   "tenantAccounting": {
     "title": "Finansiell oversikt",

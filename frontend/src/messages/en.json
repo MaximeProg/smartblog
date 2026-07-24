@@ -2646,7 +2646,12 @@
     "inviteFriendSend": "Send invitation",
     "inviteSentTitle": "Invitation sent!",
     "inviteSentDesc": "Your invitation was sent to {email}.",
-    "inviteError": "Could not send invitation."
+    "inviteError": "Could not send invitation.",
+    "walletRequiredTitle": "Add your USDT-BSC wallet to get paid",
+    "walletRequiredDesc": "You need a USDT (BEP20/BSC) wallet address on file to participate in the affiliate program and receive commissions.",
+    "walletRequiredCta": "Add my wallet",
+    "waitingThresholdTitle": "Almost there!",
+    "waitingThresholdDesc": "Your commissions will be sent automatically as soon as your balance reaches {min}."
   },
   "advertiser": {
     "title": "Advertise on SmarterBloggers",

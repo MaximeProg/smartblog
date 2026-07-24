@@ -203,6 +203,27 @@ async def send_payout(
         return resp.json()
 
 
+async def get_payout_status(batch_withdrawal_id: str) -> dict:
+    """
+    Consulte l'état réel d'un batch de payout. Indispensable pour confirmer
+    qu'un virement a vraiment abouti : `send_payout`/`verify_payout` ne
+    renvoient qu'un HTTP 200 de confirmation de la demande, jamais une
+    garantie que l'argent est parti — NowPayments peut encore rejeter le
+    virement après coup (silencieusement, `error: null`) lors d'un contrôle
+    asynchrone. Ne jamais marquer un paiement "payé" côté plateforme sans
+    être passé par ce statut et avoir vu `status == "FINISHED"` avec un hash
+    non nul (voir historique 2026-07-24).
+    """
+    async with httpx.AsyncClient(timeout=15) as client:
+        resp = await client.get(
+            f"{_PAYOUT_BASE}/payout/{batch_withdrawal_id}",
+            headers=await _payout_headers(),
+        )
+        if resp.status_code >= 400:
+            raise RuntimeError(f"NowPayments GET /payout/{batch_withdrawal_id} -> {resp.status_code}: {resp.text[:300]}")
+        return resp.json()
+
+
 async def verify_payout(batch_withdrawal_id: str) -> dict:
     """
     Confirme un payout avec le code 2FA — obligatoire dans l'heure suivant sa

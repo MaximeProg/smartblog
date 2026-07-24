@@ -2646,7 +2646,12 @@
     "cashoutGross": "Brüt",
     "cashoutNet": "Net",
     "cashoutRequestedCol": "Talep edildi",
-    "cashoutProcessedCol": "İşlendi"
+    "cashoutProcessedCol": "İşlendi",
+    "walletRequiredTitle": "Ödeme alabilmek için USDT-BSC cüzdanınızı ekleyin",
+    "walletRequiredDesc": "Ortaklık programına katılmak ve komisyon almak için kayıtlı bir USDT (BEP20/BSC) cüzdan adresinizin olması gerekir.",
+    "walletRequiredCta": "Cüzdanımı ekle",
+    "waitingThresholdTitle": "Neredeyse bitti!",
+    "waitingThresholdDesc": "Bakiyeniz {min}'a ulaşır ulaşmaz komisyonlarınız otomatik olarak gönderilecektir."
   },
   "tenantAccounting": {
     "title": "Mali genel bakış",

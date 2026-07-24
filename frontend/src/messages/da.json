@@ -2646,7 +2646,12 @@
     "cashoutGross": "Brutto",
     "cashoutNet": "Netto",
     "cashoutRequestedCol": "Anmodet om",
-    "cashoutProcessedCol": "Behandlet"
+    "cashoutProcessedCol": "Behandlet",
+    "walletRequiredTitle": "Tilføj din USDT-BSC-tegnebog for at modtage betaling",
+    "walletRequiredDesc": "Du skal have registreret en USDT (BEP20/BSC)-tegnebogsadresse for at kunne deltage i partnerprogrammet og modtage provision.",
+    "walletRequiredCta": "Tilføj min tegnebog",
+    "waitingThresholdTitle": "Nu er vi næsten der!",
+    "waitingThresholdDesc": "Dine provisioner udbetales automatisk, så snart din saldo når op på {min}."
   },
   "tenantAccounting": {
     "title": "Finansielt overblik",

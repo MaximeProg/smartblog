@@ -732,6 +732,7 @@ export interface AffiliateDashboard {
   balance: number;
   cashout_threshold: number;
   can_cashout: boolean;
+  has_wallet: boolean;
   total_earned: number;
   total_paid_out: number;
   total_referrals: number;

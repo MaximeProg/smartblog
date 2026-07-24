@@ -1725,7 +1725,7 @@
           "10 avtorjev",
           "50 GB prostora za shranjevanje",
           "Lastna domena",
-          "Celovita analitika + optimizacija za iskalnike (SEO)",
+          "Celovita analitika + SEO",
           "Dostop do API-ja",
           "Posebna podpora"
         ]
@@ -2646,7 +2646,12 @@
     "cashoutGross": "Bruto",
     "cashoutNet": "Neto",
     "cashoutRequestedCol": "Zahtevano",
-    "cashoutProcessedCol": "Obdelano"
+    "cashoutProcessedCol": "Obdelano",
+    "walletRequiredTitle": "Dodajte svojo denarnico USDT-BSC, da boste prejeli plačilo",
+    "walletRequiredDesc": "Za sodelovanje v partnerskem programu in prejemanje provizij morate imeti v evidenci naslov denarnice za USDT (BEP20/BSC).",
+    "walletRequiredCta": "Dodaj mojo denarnico",
+    "waitingThresholdTitle": "Skoraj smo tam!",
+    "waitingThresholdDesc": "Vaše provizije bodo izplačane samodejno, takoj ko bo vaše stanje doseglo {min}."
   },
   "tenantAccounting": {
     "title": "Finančni pregled",
