@@ -2832,7 +2832,9 @@
     "dnsName": "Navn",
     "dnsValue": "Verdi",
     "sslActive": "SSL aktivert",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Bloggen din er ikke publisert ennå – leserne har ikke tilgang til den.",
+    "bannerAddDomain": "Legg til domene"
   },
   "twoFA": {
     "setupTitle": "Konfigurer tofaktorautentisering",

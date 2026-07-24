@@ -2832,7 +2832,9 @@
     "dnsName": "Όνομα",
     "dnsValue": "Τιμή",
     "sslActive": "SSL ενεργό",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Το ιστολόγιό σου δεν έχει δημοσιευτεί ακόμα — οι αναγνώστες δεν μπορούν να έχουν πρόσβαση σε αυτό.",
+    "bannerAddDomain": "Προσθήκη domain"
   },
   "twoFA": {
     "setupTitle": "Ρύθμιση της επαλήθευσης δύο παραγόντων",

@@ -2832,7 +2832,9 @@
     "dnsName": "姓名",
     "dnsValue": "值",
     "sslActive": "SSL 已启用",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "您的博客尚未发布——读者无法访问。",
+    "bannerAddDomain": "添加域名"
   },
   "twoFA": {
     "setupTitle": "设置双因素认证",

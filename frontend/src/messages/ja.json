@@ -2832,7 +2832,9 @@
     "dnsName": "名前",
     "dnsValue": "値",
     "sslActive": "SSLが有効",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "あなたのブログはまだ公開されていません。読者はアクセスできません。",
+    "bannerAddDomain": "ドメインを追加"
   },
   "twoFA": {
     "setupTitle": "二要素認証を設定する",

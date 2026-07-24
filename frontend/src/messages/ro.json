@@ -2832,7 +2832,9 @@
     "dnsName": "Nume",
     "dnsValue": "Valoare",
     "sslActive": "SSL activ",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Blogul tău nu este încă public — cititorii nu îl pot accesa.",
+    "bannerAddDomain": "Adăugare domeniu"
   },
   "twoFA": {
     "setupTitle": "Configurarea autentificării în doi pași",

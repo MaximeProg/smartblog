@@ -2832,7 +2832,9 @@
     "dnsName": "이름",
     "dnsValue": "값",
     "sslActive": "SSL 활성화됨",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "귀하의 블로그는 아직 공개되지 않았습니다. 독자들이 접속할 수 없습니다.",
+    "bannerAddDomain": "도메인 추가"
   },
   "twoFA": {
     "setupTitle": "2단계 인증 설정하기",

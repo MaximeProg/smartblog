@@ -2832,7 +2832,9 @@
     "dnsName": "Ime",
     "dnsValue": "Vrednost",
     "sslActive": "SSL je aktiven",
-    "placeholderCustomDomainExample": "blog.moja-spletna-stran.com"
+    "placeholderCustomDomainExample": "blog.moja-spletna-stran.com",
+    "bannerNotVisible": "Tvoj blog še ni objavljen — bralci nimajo dostopa do njega.",
+    "bannerAddDomain": "Dodaj domeno"
   },
   "twoFA": {
     "setupTitle": "Nastavite dvofaktorsko avtentifikacijo",

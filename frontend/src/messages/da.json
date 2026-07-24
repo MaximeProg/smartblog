@@ -2832,7 +2832,9 @@
     "dnsName": "Navn",
     "dnsValue": "Værdi",
     "sslActive": "SSL er aktiveret",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Din blog er endnu ikke online — læserne kan ikke få adgang til den.",
+    "bannerAddDomain": "Tilføj domæne"
   },
   "twoFA": {
     "setupTitle": "Konfigurer tofaktorautentificering",

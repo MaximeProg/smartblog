@@ -2832,7 +2832,9 @@
     "dnsName": "Naam",
     "dnsValue": "Waarde",
     "sslActive": "SSL actief",
-    "placeholderCustomDomainExample": "blog.mijnsite.com"
+    "placeholderCustomDomainExample": "blog.mijnsite.com",
+    "bannerNotVisible": "Je blog is nog niet online — lezers hebben er geen toegang toe.",
+    "bannerAddDomain": "Domein toevoegen"
   },
   "twoFA": {
     "setupTitle": "Tweefactorauthenticatie instellen",

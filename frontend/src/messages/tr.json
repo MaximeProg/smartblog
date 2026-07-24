@@ -2832,7 +2832,9 @@
     "dnsName": "Ad",
     "dnsValue": "Değer",
     "sslActive": "SSL etkin",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Blogunuz henüz yayında değil — okuyucular blogunuza erişemiyor.",
+    "bannerAddDomain": "Etki alanı ekle"
   },
   "twoFA": {
     "setupTitle": "İki faktörlü kimlik doğrulamayı ayarlayın",

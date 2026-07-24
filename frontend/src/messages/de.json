@@ -2832,7 +2832,9 @@
     "dnsName": "Name",
     "dnsValue": "Wert",
     "sslActive": "SSL aktiv",
-    "placeholderCustomDomainExample": "blog.meinewebsite.com"
+    "placeholderCustomDomainExample": "blog.meinewebsite.com",
+    "bannerNotVisible": "Dein Blog ist noch nicht online – Leser können nicht darauf zugreifen.",
+    "bannerAddDomain": "Domain hinzufügen"
   },
   "twoFA": {
     "setupTitle": "Zwei-Faktor-Authentifizierung einrichten",

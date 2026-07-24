@@ -2832,7 +2832,9 @@
     "dnsName": "Jméno",
     "dnsValue": "Hodnota",
     "sslActive": "SSL je aktivní",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Váš blog ještě není zveřejněn – čtenáři k němu nemají přístup.",
+    "bannerAddDomain": "Přidat doménu"
   },
   "twoFA": {
     "setupTitle": "Nastavení dvoufaktorového ověřování",

@@ -2832,7 +2832,9 @@
     "dnsName": "Meno",
     "dnsValue": "Hodnota",
     "sslActive": "SSL je aktívne",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Váš blog ešte nie je sprístupnený – čitatelia k nemu nemajú prístup.",
+    "bannerAddDomain": "Pridať doménu"
   },
   "twoFA": {
     "setupTitle": "Nastavte dvojfaktorovú autentifikáciu",

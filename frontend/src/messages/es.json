@@ -1742,7 +1742,7 @@
           "Multidominio",
           "Marca blanca",
           "Acuerdo de nivel de servicio (SLA) garantizado",
-          "Proceso de incorporación personalizado",
+          "Proceso de incorporación específico",
           "Asistencia las 24 horas del día, los 7 días de la semana"
         ]
       }
@@ -2832,7 +2832,9 @@
     "dnsName": "Nombre",
     "dnsValue": "Valor",
     "sslActive": "SSL activo",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Tu blog aún no está publicado; los lectores no pueden acceder a él.",
+    "bannerAddDomain": "Añadir dominio"
   },
   "twoFA": {
     "setupTitle": "Configurar la autenticación de dos factores",

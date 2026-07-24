@@ -2832,7 +2832,9 @@
     "dnsName": "Nimi",
     "dnsValue": "Väärtus",
     "sslActive": "SSL on aktiivne",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Sinu blogi pole veel avatud – lugejad ei saa sellele juurde pääseda.",
+    "bannerAddDomain": "Lisa domeen"
   },
   "twoFA": {
     "setupTitle": "Kahefaktorilise autentimise seadistamine",

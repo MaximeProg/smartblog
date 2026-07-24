@@ -2832,7 +2832,9 @@
     "dnsName": "Nama",
     "dnsValue": "Nilai",
     "sslActive": "SSL aktif",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Blog Anda belum ditayangkan — pembaca belum bisa mengaksesnya.",
+    "bannerAddDomain": "Tambahkan domain"
   },
   "twoFA": {
     "setupTitle": "Mengaktifkan otentikasi dua faktor",

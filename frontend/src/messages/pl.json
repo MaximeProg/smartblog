@@ -1696,7 +1696,7 @@
           "1 autor",
           "1 GB pamięci",
           "poddomena smarterbloggers.com",
-          "W zestawie znajduje się szablon korporacyjny"
+          "W zestawie znajduje się szablon firmowy"
         ]
       },
       "starter": {
@@ -2832,7 +2832,9 @@
     "dnsName": "Nazwa",
     "dnsValue": "Wartość",
     "sslActive": "SSL włączony",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Twój blog nie jest jeszcze dostępny — czytelnicy nie mają do niego dostępu.",
+    "bannerAddDomain": "Dodaj domenę"
   },
   "twoFA": {
     "setupTitle": "Skonfiguruj uwierzytelnianie dwuskładnikowe",

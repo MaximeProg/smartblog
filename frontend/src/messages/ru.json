@@ -2832,7 +2832,9 @@
     "dnsName": "Имя",
     "dnsValue": "Значение",
     "sslActive": "SSL включен",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Ваш блог ещё не запущен — читатели не могут получить к нему доступ.",
+    "bannerAddDomain": "Добавить домен"
   },
   "twoFA": {
     "setupTitle": "Настройте двухфакторную аутентификацию",

@@ -1706,7 +1706,7 @@
         "features": [
           "3 bloggar",
           "500 artiklar",
-          "5 000 nyhetsbrevsprenumeranter",
+          "5 000 prenumeranter på nyhetsbrevet",
           "3 författare",
           "5 GB lagringsutrymme",
           "Anpassad domän",
@@ -2832,7 +2832,9 @@
     "dnsName": "Namn",
     "dnsValue": "Värde",
     "sslActive": "SSL aktiverat",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Din blogg är inte publicerad än – läsarna kan inte komma åt den.",
+    "bannerAddDomain": "Lägg till domän"
   },
   "twoFA": {
     "setupTitle": "Konfigurera tvåfaktorsautentisering",

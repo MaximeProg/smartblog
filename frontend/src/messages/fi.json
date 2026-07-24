@@ -1696,7 +1696,7 @@
           "1 kirjoittaja",
           "1 GB tallennustilaa",
           "smarterbloggers.com-aliverkkotunnus",
-          "Mukana yrityskäyttöön tarkoitettu malli"
+          "Mukana yritysmalli"
         ]
       },
       "starter": {
@@ -2832,7 +2832,9 @@
     "dnsName": "Nimi",
     "dnsValue": "Arvo",
     "sslActive": "SSL käytössä",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Blogiasi ei ole vielä julkaistu — lukijat eivät pääse lukemaan sitä.",
+    "bannerAddDomain": "Lisää verkkotunnus"
   },
   "twoFA": {
     "setupTitle": "Kaksivaiheisen todennuksen määrittäminen",

@@ -2832,7 +2832,9 @@
     "dnsName": "Ім'я",
     "dnsValue": "Значення",
     "sslActive": "SSL увімкнено",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Ваш блог ще не опубліковано — читачі не можуть отримати до нього доступ.",
+    "bannerAddDomain": "Додати домен"
   },
   "twoFA": {
     "setupTitle": "Налаштувати двофакторну автентифікацію",

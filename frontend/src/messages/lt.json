@@ -2832,7 +2832,9 @@
     "dnsName": "Vardas",
     "dnsValue": "Vertė",
     "sslActive": "SSL įjungtas",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Jūsų tinklaraštis dar neveikia — skaitytojai negali jo pasiekti.",
+    "bannerAddDomain": "Pridėti domeną"
   },
   "twoFA": {
     "setupTitle": "Nustatykite dviejų veiksnių autentifikavimą",

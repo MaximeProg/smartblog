@@ -2877,7 +2877,9 @@
     "dnsName": "Name",
     "dnsValue": "Value",
     "sslActive": "SSL active",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Your blog isn't live yet — readers can't access it.",
+    "bannerAddDomain": "Add domain"
   },
   "twoFA": {
     "setupTitle": "Set up two-factor authentication",

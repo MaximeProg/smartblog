@@ -2832,7 +2832,9 @@
     "dnsName": "Vārds",
     "dnsValue": "Vērtība",
     "sslActive": "SSL ir ieslēgts",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "Tavs blogs vēl nav pieejams — lasītāji nevar to apmeklēt.",
+    "bannerAddDomain": "Pievienot domēnu"
   },
   "twoFA": {
     "setupTitle": "Iestatiet divpakāpju autentifikāciju",

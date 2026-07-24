@@ -2832,7 +2832,9 @@
     "dnsName": "Név",
     "dnsValue": "Érték",
     "sslActive": "SSL aktív",
-    "placeholderCustomDomainExample": "blog.mysite.com"
+    "placeholderCustomDomainExample": "blog.mysite.com",
+    "bannerNotVisible": "A blogod még nem elérhető — az olvasók nem tudnak hozzáférni.",
+    "bannerAddDomain": "Domain hozzáadása"
   },
   "twoFA": {
     "setupTitle": "A kétfaktoros hitelesítés beállítása",
