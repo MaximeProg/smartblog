@@ -104,7 +104,7 @@ class RegisterRequest(BaseModel):
     @classmethod
     def password_min_length(cls, v: str) -> str:
         if len(v) < 8:
-            raise ValueError("Le mot de passe doit contenir au moins 8 caractères.")
+            raise ValueError("Password must be at least 8 characters long.")
         return v
 
 
@@ -140,5 +140,17 @@ class ResetPasswordRequest(BaseModel):
     @classmethod
     def password_min_length(cls, v: str) -> str:
         if len(v) < 8:
-            raise ValueError("Le mot de passe doit contenir au moins 8 caractères.")
+            raise ValueError("Password must be at least 8 characters long.")
+        return v
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def password_min_length(cls, v: str) -> str:
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters long.")
         return v

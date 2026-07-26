@@ -7,6 +7,7 @@ import { Plus, Search, Trash2, Edit2, Check, X, Hash, Loader2, GitMerge } from '
 import { useTranslations } from 'next-intl';
 import { tagsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import type { TagInfo } from '@/types';
 
@@ -38,7 +39,7 @@ function TagRow({
       toast({ title: t('save') });
       setEditing(false);
     },
-    onError: () => toast({ variant: 'destructive', title: t('renameError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('renameError'), description: getErrorMessage(err, '') }),
   });
 
   const deleteMut = useMutation({
@@ -47,7 +48,7 @@ function TagRow({
       qc.invalidateQueries({ queryKey: ['tags', blogId] });
       toast({ title: t('delete') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('deleteError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('deleteError'), description: getErrorMessage(err, '') }),
   });
 
   function startEdit() {
@@ -178,7 +179,7 @@ export default function TagsPage() {
       toast({ title: t('create') });
       setNewName('');
     },
-    onError: () => toast({ variant: 'destructive', title: t('createError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('createError'), description: getErrorMessage(err, '') }),
   });
 
   const mergeMut = useMutation({
@@ -190,7 +191,7 @@ export default function TagsPage() {
       setShowMerge(false);
       setMergeTarget('');
     },
-    onError: () => toast({ variant: 'destructive', title: t('mergeError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('mergeError'), description: getErrorMessage(err, '') }),
   });
 
   function toggleSelect(id: string) {

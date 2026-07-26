@@ -75,7 +75,7 @@ async def create_webhook(
 
     invalid = [e for e in body.events if e not in SUPPORTED_EVENTS]
     if invalid:
-        raise ValidationException(f"Événements non supportés : {invalid}")
+        raise ValidationException(f"Unsupported events: {invalid}")
 
     ep = WebhookEndpoint(
         tenant_id=tenant_id,
@@ -104,7 +104,7 @@ async def update_webhook(
     if body.events is not None:
         invalid = [e for e in body.events if e not in SUPPORTED_EVENTS]
         if invalid:
-            raise ValidationException(f"Événements non supportés : {invalid}")
+            raise ValidationException(f"Unsupported events: {invalid}")
         ep.events = body.events
     if body.description is not None:
         ep.description = body.description

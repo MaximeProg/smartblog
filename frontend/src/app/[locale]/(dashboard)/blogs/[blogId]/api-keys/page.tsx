@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Key, Plus, Trash2, Copy, Check, Loader2, Eye, EyeOff } from 'lucide-react';
 import { apiKeysApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 
 function fmtDate(iso: string) {
@@ -43,7 +44,7 @@ export default function ApiKeysPage() {
       setNewExpiry('');
       toast({ title: t('keyCreated') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('createError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('createError'), description: getErrorMessage(err, '') }),
   });
 
   const revokeMut = useMutation({
@@ -53,7 +54,7 @@ export default function ApiKeysPage() {
       setConfirmRevoke(null);
       toast({ title: t('keyRevoked') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('revokeError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('revokeError'), description: getErrorMessage(err, '') }),
   });
 
   async function copyKey() {

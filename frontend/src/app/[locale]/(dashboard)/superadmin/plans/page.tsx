@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { superadminApi, type SAPlanStat, type SAPlanConfig, type SAPlanCreateBody } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 const PLAN_COLORS: Record<string, string> = {
   free: '#64748b', starter: '#3b82f6', pro: '#8b5cf6', business: '#f59e0b', enterprise: '#ef4444',
@@ -265,7 +266,7 @@ export default function PlansPage() {
       qc.invalidateQueries({ queryKey: ['sa-plans-stats'] });
       setModal(null);
     },
-    onError: () => toast({ title: t('common.error'), variant: 'destructive' }),
+    onError: (err: any) => toast({ title: t('common.error'), variant: 'destructive', description: getErrorMessage(err, '') }),
   });
 
   const { mutate: deactivate, isPending: deactivating } = useMutation({
@@ -274,7 +275,7 @@ export default function PlansPage() {
       toast({ title: tp('deactivated') });
       qc.invalidateQueries({ queryKey: ['sa-plans-list'] });
     },
-    onError: () => toast({ title: t('common.error'), variant: 'destructive' }),
+    onError: (err: any) => toast({ title: t('common.error'), variant: 'destructive', description: getErrorMessage(err, '') }),
   });
 
   // Build stats lookup map (planId → {count, mrr}) for overlay on comparison table

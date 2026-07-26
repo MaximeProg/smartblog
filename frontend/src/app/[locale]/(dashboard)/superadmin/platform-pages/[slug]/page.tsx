@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { ArrowLeft, Check, Loader2, Languages, Sparkles } from 'lucide-react';
 import { superadminApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import { PlatformPageJsonEditor } from '@/components/superadmin/PlatformPageJsonEditor';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
@@ -67,7 +68,7 @@ export default function PlatformPageEditorPage() {
       setAiOpen(false);
       toast({ title: t('contentGeneratedToast') });
     },
-    onError: () => toast({ title: t('aiGenerationFailedToast'), variant: 'destructive' }),
+    onError: (err: any) => toast({ title: t('aiGenerationFailedToast'), variant: 'destructive', description: getErrorMessage(err, '') }),
   });
 
   const { mutate: save, isPending: saving } = useMutation({
@@ -78,7 +79,7 @@ export default function PlatformPageEditorPage() {
       qc.invalidateQueries({ queryKey: ['sa-platform-page', slug] });
       qc.invalidateQueries({ queryKey: ['sa-platform-pages'] });
     },
-    onError: () => toast({ title: t('saveErrorToast'), variant: 'destructive' }),
+    onError: (err: any) => toast({ title: t('saveErrorToast'), variant: 'destructive', description: getErrorMessage(err, '') }),
   });
 
   return (

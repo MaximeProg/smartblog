@@ -63,13 +63,13 @@ async def create_tag(
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
     slug = _slugify(body.name)
     if not slug:
-        raise ValidationException("Nom de tag invalide.")
+        raise ValidationException("Invalid tag name.")
 
     existing = await db.execute(
         select(Tag).where(Tag.tenant_id == tenant_id, Tag.slug == slug)
     )
     if existing.scalar_one_or_none():
-        raise ValidationException(f"Le tag '{slug}' existe déjà.")
+        raise ValidationException(f"Tag '{slug}' already exists.")
 
     tag = Tag(tenant_id=tenant_id, name=body.name.strip(), slug=slug)
     db.add(tag)
@@ -97,7 +97,7 @@ async def rename_tag(
             select(Tag).where(Tag.tenant_id == tenant_id, Tag.slug == new_slug)
         )
         if conflict.scalar_one_or_none():
-            raise ValidationException(f"Le tag '{new_slug}' existe déjà.")
+            raise ValidationException(f"Tag '{new_slug}' already exists.")
 
     tag.name = body.name.strip()
     tag.slug = new_slug
@@ -120,7 +120,7 @@ async def merge_tags(
     )
     target = target_res.scalar_one_or_none()
     if not target:
-        raise NotFoundException("Tag cible")
+        raise NotFoundException("Target tag")
 
     for src_id_str in body.source_ids:
         src_id = uuid.UUID(src_id_str)

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Settings, Globe, Key, Plug, CheckCircle, AlertTriangle, Save, Eye, EyeOff, RefreshCw, Copy, Check } from 'lucide-react';
 import { superadminApi, type SAPlatformSettings } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 export default function SettingsPage() {
   const t  = useTranslations('superAdmin');
@@ -44,7 +45,7 @@ export default function SettingsPage() {
   const { mutate: save, isPending: saving } = useMutation({
     mutationFn: (body: Record<string, unknown>) => superadminApi.updateSettings(body),
     onSuccess: () => { toast({ title: ts('saved') }); refetch(); },
-    onError:   () => toast({ title: t('common.error'), variant: 'destructive' }),
+    onError:   (err: any) => toast({ title: t('common.error'), variant: 'destructive', description: getErrorMessage(err, '') }),
   });
 
   const TABS = [

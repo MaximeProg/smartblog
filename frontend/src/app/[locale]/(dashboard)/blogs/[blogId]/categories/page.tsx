@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Plus, Tag, Trash2, Check, X, ChevronDown, ImageIcon, Edit2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { categoriesApi } from '@/lib/api';
-import { slugify } from '@/lib/utils';
+import { slugify, getErrorMessage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
@@ -45,7 +45,7 @@ function NewCategoryForm({ blogId, onDone }: { blogId: string; onDone: () => voi
       toast({ title: ts('catToastCreated') });
       onDone();
     },
-    onError: () => toast({ variant: 'destructive', title: ts('catToastCreateError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('catToastCreateError'), description: getErrorMessage(err, '') }),
   });
 
   const handleNameChange = (v: string) => {
@@ -156,7 +156,7 @@ function CategoryCard({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
       toast({ title: ts('catToastUpdated') });
       setEditing(false);
     },
-    onError: () => toast({ variant: 'destructive', title: ts('catToastUpdateError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('catToastUpdateError'), description: getErrorMessage(err, '') }),
   });
 
   const deleteMut = useMutation({
@@ -165,7 +165,7 @@ function CategoryCard({ cat, blogId }: { cat: CategoryInfo; blogId: string }) {
       qc.invalidateQueries({ queryKey: ['categories', blogId] });
       toast({ title: ts('catToastDeleted') });
     },
-    onError: () => toast({ variant: 'destructive', title: ts('catToastDeleteError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('catToastDeleteError'), description: getErrorMessage(err, '') }),
   });
 
   if (editing) {

@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAutoSave } from '@/hooks/use-auto-save';
+import { getErrorMessage } from '@/lib/utils';
 import {
   BlogStudioShell, StudioSection, StudioField, StudioInput,
 } from '@/components/dashboard/BlogStudioShell';
@@ -68,7 +69,7 @@ export default function SeoPage() {
   const mutation = useMutation({
     mutationFn: () => doSave(form),
     onSuccess: () => toast({ title: ts('seoSavedToast') }),
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const previewTitle = form.seo_title_template

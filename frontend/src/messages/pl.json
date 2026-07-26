@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Mężczyzna",
       "female": "Kobieta"
-    }
+    },
+    "pwGenericError": "Nie udało się zmienić hasła."
   },
   "notifications": {
     "title": "Powiadomienia",

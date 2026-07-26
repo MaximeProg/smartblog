@@ -62,7 +62,7 @@ def require_role(*roles: UserRole):
         role = payload.get("role")
         if role not in [r.value for r in roles]:
             raise ForbiddenException(
-                f"Rôle requis : {', '.join(r.value for r in roles)}. Rôle actuel : {role}"
+                f"Required role: {', '.join(r.value for r in roles)}. Current role: {role}"
             )
         return payload
     return _check_role
@@ -71,7 +71,7 @@ def require_role(*roles: UserRole):
 def require_super_admin():
     async def _check(payload: TokenPayload):
         if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
-            raise ForbiddenException("Accès Super Admin requis.")
+            raise ForbiddenException("Super Admin access required.")
         return payload
     return _check
 
@@ -111,7 +111,7 @@ async def check_plan_active(
                 status_code=402,
                 detail={
                     "code": "TRIAL_EXPIRED",
-                    "message": "Votre période d'essai a expiré. Passez à un plan payant pour continuer.",
+                    "message": "Your trial period has expired. Upgrade to a paid plan to continue.",
                 },
             )
     elif sub.status in (
@@ -124,6 +124,6 @@ async def check_plan_active(
             status_code=402,
             detail={
                 "code": "SUBSCRIPTION_INACTIVE",
-                "message": "Votre abonnement est inactif. Renouvelez votre plan pour accéder à cette fonctionnalité.",
+                "message": "Your subscription is inactive. Renew your plan to access this feature.",
             },
         )

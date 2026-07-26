@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Vīrietis",
       "female": "Sieviete"
-    }
+    },
+    "pwGenericError": "Neizdevās mainīt paroli."
   },
   "notifications": {
     "title": "Paziņojumi",

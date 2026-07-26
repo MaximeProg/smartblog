@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Vyras",
       "female": "Moteris"
-    }
+    },
+    "pwGenericError": "Nepavyko pakeisti slaptažodžio."
   },
   "notifications": {
     "title": "Pranešimai",

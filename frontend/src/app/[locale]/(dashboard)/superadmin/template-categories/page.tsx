@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Tag, RefreshCw, Plus, X, Check, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { superadminApi, type SATemplateCategory, type SATemplateCategoryCreateBody } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 // ── Create form — outside component to avoid remount ─────────────
 function CreateModal({ onClose, onSave, isPending }: { onClose: () => void; onSave: (body: SATemplateCategoryCreateBody) => void; isPending?: boolean }) {
@@ -80,7 +81,7 @@ export default function TemplateCategoriesPage() {
   const { mutate: toggleCategory, isPending: toggling } = useMutation({
     mutationFn: (id: string) => superadminApi.toggleTemplateCategory(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['sa-template-categories'] }); toast({ title: tc('toggled') }); },
-    onError: () => toast({ title: t('common.error'), variant: 'destructive' }),
+    onError: (err: any) => toast({ title: t('common.error'), variant: 'destructive', description: getErrorMessage(err, '') }),
   });
 
   const { mutate: createCategory, isPending: creating } = useMutation({
@@ -90,7 +91,7 @@ export default function TemplateCategoriesPage() {
       toast({ title: tc('created') });
       setShowCreate(false);
     },
-    onError: () => toast({ title: t('common.error'), variant: 'destructive' }),
+    onError: (err: any) => toast({ title: t('common.error'), variant: 'destructive', description: getErrorMessage(err, '') }),
   });
 
   const categories = data?.categories ?? [];

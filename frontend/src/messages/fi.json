@@ -1696,7 +1696,7 @@
           "1 kirjoittaja",
           "1 GB tallennustilaa",
           "smarterbloggers.com-aliverkkotunnus",
-          "Mukana yrityskäyttöön tarkoitettu malli"
+          "Mukana yritysmalli"
         ]
       },
       "starter": {
@@ -1736,7 +1736,7 @@
         "features": [
           "Rajoittamaton määrä blogeja",
           "Rajoittamaton määrä artikkeleita",
-          "Rajoittamaton tilaajamäärä",
+          "Rajoittamaton määrä tilaajia",
           "Rajoittamaton määrä kirjoittajia",
           "Rajoittamaton tallennustila",
           "Usean toimialueen",
@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Mies",
       "female": "Nainen"
-    }
+    },
+    "pwGenericError": "Salasanan vaihtaminen epäonnistui."
   },
   "notifications": {
     "title": "Ilmoitukset",

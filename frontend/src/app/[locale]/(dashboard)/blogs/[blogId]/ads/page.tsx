@@ -13,6 +13,7 @@ import {
 import { adsApi, tenantsApi, type AdResponse } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 type SubmissionStatus = AdResponse['submission_status'];
 type SafetyStatus     = AdResponse['link_safety_status'];
@@ -351,13 +352,13 @@ export default function AdsPage() {
   const pauseMutation = useMutation({
     mutationFn: (id: string) => adsApi.pause(blogId, id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['ads', blogId] }),
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const resumeMutation = useMutation({
     mutationFn: (id: string) => adsApi.resume(blogId, id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['ads', blogId] }),
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const isMutating = pauseMutation.isPending || resumeMutation.isPending;

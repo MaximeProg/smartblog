@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Laki-laki",
       "female": "Perempuan"
-    }
+    },
+    "pwGenericError": "Gagal mengubah kata sandi."
   },
   "notifications": {
     "title": "Pemberitahuan",

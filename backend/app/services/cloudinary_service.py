@@ -41,7 +41,7 @@ def detect_media_type(content_type: str) -> MediaType:
         return MediaType.AUDIO
     if content_type in ALLOWED_DOC_TYPES:
         return MediaType.DOCUMENT
-    raise ValueError(f"Type de fichier non supporté : {content_type}")
+    raise ValueError(f"Unsupported file type: {content_type}")
 
 
 def get_max_size(media_type: MediaType) -> int:
@@ -74,8 +74,8 @@ async def upload_file(
     max_size = get_max_size(media_type)
     if len(contents) > max_size:
         raise ValidationException(
-            f"Fichier trop volumineux ({len(contents) // 1024}KB). "
-            f"Maximum : {max_size // (1024*1024)}MB."
+            f"File too large ({len(contents) // 1024}KB). "
+            f"Maximum: {max_size // (1024*1024)}MB."
         )
 
     folder = f"{folder_prefix}/{tenant_id}/{media_type.value}s"
@@ -116,11 +116,11 @@ async def upload_avatar_image(file: UploadFile, user_id: str) -> dict:
 
     content_type = file.content_type or ""
     if content_type not in ALLOWED_IMAGE_TYPES:
-        raise ValidationException("Seuls les fichiers image sont acceptés pour l'avatar.")
+        raise ValidationException("Only image files are accepted for the avatar.")
 
     contents = await file.read()
     if len(contents) > 5 * 1024 * 1024:
-        raise ValidationException("L'avatar ne doit pas dépasser 5 MB.")
+        raise ValidationException("The avatar must not exceed 5 MB.")
 
     result = cloudinary.uploader.upload(
         contents,

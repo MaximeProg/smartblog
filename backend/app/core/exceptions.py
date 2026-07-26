@@ -9,41 +9,41 @@ class SmarterBloggersException(HTTPException):
 # ── 401 ───────────────────────────────────────────────────────────
 
 class UnauthorizedException(SmarterBloggersException):
-    def __init__(self, message: str = "Authentification requise."):
+    def __init__(self, message: str = "Authentication required."):
         super().__init__("UNAUTHORIZED", message, status.HTTP_401_UNAUTHORIZED)
 
 
 class InvalidTokenException(SmarterBloggersException):
     def __init__(self):
-        super().__init__("INVALID_TOKEN", "Token invalide ou expiré.", status.HTTP_401_UNAUTHORIZED)
+        super().__init__("INVALID_TOKEN", "Invalid or expired token.", status.HTTP_401_UNAUTHORIZED)
 
 
 class TokenRevokedException(SmarterBloggersException):
     def __init__(self):
-        super().__init__("TOKEN_REVOKED", "Ce token a été révoqué.", status.HTTP_401_UNAUTHORIZED)
+        super().__init__("TOKEN_REVOKED", "This token has been revoked.", status.HTTP_401_UNAUTHORIZED)
 
 
 # ── 403 ───────────────────────────────────────────────────────────
 
 class ForbiddenException(SmarterBloggersException):
-    def __init__(self, message: str = "Vous n'avez pas les permissions nécessaires."):
+    def __init__(self, message: str = "You don't have the required permissions."):
         super().__init__("FORBIDDEN", message, status.HTTP_403_FORBIDDEN)
 
 
 # ── 404 ───────────────────────────────────────────────────────────
 
 class NotFoundException(SmarterBloggersException):
-    def __init__(self, resource: str = "Ressource"):
+    def __init__(self, resource: str = "Resource"):
         super().__init__(
             f"{resource.upper()}_NOT_FOUND",
-            f"{resource} introuvable.",
+            f"{resource} not found.",
             status.HTTP_404_NOT_FOUND,
         )
 
 
 class TenantNotFoundException(SmarterBloggersException):
     def __init__(self):
-        super().__init__("TENANT_NOT_FOUND", "Blog introuvable.", status.HTTP_404_NOT_FOUND)
+        super().__init__("TENANT_NOT_FOUND", "Blog not found.", status.HTTP_404_NOT_FOUND)
 
 
 # ── 409 ───────────────────────────────────────────────────────────
@@ -52,7 +52,7 @@ class SlugAlreadyExistsException(SmarterBloggersException):
     def __init__(self, slug: str):
         super().__init__(
             "SLUG_ALREADY_EXISTS",
-            f"Le slug '{slug}' est déjà utilisé.",
+            f"The slug '{slug}' is already in use.",
             status.HTTP_409_CONFLICT,
         )
 
@@ -61,7 +61,7 @@ class EmailAlreadyExistsException(SmarterBloggersException):
     def __init__(self):
         super().__init__(
             "EMAIL_ALREADY_EXISTS",
-            "Cet email est déjà associé à un compte.",
+            "This email is already associated with an account.",
             status.HTTP_409_CONFLICT,
         )
 
@@ -72,7 +72,7 @@ class PlanLimitReachedException(SmarterBloggersException):
     def __init__(self, resource: str, limit: int):
         super().__init__(
             "PLAN_LIMIT_REACHED",
-            f"Limite du plan atteinte pour '{resource}' (max {limit}). Passez à un plan supérieur.",
+            f"Plan limit reached for '{resource}' (max {limit}). Upgrade to a higher plan.",
             status.HTTP_402_PAYMENT_REQUIRED,
         )
 
@@ -81,7 +81,7 @@ class AIQuotaExceededException(SmarterBloggersException):
     def __init__(self):
         super().__init__(
             "AI_QUOTA_EXCEEDED",
-            "Quota IA mensuel épuisé. Passez à un plan supérieur.",
+            "Monthly AI quota exhausted. Upgrade to a higher plan.",
             status.HTTP_402_PAYMENT_REQUIRED,
         )
 
@@ -92,7 +92,7 @@ class RateLimitExceededException(SmarterBloggersException):
     def __init__(self):
         super().__init__(
             "RATE_LIMIT_EXCEEDED",
-            "Trop de requêtes. Réessayez dans quelques instants.",
+            "Too many requests. Please try again in a moment.",
             status.HTTP_429_TOO_MANY_REQUESTS,
         )
 

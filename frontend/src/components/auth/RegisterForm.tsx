@@ -17,6 +17,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { authApi } from '@/lib/api';
 import { signInWithGoogle } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 const schema = z.object({
   name: z.string().min(1).max(100),
@@ -96,8 +97,8 @@ export function RegisterForm({ locale }: RegisterFormProps) {
       // Le code ref est envoyé directement dans /auth/register (voir authApi.register)
       setVerificationEmail(email);
     } catch (err: unknown) {
-      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
-      const msg = detail?.includes('existe déjà') ? t('errors.emailInUse') : (detail || t('errors.generic'));
+      const detail = getErrorMessage(err, '');
+      const msg = detail.includes('existe déjà') ? t('errors.emailInUse') : (detail || t('errors.generic'));
       setFormError(msg);
       toast({ variant: 'destructive', title: msg });
     }

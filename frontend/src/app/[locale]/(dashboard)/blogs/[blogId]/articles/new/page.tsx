@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { articlesApi, categoriesApi, aiApi } from '@/lib/api';
 import type { AiGeneratedArticle } from '@/lib/api';
-import { slugify } from '@/lib/utils';
+import { slugify, getErrorMessage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useStudioPreview } from '@/contexts/studio-preview';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
@@ -150,7 +150,7 @@ export default function NewArticlePage() {
       toast({ title: publish ? ts('articlePublishedToast') : ts('articleSavedToast') });
       router.push(`/${locale}/blogs/${blogId}/articles/${data.id}/edit`);
     },
-    onError: () => toast({ variant: 'destructive', title: ts('articleCreateError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('articleCreateError'), description: getErrorMessage(err, '') }),
   });
 
   const canSave = title.trim().length >= 2 && !mutation.isPending;

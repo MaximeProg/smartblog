@@ -145,7 +145,7 @@ async def moderate_comment(
     row = result.first()
     if not row:
         from app.core.exceptions import NotFoundException
-        raise NotFoundException("Commentaire")
+        raise NotFoundException("Comment")
 
     c, article_title = row
     if "status" in body:
@@ -185,7 +185,7 @@ async def delete_comment(
     c = result.scalar_one_or_none()
     if not c:
         from app.core.exceptions import NotFoundException
-        raise NotFoundException("Commentaire")
+        raise NotFoundException("Comment")
 
     await db.delete(c)
     from sqlalchemy import text
@@ -206,7 +206,7 @@ async def ban(
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
     if not body.get("email") and not body.get("ip_address"):
         from app.core.exceptions import ValidationException
-        raise ValidationException("Fournir un email ou une adresse IP à bannir.")
+        raise ValidationException("Provide an email or an IP address to ban.")
 
     db.add(CommentBan(
         tenant_id=tenant_id,
@@ -270,6 +270,6 @@ async def delete_ban(
     ban = result.scalar_one_or_none()
     if not ban:
         from app.core.exceptions import NotFoundException
-        raise NotFoundException("Bannissement")
+        raise NotFoundException("Ban")
     await db.delete(ban)
     await db.commit()

@@ -39,7 +39,7 @@ async def _get_article(db, article_id: uuid.UUID) -> Article:
     )
     article = result.scalar_one_or_none()
     if not article:
-        raise HTTPException(status_code=404, detail="Article introuvable")
+        raise HTTPException(status_code=404, detail="Article not found")
     return article
 
 
@@ -149,7 +149,7 @@ async def record_share(
     db: DBSession,
 ):
     if body.platform not in VALID_PLATFORMS:
-        raise HTTPException(status_code=400, detail=f"Plateforme invalide. Valeurs acceptées : {', '.join(VALID_PLATFORMS)}")
+        raise HTTPException(status_code=400, detail=f"Invalid platform. Accepted values: {', '.join(VALID_PLATFORMS)}")
 
     article = await _get_article(db, article_id)
     fp = _fingerprint(request, body.platform)
@@ -238,9 +238,9 @@ async def post_public_comment(
 ):
     article = await _get_article(db, article_id)
     if not article.allow_comments:
-        raise HTTPException(status_code=403, detail="Les commentaires sont désactivés.")
+        raise HTTPException(status_code=403, detail="Comments are disabled.")
     if article.comments_closed_at and article.comments_closed_at < datetime.utcnow():
-        raise HTTPException(status_code=403, detail="Les commentaires sont fermés.")
+        raise HTTPException(status_code=403, detail="Comments are closed.")
 
     ip = request.client.host if request.client else None
     fp = _fingerprint(request)
@@ -261,7 +261,7 @@ async def post_public_comment(
                 )
             )
             if ban.scalar_one_or_none():
-                raise HTTPException(status_code=403, detail="Vous avez été banni de commentaires sur ce blog.")
+                raise HTTPException(status_code=403, detail="You have been banned from commenting on this blog.")
 
     comment = Comment(
         tenant_id=article.tenant_id,

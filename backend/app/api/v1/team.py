@@ -104,7 +104,7 @@ async def invite_member(
             )
         )
         if already.scalar_one_or_none():
-            raise ValidationException(f"{body.email} est déjà membre de ce blog.")
+            raise ValidationException(f"{body.email} is already a member of this blog.")
 
     # Remplace une invitation en attente pour le même email
     old = await db.execute(
@@ -177,7 +177,7 @@ async def accept_invite(
     if not inv:
         raise NotFoundException("Invitation")
     if inv.expires_at < datetime.now(timezone.utc):
-        raise ValidationException("Cette invitation a expiré.")
+        raise ValidationException("This invitation has expired.")
 
     db.add(TenantUser(
         tenant_id=tenant_id,
@@ -202,7 +202,7 @@ async def update_member_role(
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
     if str(member_user_id) == payload["sub"]:
-        raise ValidationException("Vous ne pouvez pas modifier votre propre rôle.")
+        raise ValidationException("You cannot change your own role.")
 
     result = await db.execute(
         select(TenantUser, User)
@@ -211,7 +211,7 @@ async def update_member_role(
     )
     row = result.first()
     if not row:
-        raise NotFoundException("Membre")
+        raise NotFoundException("Member")
 
     tu, user = row
     tu.role = body.role
@@ -234,7 +234,7 @@ async def remove_member(
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
     if str(member_user_id) == payload["sub"]:
-        raise ValidationException("Vous ne pouvez pas vous retirer vous-même.")
+        raise ValidationException("You cannot remove yourself.")
 
     result = await db.execute(
         select(TenantUser).where(
@@ -244,7 +244,7 @@ async def remove_member(
     )
     member = result.scalar_one_or_none()
     if not member:
-        raise NotFoundException("Membre")
+        raise NotFoundException("Member")
     await db.delete(member)
     await db.commit()
 
@@ -315,10 +315,10 @@ async def lookup_invitation(
     )
     row = result.first()
     if not row:
-        raise NotFoundException("Invitation introuvable ou déjà acceptée.")
+        raise NotFoundException("Invitation not found or already accepted.")
     inv, tenant, inviter = row
     if inv.expires_at < datetime.now(timezone.utc):
-        raise ValidationException("Cette invitation a expiré.")
+        raise ValidationException("This invitation has expired.")
     return {
         "tenant_id": str(inv.tenant_id),
         "tenant_name": tenant.name,
@@ -345,9 +345,9 @@ async def accept_invitation_by_token(
     )
     inv = result.scalar_one_or_none()
     if not inv:
-        raise NotFoundException("Invitation introuvable ou déjà acceptée.")
+        raise NotFoundException("Invitation not found or already accepted.")
     if inv.expires_at < datetime.now(timezone.utc):
-        raise ValidationException("Cette invitation a expiré.")
+        raise ValidationException("This invitation has expired.")
 
     user_id = uuid.UUID(payload["sub"])
 
@@ -359,7 +359,7 @@ async def accept_invitation_by_token(
         )
     )
     if existing.scalar_one_or_none():
-        raise ValidationException("Vous êtes déjà membre de ce blog.")
+        raise ValidationException("You are already a member of this blog.")
 
     db.add(TenantUser(
         tenant_id=inv.tenant_id,

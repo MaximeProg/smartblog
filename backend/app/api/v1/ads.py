@@ -133,7 +133,7 @@ async def submit_ad(
     from app.models.enums import TransactionType
 
     if body.total_budget <= 0:
-        raise ValidationException("Le budget doit être supérieur à 0.")
+        raise ValidationException("Budget must be greater than 0.")
 
     ad = Ad(
         tenant_id=tenant_id,
@@ -195,11 +195,11 @@ async def submit_platform_ad(
     from app.models.user import User
 
     if body.total_budget <= 0:
-        raise ValidationException("Le budget doit être supérieur à 0.")
+        raise ValidationException("Budget must be greater than 0.")
 
     user = await db.get(User, uuid.UUID(payload["sub"]))
     if not user:
-        raise NotFoundException("Utilisateur")
+        raise NotFoundException("User")
 
     tenant_id = uuid.UUID(settings.PLATFORM_TENANT_ID)
     ad = Ad(
@@ -306,7 +306,7 @@ async def get_platform_ad_stats(
     )
     ad = result.scalar_one_or_none()
     if not ad:
-        raise NotFoundException("Publicité")
+        raise NotFoundException("Ad")
 
     since = date.today() - timedelta(days=days - 1)
     stats_result = await db.execute(
@@ -376,21 +376,21 @@ async def review_ad(
 ):
     # Seul le super admin valide les pubs — la plateforme doit être configurée avant activation
     if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
-        raise ForbiddenException("La validation des publicités est réservée au super admin.")
+        raise ForbiddenException("Ad approval is reserved for super admins.")
 
     if body.decision not in (AdSubmissionStatus.APPROVED, AdSubmissionStatus.REJECTED):
-        raise ValidationException("La décision doit être APPROVED ou REJECTED.")
+        raise ValidationException("Decision must be APPROVED or REJECTED.")
 
     ad = await _get_or_404(db, tenant_id, ad_id)
 
     if ad.submission_status == AdSubmissionStatus.PAYMENT_PENDING:
         raise ValidationException(
-            "Le paiement de cette publicité n'a pas encore été confirmé — impossible de la valider."
+            "Payment for this ad has not been confirmed yet — it cannot be approved."
         )
 
     if ad.link_safety_status == LinkSafetyStatus.DANGEROUS and body.decision == AdSubmissionStatus.APPROVED:
         raise ValidationException(
-            "Impossible d'approuver une publicité dont le lien est signalé comme dangereux."
+            "Cannot approve an ad whose link is flagged as dangerous."
         )
 
     ad.submission_status = body.decision
@@ -545,9 +545,9 @@ async def resume_ad(
     ad = await _get_or_404(db, tenant_id, ad_id)
 
     if ad.link_safety_status == LinkSafetyStatus.DANGEROUS:
-        raise ValidationException("Impossible de reprendre une pub avec un lien dangereux.")
+        raise ValidationException("Cannot resume an ad with a dangerous link.")
     if ad.submission_status != AdSubmissionStatus.APPROVED:
-        raise ValidationException("La publicité n'est pas encore approuvée.")
+        raise ValidationException("This ad has not been approved yet.")
 
     ad.campaign_status = AdCampaignStatus.ACTIVE
     await db.commit()
@@ -600,7 +600,7 @@ async def track_click(
 
     # Bloquer les clics si le lien est dangereux
     if ad.link_safety_status == LinkSafetyStatus.DANGEROUS:
-        raise ForbiddenException("Ce lien a été signalé comme dangereux.")
+        raise ForbiddenException("This link has been flagged as dangerous.")
 
     from sqlalchemy import text
     await db.execute(
@@ -631,7 +631,7 @@ async def _get_or_404(db, tenant_id: uuid.UUID, ad_id: uuid.UUID) -> Ad:
     )
     a = result.scalar_one_or_none()
     if not a:
-        raise NotFoundException("Publicité")
+        raise NotFoundException("Ad")
     return a
 
 

@@ -1084,7 +1084,7 @@ async def track_ad_click(slug: str, ad_id: uuid.UUID, db: DBSession):
     if not ad:
         return
     if ad.link_safety_status == LinkSafetyStatus.DANGEROUS:
-        raise ValidationException("Ce lien publicitaire a été signalé comme dangereux.")
+        raise ValidationException("This advertising link has been flagged as dangerous.")
     await db.execute(
         sa_text(
             "UPDATE ads SET clicks_count = clicks_count + 1 WHERE id = :id AND tenant_id = :tid"
@@ -1198,9 +1198,9 @@ async def create_public_comment(
     db: DBSession,
 ):
     if not body.content or len(body.content.strip()) < 2:
-        raise ValidationException("Le commentaire est trop court.")
+        raise ValidationException("The comment is too short.")
     if len(body.content) > 5000:
-        raise ValidationException("Le commentaire est trop long (max 5000 caractères).")
+        raise ValidationException("The comment is too long (max 5000 characters).")
 
     # Rate limiting : 5 commentaires par heure par IP
     ip = request.client.host if request.client else "unknown"
@@ -1213,7 +1213,7 @@ async def create_public_comment(
         if count > 5:
             raise HTTPException(
                 status_code=429,
-                detail="Trop de commentaires. Réessayez dans une heure.",
+                detail="Too many comments. Please try again in an hour.",
             )
     except HTTPException:
         raise
@@ -1224,7 +1224,7 @@ async def create_public_comment(
     article = await _resolve_public_article(db, tenant, article_slug)
 
     if not article.allow_comments:
-        raise ValidationException("Les commentaires sont désactivés pour cet article.")
+        raise ValidationException("Comments are disabled for this article.")
 
     ip = request.client.host if request.client else None
 

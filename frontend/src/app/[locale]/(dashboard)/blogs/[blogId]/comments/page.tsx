@@ -12,6 +12,7 @@ import { moderationApi, tenantsApi } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import type { CommentStatus, CommentsMode, CommentBanInfo } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 const STATUS_TABS: { key: CommentStatus | 'all'; labelKey: string; icon: React.ElementType; color: string }[] = [
   { key: 'all',      labelKey: 'all',                  icon: MessageSquare, color: 'text-slate-500' },
@@ -95,7 +96,7 @@ function SettingsPanel({ blogId }: { blogId: string }) {
       qc.invalidateQueries({ queryKey: ['tenant', blogId] });
       toast({ title: t('modeSaved') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('modeError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('modeError'), description: getErrorMessage(err, '') }),
   });
 
   const deleteBanMut = useMutation({
@@ -104,7 +105,7 @@ function SettingsPanel({ blogId }: { blogId: string }) {
       qc.invalidateQueries({ queryKey: ['bans', blogId] });
       toast({ title: t('banRemoved') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('banRemoveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('banRemoveError'), description: getErrorMessage(err, '') }),
   });
 
   const currentMode = tenant?.comments_mode ?? mode;
@@ -227,7 +228,7 @@ export default function CommentsPage() {
       qc.invalidateQueries({ queryKey: ['comments', blogId] });
       qc.invalidateQueries({ queryKey: ['comments-stats', blogId] });
     },
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const deleteMutation = useMutation({
@@ -236,7 +237,7 @@ export default function CommentsPage() {
       qc.invalidateQueries({ queryKey: ['comments', blogId] });
       qc.invalidateQueries({ queryKey: ['comments-stats', blogId] });
     },
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const banMutation = useMutation({
@@ -246,7 +247,7 @@ export default function CommentsPage() {
       qc.invalidateQueries({ queryKey: ['bans', blogId] });
       toast({ title: t('banSuccess') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('banError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('banError'), description: getErrorMessage(err, '') }),
   });
 
   return (

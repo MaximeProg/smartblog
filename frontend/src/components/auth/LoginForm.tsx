@@ -17,6 +17,7 @@ import { useAuthStore } from '@/store/auth.store';
 import { authApi, twoFactorApi } from '@/lib/api';
 import { signInWithGoogle } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 const schema = z.object({
   email: z.string().email(),
@@ -104,7 +105,7 @@ export function LoginForm({ locale, callbackUrl }: LoginFormProps) {
       setAuth(data.user, tenants, data.access_token);
       router.push(callbackUrl ?? `/${locale}/dashboard`);
     } catch (err: unknown) {
-      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? '';
+      const detail = getErrorMessage(err, '');
 
       let msg: string;
       if (detail.toLowerCase().includes('vérifier votre adresse email')) {

@@ -179,7 +179,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         headers=await _cors_headers(request),
         content={
             "error": "VALIDATION_ERROR",
-            "message": first.get("msg", "Données invalides."),
+            "message": first.get("msg", "Invalid data."),
             "details": errors,
         },
     )
@@ -194,7 +194,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
         headers=await _cors_headers(request),
         content={
             "error": "INTERNAL_SERVER_ERROR",
-            "message": "Une erreur interne est survenue.",
+            "message": "An internal error occurred.",
             "trace_id": trace_id,
         },
     )

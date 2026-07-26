@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "男性",
       "female": "女性"
-    }
+    },
+    "pwGenericError": "密码更改失败。"
   },
   "notifications": {
     "title": "通知",

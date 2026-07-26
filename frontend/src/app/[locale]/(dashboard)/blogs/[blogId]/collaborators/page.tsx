@@ -8,6 +8,7 @@ import { Users, UserPlus, Mail, Crown, Edit3, Feather, Eye, Trash2, Clock, Chevr
 import { teamApi } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import type { UserRole } from '@/types';
 
 const ROLES: { value: UserRole; labelKey: string; descKey: string; icon: React.ElementType; color: string; bg: string; border: string }[] = [
@@ -93,7 +94,7 @@ export default function CollaboratorsPage() {
       setInviteEmail('');
       setShowInviteForm(false);
     },
-    onError: () => toast({ variant: 'destructive', title: ts('collabInviteError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('collabInviteError'), description: getErrorMessage(err, '') }),
   });
 
   const removeMutation = useMutation({
@@ -102,7 +103,7 @@ export default function CollaboratorsPage() {
       qc.invalidateQueries({ queryKey: ['team-members', blogId] });
       toast({ title: ts('collabRemoved') });
     },
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const updateRoleMutation = useMutation({
@@ -113,7 +114,7 @@ export default function CollaboratorsPage() {
       toast({ title: ts('collabRoleChanged') });
       setEditingUserId(null);
     },
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const nonAdminMembers = members.filter(m => m.role !== 'TENANT_ADMIN');

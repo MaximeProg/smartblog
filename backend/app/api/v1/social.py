@@ -109,7 +109,7 @@ async def connect_account(
         )
     )
     if existing.scalar_one_or_none():
-        raise ValidationException(f"Ce compte {body.platform.value} est déjà connecté.")
+        raise ValidationException(f"This {body.platform.value} account is already connected.")
 
     account = SocialAccount(
         tenant_id=tenant_id,
@@ -148,7 +148,7 @@ async def toggle_auto_post(
     )
     account = result.scalar_one_or_none()
     if not account:
-        raise NotFoundException("Compte social")
+        raise NotFoundException("Social account")
     account.auto_post_enabled = body.auto_post_enabled
     await db.commit()
     await db.refresh(account)
@@ -169,7 +169,7 @@ async def disconnect_account(
     )
     account = result.scalar_one_or_none()
     if not account:
-        raise NotFoundException("Compte social")
+        raise NotFoundException("Social account")
     account.is_active = False
     await db.commit()
 
@@ -215,7 +215,7 @@ async def create_post(
     )
     account = acc_result.scalar_one_or_none()
     if not account:
-        raise NotFoundException("Compte social")
+        raise NotFoundException("Social account")
 
     post = SocialPost(
         tenant_id=tenant_id,
@@ -246,7 +246,7 @@ async def update_post(
     post = await _get_post_or_404(db, tenant_id, post_id)
 
     if post.status == SocialPostStatus.PUBLISHED:
-        raise ValidationException("Impossible de modifier un post déjà publié.")
+        raise ValidationException("Cannot edit a post that has already been published.")
 
     if body.content is not None:
         post.content = body.content
@@ -269,7 +269,7 @@ async def delete_post(
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.AUTHOR)
     post = await _get_post_or_404(db, tenant_id, post_id)
     if post.status == SocialPostStatus.PUBLISHED:
-        raise ValidationException("Impossible de supprimer un post déjà publié.")
+        raise ValidationException("Cannot delete a post that has already been published.")
     post.status = SocialPostStatus.CANCELED
     await db.commit()
 
@@ -286,7 +286,7 @@ async def publish_now(
     post = await _get_post_or_404(db, tenant_id, post_id)
 
     if post.status == SocialPostStatus.PUBLISHED:
-        raise ValidationException("Ce post est déjà publié.")
+        raise ValidationException("This post is already published.")
 
     post.status = SocialPostStatus.PENDING
     post.scheduled_at = None
@@ -311,7 +311,7 @@ async def _get_post_or_404(db, tenant_id: uuid.UUID, post_id: uuid.UUID) -> Soci
     )
     p = result.scalar_one_or_none()
     if not p:
-        raise NotFoundException("Post social")
+        raise NotFoundException("Social post")
     return p
 
 

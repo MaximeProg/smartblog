@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { articlesApi, tenantsApi } from '@/lib/api';
 import Link from 'next/link';
-import { formatRelativeTime } from '@/lib/utils';
+import { formatRelativeTime, getErrorMessage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import type { ArticleListItem, ArticleStatus } from '@/types';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
@@ -209,7 +209,7 @@ export default function ArticlesPage() {
       toast({ title: t('toastDeleted') });
       setTimeout(refresh, 600);
     },
-    onError: () => toast({ variant: 'destructive', title: t('toastDeleteError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('toastDeleteError'), description: getErrorMessage(err, '') }),
   });
 
   const publishMut = useMutation({

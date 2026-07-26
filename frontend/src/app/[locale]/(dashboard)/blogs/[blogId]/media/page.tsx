@@ -11,6 +11,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { mediaApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import type { MediaItem, MediaType } from '@/types';
 
@@ -143,7 +144,7 @@ function DetailPanel({ item, blogId, onClose }: { item: MediaItem; blogId: strin
       qc.invalidateQueries({ queryKey: ['media', blogId] });
       toast({ title: t('metaSaved') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('saveFailed') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('saveFailed'), description: getErrorMessage(err, '') }),
   });
 
   const deleteMut = useMutation({
@@ -153,7 +154,7 @@ function DetailPanel({ item, blogId, onClose }: { item: MediaItem; blogId: strin
       toast({ title: t('deleted') });
       onClose();
     },
-    onError: () => toast({ variant: 'destructive', title: t('deleteError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('deleteError'), description: getErrorMessage(err, '') }),
   });
 
   function copyUrl() {
@@ -339,8 +340,7 @@ function UploadZone({ blogId, onDone }: { blogId: string; onDone: () => void }) 
       toast({ title: t('upload') });
       onDone();
     } catch (e: unknown) {
-      const msg = (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? t('uploadFailed');
-      setError(msg);
+      setError(getErrorMessage(e, t('uploadFailed')));
     } finally {
       setUploading(false);
       setPct(0);

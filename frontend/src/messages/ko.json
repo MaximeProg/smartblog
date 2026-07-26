@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "남성",
       "female": "여성"
-    }
+    },
+    "pwGenericError": "비밀번호 변경에 실패했습니다."
   },
   "notifications": {
     "title": "알림",

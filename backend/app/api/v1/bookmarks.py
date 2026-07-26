@@ -74,12 +74,12 @@ async def add_bookmark(
 
     article_id_str = body.get("article_id")
     if not article_id_str:
-        raise ValidationException("article_id requis.")
+        raise ValidationException("article_id required.")
 
     try:
         article_id = uuid.UUID(str(article_id_str))
     except ValueError:
-        raise ValidationException("article_id invalide.")
+        raise ValidationException("Invalid article_id.")
 
     # Verify article exists
     art = await db.execute(

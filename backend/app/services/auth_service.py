@@ -165,7 +165,7 @@ async def register_with_password(
     vérifier son email puis se connecter via login_with_password."""
     existing = await db.execute(select(User).where(User.email == email))
     if existing.scalar_one_or_none():
-        raise ValidationException("Un compte existe déjà avec cette adresse email.")
+        raise ValidationException("An account already exists with this email address.")
 
     from app.core.security import hash_password, create_email_verification_token
 
@@ -212,11 +212,11 @@ async def login_with_password(
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
     if not user or not user.password_hash or not verify_password(password, user.password_hash):
-        raise UnauthorizedException("Email ou mot de passe incorrect.")
+        raise UnauthorizedException("Incorrect email or password.")
 
     require_verification = getattr(settings, "REQUIRE_EMAIL_VERIFICATION", "false").lower() == "true"
     if require_verification and not user.email_verified:
-        raise ValidationException("Veuillez vérifier votre adresse email avant de vous connecter.")
+        raise ValidationException("Please verify your email address before logging in.")
 
     return await _finalize_login(db, user, ip_address, tenant_id)
 
@@ -234,17 +234,17 @@ async def complete_2fa_login_native(
 
     user_id = await get_2fa_challenge_user_id(challenge_token)
     if not user_id:
-        raise UnauthorizedException("Session de connexion expirée, veuillez vous reconnecter.")
+        raise UnauthorizedException("Login session expired, please log in again.")
 
     result = await db.execute(select(User).where(User.id == uuid.UUID(user_id)))
     user = result.scalar_one_or_none()
     if not user or not user.two_fa_enabled or not user.two_fa_secret_enc:
-        raise UnauthorizedException("Compte introuvable ou 2FA non activé.")
+        raise UnauthorizedException("Account not found or 2FA not enabled.")
 
     secret = decrypt_value(user.two_fa_secret_enc)
     if not verify_totp(secret, code.strip()):
         if not check_backup_code(user, code.strip()):
-            raise ValidationException("Code 2FA invalide.")
+            raise ValidationException("Invalid 2FA code.")
 
     await delete_2fa_challenge_token(challenge_token)
     return await _issue_tokens(db, user, preferred_tenant_id=tenant_id)
@@ -276,10 +276,10 @@ async def verify_email_token(db: AsyncSession, token: str) -> None:
     from app.core.security import consume_email_verification_token
     user_id = await consume_email_verification_token(token)
     if not user_id:
-        raise ValidationException("Lien de vérification invalide ou expiré.")
+        raise ValidationException("Invalid or expired verification link.")
     user = await db.get(User, uuid.UUID(user_id))
     if not user:
-        raise NotFoundException("Utilisateur")
+        raise NotFoundException("User")
     user.email_verified = True
     await db.commit()
 
@@ -327,14 +327,31 @@ async def reset_password_with_token(db: AsyncSession, token: str, new_password: 
 
     user_id = await consume_password_reset_token(token)
     if not user_id:
-        raise ValidationException("Lien de réinitialisation invalide ou expiré.")
+        raise ValidationException("Invalid or expired reset link.")
     user = await db.get(User, uuid.UUID(user_id))
     if not user:
-        raise NotFoundException("Utilisateur")
+        raise NotFoundException("User")
 
     user.password_hash = hash_password(new_password)
     await db.commit()
     await revoke_all_user_tokens(str(user.id))
+
+
+async def change_password(db: AsyncSession, user_id: uuid.UUID, current_password: str, new_password: str) -> None:
+    """Requires the current password — unlike reset_password_with_token, which
+    is for users who are locked out and relies on a mailed token instead."""
+    from app.core.security import hash_password, verify_password
+
+    user = await db.get(User, user_id)
+    if not user:
+        raise NotFoundException("User")
+    if not user.password_hash:
+        raise ValidationException("This account has no password set (sign in with Google instead).")
+    if not verify_password(current_password, user.password_hash):
+        raise ValidationException("Current password is incorrect.")
+
+    user.password_hash = hash_password(new_password)
+    await db.commit()
 
 
 async def _issue_tokens(
@@ -424,7 +441,7 @@ async def refresh_access_token(
     """
     data = await get_refresh_token_data(refresh_token_plain)
     if not data:
-        raise UnauthorizedException("Refresh token invalide ou expiré.")
+        raise UnauthorizedException("Invalid or expired refresh token.")
 
     # Rotation : révoque l'ancien, crée le nouveau
     await revoke_refresh_token(refresh_token_plain)
@@ -432,7 +449,7 @@ async def refresh_access_token(
     result = await db.execute(select(User).where(User.id == uuid.UUID(data["user_id"])))
     user = result.scalar_one_or_none()
     if not user:
-        raise UnauthorizedException("Utilisateur introuvable.")
+        raise UnauthorizedException("User not found.")
 
     access_token, _, _ = create_access_token(
         user_id=data["user_id"],
@@ -459,10 +476,10 @@ async def setup_2fa(db: AsyncSession, user_id: uuid.UUID) -> dict:
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
-        raise NotFoundException("Utilisateur")
+        raise NotFoundException("User")
 
     if user.two_fa_enabled:
-        raise ValidationException("Le 2FA est déjà activé.")
+        raise ValidationException("2FA is already enabled.")
 
     # Réutilise le secret pending si déjà initié (évite race conditions client)
     if user.two_fa_secret_enc and user.two_fa_backup_codes and not user.two_fa_backup_codes.get("confirmed"):
@@ -487,7 +504,7 @@ async def confirm_2fa(db: AsyncSession, user_id: uuid.UUID, code: str) -> bool:
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user or not user.two_fa_secret_enc:
-        raise ValidationException("Setup 2FA non initié.")
+        raise ValidationException("2FA setup has not been initiated.")
 
     secret = decrypt_value(user.two_fa_secret_enc)
     if not verify_totp(secret, code):
@@ -506,7 +523,7 @@ async def disable_2fa(db: AsyncSession, user_id: uuid.UUID, code: str) -> bool:
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user or not user.two_fa_enabled:
-        raise ValidationException("Le 2FA n'est pas activé.")
+        raise ValidationException("2FA is not enabled.")
 
     secret = decrypt_value(user.two_fa_secret_enc)
     if not verify_totp(secret, code):

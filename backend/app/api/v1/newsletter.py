@@ -141,7 +141,7 @@ async def confirm_subscription(
     )
     sub = result.scalar_one_or_none()
     if not sub:
-        raise NotFoundException("Token de confirmation")
+        raise NotFoundException("Confirmation token")
 
     sub.status = SubscriberStatus.ACTIVE
     sub.confirmed_at = datetime.now(timezone.utc)
@@ -172,7 +172,7 @@ async def unsubscribe(
     )
     sub = result.scalar_one_or_none()
     if not sub:
-        raise NotFoundException("Token de désabonnement")
+        raise NotFoundException("Unsubscribe token")
 
     sub.status = SubscriberStatus.UNSUBSCRIBED
     sub.unsubscribed_at = datetime.now(timezone.utc)
@@ -368,9 +368,9 @@ async def send_campaign(
     )
     campaign = result.scalar_one_or_none()
     if not campaign:
-        raise NotFoundException("Campagne")
+        raise NotFoundException("Campaign")
     if campaign.status not in (CampaignStatus.DRAFT, CampaignStatus.SCHEDULED):
-        raise ValidationException("Cette campagne a déjà été envoyée ou annulée.")
+        raise ValidationException("This campaign has already been sent or canceled.")
 
     # Compter les abonnés actifs
     count_result = await db.execute(
@@ -414,7 +414,7 @@ async def test_campaign(
     )
     campaign = result.scalar_one_or_none()
     if not campaign:
-        raise NotFoundException("Campagne")
+        raise NotFoundException("Campaign")
 
     from app.services.tenant_service import get_tenant
     from app.services.email_service import send_newsletter_campaign
@@ -465,9 +465,9 @@ async def checkout_newsletter(
     )
     campaign = result.scalar_one_or_none()
     if not campaign:
-        raise NotFoundException("Campagne")
+        raise NotFoundException("Campaign")
     if not campaign.is_paid or not campaign.price or campaign.price <= 0:
-        raise ValidationException("Cette newsletter n'est pas payante.")
+        raise ValidationException("This newsletter is not paid.")
 
     from app.models.newsletter import NewsletterAccess
     existing = await db.execute(
@@ -477,7 +477,7 @@ async def checkout_newsletter(
         )
     )
     if existing.scalar_one_or_none():
-        raise ValidationException("Vous avez déjà accès à cette newsletter.")
+        raise ValidationException("You already have access to this newsletter.")
 
     order_id = f"nl_{tenant_id}_{campaign_id}_{uuid.uuid4().hex[:8]}"
 

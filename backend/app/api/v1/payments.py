@@ -155,7 +155,7 @@ async def _create_crypto_transaction(
     if not settings.NOWPAYMENTS_API_KEY:
         raise HTTPException(
             status_code=503,
-            detail="NowPayments non configuré. Ajoutez NOWPAYMENTS_API_KEY dans .env.",
+            detail="NowPayments is not configured. Add NOWPAYMENTS_API_KEY in .env.",
         )
 
     payment = await create_payment(
@@ -431,7 +431,7 @@ async def checkout_subscription(
     plan = body.plan.lower()
     billing = body.billing.lower()
     if plan not in _PLAN_TIERS:
-        raise ValidationException(f"Plan invalide : {plan}")
+        raise ValidationException(f"Invalid plan: {plan}")
 
     try:
         amount_usd = await _get_plan_price(db, plan, billing)
@@ -474,7 +474,7 @@ async def checkout_article(
     if not article:
         raise NotFoundException("Article")
     if not article.price or article.price <= 0:
-        raise ValidationException("Cet article n'est pas payant.")
+        raise ValidationException("This article is not a paid article.")
 
     user_id = uuid.UUID(payload["sub"])
     access = await db.execute(
@@ -484,7 +484,7 @@ async def checkout_article(
         )
     )
     if access.scalar_one_or_none():
-        raise ValidationException("Vous avez déjà accès à cet article.")
+        raise ValidationException("You already have access to this article.")
 
     platform_fee = round(article.price * settings.NOWPAYMENTS_PLATFORM_FEE_PERCENT / 100, 2)
     order_id = f"art_{tenant_id}_{article.id}_{uuid.uuid4().hex[:8]}"
@@ -521,12 +521,12 @@ async def checkout_domain(
 
     domain_name = body.domain_name.strip().lower()
     if "." not in domain_name:
-        raise ValidationException("Nom de domaine invalide.")
+        raise ValidationException("Invalid domain name.")
     _, tld = domain_name.split(".", 1)
 
     existing = await db.execute(select(CustomDomain).where(CustomDomain.domain == domain_name))
     if existing.scalar_one_or_none():
-        raise ValidationException("Ce domaine est déjà enregistré sur la plateforme.")
+        raise ValidationException("This domain is already registered on the platform.")
 
     from app.services.registrars.registry import get_registrar
     from app.services.registrars.pricing import apply_markup
@@ -536,11 +536,11 @@ async def checkout_domain(
     try:
         results = await registrar.check_availability([domain_name])
     except RegistrarError as e:
-        raise HTTPException(status_code=502, detail=f"Registrar indisponible : {e}")
+        raise HTTPException(status_code=502, detail=f"Registrar unavailable: {e}")
 
     match = next((r for r in results if r.domain == domain_name), None)
     if not match or not match.available or match.price is None or match.price <= 0:
-        raise ValidationException("Ce domaine n'est pas disponible à l'achat.")
+        raise ValidationException("This domain is not available for purchase.")
 
     price = await apply_markup(match.price)
     # Le prix de renouvellement n'est pas inclus dans check_availability (voir
@@ -613,7 +613,7 @@ async def get_payment_status_endpoint(
     )
     tx = tx_q.scalar_one_or_none()
     if not tx:
-        raise NotFoundException("Paiement")
+        raise NotFoundException("Payment")
 
     if tx.status in (TransactionStatus.PENDING, TransactionStatus.PARTIALLY_PAID) and tx.nowpayments_payment_id:
         try:
@@ -673,14 +673,14 @@ async def resume_payment(
     """
     tx = await db.get(Transaction, transaction_id)
     if not tx or tx.tenant_id != tenant_id or tx.nowpayments_order_id != body.order_id:
-        raise NotFoundException("Paiement")
+        raise NotFoundException("Payment")
 
     if tx.status != TransactionStatus.PARTIALLY_PAID:
-        raise ValidationException("Ce paiement n'est pas en attente de complément.")
+        raise ValidationException("This payment is not awaiting an additional amount.")
 
     remaining = round(float(tx.amount) - float(tx.amount_received or 0), 2)
     if remaining <= 0:
-        raise ValidationException("Aucun montant restant à payer.")
+        raise ValidationException("No remaining amount to pay.")
 
     tx.payment_expires_at = _payment_window_expiry()
     await db.commit()
@@ -704,7 +704,7 @@ async def nowpayments_webhook(
 
     if not settings.NOWPAYMENTS_SANDBOX:
         if not verify_ipn_signature(raw, x_nowpayments_sig):
-            raise HTTPException(status_code=400, detail="Signature IPN invalide.")
+            raise HTTPException(status_code=400, detail="Invalid IPN signature.")
 
     import json as _json
     data = _json.loads(raw)

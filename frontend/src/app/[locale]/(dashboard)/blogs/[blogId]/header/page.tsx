@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { useAutoSave } from '@/hooks/use-auto-save';
+import { getErrorMessage } from '@/lib/utils';
 import {
   BlogStudioShell, StudioSection, StudioField,
   StudioSwitch, StudioInput,
@@ -86,7 +87,7 @@ export default function HeaderPage() {
   const mutation = useMutation({
     mutationFn: () => doSave(cfg),
     onSuccess: () => toast({ title: ts('headerSavedToast') }),
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const addLink = () => patch(c => ({ ...c, nav: { links: [...c.nav.links, { label: '', url: '/' }] } }));

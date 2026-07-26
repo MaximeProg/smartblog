@@ -61,3 +61,25 @@ export function estimateReadTime(content: string, locale = 'en'): string {
   const minutes = Math.max(1, Math.ceil(wordCount / wordsPerMinute));
   return locale === 'fr' ? `${minutes} min de lecture` : `${minutes} min read`;
 }
+
+/**
+ * Extracts the real backend error message from an axios error, regardless of
+ * which of the two response shapes this backend uses: the custom
+ * `SmarterBloggersException` handler returns a flat `{ error, message,
+ * trace_id }` body (most endpoints), while a few raw `HTTPException(...)`
+ * call sites fall through to FastAPI's default `{ detail: "..." }` shape.
+ * Checking only `.detail` (the common but wrong assumption) silently misses
+ * the flat-shape message on most errors, which is why real backend error
+ * text was going missing across the app and falling back to a generic
+ * hardcoded string instead.
+ */
+export function getErrorMessage(err: unknown, fallback: string): string {
+  const data = (err as { response?: { data?: any } })?.response?.data;
+  if (!data) return fallback;
+  if (typeof data.message === 'string' && data.message) return data.message;
+  if (typeof data.detail === 'string' && data.detail) return data.detail;
+  if (data.detail && typeof data.detail === 'object' && typeof data.detail.message === 'string') {
+    return data.detail.message;
+  }
+  return fallback;
+}

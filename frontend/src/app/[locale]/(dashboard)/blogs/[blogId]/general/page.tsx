@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import { useAutoSave } from '@/hooks/use-auto-save';
 import {
   BlogStudioShell, StudioSection, StudioField,
@@ -106,7 +107,7 @@ export default function GeneralPage() {
   const mutation = useMutation({
     mutationFn: () => doSave(form),
     onSuccess: () => toast({ title: ts('saved') }),
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const setSocial = (key: string, val: string) =>

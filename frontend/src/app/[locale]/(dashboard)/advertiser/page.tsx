@@ -12,6 +12,7 @@ import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 const PLATFORM_TENANT_ID = process.env.NEXT_PUBLIC_PLATFORM_TENANT_ID || '00000000-0000-0000-0000-000000000001';
 
@@ -141,7 +142,7 @@ export default function AdvertiserPage() {
       setPayment(data);
     },
     onError: (err: any) => {
-      toast({ variant: 'destructive', title: t('submitError'), description: err?.response?.data?.detail });
+      toast({ variant: 'destructive', title: t('submitError'), description: getErrorMessage(err, '') });
     },
   });
 

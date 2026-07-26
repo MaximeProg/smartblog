@@ -122,7 +122,7 @@ async def get_affiliate_dashboard(payload: TokenPayload, db: DBSession):
     user_id = uuid.UUID(payload["sub"])
     user = await db.get(User, user_id)
     if not user:
-        raise NotFoundException("Utilisateur")
+        raise NotFoundException("User")
 
     code = await _get_or_create_affiliate_code(db, user)
 
@@ -248,13 +248,13 @@ async def request_cashout(
     user_id = uuid.UUID(payload["sub"])
     user = await db.get(User, user_id)
     if not user:
-        raise NotFoundException("Utilisateur")
+        raise NotFoundException("User")
 
     balance = float(user.affiliate_balance or 0)
     threshold = float(user.affiliate_cashout_threshold or MIN_CASHOUT)
 
     if balance < threshold:
-        raise ValidationException(f"Solde insuffisant. Minimum requis : ${threshold:.2f}, solde actuel : ${balance:.2f}")
+        raise ValidationException(f"Insufficient balance. Minimum required: ${threshold:.2f}, current balance: ${balance:.2f}")
 
     pending_q = await db.execute(
         select(func.count()).where(
@@ -263,11 +263,11 @@ async def request_cashout(
         )
     )
     if (pending_q.scalar() or 0) > 0:
-        raise ValidationException("Une demande de retrait est déjà en cours.")
+        raise ValidationException("A cashout request is already in progress.")
 
     net_amount = balance - CASHOUT_FEE
     if net_amount <= 0:
-        raise ValidationException(f"Le solde (${balance:.2f}) ne couvre pas les frais de retrait (${CASHOUT_FEE:.2f}).")
+        raise ValidationException(f"The balance (${balance:.2f}) does not cover the cashout fee (${CASHOUT_FEE:.2f}).")
 
     cashout = AffiliateCashoutRequest(
         user_id=user_id,
@@ -447,7 +447,7 @@ async def invite_friend(
     user_id = uuid.UUID(payload["sub"])
     user = await db.get(User, user_id)
     if not user:
-        raise NotFoundException("Utilisateur")
+        raise NotFoundException("User")
 
     code = await _get_or_create_affiliate_code(db, user)
     referral_url = f"{settings.FRONTEND_URL}/register?ref={code}"
@@ -851,7 +851,7 @@ async def admin_list_affiliates(
 ):
     """List all users with an active affiliate code and their stats."""
     if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
-        raise ForbiddenException("Super admin requis.")
+        raise ForbiddenException("Super admin required.")
 
     from sqlalchemy import text as _text
     rows = await db.execute(_text("""
@@ -907,7 +907,7 @@ async def admin_list_cashouts(
     offset: int = Query(0, ge=0),
 ):
     if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
-        raise ForbiddenException("Super admin requis.")
+        raise ForbiddenException("Super admin required.")
 
     base = (
         select(
@@ -961,14 +961,14 @@ async def admin_process_cashout(
     db: DBSession,
 ):
     if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
-        raise ForbiddenException("Super admin requis.")
+        raise ForbiddenException("Super admin required.")
 
     cashout = await db.get(AffiliateCashoutRequest, cashout_id)
     if not cashout:
-        raise NotFoundException("Demande de retrait introuvable.")
+        raise NotFoundException("Cashout request not found.")
 
     if cashout.status not in [CashoutStatus.REQUESTED, CashoutStatus.PROCESSING]:
-        raise ValidationException("Cette demande ne peut plus être modifiée.")
+        raise ValidationException("This request can no longer be modified.")
 
     now = datetime.now(timezone.utc)
 
@@ -996,7 +996,7 @@ async def admin_process_cashout(
                 c.cashout_request_id = None
                 c.paid_at = None
     else:
-        raise ValidationException("Action invalide. Utilisez 'approve' ou 'reject'.")
+        raise ValidationException("Invalid action. Use 'approve' or 'reject'.")
 
     await db.commit()
     return {"status": cashout.status.value}

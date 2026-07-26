@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Чоловік",
       "female": "Жінка"
-    }
+    },
+    "pwGenericError": "Не вдалося змінити пароль."
   },
   "notifications": {
     "title": "Повідомлення",

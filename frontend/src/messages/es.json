@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Hombre",
       "female": "Mujer"
-    }
+    },
+    "pwGenericError": "No se ha podido cambiar la contraseña."
   },
   "notifications": {
     "title": "Notificaciones",

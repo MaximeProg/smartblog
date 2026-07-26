@@ -12,7 +12,7 @@ from app.schemas.auth import (
     TwoFALoginRequest, UpdateProfileRequest,
     RegisterRequest, LoginPasswordRequest, TwoFALoginPasswordRequest,
     VerifyEmailRequest, ResendVerificationRequest,
-    ForgotPasswordRequest, ResetPasswordRequest,
+    ForgotPasswordRequest, ResetPasswordRequest, ChangePasswordRequest,
 )
 from app.services.firebase_service import verify_firebase_id_token
 from app.services.auth_service import (
@@ -20,7 +20,7 @@ from app.services.auth_service import (
     setup_2fa, confirm_2fa, disable_2fa, check_backup_code,
     register_with_password, login_with_password, complete_2fa_login_native,
     verify_email_token, resend_verification_email,
-    request_password_reset, reset_password_with_token,
+    request_password_reset, reset_password_with_token, change_password,
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -109,7 +109,7 @@ async def refresh(
 ):
     """Rotation du refresh token (HttpOnly cookie → nouveau JWT + cookie)."""
     if not smarterbloggers_refresh:
-        raise UnauthorizedException("Refresh token manquant.")
+        raise UnauthorizedException("Missing refresh token.")
 
     new_access, new_refresh = await refresh_access_token(db, smarterbloggers_refresh)
     _set_refresh_cookie(response, new_refresh)
@@ -158,7 +158,7 @@ async def get_me(payload: TokenPayload, db: DBSession):
     )
     user = result.scalar_one_or_none()
     if not user:
-        raise UnauthorizedException("Utilisateur introuvable.")
+        raise UnauthorizedException("User not found.")
 
     from app.schemas.auth import UserInfo
     return UserInfo.model_validate(user)
@@ -181,7 +181,7 @@ async def update_profile(
     )
     user = result.scalar_one_or_none()
     if not user:
-        raise UnauthorizedException("Utilisateur introuvable.")
+        raise UnauthorizedException("User not found.")
 
     if body.display_name is not None:
         user.display_name = body.display_name
@@ -219,7 +219,7 @@ async def upload_avatar(
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
-        raise UnauthorizedException("Utilisateur introuvable.")
+        raise UnauthorizedException("User not found.")
 
     upload_result = await upload_avatar_image(file, str(user_id))
     user.avatar_url = upload_result["secure_url"]
@@ -255,22 +255,22 @@ async def update_wallet(
     wallet_address: str = (body.get("usdt_wallet_address") or "").strip()
 
     if not wallet_address:
-        raise ValidationException("Adresse USDT requise.")
+        raise ValidationException("USDT address required.")
 
     # Validation basique format BSC/BEP20 (adresse EVM standard : 0x + 40 hex)
     if not re.match(r"^0x[a-fA-F0-9]{40}$", wallet_address):
-        raise ValidationException("Adresse USDT BSC invalide. Elle doit commencer par 0x et comporter 42 caractères.")
+        raise ValidationException("Invalid BSC USDT address. It must start with 0x and be 42 characters long.")
 
     user_id = uuid.UUID(payload["sub"])
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
-        raise UnauthorizedException("Utilisateur introuvable.")
+        raise UnauthorizedException("User not found.")
 
     # 2FA obligatoire — l'utilisateur doit avoir activé la 2FA
     # (la vérification du code a déjà eu lieu à la connexion)
     if not user.two_fa_enabled:
-        raise ValidationException("Vous devez activer la double authentification (2FA) avant d'enregistrer votre adresse wallet.")
+        raise ValidationException("You must enable two-factor authentication (2FA) before registering your wallet address.")
 
     user.usdt_wallet_address = wallet_address
     await db.commit()
@@ -504,7 +504,7 @@ async def test_email(payload: TokenPayload, db: DBSession):
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
-        raise UnauthorizedException("Utilisateur introuvable.")
+        raise UnauthorizedException("User not found.")
 
     # Sans domaine Resend vérifié, le TO doit être l'email du compte Resend
     recipient = settings.RESEND_TEST_RECIPIENT or user.email
@@ -553,7 +553,7 @@ async def test_push(payload: TokenPayload, db: DBSession):
         if not subs:
             raise HTTPException(
                 status_code=400,
-                detail="Aucun abonnement push. Active les push sur la page /notifications d'abord.",
+                detail="No push subscription found. Enable push notifications on the /notifications page first.",
             )
 
         await send_push_to_user(
@@ -606,7 +606,7 @@ async def verify_2fa_route(body: TwoFAVerifyRequest, payload: TokenPayload, db: 
     user_id = uuid.UUID(payload["sub"])
     success = await confirm_2fa(db, user_id, body.code)
     if not success:
-        raise ValidationException("Code TOTP invalide.")
+        raise ValidationException("Invalid TOTP code.")
     return {"message": "2FA activé avec succès."}
 
 
@@ -616,7 +616,7 @@ async def disable_2fa_route(body: TwoFADisableRequest, payload: TokenPayload, db
     user_id = uuid.UUID(payload["sub"])
     success = await disable_2fa(db, user_id, body.code)
     if not success:
-        raise ValidationException("Code TOTP invalide.")
+        raise ValidationException("Invalid TOTP code.")
     return {"message": "2FA désactivé."}
 
 
@@ -636,7 +636,7 @@ async def login_with_2fa(
     try:
         firebase_data = await verify_firebase_id_token(body.firebase_id_token)
     except Exception:
-        raise UnauthorizedException("Firebase token invalide.")
+        raise UnauthorizedException("Invalid Firebase token.")
 
     result = await db.execute(
         select(User).where(User.firebase_uid == firebase_data["uid"])
@@ -644,14 +644,14 @@ async def login_with_2fa(
     user = result.scalar_one_or_none()
 
     if not user or not user.two_fa_enabled or not user.two_fa_secret_enc:
-        raise UnauthorizedException("Compte introuvable ou 2FA non activé.")
+        raise UnauthorizedException("Account not found or 2FA not enabled.")
 
     # Vérifie le code TOTP
     secret = decrypt_value(user.two_fa_secret_enc)
     if not verify_totp(secret, body.code.strip()):
         # Tentative sur les backup codes
         if not check_backup_code(user, body.code.strip()):
-            raise ValidationException("Code 2FA invalide.")
+            raise ValidationException("Invalid 2FA code.")
 
     tenant_id = str(request.state.tenant_id) if getattr(request.state, "tenant_id", None) else None
     issued = await _issue_tokens(db, user, preferred_tenant_id=tenant_id)
@@ -748,10 +748,17 @@ async def resend_verification(body: ResendVerificationRequest, db: DBSession):
 @router.post("/forgot-password", status_code=200)
 async def forgot_password(body: ForgotPasswordRequest, db: DBSession):
     await request_password_reset(db, body.email, locale=body.locale)
-    return {"message": "Si ce compte existe, un email de réinitialisation a été envoyé."}
+    return {"message": "If this account exists, a reset email has been sent."}
 
 
 @router.post("/reset-password", status_code=200)
 async def reset_password(body: ResetPasswordRequest, db: DBSession):
     await reset_password_with_token(db, body.token, body.new_password)
-    return {"message": "Mot de passe réinitialisé avec succès."}
+    return {"message": "Password reset successfully."}
+
+
+@router.post("/change-password", status_code=200)
+async def change_password_route(body: ChangePasswordRequest, payload: TokenPayload, db: DBSession):
+    import uuid
+    await change_password(db, uuid.UUID(payload["sub"]), body.current_password, body.new_password)
+    return {"message": "Password changed successfully."}

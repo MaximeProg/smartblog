@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { superadminApi, type SupportMessageItem } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 function fmtTime(iso: string | null) {
   if (!iso) return '';
@@ -117,7 +118,7 @@ export default function AdminTicketPage() {
       qc.invalidateQueries({ queryKey: ['sa-ticket', ticketId] });
       qc.invalidateQueries({ queryKey: ['sa-support'] });
     },
-    onError: () => toast({ variant: 'destructive', title: t('updateError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('updateError'), description: getErrorMessage(err, '') }),
   });
 
   useEffect(() => {

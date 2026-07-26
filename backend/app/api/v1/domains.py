@@ -106,12 +106,12 @@ async def add_domain(
 
     domain = body.domain.strip().lower().lstrip("https://").lstrip("http://").rstrip("/")
     if not domain or "." not in domain:
-        raise ValidationException("Domaine invalide.")
+        raise ValidationException("Invalid domain.")
 
     # Unicité
     existing = await db.execute(select(CustomDomain).where(CustomDomain.domain == domain))
     if existing.scalar_one_or_none():
-        raise ValidationException("Ce domaine est déjà enregistré.")
+        raise ValidationException("This domain is already registered.")
 
     # Limit par plan
     from app.models.tenant import Tenant
@@ -127,7 +127,7 @@ async def add_domain(
     )
     current_count = count_result.scalar() or 0
     if limits and limits.domains_max is not None and current_count >= limits.domains_max:
-        raise ForbiddenException(f"Votre plan autorise {limits.domains_max} domaine(s) personnalisé(s).")
+        raise ForbiddenException(f"Your plan allows {limits.domains_max} custom domain(s).")
 
     d = CustomDomain(tenant_id=tenant_id, domain=domain)
     db.add(d)
@@ -265,7 +265,7 @@ async def search_domains(
 
     root = q.strip().lower().split(".")[0]
     if not root or not root.replace("-", "").isalnum():
-        raise ValidationException("Nom de domaine invalide.")
+        raise ValidationException("Invalid domain name.")
 
     candidates = [f"{root}.{tld}" for tld in settings.DOMAIN_SEARCH_TLDS]
 
@@ -273,7 +273,7 @@ async def search_domains(
     try:
         results = await registrar.check_availability(candidates)
     except RegistrarError as e:
-        raise HTTPException(status_code=502, detail=f"Registrar indisponible : {e}")
+        raise HTTPException(status_code=502, detail=f"Registrar unavailable: {e}")
 
     by_domain = {r.domain: r for r in results}
     out: list[DomainSearchResult] = []
@@ -330,9 +330,9 @@ async def renew_domain_endpoint(
     d = await _get_domain(db, tenant_id, domain_id)
 
     if d.source != DomainSource.PURCHASED:
-        raise ValidationException("Seuls les domaines achetés via SmarterBloggers peuvent être renouvelés ici.")
+        raise ValidationException("Only domains purchased through SmarterBloggers can be renewed here.")
     if d.renewal_price is None:
-        raise ValidationException("Prix de renouvellement indisponible pour ce domaine.")
+        raise ValidationException("Renewal price unavailable for this domain.")
 
     from app.models.domain import DomainOrder
     from app.models.enums import DomainOrderStatus, TransactionType

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Bell, Send, RefreshCw, Users, Globe, Loader2 } from 'lucide-react';
 import { superadminApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 export default function NotificationsPage() {
   const t  = useTranslations('superAdmin');
@@ -30,7 +31,7 @@ export default function NotificationsPage() {
       setMessage('');
       qc.invalidateQueries({ queryKey: ['sa-notifications'] });
     },
-    onError: () => toast({ title: t('common.error'), variant: 'destructive' }),
+    onError: (err: any) => toast({ title: t('common.error'), variant: 'destructive', description: getErrorMessage(err, '') }),
   });
 
   const AUDIENCES = [

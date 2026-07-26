@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Mees",
       "female": "Naine"
-    }
+    },
+    "pwGenericError": "Parooli muutmine ebaõnnestus."
   },
   "notifications": {
     "title": "Teated",

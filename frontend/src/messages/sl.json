@@ -1725,7 +1725,7 @@
           "10 avtorjev",
           "50 GB prostora za shranjevanje",
           "Lastna domena",
-          "Celovita analitika + SEO",
+          "Celovita analitika + optimizacija za iskalnike (SEO)",
           "Dostop do API-ja",
           "Posebna podpora"
         ]
@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Moški",
       "female": "Ženska"
-    }
+    },
+    "pwGenericError": "Sprememba gesla ni uspela."
   },
   "notifications": {
     "title": "Obvestila",

@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Mann",
       "female": "Kvinne"
-    }
+    },
+    "pwGenericError": "Det gikk ikke å endre passordet."
   },
   "notifications": {
     "title": "Varsler",

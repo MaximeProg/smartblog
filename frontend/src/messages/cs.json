@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Muž",
       "female": "Žena"
-    }
+    },
+    "pwGenericError": "Změna hesla se nezdařila."
   },
   "notifications": {
     "title": "Oznámení",

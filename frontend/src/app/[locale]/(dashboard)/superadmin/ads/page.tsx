@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { superadminApi, type SuperAdminAdView } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import SAPagination from '@/components/superadmin/SAPagination';
 
 const PAGE_SIZE = 15;
@@ -258,7 +259,7 @@ export default function SuperAdminAdsPage() {
       qc.invalidateQueries({ queryKey: ['superadmin-ads'] });
     },
     onError: (e: any) => {
-      toast({ variant: 'destructive', title: t('common.error'), description: e?.response?.data?.detail });
+      toast({ variant: 'destructive', title: t('common.error'), description: getErrorMessage(e, '') });
     },
   });
 

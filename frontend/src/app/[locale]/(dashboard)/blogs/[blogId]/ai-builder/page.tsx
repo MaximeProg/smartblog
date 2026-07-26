@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { tenantsApi, aiApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -110,12 +111,11 @@ export default function AiBuilderPage() {
 
       toast({ title: t('successToast') });
     } catch (e: any) {
-      const detail = e?.response?.data?.detail;
       const isPlanError = e?.response?.status === 402;
       toast({
         variant: 'destructive',
         title: isPlanError ? t('planRequiredError') : t('generationFailedError'),
-        description: typeof detail === 'string' ? detail : t('checkQuotaError'),
+        description: getErrorMessage(e, t('checkQuotaError')),
       });
     } finally {
       setLoading(false);

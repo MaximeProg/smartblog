@@ -98,9 +98,9 @@ async def create_comment(
     if not article:
         raise NotFoundException("Article")
     if not article.allow_comments:
-        raise ValidationException("Les commentaires sont désactivés pour cet article.")
+        raise ValidationException("Comments are disabled for this article.")
     if article.comments_closed_at and article.comments_closed_at < datetime.now(article.comments_closed_at.tzinfo):
-        raise ValidationException("Les commentaires sont fermés pour cet article.")
+        raise ValidationException("Comments are closed for this article.")
 
     user_id = uuid.UUID(payload["sub"])
 
@@ -123,7 +123,7 @@ async def create_comment(
             )
         ban = await db.execute(ban_q)
         if ban.scalar_one_or_none():
-            raise ForbiddenException("Vous avez été banni de commentaires sur ce blog.")
+            raise ForbiddenException("You have been banned from commenting on this blog.")
 
     comment = Comment(
         tenant_id=tenant_id,
@@ -196,7 +196,7 @@ async def ban_user(
 ):
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.EDITOR)
     if not body.email and not body.ip_address:
-        raise ValidationException("Fournir un email ou une adresse IP à bannir.")
+        raise ValidationException("Provide an email or IP address to ban.")
     db.add(CommentBan(
         tenant_id=tenant_id,
         email=body.email,
@@ -273,7 +273,7 @@ async def moderate_tenant_comment(
     )
     row = result.first()
     if not row:
-        raise NotFoundException("Commentaire")
+        raise NotFoundException("Comment")
     c, u = row
     c.status = body.status
     await db.commit()
@@ -291,7 +291,7 @@ async def _get_or_404(db, tenant_id: uuid.UUID, comment_id: uuid.UUID):
     )
     row = result.first()
     if not row:
-        raise NotFoundException("Commentaire")
+        raise NotFoundException("Comment")
     return row
 
 

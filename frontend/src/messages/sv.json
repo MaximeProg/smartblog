@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Man",
       "female": "Kvinna"
-    }
+    },
+    "pwGenericError": "Det gick inte att byta lösenord."
   },
   "notifications": {
     "title": "Meddelanden",

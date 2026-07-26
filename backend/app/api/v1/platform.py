@@ -272,11 +272,11 @@ async def _push_all_super_admins(db: DBSession, title: str, body: str, url: str)
 @router.post("/contact", status_code=201)
 async def submit_contact_message(body: ContactMessageBody, request: Request, db: DBSession):
     if len(body.message.strip()) < 5:
-        raise ValidationException("Le message est trop court.")
+        raise ValidationException("Message is too short.")
     if len(body.message) > 5000:
-        raise ValidationException("Le message est trop long (max 5000 caractères).")
+        raise ValidationException("Message is too long (max 5000 characters).")
     if not body.name.strip() or not body.subject.strip():
-        raise ValidationException("Nom et sujet requis.")
+        raise ValidationException("Name and subject are required.")
 
     # Rate limiting : 5 messages par heure par IP — endpoint public déclenchant
     # de vrais emails/push, à protéger contre le spam.
@@ -287,7 +287,7 @@ async def submit_contact_message(body: ContactMessageBody, request: Request, db:
         if count == 1:
             await redis.expire(rate_key, 3600)
         if count > 5:
-            raise HTTPException(status_code=429, detail="Trop de messages envoyés. Réessayez dans une heure.")
+            raise HTTPException(status_code=429, detail="Too many messages sent. Please try again in an hour.")
     except HTTPException:
         raise
     except Exception:

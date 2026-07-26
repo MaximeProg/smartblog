@@ -11,6 +11,7 @@ import {
 import { socialApi } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import type { SocialAccountInfo, SocialPostInfo, SocialPlatform, SocialPostStatus } from '@/types';
 
 // ── Platform metadata ─────────────────────────────────────────────────────────
@@ -92,8 +93,7 @@ function AccountCard({
       const { data } = await socialApi.getOAuthConnectUrl(blogId, platform, locale);
       window.location.href = data.url;
     } catch (err: any) {
-      const msg = err?.response?.data?.detail || t('connectError');
-      toast({ variant: 'destructive', title: msg });
+      toast({ variant: 'destructive', title: getErrorMessage(err, t('connectError')) });
       setConnecting(false);
     }
   };
@@ -196,7 +196,7 @@ function PostModal({ blogId, accounts, onClose }: { blogId: string; accounts: So
       toast({ title: t('postCreated') });
       onClose();
     },
-    onError: () => toast({ variant: 'destructive', title: t('postError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('postError'), description: getErrorMessage(err, '') }),
   });
 
   return (
@@ -302,14 +302,14 @@ function SocialPageInner() {
       qc.invalidateQueries({ queryKey: ['social-accounts', blogId] });
       toast({ title: t('disconnected') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('disconnectError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('disconnectError'), description: getErrorMessage(err, '') }),
   });
 
   const autoPostMut = useMutation({
     mutationFn: ({ id, enabled }: { id: string; enabled: boolean }) =>
       socialApi.toggleAutoPost(blogId, id, enabled),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['social-accounts', blogId] }),
-    onError: () => toast({ variant: 'destructive', title: t('disconnectError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('disconnectError'), description: getErrorMessage(err, '') }),
   });
 
   const deletePostMut = useMutation({
@@ -318,7 +318,7 @@ function SocialPageInner() {
       qc.invalidateQueries({ queryKey: ['social-posts', blogId] });
       toast({ title: t('postDeleted') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('postDeleteError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('postDeleteError'), description: getErrorMessage(err, '') }),
   });
 
   const connectedCount = accounts.length;

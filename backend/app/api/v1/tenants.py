@@ -105,7 +105,7 @@ async def _assert_member(db, tenant_id: uuid.UUID, user_id: uuid.UUID, payload: 
     )
     member = result.scalar_one_or_none()
     if not member:
-        raise ForbiddenException("Vous n'êtes pas membre de ce blog.")
+        raise ForbiddenException("You are not a member of this blog.")
     return member
 
 
@@ -118,5 +118,5 @@ async def _assert_role(
     member = await _assert_member(db, tenant_id, user_id, payload)
     role_order = [UserRole.VIEWER, UserRole.AUTHOR, UserRole.EDITOR, UserRole.TENANT_ADMIN]
     if role_order.index(member.role) < role_order.index(required_role):
-        raise ForbiddenException(f"Rôle {required_role.value} requis.")
+        raise ForbiddenException(f"Role {required_role.value} required.")
     return member

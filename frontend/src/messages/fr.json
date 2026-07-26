@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Mâle",
       "female": "Femelle"
-    }
+    },
+    "pwGenericError": "Échec du changement de mot de passe."
   },
   "notifications": {
     "title": "Notifications",

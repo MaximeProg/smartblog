@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Masculino",
       "female": "Mulher"
-    }
+    },
+    "pwGenericError": "Não foi possível alterar a palavra-passe."
   },
   "notifications": {
     "title": "Notificações",

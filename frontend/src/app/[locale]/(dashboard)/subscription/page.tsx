@@ -12,6 +12,7 @@ import { useAuthStore, useCurrentTenant } from '@/store/auth.store';
 import { paymentsApi, platformApi, authApi, type PublicPlan, type CryptoPaymentResponse } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
+import { getErrorMessage } from '@/lib/utils';
 
 // ── Plan config ───────────────────────────────────────────────────
 
@@ -72,11 +73,10 @@ export default function SubscriptionPage() {
       setPendingPlan(planId);
       setPayment(data);
     } catch (e: any) {
-      const detail = e?.response?.data?.detail;
       toast({
         variant: 'destructive',
         title: t('checkoutError'),
-        description: typeof detail === 'string' ? detail : undefined,
+        description: getErrorMessage(e, ''),
       });
     } finally {
       setCheckoutLoading(null);

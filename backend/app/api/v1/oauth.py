@@ -368,7 +368,7 @@ async def oauth_disconnect(
     )
     accounts = result.scalars().all()
     if not accounts:
-        raise NotFoundException("Compte social")
+        raise NotFoundException("Social account")
     for acct in accounts:
         acct.is_active = False
     await db.commit()
@@ -395,7 +395,7 @@ async def oauth_refresh(
     )
     accounts = result.scalars().all()
     if not accounts:
-        raise NotFoundException("Compte social")
+        raise NotFoundException("Social account")
 
     refreshed = 0
     for acct in accounts:
@@ -408,7 +408,7 @@ async def oauth_refresh(
 
     await db.commit()
     if not refreshed:
-        raise ValidationException("Impossible de rafraîchir ce compte — reconnexion requise.")
+        raise ValidationException("Unable to refresh this account — reconnection required.")
     return {"refreshed": refreshed}
 
 

@@ -92,7 +92,7 @@ async def create_category(
         select(Category).where(Category.tenant_id == tenant_id, Category.slug == slug)
     )
     if existing.scalar_one_or_none():
-        raise ValidationException(f"Le slug '{slug}' est déjà utilisé.")
+        raise ValidationException(f"Slug '{slug}' is already in use.")
 
     cat = Category(
         tenant_id=tenant_id,
@@ -119,7 +119,7 @@ async def update_category(
     )
     cat = result.scalar_one_or_none()
     if not cat:
-        raise NotFoundException("Catégorie")
+        raise NotFoundException("Category")
 
     for field, value in body.model_dump(exclude_unset=True).items():
         if field == "parent_id" and value is not None:
@@ -142,12 +142,12 @@ async def delete_category(
     )
     cat = result.scalar_one_or_none()
     if not cat:
-        raise NotFoundException("Catégorie")
+        raise NotFoundException("Category")
 
     if not force and cat.articles_count > 0:
         raise ValidationException(
-            f"Cette catégorie contient {cat.articles_count} article(s) publiés. "
-            "Utilisez force=true pour supprimer quand même."
+            f"This category contains {cat.articles_count} published article(s). "
+            "Use force=true to delete anyway."
         )
 
     await db.delete(cat)

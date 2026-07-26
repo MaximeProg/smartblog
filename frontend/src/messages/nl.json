@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Man",
       "female": "Vrouw"
-    }
+    },
+    "pwGenericError": "Het wijzigen van het wachtwoord is mislukt."
   },
   "notifications": {
     "title": "Meldingen",

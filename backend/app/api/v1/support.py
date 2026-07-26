@@ -35,7 +35,7 @@ async def _require_tenant_access(payload: TokenPayload, db: DBSession, tenant_id
     )
     tu = result.scalar_one_or_none()
     if not tu:
-        raise ForbiddenException("Accès interdit.")
+        raise ForbiddenException("Access denied.")
     return tu
 
 
@@ -189,7 +189,7 @@ async def get_ticket(
     )
     ticket = result.scalar_one_or_none()
     if not ticket:
-        raise NotFoundException("Ticket introuvable.")
+        raise NotFoundException("Ticket not found.")
 
     msgs_r = await db.execute(
         select(SupportMessage).where(SupportMessage.ticket_id == tkid)
@@ -241,7 +241,7 @@ async def send_message(
 ):
     from app.core.exceptions import ValidationException
     if not body.body.strip() and not body.file_url:
-        raise ValidationException("Un message ou un fichier est requis.")
+        raise ValidationException("A message or a file is required.")
 
     await _require_tenant_access(payload, db, tenant_id)
     tid = uuid.UUID(tenant_id)
@@ -253,7 +253,7 @@ async def send_message(
     )
     ticket = result.scalar_one_or_none()
     if not ticket:
-        raise NotFoundException("Ticket introuvable.")
+        raise NotFoundException("Ticket not found.")
     if ticket.status in (TicketStatus.resolved, TicketStatus.closed):
         ticket.status = TicketStatus.open
 
@@ -302,7 +302,7 @@ async def close_ticket(
     )
     ticket = result.scalar_one_or_none()
     if not ticket:
-        raise NotFoundException("Ticket introuvable.")
+        raise NotFoundException("Ticket not found.")
 
     ticket.status = TicketStatus.closed
     ticket.resolved_at = datetime.utcnow()

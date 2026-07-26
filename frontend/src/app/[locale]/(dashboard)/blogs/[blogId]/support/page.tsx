@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { supportApi, type SupportTicketItem } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 
 function fmtDate(iso: string | null) {
@@ -69,7 +70,7 @@ export default function SupportListPage() {
       setPriority('normal');
       router.push(`/${locale}/blogs/${blogId}/support/${ticket.id}`);
     },
-    onError: () => toast({ variant: 'destructive', title: t('createError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('createError'), description: getErrorMessage(err, '') }),
   });
 
   const tickets = data?.tickets ?? [];

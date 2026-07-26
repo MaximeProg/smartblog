@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Férfi",
       "female": "Nő"
-    }
+    },
+    "pwGenericError": "A jelszó megváltoztatása nem sikerült."
   },
   "notifications": {
     "title": "Értesítések",

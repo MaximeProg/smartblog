@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { accountingApi, type ChartAccount, type JournalEntry } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -63,13 +64,13 @@ function ChartOfAccountsTab({ t, ta }: { t: ReturnType<typeof useTranslations>; 
       setShowCreate(false);
       setForm({ code:'', name:'', account_class:1, account_type:'asset', parent_code:'', description:'' });
     },
-    onError: (e: any) => toast({ variant:'destructive', title: e?.response?.data?.detail ?? t('common.error') as string }),
+    onError: (e: any) => toast({ variant:'destructive', title: getErrorMessage(e, t('common.error') as string) }),
   });
 
   const toggleMut = useMutation({
     mutationFn: (code: string) => accountingApi.toggleAccount(code),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['chart-of-accounts'] }),
-    onError: () => toast({ variant:'destructive', title: t('common.error') as string }),
+    onError: (e: any) => toast({ variant:'destructive', title: t('common.error') as string, description: getErrorMessage(e, '') }),
   });
 
   const byClass = [1,2,3,4,5].map(cls => ({
@@ -253,7 +254,7 @@ function JournalEntriesTab({ t, ta }: { t: ReturnType<typeof useTranslations>; t
   const approveMut = useMutation({
     mutationFn: (id: string) => accountingApi.approveEntry(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['journal-entries'] }); toast({ title: ta('entryApproved') as string }); },
-    onError: (e: any) => toast({ variant:'destructive', title: e?.response?.data?.detail ?? t('common.error') as string }),
+    onError: (e: any) => toast({ variant:'destructive', title: getErrorMessage(e, t('common.error') as string) }),
   });
 
   const reverseMut = useMutation({
@@ -263,7 +264,7 @@ function JournalEntriesTab({ t, ta }: { t: ReturnType<typeof useTranslations>; t
       toast({ title: ta('reversalCreated') as string });
       setReverseId(null); setReverseReason('');
     },
-    onError: (e: any) => toast({ variant:'destructive', title: e?.response?.data?.detail ?? t('common.error') as string }),
+    onError: (e: any) => toast({ variant:'destructive', title: getErrorMessage(e, t('common.error') as string) }),
   });
 
   const JOURNAL_TYPES = ['general','sales','purchases','cash','bank'];

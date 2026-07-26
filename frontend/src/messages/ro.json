@@ -1721,7 +1721,7 @@
         "features": [
           "10 bloguri",
           "Articole nelimitate",
-          "50.000 de abonați la buletinul informativ",
+          "50.000 de abonați la newsletter",
           "10 autori",
           "50 GB spațiu de stocare",
           "Domeniu personalizat",
@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Bărbat",
       "female": "Femeie"
-    }
+    },
+    "pwGenericError": "Nu s-a reușit schimbarea parolei."
   },
   "notifications": {
     "title": "Notificări",

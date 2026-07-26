@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Мъж",
       "female": "Женски"
-    }
+    },
+    "pwGenericError": "Не успяхте да промените паролата."
   },
   "notifications": {
     "title": "Уведомления",

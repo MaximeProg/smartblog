@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 import { newsletterApi, tenantsApi, articlesApi } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import type { NewsletterSubscriber, NewsletterCampaign, SubscriberStatus, CampaignStatus } from '@/types';
 
 function fmtDate(iso: string) {
@@ -93,7 +94,7 @@ function CampaignModal({ blogId, onClose, initialName = '', initialSubject = '',
       toast({ title: isScheduled ? t('campaignScheduled') : t('campaignCreated') });
       onClose();
     },
-    onError: () => toast({ variant: 'destructive', title: t('campaignError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('campaignError'), description: getErrorMessage(err, '') }),
   });
 
   const minDateTime = new Date(Date.now() + 5 * 60 * 1000).toISOString().slice(0, 16);
@@ -277,7 +278,7 @@ function NewsletterPageInner() {
       qc.invalidateQueries({ queryKey: ['campaigns', blogId] });
       toast({ title: t('campaignSent') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('campaignSendError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('campaignSendError'), description: getErrorMessage(err, '') }),
   });
 
   const [testCampaignId, setTestCampaignId] = useState<string | null>(null);
@@ -289,7 +290,7 @@ function NewsletterPageInner() {
       setTestCampaignId(null);
       setTestEmail('');
     },
-    onError: () => toast({ variant: 'destructive', title: t('testEmailError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('testEmailError'), description: getErrorMessage(err, '') }),
   });
 
   async function handleExport() {

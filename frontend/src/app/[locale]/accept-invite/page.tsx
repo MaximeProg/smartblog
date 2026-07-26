@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Users, ShieldCheck, Loader2, CheckCircle2, AlertCircle, LogIn, UserPlus } from 'lucide-react';
 import { teamApi } from '@/lib/api';
 import { useAuthStore } from '@/store/auth.store';
+import { getErrorMessage } from '@/lib/utils';
 
 const ROLE_ICON_COLOR: Record<string, string> = {
   EDITOR:       'text-violet-600',
@@ -58,8 +59,7 @@ function AcceptInviteContent() {
         router.push(`/${locale}/blogs`);
       }, 2000);
     } catch (e: any) {
-      const detail = e?.response?.data?.detail;
-      setAcceptError(typeof detail === 'string' ? detail : t('acceptError'));
+      setAcceptError(getErrorMessage(e, t('acceptError')));
     } finally {
       setAccepting(false);
     }

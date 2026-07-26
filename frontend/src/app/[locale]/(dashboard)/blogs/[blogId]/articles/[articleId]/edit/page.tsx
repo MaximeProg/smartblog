@@ -14,6 +14,7 @@ import type { ArticleType, ArticleVersionResponse } from '@/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { articlesApi, categoriesApi, aiApi, articleScheduleApi } from '@/lib/api';
+import { getErrorMessage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useStudioPreview } from '@/contexts/studio-preview';
 import { ImagePicker } from '@/components/dashboard/ImagePicker';
@@ -164,13 +165,13 @@ export default function EditArticlePage() {
       toast({ title: ts('articleSavedToast') });
       setTimeout(() => refresh(), 400);
     },
-    onError: () => toast({ variant: 'destructive', title: ts('articleSaveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('articleSaveError'), description: getErrorMessage(err, '') }),
   });
 
   const publishMut = useMutation({
     mutationFn: () => articlesApi.publish(blogId, articleId),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['article', blogId, articleId] }); toast({ title: ts('articlePublishedToast') }); setTimeout(() => refresh(), 400); },
-    onError: () => toast({ variant: 'destructive', title: ts('articlePublishError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('articlePublishError'), description: getErrorMessage(err, '') }),
   });
 
   const unpublishMut = useMutation({
@@ -227,13 +228,13 @@ export default function EditArticlePage() {
       setShowSchedule(false);
       toast({ title: te('scheduledToast') });
     },
-    onError: () => toast({ variant: 'destructive', title: te('scheduleError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: te('scheduleError'), description: getErrorMessage(err, '') }),
   });
 
   const cancelScheduleMut = useMutation({
     mutationFn: () => articleScheduleApi.cancelSchedule(blogId, articleId),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['article', blogId, articleId] }); toast({ title: te('scheduleCancelledToast') }); },
-    onError: () => toast({ variant: 'destructive', title: te('genericError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: te('genericError'), description: getErrorMessage(err, '') }),
   });
 
   const handleSeoScore = useCallback(async () => {

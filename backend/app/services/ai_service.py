@@ -144,7 +144,7 @@ async def translate(
     source_lang: str | None = None,
 ) -> dict:
     if not settings.DEEPL_API_KEY:
-        raise ValidationException("DeepL non configuré.")
+        raise ValidationException("DeepL is not configured.")
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(
@@ -175,7 +175,7 @@ async def text_to_speech(
     model_id: str = "eleven_multilingual_v2",
 ) -> dict:
     if not settings.ELEVENLABS_API_KEY:
-        raise ValidationException("ElevenLabs non configuré.")
+        raise ValidationException("ElevenLabs is not configured.")
 
     async with httpx.AsyncClient(timeout=60.0) as client:
         resp = await client.post(
@@ -191,7 +191,7 @@ async def text_to_speech(
             },
         )
         if resp.status_code != 200:
-            raise ValidationException(f"ElevenLabs erreur : {resp.status_code}")
+            raise ValidationException(f"ElevenLabs error: {resp.status_code}")
         audio_bytes = resp.content
 
     return {

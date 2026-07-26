@@ -14,6 +14,7 @@ import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth.store';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
+import { getErrorMessage } from '@/lib/utils';
 
 const STATUS_CONFIG = {
   pending:  { icon: Clock,        cls: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',       labelKey: 'status_pending'  },
@@ -81,7 +82,7 @@ export default function DomainsPage() {
       setShowAdd(false);
       toast({ title: t('addSuccess') });
     },
-    onError: (err: any) => toast({ variant: 'destructive', title: err?.response?.data?.detail ?? t('addError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: getErrorMessage(err, t('addError')) }),
   });
 
   const verifyMut = useMutation({
@@ -92,7 +93,7 @@ export default function DomainsPage() {
       if (status === 'verified') toast({ title: t('verifySuccess') });
       else toast({ variant: 'destructive', title: t('verifyFailed') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('verifyError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('verifyError'), description: getErrorMessage(err, '') }),
   });
 
   const deleteMut = useMutation({
@@ -101,7 +102,7 @@ export default function DomainsPage() {
       qc.invalidateQueries({ queryKey: ['domains', blogId] });
       toast({ title: t('deleteSuccess') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('deleteError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: t('deleteError'), description: getErrorMessage(err, '') }),
   });
 
   const setPrimaryMut = useMutation({
@@ -127,13 +128,13 @@ export default function DomainsPage() {
       },
     }).then((r) => r.data),
     onSuccess: (data) => setPayment(data),
-    onError: (err: any) => toast({ variant: 'destructive', title: err?.response?.data?.detail ?? t('purchaseError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: getErrorMessage(err, t('purchaseError')) }),
   });
 
   const renewMut = useMutation({
     mutationFn: (domainId: string) => domainsApi.renew(blogId, domainId).then((r) => r.data),
     onSuccess: (data) => setPayment(data),
-    onError: (err: any) => toast({ variant: 'destructive', title: err?.response?.data?.detail ?? t('renewError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: getErrorMessage(err, t('renewError')) }),
   });
 
   function handlePaymentConfirmed() {

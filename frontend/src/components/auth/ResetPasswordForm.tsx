@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authApi } from '@/lib/api';
+import { getErrorMessage } from '@/lib/utils';
 
 const schema = z
   .object({
@@ -48,8 +49,8 @@ export function ResetPasswordForm({ locale, token }: ResetPasswordFormProps) {
       await authApi.resetPasswordNative(token, password);
       setStatus('success');
     } catch (err: unknown) {
-      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
-      if (detail?.includes('invalide') || detail?.includes('expiré')) {
+      const detail = getErrorMessage(err, '');
+      if (detail.includes('invalide') || detail.includes('expiré')) {
         setStatus('invalid');
       } else {
         setFormError(detail || t('errors.generic'));

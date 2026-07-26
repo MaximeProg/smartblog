@@ -9,7 +9,7 @@ import { TopBar } from '@/components/dashboard/TopBar';
 import { useAuthStore } from '@/store/auth.store';
 import { authApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
-import { getInitials } from '@/lib/utils';
+import { getInitials, getErrorMessage } from '@/lib/utils';
 import { COUNTRIES, CONTINENTS, GENDERS, getContinentFromCountry, getDialCode, countryFlag } from '@/lib/constants/countries';
 import { twoFactorApi } from '@/lib/api';
 import { TwoFactorSetupModal } from '@/components/auth/TwoFactorSetupModal';
@@ -163,8 +163,7 @@ export default function ProfilePage() {
       toast({ title: t('walletSavedToast') });
     },
     onError: (err: unknown) => {
-      const detail: string = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? '';
-      setWalletError(detail || t('walletInvalidAddress'));
+      setWalletError(getErrorMessage(err, t('walletInvalidAddress')));
     },
   });
 
@@ -255,7 +254,7 @@ export default function ProfilePage() {
       }));
       toast({ title: t('profileUpdatedToast') });
     },
-    onError: () => toast({ variant: 'destructive', title: t('profileUpdateError') }),
+    onError: (err: unknown) => toast({ variant: 'destructive', title: t('profileUpdateError'), description: getErrorMessage(err, '') }),
   });
 
   async function handleAvatarUpload(file: File) {
@@ -273,14 +272,22 @@ export default function ProfilePage() {
     }
   }
 
+  const changePwMut = useMutation({
+    mutationFn: () => authApi.changePassword(currentPw, newPw),
+    onSuccess: () => {
+      toast({ title: t('passwordUpdatedToast') });
+      setCurrentPw(''); setNewPw(''); setConfirmPw('');
+      setShowPwSection(false);
+    },
+    onError: (err: any) => setPwError(getErrorMessage(err, t('pwGenericError'))),
+  });
+
   function handlePwSave() {
     setPwError('');
     if (!currentPw || !newPw || !confirmPw) { setPwError(t('pwFillAll')); return; }
     if (newPw.length < 8) { setPwError(t('pwTooShort')); return; }
     if (newPw !== confirmPw) { setPwError(t('pwMismatch')); return; }
-    toast({ title: t('passwordUpdatedToast') });
-    setCurrentPw(''); setNewPw(''); setConfirmPw('');
-    setShowPwSection(false);
+    changePwMut.mutate();
   }
 
   const initials = user ? getInitials(user.display_name ?? user.email).slice(0, 2) : 'U';
@@ -498,8 +505,15 @@ export default function ProfilePage() {
                     <input type={showPw ? 'text' : 'password'} value={confirmPw} onChange={e => setConfirmPw(e.target.value)} placeholder={t('confirmPasswordPlaceholder')} className={inputCls} />
                   </div>
                   {pwError && <p className="text-[12px] text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg px-3 py-2">{pwError}</p>}
-                  <button onClick={handlePwSave} className="flex items-center gap-2 h-9 px-5 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors">
-                    <Save className="h-3.5 w-3.5" /> {t('updatePasswordButton')}
+                  <button
+                    onClick={handlePwSave}
+                    disabled={changePwMut.isPending}
+                    className="flex items-center gap-2 h-9 px-5 rounded-xl bg-slate-900 dark:bg-slate-100 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 text-[13px] font-semibold transition-colors disabled:opacity-50"
+                  >
+                    {changePwMut.isPending
+                      ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> {t('saving')}</>
+                      : <><Save className="h-3.5 w-3.5" /> {t('updatePasswordButton')}</>
+                    }
                   </button>
                 </div>
               )}

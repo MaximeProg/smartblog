@@ -14,6 +14,7 @@ import { affiliateApi, type AffiliateDashboard, type AffiliateCommission, type C
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 function fmtDate(iso: string | null | undefined) {
   if (!iso) return '—';
@@ -125,8 +126,8 @@ export default function AffiliatePage() {
       setTimeout(() => setInviteSent(false), 4000);
       toast({ title: t('inviteSentTitle'), description: t('inviteSentDesc', { email: friendEmail.trim() }) });
     },
-    onError: () => {
-      toast({ variant: 'destructive', title: t('error'), description: t('inviteError') });
+    onError: (err: any) => {
+      toast({ variant: 'destructive', title: t('error'), description: getErrorMessage(err, t('inviteError')) });
     },
   });
 
@@ -139,7 +140,7 @@ export default function AffiliatePage() {
       toast({ title: t('cashoutRequested') });
     },
     onError: (err: any) => {
-      toast({ variant: 'destructive', title: t('error'), description: err?.response?.data?.detail ?? t('cashoutError') });
+      toast({ variant: 'destructive', title: t('error'), description: getErrorMessage(err, t('cashoutError')) });
     },
   });
 

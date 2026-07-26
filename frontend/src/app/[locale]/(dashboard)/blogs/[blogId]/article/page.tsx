@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import {
   BlogStudioShell, StudioSection, StudioField,
   StudioSwitch, StudioInput,
@@ -61,7 +62,7 @@ export default function ArticlePage() {
       qc.invalidateQueries({ queryKey: ['tenant', blogId] });
       toast({ title: ts('articlePageSavedToast') });
     },
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   return (

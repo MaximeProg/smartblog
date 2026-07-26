@@ -84,7 +84,7 @@ class JournalEntryResponse(BaseModel):
 
 def _require_super_admin(payload: dict):
     if not (payload.get("is_super_admin") or payload.get("role") == "SUPER_ADMIN"):
-        raise ForbiddenException("Super admin requis pour l'accès comptable.")
+        raise ForbiddenException("Super admin access required for accounting.")
 
 
 async def _build_entry_response(db, entry: JournalEntry, include_lines: bool = False) -> JournalEntryResponse:
@@ -184,13 +184,13 @@ async def create_account(
     # Validate code uniqueness
     existing = await db.execute(select(ChartOfAccount).where(ChartOfAccount.code == body.code))
     if existing.scalar_one_or_none():
-        raise ValidationException(f"Le compte {body.code} existe déjà.")
+        raise ValidationException(f"Account {body.code} already exists.")
 
     # Validate parent
     if body.parent_code:
         parent = await db.execute(select(ChartOfAccount).where(ChartOfAccount.code == body.parent_code))
         if not parent.scalar_one_or_none():
-            raise ValidationException(f"Compte parent {body.parent_code} introuvable.")
+            raise ValidationException(f"Parent account {body.parent_code} not found.")
 
     account = ChartOfAccount(
         code=body.code,
@@ -228,9 +228,9 @@ async def toggle_account(
     result = await db.execute(select(ChartOfAccount).where(ChartOfAccount.code == code))
     account = result.scalar_one_or_none()
     if not account:
-        raise NotFoundException(f"Compte {code} introuvable.")
+        raise NotFoundException(f"Account {code} not found.")
     if account.is_system:
-        raise ValidationException("Les comptes système ne peuvent pas être désactivés.")
+        raise ValidationException("System accounts cannot be deactivated.")
 
     account.is_active = not account.is_active
     await db.commit()
@@ -279,7 +279,7 @@ async def get_journal_entry(
 
     entry = await db.get(JournalEntry, entry_id)
     if not entry:
-        raise NotFoundException("Écriture introuvable.")
+        raise NotFoundException("Journal entry not found.")
 
     return await _build_entry_response(db, entry, include_lines=True)
 
@@ -294,21 +294,21 @@ async def create_journal_entry(
     user_id = uuid.UUID(payload["sub"])
 
     if not body.lines:
-        raise ValidationException("L'écriture doit comporter au moins deux lignes.")
+        raise ValidationException("The journal entry must contain at least two lines.")
 
     total_debit = sum(ln.debit for ln in body.lines)
     total_credit = sum(ln.credit for ln in body.lines)
 
     if abs(total_debit - total_credit) > 0.01:
         raise ValidationException(
-            f"L'écriture n'est pas équilibrée : débit {total_debit:.2f} ≠ crédit {total_credit:.2f}."
+            f"The journal entry is not balanced: debit {total_debit:.2f} ≠ credit {total_credit:.2f}."
         )
 
     # Validate account codes
     for ln in body.lines:
         acc = await db.execute(select(ChartOfAccount).where(ChartOfAccount.code == ln.account_code, ChartOfAccount.is_active == True))
         if not acc.scalar_one_or_none():
-            raise ValidationException(f"Compte {ln.account_code} introuvable ou inactif.")
+            raise ValidationException(f"Account {ln.account_code} not found or inactive.")
 
     entry_number = await _get_next_entry_number(db)
 
@@ -351,14 +351,14 @@ async def approve_journal_entry(
 
     entry = await db.get(JournalEntry, entry_id)
     if not entry:
-        raise NotFoundException("Écriture introuvable.")
+        raise NotFoundException("Journal entry not found.")
 
     if entry.status != JournalEntryStatus.PENDING:
-        raise ValidationException("Seules les écritures en attente peuvent être approuvées.")
+        raise ValidationException("Only pending journal entries can be approved.")
 
     # Dual-control: approver must differ from creator
     if entry.created_by == approver_id:
-        raise ValidationException("L'approbateur doit être différent de l'initiateur (double contrôle).")
+        raise ValidationException("The approver must be different from the initiator (dual control).")
 
     entry.status = JournalEntryStatus.APPROVED
     entry.approved_by = approver_id
@@ -381,10 +381,10 @@ async def reverse_journal_entry(
 
     original = await db.get(JournalEntry, entry_id)
     if not original:
-        raise NotFoundException("Écriture introuvable.")
+        raise NotFoundException("Journal entry not found.")
 
     if original.status != JournalEntryStatus.APPROVED:
-        raise ValidationException("Seules les écritures approuvées peuvent être extournées.")
+        raise ValidationException("Only approved journal entries can be reversed.")
 
     # Fetch original lines
     lines_q = await db.execute(

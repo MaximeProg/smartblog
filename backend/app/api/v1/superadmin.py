@@ -26,7 +26,7 @@ async def _require_super_admin(payload: TokenPayload, db: DBSession) -> User:
     result = await db.execute(select(User).where(User.id == uuid.UUID(payload["sub"])))
     user = result.scalar_one_or_none()
     if not user or not user.is_super_admin:
-        raise ForbiddenException("Accès réservé aux super-administrateurs.")
+        raise ForbiddenException("Access restricted to super administrators.")
     return user
 
 
@@ -203,7 +203,7 @@ async def change_plan(
     from app.services.tenant_service import get_tenant_owner_user_id, sync_tenant_plans_for_user
     owner_user_id = await get_tenant_owner_user_id(db, tenant_id)
     if not owner_user_id:
-        raise NotFoundException("Propriétaire du blog")
+        raise NotFoundException("Blog owner")
     owner = await db.get(User, owner_user_id)
 
     old_plan = tenant.plan.value if tenant.plan else "unknown"
@@ -309,7 +309,7 @@ async def make_super_admin(
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
-        raise NotFoundException("Utilisateur")
+        raise NotFoundException("User")
     user.is_super_admin = True
     await db.commit()
 
@@ -326,11 +326,11 @@ async def revoke_super_admin(
 ):
     admin = await _require_super_admin(payload, db)
     if str(user_id) == payload["sub"]:
-        raise ForbiddenException("Vous ne pouvez pas révoquer vos propres droits.")
+        raise ForbiddenException("You cannot revoke your own privileges.")
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if not user:
-        raise NotFoundException("Utilisateur")
+        raise NotFoundException("User")
     user.is_super_admin = False
     await db.commit()
 
@@ -500,7 +500,7 @@ async def get_domain_detail(
 
     d = await db.get(CustomDomain, domain_id)
     if not d:
-        raise NotFoundException("Domaine")
+        raise NotFoundException("Domain")
 
     orders_result = await db.execute(
         select(DomainOrder).where(DomainOrder.custom_domain_id == domain_id).order_by(DomainOrder.created_at.desc())
@@ -769,7 +769,7 @@ async def create_plan(body: PlanCreateBody, payload: TokenPayload, db: DBSession
     existing = await db.execute(text("SELECT id FROM subscription_plans WHERE id = :id"), {"id": body.id})
     if existing.scalar_one_or_none():
         from fastapi import HTTPException as _HTTPEx
-        raise _HTTPEx(status_code=400, detail=f"Un plan avec l'identifiant '{body.id}' existe déjà.")
+        raise _HTTPEx(status_code=400, detail=f"A plan with the identifier '{body.id}' already exists.")
 
     await db.execute(text("""
         INSERT INTO subscription_plans
@@ -856,7 +856,7 @@ async def deactivate_plan(plan_id: str, payload: TokenPayload, db: DBSession):
         raise NotFoundException("Plan")
     if row.is_default:
         from fastapi import HTTPException as _HTTPEx
-        raise _HTTPEx(status_code=400, detail="Impossible de désactiver un plan par défaut.")
+        raise _HTTPEx(status_code=400, detail="Cannot deactivate a default plan.")
 
     await db.execute(text("UPDATE subscription_plans SET is_active = false, updated_at = NOW() WHERE id = :id"), {"id": plan_id})
     await db.commit()
@@ -1368,7 +1368,7 @@ async def get_nowpayments_totp_code(payload: TokenPayload, db: DBSession):
     import time
 
     if not cfg.NOWPAYMENTS_PAYOUT_TOTP_SECRET:
-        raise ValidationException("NOWPAYMENTS_PAYOUT_TOTP_SECRET non configuré.")
+        raise ValidationException("NOWPAYMENTS_PAYOUT_TOTP_SECRET is not configured.")
 
     code = pyotp.TOTP(cfg.NOWPAYMENTS_PAYOUT_TOTP_SECRET).now()
     return {"code": code, "seconds_remaining": 30 - (int(time.time()) % 30)}
@@ -1559,7 +1559,7 @@ async def get_support_ticket(ticket_id: str, payload: TokenPayload, db: DBSessio
     ticket = t_r.scalar_one_or_none()
     if not ticket:
         from app.core.exceptions import NotFoundException
-        raise NotFoundException("Ticket introuvable.")
+        raise NotFoundException("Ticket not found.")
 
     msgs_r = await db.execute(
         select(SupportMessage).where(SupportMessage.ticket_id == tkid)
@@ -1617,7 +1617,7 @@ class AdminReplyBody(BaseModel):
 async def admin_reply(ticket_id: str, body: AdminReplyBody, payload: TokenPayload, db: DBSession):
     from app.core.exceptions import ValidationException
     if not body.body.strip() and not body.file_url:
-        raise ValidationException("Un message ou un fichier est requis.")
+        raise ValidationException("A message or a file is required.")
 
     admin = await _require_super_admin(payload, db)
     tkid = uuid.UUID(ticket_id)
@@ -1626,7 +1626,7 @@ async def admin_reply(ticket_id: str, body: AdminReplyBody, payload: TokenPayloa
     ticket = t_r.scalar_one_or_none()
     if not ticket:
         from app.core.exceptions import NotFoundException
-        raise NotFoundException("Ticket introuvable.")
+        raise NotFoundException("Ticket not found.")
 
     text_body = body.body.strip()
     target_lang = ticket.tenant_language or "fr"
@@ -1691,7 +1691,7 @@ async def update_ticket_status(ticket_id: str, body: UpdateTicketBody, payload: 
     ticket = t_r.scalar_one_or_none()
     if not ticket:
         from app.core.exceptions import NotFoundException
-        raise NotFoundException("Ticket introuvable.")
+        raise NotFoundException("Ticket not found.")
 
     if body.status:
         try:
@@ -1748,7 +1748,7 @@ async def create_template_category(body: CategoryCreateBody, payload: TokenPaylo
     existing = await db.execute(text("SELECT id FROM blog_template_categories WHERE slug = :slug"), {"slug": body.slug})
     if existing.scalar_one_or_none():
         from fastapi import HTTPException as _HTTPEx
-        raise _HTTPEx(status_code=400, detail=f"Une catégorie avec le slug '{body.slug}' existe déjà.")
+        raise _HTTPEx(status_code=400, detail=f"A category with the slug '{body.slug}' already exists.")
     result = await db.execute(text("""
         INSERT INTO blog_template_categories (name, slug, description, sort_order)
         VALUES (:name, :slug, :description, :sort_order)
@@ -1888,14 +1888,14 @@ async def upload_template(
     await _require_super_admin(payload, db)
 
     if not (file.filename or "").endswith(".zip"):
-        raise _FastHTTPEx(status_code=400, detail="Le fichier doit être un ZIP (.zip)")
+        raise _FastHTTPEx(status_code=400, detail="The file must be a ZIP (.zip)")
 
     content = await file.read()
     try:
         with zipfile.ZipFile(io.BytesIO(content)) as zf:
             names = zf.namelist()
             if "template.json" not in names:
-                raise _FastHTTPEx(status_code=400, detail="Le ZIP doit contenir un fichier template.json à la racine")
+                raise _FastHTTPEx(status_code=400, detail="The ZIP must contain a template.json file at its root")
 
             meta = _json.loads(zf.read("template.json"))
             name        = str(meta.get("name", "Custom Template"))[:200]
@@ -1905,7 +1905,7 @@ async def upload_template(
             is_featured = bool(meta.get("is_featured", False))
 
             if theme_base not in BUILT_IN_IDS:
-                raise _FastHTTPEx(status_code=400, detail=f"theme_base doit être l'un de : {', '.join(BUILT_IN_IDS)}")
+                raise _FastHTTPEx(status_code=400, detail=f"theme_base must be one of: {', '.join(BUILT_IN_IDS)}")
 
             # Optional preview image → stored as data URL in thumbnail_url
             thumbnail_url: str | None = None
@@ -1918,7 +1918,7 @@ async def upload_template(
                     break
 
     except zipfile.BadZipFile:
-        raise _FastHTTPEx(status_code=400, detail="Fichier ZIP corrompu ou invalide")
+        raise _FastHTTPEx(status_code=400, detail="Corrupted or invalid ZIP file")
 
     result = await db.execute(text("""
         INSERT INTO blog_templates (name, description, theme, thumbnail_url, config, is_featured, sort_order)

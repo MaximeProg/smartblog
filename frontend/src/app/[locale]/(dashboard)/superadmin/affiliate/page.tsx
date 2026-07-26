@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { superadminApi, type CashoutAdminView, type SAAffiliateItem } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import SAPagination from '@/components/superadmin/SAPagination';
 
 const PAGE_SIZE = 15;
@@ -158,7 +159,7 @@ export default function AffiliatePage() {
       setModal(null);
       toast({ title: '✓', description: vars.action === 'approve' ? ta('cashoutApprovedToast') : ta('cashoutRejectedToast') });
     },
-    onError: () => toast({ title: t('common.errorTitle'), description: t('common.error'), variant: 'destructive' }),
+    onError: (err: any) => toast({ title: t('common.errorTitle'), description: getErrorMessage(err, t('common.error')), variant: 'destructive' }),
   });
 
   const CASHOUT_STATUS: Record<string, { icon: typeof CheckCircle; cls: string; label: string }> = {

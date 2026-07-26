@@ -1721,7 +1721,7 @@
         "cta": "Auf „Pro“ umsteigen",
         "features": [
           "10 Blogs",
-          "Unbegrenzte Anzahl von Artikeln",
+          "Unbegrenzte Anzahl an Artikeln",
           "50.000 Newsletter-Abonnenten",
           "10 Autoren",
           "50 GB Speicherplatz",
@@ -2558,7 +2558,8 @@
     "genders": {
       "male": "Männlich",
       "female": "Weiblich"
-    }
+    },
+    "pwGenericError": "Das Ändern des Passworts ist fehlgeschlagen."
   },
   "notifications": {
     "title": "Benachrichtigungen",

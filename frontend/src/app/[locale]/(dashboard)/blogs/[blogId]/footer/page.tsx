@@ -7,6 +7,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { tenantsApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 import { useAutoSave } from '@/hooks/use-auto-save';
 import {
   BlogStudioShell, StudioSection, StudioField,
@@ -83,7 +84,7 @@ export default function FooterPage() {
   const mutation = useMutation({
     mutationFn: () => doSave(cfg),
     onSuccess: () => toast({ title: ts('footerSavedToast') }),
-    onError: () => toast({ variant: 'destructive', title: ts('saveError') }),
+    onError: (err: any) => toast({ variant: 'destructive', title: ts('saveError'), description: getErrorMessage(err, '') }),
   });
 
   const addLink = () => patch(c => ({ ...c, navLinks: [...c.navLinks, { label: '', url: '/' }] }));

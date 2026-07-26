@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { superadminApi, type SATemplate } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getErrorMessage } from '@/lib/utils';
 
 // Accent colors matching TEMPLATE_OPTIONS in blogs/new/page.tsx
 const ACCENT: Record<string, string> = {
@@ -36,8 +37,7 @@ function UploadModal({ onClose, onUploaded }: { onClose: () => void; onUploaded:
       onClose();
     },
     onError: (err: any) => {
-      const msg = err?.response?.data?.detail ?? t('common.error');
-      toast({ title: msg, variant: 'destructive' });
+      toast({ title: getErrorMessage(err, t('common.error')), variant: 'destructive' });
     },
   });
 
@@ -197,7 +197,7 @@ export default function TemplatesPage() {
   const { mutate: toggleTemplate, isPending: toggling } = useMutation({
     mutationFn: (id: string) => superadminApi.toggleTemplate(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['sa-templates'] }); toast({ title: tt('toggled') }); },
-    onError: () => toast({ title: t('common.error'), variant: 'destructive' }),
+    onError: (err: any) => toast({ title: t('common.error'), variant: 'destructive', description: getErrorMessage(err, '') }),
   });
 
   const builtIn = data?.templates.filter(t => t.is_builtin)  ?? [];
