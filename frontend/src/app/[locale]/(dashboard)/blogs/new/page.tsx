@@ -15,7 +15,7 @@ import {
   tenantsApi, mediaApi, domainsApi, paymentsApi,
   type DomainSearchResult, type CryptoPaymentResponse,
 } from '@/lib/api';
-import { slugify } from '@/lib/utils';
+import { slugify, getErrorMessage } from '@/lib/utils';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
@@ -358,18 +358,18 @@ export default function CreateBlogPage() {
       setStep('domain');
     },
     onError: (err: any) => {
-      // On ne fait jamais confiance au texte brut renvoyé par le backend pour
-      // l'affichage (toujours en français côté serveur, quelle que soit la
-      // locale de l'utilisateur) — on ne lit que le code d'erreur stable et
-      // les champs en échec (`details[].loc`), et on choisit nous-mêmes le
-      // message traduit à afficher.
+      // Les codes d'erreur stables (slug pris, champ invalide) gardent un
+      // message dédié affiché sous le bon champ ; pour tout le reste
+      // (ex: PLAN_LIMIT_REACHED), on affiche le vrai message backend — les
+      // messages backend sont désormais en anglais (plus de raison de s'en
+      // méfier comme avant), voir getErrorMessage().
       const errorCode: string | undefined = err?.response?.data?.error;
       const details: any[] = err?.response?.data?.details ?? [];
       const hasFieldError = (field: string) =>
         details.some((d) => Array.isArray(d?.loc) && d.loc.includes(field));
 
       let slugMsg = '';
-      let generalMsg = t('quickGenericError');
+      let generalMsg = getErrorMessage(err, t('quickGenericError'));
 
       if (errorCode === 'SLUG_ALREADY_EXISTS') {
         slugMsg = t('quickSlugTaken');
