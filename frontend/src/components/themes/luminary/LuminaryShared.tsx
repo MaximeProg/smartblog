@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Menu, X, Twitter, Linkedin, Github, ExternalLink, Instagram, Youtube } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+import { getFetchErrorMessage } from '@/lib/utils';
 import { ShareButtons } from '../shared/ShareButtons';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 
@@ -156,6 +157,7 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
 export function LuminaryFooter({ blog, categories, basePath, primaryColor }: SharedProps) {
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [subError, setSubError] = useState('');
   const fCfg = blog.template_config?.footer;
 
   const description = fCfg?.description || blog.description || '';
@@ -180,14 +182,23 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
     e.preventDefault();
     if (!email.trim()) return;
     setSubStatus('loading');
+    setSubError('');
     try {
       const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      setSubStatus(res.ok ? 'ok' : 'error');
-    } catch { setSubStatus('error'); }
+      if (res.ok) {
+        setSubStatus('ok');
+      } else {
+        setSubError(await getFetchErrorMessage(res, 'Something went wrong. Please try again.'));
+        setSubStatus('error');
+      }
+    } catch {
+      setSubError('Something went wrong. Please try again.');
+      setSubStatus('error');
+    }
   };
 
   return (
@@ -263,7 +274,7 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
                       style={{ color: primaryColor }}>
                       {subStatus === 'loading' ? 'Subscribing…' : 'Subscribe →'}
                     </button>
-                    {subStatus === 'error' && <p className="text-xs text-red-400">Something went wrong.</p>}
+                    {subStatus === 'error' && <p className="text-xs text-red-400">{subError}</p>}
                   </form>
                 )}
               </>

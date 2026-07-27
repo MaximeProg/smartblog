@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import type { HomeProps } from '../ThemeRenderer';
+import { getFetchErrorMessage } from '@/lib/utils';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { EditableSection } from '../shared/EditableSection';
 import { InlineEditable } from '../shared/InlineEditable';
@@ -42,6 +43,7 @@ export default function MagazineHome({
 
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [subError, setSubError] = useState('');
   const [topAdId, setTopAdId] = useState<string | null>(null);
 
   const aHref = useCallback(
@@ -57,14 +59,21 @@ export default function MagazineHome({
     e.preventDefault();
     if (!email.trim()) return;
     setSubStatus('loading');
+    setSubError('');
     try {
       const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      setSubStatus(res.ok ? 'ok' : 'error');
+      if (res.ok) {
+        setSubStatus('ok');
+      } else {
+        setSubError(await getFetchErrorMessage(res, t('subscribeError')));
+        setSubStatus('error');
+      }
     } catch {
+      setSubError(t('subscribeError'));
       setSubStatus('error');
     }
   };
@@ -336,7 +345,7 @@ export default function MagazineHome({
                         </button>
                       </form>
                     )}
-                    {subStatus === 'error' && <p className="text-white/70 text-xs mt-2">{t('subscribeError')}</p>}
+                    {subStatus === 'error' && <p className="text-white/70 text-xs mt-2">{subError}</p>}
                   </div>
                 </div>
               </div>

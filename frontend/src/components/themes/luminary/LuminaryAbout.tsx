@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ArrowRight, Mail } from 'lucide-react';
 import type { AboutProps } from '@/components/themes/ThemeRenderer';
+import { getFetchErrorMessage } from '@/lib/utils';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
 import { EditableSection } from '@/components/themes/shared/EditableSection';
 import { InlineEditable } from '@/components/themes/shared/InlineEditable';
@@ -16,6 +17,7 @@ export default function LuminaryAbout({ blog, categories, basePath, editMode, se
   const primaryColor = blog.primary_color || '#b8960c';
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [subError, setSubError] = useState('');
 
   const aboutConfig = blog.template_config?.about as Record<string, any> | undefined;
 
@@ -57,14 +59,21 @@ export default function LuminaryAbout({ blog, categories, basePath, editMode, se
     e.preventDefault();
     if (!email.trim()) return;
     setSubStatus('loading');
+    setSubError('');
     try {
       const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      setSubStatus(res.ok ? 'ok' : 'error');
+      if (res.ok) {
+        setSubStatus('ok');
+      } else {
+        setSubError(await getFetchErrorMessage(res, t('subscribeError')));
+        setSubStatus('error');
+      }
     } catch {
+      setSubError(t('subscribeError'));
       setSubStatus('error');
     }
   };
@@ -224,7 +233,7 @@ export default function LuminaryAbout({ blog, categories, basePath, editMode, se
                 </button>
               </form>
             )}
-            {subStatus === 'error' && <p className="font-sans text-xs text-red-400 mt-3">Something went wrong. Try again.</p>}
+            {subStatus === 'error' && <p className="font-sans text-xs text-red-400 mt-3">{subError}</p>}
             <p className="font-sans text-xs text-zinc-600 mt-6">Unsubscribe anytime.</p>
           </div>
         </section>

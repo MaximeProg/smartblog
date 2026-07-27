@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { TrendingUp, BookOpen, Hash, Mail } from 'lucide-react';
 import type { BlogInfo, PublicArticle, PublicCategory, TemplateConfig } from '@/lib/public-api';
+import { getFetchErrorMessage } from '@/lib/utils';
 import { AdRotator } from './AdRotator';
 
 interface ThemeSidebarProps {
@@ -35,6 +36,7 @@ export function ThemeSidebar({
   const t = useTranslations('publicBlog');
   const [email, setEmail]         = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [subError, setSubError]   = useState('');
 
   const primaryColor = blog.primary_color || '#18181b';
 
@@ -66,14 +68,21 @@ export function ThemeSidebar({
     e.preventDefault();
     if (!email.trim()) return;
     setSubStatus('loading');
+    setSubError('');
     try {
       const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      setSubStatus(res.ok ? 'ok' : 'error');
+      if (res.ok) {
+        setSubStatus('ok');
+      } else {
+        setSubError(await getFetchErrorMessage(res, t('subscribeError')));
+        setSubStatus('error');
+      }
     } catch {
+      setSubError(t('subscribeError'));
       setSubStatus('error');
     }
   }
@@ -201,6 +210,7 @@ export function ThemeSidebar({
               </button>
             </form>
           )}
+          {subStatus === 'error' && <p className="text-[11px] text-red-300 mt-2">{subError}</p>}
         </div>
       )}
     </aside>

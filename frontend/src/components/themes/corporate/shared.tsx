@@ -9,6 +9,7 @@ import {
   Facebook, Twitter, Instagram, Youtube, Linkedin, Rss, ChevronRight,
 } from 'lucide-react';
 import type { PublicArticle, PublicCategory } from '@/lib/public-api';
+import { getFetchErrorMessage } from '@/lib/utils';
 import { VideoCardThumb } from '../shared/VideoCardThumb';
 import { ShareButtons } from '../shared/ShareButtons';
 import { InlineEditable } from '../shared/InlineEditable';
@@ -676,19 +677,27 @@ export function NewsletterSection({
   const t = useTranslations('publicBlog');
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [subError, setSubError] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
     setStatus('loading');
+    setSubError('');
     try {
       const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      setStatus(res.ok ? 'ok' : 'error');
+      if (res.ok) {
+        setStatus('ok');
+      } else {
+        setSubError(await getFetchErrorMessage(res, t('subscribeError')));
+        setStatus('error');
+      }
     } catch {
+      setSubError(t('subscribeError'));
       setStatus('error');
     }
   };
@@ -727,7 +736,7 @@ export function NewsletterSection({
           </form>
         )}
 
-        {status === 'error' && <p className="text-white/70 text-sm mt-3">{t('subscribeError')}</p>}
+        {status === 'error' && <p className="text-white/70 text-sm mt-3">{subError}</p>}
         <p className="text-white/40 text-xs mt-4">{t('noSpam')}</p>
       </div>
     </section>

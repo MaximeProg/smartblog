@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ArrowRight, BookOpen, Clock } from 'lucide-react';
 import type { HomeProps } from '../ThemeRenderer';
+import { getFetchErrorMessage } from '@/lib/utils';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
 import { EditableSection } from '../shared/EditableSection';
 import { InlineEditable } from '../shared/InlineEditable';
@@ -62,6 +63,7 @@ export default function EditorialHome({
 
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [subError, setSubError] = useState('');
 
   const aHref = useCallback(
     (s: string) => {
@@ -76,14 +78,21 @@ export default function EditorialHome({
     e.preventDefault();
     if (!email.trim()) return;
     setSubStatus('loading');
+    setSubError('');
     try {
       const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      setSubStatus(res.ok ? 'ok' : 'error');
+      if (res.ok) {
+        setSubStatus('ok');
+      } else {
+        setSubError(await getFetchErrorMessage(res, t('subscribeError')));
+        setSubStatus('error');
+      }
     } catch {
+      setSubError(t('subscribeError'));
       setSubStatus('error');
     }
   };
@@ -333,7 +342,7 @@ export default function EditorialHome({
                 </button>
               </form>
             )}
-            {subStatus === 'error' && <p className="text-xs text-red-400 mt-3">{t('subscribeError')}</p>}
+            {subStatus === 'error' && <p className="text-xs text-red-400 mt-3">{subError}</p>}
             {newsletterDisclaimer && <p className="text-xs text-zinc-600 mt-4">{newsletterDisclaimer}</p>}
           </div>
         </div>

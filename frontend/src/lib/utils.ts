@@ -83,3 +83,23 @@ export function getErrorMessage(err: unknown, fallback: string): string {
   }
   return fallback;
 }
+
+/**
+ * Same idea as getErrorMessage(), but for raw `fetch()` Response objects
+ * (used by public/theme components that call the Next.js API proxy routes
+ * directly instead of the axios `api` instance) — reads the JSON body and
+ * extracts the real backend message using the same two possible shapes.
+ */
+export async function getFetchErrorMessage(res: Response, fallback: string): Promise<string> {
+  try {
+    const data = await res.json();
+    if (typeof data?.message === 'string' && data.message) return data.message;
+    if (typeof data?.detail === 'string' && data.detail) return data.detail;
+    if (data?.detail && typeof data.detail === 'object' && typeof data.detail.message === 'string') {
+      return data.detail.message;
+    }
+  } catch {
+    // body wasn't JSON — fall through to fallback
+  }
+  return fallback;
+}

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ArrowRight, Check, Loader2, AlertCircle } from 'lucide-react';
 import { platformApi } from '@/lib/api';
+import { getErrorMessage } from '@/lib/utils';
 
 interface FormConfig {
   title: string;
@@ -41,7 +42,7 @@ export function ContactForm({
       await platformApi.sendContactMessage({ channel, ...form });
       setSubmitted(true);
     } catch (err: any) {
-      setError(err?.response?.status === 429 ? errors.rateLimited : errors.generic);
+      setError(err?.response?.status === 429 ? errors.rateLimited : getErrorMessage(err, errors.generic));
     } finally {
       setSending(false);
     }

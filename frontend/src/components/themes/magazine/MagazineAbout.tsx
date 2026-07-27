@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ArrowRight, Mail } from 'lucide-react';
 import type { AboutProps } from '@/components/themes/ThemeRenderer';
+import { getFetchErrorMessage } from '@/lib/utils';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { EditableSection } from '@/components/themes/shared/EditableSection';
 import { InlineEditable } from '@/components/themes/shared/InlineEditable';
@@ -16,6 +17,7 @@ export default function MagazineAbout({ blog, categories, basePath, editMode, se
   const primaryColor = blog.primary_color || '#e11d48';
   const [email, setEmail] = useState('');
   const [subStatus, setSubStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+  const [subError, setSubError] = useState('');
 
   const aboutConfig = blog.template_config?.about as Record<string, any> | undefined;
 
@@ -57,14 +59,21 @@ export default function MagazineAbout({ blog, categories, basePath, editMode, se
     e.preventDefault();
     if (!email.trim()) return;
     setSubStatus('loading');
+    setSubError('');
     try {
       const res = await fetch(`/api/public-proxy/${blog.slug}/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      setSubStatus(res.ok ? 'ok' : 'error');
+      if (res.ok) {
+        setSubStatus('ok');
+      } else {
+        setSubError(await getFetchErrorMessage(res, t('subscribeError')));
+        setSubStatus('error');
+      }
     } catch {
+      setSubError(t('subscribeError'));
       setSubStatus('error');
     }
   };
@@ -232,7 +241,7 @@ export default function MagazineAbout({ blog, categories, basePath, editMode, se
               </form>
             )}
             {subStatus === 'error' && (
-              <p className="text-white/70 text-xs mt-3">Something went wrong. Please try again.</p>
+              <p className="text-white/70 text-xs mt-3">{subError}</p>
             )}
           </div>
         </div>
