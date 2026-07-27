@@ -2840,7 +2840,16 @@
     "sslActive": "SSL aktív",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "A blogod még nem elérhető — az olvasók nem tudnak hozzáférni.",
-    "bannerAddDomain": "Domain hozzáadása"
+    "bannerAddDomain": "Domain hozzáadása",
+    "orderRegisteringTitle": "{domain} regisztrálása…",
+    "orderRegisteringDesc": "A fizetés megerősítve — jelenleg véglegesítjük a domain-regisztrációt és a DNS-beállításokat. Ez általában kevesebb mint egy percet vesz igénybe.",
+    "orderFailedTitle": "A regisztráció nem sikerült a {domain} oldalon",
+    "orderFailedDesc": "A befizetés beérkezett, de a regisztráció nem sikerült: {error}",
+    "orderFailedSupport": "Csapatunkat már értesítettük. Ha a probléma nem oldódik meg hamarosan, kérjük, forduljon az ügyfélszolgálathoz.",
+    "orderRefundPendingTitle": "Az „{domain}” című termék visszatérítése folyamatban van",
+    "orderRefundPendingDesc": "A regisztráció nem sikerült, a visszatérítés feldolgozása folyamatban van.",
+    "orderRefundedTitle": "{domain} — visszatérítve",
+    "orderRefundedDesc": "A regisztráció sikertelensége miatt a megrendelés visszatérítésre került."
   },
   "twoFA": {
     "setupTitle": "A kétfaktoros hitelesítés beállítása",

@@ -2840,7 +2840,16 @@
     "sslActive": "SSL увімкнено",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Ваш блог ще не опубліковано — читачі не можуть отримати до нього доступ.",
-    "bannerAddDomain": "Додати домен"
+    "bannerAddDomain": "Додати домен",
+    "orderRegisteringTitle": "Реєстрація {domain}…",
+    "orderRegisteringDesc": "Оплата підтверджена — ми завершуємо реєстрацію домену та налаштування DNS. Зазвичай це займає менше хвилини.",
+    "orderFailedTitle": "Не вдалося зареєструвати домен {domain}",
+    "orderFailedDesc": "Ваш платіж було отримано, але реєстрацію не вдалося завершити: {error}",
+    "orderFailedSupport": "Наша команда вже отримала повідомлення. Якщо проблема не буде вирішена найближчим часом, будь ласка, зверніться до служби підтримки.",
+    "orderRefundPendingTitle": "Триває процес повернення коштів за гру «{domain}»",
+    "orderRefundPendingDesc": "Реєстрація не вдалася, і зараз здійснюється повернення коштів.",
+    "orderRefundedTitle": "{domain} — повернено",
+    "orderRefundedDesc": "Цей замовлення було відшкодовано після того, як реєстрація не відбулася."
   },
   "twoFA": {
     "setupTitle": "Налаштувати двофакторну автентифікацію",

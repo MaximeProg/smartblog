@@ -1696,7 +1696,7 @@
           "1 kirjoittaja",
           "1 GB tallennustilaa",
           "smarterbloggers.com-aliverkkotunnus",
-          "Mukana yritysmalli"
+          "Mukana yrityskäyttöön tarkoitettu malli"
         ]
       },
       "starter": {
@@ -2840,7 +2840,16 @@
     "sslActive": "SSL käytössä",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Blogiasi ei ole vielä julkaistu — lukijat eivät pääse lukemaan sitä.",
-    "bannerAddDomain": "Lisää verkkotunnus"
+    "bannerAddDomain": "Lisää verkkotunnus",
+    "orderRegisteringTitle": "{domain}:n rekisteröinti…",
+    "orderRegisteringDesc": "Maksu on vahvistettu — viimeistelemme parhaillaan verkkotunnuksen rekisteröintiä ja DNS-asetuksia. Tämä kestää yleensä alle minuutin.",
+    "orderFailedTitle": "Rekisteröinti epäonnistui osoitteessa {domain}",
+    "orderFailedDesc": "Maksusi on vastaanotettu, mutta rekisteröintiä ei voitu viedä loppuun: {error}",
+    "orderFailedSupport": "Tiimillemme on ilmoitettu asiasta. Jos ongelmaa ei saada pian ratkaistua, ota yhteyttä tukeen.",
+    "orderRefundPendingTitle": "{domain} -tuotteen hyvitys on käynnissä",
+    "orderRefundPendingDesc": "Rekisteröinti epäonnistui, ja hyvitystä käsitellään parhaillaan.",
+    "orderRefundedTitle": "{domain} — palautettu",
+    "orderRefundedDesc": "Tämä tilaus hyvittiin, kun rekisteröinti epäonnistui."
   },
   "twoFA": {
     "setupTitle": "Kaksivaiheisen todennuksen määrittäminen",

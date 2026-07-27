@@ -6,10 +6,10 @@ import { useState } from 'react';
 import {
   Globe, Plus, Trash2, RefreshCw, CheckCircle2, XCircle,
   Clock, Copy, Check, Loader2, ExternalLink, ChevronDown, ChevronUp,
-  Search, ShoppingCart, Star, Shield, Link2,
+  Search, ShoppingCart, Star, Shield, Link2, AlertTriangle,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { domainsApi, paymentsApi, type CustomDomainInfo, type DomainSearchResult, type CryptoPaymentResponse } from '@/lib/api';
+import { domainsApi, paymentsApi, type CustomDomainInfo, type DomainSearchResult, type CryptoPaymentResponse, type DomainOrderStatusInfo } from '@/lib/api';
 import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth.store';
@@ -70,9 +70,21 @@ export default function DomainsPage() {
     address: '', city: '', country: '', zipcode: '', years: 1, autoRenew: false,
   });
 
+  const { data: pendingOrders = [] } = useQuery({
+    queryKey: ['domain-pending-orders', blogId],
+    queryFn: async () => { const { data } = await domainsApi.pendingOrders(blogId); return data; },
+    refetchInterval: (query) => {
+      const orders = query.state.data ?? [];
+      const stillActive = orders.some((o) => o.status === 'paid' || o.status === 'registering');
+      return stillActive ? 4000 : false;
+    },
+  });
+  const hasActiveOrder = pendingOrders.some((o) => o.status === 'paid' || o.status === 'registering');
+
   const { data: domains = [], isLoading } = useQuery({
     queryKey: ['domains', blogId],
     queryFn: async () => { const { data } = await domainsApi.list(blogId); return data; },
+    refetchInterval: hasActiveOrder ? 4000 : false,
   });
 
   const addMut = useMutation({
@@ -142,6 +154,7 @@ export default function DomainsPage() {
     setPayment(null);
     setPurchaseTarget(null);
     qc.invalidateQueries({ queryKey: ['domains', blogId] });
+    qc.invalidateQueries({ queryKey: ['domain-pending-orders', blogId] });
     toast({ title: t('purchaseSuccess') });
   }
 
@@ -375,6 +388,57 @@ export default function DomainsPage() {
           </div>
         )}
         </>)}
+
+        {/* ── Pending/failed domain orders (toujours visible) ─────────── */}
+        {pendingOrders.length > 0 && (
+          <div className="space-y-2.5">
+            {pendingOrders.map((o: DomainOrderStatusInfo) => {
+              if (o.status === 'paid' || o.status === 'registering') {
+                return (
+                  <div key={o.id} className="flex items-start gap-3 rounded-2xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-4">
+                    <Loader2 className="h-4 w-4 text-blue-500 animate-spin shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-[13px] font-bold text-blue-700 dark:text-blue-400">{t('orderRegisteringTitle', { domain: o.domain_name })}</p>
+                      <p className="text-[12px] text-blue-600/80 dark:text-blue-400/80 mt-0.5">{t('orderRegisteringDesc')}</p>
+                    </div>
+                  </div>
+                );
+              }
+              if (o.status === 'registration_failed') {
+                return (
+                  <div key={o.id} className="flex items-start gap-3 rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
+                    <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-[13px] font-bold text-red-700 dark:text-red-400">{t('orderFailedTitle', { domain: o.domain_name })}</p>
+                      <p className="text-[12px] text-red-600/80 dark:text-red-400/80 mt-0.5">{t('orderFailedDesc', { error: o.error_message ?? '—' })}</p>
+                      <p className="text-[11.5px] text-red-500/70 dark:text-red-400/70 mt-1">{t('orderFailedSupport')}</p>
+                    </div>
+                  </div>
+                );
+              }
+              if (o.status === 'refund_pending') {
+                return (
+                  <div key={o.id} className="flex items-start gap-3 rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-4">
+                    <Clock className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-[13px] font-bold text-amber-700 dark:text-amber-400">{t('orderRefundPendingTitle', { domain: o.domain_name })}</p>
+                      <p className="text-[12px] text-amber-600/80 dark:text-amber-400/80 mt-0.5">{t('orderRefundPendingDesc')}</p>
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <div key={o.id} className="flex items-start gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4">
+                  <CheckCircle2 className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-[13px] font-bold text-slate-600 dark:text-slate-300">{t('orderRefundedTitle', { domain: o.domain_name })}</p>
+                    <p className="text-[12px] text-slate-500 dark:text-slate-400 mt-0.5">{t('orderRefundedDesc')}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* ── Domain list (toujours visible, indépendamment de l'onglet) ── */}
         {isLoading ? (

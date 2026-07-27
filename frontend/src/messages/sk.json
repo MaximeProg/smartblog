@@ -1741,7 +1741,7 @@
           "Neobmedzený úložný priestor",
           "Viacdoménové",
           "White-label",
-          "Záruka SLA",
+          "Zaručená SLA",
           "Špecializované zaškolenie",
           "Podpora 24 hodín denne, 7 dní v týždni"
         ]
@@ -2840,7 +2840,16 @@
     "sslActive": "SSL je aktívne",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Váš blog ešte nie je sprístupnený – čitatelia k nemu nemajú prístup.",
-    "bannerAddDomain": "Pridať doménu"
+    "bannerAddDomain": "Pridať doménu",
+    "orderRegisteringTitle": "Registrácia {domain}…",
+    "orderRegisteringDesc": "Platba bola potvrdená — práve dokončujeme registráciu domény a nastavenie DNS. Zvyčajne to trvá menej ako minútu.",
+    "orderFailedTitle": "Registrácia na stránke {domain} sa nepodarila",
+    "orderFailedDesc": "Vaša platba bola prijatá, registrácia sa však nepodarilo dokončiť: {error}",
+    "orderFailedSupport": "Náš tím bol o tom informovaný. Ak sa tento problém čoskoro nevyrieši, obráťte sa, prosím, na podporu.",
+    "orderRefundPendingTitle": "Prebieha vrátenie peňazí za hru „{domain}“",
+    "orderRefundPendingDesc": "Registrácia sa nepodarila a v súčasnosti prebieha spracovanie vrátenia peňazí.",
+    "orderRefundedTitle": "{domain} — vrátené",
+    "orderRefundedDesc": "Táto objednávka bola vrátená po tom, čo sa registrácia nezdařila."
   },
   "twoFA": {
     "setupTitle": "Nastavte dvojfaktorovú autentifikáciu",

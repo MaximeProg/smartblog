@@ -2840,7 +2840,16 @@
     "sslActive": "SSL ativo",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "O teu blogue ainda não está online — os leitores não conseguem aceder a ele.",
-    "bannerAddDomain": "Adicionar domínio"
+    "bannerAddDomain": "Adicionar domínio",
+    "orderRegisteringTitle": "A registar {domain}…",
+    "orderRegisteringDesc": "Pagamento confirmado — estamos a finalizar o registo do domínio e a configuração do DNS. Normalmente, isto demora menos de um minuto.",
+    "orderFailedTitle": "Falha no registo de {domain}",
+    "orderFailedDesc": "O seu pagamento foi recebido, mas não foi possível concluir o registo: {error}",
+    "orderFailedSupport": "A nossa equipa já foi informada. Se o problema não for resolvido em breve, contacte o apoio ao cliente.",
+    "orderRefundPendingTitle": "Reembolso em curso para {domain}",
+    "orderRefundPendingDesc": "O registo não foi bem-sucedido e está a ser processado um reembolso.",
+    "orderRefundedTitle": "{domain} — reembolsado",
+    "orderRefundedDesc": "Esta encomenda foi reembolsada após a falha no registo."
   },
   "twoFA": {
     "setupTitle": "Configurar a autenticação de dois fatores",

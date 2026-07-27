@@ -2840,7 +2840,16 @@
     "sslActive": "SSL ir ieslēgts",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Tavs blogs vēl nav pieejams — lasītāji nevar to apmeklēt.",
-    "bannerAddDomain": "Pievienot domēnu"
+    "bannerAddDomain": "Pievienot domēnu",
+    "orderRegisteringTitle": "{domain} reģistrēšana…",
+    "orderRegisteringDesc": "Maksājums apstiprināts — pašlaik pabeidzam domēna reģistrāciju un DNS iestatīšanu. Tas parasti aizņem mazāk nekā minūti.",
+    "orderFailedTitle": "Reģistrācija neizdevās vietnei {domain}",
+    "orderFailedDesc": "Jūsu maksājums ir saņemts, taču reģistrāciju neizdevās pabeigt: {error}",
+    "orderFailedSupport": "Mūsu komanda ir informēta. Ja problēma netiks drīz atrisināta, lūdzu, sazinieties ar atbalsta dienestu.",
+    "orderRefundPendingTitle": "Notiek naudas atmaksa par „{domain}“",
+    "orderRefundPendingDesc": "Reģistrācija neizdevās, un tiek veikta naudas atmaksa.",
+    "orderRefundedTitle": "{domain} — atmaksāts",
+    "orderRefundedDesc": "Šis pasūtījums tika atgriezts pēc tam, kad reģistrācija neizdevās."
   },
   "twoFA": {
     "setupTitle": "Iestatiet divpakāpju autentifikāciju",

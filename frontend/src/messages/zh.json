@@ -2840,7 +2840,16 @@
     "sslActive": "SSL 已启用",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "您的博客尚未发布——读者无法访问。",
-    "bannerAddDomain": "添加域名"
+    "bannerAddDomain": "添加域名",
+    "orderRegisteringTitle": "正在注册 {domain}…",
+    "orderRegisteringDesc": "付款已确认——我们正在完成域名注册和DNS设置。这通常不到一分钟即可完成。",
+    "orderFailedTitle": "{domain} 的注册失败",
+    "orderFailedDesc": "已收到您的付款，但注册未能完成：{error}",
+    "orderFailedSupport": "我们团队已收到通知。如果问题无法尽快解决，请联系客服。",
+    "orderRefundPendingTitle": "{domain} 的退款正在处理中",
+    "orderRefundPendingDesc": "注册失败，退款正在处理中。",
+    "orderRefundedTitle": "{domain} — 已退款",
+    "orderRefundedDesc": "该订单因注册失败而被退款。"
   },
   "twoFA": {
     "setupTitle": "设置双因素认证",

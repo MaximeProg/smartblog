@@ -79,6 +79,15 @@ class DomainHistoryEntry(BaseModel):
     created_at: datetime
 
 
+class DomainOrderStatusResponse(BaseModel):
+    id: str
+    domain_name: str
+    status: str
+    error_message: str | None
+    created_at: datetime
+    registered_at: datetime | None
+
+
 # ── GET /domains ──────────────────────────────────────────────────
 
 @router.get("", response_model=list[DomainResponse])
@@ -91,6 +100,50 @@ async def list_domains(tenant_id: uuid.UUID, payload: TokenPayload, db: DBSessio
     )
     domains = result.scalars().all()
     return [_to_response(d, tenant_id) for d in domains]
+
+
+# ── GET /domains/pending-orders — commandes payées sans domaine lié encore ──
+
+@router.get("/pending-orders", response_model=list[DomainOrderStatusResponse])
+async def list_pending_domain_orders(tenant_id: uuid.UUID, payload: TokenPayload, db: DBSession):
+    """Commandes d'achat/renouvellement dont le paiement est confirmé mais qui
+    n'ont pas (encore, ou plus jamais) de custom_domains correspondante — en
+    cours d'enregistrement par le worker, ou en échec. Sans cet endpoint, un
+    achat payé mais bloqué (registrar en erreur, ou juste en cours) est
+    totalement invisible sur la page domaines (bug réel trouvé le 2026-07-27)."""
+    await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
+
+    from app.models.domain import DomainOrder
+    from app.models.enums import DomainOrderStatus
+
+    result = await db.execute(
+        select(DomainOrder)
+        .where(
+            DomainOrder.tenant_id == tenant_id,
+            DomainOrder.custom_domain_id.is_(None),
+            DomainOrder.status.in_([
+                DomainOrderStatus.PAID,
+                DomainOrderStatus.REGISTERING,
+                DomainOrderStatus.REGISTRATION_FAILED,
+                DomainOrderStatus.REFUND_PENDING,
+                DomainOrderStatus.REFUNDED,
+            ]),
+        )
+        .order_by(DomainOrder.created_at.desc())
+        .limit(10)
+    )
+    orders = result.scalars().all()
+    return [
+        DomainOrderStatusResponse(
+            id=str(o.id),
+            domain_name=o.domain_name,
+            status=o.status.value,
+            error_message=o.error_message,
+            created_at=o.created_at,
+            registered_at=o.registered_at,
+        )
+        for o in orders
+    ]
 
 
 # ── POST /domains ─────────────────────────────────────────────────

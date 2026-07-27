@@ -2840,7 +2840,16 @@
     "sslActive": "SSL actief",
     "placeholderCustomDomainExample": "blog.mijnsite.com",
     "bannerNotVisible": "Je blog is nog niet online — lezers hebben er geen toegang toe.",
-    "bannerAddDomain": "Domein toevoegen"
+    "bannerAddDomain": "Domein toevoegen",
+    "orderRegisteringTitle": "{domain} wordt geregistreerd…",
+    "orderRegisteringDesc": "Betaling bevestigd — we ronden de domeinregistratie en DNS-instellingen af. Dit duurt meestal minder dan een minuut.",
+    "orderFailedTitle": "De registratie voor {domain} is mislukt",
+    "orderFailedDesc": "Uw betaling is ontvangen, maar de registratie kon niet worden voltooid: {error}",
+    "orderFailedSupport": "Ons team is hiervan op de hoogte gesteld. Mocht dit niet snel worden opgelost, neem dan contact op met de klantenservice.",
+    "orderRefundPendingTitle": "Terugbetaling voor {domain} wordt momenteel verwerkt",
+    "orderRefundPendingDesc": "De registratie is mislukt en de terugbetaling wordt momenteel verwerkt.",
+    "orderRefundedTitle": "{domain} — terugbetaald",
+    "orderRefundedDesc": "Deze bestelling is terugbetaald nadat de registratie was mislukt."
   },
   "twoFA": {
     "setupTitle": "Tweefactorauthenticatie instellen",

@@ -2840,7 +2840,16 @@
     "sslActive": "SSL ενεργό",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Το ιστολόγιό σου δεν έχει δημοσιευτεί ακόμα — οι αναγνώστες δεν μπορούν να έχουν πρόσβαση σε αυτό.",
-    "bannerAddDomain": "Προσθήκη domain"
+    "bannerAddDomain": "Προσθήκη domain",
+    "orderRegisteringTitle": "Εγγραφή του {domain}…",
+    "orderRegisteringDesc": "Η πληρωμή επιβεβαιώθηκε — ολοκληρώνουμε την καταχώριση του domain και τη ρύθμιση του DNS. Αυτό συνήθως διαρκεί λιγότερο από ένα λεπτό.",
+    "orderFailedTitle": "Η εγγραφή για το {domain} απέτυχε",
+    "orderFailedDesc": "Η πληρωμή σας ελήφθη, αλλά η εγγραφή δεν μπόρεσε να ολοκληρωθεί: {error}",
+    "orderFailedSupport": "Η ομάδα μας έχει ενημερωθεί. Εάν το πρόβλημα δεν επιλυθεί σύντομα, παρακαλούμε επικοινωνήστε με την υποστήριξη.",
+    "orderRefundPendingTitle": "Η επιστροφή χρημάτων για το «{domain}» βρίσκεται σε εξέλιξη",
+    "orderRefundPendingDesc": "Η εγγραφή απέτυχε και βρίσκεται σε εξέλιξη η επιστροφή χρημάτων.",
+    "orderRefundedTitle": "{domain} — επιστράφηκε",
+    "orderRefundedDesc": "Η παραγγελία αυτή επιστράφηκε μετά την αποτυχία της εγγραφής."
   },
   "twoFA": {
     "setupTitle": "Ρύθμιση της επαλήθευσης δύο παραγόντων",

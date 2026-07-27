@@ -2840,7 +2840,16 @@
     "sslActive": "SSL etkin",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Blogunuz henüz yayında değil — okuyucular blogunuza erişemiyor.",
-    "bannerAddDomain": "Etki alanı ekle"
+    "bannerAddDomain": "Etki alanı ekle",
+    "orderRegisteringTitle": "{domain}'i kaydediliyor…",
+    "orderRegisteringDesc": "Ödeme onaylandı — alan adı kaydı ve DNS ayarlarını tamamlıyoruz. Bu işlem genellikle bir dakikadan az sürer.",
+    "orderFailedTitle": "{domain} adresi için kayıt işlemi başarısız oldu",
+    "orderFailedDesc": "Ödemeniz alındı, ancak kayıt işlemi tamamlanamadı: {error}",
+    "orderFailedSupport": "Ekibimize durum bildirildi. Sorun kısa sürede çözülmezse lütfen destek ekibiyle iletişime geçin.",
+    "orderRefundPendingTitle": "{domain} için geri ödeme işlemi devam ediyor",
+    "orderRefundPendingDesc": "Kayıt işlemi başarısız oldu ve para iadesi işlemleri devam ediyor.",
+    "orderRefundedTitle": "{domain} — iade edildi",
+    "orderRefundedDesc": "Kayıt işlemi başarısız olunca bu siparişin bedeli iade edildi."
   },
   "twoFA": {
     "setupTitle": "İki faktörlü kimlik doğrulamayı ayarlayın",

@@ -2840,7 +2840,16 @@
     "sslActive": "SSL je aktivní",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Váš blog ještě není zveřejněn – čtenáři k němu nemají přístup.",
-    "bannerAddDomain": "Přidat doménu"
+    "bannerAddDomain": "Přidat doménu",
+    "orderRegisteringTitle": "Probíhá registrace {domain}…",
+    "orderRegisteringDesc": "Platba byla potvrzena – právě dokončujeme registraci domény a nastavení DNS. To obvykle trvá méně než minutu.",
+    "orderFailedTitle": "Registrace na stránce {domain} se nezdařila",
+    "orderFailedDesc": "Vaše platba byla přijata, ale registraci se nepodařilo dokončit: {error}",
+    "orderFailedSupport": "Náš tým již byl informován. Pokud se problém brzy nevyřeší, obraťte se prosím na podporu.",
+    "orderRefundPendingTitle": "Probíhá vrácení peněz za hru „{domain}“",
+    "orderRefundPendingDesc": "Registrace se nezdařila a v současné době se zpracovává vrácení peněz.",
+    "orderRefundedTitle": "{domain} — vráceno",
+    "orderRefundedDesc": "Tato objednávka byla vrácena poté, co se nepodařilo provést registraci."
   },
   "twoFA": {
     "setupTitle": "Nastavení dvoufaktorového ověřování",

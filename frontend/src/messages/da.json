@@ -2840,7 +2840,16 @@
     "sslActive": "SSL er aktiveret",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Din blog er endnu ikke online — læserne kan ikke få adgang til den.",
-    "bannerAddDomain": "Tilføj domæne"
+    "bannerAddDomain": "Tilføj domæne",
+    "orderRegisteringTitle": "{domain} registreres…",
+    "orderRegisteringDesc": "Betalingen er bekræftet — vi er i gang med at færdiggøre domæneregistreringen og DNS-indstillingerne. Det tager normalt under et minut.",
+    "orderFailedTitle": "Registreringen af {domain} mislykkedes",
+    "orderFailedDesc": "Din betaling er modtaget, men tilmeldingen kunne ikke gennemføres: {error}",
+    "orderFailedSupport": "Vores team er blevet underrettet. Hvis problemet ikke bliver løst snart, bedes du kontakte supporten.",
+    "orderRefundPendingTitle": "Der er en tilbagebetaling i gang for {domain}",
+    "orderRefundPendingDesc": "Registreringen mislykkedes, og der er iværksat en refusion.",
+    "orderRefundedTitle": "{domain} — refunderet",
+    "orderRefundedDesc": "Denne ordre blev refunderet, efter at registreringen mislykkedes."
   },
   "twoFA": {
     "setupTitle": "Konfigurer tofaktorautentificering",

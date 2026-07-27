@@ -2840,7 +2840,16 @@
     "sslActive": "SSL įjungtas",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Jūsų tinklaraštis dar neveikia — skaitytojai negali jo pasiekti.",
-    "bannerAddDomain": "Pridėti domeną"
+    "bannerAddDomain": "Pridėti domeną",
+    "orderRegisteringTitle": "Registruojama „{domain}“…",
+    "orderRegisteringDesc": "Mokėjimas patvirtintas — šiuo metu baigiame domeno registraciją ir DNS nustatymus. Tai paprastai užtrunka mažiau nei minutę.",
+    "orderFailedTitle": "Nepavyko užregistruoti „{domain}“",
+    "orderFailedDesc": "Jūsų mokėjimas buvo gautas, tačiau registracijos užbaigti nepavyko: {error}",
+    "orderFailedSupport": "Mūsų komanda jau informuota. Jei problema nebus greitai išspręsta, prašome kreiptis į pagalbos tarnybą.",
+    "orderRefundPendingTitle": "Vyksta pinigų grąžinimas už „{domain}“",
+    "orderRefundPendingDesc": "Registracija nepavyko, šiuo metu tvarkomas pinigų grąžinimas.",
+    "orderRefundedTitle": "{domain} — grąžinta",
+    "orderRefundedDesc": "Šis užsakymas buvo grąžintas, nes nepavyko jį užregistruoti."
   },
   "twoFA": {
     "setupTitle": "Nustatykite dviejų veiksnių autentifikavimą",

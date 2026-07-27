@@ -2840,7 +2840,16 @@
     "sslActive": "SSLが有効",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "あなたのブログはまだ公開されていません。読者はアクセスできません。",
-    "bannerAddDomain": "ドメインを追加"
+    "bannerAddDomain": "ドメインを追加",
+    "orderRegisteringTitle": "{domain}の登録中…",
+    "orderRegisteringDesc": "お支払いの確認が完了しました。現在、ドメイン登録とDNSの設定を最終調整中です。通常、これには1分もかかりません。",
+    "orderFailedTitle": "{domain} の登録に失敗しました",
+    "orderFailedDesc": "お支払いは確認できましたが、登録を完了できませんでした：{error}",
+    "orderFailedSupport": "弊社チームにはすでに連絡が入っています。もし近いうちに解決しない場合は、サポートまでご連絡ください。",
+    "orderRefundPendingTitle": "{domain} の返金手続き中です",
+    "orderRefundPendingDesc": "登録に失敗しました。現在、返金手続きが進められています。",
+    "orderRefundedTitle": "{domain} — 返金済み",
+    "orderRefundedDesc": "この注文は、登録に失敗したため、返金されました。"
   },
   "twoFA": {
     "setupTitle": "二要素認証を設定する",

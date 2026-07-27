@@ -1721,7 +1721,7 @@
         "features": [
           "10 bloguri",
           "Articole nelimitate",
-          "50.000 de abonați la buletinul informativ",
+          "50.000 de abonați la newsletter",
           "10 autori",
           "50 GB spațiu de stocare",
           "Domeniu personalizat",
@@ -2840,7 +2840,16 @@
     "sslActive": "SSL activ",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Blogul tău nu este încă public — cititorii nu îl pot accesa.",
-    "bannerAddDomain": "Adăugare domeniu"
+    "bannerAddDomain": "Adăugare domeniu",
+    "orderRegisteringTitle": "Se înregistrează {domain}…",
+    "orderRegisteringDesc": "Plata a fost confirmată — suntem pe cale să finalizăm înregistrarea domeniului și configurarea DNS. De obicei, acest proces durează mai puțin de un minut.",
+    "orderFailedTitle": "Înregistrarea la adresa {domain} a eșuat",
+    "orderFailedDesc": "Plata dumneavoastră a fost primită, dar înregistrarea nu a putut fi finalizată: {error}",
+    "orderFailedSupport": "Echipa noastră a fost informată. Dacă problema nu se rezolvă în curând, vă rugăm să contactați serviciul de asistență.",
+    "orderRefundPendingTitle": "Rambursarea este în curs pentru {domain}",
+    "orderRefundPendingDesc": "Înregistrarea a eșuat și se procesează rambursarea.",
+    "orderRefundedTitle": "{domain} — rambursat",
+    "orderRefundedDesc": "Această comandă a fost rambursată după ce înregistrarea a eșuat."
   },
   "twoFA": {
     "setupTitle": "Configurarea autentificării în doi pași",

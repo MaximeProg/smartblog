@@ -2840,7 +2840,16 @@
     "sslActive": "SSL je aktiven",
     "placeholderCustomDomainExample": "blog.moja-spletna-stran.com",
     "bannerNotVisible": "Tvoj blog še ni objavljen — bralci nimajo dostopa do njega.",
-    "bannerAddDomain": "Dodaj domeno"
+    "bannerAddDomain": "Dodaj domeno",
+    "orderRegisteringTitle": "Prijava na {domain}…",
+    "orderRegisteringDesc": "Plačilo je potrjeno — trenutno zaključujemo registracijo domene in nastavitev DNS. To običajno traja manj kot minuto.",
+    "orderFailedTitle": "Prijava na naslov {domain} ni uspela",
+    "orderFailedDesc": "Vaše plačilo je bilo prejeto, vendar se registracija ni mogla zaključiti: {error}",
+    "orderFailedSupport": "Naša ekipa je bila obveščena. Če se težava ne bo kmalu rešila, se obrnite na podporo uporabnikom.",
+    "orderRefundPendingTitle": "Poteka vračilo za »{domain}«",
+    "orderRefundPendingDesc": "Prijava ni uspela, vračilo pa je v postopku.",
+    "orderRefundedTitle": "{domain} — povrnjeno",
+    "orderRefundedDesc": "To naročilo je bilo povrnjeno, ker se registracija ni uspela izvesti."
   },
   "twoFA": {
     "setupTitle": "Nastavite dvofaktorsko avtentifikacijo",

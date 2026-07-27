@@ -933,6 +933,15 @@ export interface RegistrantInfo {
   zipcode: string;
 }
 
+export interface DomainOrderStatusInfo {
+  id: string;
+  domain_name: string;
+  status: 'paid' | 'registering' | 'registration_failed' | 'refund_pending' | 'refunded';
+  error_message: string | null;
+  created_at: string;
+  registered_at: string | null;
+}
+
 export const domainsApi = {
   list: (tenantId: string) =>
     api.get<CustomDomainInfo[]>(`/tenants/${tenantId}/domains`),
@@ -959,6 +968,9 @@ export const domainsApi = {
     api.get<{ action: string; level: string; details: string | null; created_at: string }[]>(
       `/tenants/${tenantId}/domains/${domainId}/history`,
     ),
+
+  pendingOrders: (tenantId: string) =>
+    api.get<DomainOrderStatusInfo[]>(`/tenants/${tenantId}/domains/pending-orders`),
 };
 
 // ─── AI ───────────────────────────────────────────────────────────────────────

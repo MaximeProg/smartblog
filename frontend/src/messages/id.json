@@ -2840,7 +2840,16 @@
     "sslActive": "SSL aktif",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Blog Anda belum ditayangkan — pembaca belum bisa mengaksesnya.",
-    "bannerAddDomain": "Tambahkan domain"
+    "bannerAddDomain": "Tambahkan domain",
+    "orderRegisteringTitle": "Mendaftarkan {domain}…",
+    "orderRegisteringDesc": "Pembayaran telah dikonfirmasi — kami sedang menyelesaikan proses pendaftaran domain dan pengaturan DNS. Proses ini biasanya memakan waktu kurang dari satu menit.",
+    "orderFailedTitle": "Pendaftaran untuk {domain} gagal",
+    "orderFailedDesc": "Pembayaran Anda telah diterima, namun proses pendaftaran tidak dapat diselesaikan: {error}",
+    "orderFailedSupport": "Tim kami sudah diberi tahu. Jika masalah ini tidak segera terselesaikan, silakan hubungi bagian dukungan.",
+    "orderRefundPendingTitle": "Proses pengembalian dana sedang berlangsung untuk {domain}",
+    "orderRefundPendingDesc": "Pendaftaran gagal dan pengembalian dana sedang diproses.",
+    "orderRefundedTitle": "{domain} — dikembalikan",
+    "orderRefundedDesc": "Pesanan ini telah dikembalikan dananya setelah proses pendaftaran gagal."
   },
   "twoFA": {
     "setupTitle": "Mengaktifkan otentikasi dua faktor",

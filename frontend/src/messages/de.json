@@ -2840,7 +2840,16 @@
     "sslActive": "SSL aktiv",
     "placeholderCustomDomainExample": "blog.meinewebsite.com",
     "bannerNotVisible": "Dein Blog ist noch nicht online – Leser können nicht darauf zugreifen.",
-    "bannerAddDomain": "Domain hinzufügen"
+    "bannerAddDomain": "Domain hinzufügen",
+    "orderRegisteringTitle": "{domain} wird registriert…",
+    "orderRegisteringDesc": "Zahlung bestätigt – wir schließen gerade die Domain-Registrierung und die DNS-Einrichtung ab. Dies dauert in der Regel weniger als eine Minute.",
+    "orderFailedTitle": "Die Registrierung für „{domain}“ ist fehlgeschlagen.",
+    "orderFailedDesc": "Ihre Zahlung ist eingegangen, die Anmeldung konnte jedoch nicht abgeschlossen werden: {error}",
+    "orderFailedSupport": "Unser Team wurde bereits informiert. Sollte das Problem nicht bald behoben sein, wenden Sie sich bitte an den Support.",
+    "orderRefundPendingTitle": "Rückerstattung für „{domain}“ wird derzeit bearbeitet",
+    "orderRefundPendingDesc": "Die Registrierung ist fehlgeschlagen, und die Rückerstattung wird derzeit bearbeitet.",
+    "orderRefundedTitle": "{domain} — erstattet",
+    "orderRefundedDesc": "Diese Bestellung wurde zurückerstattet, nachdem die Registrierung fehlgeschlagen war."
   },
   "twoFA": {
     "setupTitle": "Zwei-Faktor-Authentifizierung einrichten",

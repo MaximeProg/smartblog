@@ -1706,7 +1706,7 @@
         "features": [
           "3 bloggar",
           "500 artiklar",
-          "5 000 nyhetsbrevsprenumeranter",
+          "5 000 prenumeranter på nyhetsbrevet",
           "3 författare",
           "5 GB lagringsutrymme",
           "Anpassad domän",
@@ -2840,7 +2840,16 @@
     "sslActive": "SSL aktiverat",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Din blogg är inte publicerad än – läsarna kan inte komma åt den.",
-    "bannerAddDomain": "Lägg till domän"
+    "bannerAddDomain": "Lägg till domän",
+    "orderRegisteringTitle": "Registrerar {domain}…",
+    "orderRegisteringDesc": "Betalningen har bekräftats – vi håller på att slutföra domänregistreringen och DNS-inställningarna. Detta tar vanligtvis mindre än en minut.",
+    "orderFailedTitle": "Registreringen av {domain} misslyckades",
+    "orderFailedDesc": "Din betalning har mottagits, men registreringen kunde inte slutföras: {error}",
+    "orderFailedSupport": "Vårt team har underrättats. Om problemet inte löses inom kort, vänligen kontakta supporten.",
+    "orderRefundPendingTitle": "Återbetalning pågår för {domain}",
+    "orderRefundPendingDesc": "Registreringen misslyckades och en återbetalning håller på att behandlas.",
+    "orderRefundedTitle": "{domain} — återbetalat",
+    "orderRefundedDesc": "Denna beställning återbetalades efter att registreringen misslyckats."
   },
   "twoFA": {
     "setupTitle": "Konfigurera tvåfaktorsautentisering",

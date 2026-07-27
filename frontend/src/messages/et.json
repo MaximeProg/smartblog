@@ -1711,7 +1711,7 @@
           "5 GB salvestusruumi",
           "Kohandatud domeen",
           "Täpsem analüüs",
-          "Esmajärguline tugi"
+          "Esmajärguline toetus"
         ]
       },
       "pro": {
@@ -2840,7 +2840,16 @@
     "sslActive": "SSL on aktiivne",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Sinu blogi pole veel avatud – lugejad ei saa sellele juurde pääseda.",
-    "bannerAddDomain": "Lisa domeen"
+    "bannerAddDomain": "Lisa domeen",
+    "orderRegisteringTitle": "{domain} registreerimine…",
+    "orderRegisteringDesc": "Makse on kinnitatud — viime lõpule domeeni registreerimise ja DNS-i seadistamise. See võtab tavaliselt alla minuti.",
+    "orderFailedTitle": "{domain}i registreerimine ebaõnnestus",
+    "orderFailedDesc": "Teie makse on laekunud, kuid registreerimist ei õnnestunud lõpule viia: {error}",
+    "orderFailedSupport": "Meie meeskond on sellest teavitatud. Kui probleemi ei suudeta peagi lahendada, võtke palun ühendust klienditoega.",
+    "orderRefundPendingTitle": "{domain}i tagasimakse on käimas",
+    "orderRefundPendingDesc": "Registreerimine ebaõnnestus ja tagasimakse on menetluses.",
+    "orderRefundedTitle": "{domain} — tagastatud",
+    "orderRefundedDesc": "Kuna registreerimine ebaõnnestus, tagastati selle tellimuse maksumus."
   },
   "twoFA": {
     "setupTitle": "Kahefaktorilise autentimise seadistamine",

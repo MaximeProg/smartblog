@@ -2840,7 +2840,16 @@
     "sslActive": "SSL włączony",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Twój blog nie jest jeszcze dostępny — czytelnicy nie mają do niego dostępu.",
-    "bannerAddDomain": "Dodaj domenę"
+    "bannerAddDomain": "Dodaj domenę",
+    "orderRegisteringTitle": "Rejestracja {domain}…",
+    "orderRegisteringDesc": "Płatność potwierdzona — finalizujemy rejestrację domeny i konfigurację DNS. Zwykle zajmuje to mniej niż minutę.",
+    "orderFailedTitle": "Rejestracja adresu {domain} nie powiodła się",
+    "orderFailedDesc": "Otrzymaliśmy Twoją płatność, ale nie udało się zakończyć rejestracji: {error}",
+    "orderFailedSupport": "Poinformowaliśmy nasz zespół. Jeśli problem nie zostanie wkrótce rozwiązany, prosimy o kontakt z działem pomocy technicznej.",
+    "orderRefundPendingTitle": "Trwa proces zwrotu kosztów za grę „{domain}”",
+    "orderRefundPendingDesc": "Rejestracja nie powiodła się i trwa procedura zwrotu środków.",
+    "orderRefundedTitle": "{domain} — zwrócono",
+    "orderRefundedDesc": "Kwota za to zamówienie została zwrócona po nieudanej rejestracji."
   },
   "twoFA": {
     "setupTitle": "Skonfiguruj uwierzytelnianie dwuskładnikowe",
