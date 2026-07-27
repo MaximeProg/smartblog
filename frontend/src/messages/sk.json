@@ -1741,7 +1741,7 @@
           "Neobmedzený úložný priestor",
           "Viacdoménové",
           "White-label",
-          "Zaručená SLA",
+          "Záruka SLA",
           "Špecializované zaškolenie",
           "Podpora 24 hodín denne, 7 dní v týždni"
         ]
@@ -2559,7 +2559,14 @@
       "male": "Muž",
       "female": "Žena"
     },
-    "pwGenericError": "Zmena hesla sa nepodarila."
+    "pwGenericError": "Zmena hesla sa nepodarila.",
+    "walletCurrencyLabel": "Mena / sieť",
+    "walletCurrencyLoading": "Načítavanie dostupných sietí…",
+    "walletCurrencySearch": "Vyhľadajte menu alebo sieť…",
+    "walletCurrencyNoResults": "Nenašla sa zodpovedajúca mena.",
+    "walletExtraIdLabel": "Poznámka / Štítok",
+    "walletExtraIdPlaceholder": "Požiadavky na túto sieť",
+    "walletExtraIdHint": "Niektoré siete (napr. XRP, EOS) vyžadujú okrem adresy aj tento dodatočný memo/tag – bez neho sa môže stať, že prostriedky, ktoré vám boli zaslané, sa stratia."
   },
   "notifications": {
     "title": "Oznámenia",
@@ -3849,7 +3856,13 @@
     "qrAlt": "QR kód na platbu",
     "depositAddressLabel": "Adresa pre vklad",
     "expiresIn": "Platnosť vyprší o{time}",
-    "countdownExpired": "Lehota na platbu uplynula"
+    "countdownExpired": "Lehota na platbu uplynula",
+    "currencyPickerLabel": "Zaplatiť prostredníctvom",
+    "currencyPickerLoading": "Načítavanie dostupných mien…",
+    "currencyPickerSearch": "Vyhľadajte menu alebo sieť…",
+    "currencyPickerNoResults": "Nenašla sa zodpovedajúca mena.",
+    "minAmountChecking": "Overuje sa minimálna suma pre túto menu…",
+    "minAmountTooLow": "Minimálna suma pre platbu prostredníctvom služby „{currency}“: {amount} — vyberte si inú menu alebo zvýšte sumu."
   },
   "advertiser": {
     "title": "Inzerujte na SmarterBloggers",

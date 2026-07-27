@@ -2559,7 +2559,14 @@
       "male": "Άνδρας",
       "female": "Γυναίκα"
     },
-    "pwGenericError": "Δεν κατέστη δυνατή η αλλαγή του κωδικού πρόσβασης."
+    "pwGenericError": "Δεν κατέστη δυνατή η αλλαγή του κωδικού πρόσβασης.",
+    "walletCurrencyLabel": "Νόμισμα / δίκτυο",
+    "walletCurrencyLoading": "Φόρτωση διαθέσιμων δικτύων…",
+    "walletCurrencySearch": "Αναζήτηση νομίσματος ή δικτύου…",
+    "walletCurrencyNoResults": "Δεν υπάρχει αντίστοιχο νόμισμα.",
+    "walletExtraIdLabel": "Σημείωση / Ετικέτα",
+    "walletExtraIdPlaceholder": "Απαιτείται για αυτό το δίκτυο",
+    "walletExtraIdHint": "Ορισμένα δίκτυα (π.χ. XRP, EOS) απαιτούν αυτό το επιπλέον memo/tag μαζί με τη διεύθυνση — χωρίς αυτό, τα χρήματα που σας αποστέλλονται ενδέχεται να χαθούν."
   },
   "notifications": {
     "title": "Ειδοποιήσεις",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Κωδικός QR πληρωμής",
     "depositAddressLabel": "Διεύθυνση κατάθεσης",
     "expiresIn": "Λήγει σε{time}",
-    "countdownExpired": "Η προθεσμία πληρωμής έληξε"
+    "countdownExpired": "Η προθεσμία πληρωμής έληξε",
+    "currencyPickerLabel": "Πληρώστε με",
+    "currencyPickerLoading": "Φόρτωση διαθέσιμων νομισμάτων…",
+    "currencyPickerSearch": "Αναζήτηση νομίσματος ή δικτύου…",
+    "currencyPickerNoResults": "Δεν υπάρχει αντίστοιχο νόμισμα.",
+    "minAmountChecking": "Έλεγχος του ελάχιστου ποσού για αυτό το νόμισμα…",
+    "minAmountTooLow": "Ελάχιστο ποσό για το «{currency}»: {amount} — επιλέξτε άλλο νόμισμα ή αυξήστε το ποσό."
   },
   "advertiser": {
     "title": "Διαφημιστείτε στο SmarterBloggers",

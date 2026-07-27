@@ -2559,7 +2559,14 @@
       "male": "Vīrietis",
       "female": "Sieviete"
     },
-    "pwGenericError": "Neizdevās mainīt paroli."
+    "pwGenericError": "Neizdevās mainīt paroli.",
+    "walletCurrencyLabel": "Valūta / tīkls",
+    "walletCurrencyLoading": "Tiek ielādēti pieejamie tīkli…",
+    "walletCurrencySearch": "Meklēt valūtu vai tīklu…",
+    "walletCurrencyNoResults": "Nav atbilstošas valūtas.",
+    "walletExtraIdLabel": "Piezīme / Etiķete",
+    "walletExtraIdPlaceholder": "Šim tīklam nepieciešams",
+    "walletExtraIdHint": "Dažos tīklos (piemēram, XRP, EOS) papildus adresei ir jānorāda arī šis papildu memos/tags — bez tā jums nosūtītie līdzekļi var tikt zaudēti."
   },
   "notifications": {
     "title": "Paziņojumi",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Maksājuma QR kods",
     "depositAddressLabel": "Iemaksas adrese",
     "expiresIn": "Derīguma termiņš beidzas pēc {time}",
-    "countdownExpired": "Maksājuma termiņš ir beidzies"
+    "countdownExpired": "Maksājuma termiņš ir beidzies",
+    "currencyPickerLabel": "Maksājiet ar",
+    "currencyPickerLoading": "Tiek ielādētas pieejamās valūtas…",
+    "currencyPickerSearch": "Meklēt valūtu vai tīklu…",
+    "currencyPickerNoResults": "Nav atbilstošas valūtas.",
+    "minAmountChecking": "Pārbauda minimālo summu šai valūtai…",
+    "minAmountTooLow": "Minimālā summa „{currency}” gadījumā: {amount} — izvēlieties citu valūtu vai palieliniet summu."
   },
   "advertiser": {
     "title": "Reklāmējieties vietnē „SmarterBloggers“",

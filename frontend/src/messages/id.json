@@ -2559,7 +2559,14 @@
       "male": "Laki-laki",
       "female": "Perempuan"
     },
-    "pwGenericError": "Gagal mengubah kata sandi."
+    "pwGenericError": "Gagal mengubah kata sandi.",
+    "walletCurrencyLabel": "Mata uang / jaringan",
+    "walletCurrencyLoading": "Memuat jaringan yang tersedia…",
+    "walletCurrencySearch": "Cari mata uang atau jaringan…",
+    "walletCurrencyNoResults": "Tidak ada mata uang yang sesuai.",
+    "walletExtraIdLabel": "Catatan / Tag",
+    "walletExtraIdPlaceholder": "Persyaratan untuk jaringan ini",
+    "walletExtraIdHint": "Beberapa jaringan (misalnya XRP, EOS) mewajibkan adanya memo/tag tambahan ini selain alamat — tanpa itu, dana yang dikirimkan kepada Anda mungkin akan hilang."
   },
   "notifications": {
     "title": "Pemberitahuan",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Kode QR pembayaran",
     "depositAddressLabel": "Alamat dompet",
     "expiresIn": "Akan kedaluwarsa dalam {time}",
-    "countdownExpired": "Jangka waktu pembayaran telah berakhir"
+    "countdownExpired": "Jangka waktu pembayaran telah berakhir",
+    "currencyPickerLabel": "Bayar dengan",
+    "currencyPickerLoading": "Memuat mata uang yang tersedia…",
+    "currencyPickerSearch": "Cari mata uang atau jaringan…",
+    "currencyPickerNoResults": "Tidak ada mata uang yang sesuai.",
+    "minAmountChecking": "Memeriksa jumlah minimum untuk mata uang ini…",
+    "minAmountTooLow": "Jumlah minimum untuk \"{currency}\": {amount} — pilih mata uang lain atau tambahkan jumlahnya."
   },
   "advertiser": {
     "title": "Beriklan di SmarterBloggers",

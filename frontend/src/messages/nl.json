@@ -1710,7 +1710,7 @@
           "3 auteurs",
           "5 GB opslagruimte",
           "Aangepast domein",
-          "Geavanceerde analyses",
+          "Geavanceerde analyse",
           "Prioritaire ondersteuning"
         ]
       },
@@ -2559,7 +2559,14 @@
       "male": "Man",
       "female": "Vrouw"
     },
-    "pwGenericError": "Het wijzigen van het wachtwoord is mislukt."
+    "pwGenericError": "Het wijzigen van het wachtwoord is mislukt.",
+    "walletCurrencyLabel": "Valuta / netwerk",
+    "walletCurrencyLoading": "Beschikbare netwerken worden geladen…",
+    "walletCurrencySearch": "Zoek een valuta of netwerk…",
+    "walletCurrencyNoResults": "Er is geen overeenkomende valuta.",
+    "walletExtraIdLabel": "Notitie / Label",
+    "walletExtraIdPlaceholder": "Vereist voor dit netwerk",
+    "walletExtraIdHint": "Bij sommige netwerken (bijv. XRP, EOS) moet je naast het adres ook deze extra memo/tag vermelden — zonder deze memo/tag kunnen de naar jou verzonden middelen verloren gaan."
   },
   "notifications": {
     "title": "Meldingen",
@@ -3849,7 +3856,13 @@
     "qrAlt": "QR-code voor betaling",
     "depositAddressLabel": "Stortingsadres",
     "expiresIn": "Vervalt over {time}",
-    "countdownExpired": "De betalingstermijn is verstreken"
+    "countdownExpired": "De betalingstermijn is verstreken",
+    "currencyPickerLabel": "Betaal met",
+    "currencyPickerLoading": "Beschikbare valuta's worden geladen…",
+    "currencyPickerSearch": "Zoek een valuta of netwerk…",
+    "currencyPickerNoResults": "Er is geen overeenkomende valuta.",
+    "minAmountChecking": "Het minimumbedrag voor deze valuta wordt gecontroleerd…",
+    "minAmountTooLow": "Minimumbedrag voor {currency}: {amount} — kies een andere valuta of verhoog het bedrag."
   },
   "advertiser": {
     "title": "Adverteer op SmarterBloggers",

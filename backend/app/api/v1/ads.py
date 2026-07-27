@@ -50,6 +50,7 @@ class SubmitAdRequest(BaseModel):
     price_per_day: float | None = None
     total_budget: float
     currency: str = "USD"
+    pay_currency: str = "usdtbsc"
 
 
 class ReviewAdRequest(BaseModel):
@@ -92,6 +93,7 @@ class PlatformAdSubmitRequest(BaseModel):
     price_per_day: float | None = None
     total_budget: float
     currency: str = "USD"
+    pay_currency: str = "usdtbsc"
     target_countries: list[str] | None = None
 
 
@@ -169,6 +171,7 @@ async def submit_ad(
         order_id=order_id,
         order_description=f"Ad slot: {body.title[:80]}",
         campaign_id=ad.id,
+        pay_currency=body.pay_currency,
     )
 
     payment = _crypto_response(tx, body.total_budget)
@@ -239,6 +242,7 @@ async def submit_platform_ad(
         order_id=order_id,
         order_description=f"Platform ad slot: {body.title[:80]}",
         campaign_id=ad.id,
+        pay_currency=body.pay_currency,
     )
 
     payment = _crypto_response(tx, body.total_budget)

@@ -2559,7 +2559,14 @@
       "male": "남성",
       "female": "여성"
     },
-    "pwGenericError": "비밀번호 변경에 실패했습니다."
+    "pwGenericError": "비밀번호 변경에 실패했습니다.",
+    "walletCurrencyLabel": "통화 / 네트워크",
+    "walletCurrencyLoading": "사용 가능한 네트워크를 불러오는 중…",
+    "walletCurrencySearch": "통화 또는 네트워크를 검색하세요…",
+    "walletCurrencyNoResults": "일치하는 통화가 없습니다.",
+    "walletExtraIdLabel": "메모 / 태그",
+    "walletExtraIdPlaceholder": "이 네트워크에 필수적인 사항",
+    "walletExtraIdHint": "일부 네트워크(예: XRP, EOS)에서는 주소와 함께 이 추가 메모/태그를 입력해야 합니다. 이를 입력하지 않으면 수신자에게 전송된 자금이 분실될 수 있습니다."
   },
   "notifications": {
     "title": "알림",
@@ -3849,7 +3856,13 @@
     "qrAlt": "결제용 QR 코드",
     "depositAddressLabel": "입금 주소",
     "expiresIn": "{time} 후 만료됩니다.",
-    "countdownExpired": "결제 기간이 만료되었습니다."
+    "countdownExpired": "결제 기간이 만료되었습니다.",
+    "currencyPickerLabel": "결제 방법",
+    "currencyPickerLoading": "사용 가능한 통화 불러오는 중…",
+    "currencyPickerSearch": "통화 또는 네트워크를 검색하세요…",
+    "currencyPickerNoResults": "일치하는 통화가 없습니다.",
+    "minAmountChecking": "이 통화의 최소 금액을 확인 중입니다…",
+    "minAmountTooLow": "{currency}의 최소 금액: {amount} — 다른 통화를 선택하거나 금액을 늘리세요."
   },
   "advertiser": {
     "title": "SmarterBloggers에 광고를 게재하세요",

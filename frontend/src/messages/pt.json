@@ -2559,7 +2559,14 @@
       "male": "Masculino",
       "female": "Mulher"
     },
-    "pwGenericError": "Não foi possível alterar a palavra-passe."
+    "pwGenericError": "Não foi possível alterar a palavra-passe.",
+    "walletCurrencyLabel": "Moeda / rede",
+    "walletCurrencyLoading": "A carregar as redes disponíveis…",
+    "walletCurrencySearch": "Pesquisar uma moeda ou uma rede…",
+    "walletCurrencyNoResults": "Não existe moeda correspondente.",
+    "walletExtraIdLabel": "Nota / Etiqueta",
+    "walletExtraIdPlaceholder": "Requisitos para esta rede",
+    "walletExtraIdHint": "Algumas redes (por exemplo, XRP, EOS) exigem esta nota/etiqueta adicional juntamente com o endereço — sem ela, os fundos que lhe forem enviados poderão perder-se."
   },
   "notifications": {
     "title": "Notificações",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Código QR de pagamento",
     "depositAddressLabel": "Endereço para depósito",
     "expiresIn": "Vence em {time}",
-    "countdownExpired": "O prazo de pagamento expirou"
+    "countdownExpired": "O prazo de pagamento expirou",
+    "currencyPickerLabel": "Pagar com",
+    "currencyPickerLoading": "A carregar as moedas disponíveis…",
+    "currencyPickerSearch": "Pesquisar uma moeda ou uma rede…",
+    "currencyPickerNoResults": "Não existe moeda correspondente.",
+    "minAmountChecking": "A verificar o montante mínimo para esta moeda…",
+    "minAmountTooLow": "Valor mínimo para «{currency}»: {amount} — escolha outra moeda ou aumente o montante."
   },
   "advertiser": {
     "title": "Anuncie no SmarterBloggers",

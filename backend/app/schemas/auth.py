@@ -36,6 +36,8 @@ class UserInfo(BaseModel):
     is_super_admin: bool
     two_fa_enabled: bool
     usdt_wallet_address: str | None = None
+    payout_currency: str | None = None
+    payout_extra_id: str | None = None
 
     model_config = {"from_attributes": True}
 

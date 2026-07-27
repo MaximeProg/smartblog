@@ -2559,7 +2559,14 @@
       "male": "Мужчина",
       "female": "Женский"
     },
-    "pwGenericError": "Не удалось изменить пароль."
+    "pwGenericError": "Не удалось изменить пароль.",
+    "walletCurrencyLabel": "Валюта / сеть",
+    "walletCurrencyLoading": "Загрузка доступных сетей…",
+    "walletCurrencySearch": "Поиск валюты или сети…",
+    "walletCurrencyNoResults": "Нет соответствующей валюты.",
+    "walletExtraIdLabel": "Заметка / Тег",
+    "walletExtraIdPlaceholder": "Необходимо для этой сети",
+    "walletExtraIdHint": "В некоторых сетях (например, XRP, EOS) помимо адреса требуется указать дополнительную заметку/тег — без этого отправленные вам средства могут быть утеряны."
   },
   "notifications": {
     "title": "Уведомления",
@@ -3849,7 +3856,13 @@
     "qrAlt": "QR-код для оплаты",
     "depositAddressLabel": "Адрес для пополнения счета",
     "expiresIn": "Срок действия истекает через {time}",
-    "countdownExpired": "Срок оплаты истек"
+    "countdownExpired": "Срок оплаты истек",
+    "currencyPickerLabel": "Оплатить с помощью",
+    "currencyPickerLoading": "Загрузка доступных валют…",
+    "currencyPickerSearch": "Поиск валюты или сети…",
+    "currencyPickerNoResults": "Нет соответствующей валюты.",
+    "minAmountChecking": "Проверка минимальной суммы для этой валюты…",
+    "minAmountTooLow": "Минимальная сумма для {currency}: {amount} долларов — выберите другую валюту или увеличьте сумму."
   },
   "advertiser": {
     "title": "Разместите рекламу на SmarterBloggers",

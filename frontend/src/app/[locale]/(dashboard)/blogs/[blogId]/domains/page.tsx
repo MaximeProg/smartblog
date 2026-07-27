@@ -14,6 +14,7 @@ import { FullPageShell } from '@/components/dashboard/BlogStudioShell';
 import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth.store';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
+import { CryptoCurrencyPicker } from '@/components/payments/CryptoCurrencyPicker';
 import { getErrorMessage } from '@/lib/utils';
 import { COUNTRIES } from '@/lib/constants/countries';
 
@@ -69,6 +70,8 @@ export default function DomainsPage() {
     name: user?.display_name ?? '', email: user?.email ?? '', phone: user?.phone ?? '',
     address: '', city: '', country: '', zipcode: '', years: 1, autoRenew: false,
   });
+  const [payCurrency, setPayCurrency] = useState('usdtbsc');
+  const [payCurrencyValid, setPayCurrencyValid] = useState(true);
 
   const { data: pendingOrders = [] } = useQuery({
     queryKey: ['domain-pending-orders', blogId],
@@ -139,6 +142,7 @@ export default function DomainsPage() {
         address: purchaseForm.address, city: purchaseForm.city,
         country: purchaseForm.country, zipcode: purchaseForm.zipcode,
       },
+      pay_currency: payCurrency,
     }).then((r) => r.data),
     onSuccess: (data) => setPayment(data),
     onError: (err: any) => toast({ variant: 'destructive', title: getErrorMessage(err, t('purchaseError')) }),
@@ -249,6 +253,7 @@ export default function DomainsPage() {
                           onClick={() => {
                             setPurchaseTarget(r);
                             setPurchaseForm((f) => ({ ...f, years: 1 }));
+                            setPayCurrency('usdtbsc');
                           }}
                           className="flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[12px] font-bold transition-colors"
                         >
@@ -654,13 +659,23 @@ export default function DomainsPage() {
               </p>
             )}
 
+            <div className="mt-3.5">
+              <CryptoCurrencyPicker
+                tenantId={blogId}
+                amountUsd={purchaseTarget.price != null ? purchaseTarget.price * purchaseForm.years : 0}
+                value={payCurrency}
+                onChange={setPayCurrency}
+                onValidityChange={setPayCurrencyValid}
+              />
+            </div>
+
             <div className="flex items-center gap-2 mt-4">
               <button onClick={() => setPurchaseTarget(null)} className="flex-1 h-10 rounded-xl border border-slate-200 dark:border-slate-700 text-[12.5px] font-bold text-slate-600 dark:text-slate-300">
                 {t('cancel')}
               </button>
               <button
                 onClick={() => purchaseMut.mutate()}
-                disabled={purchaseMut.isPending || !purchaseForm.name || !purchaseForm.email || !purchaseForm.address || !purchaseForm.city || !purchaseForm.country || !purchaseForm.zipcode}
+                disabled={purchaseMut.isPending || !payCurrencyValid || !purchaseForm.name || !purchaseForm.email || !purchaseForm.address || !purchaseForm.city || !purchaseForm.country || !purchaseForm.zipcode}
                 className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[12.5px] font-bold disabled:opacity-50"
               >
                 {purchaseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}

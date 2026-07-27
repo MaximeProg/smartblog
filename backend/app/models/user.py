@@ -47,9 +47,15 @@ class User(Base):
     two_fa_secret_enc: Mapped[str | None] = mapped_column(Text)
     two_fa_backup_codes: Mapped[dict | None] = mapped_column(JSONB)
 
-    # Crypto wallet — USDT BSC (BEP20) obligatoire pour recevoir commissions affiliés
-    # 2FA doit être activé avant de pouvoir renseigner/modifier cette adresse
+    # Crypto wallet — pour recevoir les commissions affiliés/ads. Depuis le
+    # 2026-07-27, l'utilisateur choisit son réseau/devise de cashout parmi ce
+    # que NowPayments accepte réellement (payout_currency, ex: "usdtbsc",
+    # "usdttrc20", "btc"...) — usdt_wallet_address stocke l'adresse pour CE
+    # réseau (nom de colonne conservé pour compat, plus limité à USDT/BSC).
+    # 2FA doit être activé avant de pouvoir renseigner/modifier cette adresse.
     usdt_wallet_address: Mapped[str | None] = mapped_column(String(100))
+    payout_currency: Mapped[str] = mapped_column(String(20), nullable=False, default="usdtbsc")
+    payout_extra_id: Mapped[str | None] = mapped_column(String(100))  # memo/tag requis par certains réseaux (XRP, EOS...)
 
     # Programme d'affiliation — au niveau du compte, pas d'un blog en particulier :
     # une même personne peut posséder plusieurs blogs, un seul code/solde compte.

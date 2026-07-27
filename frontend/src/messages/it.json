@@ -2559,7 +2559,14 @@
       "male": "Maschio",
       "female": "Donna"
     },
-    "pwGenericError": "Impossibile modificare la password."
+    "pwGenericError": "Impossibile modificare la password.",
+    "walletCurrencyLabel": "Valuta / rete",
+    "walletCurrencyLoading": "Caricamento delle reti disponibili…",
+    "walletCurrencySearch": "Cerca una valuta o una rete…",
+    "walletCurrencyNoResults": "Nessuna valuta corrispondente.",
+    "walletExtraIdLabel": "Promemoria / Etichetta",
+    "walletExtraIdPlaceholder": "Requisiti per questa rete",
+    "walletExtraIdHint": "Alcune reti (ad esempio XRP, EOS) richiedono l'inserimento di questo memo/tag aggiuntivo insieme all'indirizzo; in sua assenza, i fondi a te destinati potrebbero andare persi."
   },
   "notifications": {
     "title": "Notifiche",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Codice QR per il pagamento",
     "depositAddressLabel": "Indirizzo di deposito",
     "expiresIn": "Scade tra{time}",
-    "countdownExpired": "Il periodo di pagamento è scaduto"
+    "countdownExpired": "Il periodo di pagamento è scaduto",
+    "currencyPickerLabel": "Paga con",
+    "currencyPickerLoading": "Caricamento delle valute disponibili…",
+    "currencyPickerSearch": "Cerca una valuta o una rete…",
+    "currencyPickerNoResults": "Nessuna valuta corrispondente.",
+    "minAmountChecking": "Verifica dell'importo minimo per questa valuta…",
+    "minAmountTooLow": "Importo minimo per \"{currency}\": {amount} — scegli un'altra valuta o aumenta l'importo."
   },
   "advertiser": {
     "title": "Pubblicizza su SmarterBloggers",

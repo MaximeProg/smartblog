@@ -2559,7 +2559,14 @@
       "male": "Erkek",
       "female": "Kadın"
     },
-    "pwGenericError": "Şifre değiştirilemedi."
+    "pwGenericError": "Şifre değiştirilemedi.",
+    "walletCurrencyLabel": "Para birimi / ağ",
+    "walletCurrencyLoading": "Mevcut ağlar yükleniyor…",
+    "walletCurrencySearch": "Bir para birimini veya ağı ara…",
+    "walletCurrencyNoResults": "Eşleşen para birimi bulunamadı.",
+    "walletExtraIdLabel": "Not / Etiket",
+    "walletExtraIdPlaceholder": "Bu ağ için gerekli olan",
+    "walletExtraIdHint": "Bazı ağlarda (örneğin XRP, EOS), adresin yanı sıra bu ek not/etiketin de girilmesi gerekir — bu bilgi olmadan, size gönderilen paralar kaybolabilir."
   },
   "notifications": {
     "title": "Bildirimler",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Ödeme QR kodu",
     "depositAddressLabel": "Para yatırma adresi",
     "expiresIn": "{time}'da sona erecek",
-    "countdownExpired": "Ödeme süresi doldu"
+    "countdownExpired": "Ödeme süresi doldu",
+    "currencyPickerLabel": "Şu yöntemlerle ödeme yapabilirsiniz:",
+    "currencyPickerLoading": "Mevcut para birimleri yükleniyor…",
+    "currencyPickerSearch": "Bir para birimini veya ağı ara…",
+    "currencyPickerNoResults": "Eşleşen para birimi bulunamadı.",
+    "minAmountChecking": "Bu para birimi için minimum tutar kontrol ediliyor…",
+    "minAmountTooLow": "{currency} için minimum tutar: {amount} — başka bir para birimi seçin veya tutarı artırın."
   },
   "advertiser": {
     "title": "SmarterBloggers'da reklam verin",

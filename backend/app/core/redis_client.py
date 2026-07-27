@@ -69,3 +69,9 @@ def key_oauth_pkce(state_hash: str) -> str:
 
 def key_platform_stats() -> str:
     return "cache:platform:stats"
+
+def key_payout_currencies() -> str:
+    return "cache:nowpayments:payout-currencies"
+
+def key_payment_currencies() -> str:
+    return "cache:nowpayments:payment-currencies"

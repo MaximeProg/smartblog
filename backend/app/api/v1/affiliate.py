@@ -680,6 +680,7 @@ async def _trigger_auto_payout_for_user(db, user: User):
         net_amount=attempt_amount,
         payout_method="nowpayments_crypto",
         usdt_wallet_snapshot=wallet_address,
+        payout_currency_snapshot=user.payout_currency,
         status=CashoutStatus.PROCESSING,
     )
     db.add(cashout)
@@ -691,7 +692,12 @@ async def _trigger_auto_payout_for_user(db, user: User):
     await db.flush()
 
     try:
-        result = await send_single_payout(wallet_address=wallet_address, amount_usd=attempt_amount)
+        result = await send_single_payout(
+            wallet_address=wallet_address,
+            amount_usd=attempt_amount,
+            currency=user.payout_currency or "usdtbsc",
+            extra_id=user.payout_extra_id,
+        )
         batch_id = str(result.get("id") or "")
         if not batch_id:
             raise RuntimeError("NowPayments payout: id de batch absent de la réponse.")

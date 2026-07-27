@@ -374,6 +374,7 @@ async def renew_domain_endpoint(
     payload: TokenPayload,
     db: DBSession,
     years: int = 1,
+    pay_currency: str = "usdtbsc",
 ):
     """Crée un paiement de renouvellement — même pipeline crypto que l'achat.
     L'appel registrar.renew_domain() a lieu après confirmation du paiement
@@ -419,6 +420,7 @@ async def renew_domain_endpoint(
         order_id=order_id,
         order_description=f"Renew {d.domain} ({years} an(s))",
         campaign_id=order.id,
+        pay_currency=pay_currency,
     )
     order.transaction_id = tx.id
     await db.commit()

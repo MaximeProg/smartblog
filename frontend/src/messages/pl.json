@@ -1696,7 +1696,7 @@
           "1 autor",
           "1 GB pamięci",
           "poddomena smarterbloggers.com",
-          "W zestawie znajduje się szablon firmowy"
+          "W zestawie znajduje się szablon korporacyjny"
         ]
       },
       "starter": {
@@ -2559,7 +2559,14 @@
       "male": "Mężczyzna",
       "female": "Kobieta"
     },
-    "pwGenericError": "Nie udało się zmienić hasła."
+    "pwGenericError": "Nie udało się zmienić hasła.",
+    "walletCurrencyLabel": "Waluta / sieć",
+    "walletCurrencyLoading": "Ładowanie dostępnych sieci…",
+    "walletCurrencySearch": "Wyszukaj walutę lub sieć…",
+    "walletCurrencyNoResults": "Brak pasującej waluty.",
+    "walletExtraIdLabel": "Notatka / Etykieta",
+    "walletExtraIdPlaceholder": "Wymagane dla tej sieci",
+    "walletExtraIdHint": "Niektóre sieci (np. XRP, EOS) wymagają podania tego dodatkowego memu/tagu wraz z adresem — bez niego środki wysłane do Ciebie mogą zostać utracone."
   },
   "notifications": {
     "title": "Powiadomienia",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Kod QR do płatności",
     "depositAddressLabel": "Adres do wpłaty",
     "expiresIn": "Wygasają za{time}",
-    "countdownExpired": "Termin płatności upłynął"
+    "countdownExpired": "Termin płatności upłynął",
+    "currencyPickerLabel": "Zapłać za pomocą",
+    "currencyPickerLoading": "Ładowanie dostępnych walut…",
+    "currencyPickerSearch": "Wyszukaj walutę lub sieć…",
+    "currencyPickerNoResults": "Brak pasującej waluty.",
+    "minAmountChecking": "Sprawdzanie minimalnej kwoty dla tej waluty…",
+    "minAmountTooLow": "Minimalna kwota za usługę „{currency}”: {amount} — wybierz inną walutę lub zwiększ kwotę."
   },
   "advertiser": {
     "title": "Reklamuj się na SmarterBloggers",

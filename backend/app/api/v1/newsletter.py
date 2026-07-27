@@ -443,6 +443,7 @@ def _sub_response(s: NewsletterSubscriber) -> SubscriberResponse:
 
 class NewsletterCheckoutRequest(BaseModel):
     email: EmailStr
+    pay_currency: str = "usdtbsc"
 
 
 @router.post("/campaigns/{campaign_id}/checkout", status_code=201)
@@ -496,6 +497,7 @@ async def checkout_newsletter(
         order_id=order_id,
         order_description=campaign.subject[:100],
         campaign_id=campaign_id,
+        pay_currency=body.pay_currency,
     )
 
     # Enregistrer l'accès en attente (granted_at=null jusqu'à la confirmation)

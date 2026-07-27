@@ -2559,7 +2559,14 @@
       "male": "Muž",
       "female": "Žena"
     },
-    "pwGenericError": "Změna hesla se nezdařila."
+    "pwGenericError": "Změna hesla se nezdařila.",
+    "walletCurrencyLabel": "Měna / síť",
+    "walletCurrencyLoading": "Načítání dostupných sítí…",
+    "walletCurrencySearch": "Vyhledat měnu nebo síť…",
+    "walletCurrencyNoResults": "Nenašla se odpovídající měna.",
+    "walletExtraIdLabel": "Poznámka / Štítek",
+    "walletExtraIdPlaceholder": "Pro tuto síť je nutné",
+    "walletExtraIdHint": "Některé sítě (např. XRP, EOS) vyžadují kromě adresy také tento dodatečný poznámkový údaj/značku – bez něj by se vám zaslané prostředky mohly ztratit."
   },
   "notifications": {
     "title": "Oznámení",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Platební QR kód",
     "depositAddressLabel": "Adresa pro vklad",
     "expiresIn": "Platnost vyprší za{time}",
-    "countdownExpired": "Platnost platebního okna vypršela"
+    "countdownExpired": "Platnost platebního okna vypršela",
+    "currencyPickerLabel": "Zaplatit pomocí",
+    "currencyPickerLoading": "Načítání dostupných měn…",
+    "currencyPickerSearch": "Vyhledat měnu nebo síť…",
+    "currencyPickerNoResults": "Nenašla se odpovídající měna.",
+    "minAmountChecking": "Zjišťuji minimální částku pro tuto měnu…",
+    "minAmountTooLow": "Minimální částka pro platbu přes {currency}: {amount} – vyberte jinou měnu nebo částku navýšte."
   },
   "advertiser": {
     "title": "Inzerujte na SmarterBloggers",

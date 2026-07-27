@@ -2559,7 +2559,14 @@
       "male": "Mees",
       "female": "Naine"
     },
-    "pwGenericError": "Parooli muutmine ebaõnnestus."
+    "pwGenericError": "Parooli muutmine ebaõnnestus.",
+    "walletCurrencyLabel": "Valuuta / võrk",
+    "walletCurrencyLoading": "Laaditakse kättesaadavaid võrke…",
+    "walletCurrencySearch": "Otsi valuutat või võrku…",
+    "walletCurrencyNoResults": "Sobivat valuutat ei leitud.",
+    "walletExtraIdLabel": "Märkus / Silt",
+    "walletExtraIdPlaceholder": "Selle võrgu jaoks vajalik",
+    "walletExtraIdHint": "Mõned võrgustikud (nt XRP, EOS) nõuavad aadressi kõrval seda täiendavat märkust/märgistust – ilma selleta võivad teile saadetud rahalised vahendid kaduma minna."
   },
   "notifications": {
     "title": "Teated",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Makse QR-kood",
     "depositAddressLabel": "Sissemakse aadress",
     "expiresIn": "Aegub {time}",
-    "countdownExpired": "Makse tähtaeg on möödunud"
+    "countdownExpired": "Makse tähtaeg on möödunud",
+    "currencyPickerLabel": "Maksa",
+    "currencyPickerLoading": "Laaditakse saadaval olevaid valuutasid…",
+    "currencyPickerSearch": "Otsi valuutat või võrku…",
+    "currencyPickerNoResults": "Sobivat valuutat ei leitud.",
+    "minAmountChecking": "Selle valuuta miinimumsumma kontrollimine…",
+    "minAmountTooLow": "{currency}i miinimumsumma: {amount} — vali mõni muu valuuta või suurenda summat."
   },
   "advertiser": {
     "title": "Reklaami SmarterBloggersis",

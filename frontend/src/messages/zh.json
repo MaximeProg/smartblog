@@ -1742,7 +1742,7 @@
           "多领域",
           "白标",
           "有保障的服务水平协议（SLA）",
-          "专属入职指导",
+          "专属入职流程",
           "全天候支持"
         ]
       }
@@ -2559,7 +2559,14 @@
       "male": "男性",
       "female": "女性"
     },
-    "pwGenericError": "密码更改失败。"
+    "pwGenericError": "密码更改失败。",
+    "walletCurrencyLabel": "货币 / 网络",
+    "walletCurrencyLoading": "正在加载可用网络……",
+    "walletCurrencySearch": "搜索一种币种或网络……",
+    "walletCurrencyNoResults": "没有匹配的货币。",
+    "walletExtraIdLabel": "备忘录 / 标签",
+    "walletExtraIdPlaceholder": "此网络所需条件",
+    "walletExtraIdHint": "某些网络（例如 XRP、EOS）要求在地址之外还需添加此备注/标签——若未添加，发给您的资金可能会丢失。"
   },
   "notifications": {
     "title": "通知",
@@ -3849,7 +3856,13 @@
     "qrAlt": "支付二维码",
     "depositAddressLabel": "充值地址",
     "expiresIn": "距离过期还有{time}",
-    "countdownExpired": "付款期限已过"
+    "countdownExpired": "付款期限已过",
+    "currencyPickerLabel": "使用以下方式支付",
+    "currencyPickerLoading": "正在加载可用货币……",
+    "currencyPickerSearch": "搜索一种币种或网络……",
+    "currencyPickerNoResults": "没有匹配的货币。",
+    "minAmountChecking": "正在查询该货币的最低金额……",
+    "minAmountTooLow": "{currency} 的最低金额：{amount}——请选择其他货币或增加金额。"
   },
   "advertiser": {
     "title": "在 SmarterBloggers 上投放广告",

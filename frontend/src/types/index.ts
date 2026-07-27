@@ -14,6 +14,8 @@ export interface UserInfo {
   is_super_admin: boolean;
   two_fa_enabled: boolean;
   usdt_wallet_address: string | null;
+  payout_currency: string | null;
+  payout_extra_id: string | null;
 }
 
 export interface TenantInfo {

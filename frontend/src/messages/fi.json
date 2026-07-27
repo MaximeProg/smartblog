@@ -1696,7 +1696,7 @@
           "1 kirjoittaja",
           "1 GB tallennustilaa",
           "smarterbloggers.com-aliverkkotunnus",
-          "Mukana yrityskäyttöön tarkoitettu malli"
+          "Mukana yritysmalli"
         ]
       },
       "starter": {
@@ -2559,7 +2559,14 @@
       "male": "Mies",
       "female": "Nainen"
     },
-    "pwGenericError": "Salasanan vaihtaminen epäonnistui."
+    "pwGenericError": "Salasanan vaihtaminen epäonnistui.",
+    "walletCurrencyLabel": "Valuutta / verkko",
+    "walletCurrencyLoading": "Ladataan käytettävissä olevia verkkoja…",
+    "walletCurrencySearch": "Etsi valuutta tai verkko…",
+    "walletCurrencyNoResults": "Vastaavaa valuuttaa ei löytynyt.",
+    "walletExtraIdLabel": "Muistio / Tunniste",
+    "walletExtraIdPlaceholder": "Tämän verkon kannalta välttämätön",
+    "walletExtraIdHint": "Jotkin verkostot (esim. XRP, EOS) vaativat tämän lisätiedon (memo/tag) osoitteen lisäksi — ilman sitä sinulle lähetetyt varat saattavat kadota."
   },
   "notifications": {
     "title": "Ilmoitukset",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Maksun QR-koodi",
     "depositAddressLabel": "Talletusosoite",
     "expiresIn": "Voimassaolo päättyy{time}",
-    "countdownExpired": "Maksuaika on päättynyt"
+    "countdownExpired": "Maksuaika on päättynyt",
+    "currencyPickerLabel": "Maksa",
+    "currencyPickerLoading": "Lataa käytettävissä olevat valuutat…",
+    "currencyPickerSearch": "Etsi valuutta tai verkko…",
+    "currencyPickerNoResults": "Vastaavaa valuuttaa ei löytynyt.",
+    "minAmountChecking": "Tarkistetaan tämän valuutan vähimmäissummaa…",
+    "minAmountTooLow": "{currency}in vähimmäissumma: {amount} dollaria — valitse toinen valuutta tai korota summaa."
   },
   "advertiser": {
     "title": "Mainosta SmarterBloggers-sivustolla",

@@ -29,7 +29,7 @@ from app.models.enums import (
 )
 from app.services.nowpayments_service import (
     create_payment, get_payment_status, generate_qr_data_uri,
-    verify_ipn_signature,
+    verify_ipn_signature, get_payment_currencies, get_min_amount,
 )
 from app.api.v1.tenants import _assert_member, _assert_role
 from app.models.enums import UserRole
@@ -45,10 +45,12 @@ _TERMINAL_PROVIDER_STATUSES = {"failed", "expired"}
 class SubscriptionCheckoutRequest(BaseModel):
     plan: str           # starter | pro | business | enterprise
     billing: str = "monthly"   # monthly | annual
+    pay_currency: str = "usdtbsc"
 
 
 class ArticleCheckoutRequest(BaseModel):
     article_id: str
+    pay_currency: str = "usdtbsc"
 
 
 class RegistrantInfo(BaseModel):
@@ -66,6 +68,7 @@ class DomainCheckoutRequest(BaseModel):
     years: int = 1
     auto_renew: bool = False
     registrant: RegistrantInfo
+    pay_currency: str = "usdtbsc"
 
 
 class CryptoPaymentResponse(BaseModel):
@@ -148,6 +151,7 @@ async def _create_crypto_transaction(
     article_id: uuid.UUID | None = None,
     campaign_id: uuid.UUID | None = None,
     platform_fee: float = 0,
+    pay_currency: str = "usdtbsc",
 ) -> tuple[Transaction, dict]:
     """Crée un paiement NowPayments direct et persiste immédiatement une
     Transaction PENDING avec l'adresse/montant — c'est la ligne que le
@@ -163,6 +167,7 @@ async def _create_crypto_transaction(
         order_id=order_id,
         order_description=order_description,
         ipn_callback_url=_ipn_callback_url(tenant_id),
+        pay_currency=pay_currency,
     )
 
     net_amount = round(amount_usd - platform_fee, 2)
@@ -416,6 +421,29 @@ async def _activate_subscription(db, tenant_id: uuid.UUID, plan: str, billing: s
         ))
 
 
+# ── Devises de paiement + plancher minimum par devise ──────────────
+# Publics (sans auth) : réutilisés aussi par la soumission de pub anonyme
+# (`submit_ad`, sans TokenPayload) — aucune donnée sensible exposée ici,
+# juste ce que NowPayments accepte réellement en paiement.
+
+@router.get("/currencies")
+async def list_payment_currencies(tenant_id: uuid.UUID):
+    return await get_payment_currencies()
+
+
+@router.get("/min-amount")
+async def get_payment_min_amount(tenant_id: uuid.UUID, currency: str):
+    """Montant minimum réel (équivalent usdtbsc/USD) pour payer dans `currency`
+    — le plancher varie fortement selon la devise choisie (confirmé le
+    2026-07-27 : ~0.05$ en usdtbsc, ~4$ en BTC), donc à vérifier à chaque
+    changement de devise dans le sélecteur, jamais supposé fixe."""
+    try:
+        min_amount = await get_min_amount(currency.lower())
+    except RuntimeError as e:
+        raise HTTPException(status_code=502, detail=str(e))
+    return {"currency": currency.lower(), "min_amount_usd": min_amount}
+
+
 # ── Checkout abonnement SaaS ──────────────────────────────────────
 
 @router.post("/checkout-subscription", response_model=CryptoPaymentResponse, status_code=201)
@@ -447,6 +475,7 @@ async def checkout_subscription(
         amount_usd=amount_usd,
         order_id=order_id,
         order_description=f"SmarterBloggers {plan.title()} — {billing}",
+        pay_currency=body.pay_currency,
     )
     return _crypto_response(tx, amount_usd)
 
@@ -499,6 +528,7 @@ async def checkout_article(
         order_description=article.title[:100],
         article_id=article.id,
         platform_fee=platform_fee,
+        pay_currency=body.pay_currency,
     )
     return _crypto_response(tx, article.price)
 
@@ -579,6 +609,7 @@ async def checkout_domain(
         order_id=order_id,
         order_description=f"Domain {domain_name} ({body.years} an(s))",
         campaign_id=order.id,
+        pay_currency=body.pay_currency,
     )
     order.transaction_id = tx.id
     order.auto_renew = body.auto_renew

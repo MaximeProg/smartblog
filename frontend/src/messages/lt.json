@@ -2559,7 +2559,14 @@
       "male": "Vyras",
       "female": "Moteris"
     },
-    "pwGenericError": "Nepavyko pakeisti slaptažodžio."
+    "pwGenericError": "Nepavyko pakeisti slaptažodžio.",
+    "walletCurrencyLabel": "Valiuta / tinklas",
+    "walletCurrencyLoading": "Įkeliami prieinami tinklai…",
+    "walletCurrencySearch": "Ieškoti valiutos arba tinklo…",
+    "walletCurrencyNoResults": "Nerasta atitinkančios valiutos.",
+    "walletExtraIdLabel": "Pastaba / Žymė",
+    "walletExtraIdPlaceholder": "Būtina šiam tinklui",
+    "walletExtraIdHint": "Kai kuriuose tinkluose (pvz., XRP, EOS) kartu su adresu būtina nurodyti šią papildomą pastabą/žymą – be jos jums siunčiamos lėšos gali būti prarastos."
   },
   "notifications": {
     "title": "Pranešimai",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Mokėjimo QR kodas",
     "depositAddressLabel": "Įmokos adresas",
     "expiresIn": "Galioja iki „{time}“",
-    "countdownExpired": "Mokėjimo terminas pasibaigė"
+    "countdownExpired": "Mokėjimo terminas pasibaigė",
+    "currencyPickerLabel": "Apmokėti naudojantis",
+    "currencyPickerLoading": "Įkeliama turimų valiutų sąrašas…",
+    "currencyPickerSearch": "Ieškoti valiutos arba tinklo…",
+    "currencyPickerNoResults": "Nerasta atitinkančios valiutos.",
+    "minAmountChecking": "Tikrinama mažiausia suma šia valiuta…",
+    "minAmountTooLow": "Mažiausia „{currency}“ suma: {amount} dolerių — pasirinkite kitą valiutą arba padidinkite sumą."
   },
   "advertiser": {
     "title": "Reklamuokitės „SmarterBloggers“ svetainėje",

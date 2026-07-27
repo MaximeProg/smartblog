@@ -2559,7 +2559,14 @@
       "male": "Férfi",
       "female": "Nő"
     },
-    "pwGenericError": "A jelszó megváltoztatása nem sikerült."
+    "pwGenericError": "A jelszó megváltoztatása nem sikerült.",
+    "walletCurrencyLabel": "Pénznem / hálózat",
+    "walletCurrencyLoading": "A rendelkezésre álló hálózatok betöltése…",
+    "walletCurrencySearch": "Pénznem vagy hálózat keresése…",
+    "walletCurrencyNoResults": "Nincs megfelelő pénznem.",
+    "walletExtraIdLabel": "Jegyzet / Címke",
+    "walletExtraIdPlaceholder": "Ehhez a hálózathoz szükséges",
+    "walletExtraIdHint": "Egyes hálózatok (pl. XRP, EOS) megkövetelik, hogy a cím mellett ezt a kiegészítő megjegyzést/címkét is megadják – ennek hiányában az Önnek küldött pénzeszközök elveszhetnek."
   },
   "notifications": {
     "title": "Értesítések",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Fizetési QR-kód",
     "depositAddressLabel": "Befizetési cím",
     "expiresIn": "{time}-ig érvényes",
-    "countdownExpired": "A fizetési határidő lejárt"
+    "countdownExpired": "A fizetési határidő lejárt",
+    "currencyPickerLabel": "Fizetés",
+    "currencyPickerLoading": "A rendelkezésre álló pénznemek betöltése…",
+    "currencyPickerSearch": "Pénznem vagy hálózat keresése…",
+    "currencyPickerNoResults": "Nincs megfelelő pénznem.",
+    "minAmountChecking": "Az adott pénznem minimális összegének ellenőrzése…",
+    "minAmountTooLow": "{currency} minimális összege: {amount} dollár — válasszon másik pénznemet, vagy növelje az összeget."
   },
   "advertiser": {
     "title": "Hirdessen a SmarterBloggers oldalon",

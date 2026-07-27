@@ -2559,7 +2559,14 @@
       "male": "Hombre",
       "female": "Mujer"
     },
-    "pwGenericError": "No se ha podido cambiar la contraseña."
+    "pwGenericError": "No se ha podido cambiar la contraseña.",
+    "walletCurrencyLabel": "Moneda / red",
+    "walletCurrencyLoading": "Cargando las redes disponibles…",
+    "walletCurrencySearch": "Busca una moneda o una red…",
+    "walletCurrencyNoResults": "No hay ninguna moneda que coincida.",
+    "walletExtraIdLabel": "Nota / Etiqueta",
+    "walletExtraIdPlaceholder": "Requisitos para esta red",
+    "walletExtraIdHint": "Algunas redes (por ejemplo, XRP, EOS) exigen que se incluya este memo o etiqueta adicional junto con la dirección; sin él, los fondos que se te envíen podrían perderse."
   },
   "notifications": {
     "title": "Notificaciones",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Código QR de pago",
     "depositAddressLabel": "Dirección de depósito",
     "expiresIn": "Caduca en {time}",
-    "countdownExpired": "El plazo de pago ha vencido"
+    "countdownExpired": "El plazo de pago ha vencido",
+    "currencyPickerLabel": "Pagar con",
+    "currencyPickerLoading": "Cargando las divisas disponibles…",
+    "currencyPickerSearch": "Busca una moneda o una red…",
+    "currencyPickerNoResults": "No hay ninguna moneda que coincida.",
+    "minAmountChecking": "Comprobando el importe mínimo para esta divisa…",
+    "minAmountTooLow": "Importe mínimo para «{currency}»: {amount} — elige otra divisa o aumenta el importe."
   },
   "advertiser": {
     "title": "Anúnciate en SmarterBloggers",

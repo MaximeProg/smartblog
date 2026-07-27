@@ -2559,7 +2559,14 @@
       "male": "Чоловік",
       "female": "Жінка"
     },
-    "pwGenericError": "Не вдалося змінити пароль."
+    "pwGenericError": "Не вдалося змінити пароль.",
+    "walletCurrencyLabel": "Валюта / мережа",
+    "walletCurrencyLoading": "Завантаження доступних мереж…",
+    "walletCurrencySearch": "Знайти валюту або мережу…",
+    "walletCurrencyNoResults": "Відповідної валюти немає.",
+    "walletExtraIdLabel": "Нотатка / Тег",
+    "walletExtraIdPlaceholder": "Необхідно для цієї мережі",
+    "walletExtraIdHint": "Деякі мережі (наприклад, XRP, EOS) вимагають вказати цей додатковий мемо/тег разом з адресою — без нього кошти, надіслані вам, можуть бути втрачені."
   },
   "notifications": {
     "title": "Повідомлення",
@@ -3849,7 +3856,13 @@
     "qrAlt": "QR-код для оплати",
     "depositAddressLabel": "Адреса для поповнення рахунку",
     "expiresIn": "Термін дії закінчується через {time}",
-    "countdownExpired": "Термін оплати закінчився"
+    "countdownExpired": "Термін оплати закінчився",
+    "currencyPickerLabel": "Оплатити за допомогою",
+    "currencyPickerLoading": "Завантаження доступних валют…",
+    "currencyPickerSearch": "Знайти валюту або мережу…",
+    "currencyPickerNoResults": "Відповідної валюти немає.",
+    "minAmountChecking": "Перевірка мінімальної суми для цієї валюти…",
+    "minAmountTooLow": "Мінімальна сума для «{currency}»: {amount} доларів — виберіть іншу валюту або збільште суму."
   },
   "advertiser": {
     "title": "Розміщуйте рекламу на SmarterBloggers",

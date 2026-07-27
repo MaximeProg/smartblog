@@ -1721,7 +1721,7 @@
         "features": [
           "10 bloguri",
           "Articole nelimitate",
-          "50.000 de abonați la newsletter",
+          "50.000 de abonați la buletinul informativ",
           "10 autori",
           "50 GB spațiu de stocare",
           "Domeniu personalizat",
@@ -2559,7 +2559,14 @@
       "male": "Bărbat",
       "female": "Femeie"
     },
-    "pwGenericError": "Nu s-a reușit schimbarea parolei."
+    "pwGenericError": "Nu s-a reușit schimbarea parolei.",
+    "walletCurrencyLabel": "Monedă / rețea",
+    "walletCurrencyLoading": "Se încarcă rețelele disponibile…",
+    "walletCurrencySearch": "Căutați o monedă sau o rețea…",
+    "walletCurrencyNoResults": "Nu există nicio monedă corespunzătoare.",
+    "walletExtraIdLabel": "Notă / Etichetă",
+    "walletExtraIdPlaceholder": "Necesar pentru această rețea",
+    "walletExtraIdHint": "Unele rețele (de exemplu, XRP, EOS) necesită această notă/etichetă suplimentară alături de adresă — fără aceasta, fondurile trimise către tine ar putea fi pierdute."
   },
   "notifications": {
     "title": "Notificări",
@@ -3849,7 +3856,13 @@
     "qrAlt": "Cod QR de plată",
     "depositAddressLabel": "Adresa de depozit",
     "expiresIn": "Expiră în{time}",
-    "countdownExpired": "Termenul de plată a expirat"
+    "countdownExpired": "Termenul de plată a expirat",
+    "currencyPickerLabel": "Plătește cu",
+    "currencyPickerLoading": "Se încarcă monedele disponibile…",
+    "currencyPickerSearch": "Căutați o monedă sau o rețea…",
+    "currencyPickerNoResults": "Nu există nicio monedă corespunzătoare.",
+    "minAmountChecking": "Se verifică suma minimă pentru această monedă…",
+    "minAmountTooLow": "Suma minimă pentru „{currency}”: {amount} — alegeți o altă monedă sau măriți suma."
   },
   "advertiser": {
     "title": "Promovați-vă pe SmarterBloggers",

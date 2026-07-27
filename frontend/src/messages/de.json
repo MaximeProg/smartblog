@@ -2559,7 +2559,14 @@
       "male": "Männlich",
       "female": "Weiblich"
     },
-    "pwGenericError": "Das Ändern des Passworts ist fehlgeschlagen."
+    "pwGenericError": "Das Ändern des Passworts ist fehlgeschlagen.",
+    "walletCurrencyLabel": "Währung / Netzwerk",
+    "walletCurrencyLoading": "Verfügbare Netzwerke werden geladen…",
+    "walletCurrencySearch": "Eine Währung oder ein Netzwerk suchen…",
+    "walletCurrencyNoResults": "Keine passende Währung gefunden.",
+    "walletExtraIdLabel": "Notiz / Stichwort",
+    "walletExtraIdPlaceholder": "Für dieses Netzwerk erforderlich",
+    "walletExtraIdHint": "Bei einigen Netzwerken (z. B. XRP, EOS) ist neben der Adresse die Angabe dieses zusätzlichen Memos/Tags erforderlich – ohne dieses könnten an Sie gesendete Beträge verloren gehen."
   },
   "notifications": {
     "title": "Benachrichtigungen",
@@ -3849,7 +3856,13 @@
     "qrAlt": "QR-Code für die Zahlung",
     "depositAddressLabel": "Einzahlungsadresse",
     "expiresIn": "Läuft ab in {time}",
-    "countdownExpired": "Die Zahlungsfrist ist abgelaufen"
+    "countdownExpired": "Die Zahlungsfrist ist abgelaufen",
+    "currencyPickerLabel": "Bezahlen mit",
+    "currencyPickerLoading": "Verfügbare Währungen werden geladen…",
+    "currencyPickerSearch": "Eine Währung oder ein Netzwerk suchen…",
+    "currencyPickerNoResults": "Keine passende Währung gefunden.",
+    "minAmountChecking": "Mindestbetrag für diese Währung wird geprüft…",
+    "minAmountTooLow": "Mindestbetrag für „{currency}“: {amount} – wählen Sie eine andere Währung aus oder erhöhen Sie den Betrag."
   },
   "advertiser": {
     "title": "Werben Sie auf SmarterBloggers",

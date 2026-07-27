@@ -2559,7 +2559,14 @@
       "male": "男性",
       "female": "女性"
     },
-    "pwGenericError": "パスワードの変更に失敗しました。"
+    "pwGenericError": "パスワードの変更に失敗しました。",
+    "walletCurrencyLabel": "通貨／ネットワーク",
+    "walletCurrencyLoading": "利用可能なネットワークを読み込んでいます…",
+    "walletCurrencySearch": "通貨やネットワークを検索…",
+    "walletCurrencyNoResults": "該当する通貨が見つかりません。",
+    "walletExtraIdLabel": "メモ / タグ",
+    "walletExtraIdPlaceholder": "このネットワークに必須",
+    "walletExtraIdHint": "一部のネットワーク（XRPやEOSなど）では、アドレスのほかにこの追加のメモ／タグが必要となります。これがない場合、送金された資金が失われる可能性があります。"
   },
   "notifications": {
     "title": "通知",
@@ -3849,7 +3856,13 @@
     "qrAlt": "支払い用QRコード",
     "depositAddressLabel": "入金先アドレス",
     "expiresIn": "有効期限まであと{time}",
-    "countdownExpired": "お支払い期間が終了しました"
+    "countdownExpired": "お支払い期間が終了しました",
+    "currencyPickerLabel": "お支払い方法",
+    "currencyPickerLoading": "利用可能な通貨を読み込み中…",
+    "currencyPickerSearch": "通貨やネットワークを検索…",
+    "currencyPickerNoResults": "該当する通貨が見つかりません。",
+    "minAmountChecking": "この通貨の最低入金額を確認中…",
+    "minAmountTooLow": "{currency}の最低入金額：{amount} — 別の通貨を選択するか、金額を増やしてください。"
   },
   "advertiser": {
     "title": "SmarterBloggersに広告を掲載する",

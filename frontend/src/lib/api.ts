@@ -212,8 +212,11 @@ export const authApi = {
     });
   },
 
-  updateWallet: (data: { usdt_wallet_address: string }) =>
+  updateWallet: (data: { usdt_wallet_address: string; payout_currency: string; payout_extra_id?: string }) =>
     api.patch<UserInfo>('/auth/me/wallet', data),
+
+  getPayoutCurrencies: () =>
+    api.get<PayoutCurrencyInfo[]>('/auth/payout-currencies'),
 
   // ── Authentification native (email/mot de passe, sans Firebase) ──
   // Firebase reste utilisé uniquement pour la connexion Google (authApi.login).
@@ -668,6 +671,7 @@ export interface SubmitAdData {
   starts_at?: string;
   ends_at?: string;
   total_budget?: number;
+  pay_currency?: string;
 }
 
 export const adsApi = {
@@ -700,6 +704,7 @@ export interface PlatformAdSubmitData {
   price_per_day?: number;
   total_budget: number;
   currency?: string;
+  pay_currency?: string;
   target_countries?: string[] | null;
 }
 
@@ -933,6 +938,24 @@ export interface RegistrantInfo {
   zipcode: string;
 }
 
+export interface PaymentCurrencyInfo {
+  code: string;
+  name: string;
+  network: string | null;
+  logo_url: string | null;
+}
+
+export interface PayoutCurrencyInfo {
+  code: string;
+  name: string;
+  network: string | null;
+  wallet_regex: string | null;
+  extra_id_exists: boolean;
+  extra_id_regex: string | null;
+  extra_id_optional: boolean;
+  logo_url: string | null;
+}
+
 export interface DomainOrderStatusInfo {
   id: string;
   domain_name: string;
@@ -1092,14 +1115,20 @@ export const paymentsApi = {
   getSubscription: (tenantId: string) =>
     api.get<{ plan: string; status: string; expires_at: string | null; trial_ends_at: string | null }>(`/tenants/${tenantId}/payments/subscription`),
 
-  createArticleCheckout: (tenantId: string, data: { article_id: string }) =>
+  createArticleCheckout: (tenantId: string, data: { article_id: string; pay_currency?: string }) =>
     api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/checkout`, data),
 
-  createSubscriptionCheckout: (tenantId: string, data: { plan: string; billing?: 'monthly' | 'annual' }) =>
+  createSubscriptionCheckout: (tenantId: string, data: { plan: string; billing?: 'monthly' | 'annual'; pay_currency?: string }) =>
     api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/checkout-subscription`, data),
 
-  createDomainCheckout: (tenantId: string, data: { domain_name: string; years: number; auto_renew: boolean; registrant: RegistrantInfo }) =>
+  createDomainCheckout: (tenantId: string, data: { domain_name: string; years: number; auto_renew: boolean; registrant: RegistrantInfo; pay_currency?: string }) =>
     api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/checkout-domain`, data),
+
+  getCurrencies: (tenantId: string) =>
+    api.get<PaymentCurrencyInfo[]>(`/tenants/${tenantId}/payments/currencies`),
+
+  getMinAmount: (tenantId: string, currency: string) =>
+    api.get<{ currency: string; min_amount_usd: number }>(`/tenants/${tenantId}/payments/min-amount`, { params: { currency } }),
 
   getPaymentStatus: (tenantId: string, orderId: string) =>
     api.get<PaymentStatusResponse>(`/tenants/${tenantId}/payments/status/${orderId}`),

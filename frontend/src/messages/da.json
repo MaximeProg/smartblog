@@ -2559,7 +2559,14 @@
       "male": "Mand",
       "female": "Kvinde"
     },
-    "pwGenericError": "Det lykkedes ikke at ændre adgangskoden."
+    "pwGenericError": "Det lykkedes ikke at ændre adgangskoden.",
+    "walletCurrencyLabel": "Valuta / netværk",
+    "walletCurrencyLoading": "Indlæser tilgængelige netværk…",
+    "walletCurrencySearch": "Søg efter en valuta eller et netværk…",
+    "walletCurrencyNoResults": "Der findes ingen tilsvarende valuta.",
+    "walletExtraIdLabel": "Notat / Mærke",
+    "walletExtraIdPlaceholder": "Nødvendigt for dette netværk",
+    "walletExtraIdHint": "Nogle netværk (f.eks. XRP, EOS) kræver, at der angives denne ekstra memo/tag sammen med adressen — uden den kan de midler, der sendes til dig, gå tabt."
   },
   "notifications": {
     "title": "Meddelelser",
@@ -3849,7 +3856,13 @@
     "qrAlt": "QR-kode til betaling",
     "depositAddressLabel": "Indbetalingsadresse",
     "expiresIn": "Udløber om {time}",
-    "countdownExpired": "Betalingsfristen er udløbet"
+    "countdownExpired": "Betalingsfristen er udløbet",
+    "currencyPickerLabel": "Betal med",
+    "currencyPickerLoading": "Indlæser tilgængelige valutaer…",
+    "currencyPickerSearch": "Søg efter en valuta eller et netværk…",
+    "currencyPickerNoResults": "Der findes ingen tilsvarende valuta.",
+    "minAmountChecking": "Kontrollerer minimumsbeløbet for denne valuta…",
+    "minAmountTooLow": "Minimumsbeløb for »{currency}«: {amount} — vælg en anden valuta eller forhøj beløbet."
   },
   "advertiser": {
     "title": "Annoncer på SmarterBloggers",

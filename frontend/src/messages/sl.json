@@ -2559,7 +2559,14 @@
       "male": "Moški",
       "female": "Ženska"
     },
-    "pwGenericError": "Sprememba gesla ni uspela."
+    "pwGenericError": "Sprememba gesla ni uspela.",
+    "walletCurrencyLabel": "Valuta / omrežje",
+    "walletCurrencyLoading": "Nalaganje razpoložljivih omrežij…",
+    "walletCurrencySearch": "Poišči valuto ali omrežje…",
+    "walletCurrencyNoResults": "Ni ustrezne valute.",
+    "walletExtraIdLabel": "Opomba / Oznaka",
+    "walletExtraIdPlaceholder": "Za to omrežje je potrebno",
+    "walletExtraIdHint": "Nekatera omrežja (npr. XRP, EOS) zahtevajo poleg naslova tudi ta dodatni memo/oznako – brez njega se lahko sredstva, ki so vam bila poslana, izgubijo."
   },
   "notifications": {
     "title": "Obvestila",
@@ -3849,7 +3856,13 @@
     "qrAlt": "QR-koda za plačilo",
     "depositAddressLabel": "Naslov za nakazilo",
     "expiresIn": "Potek veljavnosti: {time}",
-    "countdownExpired": "Rok za plačilo je potekel"
+    "countdownExpired": "Rok za plačilo je potekel",
+    "currencyPickerLabel": "Plačajte z",
+    "currencyPickerLoading": "Nalaganje razpoložljivih valut…",
+    "currencyPickerSearch": "Poišči valuto ali omrežje…",
+    "currencyPickerNoResults": "Ni ustrezne valute.",
+    "minAmountChecking": "Preverjanje najnižjega zneska za to valuto…",
+    "minAmountTooLow": "Minimalni znesek za »{currency}«: {amount} — izberite drugo valuto ali povečajte znesek."
   },
   "advertiser": {
     "title": "Oglašujte na SmarterBloggers",

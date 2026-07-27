@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { Save, Loader2, User, Mail, Shield, Key, Eye, EyeOff, Phone, Globe, Lock, ShieldCheck, ShieldOff, Camera, Wallet, CheckCircle2 } from 'lucide-react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Save, Loader2, User, Mail, Shield, Key, Eye, EyeOff, Phone, Globe, Lock, ShieldCheck, ShieldOff, Camera, Wallet, CheckCircle2, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { useAuthStore } from '@/store/auth.store';
-import { authApi } from '@/lib/api';
+import { authApi, type PayoutCurrencyInfo } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { getInitials, getErrorMessage } from '@/lib/utils';
 import { COUNTRIES, CONTINENTS, GENDERS, getContinentFromCountry, getDialCode, countryFlag } from '@/lib/constants/countries';
@@ -143,23 +143,43 @@ export default function ProfilePage() {
   const [disableError, setDisableError]       = useState('');
   const [twoFAEnabled, setTwoFAEnabled]       = useState(user?.two_fa_enabled ?? false);
 
-  // Wallet USDT
-  const [walletAddress, setWalletAddress]   = useState(user?.usdt_wallet_address ?? '');
-  const [showWalletForm, setShowWalletForm] = useState(false);
-  const [walletInput, setWalletInput]       = useState('');
-  const [walletError, setWalletError]       = useState('');
+  // Wallet — devise/réseau de cashout + adresse
+  const [walletAddress, setWalletAddress]     = useState(user?.usdt_wallet_address ?? '');
+  const [showWalletForm, setShowWalletForm]   = useState(false);
+  const [walletInput, setWalletInput]         = useState('');
+  const [extraIdInput, setExtraIdInput]       = useState('');
+  const [currencyCode, setCurrencyCode]       = useState(user?.payout_currency ?? 'usdtbsc');
+  const [currencySearch, setCurrencySearch]   = useState('');
+  const [walletError, setWalletError]         = useState('');
+
+  const { data: payoutCurrencies = [] } = useQuery({
+    queryKey: ['payout-currencies'],
+    queryFn: async () => { const { data } = await authApi.getPayoutCurrencies(); return data; },
+    enabled: showWalletForm,
+    staleTime: 60 * 60 * 1000,
+  });
+  const selectedCurrency = payoutCurrencies.find((c: PayoutCurrencyInfo) => c.code === currencyCode) ?? null;
+  const filteredCurrencies = payoutCurrencies.filter((c: PayoutCurrencyInfo) =>
+    !currencySearch || c.code.includes(currencySearch.toLowerCase()) || c.name.toLowerCase().includes(currencySearch.toLowerCase())
+  );
+  const addressValid = selectedCurrency?.wallet_regex ? new RegExp(selectedCurrency.wallet_regex).test(walletInput) : false;
+  const extraIdRequired = !!selectedCurrency?.extra_id_exists && !selectedCurrency?.extra_id_optional;
+  const extraIdValid = !extraIdRequired || (!!extraIdInput && (!selectedCurrency?.extra_id_regex || new RegExp(selectedCurrency.extra_id_regex).test(extraIdInput)));
 
   const walletMut = useMutation({
     mutationFn: () => authApi.updateWallet({
       usdt_wallet_address: walletInput.trim(),
+      payout_currency: currencyCode,
+      payout_extra_id: extraIdInput.trim() || undefined,
     }),
     onSuccess: (res) => {
       const newAddress = res.data.usdt_wallet_address ?? walletInput.trim();
       setWalletAddress(newAddress);
       setShowWalletForm(false);
       setWalletInput('');
+      setExtraIdInput('');
       setWalletError('');
-      useAuthStore.setState(s => ({ user: s.user ? { ...s.user, usdt_wallet_address: newAddress } : null }));
+      useAuthStore.setState(s => ({ user: s.user ? { ...s.user, usdt_wallet_address: newAddress, payout_currency: currencyCode } : null }));
       toast({ title: t('walletSavedToast') });
     },
     onError: (err: unknown) => {
@@ -197,6 +217,7 @@ export default function ProfilePage() {
     setGender(user.gender ?? '');
     setTwoFAEnabled(user.two_fa_enabled ?? false);
     setWalletAddress(user.usdt_wallet_address ?? '');
+    setCurrencyCode(user.payout_currency ?? 'usdtbsc');
     const dc = savedCountry ? (getDialCode(savedCountry) ?? '') : '';
     setDialCode(dc);
     const fullPhone = user.phone ?? '';
@@ -614,7 +635,7 @@ export default function ProfilePage() {
                     </div>
                     {twoFAEnabled ? (
                       <button
-                        onClick={() => { setShowWalletForm(v => !v); setWalletInput(walletAddress); setWalletError(''); }}
+                        onClick={() => { setShowWalletForm(v => !v); setWalletInput(walletAddress); setWalletError(''); setCurrencySearch(''); }}
                         className="self-start sm:self-auto flex items-center gap-1.5 h-8 px-3 rounded-lg border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-400 text-[12px] font-semibold hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
                       >
                         <Wallet className="h-3.5 w-3.5" />
@@ -630,6 +651,47 @@ export default function ProfilePage() {
                   {showWalletForm && twoFAEnabled && (
                     <div className="mt-3 pt-3 border-t border-amber-100 dark:border-amber-800/50 space-y-3">
                       <p className="text-[11px] text-slate-500 dark:text-slate-400">{t('walletDescription')}</p>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('walletCurrencyLabel')}</label>
+                        {payoutCurrencies.length === 0 ? (
+                          <div className="flex items-center gap-2 h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[12.5px] text-slate-400">
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" /> {t('walletCurrencyLoading')}
+                          </div>
+                        ) : (
+                          <>
+                            <div className="relative mb-1.5">
+                              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                              <input
+                                type="text"
+                                value={currencySearch}
+                                onChange={e => setCurrencySearch(e.target.value)}
+                                placeholder={t('walletCurrencySearch')}
+                                className="w-full h-8 pl-8 pr-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[12px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+                              />
+                            </div>
+                            <div className="max-h-40 overflow-y-auto rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
+                              {filteredCurrencies.slice(0, 100).map((c: PayoutCurrencyInfo) => (
+                                <button
+                                  key={c.code}
+                                  type="button"
+                                  onClick={() => { setCurrencyCode(c.code); setWalletError(''); }}
+                                  className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-left text-[12.5px] transition-colors ${
+                                    currencyCode === c.code ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 font-semibold' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                  }`}
+                                >
+                                  <span>{c.name}</span>
+                                  <span className="text-[10px] uppercase text-slate-400">{c.code}</span>
+                                </button>
+                              ))}
+                              {filteredCurrencies.length === 0 && (
+                                <p className="px-3 py-2.5 text-[12px] text-slate-400">{t('walletCurrencyNoResults')}</p>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
+
                       <div>
                         <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('walletAddressLabel')}</label>
                         <input
@@ -640,17 +702,32 @@ export default function ProfilePage() {
                           className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] font-mono text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-colors"
                         />
                       </div>
+
+                      {extraIdRequired && (
+                        <div>
+                          <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">{t('walletExtraIdLabel')}</label>
+                          <input
+                            type="text"
+                            value={extraIdInput}
+                            onChange={e => { setExtraIdInput(e.target.value.trim()); setWalletError(''); }}
+                            placeholder={t('walletExtraIdPlaceholder')}
+                            className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-[13px] font-mono text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 transition-colors"
+                          />
+                          <p className="text-[10.5px] text-slate-400 mt-1">{t('walletExtraIdHint')}</p>
+                        </div>
+                      )}
+
                       {walletError && <p className="text-[11px] text-red-500">{walletError}</p>}
                       <div className="flex gap-2">
                         <button
-                          onClick={() => { setShowWalletForm(false); setWalletInput(''); setWalletError(''); }}
+                          onClick={() => { setShowWalletForm(false); setWalletInput(''); setExtraIdInput(''); setWalletError(''); }}
                           className="flex-1 h-8 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[12px] font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                         >
                           {t('cancelButton')}
                         </button>
                         <button
                           onClick={() => walletMut.mutate()}
-                          disabled={!/^0x[a-fA-F0-9]{40}$/.test(walletInput) || walletMut.isPending}
+                          disabled={!addressValid || !extraIdValid || walletMut.isPending}
                           className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[12px] font-semibold transition-colors disabled:opacity-50"
                         >
                           {walletMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle2 className="h-3.5 w-3.5" />}

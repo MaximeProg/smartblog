@@ -12,6 +12,7 @@ import { platformAdsApi, type AdResponse, type PlatformAdStats, type PlatformAdS
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
+import { CryptoCurrencyPicker } from '@/components/payments/CryptoCurrencyPicker';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
 import { COUNTRIES } from '@/lib/constants/countries';
@@ -122,6 +123,8 @@ export default function AdvertiserPage() {
   const [targetCountries, setTargetCountries] = useState<string[]>([]);
   const [countrySearch, setCountrySearch] = useState('');
   const [touched, setTouched] = useState(false);
+  const [payCurrency, setPayCurrency] = useState('usdtbsc');
+  const [payCurrencyValid, setPayCurrencyValid] = useState(true);
 
   const { data: ads = [], isLoading } = useQuery<AdResponse[]>({
     queryKey: ['platform-ads-mine'],
@@ -140,6 +143,7 @@ export default function AdvertiserPage() {
       if (form.starts_at) body.starts_at = new Date(form.starts_at).toISOString();
       if (form.ends_at) body.ends_at = new Date(form.ends_at).toISOString();
       if (targetCountries.length) body.target_countries = targetCountries;
+      body.pay_currency = payCurrency;
       const { data } = await platformAdsApi.submit(body);
       return data;
     },
@@ -153,7 +157,7 @@ export default function AdvertiserPage() {
 
   const set = (key: keyof typeof form, value: string) => setForm(f => ({ ...f, [key]: value }));
 
-  const isValid = () => !!(form.title.trim() && form.click_url.trim() && form.total_budget && parseFloat(form.total_budget) > 0);
+  const isValid = () => !!(form.title.trim() && form.click_url.trim() && form.total_budget && parseFloat(form.total_budget) > 0 && payCurrencyValid);
 
   const handleSubmit = () => {
     setTouched(true);
@@ -166,6 +170,7 @@ export default function AdvertiserPage() {
     setTargetCountries([]);
     setCountrySearch('');
     setTouched(false);
+    setPayCurrency('usdtbsc');
   };
 
   const toggleCountry = (code: string) =>
@@ -317,6 +322,14 @@ export default function AdvertiserPage() {
                   </div>
                 </div>
 
+                <CryptoCurrencyPicker
+                  tenantId={PLATFORM_TENANT_ID}
+                  amountUsd={parseFloat(form.total_budget) || 0}
+                  value={payCurrency}
+                  onChange={setPayCurrency}
+                  onValidityChange={setPayCurrencyValid}
+                />
+
                 {touched && !isValid() && (
                   <p className="text-xs text-red-500 flex items-center gap-1.5">
                     <AlertCircle className="h-3.5 w-3.5 shrink-0" />
@@ -327,7 +340,7 @@ export default function AdvertiserPage() {
                 <div className="flex justify-end">
                   <button
                     onClick={handleSubmit}
-                    disabled={submitMutation.isPending}
+                    disabled={submitMutation.isPending || !payCurrencyValid}
                     className="flex items-center gap-2 px-6 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold disabled:opacity-60 transition-colors"
                   >
                     {submitMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <DollarSign className="h-4 w-4" />}

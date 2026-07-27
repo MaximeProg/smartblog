@@ -229,6 +229,18 @@ async def upload_avatar(
     return UserInfo.model_validate(user)
 
 
+# ── GET /auth/payout-currencies ────────────────────────────────────
+
+@router.get("/payout-currencies")
+async def get_payout_currencies_endpoint(payload: TokenPayload):
+    """Liste des devises/réseaux réellement disponibles pour le cashout,
+    récupérée en direct depuis NowPayments (mise en cache 6h) — jamais une
+    liste maintenue à la main côté plateforme, pour ne pas diverger de ce
+    que NowPayments accepte vraiment."""
+    from app.services.nowpayments_service import get_payout_currencies
+    return await get_payout_currencies()
+
+
 # ── PATCH /auth/me/wallet ─────────────────────────────────────────
 # Exige que la 2FA soit activée (RG-AFF-10)
 
@@ -239,8 +251,13 @@ async def update_wallet(
     db: DBSession,
 ):
     """
-    Enregistre ou met à jour l'adresse USDT BSC (BEP20) de l'utilisateur.
-    Requis : 2FA activé + code TOTP valide.
+    Enregistre ou met à jour la devise/réseau de cashout + l'adresse wallet
+    de l'utilisateur. Requis : 2FA activé + code TOTP valide.
+
+    Depuis le 2026-07-27, l'utilisateur choisit sa devise/réseau parmi ce que
+    NowPayments accepte réellement en payout (voir `get_payout_currencies`)
+    — l'adresse est validée avec le VRAI `wallet_regex` de NowPayments pour
+    cette devise précise, pas un regex BSC fixe, pour ne jamais diverger.
 
     Décision PDG : sans wallet enregistré, un utilisateur ne participe pas au
     programme d'affiliation et ne reçoit pas sa part de revenu publicitaire —
@@ -250,16 +267,27 @@ async def update_wallet(
     """
     from sqlalchemy import select
     from app.models.user import User
+    from app.services.nowpayments_service import find_payout_currency
     import uuid, re
 
     wallet_address: str = (body.get("usdt_wallet_address") or "").strip()
+    currency_code: str = (body.get("payout_currency") or "usdtbsc").strip().lower()
+    extra_id: str = (body.get("payout_extra_id") or "").strip()
 
     if not wallet_address:
-        raise ValidationException("USDT address required.")
+        raise ValidationException("Wallet address required.")
 
-    # Validation basique format BSC/BEP20 (adresse EVM standard : 0x + 40 hex)
-    if not re.match(r"^0x[a-fA-F0-9]{40}$", wallet_address):
-        raise ValidationException("Invalid BSC USDT address. It must start with 0x and be 42 characters long.")
+    currency = await find_payout_currency(currency_code)
+    if not currency:
+        raise ValidationException("Unsupported payout currency/network.")
+
+    if currency["wallet_regex"] and not re.match(currency["wallet_regex"], wallet_address):
+        raise ValidationException(f"Invalid address format for {currency['name']}.")
+
+    if currency["extra_id_exists"] and not currency["extra_id_optional"] and not extra_id:
+        raise ValidationException(f"{currency['name']} requires an additional memo/tag (extra_id).")
+    if extra_id and currency["extra_id_regex"] and not re.match(currency["extra_id_regex"], extra_id):
+        raise ValidationException(f"Invalid memo/tag format for {currency['name']}.")
 
     user_id = uuid.UUID(payload["sub"])
     result = await db.execute(select(User).where(User.id == user_id))
@@ -273,6 +301,8 @@ async def update_wallet(
         raise ValidationException("You must enable two-factor authentication (2FA) before registering your wallet address.")
 
     user.usdt_wallet_address = wallet_address
+    user.payout_currency = currency_code
+    user.payout_extra_id = extra_id or None
     await db.commit()
 
     from app.schemas.auth import UserInfo

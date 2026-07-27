@@ -2559,7 +2559,14 @@
       "male": "Мъж",
       "female": "Женски"
     },
-    "pwGenericError": "Не успяхте да промените паролата."
+    "pwGenericError": "Не успяхте да промените паролата.",
+    "walletCurrencyLabel": "Валута / мрежа",
+    "walletCurrencyLoading": "Зареждане на наличните мрежи…",
+    "walletCurrencySearch": "Търсене на валута или мрежа…",
+    "walletCurrencyNoResults": "Няма съвпадаща валута.",
+    "walletExtraIdLabel": "Бележка / Етикет",
+    "walletExtraIdPlaceholder": "Необходимо за тази мрежа",
+    "walletExtraIdHint": "Някои мрежи (например XRP, EOS) изискват този допълнителен мемо/таг заедно с адреса — без него изпратените ви средства могат да бъдат загубени."
   },
   "notifications": {
     "title": "Уведомления",
@@ -3849,7 +3856,13 @@
     "qrAlt": "QR код за плащане",
     "depositAddressLabel": "Адрес за депозит",
     "expiresIn": "Изтича след {time}",
-    "countdownExpired": "Срокът за плащане изтече"
+    "countdownExpired": "Срокът за плащане изтече",
+    "currencyPickerLabel": "Платете с",
+    "currencyPickerLoading": "Зареждане на наличните валути…",
+    "currencyPickerSearch": "Търсене на валута или мрежа…",
+    "currencyPickerNoResults": "Няма съвпадаща валута.",
+    "minAmountChecking": "Проверява се минималната сума за тази валута…",
+    "minAmountTooLow": "Минимална сума за „{currency}“: {amount} долара — изберете друга валута или увеличете сумата."
   },
   "advertiser": {
     "title": "Рекламирайте се в SmarterBloggers",

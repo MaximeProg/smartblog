@@ -2559,7 +2559,14 @@
       "male": "Man",
       "female": "Kvinna"
     },
-    "pwGenericError": "Det gick inte att byta lösenord."
+    "pwGenericError": "Det gick inte att byta lösenord.",
+    "walletCurrencyLabel": "Valuta / nätverk",
+    "walletCurrencyLoading": "Hämtar tillgängliga nätverk…",
+    "walletCurrencySearch": "Sök efter en valuta eller ett nätverk…",
+    "walletCurrencyNoResults": "Ingen matchande valuta.",
+    "walletExtraIdLabel": "Anteckning / Etikett",
+    "walletExtraIdPlaceholder": "Krävs för detta nätverk",
+    "walletExtraIdHint": "Vissa nätverk (t.ex. XRP, EOS) kräver att man anger denna extra memo/tagg tillsammans med adressen – utan den kan de medel som skickas till dig gå förlorade."
   },
   "notifications": {
     "title": "Meddelanden",
@@ -3849,7 +3856,13 @@
     "qrAlt": "QR-kod för betalning",
     "depositAddressLabel": "Insättningsadress",
     "expiresIn": "Giltighetstid utgår om {time}",
-    "countdownExpired": "Betalningsfristen har löpt ut"
+    "countdownExpired": "Betalningsfristen har löpt ut",
+    "currencyPickerLabel": "Betala med",
+    "currencyPickerLoading": "Laddar tillgängliga valutor…",
+    "currencyPickerSearch": "Sök efter en valuta eller ett nätverk…",
+    "currencyPickerNoResults": "Ingen matchande valuta.",
+    "minAmountChecking": "Kontrollerar minimibeloppet för denna valuta…",
+    "minAmountTooLow": "Minimibelopp för ”{currency}”: {amount} — välj en annan valuta eller höj beloppet."
   },
   "advertiser": {
     "title": "Annonsera på SmarterBloggers",
