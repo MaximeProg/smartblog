@@ -304,11 +304,16 @@ async def resend_verification_email(db: AsyncSession, email: str, locale: str = 
 
 
 async def request_password_reset(db: AsyncSession, email: str, locale: str = "en") -> None:
-    """Toujours silencieux (anti-énumération), y compris pour les comptes Google
-    (qui n'ont pas de password_hash — rien à réinitialiser)."""
+    """Toujours silencieux pour une adresse email inconnue (anti-énumération).
+    Un compte Google sans password_hash reçoit quand même le lien : ça lui
+    permet de DÉFINIR un mot de passe pour la première fois (connexion
+    email/mot de passe en plus de Google), pas seulement de le réinitialiser —
+    tout utilisateur doit pouvoir obtenir un accès par mot de passe, quel que
+    soit son mode d'inscription initial ou son rôle (décision PDG 2026-07-27,
+    suite à un super admin inscrit via Google qui ne recevait jamais l'email)."""
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalar_one_or_none()
-    if not user or not user.password_hash:
+    if not user:
         return
 
     from app.core.security import create_password_reset_token
