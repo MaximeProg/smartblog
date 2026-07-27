@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Når din annonce er godkendt, bliver den offentliggjort på SmarterBloggers’ forside.",
     "howItWorksStep4": "Følg visninger, klik og CTR i realtid fra dette kontrolpanel.",
     "sponsoredLabel": "Sponsoreret",
-    "openButton": "Åben"
+    "openButton": "Åben",
+    "targetCountries": "Mållande (valgfrit)",
+    "targetCountriesHint": "Lad feltet være tomt for at vise din annonce til besøgende overalt. Vælg et eller flere lande for kun at vise den til besøgende fra disse lande.",
+    "targetCountriesSearch": "Søg efter et land…",
+    "targetCountriesNoResults": "Der findes intet matchende land."
   },
   "aiBuilder": {
     "title": "AI-bloggenerator",

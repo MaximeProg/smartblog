@@ -654,6 +654,7 @@ export interface AdResponse {
   clicks_count: number;
   payment_link_url: string | null;
   created_at: string;
+  target_countries?: string[] | null;
 }
 
 export interface SubmitAdData {
@@ -699,6 +700,7 @@ export interface PlatformAdSubmitData {
   price_per_day?: number;
   total_budget: number;
   currency?: string;
+  target_countries?: string[] | null;
 }
 
 export interface PlatformAdStats {

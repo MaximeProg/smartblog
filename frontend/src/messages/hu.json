@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "A jóváhagyás után a hirdetésed megjelenik a SmarterBloggers főoldalán.",
     "howItWorksStep4": "Ezen az irányítópulton keresztül valós időben követheti nyomon a megjelenítéseket, a kattintásokat és a kattintási arányt (CTR).",
     "sponsoredLabel": "Szponzorált",
-    "openButton": "Megnyitás"
+    "openButton": "Megnyitás",
+    "targetCountries": "Célországok (opcionális)",
+    "targetCountriesHint": "Ha üresen hagyja, a hirdetése minden látogató számára megjelenik. Válasszon ki egy vagy több országot, ha a hirdetést csak az adott országokból érkező látogatóknak szeretné megjeleníteni.",
+    "targetCountriesSearch": "Ország keresése…",
+    "targetCountriesNoResults": "Nincs megfelelő ország."
   },
   "aiBuilder": {
     "title": "AI-alapú blogkészítő",

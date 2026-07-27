@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Po zatwierdzeniu Twoja reklama pojawi się na stronie głównej serwisu SmarterBloggers.",
     "howItWorksStep4": "Na tym pulpicie nawigacyjnym możesz na bieżąco śledzić wyświetlenia, kliknięcia i współczynnik CTR.",
     "sponsoredLabel": "Sponsorowane",
-    "openButton": "Otwórz"
+    "openButton": "Otwórz",
+    "targetCountries": "Kraje docelowe (opcjonalnie)",
+    "targetCountriesHint": "Pozostaw to pole puste, aby Twoja reklama była wyświetlana wszystkim odwiedzającym. Wybierz jeden lub więcej krajów, aby reklama była wyświetlana wyłącznie odwiedzającym z tych krajów.",
+    "targetCountriesSearch": "Wyszukaj kraj…",
+    "targetCountriesNoResults": "Nie znaleziono pasującego kraju."
   },
   "aiBuilder": {
     "title": "Kreator blogów oparty na sztucznej inteligencji",

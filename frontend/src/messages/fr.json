@@ -2697,7 +2697,11 @@
     "howItWorksStep3": "Une fois approuvée, votre publicité est diffusée sur la page d'accueil de SmarterBloggers.",
     "howItWorksStep4": "Suivez en direct les impressions, clics et le taux de clic depuis ce tableau de bord.",
     "sponsoredLabel": "Sponsorisé",
-    "openButton": "Ouvrir"
+    "openButton": "Ouvrir",
+    "targetCountries": "Pays ciblés (optionnel)",
+    "targetCountriesHint": "Laissez vide pour afficher votre pub à tous les visiteurs. Sélectionnez un ou plusieurs pays pour ne l'afficher qu'aux visiteurs de ces pays.",
+    "targetCountriesSearch": "Rechercher un pays…",
+    "targetCountriesNoResults": "Aucun pays correspondant."
   },
   "tenantAccounting": {
     "title": "Vue financière",

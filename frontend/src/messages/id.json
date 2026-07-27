@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Setelah disetujui, iklan Anda akan ditayangkan di halaman utama SmarterBloggers.",
     "howItWorksStep4": "Pantau tayangan, klik, dan CTR secara langsung dari dasbor ini.",
     "sponsoredLabel": "Disponsori",
-    "openButton": "Buka"
+    "openButton": "Buka",
+    "targetCountries": "Negara sasaran (opsional)",
+    "targetCountriesHint": "Biarkan kosong agar iklan Anda ditampilkan kepada pengunjung di mana pun. Pilih satu atau lebih negara agar iklan hanya ditampilkan kepada pengunjung dari negara-negara tersebut.",
+    "targetCountriesSearch": "Cari negara…",
+    "targetCountriesNoResults": "Tidak ada negara yang sesuai."
   },
   "aiBuilder": {
     "title": "Pembuat Blog AI",

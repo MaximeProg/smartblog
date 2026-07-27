@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Po schválení sa vaša reklama zobrazí na hlavnej stránke SmarterBloggers.",
     "howItWorksStep4": "Na tomto riadiacom paneli môžete v reálnom čase sledovať zobrazenia, kliknutia a mieru prekliku (CTR).",
     "sponsoredLabel": "Sponzorované",
-    "openButton": "Otvoriť"
+    "openButton": "Otvoriť",
+    "targetCountries": "Cieľové krajiny (nevyžaduje sa)",
+    "targetCountriesHint": "Nechajte pole prázdne, ak chcete, aby sa vaša reklama zobrazovala návštevníkom z celého sveta. Vyberte jednu alebo viac krajín, ak chcete, aby sa reklama zobrazovala len návštevníkom z týchto krajín.",
+    "targetCountriesSearch": "Vyhľadajte krajinu…",
+    "targetCountriesNoResults": "Nenašla sa žiadna zodpovedajúca krajina."
   },
   "aiBuilder": {
     "title": "Nástroj na tvorbu blogov s umelou inteligenciou",

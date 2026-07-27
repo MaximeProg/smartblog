@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Una volta approvato, il tuo annuncio verrà pubblicato sulla homepage di SmarterBloggers.",
     "howItWorksStep4": "Monitora in tempo reale le visualizzazioni, i clic e il CTR da questa dashboard.",
     "sponsoredLabel": "Con il sostegno di",
-    "openButton": "Apri"
+    "openButton": "Apri",
+    "targetCountries": "Paesi di destinazione (facoltativo)",
+    "targetCountriesHint": "Lascia il campo vuoto per mostrare il tuo annuncio ai visitatori di tutto il mondo. Seleziona uno o più paesi per mostrarlo solo ai visitatori provenienti da quei paesi.",
+    "targetCountriesSearch": "Cerca un paese…",
+    "targetCountriesNoResults": "Nessun paese corrispondente."
   },
   "aiBuilder": {
     "title": "Generatore di blog sull'intelligenza artificiale",

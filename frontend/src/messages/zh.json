@@ -1742,7 +1742,7 @@
           "多领域",
           "白标",
           "有保障的服务水平协议（SLA）",
-          "专属入职流程",
+          "专属入职指导",
           "全天候支持"
         ]
       }
@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "广告一经审核通过，即会在 SmarterBloggers 首页上线。",
     "howItWorksStep4": "通过此仪表盘实时跟踪展示量、点击量和点击率。",
     "sponsoredLabel": "赞助内容",
-    "openButton": "打开"
+    "openButton": "打开",
+    "targetCountries": "目标国家（可选）",
+    "targetCountriesHint": "留空即可向所有地区的访客展示您的广告。选择一个或多个国家/地区，仅向来自这些国家的访客展示广告。",
+    "targetCountriesSearch": "搜索一个国家……",
+    "targetCountriesNoResults": "未找到匹配的国家。"
   },
   "aiBuilder": {
     "title": "AI 博客生成器",

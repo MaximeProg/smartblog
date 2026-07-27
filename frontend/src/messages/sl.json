@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Ko bo oglas odobren, se bo objavil na domači strani SmarterBloggers.",
     "howItWorksStep4": "Na tej nadzorni plošči lahko v realnem času spremljate prikaze, kliki in CTR.",
     "sponsoredLabel": "Sponzorirano",
-    "openButton": "Odpri"
+    "openButton": "Odpri",
+    "targetCountries": "Ciljne države (neobvezno)",
+    "targetCountriesHint": "Pustite polje prazno, če želite oglas prikazati obiskovalcem povsod. Izberite eno ali več držav, če želite oglas prikazati le obiskovalcem iz teh držav.",
+    "targetCountriesSearch": "Poišči državo…",
+    "targetCountriesNoResults": "Ni ustrezne države."
   },
   "aiBuilder": {
     "title": "Orodje za ustvarjanje blogov z umetno inteligenco",

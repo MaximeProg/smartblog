@@ -1706,7 +1706,7 @@
         "features": [
           "3 bloggar",
           "500 artiklar",
-          "5 000 prenumeranter på nyhetsbrevet",
+          "5 000 nyhetsbrevsprenumeranter",
           "3 författare",
           "5 GB lagringsutrymme",
           "Anpassad domän",
@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "När din annons har godkänts publiceras den på SmarterBloggers förstasida.",
     "howItWorksStep4": "Följ visningar, klick och klickfrekvens (CTR) i realtid från den här översikten.",
     "sponsoredLabel": "Sponsrat",
-    "openButton": "Öppna"
+    "openButton": "Öppna",
+    "targetCountries": "Måländer (valfritt)",
+    "targetCountriesHint": "Lämna fältet tomt för att visa din annons för besökare överallt. Välj ett eller flera länder för att endast visa annonsen för besökare från dessa länder.",
+    "targetCountriesSearch": "Sök efter ett land…",
+    "targetCountriesNoResults": "Inget land som stämmer överens."
   },
   "aiBuilder": {
     "title": "AI-bloggskapare",

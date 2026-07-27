@@ -2697,7 +2697,11 @@
     "howItWorksStep3": "Once approved, your ad goes live on the SmarterBloggers homepage.",
     "howItWorksStep4": "Track impressions, clicks and CTR live from this dashboard.",
     "sponsoredLabel": "Sponsored",
-    "openButton": "Open"
+    "openButton": "Open",
+    "targetCountries": "Target countries (optional)",
+    "targetCountriesHint": "Leave empty to show your ad to visitors everywhere. Select one or more countries to only show it to visitors from those countries.",
+    "targetCountriesSearch": "Search a country…",
+    "targetCountriesNoResults": "No matching country."
   },
   "tenantAccounting": {
     "title": "Financial overview",

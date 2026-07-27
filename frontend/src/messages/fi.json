@@ -1736,7 +1736,7 @@
         "features": [
           "Rajoittamaton määrä blogeja",
           "Rajoittamaton määrä artikkeleita",
-          "Rajoittamaton määrä tilaajia",
+          "Rajoittamaton tilaajamäärä",
           "Rajoittamaton määrä kirjoittajia",
           "Rajoittamaton tallennustila",
           "Usean toimialueen",
@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Kun mainoksesi on hyväksytty, se julkaistaan SmarterBloggersin etusivulla.",
     "howItWorksStep4": "Seuraa näyttökertoja, klikkauksia ja klikkausprosenttia (CTR) reaaliaikaisesti tästä hallintapaneelista.",
     "sponsoredLabel": "Sponsoroitu",
-    "openButton": "Avaa"
+    "openButton": "Avaa",
+    "targetCountries": "Kohdemaat (valinnainen)",
+    "targetCountriesHint": "Jätä kenttä tyhjäksi, jos haluat näyttää mainoksesi kaikille kävijöille. Valitse yksi tai useampi maa, jos haluat näyttää mainoksen vain kyseisistä maista tuleville kävijöille.",
+    "targetCountriesSearch": "Hae maata…",
+    "targetCountriesNoResults": "Ei vastaavaa maata."
   },
   "aiBuilder": {
     "title": "AI-blogin luontityökalu",

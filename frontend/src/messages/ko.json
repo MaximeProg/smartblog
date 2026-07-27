@@ -1726,7 +1726,7 @@
           "50 GB 저장 공간",
           "사용자 지정 도메인",
           "종합 분석 + SEO",
-          "API 접근",
+          "API 이용",
           "전담 지원"
         ]
       },
@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "승인이 완료되면 귀하의 광고가 SmarterBloggers 홈페이지에 게재됩니다.",
     "howItWorksStep4": "이 대시보드에서 노출 수, 클릭 수 및 클릭률(CTR)을 실시간으로 확인하세요.",
     "sponsoredLabel": "협찬",
-    "openButton": "열기"
+    "openButton": "열기",
+    "targetCountries": "대상 국가 (선택 사항)",
+    "targetCountriesHint": "모든 지역의 방문자에게 광고를 표시하려면 비워 두세요. 특정 국가 하나 이상을 선택하면 해당 국가의 방문자에게만 광고가 표시됩니다.",
+    "targetCountriesSearch": "국가 검색…",
+    "targetCountriesNoResults": "해당하는 국가가 없습니다."
   },
   "aiBuilder": {
     "title": "AI 블로그 빌더",

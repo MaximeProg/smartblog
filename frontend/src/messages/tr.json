@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Onaylandıktan sonra, reklamınız SmarterBloggers ana sayfasında yayınlanır.",
     "howItWorksStep4": "Bu kontrol panelinden gösterim, tıklama ve tıklama oranını (CTR) gerçek zamanlı olarak takip edin.",
     "sponsoredLabel": "Sponsorlu",
-    "openButton": "Aç"
+    "openButton": "Aç",
+    "targetCountries": "Hedef ülkeler (isteğe bağlı)",
+    "targetCountriesHint": "Reklamınızı tüm ziyaretçilere göstermek için bu alanı boş bırakın. Reklamınızı yalnızca belirli ülkelerdeki ziyaretçilere göstermek için bir veya daha fazla ülke seçin.",
+    "targetCountriesSearch": "Bir ülkeyi ara…",
+    "targetCountriesNoResults": "Eşleşen ülke bulunamadı."
   },
   "aiBuilder": {
     "title": "AI Blog Oluşturucu",

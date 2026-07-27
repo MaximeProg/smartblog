@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Når annonsen din er godkjent, blir den publisert på SmarterBloggers’ hjemmeside.",
     "howItWorksStep4": "Følg med på visninger, klikk og klikkfrekvens (CTR) i sanntid fra dette dashbordet.",
     "sponsoredLabel": "Sponset",
-    "openButton": "Åpne"
+    "openButton": "Åpne",
+    "targetCountries": "Mål land (valgfritt)",
+    "targetCountriesHint": "La feltet stå tomt for å vise annonsen din til besøkende overalt. Velg ett eller flere land for å vise den kun til besøkende fra disse landene.",
+    "targetCountriesSearch": "Søk etter et land…",
+    "targetCountriesNoResults": "Ingen treff på land."
   },
   "aiBuilder": {
     "title": "AI-bloggverktøy",

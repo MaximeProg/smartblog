@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Sobald Ihre Anzeige freigegeben wurde, wird sie auf der Startseite von SmarterBloggers veröffentlicht.",
     "howItWorksStep4": "Verfolgen Sie Impressionen, Klicks und die Klickrate in Echtzeit über dieses Dashboard.",
     "sponsoredLabel": "Gesponsert",
-    "openButton": "Öffnen"
+    "openButton": "Öffnen",
+    "targetCountries": "Zielländer (optional)",
+    "targetCountriesHint": "Lassen Sie das Feld leer, damit Ihre Anzeige allen Besuchern angezeigt wird. Wählen Sie ein oder mehrere Länder aus, um die Anzeige nur Besuchern aus diesen Ländern anzuzeigen.",
+    "targetCountriesSearch": "Ein Land suchen…",
+    "targetCountriesNoResults": "Es wurde kein passendes Land gefunden."
   },
   "aiBuilder": {
     "title": "KI-Blog-Generator",

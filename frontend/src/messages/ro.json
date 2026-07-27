@@ -1721,7 +1721,7 @@
         "features": [
           "10 bloguri",
           "Articole nelimitate",
-          "50.000 de abonați la newsletter",
+          "50.000 de abonați la buletinul informativ",
           "10 autori",
           "50 GB spațiu de stocare",
           "Domeniu personalizat",
@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Odată aprobat, anunțul tău va fi publicat pe pagina principală a SmarterBloggers.",
     "howItWorksStep4": "Urmăriți în timp real numărul de afișări, clicurile și rata de clic (CTR) din acest panou de control.",
     "sponsoredLabel": "Sponsorizat",
-    "openButton": "Deschideți"
+    "openButton": "Deschideți",
+    "targetCountries": "Țări țintă (opțional)",
+    "targetCountriesHint": "Lăsați câmpul necompletat pentru a afișa anunțul vizitatorilor din întreaga lume. Selectați una sau mai multe țări pentru a-l afișa doar vizitatorilor din acele țări.",
+    "targetCountriesSearch": "Căutați o țară…",
+    "targetCountriesNoResults": "Nu s-a găsit nicio țară corespunzătoare."
   },
   "aiBuilder": {
     "title": "Generator de bloguri cu IA",

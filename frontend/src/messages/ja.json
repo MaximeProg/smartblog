@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "承認されると、広告はSmarterBloggersのトップページに掲載されます。",
     "howItWorksStep4": "このダッシュボードから、インプレッション、クリック数、CTRをリアルタイムで追跡できます。",
     "sponsoredLabel": "提供：",
-    "openButton": "開く"
+    "openButton": "開く",
+    "targetCountries": "対象国（任意）",
+    "targetCountriesHint": "空欄のままにすると、すべての訪問者に広告が表示されます。1つ以上の国を選択すると、その国の訪問者にのみ広告が表示されます。",
+    "targetCountriesSearch": "国を検索…",
+    "targetCountriesNoResults": "該当する国はありません。"
   },
   "aiBuilder": {
     "title": "AIブログビルダー",

@@ -66,6 +66,12 @@ class Ad(Base):
     # par opposition à une pub sur le blog d'un membre — voir migration 058.
     is_platform_ad: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
+    # Ciblage géographique (pubs plateforme uniquement) — liste de codes pays
+    # ISO 3166-1 alpha-2 (ex: ["US","FR"]). NULL/vide = pas de ciblage, affichée
+    # à tous les visiteurs. Détection du pays du visiteur via en-têtes CDN
+    # (voir analytics.py) au moment de servir la pub — voir migration 060.
+    target_countries: Mapped[list[str] | None] = mapped_column(JSONB)
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 

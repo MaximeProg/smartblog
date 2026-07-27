@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Kai skelbimas bus patvirtintas, jis bus paskelbtas „SmarterBloggers“ pagrindiniame puslapyje.",
     "howItWorksStep4": "Šioje valdymo pulto aplinkoje galite realiuoju laiku stebėti rodymus, paspaudimus ir CTR.",
     "sponsoredLabel": "Rėmėjų",
-    "openButton": "Atidaryti"
+    "openButton": "Atidaryti",
+    "targetCountries": "Tikslinės šalys (neprivaloma)",
+    "targetCountriesHint": "Palikite lauką tuščią, kad jūsų skelbimas būtų rodomas lankytojams visur. Pasirinkite vieną ar daugiau šalių, kad skelbimas būtų rodomas tik lankytojams iš tų šalių.",
+    "targetCountriesSearch": "Ieškoti šalies…",
+    "targetCountriesNoResults": "Nerasta atitinkančios šalies."
   },
   "aiBuilder": {
     "title": "AI tinklaraščių kūrimo įrankis",

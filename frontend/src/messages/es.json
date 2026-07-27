@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Una vez aprobado, tu anuncio se publicará en la página de inicio de SmarterBloggers.",
     "howItWorksStep4": "Realiza un seguimiento en tiempo real de las impresiones, los clics y el CTR desde este panel de control.",
     "sponsoredLabel": "Patrocinado",
-    "openButton": "Abrir"
+    "openButton": "Abrir",
+    "targetCountries": "Países de destino (opcional)",
+    "targetCountriesHint": "Délo en blanco para que tu anuncio se muestre a los visitantes de todo el mundo. Selecciona uno o varios países para que solo se muestre a los visitantes de esos países.",
+    "targetCountriesSearch": "Buscar un país…",
+    "targetCountriesNoResults": "No se ha encontrado ningún país que coincida."
   },
   "aiBuilder": {
     "title": "Creador de blogs con IA",

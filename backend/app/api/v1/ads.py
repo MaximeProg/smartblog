@@ -1,7 +1,7 @@
 import logging
 import uuid
 from datetime import datetime, timezone, date, timedelta
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Request
 from sqlalchemy import select
 from pydantic import BaseModel, HttpUrl
 
@@ -75,11 +75,14 @@ class AdResponse(BaseModel):
     impressions_count: int
     clicks_count: int
     created_at: datetime
+    target_countries: list[str] | None = None
 
 
 class PlatformAdSubmitRequest(BaseModel):
-    """Pas de placement (un seul emplacement site principal, pas de ciblage) ni
-    advertiser_name/email : renseignés côté serveur depuis le compte connecté."""
+    """Pas de placement (un seul emplacement site principal) ni
+    advertiser_name/email : renseignés côté serveur depuis le compte connecté.
+    target_countries : ciblage géographique optionnel (codes ISO 3166-1
+    alpha-2, ex ["US","FR"]) — None/vide = affichée à tous les visiteurs."""
     title: str
     description: str | None = None
     image_url: str | None = None
@@ -89,6 +92,7 @@ class PlatformAdSubmitRequest(BaseModel):
     price_per_day: float | None = None
     total_budget: float
     currency: str = "USD"
+    target_countries: list[str] | None = None
 
 
 class PlatformAdStatsResponse(BaseModel):
@@ -218,6 +222,7 @@ async def submit_platform_ad(
         ends_at=body.ends_at,
         price_per_day=body.price_per_day,
         total_budget=body.total_budget,
+        target_countries=body.target_countries or None,
         submission_status=AdSubmissionStatus.PAYMENT_PENDING,
     )
     db.add(ad)
@@ -255,11 +260,28 @@ async def list_my_platform_ads(
 
 
 @platform_ads_router.get("/active", response_model=PlatformAdCard | None)
-async def get_active_platform_ad(db: DBSession, exclude: str | None = Query(None)):
+async def get_active_platform_ad(request: Request, db: DBSession, exclude: str | None = Query(None)):
     """Pub à afficher sur la page d'accueil publique — même algorithme de
     rotation pondérée par budget que public.py::get_rotator_ad (rotation
-    entre blogs), appliqué ici au tenant sentinelle."""
+    entre blogs), appliqué ici au tenant sentinelle.
+
+    Ciblage géographique : le pays du visiteur est détecté via les mêmes
+    en-têtes CDN qu'analytics.py (aucune dépendance de géolocalisation
+    supplémentaire). Une pub sans target_countries s'affiche à tout le
+    monde ; une pub ciblée ne s'affiche qu'aux visiteurs du/des pays
+    choisis — si le pays est indétectable, on ne montre que les pubs non
+    ciblées plutôt que de mal cibler."""
     import random
+
+    visitor_country = (
+        request.headers.get("CF-IPCountry")
+        or request.headers.get("X-Vercel-IP-Country")
+        or request.headers.get("CloudFront-Viewer-Country")
+    )
+    if visitor_country in ("XX", "T1", "--", "A1", "A2"):
+        visitor_country = None
+    if visitor_country:
+        visitor_country = visitor_country[:2].upper()
 
     tenant_id = uuid.UUID(settings.PLATFORM_TENANT_ID)
     now = datetime.now(timezone.utc)
@@ -278,7 +300,10 @@ async def get_active_platform_ad(db: DBSession, exclude: str | None = Query(None
             pass
 
     result = await db.execute(select(Ad).where(*conditions))
-    ads = result.scalars().all()
+    ads = [
+        a for a in result.scalars().all()
+        if not a.target_countries or (visitor_country and visitor_country in a.target_countries)
+    ]
     if not ads:
         return None
 
@@ -693,4 +718,5 @@ def _ad_response(a: Ad) -> AdResponse:
         impressions_count=a.impressions_count,
         clicks_count=a.clicks_count,
         created_at=a.created_at,
+        target_countries=a.target_countries,
     )

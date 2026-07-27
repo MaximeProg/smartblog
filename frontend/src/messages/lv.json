@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Pēc apstiprināšanas jūsu reklāma tiks publicēta „SmarterBloggers“ galvenajā lapā.",
     "howItWorksStep4": "Šajā vadības panelī reāllaikā varat sekot līdzi parādīšanās reižu skaitam, klikšķiem un CTR.",
     "sponsoredLabel": "Sponsorēts",
-    "openButton": "Atvērt"
+    "openButton": "Atvērt",
+    "targetCountries": "Mērķa valstis (pēc izvēles)",
+    "targetCountriesHint": "Atstājiet tukšu, lai jūsu reklāma tiktu parādīta visiem apmeklētājiem. Izvēlieties vienu vai vairākas valstis, lai reklāma tiktu parādīta tikai apmeklētājiem no šīm valstīm.",
+    "targetCountriesSearch": "Meklēt valsti…",
+    "targetCountriesNoResults": "Nav atbilstošas valsts."
   },
   "aiBuilder": {
     "title": "AI blogu veidotājs",

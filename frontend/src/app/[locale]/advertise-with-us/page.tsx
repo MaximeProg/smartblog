@@ -22,7 +22,7 @@ const FALLBACK = {
     title: 'Why advertise with SmarterBloggers',
     items: [
       { icon: 'users', title: 'Real, engaged audience', description: 'Your ad reaches bloggers and readers actively using the platform every day.' },
-      { icon: 'shield-check', title: 'Human-reviewed', description: 'Every ad is checked for safety and quality by our team before it goes live — no bots, no scams.' },
+      { icon: 'shield-check', title: 'Human-reviewed & scanned', description: 'Every ad link is automatically scanned for malware and phishing (Google Safe Browsing + VirusTotal), then checked for quality by our team before it goes live — no bots, no scams.' },
       { icon: 'bar-chart-3', title: 'Real-time statistics', description: 'Track impressions, clicks, and click-through rate live from your own advertiser dashboard.' },
       { icon: 'shield', title: 'Secure crypto payment', description: 'Pay safely in USDT — no card details shared, no hidden fees.' },
     ],
@@ -31,7 +31,7 @@ const FALLBACK = {
     title: 'How it works',
     steps: [
       { title: 'Create your account', description: "Sign up or log in — the same account you'd use anywhere else on SmarterBloggers." },
-      { title: 'Submit your ad', description: 'Add your title, image, destination link and budget from your Advertiser dashboard.' },
+      { title: 'Submit your ad', description: "Add your title, image, destination link and budget from your Advertiser dashboard. Optionally target specific countries — leave it blank to reach visitors everywhere, or select one or more countries to show your ad only to visitors from those locations." },
       { title: 'Pay securely', description: 'Complete payment in USDT — your submission is reviewed once payment is confirmed.' },
       { title: 'Go live', description: 'Once approved, your ad appears on the SmarterBloggers homepage and you can track its performance live.' },
     ],

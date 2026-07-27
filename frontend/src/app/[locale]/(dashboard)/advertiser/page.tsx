@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import {
   Megaphone, ImageIcon, Link2, Calendar, DollarSign, Loader2, AlertCircle,
   Clock, CheckCircle2, XCircle, Eye, MousePointerClick, TrendingUp, BarChart3, ChevronDown, ChevronUp,
+  Globe2, X, Search,
 } from 'lucide-react';
 import { platformAdsApi, type AdResponse, type PlatformAdStats, type PlatformAdSubmitData } from '@/lib/api';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
@@ -13,6 +14,7 @@ import { TopBar } from '@/components/dashboard/TopBar';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
+import { COUNTRIES } from '@/lib/constants/countries';
 
 const PLATFORM_TENANT_ID = process.env.NEXT_PUBLIC_PLATFORM_TENANT_ID || '00000000-0000-0000-0000-000000000001';
 
@@ -117,6 +119,8 @@ export default function AdvertiserPage() {
     title: '', description: '', image_url: '', click_url: '',
     starts_at: '', ends_at: '', total_budget: '',
   });
+  const [targetCountries, setTargetCountries] = useState<string[]>([]);
+  const [countrySearch, setCountrySearch] = useState('');
   const [touched, setTouched] = useState(false);
 
   const { data: ads = [], isLoading } = useQuery<AdResponse[]>({
@@ -135,6 +139,7 @@ export default function AdvertiserPage() {
       if (form.image_url.trim()) body.image_url = form.image_url.trim();
       if (form.starts_at) body.starts_at = new Date(form.starts_at).toISOString();
       if (form.ends_at) body.ends_at = new Date(form.ends_at).toISOString();
+      if (targetCountries.length) body.target_countries = targetCountries;
       const { data } = await platformAdsApi.submit(body);
       return data;
     },
@@ -158,8 +163,17 @@ export default function AdvertiserPage() {
 
   const resetForm = () => {
     setForm({ title: '', description: '', image_url: '', click_url: '', starts_at: '', ends_at: '', total_budget: '' });
+    setTargetCountries([]);
+    setCountrySearch('');
     setTouched(false);
   };
+
+  const toggleCountry = (code: string) =>
+    setTargetCountries(cs => cs.includes(code) ? cs.filter(c => c !== code) : [...cs, code]);
+
+  const filteredCountries = countrySearch.trim()
+    ? COUNTRIES.filter(c => c.name.toLowerCase().includes(countrySearch.trim().toLowerCase()))
+    : COUNTRIES;
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
@@ -252,6 +266,54 @@ export default function AdvertiserPage() {
                       <input type="number" min={0} step={10} value={form.total_budget} onChange={e => set('total_budget', e.target.value)}
                         placeholder="500" className={`${INPUT} pl-6`} />
                     </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block flex items-center gap-1.5">
+                    <Globe2 className="h-3 w-3" /> {t('targetCountries')}
+                  </label>
+                  <p className="text-[11px] text-slate-400 mb-2">{t('targetCountriesHint')}</p>
+
+                  {targetCountries.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {targetCountries.map(code => {
+                        const c = COUNTRIES.find(x => x.code === code);
+                        return (
+                          <span key={code} className="inline-flex items-center gap-1 pl-2 pr-1 py-1 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[11px] font-semibold">
+                            {c?.name ?? code}
+                            <button type="button" onClick={() => toggleCountry(code)} className="h-4 w-4 rounded-full hover:bg-blue-100 dark:hover:bg-blue-800 flex items-center justify-center">
+                              <X className="h-2.5 w-2.5" />
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  <div className="relative mb-1.5">
+                    <Search className="h-3.5 w-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <input
+                      value={countrySearch}
+                      onChange={e => setCountrySearch(e.target.value)}
+                      placeholder={t('targetCountriesSearch')}
+                      className={`${INPUT} pl-8`}
+                    />
+                  </div>
+                  <div className="max-h-40 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
+                    {filteredCountries.length === 0 ? (
+                      <p className="text-[12px] text-slate-400 px-3 py-3">{t('targetCountriesNoResults')}</p>
+                    ) : filteredCountries.map(c => (
+                      <label key={c.code} className="flex items-center gap-2 px-3 py-2 text-[12.5px] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={targetCountries.includes(c.code)}
+                          onChange={() => toggleCountry(c.code)}
+                          className="rounded border-slate-300 dark:border-slate-600"
+                        />
+                        {c.name}
+                      </label>
+                    ))}
                   </div>
                 </div>
 

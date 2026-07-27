@@ -1711,7 +1711,7 @@
           "5 GB salvestusruumi",
           "Kohandatud domeen",
           "Täpsem analüüs",
-          "Esmajärguline toetus"
+          "Esmajärguline tugi"
         ]
       },
       "pro": {
@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Pärast heakskiitmist avaldatakse teie reklaam SmarterBloggersi avalehel.",
     "howItWorksStep4": "Jälgi sellelt juhtpaneelilt reaalajas kuvamisi, klõpse ja klõpsumäära.",
     "sponsoredLabel": "Toetatud",
-    "openButton": "Ava"
+    "openButton": "Ava",
+    "targetCountries": "Sihtriigid (vabatahtlik)",
+    "targetCountriesHint": "Jäta tühjaks, et näidata oma reklaami kõikidele külastajatele. Vali üks või mitu riiki, et näidata reklaami ainult nendest riikidest pärit külastajatele.",
+    "targetCountriesSearch": "Otsi riiki…",
+    "targetCountriesNoResults": "Sobivat riiki ei leitud."
   },
   "aiBuilder": {
     "title": "AI-blogi looja",

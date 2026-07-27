@@ -3885,7 +3885,11 @@
     "howItWorksStep3": "Zodra je advertentie is goedgekeurd, wordt deze op de startpagina van SmarterBloggers geplaatst.",
     "howItWorksStep4": "Volg het aantal vertoningen, klikken en de CTR in realtime via dit dashboard.",
     "sponsoredLabel": "Gesponsord",
-    "openButton": "Openen"
+    "openButton": "Openen",
+    "targetCountries": "Doellanden (optioneel)",
+    "targetCountriesHint": "Laat dit veld leeg om uw advertentie aan alle bezoekers te tonen. Selecteer een of meer landen om de advertentie alleen aan bezoekers uit die landen te tonen.",
+    "targetCountriesSearch": "Zoek een land…",
+    "targetCountriesNoResults": "Geen overeenkomend land gevonden."
   },
   "aiBuilder": {
     "title": "AI-blogbouwer",
