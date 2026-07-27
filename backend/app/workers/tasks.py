@@ -353,6 +353,10 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                 )
                 await registrar.configure_dns(
                     domain=order.domain_name,
+                    records=[
+                        {"name": "", "type": "A", "value": "76.76.21.21"},
+                        {"name": "www", "type": "CNAME", "value": "cname.vercel-dns.com"},
+                    ],
                     template_name=settings.OPENPROVIDER_DNS_TEMPLATE_NAME,
                 )
 

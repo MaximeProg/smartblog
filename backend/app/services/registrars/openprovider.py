@@ -273,6 +273,15 @@ class OpenProviderRegistrar(DomainRegistrarProvider):
             zone_id = None
 
         if zone_id is not None:
+            # OpenProvider crée parfois la zone tout seul dès l'enregistrement
+            # du domaine (constaté le 2026-07-27, contrairement à l'hypothèse
+            # du 2026-07-23 selon laquelle elle n'existait jamais avant) — dans
+            # ce cas `template_name` (qui ne s'applique qu'à la CRÉATION d'une
+            # zone) est inopérant, donc `records` doit être fourni explicitement
+            # par l'appelant pour ne pas se retrouver avec une zone vide (bug
+            # réel trouvé le 2026-07-27 : digitalshoppingmall.blog enregistré
+            # sans aucun enregistrement A/CNAME car l'appelant ne passait que
+            # template_name, jamais records).
             flat_records = [
                 # OpenProvider attend une chaîne vide "" pour l'enregistrement
                 # racine — "@" (convention courante ailleurs, ex: Cloudflare)
@@ -286,6 +295,19 @@ class OpenProviderRegistrar(DomainRegistrarProvider):
                     "id": zone_id,
                     "name": domain,
                     "records": {"add": flat_records},
+                },
+            )
+        elif records:
+            flat_records = [
+                {"name": "" if r.get("name") in (None, "@") else r["name"], "ttl": str(r.get("ttl", 3600)), "type": r["type"], "value": r["value"]}
+                for r in records
+            ]
+            await self._request(
+                "POST", "/dns/zones",
+                json={
+                    "domain": {"name": name, "extension": extension},
+                    "type": "master",
+                    "records": flat_records,
                 },
             )
         elif template_name:

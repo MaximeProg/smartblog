@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth.store';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 import { getErrorMessage } from '@/lib/utils';
+import { COUNTRIES } from '@/lib/constants/countries';
 
 const STATUS_CONFIG = {
   pending:  { icon: Clock,        cls: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800',       labelKey: 'status_pending'  },
@@ -565,8 +566,11 @@ export default function DomainsPage() {
                 placeholder={t('fieldCity')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
               <input value={purchaseForm.zipcode} onChange={(e) => setPurchaseForm(f => ({ ...f, zipcode: e.target.value }))}
                 placeholder={t('fieldZip')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
-              <input value={purchaseForm.country} onChange={(e) => setPurchaseForm(f => ({ ...f, country: e.target.value.toUpperCase().slice(0, 2) }))}
-                placeholder={t('fieldCountry')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+              <select value={purchaseForm.country} onChange={(e) => setPurchaseForm(f => ({ ...f, country: e.target.value }))}
+                className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                <option value="">{t('fieldCountry')}</option>
+                {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+              </select>
             </div>
 
             <div className="flex items-center justify-between mt-3.5">
