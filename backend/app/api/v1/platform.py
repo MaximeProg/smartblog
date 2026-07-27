@@ -127,9 +127,11 @@ async def get_pricing(db: DBSession, lang: str = Query(default="en")):
     )
     rows = result.fetchall()
 
+    lang = lang.lower() if lang.lower() in _CMS_SUPPORTED_LANGS else "en"
+
     translations: dict[str, dict] = {}
-    if lang.lower() != "en" and rows:
-        translations = await _get_or_create_plan_translations(db, rows, lang.lower())
+    if lang != "en" and rows:
+        translations = await _get_or_create_plan_translations(db, rows, lang)
 
     return [
         PublicPlan(
@@ -358,6 +360,8 @@ def _load_ui_source(namespace: str) -> dict | None:
 async def get_ui_translations(db: DBSession, namespace: str = Query(...), lang: str = Query(...)):
     if lang.lower() in ("en", "fr"):
         raise NotFoundException("Translation (en/fr use static message files)")
+    if lang.lower() not in _CMS_SUPPORTED_LANGS:
+        raise NotFoundException("Language")
 
     source = _load_ui_source(namespace)
     if source is None:
