@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Moj blog",
     "placeholderBlogAbout": "Blog o…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Naslov članka",
+    "articleTitleHint": "Obvezno — vnesite vsaj 2 znaka, da boste lahko shranili ta članek.",
+    "titleRequiredToast": "Pred shranjevanjem vnesite naslov (vsaj 2 znaka)."
   },
   "common": {
     "loading": "Nalaganje...",

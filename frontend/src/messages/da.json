@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Min blog",
     "placeholderBlogAbout": "En blog om…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Artiklens titel",
+    "articleTitleHint": "Påkrævet — indtast mindst 2 tegn, så du kan gemme denne artikel.",
+    "titleRequiredToast": "Indtast venligst en titel (mindst 2 tegn), inden du gemmer."
   },
   "common": {
     "loading": "Indlæser...",

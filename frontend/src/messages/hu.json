@@ -1724,7 +1724,7 @@
           "50 000 hírlevél-előfizető",
           "10 szerző",
           "50 GB tárhely",
-          "Egyéni domainnév",
+          "Egyéni domain",
           "Teljes körű elemzés + SEO",
           "API-hozzáférés",
           "Célzott támogatás"
@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "A blogom",
     "placeholderBlogAbout": "Egy blog a következő témáról…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "A cikk címe",
+    "articleTitleHint": "Kötelező — írjon be legalább 2 karaktert, hogy elmenthesse ezt a cikket.",
+    "titleRequiredToast": "Kérjük, a mentés előtt adjon meg egy címet (legalább 2 karakter)."
   },
   "common": {
     "loading": "Betöltés...",

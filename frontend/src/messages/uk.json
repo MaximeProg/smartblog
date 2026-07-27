@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Мій блог",
     "placeholderBlogAbout": "Блог про…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Назва статті",
+    "articleTitleHint": "Обов’язково — введіть щонайменше 2 символи, щоб зберегти цю статтю.",
+    "titleRequiredToast": "Будь ласка, вкажіть назву (не менше 2 символів) перед збереженням."
   },
   "common": {
     "loading": "Завантаження...",

@@ -1710,7 +1710,7 @@
           "3 auteurs",
           "5 GB opslagruimte",
           "Aangepast domein",
-          "Geavanceerde analyse",
+          "Geavanceerde analyses",
           "Prioritaire ondersteuning"
         ]
       },
@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Mijn blog",
     "placeholderBlogAbout": "Een blog over…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Titel van het artikel",
+    "articleTitleHint": "Verplicht — voer ten minste 2 tekens in om dit artikel op te kunnen slaan.",
+    "titleRequiredToast": "Voeg alstublieft een titel toe (minimaal 2 tekens) voordat u opslaat."
   },
   "common": {
     "loading": "Bezig met laden...",

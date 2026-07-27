@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Oma blogini",
     "placeholderBlogAbout": "Blogi aiheesta…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Artikkelin otsikko",
+    "articleTitleHint": "Pakollinen — kirjoita vähintään 2 merkkiä, jotta voit tallentaa tämän artikkelin.",
+    "titleRequiredToast": "Lisää otsikko (vähintään 2 merkkiä) ennen tallentamista."
   },
   "common": {
     "loading": "Ladataan...",

@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Mein Blog",
     "placeholderBlogAbout": "Ein Blog über…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Titel des Artikels",
+    "articleTitleHint": "Erforderlich – Geben Sie mindestens 2 Zeichen ein, damit Sie diesen Artikel speichern können.",
+    "titleRequiredToast": "Bitte geben Sie vor dem Speichern einen Titel ein (mindestens 2 Zeichen)."
   },
   "common": {
     "loading": "Wird geladen...",

@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "제 블로그",
     "placeholderBlogAbout": "~에 관한 블로그…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "기사 제목",
+    "articleTitleHint": "필수 — 이 기사를 저장하려면 2자 이상을 입력해 주세요.",
+    "titleRequiredToast": "저장하기 전에 제목(최소 2자)을 입력해 주세요."
   },
   "common": {
     "loading": "로딩 중...",

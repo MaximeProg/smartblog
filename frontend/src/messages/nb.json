@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Bloggen min",
     "placeholderBlogAbout": "En blogg om…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Artikkelens tittel",
+    "articleTitleHint": "Påkrevd — skriv inn minst 2 tegn for å kunne lagre denne artikkelen.",
+    "titleRequiredToast": "Husk å legge til en tittel (minst 2 tegn) før du lagrer."
   },
   "common": {
     "loading": "Laster...",

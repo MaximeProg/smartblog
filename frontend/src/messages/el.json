@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Το ιστολόγιό μου",
     "placeholderBlogAbout": "Ένα blog με θέμα…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Τίτλος άρθρου",
+    "articleTitleHint": "Απαιτείται — πληκτρολογήστε τουλάχιστον 2 χαρακτήρες για να αποθηκεύσετε αυτό το άρθρο.",
+    "titleRequiredToast": "Παρακαλώ προσθέστε έναν τίτλο (τουλάχιστον 2 χαρακτήρες) πριν αποθηκεύσετε."
   },
   "common": {
     "loading": "Φόρτωση...",

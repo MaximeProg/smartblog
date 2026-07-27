@@ -206,6 +206,15 @@ export default function EditArticlePage() {
 
   const isPending = saveMut.isPending || publishMut.isPending || archiveMut.isPending || submitReviewMut.isPending || approveMut.isPending || rejectMut.isPending || unpublishMut.isPending;
 
+  const titleValid = title.trim().length >= 2;
+  const attemptSave = () => {
+    if (!titleValid) {
+      toast({ variant: 'destructive', title: ts('titleRequiredToast') });
+      return;
+    }
+    saveMut.mutate();
+  };
+
   // ── Autosave 30s ──────────────────────────────────────────────────
   const mark = useCallback(() => {
     setDirty(true);
@@ -394,7 +403,7 @@ export default function EditArticlePage() {
               <Eye className="h-3.5 w-3.5" />
             </button>
 
-            <button onClick={() => saveMut.mutate()} disabled={isPending || !dirty}
+            <button onClick={attemptSave} disabled={isPending || !dirty}
               className="flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40">
               {saveMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
               {ts('articleSave')}
@@ -454,12 +463,18 @@ export default function EditArticlePage() {
           )}
 
           {/* Title */}
+          <label className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">
+            {ts('articleTitleLabel')} <span className="text-red-500">*</span>
+          </label>
           <input
             value={title}
             onChange={e => { setTitle(e.target.value); mark(); }}
             placeholder={ts('articleTitlePlaceholder')}
-            className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-transparent border-0 outline-none placeholder-slate-200 dark:placeholder-slate-700 mb-2 leading-tight"
+            className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-transparent border-0 border-b-2 border-transparent focus:border-blue-200 dark:focus:border-blue-800 outline-none placeholder-slate-300 dark:placeholder-slate-600 mb-2 pb-1 leading-tight transition-colors"
           />
+          {!titleValid && (
+            <p className="text-[11.5px] text-amber-600 dark:text-amber-400 mb-2 -mt-1">{ts('articleTitleHint')}</p>
+          )}
 
           <div className="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700" />
 
@@ -853,7 +868,7 @@ export default function EditArticlePage() {
                   )}
 
                   {/* Save */}
-                  <button onClick={() => saveMut.mutate()} disabled={isPending || !dirty}
+                  <button onClick={attemptSave} disabled={isPending || !dirty}
                     className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40">
                     {saveMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                     {ts('articleSave')}

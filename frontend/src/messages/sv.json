@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Min blogg",
     "placeholderBlogAbout": "En blogg om…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Artikelns rubrik",
+    "articleTitleHint": "Obligatoriskt — ange minst 2 tecken för att kunna spara den här artikeln.",
+    "titleRequiredToast": "Ange en titel (minst 2 tecken) innan du sparar."
   },
   "common": {
     "loading": "Laddar...",

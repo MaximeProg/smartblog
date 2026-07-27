@@ -1742,7 +1742,7 @@
           "Viacdoménové",
           "White-label",
           "Záruka SLA",
-          "Špecializované zaškolenie",
+          "Špecializovaný proces zapracovania nových zamestnancov",
           "Podpora 24 hodín denne, 7 dní v týždni"
         ]
       }
@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Môj blog",
     "placeholderBlogAbout": "Blog o…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Názov článku",
+    "articleTitleHint": "Povinné — zadajte aspoň 2 znaky, aby ste mohli tento článok uložiť.",
+    "titleRequiredToast": "Pred uložením prosím zadajte názov (minimálne 2 znaky)."
   },
   "common": {
     "loading": "Načítava sa...",

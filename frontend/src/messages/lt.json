@@ -1709,7 +1709,7 @@
           "5 000 naujienlaiškio prenumeratorių",
           "3 autoriai",
           "5 GB saugyklos vietos",
-          "Pasirinktinis domenas",
+          "Pasirinkto domeno vardas",
           "Išplėstinė analizė",
           "Pirmenybinė pagalba"
         ]
@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Mano tinklaraštis",
     "placeholderBlogAbout": "Tinklaraštis apie…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Straipsnio pavadinimas",
+    "articleTitleHint": "Privaloma — įveskite bent 2 simbolius, kad galėtumėte išsaugoti šį straipsnį.",
+    "titleRequiredToast": "Prieš išsaugodami, įveskite pavadinimą (ne mažiau kaip 2 simbolius)."
   },
   "common": {
     "loading": "Įkeliama...",

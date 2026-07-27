@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Мой блог",
     "placeholderBlogAbout": "Блог о…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Название статьи",
+    "articleTitleHint": "Обязательно — введите не менее 2 символов, чтобы сохранить эту статью.",
+    "titleRequiredToast": "Перед сохранением, пожалуйста, введите заголовок (не менее 2 символов)."
   },
   "common": {
     "loading": "Загрузка...",

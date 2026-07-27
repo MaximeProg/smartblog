@@ -1002,7 +1002,7 @@
     "signOut": "Se déconnecter"
   },
   "blogNav": {
-    "back": "Retour",
+    "back": "Retour au tableau de bord",
     "switchBlog": "Changer de blog",
     "newBlog": "Nouveau blog",
     "viewBlog": "Voir le blog",
@@ -2127,6 +2127,9 @@
     "articleArchiveAction": "Archiver",
     "articleUntitled": "Sans titre",
     "articleTitlePlaceholder": "Titre de l'article…",
+    "articleTitleLabel": "Titre de l'article",
+    "articleTitleHint": "Obligatoire — saisissez au moins 2 caractères pour pouvoir enregistrer cet article.",
+    "titleRequiredToast": "Veuillez ajouter un titre (au moins 2 caractères) avant d'enregistrer.",
     "articleExcerptPlaceholder": "Un résumé court affiché dans les listings et les moteurs de recherche…",
     "articleContentPlaceholder": "Commencez à écrire votre article…",
     "articleUploading": "Upload en cours…",

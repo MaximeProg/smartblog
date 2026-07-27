@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Minu blogi",
     "placeholderBlogAbout": "Blogi teemal…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Artikli pealkiri",
+    "articleTitleHint": "Kohustuslik — sisesta vähemalt 2 tähemärki, et saaksid selle artikli salvestada.",
+    "titleRequiredToast": "Palun lisage enne salvestamist pealkiri (vähemalt 2 tähemärki)."
   },
   "common": {
     "loading": "Laaditakse...",

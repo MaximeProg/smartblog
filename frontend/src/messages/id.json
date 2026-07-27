@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Blog saya",
     "placeholderBlogAbout": "Sebuah blog tentang…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Judul artikel",
+    "articleTitleHint": "Wajib — masukkan minimal 2 karakter agar Anda dapat menyimpan artikel ini.",
+    "titleRequiredToast": "Silakan tambahkan judul (minimal 2 karakter) sebelum menyimpan."
   },
   "common": {
     "loading": "Sedang dimuat...",

@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "我的博客",
     "placeholderBlogAbout": "一个关于……的博客",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "文章标题",
+    "articleTitleHint": "必填——请输入至少 2 个字符，以便保存本文。",
+    "titleRequiredToast": "保存前请添加标题（至少2个字符）。"
   },
   "common": {
     "loading": "正在加载...",

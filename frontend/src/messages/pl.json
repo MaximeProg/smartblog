@@ -1696,7 +1696,7 @@
           "1 autor",
           "1 GB pamięci",
           "poddomena smarterbloggers.com",
-          "W zestawie znajduje się szablon korporacyjny"
+          "W zestawie znajduje się szablon firmowy"
         ]
       },
       "starter": {
@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Mój blog",
     "placeholderBlogAbout": "Blog o…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Tytuł artykułu",
+    "articleTitleHint": "Wymagane — wprowadź co najmniej 2 znaki, aby móc zapisać ten artykuł.",
+    "titleRequiredToast": "Przed zapisaniem proszę podać tytuł (co najmniej 2 znaki)."
   },
   "common": {
     "loading": "Ładowanie...",

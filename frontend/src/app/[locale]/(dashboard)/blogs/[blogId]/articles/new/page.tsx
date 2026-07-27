@@ -153,7 +153,18 @@ export default function NewArticlePage() {
     onError: (err: any) => toast({ variant: 'destructive', title: ts('articleCreateError'), description: getErrorMessage(err, '') }),
   });
 
-  const canSave = title.trim().length >= 2 && !mutation.isPending;
+  const titleValid = title.trim().length >= 2;
+  const canSave = titleValid && !mutation.isPending;
+
+  const attemptSave = (shouldPublish: boolean) => {
+    if (mutation.isPending) return;
+    if (!titleValid) {
+      toast({ variant: 'destructive', title: ts('titleRequiredToast') });
+      return;
+    }
+    setPublish(shouldPublish);
+    mutation.mutate();
+  };
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-slate-50 dark:bg-slate-950">
@@ -168,13 +179,13 @@ export default function NewArticlePage() {
           <span className="text-[13px] font-semibold text-slate-700 dark:text-slate-300">{te('newArticleBreadcrumb')}</span>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => { setPublish(false); mutation.mutate(); }} disabled={!canSave}
-            className="flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40">
+          <button onClick={() => attemptSave(false)} disabled={mutation.isPending}
+            className={`flex items-center gap-1.5 h-8 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors ${!canSave ? 'opacity-40' : ''}`}>
             {mutation.isPending && !publish ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
             {ts('articleSave')}
           </button>
-          <button onClick={() => { setPublish(true); mutation.mutate(); }} disabled={!canSave}
-            className="flex items-center gap-1.5 h-8 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold transition-colors disabled:opacity-60 shadow-sm">
+          <button onClick={() => attemptSave(true)} disabled={mutation.isPending}
+            className={`flex items-center gap-1.5 h-8 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold transition-colors shadow-sm ${!canSave ? 'opacity-60' : ''}`}>
             {mutation.isPending && publish ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
             {ts('articlePublishAction')}
           </button>
@@ -276,12 +287,18 @@ export default function NewArticlePage() {
           )}
 
           {/* Title */}
+          <label className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1.5">
+            {ts('articleTitleLabel')} <span className="text-red-500">*</span>
+          </label>
           <input
             value={title}
             onChange={e => handleTitleChange(e.target.value)}
             placeholder={ts('articleTitlePlaceholder')}
-            className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-transparent border-0 outline-none placeholder-slate-200 dark:placeholder-slate-700 mb-2 leading-tight"
+            className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-transparent border-0 border-b-2 border-transparent focus:border-blue-200 dark:focus:border-blue-800 outline-none placeholder-slate-300 dark:placeholder-slate-600 mb-2 pb-1 leading-tight transition-colors"
           />
+          {!titleValid && (
+            <p className="text-[11.5px] text-amber-600 dark:text-amber-400 mb-2 -mt-1">{ts('articleTitleHint')}</p>
+          )}
 
           {/* Slug */}
           <div className="flex items-center gap-2 mb-6">
@@ -386,13 +403,13 @@ export default function NewArticlePage() {
 
           {/* Actions */}
           <div className="space-y-2 pt-2">
-            <button onClick={() => { setPublish(true); mutation.mutate(); }} disabled={!canSave}
-              className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold transition-colors disabled:opacity-50 shadow-sm">
+            <button onClick={() => attemptSave(true)} disabled={mutation.isPending}
+              className={`w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-bold transition-colors shadow-sm ${!canSave ? 'opacity-50' : ''}`}>
               {mutation.isPending && publish ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               {ts('articlePublishAction')}
             </button>
-            <button onClick={() => { setPublish(false); mutation.mutate(); }} disabled={!canSave}
-              className="w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors disabled:opacity-40">
+            <button onClick={() => attemptSave(false)} disabled={mutation.isPending}
+              className={`w-full flex items-center justify-center gap-2 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[12px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 transition-colors ${!canSave ? 'opacity-40' : ''}`}>
               {mutation.isPending && !publish ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
               {ts('articleSave')}
             </button>

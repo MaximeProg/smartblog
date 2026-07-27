@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Blogum",
     "placeholderBlogAbout": "Şu konu hakkında bir blog…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Makale başlığı",
+    "articleTitleHint": "Zorunlu — Bu makaleyi kaydedebilmek için en az 2 karakter girin.",
+    "titleRequiredToast": "Kaydetmeden önce lütfen bir başlık (en az 2 karakter) girin."
   },
   "common": {
     "loading": "Yükleniyor...",

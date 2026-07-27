@@ -1002,7 +1002,7 @@
     "signOut": "Sign out"
   },
   "blogNav": {
-    "back": "Back",
+    "back": "Back to Dashboard",
     "switchBlog": "Switch blog",
     "newBlog": "New blog",
     "viewBlog": "View blog",
@@ -2127,6 +2127,9 @@
     "articleArchiveAction": "Archive",
     "articleUntitled": "Untitled",
     "articleTitlePlaceholder": "Article title…",
+    "articleTitleLabel": "Article title",
+    "articleTitleHint": "Required — enter at least 2 characters so you can save this article.",
+    "titleRequiredToast": "Please add a title (at least 2 characters) before saving.",
     "articleExcerptPlaceholder": "A short summary displayed in listings and search engines…",
     "articleContentPlaceholder": "Start writing your article…",
     "articleUploading": "Uploading…",

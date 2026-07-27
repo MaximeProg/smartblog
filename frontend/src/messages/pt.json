@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "O meu blogue",
     "placeholderBlogAbout": "Um blogue sobre…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Título do artigo",
+    "articleTitleHint": "Obrigatório — introduza pelo menos 2 caracteres para poder guardar este artigo.",
+    "titleRequiredToast": "Por favor, introduza um título (com, pelo menos, 2 caracteres) antes de guardar."
   },
   "common": {
     "loading": "A carregar...",

@@ -1706,7 +1706,7 @@
         "features": [
           "3 bloguri",
           "500 de articole",
-          "5.000 de abonați la buletinul informativ",
+          "5.000 de abonați la newsletter",
           "3 autori",
           "5 GB spațiu de stocare",
           "Domeniu personalizat",
@@ -1743,7 +1743,7 @@
           "White-label",
           "SLA garantat",
           "Proces de integrare personalizat",
-          "Asistență 24 de ore din 24, 7 zile din 7"
+          "Asistență 24/7"
         ]
       }
     },
@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Blogul meu",
     "placeholderBlogAbout": "Un blog despre…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Titlul articolului",
+    "articleTitleHint": "Obligatoriu — introduceți cel puțin 2 caractere pentru a putea salva acest articol.",
+    "titleRequiredToast": "Te rugăm să introduci un titlu (de cel puțin 2 caractere) înainte de a salva."
   },
   "common": {
     "loading": "Se încarcă...",

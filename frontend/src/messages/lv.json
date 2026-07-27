@@ -1727,7 +1727,7 @@
           "Pielāgots domēns",
           "Pilnīga analītika + SEO",
           "API piekļuve",
-          "Speciāls atbalsts"
+          "Speciāli pielāgots atbalsts"
         ]
       },
       "business": {
@@ -1742,7 +1742,7 @@
           "Daudzdomēnu",
           "„White-label“",
           "Garantēts SLA",
-          "Speciāli izstrādāta ievadapmācība",
+          "Speciāli pielāgota ievadapmācība",
           "Atbalsts 24 stundas diennaktī, 7 dienas nedēļā"
         ]
       }
@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Mans blogs",
     "placeholderBlogAbout": "Blogs par…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Raksta nosaukums",
+    "articleTitleHint": "Obligāts — ievadiet vismaz 2 rakstzīmes, lai varētu saglabāt šo rakstu.",
+    "titleRequiredToast": "Lūdzu, pirms saglabāšanas pievienojiet nosaukumu (vismaz 2 rakstzīmes)."
   },
   "common": {
     "loading": "Tiek ielādēts...",

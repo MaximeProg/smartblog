@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Můj blog",
     "placeholderBlogAbout": "Blog o…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Název článku",
+    "articleTitleHint": "Povinné — zadejte alespoň 2 znaky, abyste mohli tento článek uložit.",
+    "titleRequiredToast": "Před uložením prosím zadejte název (minimálně 2 znaky)."
   },
   "common": {
     "loading": "Načítání...",

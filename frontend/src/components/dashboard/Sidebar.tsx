@@ -160,21 +160,27 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
   const sidebarContent = (
     <aside className="h-full w-[260px] flex flex-col border-r border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
 
-      {/* Logo + retour */}
+      {/* Logo */}
       <div className="flex h-14 shrink-0 items-center justify-between border-b border-slate-100 dark:border-slate-700 px-4">
-        <Link href={`/${locale}/dashboard`} onClick={handleNavClick} className="flex items-center gap-2.5 group min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0">
           <div className="h-7 w-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm font-black shadow-sm shrink-0">N</div>
-          <span className="font-extrabold text-sm tracking-tight text-slate-900 dark:text-slate-100 group-hover:text-blue-600 transition-colors truncate">SmarterBloggers</span>
-        </Link>
-        <div className="flex items-center gap-2 shrink-0">
-          <Link href={`/${locale}/dashboard`} onClick={handleNavClick} className="hidden lg:flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
-            <ArrowLeft className="h-3 w-3" />
-            {t('back')}
-          </Link>
-          <button onClick={closeBlogSidebar} className="lg:hidden h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-            <X className="h-4 w-4" />
-          </button>
+          <span className="font-extrabold text-sm tracking-tight text-slate-900 dark:text-slate-100 truncate">SmarterBloggers</span>
         </div>
+        <button onClick={closeBlogSidebar} className="lg:hidden h-7 w-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* Retour au dashboard principal — gros bouton, bien visible, desktop ET mobile */}
+      <div className="shrink-0 px-3 pt-3">
+        <Link
+          href={`/${locale}/dashboard`}
+          onClick={handleNavClick}
+          className="flex items-center gap-2 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:border-blue-800 dark:hover:text-blue-400 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 shrink-0" />
+          {t('back')}
+        </Link>
       </div>
 
       {/* Blog selector */}

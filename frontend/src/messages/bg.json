@@ -2311,7 +2311,10 @@
     "placeholderMyBlog": "Моят блог",
     "placeholderBlogAbout": "Блог за…",
     "placeholderSlugExample": "my-slug",
-    "placeholderCollaboratorEmail": "collaborator@email.com"
+    "placeholderCollaboratorEmail": "collaborator@email.com",
+    "articleTitleLabel": "Заглавие на статията",
+    "articleTitleHint": "Задължително — въведете поне 2 символа, за да можете да запазите тази статия.",
+    "titleRequiredToast": "Моля, въведете заглавие (най-малко 2 символа), преди да запазите."
   },
   "common": {
     "loading": "Зареждане...",
