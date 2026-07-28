@@ -8,7 +8,7 @@ import {
   Camera, Video, Mic, Radio, Layers, FileText,
   Eye, EyeOff, History, Monitor, Tablet, Smartphone,
   ThumbsUp, ThumbsDown, Clock, Headphones, Sparkles,
-  Languages, CalendarClock, X as XIcon, Lock,
+  Languages, CalendarClock, X as XIcon, Lock, AlertCircle,
 } from 'lucide-react';
 import type { ArticleType, ArticleVersionResponse } from '@/types';
 import Link from 'next/link';
@@ -74,6 +74,7 @@ export default function EditArticlePage() {
 
   // ── UI state ─────────────────────────────────────────────────────
   const [dirty,          setDirty]          = useState(false);
+  const [titleHintDismissed, setTitleHintDismissed] = useState(false);
   const [focusMode,      setFocusMode]      = useState(false);
   const [showVersions,   setShowVersions]   = useState(false);
   const [previewDevice,  setPreviewDevice]  = useState<'desktop' | 'tablet' | 'mobile' | null>(null);
@@ -207,8 +208,10 @@ export default function EditArticlePage() {
   const isPending = saveMut.isPending || publishMut.isPending || archiveMut.isPending || submitReviewMut.isPending || approveMut.isPending || rejectMut.isPending || unpublishMut.isPending;
 
   const titleValid = title.trim().length >= 2;
+  useEffect(() => { if (titleValid) setTitleHintDismissed(false); }, [titleValid]);
   const attemptSave = () => {
     if (!titleValid) {
+      setTitleHintDismissed(false);
       toast({ variant: 'destructive', title: ts('titleRequiredToast') });
       return;
     }
@@ -470,10 +473,16 @@ export default function EditArticlePage() {
             value={title}
             onChange={e => { setTitle(e.target.value); mark(); }}
             placeholder={ts('articleTitlePlaceholder')}
-            className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-transparent border-0 border-b-2 border-transparent focus:border-blue-200 dark:focus:border-blue-800 outline-none placeholder-slate-300 dark:placeholder-slate-600 mb-2 pb-1 leading-tight transition-colors"
+            className="w-full text-[32px] font-black text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 outline-none placeholder-slate-300 dark:placeholder-slate-600 mb-2 leading-tight focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
           />
-          {!titleValid && (
-            <p className="text-[11.5px] text-amber-600 dark:text-amber-400 mb-2 -mt-1">{ts('articleTitleHint')}</p>
+          {!titleValid && !titleHintDismissed && (
+            <div className="flex items-start gap-2.5 mb-2 px-4 py-3 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+              <p className="flex-1 text-[12.5px] text-amber-700 dark:text-amber-400">{ts('articleTitleHint')}</p>
+              <button onClick={() => setTitleHintDismissed(true)} className="text-amber-500 hover:text-amber-700 dark:hover:text-amber-300 shrink-0">
+                <XIcon className="h-4 w-4" />
+              </button>
+            </div>
           )}
 
           <div className="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700" />

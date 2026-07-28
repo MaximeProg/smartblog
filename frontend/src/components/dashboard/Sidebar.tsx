@@ -171,12 +171,12 @@ export function Sidebar({ locale, blogId }: SidebarProps) {
         </button>
       </div>
 
-      {/* Retour au dashboard principal — gros bouton, bien visible, desktop ET mobile */}
+      {/* Retour au dashboard principal — gros bouton bien visible (fond plein + ombre), desktop ET mobile */}
       <div className="shrink-0 px-3 pt-3">
         <Link
           href={`/${locale}/dashboard`}
           onClick={handleNavClick}
-          className="flex items-center gap-2 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-[13.5px] font-bold text-slate-700 dark:text-slate-200 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:border-blue-800 dark:hover:text-blue-400 transition-colors"
+          className="flex items-center gap-2 w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 shadow-sm px-3 py-2.5 text-[13.5px] font-bold text-slate-700 dark:text-slate-100 hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700 dark:hover:bg-blue-900/40 dark:hover:border-blue-700 dark:hover:text-blue-300 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
           {t('back')}
