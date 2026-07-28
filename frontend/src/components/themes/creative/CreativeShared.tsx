@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { X } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { ShareButtons } from '../shared/ShareButtons';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
+import { MobileBottomNav } from '../shared/MobileBottomNav';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -34,6 +36,14 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
     ...pageLinks,
     ...categories.slice(0, 5).map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
   ];
+  // Le tiroir mobile n'a pas besoin de "Home" — déjà dans la bottom nav.
+  const drawerLinks = navLinks.filter(l => l.href !== (basePath || '/'));
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
   return (
     <header className="sticky top-0 z-50 bg-zinc-950 border-b border-zinc-800">
@@ -77,37 +87,56 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
               {subscribeLabel}
             </Link>
           )}
-          <button className="md:hidden text-zinc-400 hover:text-white transition-colors p-1" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+          <button className="md:hidden text-zinc-400 hover:text-white transition-colors p-1" onClick={() => setMenuOpen(true)} aria-label="Open menu">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={menuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
         </div>
       </div>
 
+      {/* ── Tiroir vertical mobile (menu complet) ───────────────────── */}
       {menuOpen && (
-        <div className="md:hidden bg-zinc-900 border-t border-zinc-800 px-4 py-4 flex flex-col gap-1">
-          {navLinks.map(link => (
-            <Link key={link.href + link.label} href={link.href}
-              className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-white py-2 transition-colors"
-              onClick={() => setMenuOpen(false)}>
-              {link.label}
-            </Link>
-          ))}
-          <Link
-            href={`${basePath}/advertise`}
-            onClick={() => setMenuOpen(false)}
-            className="mt-1 text-center text-xs font-black text-white rounded py-2.5 hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: primaryColor }}
-          >
-            Advertise
-          </Link>
-          {showSubscribe && (
-            <Link href={`${basePath}#newsletter`} onClick={() => setMenuOpen(false)}
-              className="mt-2 text-center text-xs font-black text-zinc-950 bg-white rounded py-2.5">
-              {subscribeLabel}
-            </Link>
-          )}
+        <div className="md:hidden fixed inset-0 z-[100]">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] animate-in fade-in duration-200" onClick={() => setMenuOpen(false)} />
+          <div className="absolute top-0 right-0 h-full w-[82%] max-w-sm bg-zinc-900 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+            <div className="h-16 shrink-0 flex items-center justify-between px-5 border-b border-zinc-800">
+              <span className="text-white font-black text-lg tracking-tight">{blog.name}</span>
+              <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="text-zinc-400 hover:text-white transition-colors">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-1">
+              {drawerLinks.map(link => (
+                <Link key={link.href + link.label} href={link.href}
+                  className="text-[15px] font-bold text-zinc-200 hover:text-white py-3 border-b border-zinc-800 transition-colors"
+                  onClick={() => setMenuOpen(false)}>
+                  {link.label}
+                </Link>
+              ))}
+              <Link
+                href={`${basePath}/advertise`}
+                onClick={() => setMenuOpen(false)}
+                className="text-[15px] font-bold text-zinc-200 hover:text-white py-3 border-b border-zinc-800 transition-colors"
+              >
+                Advertise
+              </Link>
+
+              <div className="mt-5">
+                <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} className="text-zinc-500 hover:text-white hover:bg-white/10" />
+              </div>
+            </div>
+
+            {showSubscribe && (
+              <div className="shrink-0 p-5 border-t border-zinc-800">
+                <Link href={`${basePath}#newsletter`} onClick={() => setMenuOpen(false)}
+                  className="flex items-center justify-center text-sm font-black text-zinc-950 bg-white rounded py-3">
+                  {subscribeLabel}
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </header>
@@ -135,7 +164,7 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
       ];
 
   return (
-    <footer className="bg-zinc-950 text-zinc-400">
+    <footer className="bg-zinc-950 text-zinc-400 pb-16 md:pb-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
@@ -197,6 +226,7 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
           </div>
         </div>
       </div>
+      <MobileBottomNav basePath={basePath} primaryColor={primaryColor} dark />
     </footer>
   );
 }

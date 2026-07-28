@@ -99,7 +99,7 @@ export default async function BlogLayout({ children, params }: Props) {
             {children}
           </BlogReaderProvider>
         </PersistentAudioProvider>
-        <FloatingSearch basePath="" locale={displayLocale} />
+        <FloatingSearch basePath="" locale={displayLocale} hideOnMobile />
       </div>
     </NextIntlClientProvider>
   );

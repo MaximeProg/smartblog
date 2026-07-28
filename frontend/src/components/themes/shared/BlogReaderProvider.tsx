@@ -129,16 +129,17 @@ export function BlogReaderProvider({
             <button
               onClick={() => setPanelOpen(o => !o)}
               title="Reader settings"
-              className="fixed bottom-6 right-6 z-[200] w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 focus:outline-none"
-              style={{ backgroundColor: primaryColor, color: '#fff' }}
+              className="fixed right-6 z-[200] w-10 h-10 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 focus:outline-none"
+              style={{ bottom: 'calc(var(--bottom-nav-h, 0px) + 1.5rem)', backgroundColor: primaryColor, color: '#fff' }}
             >
               <Type className="h-4 w-4" />
             </button>
 
             {panelOpen && (
               <div
-                className="fixed bottom-20 right-6 z-[200] w-64 rounded-2xl shadow-2xl border overflow-hidden"
+                className="fixed right-6 z-[200] w-64 rounded-2xl shadow-2xl border overflow-hidden"
                 style={{
+                  bottom: 'calc(var(--bottom-nav-h, 0px) + 5rem)',
                   backgroundColor: dark ? '#18181b' : '#fff',
                   borderColor: dark ? '#27272a' : '#e4e4e7',
                   color: dark ? '#fafafa' : '#18181b',

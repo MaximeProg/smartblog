@@ -1,5 +1,5 @@
 ﻿'use client';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Search, Menu, X } from 'lucide-react';
@@ -7,6 +7,7 @@ import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { getFetchErrorMessage } from '@/lib/utils';
 import { ShareButtons } from '../shared/ShareButtons';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
+import { MobileBottomNav } from '../shared/MobileBottomNav';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -22,7 +23,7 @@ function rl(url: string, base: string): string {
 }
 
 export function MagazineHeader({ blog, categories, basePath, primaryColor }: SharedProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const hCfg = blog.template_config?.header;
 
   const showTopBar = hCfg?.topBar?.enabled !== false;
@@ -44,6 +45,14 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
     ...pageLinks,
     ...categories.slice(0, 6).map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
   ];
+  // Le tiroir mobile n'a pas besoin de "Home" — déjà dans la bottom nav.
+  const drawerLinks = navLinks.filter(l => l.href !== (basePath || '/'));
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, [drawerOpen]);
 
   return (
     <header>
@@ -103,8 +112,8 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
                 {subscribeLabel}
               </Link>
             )}
-            <button className="sm:hidden text-zinc-500 hover:text-zinc-900 transition-colors" onClick={() => setMobileOpen(o => !o)} aria-label="Toggle menu">
-              {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            <button className="sm:hidden text-zinc-500 hover:text-zinc-900 transition-colors" onClick={() => setDrawerOpen(true)} aria-label="Open menu">
+              <Menu className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -128,26 +137,45 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
         </div>
       </nav>
 
-      {mobileOpen && (
-        <div className="sm:hidden bg-zinc-950 border-t border-zinc-800 px-4 py-4 flex flex-col gap-3">
-          {navLinks.map(l => (
-            <Link key={l.href + l.label} href={l.href} onClick={() => setMobileOpen(false)} className="text-sm font-bold text-zinc-300 hover:text-white transition-colors">
-              {l.label}
-            </Link>
-          ))}
-          <Link
-            href={`${basePath}/advertise`}
-            onClick={() => setMobileOpen(false)}
-            className="mt-1 rounded px-5 py-2.5 text-sm font-black text-white text-center transition-opacity hover:opacity-90"
-            style={{ backgroundColor: primaryColor }}
-          >
-            Advertise
-          </Link>
-          {showSubscribeBtn && (
-            <Link href={`${basePath}#newsletter`} onClick={() => setMobileOpen(false)} className="mt-2 rounded px-5 py-2.5 text-sm font-black text-white text-center transition-opacity hover:opacity-90" style={{ backgroundColor: primaryColor }}>
-              {subscribeLabel}
-            </Link>
-          )}
+      {/* ── Tiroir vertical mobile (menu complet) ───────────────────── */}
+      {drawerOpen && (
+        <div className="sm:hidden fixed inset-0 z-[100]">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] animate-in fade-in duration-200" onClick={() => setDrawerOpen(false)} />
+          <div className="absolute top-0 right-0 h-full w-[82%] max-w-sm bg-zinc-950 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+            <div className="h-14 shrink-0 flex items-center justify-between px-5 border-b border-zinc-800">
+              <span className="text-lg font-black tracking-tight text-white">{blog.name}</span>
+              <button onClick={() => setDrawerOpen(false)} aria-label="Close menu" className="text-zinc-400 hover:text-white transition-colors">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-1">
+              {drawerLinks.map(l => (
+                <Link key={l.href + l.label} href={l.href} onClick={() => setDrawerOpen(false)}
+                  className="text-[15px] font-bold text-zinc-200 hover:text-white transition-colors py-3 border-b border-zinc-900">
+                  {l.label}
+                </Link>
+              ))}
+              <Link href={`${basePath}/advertise`} onClick={() => setDrawerOpen(false)}
+                className="text-[15px] font-bold text-zinc-200 hover:text-white transition-colors py-3 border-b border-zinc-900">
+                Advertise
+              </Link>
+
+              <div className="mt-5">
+                <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} />
+              </div>
+            </div>
+
+            {showSubscribeBtn && (
+              <div className="shrink-0 p-5 border-t border-zinc-800">
+                <Link href={`${basePath}#newsletter`} onClick={() => setDrawerOpen(false)}
+                  className="flex items-center justify-center rounded px-5 py-3 text-sm font-black text-white hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: primaryColor }}>
+                  {subscribeLabel}
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </header>
@@ -202,7 +230,7 @@ export function MagazineFooter({ blog, categories, basePath, primaryColor }: Sha
   };
 
   return (
-    <footer className="border-t-4 mt-0" style={{ borderColor: primaryColor }}>
+    <footer className="border-t-4 mt-0 pb-16 sm:pb-0" style={{ borderColor: primaryColor }}>
       <div className="bg-zinc-950 text-zinc-300">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -293,6 +321,7 @@ export function MagazineFooter({ blog, categories, basePath, primaryColor }: Sha
           </div>
         </div>
       </div>
+      <MobileBottomNav basePath={basePath} primaryColor={primaryColor} dark breakpoint="sm" />
     </footer>
   );
 }

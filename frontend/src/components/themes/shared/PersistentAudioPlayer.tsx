@@ -129,8 +129,9 @@ export function PersistentAudioProvider({ children }: { children: ReactNode }) {
       {/* Player bar — only shown when a track is loaded */}
       {track && (
         <div
-          className="fixed bottom-0 left-0 right-0 z-[300] border-t shadow-2xl"
+          className="fixed left-0 right-0 z-[300] border-t shadow-2xl"
           style={{
+            bottom: 'var(--bottom-nav-h, 0px)',
             backgroundColor: '#18181b',
             borderColor: '#27272a',
           }}

@@ -1,5 +1,5 @@
 ﻿'use client';
-import { useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ import { VideoCardThumb } from '../shared/VideoCardThumb';
 import { ShareButtons } from '../shared/ShareButtons';
 import { InlineEditable } from '../shared/InlineEditable';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
+import { MobileBottomNav } from '../shared/MobileBottomNav';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -258,6 +259,14 @@ export function CorporateHeader({
   const pageLinks = customNavLinks.length > 0
     ? customNavLinks.map(l => ({ href: resolveNavHref(l.url), label: l.label }))
     : defaultPageLinks;
+  // Le tiroir mobile n'a pas besoin de "Home" — déjà dans la bottom nav.
+  const drawerPageLinks = pageLinks.filter(l => l.href !== homeHref);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -443,65 +452,78 @@ export function CorporateHeader({
                   <Mail className="h-3.5 w-3.5" /> {subscribeLabel}
                 </a>
               )}
-              <button onClick={() => setMenuOpen(!menuOpen)}
+              <button onClick={() => setMenuOpen(true)} aria-label="Open menu"
                 className="lg:hidden h-9 w-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all">
-                {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                <Menu className="h-4 w-4" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* ── Tiroir vertical mobile (menu complet) ───────────────────── */}
         {menuOpen && (
-          <div className="lg:hidden border-t border-white/5 bg-slate-950 max-h-[80vh] overflow-y-auto">
-            <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-0.5">
-              {/* Page links */}
-              {pageLinks.map(link => (
-                <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
-                  className="px-4 py-3 rounded-xl text-sm font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-colors">
-                  {link.label}
-                </Link>
-              ))}
+          <div className="lg:hidden fixed inset-0 z-[100]">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] animate-in fade-in duration-200" onClick={() => setMenuOpen(false)} />
+            <div className="absolute top-0 right-0 h-full w-[82%] max-w-sm bg-slate-950 shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+              <div className="h-16 shrink-0 flex items-center justify-between px-5 border-b border-white/5">
+                <span className="font-black text-lg text-white">{blog.name}</span>
+                <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="text-slate-400 hover:text-white transition-colors">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
 
-              {/* Categories section */}
-              {catBasePath && categories.length > 0 && (
-                <>
-                  <div className="my-2 border-t border-white/5" />
-                  <p className="px-4 py-1 text-[10px] font-black uppercase tracking-widest text-slate-500">{t('categories')}</p>
-                  {categories.map(c => (
-                    <Link key={c.slug} href={`${catBasePath}/${c.slug}${pq}`} onClick={() => setMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-colors">
-                      <div className="relative w-10 h-7 rounded-lg overflow-hidden shrink-0 bg-slate-800">
-                        {c.cover_image_url ? (
-                          <Image src={c.cover_image_url} alt={c.name} fill className="object-cover" sizes="40px" />
-                        ) : (
-                          <div className={`absolute inset-0 bg-gradient-to-br ${grad(c.id)}`} />
-                        )}
-                      </div>
-                      <span>{c.name}</span>
-                      <span className="ml-auto text-xs text-slate-600">{c.articles_count}</span>
-                    </Link>
-                  ))}
-                  <Link href={catBasePath + pq} onClick={() => setMenuOpen(false)}
-                    className="px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors text-[var(--cp)] hover:bg-white/5"
-                    style={{ '--cp': primaryColor } as CSSProperties}>
-                    → {t('allCategories')}
+              <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-0.5">
+                {drawerPageLinks.map(link => (
+                  <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
+                    className="px-1 py-3 text-[15px] font-semibold text-slate-200 hover:text-white transition-colors border-b border-white/5">
+                    {link.label}
                   </Link>
-                </>
-              )}
+                ))}
 
-              {basePath != null && (
-                <Link href={`${basePath}/advertise${pq}`} onClick={() => setMenuOpen(false)}
-                  className="mt-2 flex items-center justify-center h-11 px-4 rounded-xl text-sm font-bold border border-white/20 text-slate-200 hover:bg-white/5 transition-colors">
-                  Advertise
-                </Link>
-              )}
+                {catBasePath && categories.length > 0 && (
+                  <>
+                    <p className="px-1 pt-4 pb-1 text-[10px] font-black uppercase tracking-widest text-slate-500">{t('categories')}</p>
+                    {categories.map(c => (
+                      <Link key={c.slug} href={`${catBasePath}/${c.slug}${pq}`} onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-3 px-1 py-2.5 text-sm font-semibold text-slate-400 hover:text-white transition-colors">
+                        <div className="relative w-10 h-7 rounded-lg overflow-hidden shrink-0 bg-slate-800">
+                          {c.cover_image_url ? (
+                            <Image src={c.cover_image_url} alt={c.name} fill className="object-cover" sizes="40px" />
+                          ) : (
+                            <div className={`absolute inset-0 bg-gradient-to-br ${grad(c.id)}`} />
+                          )}
+                        </div>
+                        <span>{c.name}</span>
+                        <span className="ml-auto text-xs text-slate-600">{c.articles_count}</span>
+                      </Link>
+                    ))}
+                    <Link href={catBasePath + pq} onClick={() => setMenuOpen(false)}
+                      className="px-1 py-2.5 text-sm font-semibold transition-colors text-[var(--cp)]"
+                      style={{ '--cp': primaryColor } as CSSProperties}>
+                      → {t('allCategories')}
+                    </Link>
+                  </>
+                )}
+
+                {basePath != null && (
+                  <Link href={`${basePath}/advertise${pq}`} onClick={() => setMenuOpen(false)}
+                    className="mt-4 flex items-center justify-center h-11 px-4 rounded-xl text-sm font-bold border border-white/20 text-slate-200 hover:bg-white/5 transition-colors">
+                    Advertise
+                  </Link>
+                )}
+                <div className="mt-4">
+                  <BlogLanguageSwitcher sourceLang={blog.language || 'en'} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath ?? ''} className="text-slate-300 hover:text-white hover:bg-white/10" />
+                </div>
+              </div>
+
               {subscribeEnabled && (
-                <a href="#newsletter" onClick={() => setMenuOpen(false)}
-                  className="mt-2 flex items-center justify-center gap-2 h-11 px-4 rounded-xl text-sm font-bold text-white"
-                  style={{ backgroundColor: primaryColor }}>
-                  <Mail className="h-4 w-4" /> {subscribeLabel}
-                </a>
+                <div className="shrink-0 p-5 border-t border-white/5">
+                  <a href="#newsletter" onClick={() => setMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 h-11 rounded-xl text-sm font-bold text-white"
+                    style={{ backgroundColor: primaryColor }}>
+                    <Mail className="h-4 w-4" /> {subscribeLabel}
+                  </a>
+                </div>
               )}
             </div>
           </div>
@@ -554,7 +576,7 @@ export function CorporateFooter({
   };
 
   return (
-    <footer className="bg-slate-950 text-white">
+    <footer className="bg-slate-950 text-white pb-16 lg:pb-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
 
@@ -659,6 +681,7 @@ export function CorporateFooter({
           </div>
         </div>
       </div>
+      <MobileBottomNav basePath={basePath ?? ''} primaryColor={primaryColor} dark breakpoint="lg" />
     </footer>
   );
 }

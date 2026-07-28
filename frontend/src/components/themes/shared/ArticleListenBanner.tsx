@@ -39,8 +39,9 @@ export default function ArticleListenBanner({
 
   return (
     <div
-      className="fixed bottom-20 right-4 z-50 flex items-center gap-2 pl-4 pr-2 py-2.5 rounded-full shadow-lg border text-sm font-medium"
+      className="fixed right-4 z-50 flex items-center gap-2 pl-4 pr-2 py-2.5 rounded-full shadow-lg border text-sm font-medium"
       style={{
+        bottom: 'calc(var(--bottom-nav-h, 0px) + 5rem)',
         borderColor: `${primaryColor}30`,
         backgroundColor: 'white',
         color: primaryColor,

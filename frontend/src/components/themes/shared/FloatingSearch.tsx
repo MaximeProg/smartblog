@@ -11,6 +11,9 @@ import { useVoiceSearch } from '@/hooks/useVoiceSearch';
 interface Props {
   basePath: string;
   locale?: string;
+  /** True for themes whose mobile bottom nav already has its own Search tab
+   * (avoids duplicating both a floating FAB and a bottom-nav icon on mobile). */
+  hideOnMobile?: boolean;
 }
 
 const LOCALE_LANG: Record<string, string> = {
@@ -21,7 +24,7 @@ const LOCALE_LANG: Record<string, string> = {
   pt: 'pt-PT',
 };
 
-export default function FloatingSearch({ basePath, locale = 'fr' }: Props) {
+export default function FloatingSearch({ basePath, locale = 'fr', hideOnMobile = false }: Props) {
   const t = useTranslations('publicBlog');
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
@@ -71,7 +74,7 @@ export default function FloatingSearch({ basePath, locale = 'fr' }: Props) {
       {/* Floating search button */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 flex items-center justify-center h-12 w-12 rounded-full shadow-lg text-white transition-transform hover:scale-105 active:scale-95"
+        className={`fixed bottom-6 right-6 z-40 items-center justify-center h-12 w-12 rounded-full shadow-lg text-white transition-transform hover:scale-105 active:scale-95 ${hideOnMobile ? 'hidden md:flex' : 'flex'}`}
         style={{ backgroundColor: 'var(--blog-primary, #6366f1)' }}
         aria-label={t('searchLabel')}
       >

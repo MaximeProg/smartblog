@@ -1,5 +1,5 @@
 ﻿'use client';
-import { useState, type FormEvent, type CSSProperties } from 'react';
+import { useEffect, useState, type FormEvent, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Menu, X, Twitter, Linkedin, Github, ExternalLink, Instagram, Youtube } from 'lucide-react';
@@ -7,6 +7,7 @@ import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { getFetchErrorMessage } from '@/lib/utils';
 import { ShareButtons } from '../shared/ShareButtons';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
+import { MobileBottomNav } from '../shared/MobileBottomNav';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -36,7 +37,7 @@ function socialIcon(platform: string) {
 }
 
 export function LuminaryHeader({ blog, categories, basePath, primaryColor }: SharedProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const hCfg = blog.template_config?.header;
 
   const showTopBar = hCfg?.topBar?.enabled !== false;
@@ -54,6 +55,23 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
     ...navCats.map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
     { label: 'All Topics', href: `${basePath}/categories` },
   ];
+  // Bug corrigé le 2026-07-27 : About/Contact n'étaient JAMAIS dans le menu
+  // mobile (seulement codés en dur dans la nav desktop) — le tiroir les
+  // inclut maintenant, en miroir exact du desktop. "Home" est filtré, déjà
+  // présent dans la bottom nav.
+  const drawerLinks = [
+    ...pageLinks.filter(l => l.href !== (basePath || '/')),
+    { label: 'About', href: `${basePath}/about` },
+    { label: 'Contact', href: `${basePath}/contact` },
+    ...navCats.map(c => ({ label: c.name, href: `${basePath}/categories/${c.slug}` })),
+    { label: 'All Topics', href: `${basePath}/categories` },
+  ];
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, [drawerOpen]);
 
   return (
     <header className="sticky top-0 z-50 bg-[#faf8f4]/95 backdrop-blur-sm border-b border-zinc-200" style={{ '--cp': primaryColor } as CSSProperties}>
@@ -80,8 +98,8 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
 
       {/* Logo row */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-        <button className="md:hidden text-zinc-500 hover:text-zinc-900 transition-colors" onClick={() => setMobileOpen(v => !v)} aria-label="Toggle menu">
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        <button className="md:hidden text-zinc-500 hover:text-zinc-900 transition-colors" onClick={() => setDrawerOpen(true)} aria-label="Open menu">
+          <Menu className="h-5 w-5" />
         </button>
 
         <Link href={basePath || "/"} className="flex-1 flex justify-center md:flex-none md:justify-start">
@@ -126,28 +144,43 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
         </div>
       </div>
 
-      {mobileOpen && (
-        <div className="md:hidden bg-[#faf8f4] border-t border-zinc-200 px-4 py-6 flex flex-col gap-4">
-          {navLinks.map(l => (
-            <Link key={l.href + l.label} href={l.href} onClick={() => setMobileOpen(false)}
-              className="font-sans text-sm uppercase tracking-widest text-zinc-600 hover:text-zinc-900 transition-colors py-1 border-b border-zinc-100">
-              {l.label}
-            </Link>
-          ))}
-          <Link
-            href={`${basePath}/advertise`}
-            onClick={() => setMobileOpen(false)}
-            className="mt-1 text-center font-sans text-xs uppercase tracking-widest text-white py-3 rounded-full hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: primaryColor }}
-          >
-            Advertise
-          </Link>
-          {showSubscribeCta && (
-            <Link href={`${basePath}#newsletter`} onClick={() => setMobileOpen(false)}
-              className="mt-2 text-center font-sans text-xs uppercase tracking-widest text-zinc-900 border border-zinc-900 py-3 hover:bg-zinc-900 hover:text-white transition-colors">
-              {subscribeLabel}
-            </Link>
-          )}
+      {/* ── Tiroir vertical mobile (menu complet) ───────────────────── */}
+      {drawerOpen && (
+        <div className="md:hidden fixed inset-0 z-[100]">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] animate-in fade-in duration-200" onClick={() => setDrawerOpen(false)} />
+          <div className="absolute top-0 right-0 h-full w-[82%] max-w-sm bg-[#faf8f4] shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+            <div className="h-14 shrink-0 flex items-center justify-between px-5 border-b border-zinc-200">
+              <span className="font-serif italic text-2xl text-zinc-900">{blog.name}</span>
+              <button onClick={() => setDrawerOpen(false)} aria-label="Close menu" className="text-zinc-500 hover:text-zinc-900 transition-colors">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-1">
+              {drawerLinks.map(l => (
+                <Link key={l.href + l.label} href={l.href} onClick={() => setDrawerOpen(false)}
+                  className="font-sans text-sm uppercase tracking-widest text-zinc-700 hover:text-zinc-950 transition-colors py-3 border-b border-zinc-200">
+                  {l.label}
+                </Link>
+              ))}
+              <Link
+                href={`${basePath}/advertise`}
+                onClick={() => setDrawerOpen(false)}
+                className="font-sans text-sm uppercase tracking-widest text-zinc-700 hover:text-zinc-950 transition-colors py-3 border-b border-zinc-200"
+              >
+                Advertise
+              </Link>
+            </div>
+
+            {showSubscribeCta && (
+              <div className="shrink-0 p-5 border-t border-zinc-200">
+                <Link href={`${basePath}#newsletter`} onClick={() => setDrawerOpen(false)}
+                  className="flex items-center justify-center text-center font-sans text-xs uppercase tracking-widest text-zinc-900 border border-zinc-900 py-3 hover:bg-zinc-900 hover:text-white transition-colors">
+                  {subscribeLabel}
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </header>
@@ -202,7 +235,7 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
   };
 
   return (
-    <footer className="bg-zinc-950 text-white">
+    <footer className="bg-zinc-950 text-white pb-16 md:pb-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-8">
         <div className="text-center mb-16 pb-16 border-b border-zinc-800">
           <Link href={basePath || "/"}>
@@ -295,6 +328,7 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
           </div>
         </div>
       </div>
+      <MobileBottomNav basePath={basePath} primaryColor={primaryColor} />
     </footer>
   );
 }
