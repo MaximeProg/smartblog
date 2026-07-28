@@ -337,7 +337,7 @@ export default function MagazineHome({
                       <form onSubmit={handleSubscribe} className="flex gap-0 w-full">
                         <input type="email" required value={email} onChange={e => setEmail(e.target.value)}
                           placeholder={newsletterPlaceholder}
-                          className="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-2.5 text-white placeholder:text-white/50 text-sm focus:outline-none" />
+                          className="flex-1 min-w-0 bg-white/10 border border-white/20 rounded-l-lg px-4 py-2.5 text-white placeholder:text-white/50 text-sm focus:outline-none" />
                         <button type="submit" disabled={subStatus === 'loading'}
                           className="bg-white rounded-r-lg px-5 py-2.5 font-black text-sm hover:opacity-90 disabled:opacity-60 transition-opacity shrink-0"
                           style={{ color: primaryColor }}>

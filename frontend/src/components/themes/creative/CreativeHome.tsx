@@ -267,7 +267,7 @@ export default function CreativeHome({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={newsletterPlaceholder}
-                className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:border-[var(--cp)]"
+                className="flex-1 min-w-0 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white placeholder:text-zinc-500 text-sm focus:outline-none focus:border-[var(--cp)]"
               />
               <button
                 type="submit"

@@ -749,7 +749,7 @@ export function NewsletterSection({
               type="email" required value={email} onChange={e => setEmail(e.target.value)}
               placeholder={t('emailPlaceholder')}
               disabled={status === 'loading'}
-              className="flex-1 h-14 rounded-2xl border-0 bg-white/15 backdrop-blur-sm text-white placeholder-white/40 px-5 text-base focus:outline-none focus:ring-2 focus:ring-white/40"
+              className="flex-1 min-w-0 h-14 rounded-2xl border-0 bg-white/15 backdrop-blur-sm text-white placeholder-white/40 px-5 text-base focus:outline-none focus:ring-2 focus:ring-white/40"
             />
             <button type="submit" disabled={status === 'loading'}
               className="h-14 px-8 rounded-2xl bg-white font-bold text-base whitespace-nowrap hover:bg-white/90 transition-colors disabled:opacity-60"
