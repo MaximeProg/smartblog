@@ -48,13 +48,13 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
   return (
     <header className="sticky top-0 z-50 bg-zinc-950 border-b border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <Link href={basePath || "/"} className="flex items-center text-white font-black text-lg tracking-tight hover:opacity-80 transition-opacity">
+        <Link href={basePath || "/"} className="flex items-center min-w-0 shrink text-white font-black text-lg tracking-tight hover:opacity-80 transition-opacity">
           {blog.logo_url ? (
-            <Image src={blog.logo_url} alt={blog.name} width={100} height={28} className="h-7 w-auto object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
+            <Image src={blog.logo_url} alt={blog.name} width={100} height={28} className="h-7 w-auto object-contain shrink-0" style={{ filter: 'brightness(0) invert(1)' }} />
           ) : (
             <>
               <span className="w-2 h-2 rounded-sm inline-block mr-2 shrink-0" style={{ backgroundColor: primaryColor }} />
-              {blog.name}
+              <span className="truncate">{blog.name}</span>
             </>
           )}
         </Link>
@@ -68,9 +68,9 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} className="text-zinc-500 hover:text-white hover:bg-white/10" />
-          <Link href={`${basePath}?search=`} className="text-zinc-400 hover:text-white transition-colors p-1">
+          <Link href={`${basePath}?search=`} className="hidden sm:block text-zinc-400 hover:text-white transition-colors p-1">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -83,7 +83,7 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
             Advertise
           </Link>
           {showSubscribe && (
-            <Link href={`${basePath}#newsletter`} className="rounded px-4 py-2 text-xs font-black text-zinc-950 bg-white hover:opacity-90 transition-opacity">
+            <Link href={`${basePath}#newsletter`} className="hidden sm:inline-flex items-center rounded px-4 py-2 text-xs font-black text-zinc-950 bg-white hover:opacity-90 transition-opacity">
               {subscribeLabel}
             </Link>
           )}

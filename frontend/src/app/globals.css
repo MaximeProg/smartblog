@@ -239,3 +239,33 @@
 }
 .mention-item { padding: 6px 12px; cursor: pointer; border-radius: 4px; font-size: 14px; }
 .mention-item:hover { background: hsl(var(--accent)); }
+
+/* ── Contenu d'article public (5 thèmes) ─────────────────────────────
+   Toutes les pages article des 5 thèmes marquent leur conteneur de
+   contenu avec [data-article-body] — l'éditeur riche (TipTap) permet
+   blocs de code, tableaux et vidéos YouTube, mais aucun thème ne gérait
+   leur débordement horizontal sur mobile (trouvé le 2026-07-27 en
+   diagnostiquant un vrai signalement utilisateur). Une seule règle
+   globale ici évite de dupliquer ce correctif sur les 5 fichiers. */
+[data-article-body] pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+[data-article-body] table {
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+  white-space: nowrap;
+}
+[data-article-body] iframe {
+  max-width: 100%;
+  /* L'extension TipTap Youtube insère toujours des iframes 640x360 (16/9) —
+     on garde ce ratio en rétrécissant, plutôt qu'un iframe déformé. */
+  aspect-ratio: 16 / 9;
+  height: auto;
+}
+[data-article-body] p,
+[data-article-body] li {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}

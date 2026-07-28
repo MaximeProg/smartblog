@@ -100,11 +100,11 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
         </button>
 
         {!collapsed && (
-          <div className="flex items-center gap-5 px-6 py-4 max-w-7xl mx-auto">
+          <div className="flex items-center gap-3 sm:gap-5 px-3 sm:px-6 py-4 max-w-7xl mx-auto">
 
             {/* Miniature image ou icône */}
             {ad.image_url && !imgError ? (
-              <div className="shrink-0 w-[60px] h-[60px] rounded-xl overflow-hidden bg-slate-100">
+              <div className="shrink-0 w-11 h-11 sm:w-[60px] sm:h-[60px] rounded-xl overflow-hidden bg-slate-100">
                 <img
                   src={ad.image_url} alt=""
                   className="w-full h-full object-cover"
@@ -112,32 +112,32 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
                 />
               </div>
             ) : (
-              <div className="shrink-0 w-[60px] h-[60px] rounded-xl bg-slate-100 flex items-center justify-center text-2xl">
+              <div className="shrink-0 w-11 h-11 sm:w-[60px] sm:h-[60px] rounded-xl bg-slate-100 flex items-center justify-center text-2xl">
                 📢
               </div>
             )}
 
             {/* Texte */}
             <div className="flex-1 min-w-0">
-              <p className="text-[17px] font-bold text-slate-900 leading-tight line-clamp-1">
+              <p className="text-[15px] sm:text-[17px] font-bold text-slate-900 leading-tight line-clamp-1">
                 {ad.title}
               </p>
               {ad.description && (
-                <p className="text-sm text-slate-500 line-clamp-1 mt-0.5 leading-relaxed">
+                <p className="hidden sm:block text-sm text-slate-500 line-clamp-1 mt-0.5 leading-relaxed">
                   {ad.description}
                 </p>
               )}
               {domain && (
-                <p className="text-xs text-slate-400 mt-0.5">{domain}</p>
+                <p className="text-xs text-slate-400 mt-0.5 truncate">{domain}</p>
               )}
             </div>
 
             {/* Bouton Ouvrir */}
             <button
               onClick={handleClick}
-              className="shrink-0 flex items-center gap-2 bg-slate-900 hover:bg-slate-700 text-white text-sm font-bold px-6 py-2.5 rounded-full transition-colors whitespace-nowrap"
+              className="shrink-0 flex items-center gap-2 bg-slate-900 hover:bg-slate-700 text-white text-sm font-bold px-3 sm:px-6 py-2.5 rounded-full transition-colors whitespace-nowrap"
             >
-              {t('openAd')} <ExternalLink className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">{t('openAd')}</span> <ExternalLink className="w-3.5 h-3.5" />
             </button>
 
             {/* Fermer */}
@@ -160,21 +160,19 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
   return (
     <div className="w-full bg-white rounded-xl border border-slate-200 overflow-hidden"
       style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}>
-      <div className="flex">
+      <div className="flex flex-col sm:flex-row">
 
-        {/* Image grande à gauche */}
+        {/* Image grande à gauche (pleine largeur empilée sur mobile, colonne fixe à partir de sm:) */}
         {ad.image_url && !imgError && (
           <button
             onClick={handleClick}
-            className="shrink-0 overflow-hidden cursor-pointer"
-            style={{ width: 'clamp(180px, 38%, 300px)', minHeight: 160 }}
+            className="shrink-0 overflow-hidden cursor-pointer w-full h-40 sm:h-auto sm:w-[clamp(140px,32vw,300px)]"
             aria-label={ad.title}
           >
             <img
               src={ad.image_url}
               alt={ad.title}
               className="w-full h-full object-cover hover:opacity-95 transition-opacity"
-              style={{ minHeight: 160 }}
               onError={() => setImgError(true)}
             />
           </button>
