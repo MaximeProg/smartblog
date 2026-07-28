@@ -67,6 +67,14 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
     { label: 'All Topics', href: `${basePath}/categories` },
   ];
 
+  // Le footer desktop est masqué sur mobile (voir LuminaryFooter) — son
+  // contenu (réseaux, copyright, powered-by) est repris ici dans le tiroir.
+  const fCfg2 = blog.template_config?.footer;
+  const showFooterSocial = fCfg2?.showSocialLinks !== false;
+  const showPoweredBy = fCfg2?.showPoweredBy !== false;
+  const footerCopyright = fCfg2?.copyrightText || `© ${new Date().getFullYear()} ${blog.name}. All rights reserved.`;
+  const footerSocialEntries = Object.entries(blog.social_links ?? {}).filter(([, u]) => !!u);
+
   useEffect(() => {
     if (!drawerOpen) return;
     document.body.style.overflow = 'hidden';
@@ -170,6 +178,23 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
               >
                 Advertise
               </Link>
+
+              {/* Contenu du footer, repris ici car le footer desktop est masqué sur mobile */}
+              {showFooterSocial && footerSocialEntries.length > 0 && (
+                <div className="flex flex-col gap-2 mt-4">
+                  {footerSocialEntries.map(([platform, url]) => (
+                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
+                      className="font-sans text-sm text-zinc-600 hover:text-zinc-950 transition-colors flex items-center gap-2 capitalize">
+                      {socialIcon(platform)}
+                      {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                    </a>
+                  ))}
+                </div>
+              )}
+              <div className="mt-6 pt-4 border-t border-zinc-200 text-[11px] text-zinc-500 space-y-1 font-sans">
+                <p>{footerCopyright}</p>
+                {showPoweredBy && <p>Powered by SmarterBloggers</p>}
+              </div>
             </div>
 
             {showSubscribeCta && (
@@ -235,7 +260,8 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
   };
 
   return (
-    <footer className="bg-zinc-950 text-white pb-16 md:pb-0">
+    <>
+    <footer className="hidden md:block bg-zinc-950 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-8">
         <div className="text-center mb-16 pb-16 border-b border-zinc-800">
           <Link href={basePath || "/"}>
@@ -328,7 +354,8 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
           </div>
         </div>
       </div>
-      <MobileBottomNav basePath={basePath} primaryColor={primaryColor} />
     </footer>
+    <MobileBottomNav basePath={basePath} primaryColor={primaryColor} />
+    </>
   );
 }

@@ -48,6 +48,14 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
   // Le tiroir mobile n'a pas besoin de "Home" — déjà dans la bottom nav.
   const drawerLinks = navLinks.filter(l => l.href !== (basePath || '/'));
 
+  // Le footer desktop est masqué sur mobile (voir MagazineFooter) — son
+  // contenu (réseaux, copyright, powered-by) est repris ici dans le tiroir.
+  const fCfg = blog.template_config?.footer;
+  const showFooterSocial = fCfg?.showSocialLinks !== false;
+  const showPoweredBy = fCfg?.showPoweredBy !== false;
+  const copyright = fCfg?.copyrightText || `© ${new Date().getFullYear()} ${blog.name}. All rights reserved.`;
+  const footerSocialEntries = Object.entries(blog.social_links ?? {}).filter(([, u]) => !!u);
+
   useEffect(() => {
     if (!drawerOpen) return;
     document.body.style.overflow = 'hidden';
@@ -164,6 +172,29 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
               <div className="mt-5">
                 <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} />
               </div>
+
+              {/* Contenu du footer, repris ici car le footer desktop est masqué sur mobile */}
+              {showFooterSocial && footerSocialEntries.length > 0 && (
+                <div className="flex gap-4 mt-6 flex-wrap">
+                  {footerSocialEntries.map(([platform, url]) => (
+                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
+                      className="text-zinc-400 hover:text-white transition-colors capitalize text-xs font-semibold">
+                      {platform}
+                    </a>
+                  ))}
+                </div>
+              )}
+              <div className="mt-6 pt-4 border-t border-zinc-900 text-[11px] text-zinc-500 space-y-1">
+                <p>{copyright}</p>
+                {showPoweredBy && (
+                  <p>
+                    Powered by{' '}
+                    <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                      SmarterBloggers
+                    </a>
+                  </p>
+                )}
+              </div>
             </div>
 
             {showSubscribeBtn && (
@@ -230,7 +261,8 @@ export function MagazineFooter({ blog, categories, basePath, primaryColor }: Sha
   };
 
   return (
-    <footer className="border-t-4 mt-0 pb-16 sm:pb-0" style={{ borderColor: primaryColor }}>
+    <>
+    <footer className="hidden sm:block border-t-4" style={{ borderColor: primaryColor }}>
       <div className="bg-zinc-950 text-zinc-300">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -321,7 +353,8 @@ export function MagazineFooter({ blog, categories, basePath, primaryColor }: Sha
           </div>
         </div>
       </div>
-      <MobileBottomNav basePath={basePath} primaryColor={primaryColor} dark breakpoint="sm" />
     </footer>
+    <MobileBottomNav basePath={basePath} primaryColor={primaryColor} dark breakpoint="sm" />
+    </>
   );
 }

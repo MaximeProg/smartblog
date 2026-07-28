@@ -22,9 +22,24 @@ function rl(url: string, base: string): string {
   return `${base}${url.startsWith('/') ? url : '/' + url}`;
 }
 
+function iconForPlatform(platform: string) {
+  const p = platform.toLowerCase();
+  if (p === 'twitter' || p === 'x') return <Twitter className="h-4 w-4" />;
+  if (p === 'linkedin') return <Linkedin className="h-4 w-4" />;
+  if (p === 'github') return <Github className="h-4 w-4" />;
+  return <ExternalLink className="h-4 w-4" />;
+}
+
 export function EditorialHeader({ blog, categories, basePath, primaryColor }: SharedProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const hCfg = blog.template_config?.header;
+  // Le footer desktop est masqué sur mobile (voir EditorialFooter) — son
+  // contenu (réseaux, copyright, powered-by) est repris ici dans le tiroir.
+  const fCfg = blog.template_config?.footer;
+  const showSocial = fCfg?.showSocialLinks !== false;
+  const showPoweredBy = fCfg?.showPoweredBy !== false;
+  const copyright = fCfg?.copyrightText || `© ${new Date().getFullYear()} ${blog.name}. All rights reserved.`;
+  const socialEntries = Object.entries(blog.social_links ?? {}).filter(([, u]) => !!u);
 
   const pageLinks = hCfg?.nav?.links?.length
     ? hCfg.nav.links.map(l => ({ label: l.label, href: rl(l.url, basePath) }))
@@ -121,6 +136,29 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
               <div className="mt-5">
                 <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} />
               </div>
+
+              {/* Contenu du footer, repris ici car le footer desktop est masqué sur mobile */}
+              {showSocial && socialEntries.length > 0 && (
+                <div className="flex gap-2 mt-6 flex-wrap">
+                  {socialEntries.map(([platform, url]) => (
+                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
+                      className="h-9 w-9 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200 transition-all" title={platform}>
+                      {iconForPlatform(platform)}
+                    </a>
+                  ))}
+                </div>
+              )}
+              <div className="mt-6 pt-4 border-t border-zinc-100 text-[11px] text-zinc-400 space-y-1">
+                <p>{copyright}</p>
+                {showPoweredBy && (
+                  <p>
+                    Powered by{' '}
+                    <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                      SmarterBloggers
+                    </a>
+                  </p>
+                )}
+              </div>
             </div>
 
             {showSubscribe && (
@@ -158,16 +196,9 @@ export function EditorialFooter({ blog, categories, basePath, primaryColor }: Sh
         { label: 'Advertise',  href: `${basePath}/advertise` },
       ];
 
-  const iconFor = (platform: string) => {
-    const p = platform.toLowerCase();
-    if (p === 'twitter' || p === 'x') return <Twitter className="h-4 w-4" />;
-    if (p === 'linkedin') return <Linkedin className="h-4 w-4" />;
-    if (p === 'github') return <Github className="h-4 w-4" />;
-    return <ExternalLink className="h-4 w-4" />;
-  };
-
   return (
-    <footer className="bg-zinc-950 text-zinc-400 pb-16 md:pb-0">
+    <>
+    <footer className="hidden md:block bg-zinc-950 text-zinc-400">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div>
@@ -178,7 +209,7 @@ export function EditorialFooter({ blog, categories, basePath, primaryColor }: Sh
                 {Object.entries(blog.social_links ?? {}).map(([platform, url]) => (
                   <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
                     className="h-9 w-9 rounded-full bg-zinc-800 flex items-center justify-center hover:text-white hover:bg-zinc-700 transition-all" title={platform}>
-                    {iconFor(platform)}
+                    {iconForPlatform(platform)}
                   </a>
                 ))}
               </div>
@@ -234,7 +265,8 @@ export function EditorialFooter({ blog, categories, basePath, primaryColor }: Sh
           </div>
         </div>
       </div>
-      <MobileBottomNav basePath={basePath} primaryColor={primaryColor} />
     </footer>
+    <MobileBottomNav basePath={basePath} primaryColor={primaryColor} />
+    </>
   );
 }

@@ -208,7 +208,7 @@ export function CardCompact({ article, href, rank }: { article: PublicArticle; h
 export function CorporateHeader({
   blog, categories, current, searchQuery, primaryColor, minimal = false, basePath, previewSlug,
 }: {
-  blog: { name: string; logo_url?: string | null; language?: string; enabled_languages?: string[]; social_links?: Record<string, string>; template_config?: { header?: { topBar?: { enabled?: boolean; showDate?: boolean; showSocial?: boolean; showNewsletter?: boolean; showRss?: boolean }; subscribe?: { enabled?: boolean; label?: string }; nav?: { links?: { label: string; url: string }[] } } } | null };
+  blog: { name: string; logo_url?: string | null; language?: string; enabled_languages?: string[]; social_links?: Record<string, string>; template_config?: { header?: { topBar?: { enabled?: boolean; showDate?: boolean; showSocial?: boolean; showNewsletter?: boolean; showRss?: boolean }; subscribe?: { enabled?: boolean; label?: string }; nav?: { links?: { label: string; url: string }[] } }; footer?: { showSocialLinks?: boolean; copyrightText?: string; showPoweredBy?: boolean } } | null };
   categories: PublicCategory[];
   current?: string;
   searchQuery?: string;
@@ -288,6 +288,14 @@ export function CorporateHeader({
   const showRssLink = topBar?.showRss !== false;
   const subscribeEnabled = subscribeConfig?.enabled !== false;
   const subscribeLabel = subscribeConfig?.label || "S'abonner";
+
+  // Le footer desktop est masqué sur mobile (voir CorporateFooter) — son
+  // contenu (réseaux, copyright, powered-by) est repris ici dans le tiroir.
+  const footerCfg = blog.template_config?.footer;
+  const showFooterSocial = footerCfg?.showSocialLinks !== false;
+  const showPoweredBy = footerCfg?.showPoweredBy !== false;
+  const footerCopyright = footerCfg?.copyrightText || `© ${new Date().getFullYear()} ${blog.name}. Tous droits réservés.`;
+  const footerSocialEntries = Object.entries(blog.social_links ?? {}).filter(([, u]) => !!u);
 
   return (
     <>
@@ -514,6 +522,29 @@ export function CorporateHeader({
                 <div className="mt-4">
                   <BlogLanguageSwitcher sourceLang={blog.language || 'en'} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath ?? ''} className="text-slate-300 hover:text-white hover:bg-white/10" />
                 </div>
+
+                {/* Contenu du footer, repris ici car le footer desktop est masqué sur mobile */}
+                {showFooterSocial && footerSocialEntries.length > 0 && (
+                  <div className="flex items-center gap-3 mt-6 flex-wrap">
+                    {footerSocialEntries.map(([platform, url]) => (
+                      <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
+                        className="h-8 w-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all" title={platform}>
+                        {socialIcons[platform] ?? <span className="text-[10px] font-bold capitalize">{platform[0]}</span>}
+                      </a>
+                    ))}
+                  </div>
+                )}
+                <div className="mt-6 pt-4 border-t border-white/5 text-[11px] text-slate-500 space-y-1">
+                  <p>{footerCopyright}</p>
+                  {showPoweredBy && (
+                    <p>
+                      {t('poweredBy')}{' '}
+                      <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                        SmarterBloggers
+                      </a>
+                    </p>
+                  )}
+                </div>
               </div>
 
               {subscribeEnabled && (
@@ -576,7 +607,8 @@ export function CorporateFooter({
   };
 
   return (
-    <footer className="bg-slate-950 text-white pb-16 lg:pb-0">
+    <>
+    <footer className="hidden lg:block bg-slate-950 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-16 pb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
 
@@ -681,8 +713,9 @@ export function CorporateFooter({
           </div>
         </div>
       </div>
-      <MobileBottomNav basePath={basePath ?? ''} primaryColor={primaryColor} dark breakpoint="lg" />
     </footer>
+    <MobileBottomNav basePath={basePath ?? ''} primaryColor={primaryColor} dark breakpoint="lg" />
+    </>
   );
 }
 

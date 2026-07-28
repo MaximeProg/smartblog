@@ -39,6 +39,14 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
   // Le tiroir mobile n'a pas besoin de "Home" — déjà dans la bottom nav.
   const drawerLinks = navLinks.filter(l => l.href !== (basePath || '/'));
 
+  // Le footer desktop est masqué sur mobile (voir CreativeFooter) — son
+  // contenu (réseaux, copyright, powered-by) est repris ici dans le tiroir.
+  const fCfg2 = blog.template_config?.footer;
+  const showFooterSocial = fCfg2?.showSocialLinks !== false;
+  const showPoweredBy = fCfg2?.showPoweredBy !== false;
+  const footerCopyright = fCfg2?.copyrightText || `© ${new Date().getFullYear()} ${blog.name}. All rights reserved.`;
+  const footerSocialEntries = Object.entries(blog.social_links || {});
+
   useEffect(() => {
     if (!menuOpen) return;
     document.body.style.overflow = 'hidden';
@@ -126,6 +134,22 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
               <div className="mt-5">
                 <BlogLanguageSwitcher sourceLang={blog.language} enabledLanguages={blog.enabled_languages ?? []} basePath={basePath} className="text-zinc-500 hover:text-white hover:bg-white/10" />
               </div>
+
+              {/* Contenu du footer, repris ici car le footer desktop est masqué sur mobile */}
+              {showFooterSocial && footerSocialEntries.length > 0 && (
+                <div className="flex flex-wrap gap-4 mt-6">
+                  {footerSocialEntries.map(([platform, url]) => (
+                    <a key={platform} href={url} target="_blank" rel="noopener noreferrer"
+                      className="text-zinc-500 hover:text-white transition-colors text-sm font-bold capitalize">
+                      {platform}
+                    </a>
+                  ))}
+                </div>
+              )}
+              <div className="mt-6 pt-4 border-t border-zinc-800 text-[11px] text-zinc-500 space-y-1">
+                <p>{footerCopyright}</p>
+                {showPoweredBy && <p>Powered by SmarterBloggers</p>}
+              </div>
             </div>
 
             {showSubscribe && (
@@ -164,7 +188,8 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
       ];
 
   return (
-    <footer className="bg-zinc-950 text-zinc-400 pb-16 md:pb-0">
+    <>
+    <footer className="hidden md:block bg-zinc-950 text-zinc-400">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div className="md:col-span-2">
@@ -226,7 +251,8 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
           </div>
         </div>
       </div>
-      <MobileBottomNav basePath={basePath} primaryColor={primaryColor} dark />
     </footer>
+    <MobileBottomNav basePath={basePath} primaryColor={primaryColor} dark />
+    </>
   );
 }
