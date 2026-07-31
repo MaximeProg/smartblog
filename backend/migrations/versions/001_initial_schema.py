@@ -14,7 +14,11 @@ depends_on = None
 
 def upgrade() -> None:
     # ── ENUMs ──────────────────────────────────────────────────────
-    op.execute("CREATE TYPE plan_tier AS ENUM ('starter', 'pro', 'business', 'enterprise')")
+    # 'free' ajouté le 2026-07-31 : jamais capturé par une migration (ajouté
+    # manuellement en direct sur la base de prod à un moment non tracé) —
+    # trouvé en rejouant tout l'historique sur une base neuve pour la
+    # première fois (migration 042 l'utilise en le supposant déjà présent).
+    op.execute("CREATE TYPE plan_tier AS ENUM ('free', 'starter', 'pro', 'business', 'enterprise')")
     op.execute("CREATE TYPE tenant_status AS ENUM ('active', 'suspended', 'grace_period', 'deleted')")
     op.execute("CREATE TYPE user_role AS ENUM ('TENANT_ADMIN', 'EDITOR', 'AUTHOR', 'VIEWER')")
     op.execute("CREATE TYPE comments_mode AS ENUM ('open', 'moderated', 'closed')")

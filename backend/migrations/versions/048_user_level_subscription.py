@@ -53,7 +53,14 @@ def upgrade() -> None:
         WITH CHECK (is_super_admin() OR user_id = current_app_user_id())
     """)
 
-    # ── 4. Backfill correctif : aligne tenant.plan sur le plan réel de
+    # ── 4. users.plan — jamais capturée par une migration (ajoutée
+    #    manuellement en direct sur la prod à un moment non tracé, comme la
+    #    valeur d'enum 'free' de plan_tier — trouvé le 2026-07-31 en rejouant
+    #    tout l'historique sur une base neuve). IF NOT EXISTS la rend
+    #    inoffensive pour l'ancienne base qui l'a déjà. ────────────────────
+    op.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS plan plan_tier NOT NULL DEFAULT 'free'")
+
+    # ── 5. Backfill correctif : aligne tenant.plan sur le plan réel de
     #    son propriétaire (corrige la dérive déjà constatée en prod) ────
     op.execute("""
         UPDATE tenants t

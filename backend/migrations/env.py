@@ -34,7 +34,21 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    # transaction_per_migration=True : chaque migration commit avant que la
+    # suivante démarre. Nécessaire car plusieurs migrations font un
+    # `ALTER TYPE ... ADD VALUE` puis une migration ULTÉRIEURE utilise cette
+    # valeur (ex. 053 ajoute 'reserved' à affiliate_commission_status, 054
+    # l'utilise) — Postgres interdit d'utiliser une nouvelle valeur d'enum
+    # dans la transaction qui l'a créée (UnsafeNewEnumValueUsageError). En
+    # production historique chaque migration était appliquée séparément
+    # (donc déjà commit), ce n'était jamais un problème ; ça ne s'est révélé
+    # que le 2026-07-31 en rejouant tout l'historique en un seul run sur une
+    # base neuve.
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        transaction_per_migration=True,
+    )
     with context.begin_transaction():
         context.run_migrations()
 

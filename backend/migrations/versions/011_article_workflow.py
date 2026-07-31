@@ -20,7 +20,13 @@ def upgrade() -> None:
 
     op.add_column("articles", sa.Column("episode_number", sa.Integer(), nullable=True))
     op.add_column("articles", sa.Column("season", sa.Integer(), nullable=True))
-    op.add_column("articles", sa.Column("canonical_url", sa.Text(), nullable=True))
+    # canonical_url est déjà dans la création initiale de la table (migration
+    # 002) — ce op.add_column était un doublon jamais détecté car l'ancienne
+    # base n'a jamais rejoué toutes les migrations depuis zéro d'un coup
+    # (trouvé le 2026-07-31 en migrant vers une nouvelle base Neon vide).
+    # IF NOT EXISTS le rend inoffensif dans les deux cas (base neuve ou base
+    # ayant déjà appliqué cette migration historiquement).
+    op.execute("ALTER TABLE articles ADD COLUMN IF NOT EXISTS canonical_url TEXT")
     op.add_column("articles", sa.Column("robots_noindex", sa.Boolean(), nullable=False, server_default="false"))
     op.add_column("articles", sa.Column("rejection_reason", sa.Text(), nullable=True))
 
