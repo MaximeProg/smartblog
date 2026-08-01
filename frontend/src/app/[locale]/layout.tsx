@@ -6,13 +6,6 @@ import { routing } from '@/i18n/routing';
 import { Providers } from '@/components/providers';
 import { ThemeProvider } from '@/components/theme-provider';
 
-// NEXT_PUBLIC_APP_URL is sometimes configured without a protocol (e.g.
-// "smarterbloggers.com") — new URL() throws on that, crashing generateMetadata
-// server-side. Normalize instead of trusting the env var's format.
-function withProtocol(url: string): string {
-  return /^https?:\/\//.test(url) ? url : `https://${url}`;
-}
-
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -28,10 +21,8 @@ export async function generateMetadata({
     title: { default: t('appName'), template: `%s | ${t('appName')}` },
     description: t('tagline'),
     metadataBase: new URL(
-      withProtocol(
-        process.env.NEXT_PUBLIC_APP_URL ??
-        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-      )
+      process.env.NEXT_PUBLIC_APP_URL ??
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
     ),
   };
 }

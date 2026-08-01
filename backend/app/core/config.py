@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
     DATABASE_SYNC_URL: str
+    # Neon exige SSL ; un Postgres auto-hébergé sur le réseau interne Docker
+    # (VPS) n'en a pas — désactivable via DATABASE_SSL_REQUIRE=false.
+    DATABASE_SSL_REQUIRE: bool = True
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
@@ -64,7 +67,9 @@ class Settings(BaseSettings):
     OPENPROVIDER_PASSWORD: str = ""
     OPENPROVIDER_SANDBOX: bool = True        # False en production (compte reseller réel requis)
     OPENPROVIDER_PRIVATE_WHOIS_ENABLED: bool = False  # Nécessite d'avoir signé le contrat WPP (WHOIS Privacy Protection) sur le dashboard OpenProvider — sinon l'enregistrement échoue avec "Wpp contract is not signed". Repasser à True une fois signé.
-    OPENPROVIDER_DNS_TEMPLATE_NAME: str = "smarterbloggers-vercel"  # Template DNS créé une fois sur le compte (POST /dns/templates, id 149570 le 2026-07-23) — A @ -> 76.76.21.21, CNAME www -> cname.vercel-dns.com
+    OPENPROVIDER_DNS_TEMPLATE_NAME: str = "smarterbloggers-vercel"  # Template DNS créé une fois sur le compte (POST /dns/templates, id 149570 le 2026-07-23) — n'a d'effet que sur la création d'une zone neuve ; les enregistrements réels sont passés explicitement (voir VPS_HOST_IP) car la plupart des zones existent déjà à l'enregistrement du domaine.
+    # IP publique du VPS auto-hébergé (remplace Vercel — voir migration du 2026-08-01) : les nouveaux domaines achetés/connectés pointent ici.
+    VPS_HOST_IP: str = "191.215.35.51"
     DEFAULT_DOMAIN_REGISTRAR: str = "openprovider"
     DOMAIN_SEARCH_TLDS: list[str] = ["com", "net", "org", "blog", "ai", "io", "co", "dev"]
 
@@ -123,10 +128,6 @@ class Settings(BaseSettings):
     # migration 058_main_site_ads.py). Jamais de TenantUser créé pour ce
     # tenant : seul un super admin peut le gérer (voir tenants.py::_assert_member).
     PLATFORM_TENANT_ID: str = "00000000-0000-0000-0000-000000000001"
-
-    # Vercel (custom domain registration)
-    VERCEL_TOKEN: str = ""
-    VERCEL_PROJECT_ID: str = ""
 
     # URLs frontend supplémentaires autorisées (séparées par des virgules)
     # Ex: EXTRA_CORS_ORIGINS=https://smarterbloggers.vercel.app,https://staging.smarterbloggers.com

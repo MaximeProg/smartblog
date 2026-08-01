@@ -303,7 +303,6 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
     from app.services.registrars.registry import get_registrar
     from app.services.registrars.base import RegistrarError
     from app.services.log_service import log_event
-    from app.api.v1.domains import _register_with_vercel
 
     async with AsyncSessionLocal() as db:
         order = await db.get(DomainOrder, uuid.UUID(order_id))
@@ -354,8 +353,8 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                 await registrar.configure_dns(
                     domain=order.domain_name,
                     records=[
-                        {"name": "", "type": "A", "value": "76.76.21.21"},
-                        {"name": "www", "type": "CNAME", "value": "cname.vercel-dns.com"},
+                        {"name": "", "type": "A", "value": settings.VPS_HOST_IP},
+                        {"name": "www", "type": "A", "value": settings.VPS_HOST_IP},
                     ],
                     template_name=settings.OPENPROVIDER_DNS_TEMPLATE_NAME,
                 )
@@ -398,9 +397,6 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                     {"tid": str(order.tenant_id)},
                 )
                 await db.commit()
-
-                await _register_with_vercel(order.domain_name)
-                await _register_with_vercel(f"www.{order.domain_name}")
 
                 await log_event(db, "domain.registered", level="success",
                                 target_type="custom_domain", target_id=str(custom_domain.id),
