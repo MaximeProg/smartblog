@@ -20,7 +20,11 @@ sudo docker compose -f docker-compose.prod.yml build
 echo "--- migrations Alembic ---"
 sudo docker compose -f docker-compose.prod.yml run --rm api alembic upgrade head
 echo "--- redémarrage ---"
-sudo docker compose -f docker-compose.prod.yml up -d
+# --force-recreate est indispensable : sans lui, `up -d` ne recrée pas un
+# conteneur déjà démarré juste parce que l'image sous-jacente a été
+# reconstruite (le tag ":latest" ne change pas, donc Compose ne voit "rien
+# de nouveau" et laisse tourner l'ancien conteneur avec l'ancien code).
+sudo docker compose -f docker-compose.prod.yml up -d --force-recreate
 echo "--- état des conteneurs ---"
 sudo docker compose -f docker-compose.prod.yml ps
 REMOTE
