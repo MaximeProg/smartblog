@@ -21,11 +21,10 @@ const FALLBACK = {
 };
 
 export default async function TermsPage({
-  params, searchParams,
-}: { params: Promise<{ locale: string }>; searchParams: Promise<{ cmsLang?: string }> }) {
+  params,
+}: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const { cmsLang } = await searchParams;
-  const lang = cmsLang || locale;
+  const lang = locale;
   const cms = (await getPlatformPage('legal-terms', lang)) as typeof FALLBACK | null;
   const c = cms ?? FALLBACK;
 

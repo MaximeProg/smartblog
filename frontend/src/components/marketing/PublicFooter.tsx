@@ -6,8 +6,8 @@ import { PlatformAdSlot } from '@/components/marketing/PlatformAdSlot';
 
 interface PublicFooterProps {
   locale: string;
-  /** Langue du contenu CMS (peut différer de `locale` via ?cmsLang=) — voir
-   * PublicNav pour le même mécanisme. */
+  /** Langue du contenu CMS traduit par DeepL — toujours égale à `locale`,
+   * voir PublicNav pour le même mécanisme. */
   lang?: string;
 }
 

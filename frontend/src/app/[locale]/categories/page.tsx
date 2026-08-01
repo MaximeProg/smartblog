@@ -49,14 +49,12 @@ const GRADIENT_COLORS = [
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1558655146-364adaf1fcc9?auto=format&fit=crop&w=800&q=80';
 
 export default async function CategoriesPage({
-  params, searchParams,
+  params,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ cmsLang?: string }>;
 }) {
   const { locale } = await params;
-  const { cmsLang } = await searchParams;
-  const lang = (cmsLang || locale).toLowerCase();
+  const lang = locale.toLowerCase();
 
   let l: CategoriesLabels = lang === 'fr' ? FR_LABELS : EN_LABELS;
   if (lang !== 'en' && lang !== 'fr') {

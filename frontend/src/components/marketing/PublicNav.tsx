@@ -13,9 +13,9 @@ const FR_LABELS: NavLabels = {
 
 interface PublicNavProps {
   locale: string;
-  /** Langue du contenu CMS (peut différer de `locale` via ?cmsLang=) — par
-   * défaut, retombe sur `locale` pour les pages qui n'ont pas encore de
-   * contenu traduisible (ex: liste des blogs, catégories). */
+  /** Langue du contenu CMS traduit par DeepL — toujours égale à `locale`
+   * (un seul choix de langue pour toute l'app), passée explicitement par
+   * chaque page pour éviter de la recalculer ici. */
   lang?: string;
   transparent?: boolean;
 }

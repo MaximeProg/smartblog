@@ -67,11 +67,11 @@ export default async function ContactPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ cmsLang?: string; subject?: string }>;
+  searchParams: Promise<{ subject?: string }>;
 }) {
   const { locale } = await params;
-  const { cmsLang, subject } = await searchParams;
-  const lang = cmsLang || locale;
+  const { subject } = await searchParams;
+  const lang = locale;
   const cms = (await getPlatformPage('contact', lang)) as typeof FALLBACK | null;
   const c = cms ?? FALLBACK;
 

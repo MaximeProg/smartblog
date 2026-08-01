@@ -57,11 +57,10 @@ const FALLBACK = {
 };
 
 export default async function StatusPage({
-  params, searchParams,
-}: { params: Promise<{ locale: string }>; searchParams: Promise<{ cmsLang?: string }> }) {
+  params,
+}: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const { cmsLang } = await searchParams;
-  const lang = cmsLang || locale;
+  const lang = locale;
   const [cms, stats] = await Promise.all([
     getPlatformPage('status', lang) as Promise<typeof FALLBACK | null>,
     getPlatformStats(),

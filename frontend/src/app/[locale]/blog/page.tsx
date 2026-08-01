@@ -74,13 +74,13 @@ interface Blog {
 
 interface Props {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ q?: string; category?: string; cmsLang?: string }>;
+  searchParams: Promise<{ q?: string; category?: string }>;
 }
 
 export default async function BlogPage({ params, searchParams }: Props) {
   const { locale } = await params;
-  const { q, category, cmsLang } = await searchParams;
-  const lang = (cmsLang || locale).toLowerCase();
+  const { q, category } = await searchParams;
+  const lang = locale.toLowerCase();
   const { blogs, error } = await fetchBlogs(q, category, lang);
 
   let labels: BlogExploreLabels = lang === 'fr' ? FR_LABELS : EN_LABELS;

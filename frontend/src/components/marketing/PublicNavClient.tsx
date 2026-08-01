@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Search, PenLine, Sun, Moon, Menu, X } from 'lucide-react';
-import { CmsLanguageSwitcher } from '@/components/marketing/CmsLanguageSwitcher';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import { useTheme } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
@@ -109,8 +109,8 @@ export function PublicNavClient({ locale, lang, labels, transparent = false }: P
             </button>
 
             {/* Language switcher */}
-            <CmsLanguageSwitcher
-              currentLang={lang}
+            <LanguageSwitcher
+              locale={locale}
               className="text-slate-400 hover:text-white hover:bg-white/10 border-transparent"
             />
 

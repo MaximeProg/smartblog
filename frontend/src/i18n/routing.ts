@@ -11,6 +11,10 @@ export const routing = defineRouting({
     'id', 'lt', 'lv', 'et', 'sl',
   ] as const,
   defaultLocale: 'en',
+  // Le défaut doit s'appliquer tel quel à la première visite, sans deviner
+  // via l'en-tête Accept-Language du navigateur (qui masquerait "en" pour un
+  // visiteur dont le navigateur est en français, par exemple).
+  localeDetection: false,
 });
 
 export type Locale = (typeof routing.locales)[number];

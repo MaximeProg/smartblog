@@ -91,14 +91,11 @@ const FALLBACK: any = {
 
 export default async function AboutPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ cmsLang?: string }>;
 }) {
   const { locale } = await params;
-  const { cmsLang } = await searchParams;
-  const lang = cmsLang || locale;
+  const lang = locale;
   const cms = (await getPlatformPage('about', lang)) as typeof FALLBACK | null;
   const c = cms ?? FALLBACK;
 

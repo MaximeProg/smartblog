@@ -35,14 +35,11 @@ const FR_PLAN_STATIC: Record<string, PlanStatic> = {
 
 export default async function HomePage({
   params,
-  searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ cmsLang?: string }>;
 }) {
   const { locale } = await params;
-  const { cmsLang } = await searchParams;
-  const lang = cmsLang || locale;
+  const lang = locale;
   const [pricingPlans, stats, cms] = await Promise.all([
     getPricingPlans(lang),
     getPlatformStats(),
