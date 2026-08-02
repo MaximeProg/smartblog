@@ -599,9 +599,11 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
         return
 
     # Décision PDG : un affilié qui n'a pas encore enregistré son wallet USDT
-    # BSC ne participe pas au programme d'affiliation — aucune commission
-    # n'est calculée ni suivie pour lui (pas de mise en réserve, rien dû).
-    if not user.usdt_wallet_address:
+    # BSC — ou dont le KYC n'est pas validé (décision PDG 2026-08-03, étendue
+    # à tout versement de fonds sur la plateforme) — ne participe pas au
+    # programme d'affiliation : aucune commission n'est calculée ni suivie
+    # pour lui (pas de mise en réserve, rien dû).
+    if not user.usdt_wallet_address or user.kyc_status != KycStatus.VERIFIED:
         return
 
     commission = AffiliateCommission(
@@ -667,7 +669,7 @@ async def _trigger_auto_payout_for_user(db, user: User):
         return
 
     wallet_address = user.usdt_wallet_address
-    if not wallet_address:
+    if not wallet_address or user.kyc_status != KycStatus.VERIFIED:
         return
 
     # Évite un second virement pendant qu'un premier est déjà en cours de confirmation.
@@ -782,6 +784,19 @@ async def _confirm_payout_and_finalize(
                 if user:
                     user.affiliate_balance = max(0, float(user.affiliate_balance or 0) - attempt_amount)
                 await db.commit()
+
+                if user and cashout:
+                    try:
+                        from app.services.invoice_service import generate_and_send_invoice
+                        await generate_and_send_invoice(
+                            db, user=user,
+                            amount=attempt_amount, currency="USDT",
+                            payment_reference=batch_id,
+                            payment_type="affiliate_commission_payout",
+                        )
+                        await db.commit()
+                    except Exception:
+                        logger.exception("Invoice generation failed for affiliate payout batch %s", batch_id)
                 break
             return
 

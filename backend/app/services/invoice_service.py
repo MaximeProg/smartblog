@@ -51,9 +51,18 @@ _LABELS_EN: dict[str, str] = {
     "pdf_reference": "Payment reference",
     "pdf_status": "Status",
     "pdf_status_paid": "Paid",
-    "pdf_thank_you": "Thank you for your payment.",
-    # Libellés par type de paiement (clé = Transaction.transaction_type.value)
+    "pdf_thank_you": "This document is provided for your records.",
+    # Libellés par type de paiement/versement (clé = Transaction.transaction_type.value
+    # pour un paiement entrant, ou un identifiant libre pour un versement sortant —
+    # voir affiliate.py::_confirm_payout_and_finalize, ads.py::review_ad).
     "payment_type_kyc_verification": "KYC Identity Verification",
+    "payment_type_subscription": "Subscription",
+    "payment_type_paid_article": "Article Purchase",
+    "payment_type_ad_campaign": "Advertising Campaign",
+    "payment_type_paid_newsletter": "Newsletter Subscription",
+    "payment_type_domain_purchase": "Domain Purchase",
+    "payment_type_affiliate_commission_payout": "Affiliate Commission Payout",
+    "payment_type_ad_revenue_payout": "Ad Revenue Payout",
 }
 
 
@@ -185,24 +194,27 @@ async def generate_and_send_invoice(
     db,
     *,
     user,
-    transaction,
+    amount: float,
+    currency: str,
+    payment_reference: str,
     payment_type: str,
+    transaction_id=None,
     language: str = "en",
 ) -> Invoice:
-    """Génère la facture d'un paiement, l'enregistre (Dashboard → Factures)
-    et l'envoie par email. La création de la ligne `Invoice` est la partie
-    qui doit réussir (l'utilisateur doit toujours la retrouver dans son
-    Dashboard même si Resend est en panne) ; l'envoi de l'email est protégé
-    par son propre try/except pour ne jamais faire échouer la facturation
-    elle-même. Cette fonction, elle, n'attrape PAS ses propres erreurs :
-    l'appelant (payments.py::_finalize_transaction) l'enveloppe pour ne
-    jamais faire échouer la finalisation du paiement à cause de la facture."""
+    """Génère la facture d'un paiement OU d'un versement (commission
+    d'affiliation, part de revenu pub d'un blogueur), l'enregistre
+    (Dashboard → Factures) et l'envoie par email. Générique : ne dépend pas
+    du modèle `Transaction` (un versement sortant — payout — n'en a pas),
+    d'où des champs explicites plutôt qu'un objet transaction. La création
+    de la ligne `Invoice` est la partie qui doit réussir (l'utilisateur doit
+    toujours la retrouver dans son Dashboard même si Resend est en panne) ;
+    l'envoi de l'email est protégé par son propre try/except pour ne jamais
+    faire échouer la facturation elle-même. Cette fonction, elle, n'attrape
+    PAS ses propres erreurs : chaque appelant (payments.py::
+    _maybe_generate_invoice, affiliate.py::_confirm_payout_and_finalize,
+    ads.py::review_ad) l'enveloppe pour ne jamais faire échouer l'opération
+    financière elle-même à cause de la facturation."""
     invoice_number = await _get_next_invoice_number(db)
-    payment_reference = (
-        transaction.nowpayments_payment_id
-        or transaction.nowpayments_order_id
-        or str(transaction.id)
-    )
     payment_type_key = f"payment_type_{payment_type}"
     payment_type_label_en = _LABELS_EN.get(payment_type_key, payment_type.replace("_", " ").title())
 
@@ -214,20 +226,20 @@ async def generate_and_send_invoice(
         "user_display_name": user.display_name or user.email,
         "payment_type": payment_type,
         "payment_type_label": payment_type_label_en,
-        "amount": float(transaction.amount),
-        "currency": transaction.currency,
+        "amount": float(amount),
+        "currency": currency,
         "payment_reference": payment_reference,
-        "transaction_id": str(transaction.id),
+        "transaction_id": str(transaction_id) if transaction_id else None,
         "status": "issued",
     }
 
     invoice = Invoice(
         invoice_number=invoice_number,
         user_id=user.id,
-        transaction_id=transaction.id,
+        transaction_id=transaction_id,
         payment_type=payment_type,
-        amount=transaction.amount,
-        currency=transaction.currency,
+        amount=amount,
+        currency=currency,
         payment_reference=payment_reference,
         status="issued",
         language=language,
@@ -246,8 +258,8 @@ async def generate_and_send_invoice(
             display_name=user.display_name or user.email,
             invoice_number=invoice_number,
             payment_type_label=payment_type_label,
-            amount=float(transaction.amount),
-            currency=transaction.currency,
+            amount=float(amount),
+            currency=currency,
             invoice_url=f"{settings.FRONTEND_URL}/invoices",
             pdf_bytes=pdf_bytes,
             labels=labels,

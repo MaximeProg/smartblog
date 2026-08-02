@@ -2724,7 +2724,14 @@
     "colStatus": "Statut",
     "download": "Télécharger",
     "type": {
-      "kyc_verification": "Vérification KYC"
+      "kyc_verification": "Vérification KYC",
+      "subscription": "Abonnement",
+      "paid_article": "Achat d'article",
+      "ad_campaign": "Campagne publicitaire",
+      "paid_newsletter": "Abonnement newsletter",
+      "domain_purchase": "Achat de domaine",
+      "affiliate_commission_payout": "Versement de commission d'affiliation",
+      "ad_revenue_payout": "Versement de revenus publicitaires"
     }
   },
   "advertiser": {

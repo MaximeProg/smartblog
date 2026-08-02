@@ -30,7 +30,7 @@
   },
   "auth": {
     "login": {
-      "title": "Bine ai revenit!",
+      "title": "Bine ai revenit",
       "subtitle": "Conectează-te la contul tău SmarterBloggers",
       "emailLabel": "Adresă de e-mail",
       "emailPlaceholder": "you@example.com",
@@ -39,7 +39,7 @@
       "signInButton": "Autentificare",
       "signingIn": "Se efectuează autentificarea...",
       "twoFATitle": "Autentificarea în doi pași",
-      "twoFADesc": "Introdu codul din cele 6 cifre din aplicația ta de autentificare.",
+      "twoFADesc": "Introdu codul din 6 cifre din aplicația ta de autentificare.",
       "twoFAVerify": "Verificați",
       "twoFABack": "Înapoi la autentificare",
       "googleButton": "Continuă cu Google",
@@ -87,7 +87,7 @@
       "sending": "Se trimite...",
       "backToLogin": "Înapoi la autentificare",
       "successTitle": "Linkul a fost trimis!",
-      "successDesc": "Dacă există un cont pentru adresa {email}, vei primi în scurt timp un link de resetare. Verifică și folderul de spam.",
+      "successDesc": "Dacă există un cont pentru adresa {email}, veți primi în scurt timp un link de resetare. Verificați și folderul de spam.",
       "errors": {
         "userNotFound": "Nu s-a găsit niciun cont pentru această adresă de e-mail.",
         "generic": "Nu s-a putut trimite linkul de resetare. Vă rugăm să încercați din nou."
@@ -783,7 +783,7 @@
     "speakNowHint": "Spune acum…",
     "voiceTranscribedHint": "Vocea dumneavoastră va fi transcriasă automat",
     "noResultsForQuery": "Nu s-au găsit rezultate pentru „{query}”",
-    "tryOtherKeywords": "Încearcă alte cuvinte cheie sau verifică ortografia.",
+    "tryOtherKeywords": "Încearcă alte cuvinte-cheie sau verifică ortografia.",
     "resultsForQuery": "{count} rezultat pentru „{query}”",
     "resultsForQueryPlural": "{count} rezultate pentru „{query}”",
     "savedArticlesLabel": "Articole salvate",
@@ -812,7 +812,7 @@
     "noEpisodesYet": "Nu există încă episoade",
     "episodeCount": "{count} episod",
     "episodeCountPlural": "{count} episoade",
-    "advertiseWithUsBadge": "Faceți publicitate alături de noi",
+    "advertiseWithUsBadge": "Faceți publicitate la noi",
     "advertiseHeroTitlePrefix": "Ajunge la",
     "advertiseHeroTitleSuffix": "public",
     "advertiseStep1Title": "Trimiteți anunțul dumneavoastră",
@@ -927,7 +927,7 @@
       "newsletterTitle": "Buletin informativ integrat",
       "newsletterDesc": "Extindeți-vă și gestionați-vă lista de abonați fără a apela la instrumente de la terți.",
       "aiTitle": "Asistent de scriere bazat pe IA",
-      "aiDesc": "Generați, îmbunătățiți, sintetizați și traduceți conținutul cu ajutorul funcționalităților integrate de inteligență artificială."
+      "aiDesc": "Generați, îmbunătățiți, rezumați și traduceți conținutul cu ajutorul funcționalităților integrate de inteligență artificială."
     },
     "pricing": {
       "title": "O politică de prețuri simplă și transparentă",
@@ -1123,7 +1123,7 @@
     },
     "widgets": {
       "title": "Widgeturi",
-      "description": "Configurează widgeturile blogului tău: căutare, articole populare, categorii, rețele sociale, buletin informativ și reclame din bara laterală."
+      "description": "Configurează widgeturile blogului tău: căutare, articole populare, categorii, rețele sociale, newsletter și reclame din bara laterală."
     },
     "seo": {
       "title": "Optimizare SEO",
@@ -1270,7 +1270,7 @@
     "primaryColor": "Culoare primară",
     "secondaryColor": "Culoare secundară",
     "headingFont": "Fontul titlului",
-    "bodyFont": "Fontul textului",
+    "bodyFont": "Fontul corpului textului",
     "contentWidth": "Lățimea conținutului",
     "sidebarEnabled": "Bara laterală este activată",
     "sidebarPosition": "Funcția",
@@ -1413,7 +1413,7 @@
     "opens": "se deschide",
     "sendTest": "Test",
     "testEmailSent": "E-mailul de testare a fost trimis!",
-    "testEmailError": "Nu s-a putut trimite e-mailul de test",
+    "testEmailError": "Nu s-a putut trimite e-mailul de testare",
     "scheduleAt": "Trimite mai târziu (opțional)",
     "willSchedule": "Această campanie va fi trimisă la ora programată",
     "scheduleCampaign": "Program",
@@ -1492,7 +1492,7 @@
   },
   "apiKeys": {
     "title": "Chei API",
-    "description": "Gestionează cheile API pentru a accesa blogul tău prin intermediul programelor.",
+    "description": "Gestionează cheile API pentru a accesa blogul tău prin intermediul unui program.",
     "newKey": "Cheie nouă",
     "createTitle": "Creează o cheie API",
     "keyName": "Numele cheii",
@@ -1891,7 +1891,7 @@
     "languagesSectionTitle": "Limbi disponibile",
     "languagesSavedToast": "Limbi actualizate",
     "pageNewsletter": "Buletin informativ",
-    "pageNewsletterDesc": "Gestionați abonații la newsletter.",
+    "pageNewsletterDesc": "Gestionați abonații la buletinul informativ.",
     "pageAnalytics": "Analize",
     "pageAnalyticsDesc": "Urmărește performanța blogului tău.",
     "pageComments": "Comentarii",
@@ -2109,7 +2109,7 @@
     "catDescPlaceholder": "Descriere (opțional)",
     "catColorLabel": "Culoare",
     "catCoverOptional": "Imagine de copertă (opțional)",
-    "catCoverLabel": "Imaginea de pe copertă",
+    "catCoverLabel": "Imaginea de copertă",
     "catCreating": "Se creează…",
     "catCreate": "Creează",
     "catSave": "Salvare",
@@ -2242,7 +2242,7 @@
     "navLinkLabel": "Etichetă",
     "navLinkUrlPlaceholder": "/page sau https://...",
     "navLinkAdd": "Adaugă un link",
-    "arrayItemDefault": "Articolul „{n}”",
+    "arrayItemDefault": "Articolul {n}",
     "arrayAdd": "Adăugare",
     "defaultSubscribeLabel": "Abonează-te",
     "placeholderHeroTitle": "În prim-plan",
@@ -2392,7 +2392,7 @@
       "dashboard": "Tablou de bord"
     },
     "sidebar": {
-      "assistant": "Asistent de creare",
+      "assistant": "Asistentul de creare",
       "connectedAs": "Conectat ca",
       "plan": "Planul „{plan}”"
     },
@@ -2436,7 +2436,7 @@
     "domainSearchEmpty": "Nu s-au găsit rezultate — încercați un alt nume.",
     "domainSelectButton": "Selectează",
     "domainTaken": "Filmat",
-    "quickSlugTaken": "Acest nume este deja luat; te rugăm să alegi altul.",
+    "quickSlugTaken": "Acest nume este deja luat; vă rugăm să alegeți altul.",
     "quickDescriptionLabel": "Descriere",
     "quickDescriptionPlaceholder": "Un blog despre tehnologie, design și antreprenoriat...",
     "quickNameHint": "Va apărea ca nume public al blogului tău. Maximum 50 de caractere.",
@@ -2453,7 +2453,7 @@
     "customColorTitle": "Culoare personalizată",
     "cancel": "Anulează",
     "templatePermanentTitle": "Șablonul este permanent.",
-    "templatePermanentDesc": "Șablonul tău definește structura vizuală a blogului tău și nu poate fi modificat după creare. Poți personaliza culorile, fonturile, conținutul și toate setările în Studio.",
+    "templatePermanentDesc": "Șablonul tău definește structura vizuală a blogului tău și nu poate fi modificat după creare. Poți personaliza culorile, fonturile, conținutul și toate setările din Studio.",
     "colors": {
       "blue": "Albastru",
       "violet": "Violet",
@@ -2645,7 +2645,7 @@
     "refPlan": "Plan",
     "refJoined": "S-a alăturat",
     "refCommissions": "Comisioane încasate",
-    "treeTab": "Arborele de referință",
+    "treeTab": "Arborele de referințe",
     "exportCSV": "Export CSV",
     "exportError": "Exportul a eșuat",
     "inviteFriendTitle": "Invită un prieten",
@@ -2724,7 +2724,14 @@
     "colStatus": "Stare",
     "download": "Descărcare",
     "type": {
-      "kyc_verification": "Verificarea KYC"
+      "kyc_verification": "Verificarea KYC",
+      "subscription": "Abonament",
+      "paid_article": "Achiziționarea articolului",
+      "ad_campaign": "Campanie publicitară",
+      "paid_newsletter": "Abonare la buletinul informativ",
+      "domain_purchase": "Achiziționarea unui domeniu",
+      "affiliate_commission_payout": "Plata comisioanelor de afiliere",
+      "ad_revenue_payout": "Plata veniturilor din publicitate"
     }
   },
   "advertiser": {
@@ -2737,7 +2744,7 @@
     "adDescriptionPlaceholder": "Scurtă descriere a ofertei dumneavoastră…",
     "imageUrl": "URL-ul imaginii din anunț",
     "imageUrlHint": "Link direct către bannerul tău (recomandat: 1200×628 px).",
-    "clickUrl": "URL-ul destinației",
+    "clickUrl": "URL-ul de destinație",
     "clickUrlHint": "Unde ar trebui să fie redirecționați vizitatorii atunci când dau clic pe anunțul tău?",
     "startsAt": "Data de începere",
     "endsAt": "Data de încheiere",
@@ -2893,7 +2900,7 @@
     "addTitle": "Adaugă un domeniu",
     "addButton": "Adăugare",
     "addHint": "Introduceți domeniul fără https:// (de exemplu, blog.mysite.com)",
-    "addSuccess": "Domeniul a fost adăugat! Acum adaugă cele două înregistrări DNS prezentate mai jos.",
+    "addSuccess": "Domeniul a fost adăugat! Acum adăugați cele două înregistrări DNS prezentate mai jos.",
     "addError": "Eroare la adăugarea domeniului.",
     "verifyButton": "Verificați",
     "verifySuccess": "Domeniul a fost verificat! Blogul tău este acum online la această adresă.",
@@ -2986,7 +2993,7 @@
     "verifyButton": "Verificați",
     "doneButton": "Gata — autentificarea în doi pași este activă",
     "manualEntry": "Sau introduceți cheia manual",
-    "backupWarning": "Păstrați aceste coduri într-un loc sigur. Fiecare cod poate fi folosit o singură dată pentru a vă recăpăta accesul în cazul în care vă pierdeți dispozitivul.",
+    "backupWarning": "Păstrați aceste coduri într-un loc sigur. Fiecare cod poate fi utilizat o singură dată pentru a vă recăpăta accesul în cazul în care vă pierdeți dispozitivul.",
     "copyBackupCodes": "Copiază toate codurile",
     "copiedButton": "S-a copiat!",
     "setupError": "Nu s-a putut iniția configurarea autentificării în doi pași (2FA). Vă rugăm să încercați din nou.",
@@ -3062,7 +3069,7 @@
       "unpublish": "Anulează publicarea",
       "consoleLabel": "Consolă",
       "expandSidebar": "Extinde bara laterală",
-      "collapseSidebar": "Așează bara laterală",
+      "collapseSidebar": "Așează bara laterală în poziție pliată",
       "errorTitle": "Eroare"
     },
     "stats": {
@@ -3420,11 +3427,11 @@
         "platformNameHint": "Afișat pe paginile publice și în e-mailuri",
         "supportEmail": "E-mail de asistență",
         "domainMarkup": "Marja de profit la achiziția domeniilor (%)",
-        "domainMarkupHint": "Se adaugă la prețul stabilit de registrator pentru fiecare achiziție și reînnoire de domeniu — valoarea 0 înseamnă revânzare la prețul de cost",
+        "domainMarkupHint": "Se adaugă la prețul stabilit de registrator pentru fiecare achiziție și reînnoire de domeniu — 0 înseamnă revânzare la prețul de cost",
         "paymentTolerance": "Limita de plată în criptomonede ($)",
         "paymentToleranceHint": "O plată primită în limitele acestei marje față de suma preconizată (comisioane de rețea, variația ratei) este totuși considerată efectuată integral",
         "kycPricePerYear": "Prețul verificării KYC ($/an)",
-        "kycPricePerYearHint": "Prețul perceput utilizatorilor pe an pentru verificarea identității, necesară înainte de a accesa programul de afiliere"
+        "kycPricePerYearHint": "Prețul perceput utilizatorilor pe an pentru verificarea identității, necesară înainte de a avea acces la programul de afiliere"
       },
       "tabs": {
         "general": "Generalități",
@@ -3437,7 +3444,7 @@
         "platformName": "Numele platformei",
         "platformNameHint": "Afișat pe paginile publice și în e-mailuri",
         "tagline": "Slogan",
-        "taglineHint": "Sloganul afișat pe pagina principală",
+        "taglineHint": "Sloganul afișat pe pagina de start",
         "supportEmail": "E-mail de asistență",
         "supportEmailHint": "Adresa utilizată pentru răspunsurile automate",
         "defaultLocale": "Limba implicită",
@@ -3607,7 +3614,7 @@
       "configured": "Conectat la OpenAI",
       "notConfigured": "OpenAI nu este configurat",
       "configuredDesc": "Funcțiile de IA sunt active — modelul răspunde",
-      "notConfiguredDesc": "Setați variabila OPENAI_API_KEY în mediul dvs. de lucru pentru a activa funcțiile de inteligență artificială",
+      "notConfiguredDesc": "Setați variabila OPENAI_API_KEY în mediul dvs. pentru a activa funcțiile de IA",
       "currentModel": "Model activ",
       "availableModels": "Modele disponibile",
       "active": "Activ",
@@ -3918,7 +3925,7 @@
     "notFound": "Acest link de invitație este nevalid, a fost deja acceptat sau a expirat.",
     "errorTitle": "Invitația nu a fost găsită",
     "acceptedTitle": "Bine ai venit la bord!",
-    "acceptedDesc": "Invitația a fost acceptată. Te redirecționez către blogurile tale…",
+    "acceptedDesc": "Invitația a fost acceptată. Te redirecționăm către blogurile tale…",
     "title": "Ai fost invitat!",
     "subtitle": "{name} te-a invitat să colaborezi la un blog.",
     "blog": "Blog",

@@ -17,7 +17,7 @@
     "subscription": "Abonnement",
     "account": "Konto",
     "upgrade": "Upgrade",
-    "soon": "Demnächst",
+    "soon": "Demnächst erhältlich",
     "user": "Benutzer",
     "ads": "Werbung",
     "affiliate": "Partnerprogramm",
@@ -56,7 +56,7 @@
     },
     "register": {
       "title": "Erstellen Sie Ihr Konto",
-      "subtitle": "In wenigen Minuten mit dem Veröffentlichen loslegen – dauerhaft kostenlos",
+      "subtitle": "In wenigen Minuten mit dem Veröffentlichen loslegen – für immer kostenlos",
       "nameLabel": "Vollständiger Name",
       "namePlaceholder": "Ihr Name",
       "emailLabel": "E-Mail-Adresse",
@@ -506,7 +506,7 @@
     "generateExcerptTitle": "Auszug aus dem Inhalt erstellen",
     "newArticleBreadcrumb": "Neuer Artikel",
     "generateWithAiBadge": "Mit KI generieren",
-    "upgradeToStarterLink": "Auf den Starter-Tarif umsteigen →",
+    "upgradeToStarterLink": "Auf den Starter-Tarif upgraden →",
     "generateArticleWithAiTitle": "Einen Artikel mit KI erstellen",
     "articleSubjectLabel": "Thema des Artikels *",
     "articleSubjectPlaceholder": "Beispiel: Die Vorteile des Content-Marketings für kleine Unternehmen im Jahr 2025...",
@@ -818,7 +818,7 @@
     "advertiseStep1Title": "Anzeige aufgeben",
     "advertiseStep1Desc": "Geben Sie im folgenden Formular die Details Ihrer Anzeige und die Ziel-URL ein.",
     "advertiseStep2Title": "Manuelle Überprüfung",
-    "advertiseStep2Desc": "Der Blogbetreiber prüft Ihren Beitrag und genehmigt ihn oder lehnt ihn ab.",
+    "advertiseStep2Desc": "Der Blogbetreiber prüft Ihren Beitrag und genehmigt oder lehnt ihn ab.",
     "advertiseStep3Title": "In Betrieb nehmen",
     "advertiseStep3Desc": "Sobald Ihre Anzeige genehmigt wurde, wird sie veröffentlicht und erreicht die Leser.",
     "adDetailsStepLabel": "Anzeigendetails",
@@ -864,14 +864,14 @@
     "currencyLabel": "Währung",
     "currencyHint": "Dient zur Angabe Ihres Budgets. Heute wird keine Zahlung eingezogen.",
     "totalBudgetLabel": "Gesamtbudget",
-    "totalBudgetHint": "Das ist der Betrag, den Sie für die Schaltung Ihrer Anzeige zahlen.",
+    "totalBudgetHint": "Das ist der Betrag, den Sie für die Schaltung Ihrer Anzeige zahlen werden.",
     "paymentSubtitle": "Die Bezahlung Ihres Anzeigenplatzes erfolgt sicher über NowPayments – per Kryptowährung oder Kreditkarte.",
     "totalToPayLabel": "Zu zahlender Gesamtbetrag",
     "missingBudgetWarning": "Bitte kehren Sie zurück und geben Sie Ihr Budget ein, um fortzufahren.",
     "whatHappensNextSectionTitle": "Wie geht es weiter?",
-    "paymentStep1Text": "Klicken Sie unten auf „Überprüfen & Bezahlen“ – daraufhin wird Ihnen eine Zusammenfassung Ihrer Anzeige angezeigt.",
+    "paymentStep1Text": "Klicken Sie unten auf „Überprüfen & Bezahlen“ – daraufhin wird Ihnen eine Übersicht über Ihre Anzeige angezeigt.",
     "paymentStep2Text": "Klicken Sie auf „Jetzt bezahlen“ – Sie werden auf die sichere Seite von NowPayments weitergeleitet.",
-    "paymentStep3Text": "Bezahlen Sie über die Plattform mit Kryptowährung (USDT, BTC, ETH…) oder per Karte.",
+    "paymentStep3Text": "Bezahlen Sie per Kryptowährung (USDT, BTC, ETH…) oder per Karte über deren Plattform.",
     "paymentStep4Text": "Zahlung bestätigt → Ihre Anzeige wird zur Prüfung an den Blog-Betreiber weitergeleitet.",
     "paymentStep5Text": "Sobald Ihre Anzeige genehmigt wurde, wird sie automatisch geschaltet.",
     "securePaymentBold": "Sichere Zahlung.",
@@ -882,7 +882,7 @@
     "companyLabel": "Unternehmen",
     "headlineLabel": "Überschrift",
     "imageUrlLabel": "Bild-URL",
-    "campaignTargetingSectionLabel": "Kampagnen & Zielgruppenansprache",
+    "campaignTargetingSectionLabel": "Kampagne & Zielgruppenansprache",
     "budgetLabel": "Budget",
     "globalAllReadersLabel": "Weltweit (alle Leser)",
     "paymentReceivedTitle": "Zahlung eingegangen!",
@@ -1127,7 +1127,7 @@
     },
     "seo": {
       "title": "SEO-Optimierung",
-      "description": "Konfigurieren Sie die SEO-Einstellungen Ihres Blogs: automatische Sitemap, schema.org, Open-Graph-Metadaten, Ranking-Tracking und Inhaltsprüfung."
+      "description": "Konfigurieren Sie die SEO-Einstellungen Ihres Blogs: automatische Sitemap, schema.org, Open-Graph-Metadaten, Ranking-Tracking und Inhaltsanalyse."
     },
     "customization": {
       "title": "Erweiterte Anpassungsmöglichkeiten",
@@ -1615,7 +1615,7 @@
     "disconnectConfirm": "Dieses Konto trennen?",
     "yes": "Ja",
     "no": "Nein",
-    "oauthNotice": "Für die OAuth-Integration sind API-Zugangsdaten der Plattform erforderlich. Konfigurieren Sie Ihre Schlüssel zunächst in Umgebungsvariablen.",
+    "oauthNotice": "Für die OAuth-Integration sind API-Anmeldedaten der Plattform erforderlich. Konfigurieren Sie Ihre Schlüssel zunächst in Umgebungsvariablen.",
     "autoPostBanner": "Verbinden Sie Ihre Konten und aktivieren Sie die automatische Veröffentlichung – die Artikel werden dann automatisch in allen verbundenen Netzwerken veröffentlicht.",
     "autoPostOn": "Automatische Veröffentlichung: EIN",
     "autoPostOff": "Automatische Veröffentlichung: AUS",
@@ -1978,7 +1978,7 @@
     "switchShowProgressBar": "Lesebalken anzeigen",
     "switchShowProgressBarDesc": "Fortschrittsbalken am oberen Rand der Seite beim Lesen eines Artikels.",
     "switchShowToc": "Inhaltsverzeichnis anzeigen",
-    "switchShowTocDesc": "Automatisch aus den H2-/H3-Überschriften des Artikels generiert.",
+    "switchShowTocDesc": "Automatisch aus den H2-/H3-Überschriften im Artikel generiert.",
     "switchShowShare": "Teilen-Schaltflächen anzeigen",
     "switchShowAuthorBio": "Autorbiografie anzeigen",
     "switchShowAuthorBioDesc": "Block unterhalb des Artikels mit dem Avatar und der Biografie des Autors.",
@@ -2090,7 +2090,7 @@
     "newsletterThisMonth": "In diesem Monat",
     "newsletterSearchPlaceholder": "Einen Teilnehmer suchen…",
     "newsletterNoTitle": "Noch keine Abonnenten",
-    "newsletterNoDesc": "Die Abonnenten werden hier angezeigt, sobald sich Besucher für Ihren Newsletter angemeldet haben.",
+    "newsletterNoDesc": "Die Abonnenten werden hier angezeigt, sobald sich Besucher für Ihren Newsletter anmelden.",
     "analyticsViews": "Gesamtanzahl der Aufrufe",
     "analyticsSessions": "Einmalige Sitzungen",
     "analyticsDuration": "Durchschnittliche Dauer",
@@ -2418,7 +2418,7 @@
     "quickCreating": "Wird erstellt…",
     "quickCreate": "Meinen Blog erstellen",
     "quickSuccess": "Blog erstellt! Weiterleitung…",
-    "domainRequiredNote": "Dein Blog ist für Besucher erst sichtbar, wenn du eine Domain verknüpfst. Nach der Erstellung rufst du die Seite „Domains“ im Studio deines Blogs auf, um die Einrichtung vorzunehmen.",
+    "domainRequiredNote": "Dein Blog ist für Besucher erst sichtbar, wenn du eine Domain verknüpft hast. Nach der Erstellung rufst du die Seite „Domains“ im Studio deines Blogs auf, um die Einrichtung vorzunehmen.",
     "domainStepTitle": "Stell deinen Blog online",
     "domainStepSubtitle": "{name} ist erstellt! Fügen Sie jetzt eine Domain hinzu, damit die Nutzer die Seite auch finden können – oder überspringen Sie diesen Schritt und erledigen Sie ihn später.",
     "domainOptionBuyTitle": "Eine neue Domain kaufen",
@@ -2481,7 +2481,7 @@
       },
       "luminary": {
         "tagline": "Prestige · Serifenschrift · Literarisch",
-        "description": "Im Stil von „The New Yorker“ / „GQ“. Cremiges Elfenbein, goldene Akzente, Initialen, hochwertiger redaktioneller Stil."
+        "description": "Im Stil von „The New Yorker“ / „GQ“. Cremeweiß, goldene Akzente, Initialen, hochwertiger redaktioneller Stil."
       }
     }
   },
@@ -2555,7 +2555,7 @@
     "walletRequires2FA": "Sie müssen die Zwei-Faktor-Authentifizierung aktivieren, bevor Sie eine Wallet-Adresse hinzufügen können.",
     "avatarChange": "Foto ändern",
     "avatarUpdated": "Profilfoto aktualisiert.",
-    "avatarError": "Das Hochladen des Fotos ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "avatarError": "Das Hochladen des Fotos ist fehlgeschlagen. Bitte versuche es erneut.",
     "avatarAlt": "Avatar",
     "continents": {
       "AF": "Afrika",
@@ -2667,7 +2667,7 @@
     "gate": {
       "not_started": {
         "title": "Identitätsprüfung erforderlich",
-        "description": "Um die Sicherheit und die Einhaltung der Vorschriften im Rahmen des Partnerprogramms zu gewährleisten, müssen Sie eine einmalige KYC-Identitätsprüfung durchführen, bevor Sie auf Ihren Empfehlungslink zugreifen und Provisionen verdienen können.",
+        "description": "Um die Sicherheit und die Einhaltung der Vorschriften im Rahmen des Partnerprogramms zu gewährleisten, müssen Sie eine einmalige KYC-Identitätsprüfung absolvieren, bevor Sie auf Ihren Empfehlungslink zugreifen und Provisionen verdienen können.",
         "cta": "Überprüfung starten"
       },
       "pending": {
@@ -2677,7 +2677,7 @@
       },
       "expired": {
         "title": "Erneute Überprüfung erforderlich",
-        "description": "Sie haben kürzlich Ihren Namen oder Ihr Land geändert, weshalb eine neue Identitätsprüfung erforderlich ist, bevor Ihr Partnerlink wieder aktiviert werden kann. Falls Sie noch im Voraus bezahlte Jahre übrig haben, entstehen Ihnen dadurch keine zusätzlichen Kosten.",
+        "description": "Sie haben kürzlich Ihren Namen oder Ihr Land geändert, weshalb eine neue Identitätsprüfung erforderlich ist, bevor Ihr Partnerlink wieder aktiviert werden kann. Sofern Sie noch im Voraus bezahlte Jahre übrig haben, entstehen Ihnen dadurch keine zusätzlichen Kosten.",
         "cta": "Meine Identität erneut bestätigen"
       },
       "rejected": {
@@ -2700,7 +2700,7 @@
     },
     "yearsRemaining": "{count, plural, =0 {No prepaid years remaining} one {# prepaid year remaining} other {# prepaid years remaining}}",
     "resumeVerification": "Überprüfung des Lebenslaufs",
-    "reverifyExplain": "Da Sie noch im Voraus bezahlte Jahre übrig haben, entstehen Ihnen durch die erneute Überprüfung keine zusätzlichen Kosten – Sie müssen lediglich die Identitätsprüfung erneut durchlaufen.",
+    "reverifyExplain": "Da Sie noch im Voraus bezahlte Jahre übrig haben, entstehen für die erneute Überprüfung keine zusätzlichen Kosten – Sie müssen lediglich die Identitätsprüfung erneut durchlaufen.",
     "reverifyCta": "Meine Identität erneut bestätigen",
     "purchaseTitle": "Wählen Sie die Dauer Ihrer Verifizierung aus",
     "durationLabel": "Dauer",
@@ -2724,7 +2724,14 @@
     "colStatus": "Status",
     "download": "Herunterladen",
     "type": {
-      "kyc_verification": "KYC-Überprüfung"
+      "kyc_verification": "KYC-Überprüfung",
+      "subscription": "Abonnement",
+      "paid_article": "Artikel kaufen",
+      "ad_campaign": "Werbekampagne",
+      "paid_newsletter": "Newsletter abonnieren",
+      "domain_purchase": "Domain-Kauf",
+      "affiliate_commission_payout": "Auszahlung der Partnerprovision",
+      "ad_revenue_payout": "Auszahlung von Werbeeinnahmen"
     }
   },
   "advertiser": {
@@ -2913,7 +2920,7 @@
     "step2TxtNote": "Der Wert des TXT-Eintrags ist für jede Domain einzigartig – kopieren Sie ihn aus der unten angezeigten Domain-Karte.",
     "step3Title": "Auf „Überprüfen“ klicken",
     "step3Desc": "Sobald Ihre DNS-Einträge übernommen wurden (bei Cloudflare dauert dies in der Regel nur wenige Minuten, andernorts bis zu 48 Stunden), klicken Sie auf die Schaltfläche „Aktualisieren“ neben Ihrer Domain.",
-    "cloudflareTip": "Nutzen Sie Cloudflare? Aktivieren Sie den orangefarbenen Cloud-Proxy in Ihrem CNAME-Eintrag – SSL wird dann automatisch verwaltet, ohne dass zusätzliche Konfigurationen erforderlich sind.",
+    "cloudflareTip": "Nutzen Sie Cloudflare? Aktivieren Sie den orangefarbenen Cloud-Proxy in Ihrem CNAME-Eintrag – SSL wird dann automatisch verwaltet, ohne dass eine zusätzliche Konfiguration erforderlich ist.",
     "hostingerTip": "Nutzen Sie Hostinger? Bei Hostinger ist ein CNAME-Eintrag auf der Root-Ebene (@) nicht zulässig. Fügen Sie stattdessen eine Weiterleitung von Ihrer Root-Domain zu „www“ hinzu und richten Sie anschließend nur den CNAME-Eintrag für „www“ sowie den TXT-Verifizierungsdatensatz ein.",
     "recordCname": "Eintrag 1 – CNAME-Root-Domain",
     "recordCnameWww": "Eintrag 2 – CNAME „www“-Subdomain",
@@ -2936,7 +2943,7 @@
     "renewButton": "Verlängern",
     "setPrimaryButton": "Als primäre Domäne festlegen",
     "purchaseTitle": "„{domain}“ kaufen",
-    "purchaseSubtitle": "Die Kontaktdaten des Registranten werden von den Domain-Registrierungsstellen (WHOIS) verlangt und werden bei aktiviertem Datenschutz nicht öffentlich angezeigt.",
+    "purchaseSubtitle": "Die Kontaktdaten des Registranten werden von den Domain-Registries (WHOIS) verlangt und werden bei aktiviertem Datenschutz nicht öffentlich angezeigt.",
     "fieldName": "Vollständiger Name",
     "fieldEmail": "E-Mail-Adresse",
     "fieldPhone": "Telefonnummer (z. B. +1 555 0100)",
@@ -3354,7 +3361,7 @@
       "analyticsFull": "Vollständig",
       "analyticsFullApi": "Full+API",
       "noPlansFound": "Es wurden keine Pläne gefunden",
-      "noPlansFoundDesc": "Führen Sie die Migration 019 durch, um Standardpläne zu initialisieren, oder erstellen Sie einen manuell.",
+      "noPlansFoundDesc": "Führen Sie die Migration 019 durch, um Standardpläne zu erstellen, oder legen Sie einen manuell an.",
       "subscribersLabel": "Abonnenten"
     },
     "payments": {
@@ -3918,7 +3925,7 @@
     "notFound": "Dieser Einladungslink ist ungültig, wurde bereits angenommen oder ist abgelaufen.",
     "errorTitle": "Einladung nicht gefunden",
     "acceptedTitle": "Herzlich willkommen an Bord!",
-    "acceptedDesc": "Einladung angenommen. Ich leite dich zu deinen Blogs weiter…",
+    "acceptedDesc": "Einladung angenommen. Du wirst zu deinen Blogs weitergeleitet…",
     "title": "Du bist eingeladen!",
     "subtitle": "{name} hat dich eingeladen, an einem Blog mitzuarbeiten.",
     "blog": "Blog",
@@ -3952,7 +3959,7 @@
     "currencyPickerLoading": "Verfügbare Währungen werden geladen…",
     "currencyPickerSearch": "Eine Währung oder ein Netzwerk suchen…",
     "currencyPickerNoResults": "Keine passende Währung gefunden.",
-    "minAmountChecking": "Mindestbetrag für diese Währung wird überprüft…",
+    "minAmountChecking": "Mindestbetrag für diese Währung wird geprüft…",
     "minAmountTooLow": "Mindestbetrag für „{currency}“: {amount} – wählen Sie eine andere Währung oder erhöhen Sie den Betrag."
   },
   "paymentCenter": {
@@ -3985,7 +3992,7 @@
   },
   "aiBuilder": {
     "title": "KI-Blog-Generator",
-    "subtitle": "Beantworten Sie ein paar Fragen, und die KI richtet Ihren Blog komplett ein: Startseite, „Über mich“, Kontakt, SEO, Kopfzeile, Fußzeile und vieles mehr.",
+    "subtitle": "Beantworten Sie ein paar Fragen, und die KI richtet Ihren Blog vollständig ein: Startseite, „Über mich“, Kontakt, SEO, Kopfzeile, Fußzeile und vieles mehr.",
     "brandNameLabel": "Blog / Markenname",
     "brandNamePlaceholder": "z. B. TechFlow, Easy Cooking, Zero Travel…",
     "nicheLabel": "Blog-Thema / Nische",

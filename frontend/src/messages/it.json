@@ -39,7 +39,7 @@
       "signInButton": "Accedi",
       "signingIn": "Accesso in corso...",
       "twoFATitle": "Autenticazione a due fattori",
-      "twoFADesc": "Inserisci il codice a 6 cifre visualizzato nell'app di autenticazione.",
+      "twoFADesc": "Inserisci il codice a 6 cifre generato dall'app di autenticazione.",
       "twoFAVerify": "Verifica",
       "twoFABack": "Torna alla pagina di accesso",
       "googleButton": "Continua con Google",
@@ -51,7 +51,7 @@
         "invalidCredentials": "Indirizzo e-mail o password non validi",
         "emailNotVerified": "Verifica il tuo indirizzo e-mail prima di effettuare l'accesso",
         "generic": "Si è verificato un errore. Riprova.",
-        "invalid2FA": "Codice di autenticazione non valido. Riprova."
+        "invalid2FA": "Codice di autenticazione non valido. Riprovare."
       }
     },
     "register": {
@@ -103,11 +103,11 @@
       "saveButton": "Salva la nuova password",
       "saving": "Salvataggio in corso...",
       "successTitle": "Password aggiornata!",
-      "successDesc": "La tua password è stata modificata. Ora puoi accedere con la nuova password.",
+      "successDesc": "La tua password è stata modificata. Ora puoi accedere utilizzando la nuova password.",
       "backToLogin": "Vai alla pagina di accesso",
       "errors": {
         "mismatch": "Le password non corrispondono.",
-        "expiredCode": "Questo link di reimpostazione è scaduto. Richiedine uno nuovo.",
+        "expiredCode": "Questo link di reimpostazione è scaduto. Si prega di richiederne uno nuovo.",
         "invalidCode": "Questo link di ripristino non è valido o è già stato utilizzato.",
         "generic": "Impossibile reimpostare la password. Riprova."
       }
@@ -639,7 +639,7 @@
     "subscribeButton": "Iscriviti",
     "subscribeSuccess": "Ti sei iscritto! Controlla la tua casella di posta.",
     "noArticles": "Non sono stati ancora pubblicati articoli",
-    "noArticlesDesc": "Torna presto a trovarci per scoprire i nuovi contenuti",
+    "noArticlesDesc": "Torna presto a trovarci per nuovi contenuti",
     "backToBlog": "Torna al blog",
     "shareOn": "Condividi su",
     "tableOfContents": "Indice",
@@ -818,7 +818,7 @@
     "advertiseStep1Title": "Invia il tuo annuncio",
     "advertiseStep1Desc": "Compila il modulo sottostante inserendo i dettagli del tuo annuncio e l'URL di destinazione.",
     "advertiseStep2Title": "Revisione manuale",
-    "advertiseStep2Desc": "Il gestore del blog esamina il contenuto inviato e lo approva o lo respinge.",
+    "advertiseStep2Desc": "Il gestore del blog esamina il contenuto inviato e decide se approvarlo o rifiutarlo.",
     "advertiseStep3Title": "Vai in diretta",
     "advertiseStep3Desc": "Una volta approvato, il tuo annuncio viene pubblicato e inizia a raggiungere i lettori.",
     "adDetailsStepLabel": "Dettagli dell'annuncio",
@@ -917,7 +917,7 @@
       "title": "Tutto ciò che ti serve per gestire un blog professionale",
       "subtitle": "Dalla scrittura alla pubblicazione, dall'analisi dei dati alla monetizzazione.",
       "multiTenantTitle": "Gestione di più blog",
-      "multiTenantDesc": "Gestisci più blog indipendenti da un'unica dashboard. Ognuno con il proprio team, dominio e impostazioni.",
+      "multiTenantDesc": "Gestisci più blog indipendenti da un'unica dashboard. Ciascuno con il proprio team, dominio e impostazioni.",
       "teamTitle": "Collaborazione in team",
       "teamDesc": "Invita redattori, autori e lettori. Decidi chi può scrivere, revisionare e pubblicare.",
       "analyticsTitle": "Funzionalità di analisi integrate",
@@ -1108,7 +1108,7 @@
     "copiedSitemap": "Copiato!",
     "schemaOrg": "Abilita i dati strutturati degli articoli (JSON-LD)",
     "schemaOrgDesc": "Aiuta i motori di ricerca a comprendere i tuoi contenuti e può consentire la visualizzazione di risultati avanzati.",
-    "exampleTitle": "Titolo di un articolo di esempio",
+    "exampleTitle": "Esempio di titolo di un articolo",
     "exampleCategory": "Tecnologia"
   },
   "comingSoon": {
@@ -1119,7 +1119,7 @@
     },
     "menus": {
       "title": "Gestione dei menu",
-      "description": "Crea e organizza i menu di navigazione del tuo blog. Aggiungi link alle tue pagine, alle categorie e a contenuti esterni."
+      "description": "Crea e organizza i menu di navigazione del tuo blog. Aggiungi collegamenti alle tue pagine, alle categorie e ai contenuti esterni."
     },
     "widgets": {
       "title": "Widget",
@@ -1141,7 +1141,7 @@
     "backToDashboard": "Torna alla dashboard",
     "mobileStep": "Fase {step} / 4",
     "errors": {
-      "createFailed": "Impossibile creare il blog. Riprovare."
+      "createFailed": "Impossibile creare il blog. Riprova."
     },
     "limit": {
       "title": "Limite del blog raggiunto",
@@ -1185,7 +1185,7 @@
         "identity": "Identità",
         "colors": "Colori",
         "typography": "Tipografia",
-        "layout": "Impaginazione",
+        "layout": "Layout",
         "sections": "Sezioni",
         "social": "Social media",
         "seo": "SEO"
@@ -1224,7 +1224,7 @@
         "full": "A tutta larghezza"
       },
       "headerStyles": {
-        "minimal": "Minimo",
+        "minimal": "Minimale",
         "classic": "Classico",
         "magazine": "Rivista",
         "centered": "Centrato"
@@ -1263,7 +1263,7 @@
     "changeTemplate": "Cambia modello",
     "sectionColors": "Colori",
     "sectionTypography": "Tipografia",
-    "sectionLayout": "Impaginazione",
+    "sectionLayout": "Layout",
     "sectionSections": "Sezioni",
     "sectionSocial": "Social media",
     "sectionSEO": "SEO",
@@ -1354,7 +1354,7 @@
     "dragDropHint": "Trascina i file qui oppure clicca su “Carica”",
     "uploadVideo": "Carica un video",
     "uploadAudio": "Carica file audio",
-    "uploadDoc": "Carica documento",
+    "uploadDoc": "Carica il documento",
     "uploadImage": "Carica immagine",
     "usedInArticles": "Citato in uno o più articoli dell'{count}",
     "saveFailed": "Salvataggio non riuscito",
@@ -1420,7 +1420,7 @@
     "campaignScheduled": "Campagna in programma",
     "sentAt": "Inviato",
     "import": "Importa CSV",
-    "importSuccess": "Abbonati importati da {imported} ({skipped} esclusi)",
+    "importSuccess": "Abbonati a “{imported}” importati ({skipped} escluso)",
     "importError": "Importazione non riuscita",
     "filterByTag": "Tag",
     "allTags": "Tutto",
@@ -1494,7 +1494,7 @@
     "title": "Chiavi API",
     "description": "Gestisci le chiavi API per accedere al tuo blog in modo programmatico.",
     "newKey": "Nuova chiave",
-    "createTitle": "Crea chiave API",
+    "createTitle": "Crea una chiave API",
     "keyName": "Nome chiave",
     "keyNamePlaceholder": "Server di produzione…",
     "expiresAt": "Scadenza",
@@ -1548,8 +1548,8 @@
     "banRemoveError": "Errore durante la rimozione del ban",
     "shadowBan": "Shadow ban",
     "banAuthor": "Autore del divieto",
-    "banSuccess": "Autore bannato",
-    "banError": "Errore durante il blocco dell'autore",
+    "banSuccess": "Autore bloccato",
+    "banError": "Errore nel bloccare l'autore",
     "status_pending": "In sospeso",
     "status_approved": "Approvato",
     "status_rejected": "Rifiutato",
@@ -1559,7 +1559,7 @@
   },
   "customization": {
     "title": "Personalizzazione",
-    "subtitle": "Aggiungi CSS personalizzati, script e font al tuo blog.",
+    "subtitle": "Aggiungi CSS, script e font personalizzati al tuo blog.",
     "save": "Salva",
     "saved": "Salvato!",
     "warning": "Il codice personalizzato viene inserito direttamente nel tuo blog pubblico. CSS o script non validi potrebbero compromettere il layout. Effettua dei test accurati.",
@@ -1575,7 +1575,7 @@
   "widgets": {
     "title": "Widget",
     "subtitle": "Configura i widget della barra laterale visualizzati sul tuo blog pubblico.",
-    "desc": "Trascina le righe per modificarne l'ordine. Clicca sul titolo per rinominarlo. Attiva o disattiva la visibilità di ciascun widget.",
+    "desc": "Trascina le righe per riordinarle. Clicca sul titolo per rinominarlo. Attiva o disattiva la visibilità di ciascun widget.",
     "save": "Salva",
     "saved": "Salvato!",
     "tipTitle": "Suggerimento: clicca sul titolo di un widget per rinominarlo. Le modifiche verranno applicate al tuo blog pubblico dopo il salvataggio."
@@ -1680,7 +1680,7 @@
     "upgradeNow": "Esegui subito l'aggiornamento",
     "trialExpiredTitle": "Il periodo di prova è scaduto",
     "trialExpiredDesc": "Scegli un piano per continuare a pubblicare contenuti e far crescere il tuo blog.",
-    "trialActiveDesc": "Approfitta di tutte le funzionalità prima che la versione di prova scada.",
+    "trialActiveDesc": "Approfitta di tutte le funzionalità prima che il periodo di prova scada.",
     "trialLastDay": "È l'ultimo giorno del tuo periodo di prova!",
     "trialDaysLeft": "{days} giorni rimanenti del periodo di prova",
     "contactModalTitle": "Passa a \"{plan}\"",
@@ -1806,7 +1806,7 @@
     "blogCardSubscribers": "abbonati",
     "blogCardAuthors": "autori",
     "loadingBlogs": "Caricamento dei tuoi blog in corso…",
-    "manageCount": "Gestisci un blog su {count}",
+    "manageCount": "Gestisci il blog \"{count}\"",
     "manageCountPlural": "Gestisci i blog dell'{count}",
     "startNow": "Crea il tuo primo blog per iniziare.",
     "noBlogsTitle": "Non ci sono ancora blog",
@@ -2278,7 +2278,7 @@
     "mediaUseThisUrl": "Utilizza questo URL",
     "mediaEmbedHint": "I link a YouTube e Vimeo vengono convertiti automaticamente in contenuti incorporati.",
     "collabRoleEditorDesc": "Crea, modifica e pubblica direttamente.",
-    "collabRoleAuthorDesc": "Redige e sottopone all’approvazione.",
+    "collabRoleAuthorDesc": "Redige e sottopone all'approvazione.",
     "collabRoleViewerDesc": "Accesso in sola lettura alla dashboard.",
     "cancel": "Annulla",
     "administrators": "Amministratori",
@@ -2359,7 +2359,7 @@
       "languageLabel": "Lingua principale",
       "descriptionLabel": "Descrizione",
       "descriptionOptional": "(facoltativo)",
-      "descriptionPlaceholder": "Un blog su tecnologia, design e imprenditoria...",
+      "descriptionPlaceholder": "Un blog dedicato alla tecnologia, al design e all'imprenditoria...",
       "nextButton": "Avanti — Scegli un tema"
     },
     "step2": {
@@ -2374,7 +2374,7 @@
       "fontLabel": "Famiglia di caratteri",
       "previewLabel": "Anteprima",
       "previewTitle": "Il mio primo articolo",
-      "previewBody": "Benvenuti nel mio blog. Questo spazio è dedicato alla condivisione delle mie idee e riflessioni.",
+      "previewBody": "Benvenuti nel mio blog. Questo spazio è dedicato alla condivisione delle mie idee e dei miei pensieri.",
       "previewAuthor": "Autore · 2 giorni fa",
       "createButton": "Crea il mio blog",
       "creatingButton": "Creazione in corso..."
@@ -2425,7 +2425,7 @@
     "domainOptionBuyDesc": "Cerca e acquista un dominio senza uscire da SmarterBloggers. Pagamento in criptovaluta, registrazione automatica.",
     "domainOptionConnectTitle": "Collegare un dominio di mia proprietà",
     "domainOptionConnectDesc": "Hai già un dominio altrove? Reindirizzalo gratuitamente al tuo blog: basta una rapida configurazione del DNS.",
-    "domainOptionSkipTitle": "Per ora salta questo passaggio",
+    "domainOptionSkipTitle": "Per ora salta questo punto",
     "domainOptionSkipDesc": "Vai direttamente al tuo studio. Il tuo blog rimarrà privato finché non aggiungerai un dominio in un secondo momento.",
     "backToChoices": "Indietro",
     "domainConnectLabel": "Il tuo dominio",
@@ -2438,7 +2438,7 @@
     "domainTaken": "Preso",
     "quickSlugTaken": "Questo nome è già stato utilizzato; scegli un altro nome.",
     "quickDescriptionLabel": "Descrizione",
-    "quickDescriptionPlaceholder": "Un blog su tecnologia, design e imprenditoria...",
+    "quickDescriptionPlaceholder": "Un blog dedicato alla tecnologia, al design e all'imprenditoria...",
     "quickNameHint": "Viene visualizzato come nome pubblico del tuo blog. Massimo 50 caratteri.",
     "quickDescriptionHint": "Viene visualizzato nei risultati di ricerca e nelle condivisioni sui social. Si consiglia di non superare i 300 caratteri.",
     "quickSlugHint": "Da 4 a 50 caratteri — solo lettere minuscole, numeri e trattini.",
@@ -2453,7 +2453,7 @@
     "customColorTitle": "Colore personalizzato",
     "cancel": "Annulla",
     "templatePermanentTitle": "Il modello è permanente.",
-    "templatePermanentDesc": "Il tuo template definisce la struttura visiva del tuo blog e non può essere modificato una volta creato. Puoi personalizzare i colori, i caratteri, i contenuti e tutte le impostazioni in Studio.",
+    "templatePermanentDesc": "Il tuo tema definisce la struttura visiva del tuo blog e non può essere modificato una volta creato. Puoi personalizzare i colori, i caratteri, i contenuti e tutte le impostazioni in Studio.",
     "colors": {
       "blue": "Blu",
       "violet": "Violet",
@@ -2677,7 +2677,7 @@
       },
       "expired": {
         "title": "È necessaria una nuova verifica",
-        "description": "Di recente hai modificato il tuo nome o il tuo Paese, pertanto è necessaria una nuova verifica dell'identità prima che il tuo link di affiliazione possa essere riattivato. Se hai ancora anni prepagati a disposizione, non ti verrà addebitato alcun costo aggiuntivo.",
+        "description": "Di recente hai modificato il tuo nome o il tuo Paese, pertanto è necessaria una nuova verifica dell'identità prima che il tuo link di affiliazione possa essere riattivato. Se hai ancora anni prepagati a disposizione, questa operazione non comporterà alcun costo aggiuntivo.",
         "cta": "Conferma nuovamente la mia identità"
       },
       "rejected": {
@@ -2724,7 +2724,14 @@
     "colStatus": "Stato",
     "download": "Scarica",
     "type": {
-      "kyc_verification": "Verifica KYC"
+      "kyc_verification": "Verifica KYC",
+      "subscription": "Abbonamento",
+      "paid_article": "Acquisto dell'articolo",
+      "ad_campaign": "Campagna pubblicitaria",
+      "paid_newsletter": "Iscrizione alla newsletter",
+      "domain_purchase": "Acquisto di domini",
+      "affiliate_commission_payout": "Pagamento delle commissioni di affiliazione",
+      "ad_revenue_payout": "Pagamento dei ricavi pubblicitari"
     }
   },
   "advertiser": {
@@ -2748,7 +2755,7 @@
     "budgetRequired": "Inserisci un budget superiore a 0.",
     "requiredFields": "Si prega di compilare tutti i campi obbligatori.",
     "myAds": "I miei annunci",
-    "noAds": "Non hai ancora inviato nessun annuncio.",
+    "noAds": "Non hai ancora inviato alcun annuncio.",
     "statusPending": "In attesa di revisione",
     "statusApproved": "Approvato",
     "statusRejected": "Rifiutato",
@@ -2797,7 +2804,7 @@
     "type_ad_campaign": "Entrate pubblicitarie",
     "status_completed": "Completato",
     "status_pending": "In sospeso",
-    "status_failed": "Fallito",
+    "status_failed": "Non riuscito",
     "status_refunded": "Rimborsato"
   },
   "support": {
@@ -2883,7 +2890,7 @@
     "daysLeft": "{days} giorni rimanenti del periodo di prova",
     "lastDay": "È l'ultimo giorno del periodo di prova: passa alla versione a pagamento oggi stesso!",
     "expiredMessage": "Il periodo di prova è scaduto. Effettua l'aggiornamento per continuare a utilizzare tutte le funzionalità.",
-    "upgradeNow": "Esegui subito l'aggiornamento",
+    "upgradeNow": "Esegui l'aggiornamento ora",
     "viewPlans": "Visualizza le planimetrie"
   },
   "domains": {
@@ -2977,7 +2984,7 @@
     "setupTitle": "Configurare l'autenticazione a due fattori",
     "step1of3": "Fase 1 di 3 — Scansione",
     "step2of3": "Fase 2 di 3 — Verifica",
-    "step3of3": "Fase 3 di 3 — Codici di backup",
+    "step3of3": "Fase 3 di 3 — Codici di sicurezza",
     "step1Desc": "Scansiona questo codice QR con la tua app di autenticazione (Google Authenticator, Authy, ecc.).",
     "step2Desc": "Inserisci il codice a 6 cifre visualizzato nell'app di autenticazione per confermare la configurazione.",
     "codeLabel": "Codice di autenticazione",
@@ -2986,7 +2993,7 @@
     "verifyButton": "Verifica",
     "doneButton": "Fatto — L'autenticazione a due fattori è attiva",
     "manualEntry": "Oppure inserisci la chiave manualmente",
-    "backupWarning": "Conserva questi codici in un luogo sicuro. Ogni codice può essere utilizzato una sola volta per recuperare l'accesso in caso di smarrimento del dispositivo.",
+    "backupWarning": "Conserva questi codici in un luogo sicuro. Ogni codice può essere utilizzato una sola volta per ripristinare l'accesso in caso di smarrimento del dispositivo.",
     "copyBackupCodes": "Copia tutti i codici",
     "copiedButton": "Copiato!",
     "setupError": "Impossibile avviare la configurazione dell'autenticazione a due fattori. Riprovare.",
@@ -3208,7 +3215,7 @@
       "payoutRef": "Riferimento al pagamento",
       "notes": "Note (facoltative)",
       "confirmApprove": "Approvare questo prelievo e contrassegnarlo come pagato?",
-      "confirmReject": "Vuoi rifiutare questa richiesta di prelievo?",
+      "confirmReject": "Rifiutare questa richiesta di prelievo?",
       "kpi": {
         "activeAffiliates": "Affiliati attivi",
         "totalReferrals": "Totale segnalazioni",
@@ -3252,7 +3259,7 @@
         "requested": "Richiesto",
         "processing": "Elaborazione",
         "paid": "A pagamento",
-        "failed": "Fallito",
+        "failed": "Non riuscito",
         "rejected": "Rifiutato"
       },
       "cashoutApprovedToast": "Prelievo approvato.",
@@ -3260,10 +3267,10 @@
     },
     "templates": {
       "title": "Libreria dei modelli",
-      "breadcrumb": "Contenuti e grafica",
+      "breadcrumb": "Contenuti e design",
       "subtitle": "{count} temi attivi",
       "toggled": "Tema aggiornato",
-      "sectionBuiltIn": "Temi predefiniti",
+      "sectionBuiltIn": "Temi integrati",
       "sectionCustom": "Modelli personalizzati",
       "colName": "Nome",
       "colTheme": "Tema",
@@ -3315,7 +3322,7 @@
       "cancel": "Annulla",
       "deactivate": "Disattiva",
       "activate": "Attiva",
-      "confirmDeactivate": "Disattivare questo piano? Gli utenti che lo utilizzano non ne subiranno le conseguenze immediatamente.",
+      "confirmDeactivate": "Disattivare questo piano? Gli utenti che lo utilizzano non ne subiranno le conseguenze nell'immediato.",
       "created": "Piano creato",
       "updated": "Piano aggiornato",
       "deactivated": "Piano disattivato",
@@ -3422,7 +3429,7 @@
         "domainMarkup": "Margine sull'acquisto di domini (%)",
         "domainMarkupHint": "Aggiunto al prezzo del registrar per ogni acquisto e rinnovo di dominio — 0 indica la rivendita al prezzo di costo",
         "paymentTolerance": "Tolleranza per i pagamenti in criptovaluta ($)",
-        "paymentToleranceHint": "Un pagamento ricevuto entro tale margine rispetto all'importo previsto (commissioni di rete, variazione del tasso) è comunque considerato completo",
+        "paymentToleranceHint": "Un pagamento ricevuto entro questo margine rispetto all'importo previsto (commissioni di rete, variazione del tasso) è comunque considerato completo",
         "kycPricePerYear": "Costo della verifica KYC ($/anno)",
         "kycPricePerYearHint": "Prezzo addebitato agli utenti per ogni anno di verifica dell'identità, richiesta prima di poter accedere al programma di affiliazione"
       },
@@ -3446,7 +3453,7 @@
         "maintenanceOn": "Abilitato — piattaforma inaccessibile",
         "maintenanceOff": "Disabile",
         "registrations": "Iscrizioni aperte",
-        "registrationsHint": "Disattiva per bloccare i nuovi account",
+        "registrationsHint": "Disattiva per bloccare la creazione di nuovi account",
         "registrationsOpen": "Apri",
         "registrationsClosed": "Chiuso"
       },
@@ -3462,7 +3469,7 @@
         "webhookSecret": "Codice segreto del webhook",
         "webhookSecretHint": "Segreto per la convalida dei webhook in entrata",
         "regenerate": "Rigenerare",
-        "warning": "La rigenerazione di una chiave invalida immediatamente quella precedente. Aggiorna le tue integrazioni prima di procedere alla rigenerazione in produzione."
+        "warning": "La rigenerazione di una chiave invalida immediatamente quella precedente. Aggiorna le tue integrazioni prima di procedere alla rigenerazione in ambiente di produzione."
       },
       "integrations": {
         "configured": "Configurato",
@@ -3507,7 +3514,7 @@
         "ip": "IP"
       },
       "action_user_login": "Accesso utente",
-      "action_user_logout": "Disconnessione utente",
+      "action_user_logout": "Disconnessione dell'utente",
       "action_user_register": "Nuova registrazione",
       "action_user_password_reset": "Reimpostazione della password",
       "action_tenant_created": "Blog creato",
@@ -3626,7 +3633,7 @@
       "breadcrumb": "Infrastrutture",
       "subtitle": "{count} Modelli configurati · Provider: SendGrid",
       "newTemplate": "Nuovo modello",
-      "templates": "Modelli di email",
+      "templates": "Modelli di e-mail",
       "active": "Attivo",
       "inactive": "Inattivo",
       "stats": {
@@ -3876,7 +3883,7 @@
       "pageLabel_contact": "Contatti",
       "pageLabel_careers": "Opportunità di lavoro",
       "pageLabel_press": "Stampa",
-      "pageLabel_changelog": "Registro delle modifiche",
+      "pageLabel_changelog": "Elenco delle modifiche",
       "pageLabel_status": "Stato",
       "pageLabel_legalPrivacy": "Privacy",
       "pageLabel_legalTerms": "Condizioni di servizio",
@@ -3985,7 +3992,7 @@
   },
   "aiBuilder": {
     "title": "Generatore di blog sull'intelligenza artificiale",
-    "subtitle": "Rispondi ad alcune domande e l'intelligenza artificiale configurerà completamente il tuo blog: pagina iniziale, \"Chi siamo\", contatti, SEO, intestazione, piè di pagina e altro ancora.",
+    "subtitle": "Rispondi ad alcune domande e l'intelligenza artificiale configurerà completamente il tuo blog: pagina iniziale, \"Chi siamo\", \"Contatti\", SEO, intestazione, piè di pagina e altro ancora.",
     "brandNameLabel": "Blog / nome del marchio",
     "brandNamePlaceholder": "ad es. TechFlow, Easy Cooking, Zero Travel…",
     "nicheLabel": "Argomento / nicchia del blog",
@@ -4017,6 +4024,6 @@
     "doneTitle": "Il tuo blog è pronto!",
     "doneDesc": "Tutti i contenuti sono stati generati e salvati. Ora puoi perfezionare ogni sezione nello studio.",
     "viewGeneralSettings": "Visualizza le impostazioni generali",
-    "viewHome": "Vai alla home"
+    "viewHome": "Visualizza la pagina iniziale"
   }
 }

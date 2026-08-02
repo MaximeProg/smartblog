@@ -256,6 +256,34 @@ async def _apply_provider_update(db, tx: Transaction, payment_status: str, actua
         tx.status = TransactionStatus.PARTIALLY_PAID if float(tx.amount_received or 0) > 0 else TransactionStatus.FAILED
 
 
+async def _maybe_generate_invoice(db, tx: Transaction, payment_type: str) -> None:
+    """Génère et envoie une facture pour ce paiement, si un utilisateur
+    identifié y est associé (certains flux — pub soumise sans compte,
+    newsletter payante achetée par email seul — n'ont pas de `user_id`, et
+    n'ont donc pas de facture). Ne bloque jamais la finalisation du paiement
+    en cas d'échec (PDF/DeepL/email) — l'appelant n'a pas besoin de
+    re-envelopper cet appel dans son propre try/except."""
+    if not tx.user_id:
+        return
+    try:
+        from app.models.user import User
+        from app.services.invoice_service import generate_and_send_invoice
+        user = await db.get(User, tx.user_id)
+        if not user:
+            return
+        invoice_language = (tx.extra or {}).get("invoice_language", "en")
+        payment_reference = tx.nowpayments_payment_id or tx.nowpayments_order_id or str(tx.id)
+        await generate_and_send_invoice(
+            db, user=user,
+            amount=float(tx.amount), currency=tx.currency,
+            payment_reference=payment_reference, transaction_id=tx.id,
+            payment_type=payment_type, language=invoice_language,
+        )
+        await db.commit()
+    except Exception:
+        logger.exception("Invoice generation failed for transaction %s (%s)", tx.id, payment_type)
+
+
 async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> None:
     """Idempotent : appelée depuis le webhook ET depuis le polling — ne doit
     jamais s'exécuter deux fois pour la même transaction (double commission
@@ -302,6 +330,8 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
         except Exception:
             pass
 
+        await _maybe_generate_invoice(db, tx, TransactionType.SUBSCRIPTION.value)
+
     elif tx.transaction_type == TransactionType.PAID_ARTICLE:
         existing = await db.execute(
             select(ArticleAccess).where(
@@ -315,6 +345,8 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
                 article_id=tx.article_id, transaction_id=tx.id,
             ))
         await db.commit()
+
+        await _maybe_generate_invoice(db, tx, TransactionType.PAID_ARTICLE.value)
 
     elif tx.transaction_type == TransactionType.AD_CAMPAIGN:
         from app.models.ad import Ad as AdModel
@@ -349,6 +381,10 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
         else:
             await db.commit()
 
+        # `user_id` peut être None (soumission anonyme via public_ads_router)
+        # — `_maybe_generate_invoice` ignore silencieusement ce cas.
+        await _maybe_generate_invoice(db, tx, TransactionType.AD_CAMPAIGN.value)
+
     elif tx.transaction_type == TransactionType.PAID_NEWSLETTER:
         from app.models.newsletter import NewsletterAccess
         access_q = await db.execute(
@@ -359,6 +395,10 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             access.granted_at = datetime.utcnow()
             access.amount_paid = actually_paid
         await db.commit()
+
+        # `user_id` peut être None (achat newsletter identifié par email seul,
+        # sans compte) — `_maybe_generate_invoice` ignore ce cas silencieusement.
+        await _maybe_generate_invoice(db, tx, TransactionType.PAID_NEWSLETTER.value)
 
     elif tx.transaction_type == TransactionType.DOMAIN_PURCHASE:
         order = await db.get(DomainOrder, tx.campaign_id) if tx.campaign_id else None
@@ -374,6 +414,8 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             from app.core.arq_pool import get_arq_pool
             pool = await get_arq_pool()
             await pool.enqueue_job("register_purchased_domain", order_id=str(order.id))
+
+            await _maybe_generate_invoice(db, tx, TransactionType.DOMAIN_PURCHASE.value)
 
     elif tx.transaction_type == TransactionType.KYC_VERIFICATION:
         from app.models.kyc import KycVerification
@@ -438,19 +480,7 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             except Exception:
                 logger.exception("KYC: échec de la création de la session Kaluta pour la transaction %s", tx.id)
 
-            # Facture — ne bloque jamais la finalisation du paiement.
-            try:
-                from app.services.invoice_service import generate_and_send_invoice
-                if user:
-                    invoice_language = (tx.extra or {}).get("invoice_language", "en")
-                    await generate_and_send_invoice(
-                        db, user=user, transaction=tx,
-                        payment_type=TransactionType.KYC_VERIFICATION.value,
-                        language=invoice_language,
-                    )
-                    await db.commit()
-            except Exception:
-                logger.exception("KYC: échec de la génération/envoi de la facture pour la transaction %s", tx.id)
+            await _maybe_generate_invoice(db, tx, TransactionType.KYC_VERIFICATION.value)
 
 
 async def _activate_subscription(db, tenant_id: uuid.UUID, plan: str, billing: str) -> None:

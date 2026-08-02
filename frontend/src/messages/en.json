@@ -2724,7 +2724,14 @@
     "colStatus": "Status",
     "download": "Download",
     "type": {
-      "kyc_verification": "KYC Verification"
+      "kyc_verification": "KYC Verification",
+      "subscription": "Subscription",
+      "paid_article": "Article Purchase",
+      "ad_campaign": "Advertising Campaign",
+      "paid_newsletter": "Newsletter Subscription",
+      "domain_purchase": "Domain Purchase",
+      "affiliate_commission_payout": "Affiliate Commission Payout",
+      "ad_revenue_payout": "Ad Revenue Payout"
     }
   },
   "advertiser": {

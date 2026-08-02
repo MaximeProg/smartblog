@@ -51,7 +51,7 @@
         "invalidCredentials": "Ugyldig e-postadresse eller passord",
         "emailNotVerified": "Bekreft e-postadressen din før du logger inn",
         "generic": "Det oppstod en feil. Prøv på nytt.",
-        "invalid2FA": "Ugyldig autentiseringskode. Prøv på nytt."
+        "invalid2FA": "Ugyldig bekreftelseskode. Prøv på nytt."
       }
     },
     "register": {
@@ -194,7 +194,7 @@
       "inviteTeam": "Inviter et teammedlem",
       "viewAnalytics": "Vis analyser",
       "recentArticles": "Nylige artikler",
-      "viewAll": "Vis alt",
+      "viewAll": "Vis alle",
       "noArticles": "Ingen artikler ennå",
       "noArticlesDesc": "Begynn å skrive for å utvide bloggen din",
       "firstArticle": "Første artikkel",
@@ -381,7 +381,7 @@
       "heading2": "Overskrift 2",
       "heading3": "Overskrift 3",
       "bulletList": "Punktliste",
-      "orderedList": "Prioritert liste",
+      "orderedList": "Merkeliste",
       "blockquote": "Sitat",
       "code": "Kode",
       "link": "Lenke",
@@ -404,7 +404,7 @@
     "alignLeft": "Juster til venstre",
     "alignCenter": "Juster til midten",
     "alignRight": "Juster til høyre",
-    "blockquote": "Sitatblokk",
+    "blockquote": "Sitat",
     "codeBlock": "Kodeblokk",
     "table": "Sett inn tabell",
     "image": "Sett inn bilde",
@@ -503,7 +503,7 @@
     "langArabic": "Arabisk",
     "generateButton": "Generer",
     "scoreLabel": "Poengsum",
-    "generateExcerptTitle": "Generer et utdrag fra innholdet",
+    "generateExcerptTitle": "Generer utdrag fra innholdet",
     "newArticleBreadcrumb": "Ny artikkel",
     "generateWithAiBadge": "Generer med AI",
     "upgradeToStarterLink": "Oppgrader til Starter-abonnementet →",
@@ -758,7 +758,7 @@
     "categoriesHeroDesc": "Oppdag historier fra alle våre kategorier.",
     "listenToArticle": "Hør på denne artikkelen",
     "listen": "Hør etter",
-    "dismiss": "Avvis",
+    "dismiss": "Lukk",
     "play": "Spill",
     "pause": "Pause",
     "copyLink": "Kopier lenken",
@@ -802,7 +802,7 @@
     "buyFor": "Kjøp for «{price}»",
     "signInToRead": "Logg inn for å lese",
     "signInAlreadyPurchased": "Logg inn (allerede kjøpt)",
-    "backToBlogName": "Tilbake til «{blog}»",
+    "backToBlogName": "Tilbake til {blog}",
     "secureBadges": "Sikker betaling · Umiddelbar tilgang · Les på alle enheter",
     "anonymousAuthor": "Anonym",
     "loading": "Laster…",
@@ -858,7 +858,7 @@
     "locationDetailsSectionTitle": "Opplysninger om stedet",
     "selectCountryPlaceholder": "— Velg et land —",
     "regionFieldLabel": "Region / Delstat / Provins",
-    "regionPlaceholder": "f.eks. California, Île-de-France, Lagos-staten…",
+    "regionPlaceholder": "f.eks. California, Île-de-France, delstaten Lagos…",
     "cityPlaceholder": "f.eks. Paris, New York, Lagos…",
     "preferredCurrencySectionTitle": "Foretrukket valuta",
     "currencyLabel": "Valuta",
@@ -889,7 +889,7 @@
     "paymentReceivedDescPrefix": "Betalingen din er bekreftet. Annonsen din er sendt til",
     "paymentReceivedDescSuffix": "til gjennomgang.",
     "paymentReceivedNote": "Når annonsen din er godkjent, blir den automatisk publisert. Du vil få beskjed fra bloggeieren dersom det er behov for endringer.",
-    "submitAnotherAdButton": "Legg ut en ny annonse",
+    "submitAnotherAdButton": "Legg inn en ny annonse",
     "fillRequiredFieldsError": "Fyll ut alle obligatoriske felter før du fortsetter.",
     "genericSubmitError": "Det oppstod en feil. Prøv på nytt.",
     "backButton": "Tilbake",
@@ -950,7 +950,7 @@
       "proF4": "Avansert analyse",
       "proF5": "Nyhetsbrev med opptil 10 000 abonnenter",
       "proF6": "Egendefinert domene",
-      "proF7": "AI-skriveverktøy",
+      "proF7": "AI-verktøy for tekstskriving",
       "businessName": "Næringsliv",
       "businessPrice": "99 dollar",
       "businessMonth": "/måned",
@@ -1090,7 +1090,7 @@
     "metaDesc": "Standard metabeskrivelse",
     "metaDescHint": "Brukes på hjemmesiden og på sider uten en spesifikk beskrivelse.",
     "metaDescPlaceholder": "En blogg om teknologi, design og entreprenørskap...",
-    "googlePreview": "Google-forhåndsvisning",
+    "googlePreview": "Forhåndsvisning fra Google",
     "ogImage": "Standard OG-bilde",
     "ogImageHint": "Brukes når du deler bloggen din på sosiale medier (anbefalt størrelse: 1200×630).",
     "ogImagePlaceholder": "https://...",
@@ -1145,7 +1145,7 @@
     },
     "limit": {
       "title": "Blogggrensen er nådd",
-      "desc": "Med «{plan}»-abonnementet ditt kan du opprette {max}. Oppgrader til Business for å opprette flere.",
+      "desc": "Med «{plan}»-abonnementet ditt kan du {max}. Oppgrader til «Business» for å opprette flere.",
       "viewPlans": "Se planer",
       "back": "Tilbake"
     },
@@ -1177,7 +1177,7 @@
       "label": "Tilpass",
       "title": "Tilpass designet ditt",
       "subtitle": "Alle endringer vises i sanntid til høyre.",
-      "publish": "Publiser blogg",
+      "publish": "Publiser blogginnlegg",
       "publishing": "Publiserer...",
       "previewLabel": "Forhåndsvisning i sanntid",
       "previewNote": "Simulert forhåndsvisning – det endelige resultatet kan avvike noe.",
@@ -1304,7 +1304,7 @@
     "themes": {
       "minimal": "Rent og innholdsfokusert",
       "magazine": "Moderne redaksjonell stil",
-      "business": "Profesjonell og strukturert",
+      "business": "Profesjonelt og strukturert",
       "news": "Et raskt og konsist nyhetsformat",
       "tech": "Mørk modus for utviklere",
       "portfolio": "Visuelt og kreativt"
@@ -1487,7 +1487,7 @@
     "selectTags": "Velg tagger som skal slås sammen…",
     "renameError": "Feil ved omdøping av tag",
     "deleteError": "Feil ved sletting av tag",
-    "createError": "Feil ved opprettelse av tag",
+    "createError": "Feil ved oppretting av tag",
     "mergeError": "Feil ved sammenslåing av tagger"
   },
   "apiKeys": {
@@ -1578,7 +1578,7 @@
     "desc": "Dra radene for å endre rekkefølgen. Klikk på tittelen for å gi den nytt navn. Slå visning av og på for hver enkelt widget.",
     "save": "Lagre",
     "saved": "Lagret!",
-    "tipTitle": "Tips: Klikk på tittelen på en widget for å gi den et nytt navn. Endringene trer i kraft på den offentlige bloggen din etter at du har lagret."
+    "tipTitle": "Tips: Klikk på tittelen på en widget for å gi den et nytt navn. Endringene blir synlige på den offentlige bloggen din etter at du har lagret."
   },
   "ai": {
     "title": "AI-assistent",
@@ -1612,11 +1612,11 @@
     "connecting": "Kobler til…",
     "connectError": "Kan ikke starte OAuth — sjekk plattformens påloggingsopplysninger i miljøvariablene",
     "disconnect": "Koble fra",
-    "disconnectConfirm": "Skal denne kontoen kobles fra?",
+    "disconnectConfirm": "Skal denne kontoen fjernes?",
     "yes": "Ja",
     "no": "Nei",
     "oauthNotice": "OAuth-integrasjon krever påloggingsopplysninger for plattformens API. Konfigurer nøklene dine i miljøvariablene først.",
-    "autoPostBanner": "Koble sammen kontoer og aktiver «Auto-post» – artiklene vil da bli publisert automatisk på alle tilknyttede nettverk.",
+    "autoPostBanner": "Koble sammen kontoer og aktiver «Automatisk publisering» – artiklene vil da bli publisert automatisk på alle tilkoblede nettverk.",
     "autoPostOn": "Automatisk publisering: PÅ",
     "autoPostOff": "Automatisk publisering: AV",
     "disconnected": "Kontoen er koblet fra",
@@ -1893,7 +1893,7 @@
     "pageNewsletter": "Nyhetsbrev",
     "pageNewsletterDesc": "Administrer abonnentene på nyhetsbrevet ditt.",
     "pageAnalytics": "Analytikk",
-    "pageAnalyticsDesc": "Følg med på bloggens resultater.",
+    "pageAnalyticsDesc": "Følg med på hvordan bloggen din presterer.",
     "pageComments": "Kommentarer",
     "pageCommentsDesc": "Moderere og administrere leserkommentarer.",
     "commentStatsTotal": "Totalt antall kommentarer",
@@ -2414,7 +2414,7 @@
     "quickCoverLabel": "Miniatyrbilde av blogginnlegg",
     "quickCoverOptional": "(valgfritt)",
     "quickCoverPlaceholder": "https://example.com/image.jpg",
-    "quickCoverError": "Ugyldig URL eller bilde som ikke kan åpnes",
+    "quickCoverError": "Ugyldig nettadresse eller bilde som ikke kan åpnes",
     "quickCreating": "Oppretter…",
     "quickCreate": "Opprett bloggen min",
     "quickSuccess": "Bloggen er opprettet! Omdirigerer…",
@@ -2472,12 +2472,12 @@
         "description": "Medium / The Atlantic-stil. En konsentrert leseopplevelse, en fremhevet hovedartikkel og et elegant oppsett med tre spalter."
       },
       "magazine": {
-        "tagline": "Dristig · Konsentrert · Dynamisk",
-        "description": "I stil med The Verge / Wired. Mørk topptekst, rutenett i flere lag, kategorideler, nyhetsbrev i sidefeltet."
+        "tagline": "Dristig · Intens · Dynamisk",
+        "description": "I stil med The Verge / Wired. Mørk topptekst, rutenett med flere lag, kategorideler, nyhetsbrev i sidefeltet."
       },
       "creative": {
         "tagline": "Mørkt · Visuelt · Oppslukende",
-        "description": "Cargo Collective-stil. Mørk modus uten kantlinjer, bildeoppsett i «masonry»-stil, layout med fokus på det visuelle."
+        "description": "Cargo Collective-stil. Mørk modus uten kantlinjer, bilder i «masonry»-oppsett, visuell layout."
       },
       "luminary": {
         "tagline": "Prestige · Serif · Litterær",
@@ -2488,7 +2488,7 @@
   "profile": {
     "personalInfo": "Personopplysninger",
     "displayNameLabel": "Visningsnavn",
-    "displayNamePlaceholder": "Ditt navn",
+    "displayNamePlaceholder": "Navnet ditt",
     "emailLabel": "E-postadresse",
     "emailNote": "(skrivebeskyttet)",
     "phoneLabel": "Telefonnummer",
@@ -2724,7 +2724,14 @@
     "colStatus": "Status",
     "download": "Last ned",
     "type": {
-      "kyc_verification": "KYC-verifisering"
+      "kyc_verification": "KYC-verifisering",
+      "subscription": "Abonnement",
+      "paid_article": "Kjøp av artikkel",
+      "ad_campaign": "Reklamekampanje",
+      "paid_newsletter": "Abonnement på nyhetsbrev",
+      "domain_purchase": "Kjøp av domene",
+      "affiliate_commission_payout": "Utbetaling av provisjon til tilknyttede partnere",
+      "ad_revenue_payout": "Utbetaling av annonseinntekter"
     }
   },
   "advertiser": {
@@ -2768,13 +2775,13 @@
     "howItWorksStep1": "Legg inn annonsen din og betal sikkert med kryptovaluta (USDT).",
     "howItWorksStep2": "Teamet vårt gjennomgår annonsen din og lenken til målsiden for å sikre at de er trygge.",
     "howItWorksStep3": "Når annonsen din er godkjent, blir den publisert på SmarterBloggers’ hjemmeside.",
-    "howItWorksStep4": "Følg med på visninger, klikk og klikkfrekvens (CTR) i sanntid fra dette oversiktspanelet.",
+    "howItWorksStep4": "Følg med på visninger, klikk og klikkfrekvens (CTR) i sanntid fra dette dashbordet.",
     "sponsoredLabel": "Sponset",
     "openButton": "Åpne",
     "targetCountries": "Mål land (valgfritt)",
     "targetCountriesHint": "La feltet stå tomt for å vise annonsen din til besøkende overalt. Velg ett eller flere land for å vise den kun til besøkende fra disse landene.",
     "targetCountriesSearch": "Søk etter et land…",
-    "targetCountriesNoResults": "Ingen treff på land."
+    "targetCountriesNoResults": "Ingen treff for land."
   },
   "tenantAccounting": {
     "title": "Finansiell oversikt",
@@ -2880,7 +2887,7 @@
     "reverseReason": "Årsak til omgjøring"
   },
   "trial": {
-    "daysLeft": "{days} antall dager igjen av prøveperioden",
+    "daysLeft": "{days} antall dager igjen av prøveperioden din",
     "lastDay": "Siste dag i prøveperioden – oppgrader i dag!",
     "expiredMessage": "Prøveperioden din har utløpt. Oppgrader for å fortsette å bruke alle funksjonene.",
     "upgradeNow": "Oppgrader nå",
@@ -2898,7 +2905,7 @@
     "verifyButton": "Bekreft",
     "verifySuccess": "Domenet er bekreftet! Bloggen din er nå tilgjengelig på denne adressen.",
     "verifyFailed": "Bekreftelsen mislyktes — sjekk at begge DNS-oppføringene er riktig angitt.",
-    "verifyError": "Feil under verifisering.",
+    "verifyError": "Feil under verifiseringen.",
     "deleteSuccess": "Domenet er fjernet.",
     "deleteError": "Feil ved fjerning av domene.",
     "deleteConfirm": "Skal dette domenet fjernes?",
@@ -2913,8 +2920,8 @@
     "step2TxtNote": "TXT-postens verdi er unik for hvert domene — kopier den fra domenekortet som vises nedenfor.",
     "step3Title": "Klikk på «Bekreft»",
     "step3Desc": "Når DNS-oppføringene dine er oppdatert (vanligvis tar det noen minutter på Cloudflare, opptil 48 timer andre steder), klikker du på oppdateringsknappen ved siden av domenet ditt.",
-    "cloudflareTip": "Bruker du Cloudflare? Aktiver den oransje skyproxyen i CNAME-oppføringen din – da håndteres SSL automatisk, uten at det er behov for ytterligere konfigurasjon.",
-    "hostingerTip": "Bruker du Hostinger? Hostinger tillater ikke en CNAME-oppføring på rotnivå (@). I stedet må du legge til en viderekobling fra rotdomenet ditt til «www», og deretter bare legge til CNAME-oppføringen for «www» og TXT-bekreftelsesoppføringen.",
+    "cloudflareTip": "Bruker du Cloudflare? Aktiver den oransje skyproxyen i CNAME-oppføringen din – da håndteres SSL automatisk, uten at det kreves noen ekstra konfigurasjon.",
+    "hostingerTip": "Bruker du Hostinger? Hostinger tillater ikke en CNAME-oppføring på rotnivå (@). Legg i stedet til en viderekobling fra rotdomenet ditt til «www», og legg deretter kun til CNAME-oppføringen for «www» og TXT-verifiseringsoppføringen.",
     "recordCname": "Oppføring 1 — CNAME-rotdomene",
     "recordCnameWww": "Oppføring 2 — CNAME for www-underdomenet",
     "recordTxt": "Oppføring 3 — TXT (bekreftelse)",
@@ -2956,7 +2963,7 @@
     "orderRegisteringDesc": "Betalingen er bekreftet — vi er i ferd med å fullføre domeneregistreringen og DNS-innstillingene. Dette tar vanligvis under ett minutt.",
     "orderFailedTitle": "Registreringen mislyktes for {domain}",
     "orderFailedDesc": "Betalingen din er mottatt, men registreringen kunne ikke fullføres: {error}",
-    "orderFailedSupport": "Teamet vårt har blitt varslet. Hvis dette ikke blir løst snart, ber vi deg ta kontakt med kundestøtte.",
+    "orderFailedSupport": "Teamet vårt har blitt varslet. Hvis dette ikke blir løst snart, ber vi deg kontakte kundestøtte.",
     "orderRefundPendingTitle": "Tilbakebetaling av «{domain}» er i gang",
     "orderRefundPendingDesc": "Registreringen mislyktes, og en refusjon er under behandling.",
     "orderRefundedTitle": "{domain} — refundert",
@@ -2968,7 +2975,7 @@
     "dnsType": "Type",
     "dnsName": "Navn",
     "dnsValue": "Verdi",
-    "sslActive": "SSL aktivert",
+    "sslActive": "SSL er aktivert",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Bloggen din er ikke publisert ennå – leserne har ikke tilgang til den.",
     "bannerAddDomain": "Legg til domene"
@@ -3024,7 +3031,7 @@
       "system": "Systemtilstand",
       "settings": "Innstillinger",
       "logs": "Aktivitetslogg",
-      "roles": "Roller og rettigheter",
+      "roles": "Roller og tillatelser",
       "support": "Støtte",
       "surveillance": "Overvåking"
     },
@@ -3140,7 +3147,7 @@
       },
       "confirmSuspend": "Skal denne bloggen stenges? Brukerne vil miste tilgangen umiddelbart.",
       "confirmActivate": "Skal jeg aktivere denne bloggen igjen?",
-      "confirmDelete": "Vil du slette denne bloggen permanent? Alt innhold vil gå tapt.",
+      "confirmDelete": "Vil du slette denne bloggen permanent? Alt innhold vil da gå tapt.",
       "owner": "Eier",
       "planChangeAccountWide": "Dette gjelder hele kontoen ({email}) — alle bloggene de eier vil bli overført til denne planen.",
       "articles": "artikler",
@@ -3701,7 +3708,7 @@
       "noMessages": "Ingen meldinger ennå",
       "composerPlaceholder": "Skriv svaret ditt… (Trykk Enter for å sende, Shift+Enter for ny linje)",
       "replyTranslationNote": "Svaret ditt blir automatisk oversatt til brukerens språk.",
-      "ticketClosedMsg": "Denne saken er lukket. Oppdater statusen for å svare.",
+      "ticketClosedMsg": "Denne saken er avsluttet. Oppdater statusen for å svare.",
       "replyError": "Det gikk ikke å sende svaret",
       "updateError": "Det gikk ikke å oppdatere billetten",
       "translated": "oversatt",
@@ -3887,7 +3894,7 @@
       "pageLabel_docsApi": "Dokumentasjon — API-referanse",
       "pageLabel_guides": "Veiledninger",
       "pageLabel_advertiseWithUs": "Annonsører",
-      "sourceContentNote": "Engelsk kildeinnhold — oversettelsene genereres på nytt automatisk.",
+      "sourceContentNote": "Engelsk kildeinnhold — oversettelsene genereres automatisk på nytt.",
       "fillWithAiButton": "Fyll med AI",
       "saveRegenTranslationsButton": "Lagre og gjenopprett oversettelser",
       "saveButton": "Lagre",
@@ -3902,7 +3909,7 @@
       "toneProfessional": "Profesjonell",
       "toneFriendly": "Vennlig",
       "toneBold": "Fet skrift",
-      "tonePlayful": "Lekende",
+      "tonePlayful": "Lekent",
       "keyPointsLabel": "Viktige punkter å fremheve",
       "optionalLabel": "(valgfritt)",
       "keyPointsPlaceholder": "F.eks.: grunnlagt i 2024, over 500 opprettede blogger, flerspråklig støtte.",
@@ -3984,14 +3991,14 @@
     }
   },
   "aiBuilder": {
-    "title": "AI-bloggverktøy",
+    "title": "AI-bloggbygger",
     "subtitle": "Svar på noen få spørsmål, så vil AI-en konfigurere bloggen din fullstendig: startsiden, «Om oss», «Kontakt», SEO, topptekst, bunntekst og mer.",
     "brandNameLabel": "Blogg / merkenavn",
     "brandNamePlaceholder": "f.eks. TechFlow, Easy Cooking, Zero Travel…",
     "nicheLabel": "Bloggtema / nisje",
     "nichePlaceholder": "f.eks. Markedsføringstips for nyetablerte bedrifter, raske vegetariske oppskrifter, ryggsekkreiser i Sørøst-Asia…",
     "audienceLabel": "Målgruppe",
-    "audiencePlaceholder": "f.eks. nybegynnerutviklere, travle mødre, budsjettreisende i alderen 25–35…",
+    "audiencePlaceholder": "f.eks. nybegynnere innen utvikling, travle mødre, budsjettreisende i alderen 25–35…",
     "toneLabel": "Skrivestil",
     "toneProfessional": "Profesjonell",
     "toneFriendly": "Vennlig og uformell",

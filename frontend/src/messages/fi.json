@@ -283,7 +283,7 @@
     "limitReachedDesc": "Olet saavuttanut tilauksesi artikkelirajan. Päivitä tilauksesi, jotta voit julkaista lisää.",
     "limitNearTitle": "Rajan lähestyminen (artikkelit osoitteissa {used} ja {max})",
     "limitNearDesc": "Olet käyttänyt yli 80 % suunnitelmasi artikkelikiintiöstä.",
-    "limitReachedTooltip": "Artikkeliraja saavutettu — päivitä tilauksesi, jotta voit luoda lisää artikkeleita"
+    "limitReachedTooltip": "Artikkeliraja on saavutettu — päivitä tilauksesi, jotta voit luoda lisää artikkeleita"
   },
   "pages": {
     "title": "Sivut",
@@ -515,7 +515,7 @@
     "toneCasual": "Rento",
     "toneEducational2": "Koulutus",
     "tonePersuasive": "Vakuuttava",
-    "toneInformative": "Tietoa tarjoava",
+    "toneInformative": "Tietoa antava",
     "aiLanguageLabel": "Kieli",
     "lengthLabel": "Pituus",
     "wordsUnit": "~ {n}-sanaa",
@@ -837,7 +837,7 @@
     "adDescriptionLabel": "Kuvaus",
     "adDescriptionHint": "Lyhyt kuvaus tarjouksestasi (enintään 200 merkkiä).",
     "adDescriptionPlaceholder": "Paranna tuottavuuttasi palkitun sovelluksemme avulla…",
-    "adImageUrlLabel": "Mainoksen kuvan URL-osoite",
+    "adImageUrlLabel": "Mainoskuvan URL-osoite",
     "adImageUrlHint": "Suora linkki banneriisi (suositus: 1200×628 pikseliä).",
     "destinationUrlLabel": "Kohde-URL",
     "destinationUrlHint": "Mille sivulle lukijoiden tulisi ohjautua, kun he klikkaavat mainostasi?",
@@ -868,10 +868,10 @@
     "paymentSubtitle": "Mainospaikkasi maksetaan turvallisesti NowPayments-palvelun kautta — kryptovaluutalla tai kortilla.",
     "totalToPayLabel": "Maksettava kokonaissumma",
     "missingBudgetWarning": "Palaa takaisin ja syötä budjettisi, jotta voit jatkaa.",
-    "whatHappensNextSectionTitle": "Mitä tapahtuu seuraavaksi?",
+    "whatHappensNextSectionTitle": "Mitä tapahtuu seuraavaksi",
     "paymentStep1Text": "Napsauta alla olevaa ”Tarkista ja maksa” -painiketta — näet mainoksesi yhteenvedon.",
     "paymentStep2Text": "Napsauta ”Maksa nyt” — sinut ohjataan NowPaymentsin suojatulle sivulle.",
-    "paymentStep3Text": "Maksaminen tapahtuu kryptovaluutalla (USDT, BTC, ETH…) tai kortilla heidän alustansa kautta.",
+    "paymentStep3Text": "Maksaminen kryptovaluutalla (USDT, BTC, ETH…) tai kortilla heidän alustansa kautta.",
     "paymentStep4Text": "Maksu vahvistettu → ilmoituksesi lähetetään blogin omistajalle tarkastettavaksi.",
     "paymentStep5Text": "Kun mainoksesi on hyväksytty, se julkaistaan automaattisesti.",
     "securePaymentBold": "Turvallinen maksu.",
@@ -887,8 +887,8 @@
     "globalAllReadersLabel": "Maailmanlaajuisesti (kaikki lukijat)",
     "paymentReceivedTitle": "Maksu on saapunut!",
     "paymentReceivedDescPrefix": "Maksusi on vahvistettu. Ilmoituksesi on lähetetty osoitteeseen",
-    "paymentReceivedDescSuffix": "tarkasteltavaksi.",
-    "paymentReceivedNote": "Kun mainoksesi on hyväksytty, se julkaistaan automaattisesti. Blogin omistaja ottaa sinuun yhteyttä, jos mainokseen tarvitaan muutoksia.",
+    "paymentReceivedDescSuffix": "tarkastelua varten.",
+    "paymentReceivedNote": "Kun ilmoituksesi on hyväksytty, se julkaistaan automaattisesti. Blogin omistaja ottaa sinuun yhteyttä, jos muutoksia tarvitaan.",
     "submitAnotherAdButton": "Lähetä uusi ilmoitus",
     "fillRequiredFieldsError": "Täytä kaikki pakolliset kentät ennen kuin jatkat.",
     "genericSubmitError": "Jotain meni pieleen. Yritä uudelleen.",
@@ -908,7 +908,7 @@
     "hero": {
       "badge": "Usean käyttäjän blogi-SaaS",
       "title": "Ammattimainen blogialusta tiimeille",
-      "subtitle": "Perusta ja hallinnoi useita blogeja, tee yhteistyötä tiimisi kanssa ja kasvata lukijakuntaasi – kaikki yhdellä tehokkaalla alustalla.",
+      "subtitle": "Perusta ja hallinnoi useita blogeja, tee yhteistyötä tiimisi kanssa ja laajenna lukijakuntaasi – kaikki yhdellä tehokkaalla alustalla.",
       "cta": "Aloita ilmaiseksi",
       "ctaSecondary": "Katso esittely",
       "noCreditCard": "Luottokorttia ei tarvita"
@@ -934,7 +934,7 @@
       "subtitle": "Aloita ilmaiseksi. Päivitä palvelua liiketoiminnan kasvaessa.",
       "starterName": "Alkuruoka",
       "starterPrice": "Ilmainen",
-      "starterDesc": "Aloittelijoille",
+      "starterDesc": "Aloitteleville",
       "starterF1": "1 blogi",
       "starterF2": "Enintään 5 kirjoittajaa",
       "starterF3": "10 GB tallennustilaa",
@@ -948,7 +948,7 @@
       "proF2": "Enintään 15 kirjoittajaa",
       "proF3": "50 GB tallennustilaa",
       "proF4": "Edistynyt analytiikka",
-      "proF5": "Uutiskirje, enintään 10 000 tilaajaa",
+      "proF5": "Uutiskirje, jopa 10 000 tilaajaa",
       "proF6": "Mukautettu verkkotunnus",
       "proF7": "Tekoälypohjaiset kirjoitustyökalut",
       "businessName": "Liiketoiminta",
@@ -1089,7 +1089,7 @@
     "titleTemplatePlaceholder": "'{title}' — '{blog}'",
     "metaDesc": "Oletusarvoinen metakuvaus",
     "metaDescHint": "Käytetään etusivulla ja sivuilla, joilla ei ole erityistä kuvausta.",
-    "metaDescPlaceholder": "Blogi, jossa käsitellään teknologiaa, muotoilua ja yrittäjyyttä...",
+    "metaDescPlaceholder": "Blogi, jossa käsitellään tekniikkaa, muotoilua ja yrittäjyyttä...",
     "googlePreview": "Google-esikatselu",
     "ogImage": "Oletusarvoinen OG-kuva",
     "ogImageHint": "Käytetään, kun jaat blogiasi sosiaalisessa mediassa (suositeltava koko 1200×630).",
@@ -1107,7 +1107,7 @@
     "copySitemap": "Kopioi",
     "copiedSitemap": "Kopioitu!",
     "schemaOrg": "Ota artikkelien strukturoidut tiedot (JSON-LD) käyttöön",
-    "schemaOrgDesc": "Auttaa hakukoneita ymmärtämään sisältöäsi ja voi mahdollistaa rikastetut hakutulokset.",
+    "schemaOrgDesc": "Auttaa hakukoneita ymmärtämään sisältöäsi ja voi mahdollistaa rikastetut tulokset.",
     "exampleTitle": "Esimerkki artikkelin otsikosta",
     "exampleCategory": "Teknologia"
   },
@@ -1123,7 +1123,7 @@
     },
     "widgets": {
       "title": "Widgetit",
-      "description": "Määritä blogisi widgetit: haku, suosituimmat kirjoitukset, kategoriat, sosiaalinen media, uutiskirje ja sivupalkin mainokset."
+      "description": "Määritä blogisi widgetit: haku, suosituimmat artikkelit, kategoriat, sosiaalinen media, uutiskirje ja sivupalkin mainokset."
     },
     "seo": {
       "title": "SEO-optimointi",
@@ -1175,7 +1175,7 @@
     },
     "step3": {
       "label": "Mukauta",
-      "title": "Mukauta ulkoasua",
+      "title": "Mukauta omaa suunnitteluasi",
       "subtitle": "Jokainen muutos näkyy reaaliajassa oikealla puolella.",
       "publish": "Julkaise blogi",
       "publishing": "Julkaistaan...",
@@ -1331,7 +1331,7 @@
     "copyUrl": "Kopioi URL-osoite",
     "copied": "Kopioitu!",
     "altText": "Vaihtoehtoinen teksti",
-    "altTextPlaceholder": "Kuvaile kuvaa esteettömyyden varmistamiseksi...",
+    "altTextPlaceholder": "Kuvaile kuvaa esteettömyyden vuoksi...",
     "caption": "Kuvateksti",
     "captionPlaceholder": "Valinnainen kuvateksti...",
     "saveMetadata": "Tallenna",
@@ -1569,7 +1569,7 @@
     "footerScripts": "Alatunnisteen skriptit",
     "footerScriptsDesc": "Lisätään ennen merkkiä '<'/body'>' — sopii erinomaisesti chat-widgetteihin, analytiikkaan jne.",
     "googleFonts": "Google Fonts -URL-osoite",
-    "googleFontsDesc": "Liitä Google Fonts -upotus-URL, jolla korvaat teeman oletusfontit.",
+    "googleFontsDesc": "Liitä Google Fonts -upotus-URL, jolla korvataan teeman oletusfontti.",
     "popularFonts": "Suosittuja fontteja"
   },
   "widgets": {
@@ -1601,7 +1601,7 @@
   },
   "social": {
     "title": "Sosiaalinen media",
-    "subtitle": "Yhdistä sosiaalisen median tilisi ja aikatauluta julkaisut.",
+    "subtitle": "Yhdistä sosiaalisen median tilisi ja ajoita julkaisut.",
     "connectedAccounts": "yhdistetyt tilit",
     "tabAccounts": "Tilit",
     "tabPosts": "Viestit",
@@ -1616,7 +1616,7 @@
     "yes": "Kyllä",
     "no": "Ei",
     "oauthNotice": "OAuth-integraatio edellyttää alustan API-käyttöoikeustietoja. Määritä avaimet ensin ympäristömuuttujissa.",
-    "autoPostBanner": "Yhdistä tilit ja ota automaattinen julkaisu käyttöön — artikkelit julkaistaan automaattisesti kaikissa yhdistetyissä verkostoissa.",
+    "autoPostBanner": "Yhdistä tilit ja ota automaattinen julkaiseminen käyttöön — artikkelit julkaistaan automaattisesti kaikissa yhdistetyissä verkostoissa.",
     "autoPostOn": "Automaattinen julkaisu: PÄÄLLÄ",
     "autoPostOff": "Automaattinen julkaisu: POIS",
     "disconnected": "Tili on irrotettu",
@@ -1638,7 +1638,7 @@
     "save": "Tallenna",
     "saved": "Tallennettu!",
     "shareButtons": "Jaa-painikkeet",
-    "shareButtonsDesc": "Valitse, mitkä alustat näytetään kunkin artikkelin yhteydessä.",
+    "shareButtonsDesc": "Valitse, mitkä alustat näytetään kussakin artikkelissa.",
     "profiles": "Sosiaalisen median profiilit",
     "profilesDesc": "Syötä profiilisi URL-osoitteet, jotta sosiaalisen median linkit näkyvät blogissasi.",
     "autoShare": "Automaattinen julkaisu",
@@ -1678,7 +1678,7 @@
     "needBlogDesc": "Sinulla on oltava vähintään yksi blogi, ennen kuin voit tilata maksullisen paketin.",
     "needBlogCta": "Luo blogini",
     "upgradeNow": "Päivitä nyt",
-    "trialExpiredTitle": "Kokeilujakso on päättynyt",
+    "trialExpiredTitle": "Kokeilujaksonne on päättynyt",
     "trialExpiredDesc": "Valitse sopiva paketti, jotta voit jatkaa blogisi julkaisemista ja kasvattamista.",
     "trialActiveDesc": "Hyödynnä kaikki ominaisuudet ennen kokeilujakson päättymistä.",
     "trialLastDay": "Kokeilujakson viimeinen päivä!",
@@ -1751,7 +1751,7 @@
     }
   },
   "myBlogs": {
-    "title": "Blogini",
+    "title": "Omat blogini",
     "noBlogsDesc": "{count} blogi",
     "noBlogsDescPlural": "{count} blogit",
     "createFirst": "Luo ensimmäinen blogisi",
@@ -1989,7 +1989,7 @@
     "switchShowStrip": "Näytä nauha",
     "switchShowNewsletterSection": "Näytä uutiskirjeen osio",
     "switchShowArticlesGrid": "Näytä artikkelit ruudukossa",
-    "fieldPostsPerPage": "Artikkeleita sivulla",
+    "fieldPostsPerPage": "Artikkeleita sivua kohti",
     "switchPopularArticles": "Suosittuja artikkeleita",
     "switchCategories": "Luokat",
     "switchMiniNewsletter": "Mini-uutiskirje",
@@ -2002,7 +2002,7 @@
     "switchRssLink": "RSS-linkki",
     "switchShowButton": "Näytä-painike",
     "switchShowSocialLinks": "Näytä sosiaaliset verkostot",
-    "switchShowCategories": "Näytä luokat",
+    "switchShowCategories": "Näytä kategoriat",
     "switchShowCategoriesFooterDesc": "Blogin luokkien luettelo sivun alatunnisteessa.",
     "switchShowNewsletterForm": "Näytä uutiskirjelomake",
     "switchPoweredBy": "\"Powered by SmarterBloggers\" -maininta",
@@ -2031,7 +2031,7 @@
     "footerSavedToast": "Alatunniste tallennettu!",
     "homeSavedToast": "Etusivu tallennettu!",
     "aboutSavedToast": "Tietoja-sivu tallennettu!",
-    "contactSavedToast": "Yhteystiedot-sivu on tallennettu!",
+    "contactSavedToast": "Yhteystietosivu on tallennettu!",
     "articlePageSavedToast": "Artikkelisivu on tallennettu!",
     "seoSavedToast": "SEO pelastui!",
     "articleSavedToast": "Artikkeli on tallennettu.",
@@ -2133,7 +2133,7 @@
     "titleRequiredToast": "Lisää otsikko (vähintään 2 merkkiä) ennen tallentamista.",
     "articleExcerptPlaceholder": "Lyhyt yhteenveto, joka näkyy luetteloissa ja hakukoneissa…",
     "articleContentPlaceholder": "Aloita artikkelin kirjoittaminen…",
-    "articleUploading": "Lataaminen käynnissä…",
+    "articleUploading": "Ladataan…",
     "articleDropImageHere": "Vedä kuva tähän",
     "markdownTips": "Markdown-pikanäppäimet",
     "livePreview": "Reaaliaikainen esikatselu",
@@ -2237,7 +2237,7 @@
     "analyticsDevices": "Laitteen vika",
     "analyticsCountries": "Johtavat maat",
     "imageFieldChange": "Muutos",
-    "imageFieldUploading": "Lataaminen käynnissä…",
+    "imageFieldUploading": "Ladataan…",
     "imageFieldAdd": "Lisää kuva",
     "navLinkLabel": "Etiketti",
     "navLinkUrlPlaceholder": "/page tai https://...",
@@ -2545,7 +2545,7 @@
     "walletAddressPlaceholder": "Syötä valitun verkon osoite",
     "walletExtraIdLabel": "Muistio / Tunniste",
     "walletExtraIdPlaceholder": "Tämän verkon kannalta välttämätön",
-    "walletExtraIdHint": "Jotkin verkostot (esim. XRP, EOS) edellyttävät tämän lisätiedon (memo/tag) ilmoittamista osoitteen lisäksi — ilman sitä sinulle lähetetyt varat saattavat kadota.",
+    "walletExtraIdHint": "Jotkin verkostot (esim. XRP, EOS) vaativat tämän lisätiedon (memo/tag) osoitteen lisäksi — ilman sitä sinulle lähetetyt varat saattavat kadota.",
     "walletTotpLabel": "Todentamiskoodi (2FA)",
     "walletTotpPlaceholder": "000 000",
     "walletSaveButton": "Tallenna lompakko",
@@ -2656,8 +2656,8 @@
     "inviteFriendMessagePlaceholder": "Olen käyttänyt SmarterBloggers-palvelua, ja uskon, että sinäkin pitäisit siitä…",
     "inviteFriendTranslationNote": "Viestisi käännetään automaattisesti ystäväsi kielelle.",
     "inviteFriendSend": "Lähetä kutsu",
-    "inviteSentTitle": "Kutsu lähetetty!",
-    "inviteSentDesc": "Kutsusi on lähetetty osoitteeseen {email}.",
+    "inviteSentTitle": "Kutsu on lähetetty!",
+    "inviteSentDesc": "Kutsusi lähetettiin osoitteeseen {email}.",
     "inviteError": "Kutsua ei voitu lähettää.",
     "walletRequiredTitle": "Lisää USDT-BSC-lompakkosi, jotta saat maksun",
     "walletRequiredDesc": "Jotta voit osallistua kumppaniohjelmaan ja saada provisioita, sinulla on oltava rekisteröity USDT (BEP20/BSC) -lompakko-osoite.",
@@ -2677,7 +2677,7 @@
       },
       "expired": {
         "title": "Uudelleentarkastus vaaditaan",
-        "description": "Olet äskettäin muuttanut nimesi tai maasi, minkä vuoksi henkilöllisyytesi on tarkistettava uudelleen, ennen kuin kumppanilinkkisi voidaan aktivoida uudelleen. Jos sinulla on jäljellä ennakkomaksettuja vuosia, tästä ei aiheudu lisäkustannuksia.",
+        "description": "Olet äskettäin muuttanut nimesi tai maasi, minkä vuoksi henkilöllisyytesi on tarkistettava uudelleen, ennen kuin kumppanilinkkisi voidaan aktivoida uudelleen. Jos sinulla on vielä jäljellä ennakkomaksettuja vuosia, tästä ei aiheudu lisäkustannuksia.",
         "cta": "Vahvista henkilöllisyyteni uudelleen"
       },
       "rejected": {
@@ -2724,7 +2724,14 @@
     "colStatus": "Tila",
     "download": "Lataa",
     "type": {
-      "kyc_verification": "KYC-todentaminen"
+      "kyc_verification": "KYC-todentaminen",
+      "subscription": "Tilaus",
+      "paid_article": "Artikkelin ostaminen",
+      "ad_campaign": "Mainoskampanja",
+      "paid_newsletter": "Uutiskirjeen tilaaminen",
+      "domain_purchase": "Verkkotunnuksen ostaminen",
+      "affiliate_commission_payout": "Kumppanipalkkioiden maksaminen",
+      "ad_revenue_payout": "Mainostulojen maksaminen"
     }
   },
   "advertiser": {
@@ -2910,7 +2917,7 @@
     "step1Desc": "Napsauta ”Lisää verkkotunnus” ja kirjoita ostamasi verkkotunnus (esim. blog.mysite.com).",
     "step2Title": "Lisää 2 DNS-tietuetta rekisteröijäsi palvelimelle",
     "step2Desc": "Siirry DNS-palveluntarjoajasi sivustolle (Cloudflare, GoDaddy, Namecheap…) ja lisää nämä kaksi tietuetta:",
-    "step2TxtNote": "TXT-tietueen arvo on yksilöllinen jokaiselle verkkotunnukselle — kopioi se alla näkyvästä verkkotunnuksen tietokortista.",
+    "step2TxtNote": "TXT-tietueen arvo on yksilöllinen jokaiselle verkkotunnukselle — kopioi se alla näkyvästä verkkotunnuksen kortista.",
     "step3Title": "Napsauta ”Vahvista”",
     "step3Desc": "Kun DNS-tietueesi ovat levinneet (Cloudflaressa yleensä muutamassa minuutissa, muualla jopa 48 tuntia), napsauta verkkotunnuksesi vieressä olevaa päivitä-painiketta.",
     "cloudflareTip": "Käytätkö Cloudflarea? Ota oranssi pilviproxy käyttöön CNAME-tietueessasi — SSL hoidetaan tällöin automaattisesti, eikä lisäasetuksia tarvita.",
@@ -3047,7 +3054,7 @@
       "confirm": "Vahvista",
       "refresh": "Päivitä",
       "exportCsv": "Vie CSV-tiedosto",
-      "search": "Haku...",
+      "search": "Hae...",
       "total": "Yhteensä",
       "all": "Kaikki",
       "noResults": "Tuloksia ei löytynyt",
@@ -3134,7 +3141,7 @@
       "actions": {
         "suspend": "Keskeytä",
         "activate": "Ota käyttöön",
-        "changePlan": "Vaihda suunnitelmaa",
+        "changePlan": "Vaihda suunnitelma",
         "delete": "Poista",
         "visit": "Käy"
       },
@@ -3423,7 +3430,7 @@
         "domainMarkupHint": "Lisätään rekisteröijän hintaan jokaisen verkkotunnuksen ostosta ja uusimisesta — 0 tarkoittaa jälleenmyyntiä omakustannushintaan",
         "paymentTolerance": "Kryptovaluuttamaksujen sietoraja ($)",
         "paymentToleranceHint": "Maksu, joka vastaanotetaan tämän odotetun summan vaihteluvälin sisällä (verkkomaksut, kurssivaihtelu), katsotaan edelleen suoritetuksi",
-        "kycPricePerYear": "KYC-todentamisen hinta ($/vuosi)",
+        "kycPricePerYear": "KYC-todentamisen hinta (USD/vuosi)",
         "kycPricePerYearHint": "Käyttäjiltä perittävä vuosimaksu henkilöllisyyden todentamisesta, joka vaaditaan ennen kumppaniohjelmaan liittymistä"
       },
       "tabs": {
@@ -3577,7 +3584,7 @@
       "env": "Ympäristö",
       "globalStatus": {
         "operational": "Kaikki järjestelmät toiminnassa",
-        "degraded": "Yhden tai useamman palvelun suorituskyky on heikentynyt",
+        "degraded": "Yhden tai useamman palvelun toiminta on heikentynyt",
         "outage": "Palvelun häiriö havaittu"
       },
       "db": {
@@ -3953,7 +3960,7 @@
     "currencyPickerSearch": "Etsi valuutta tai verkko…",
     "currencyPickerNoResults": "Vastaavaa valuuttaa ei löytynyt.",
     "minAmountChecking": "Tarkistetaan tämän valuutan vähimmäissummaa…",
-    "minAmountTooLow": "{currency}-palvelun vähimmäissumma: {amount} dollaria — valitse toinen valuutta tai korota summaa."
+    "minAmountTooLow": "{currency}in vähimmäissumma: {amount} dollaria — valitse toinen valuutta tai korota summaa."
   },
   "paymentCenter": {
     "title": "Maksut",
@@ -3991,7 +3998,7 @@
     "nicheLabel": "Blogin aihe / aihealue",
     "nichePlaceholder": "esim. markkinointivinkkejä startup-yrityksille, nopeita kasvisruokareseptejä, reppureissut Kaakkois-Aasiassa…",
     "audienceLabel": "Kohderyhmä",
-    "audiencePlaceholder": "esim. aloittelevat ohjelmoijat, kiireiset äidit, budjettimatkailijat ikäryhmässä 25–35…",
+    "audiencePlaceholder": "esim. aloittelevat ohjelmoijat, kiireiset äidit, edullisesti matkustavat 25–35-vuotiaat…",
     "toneLabel": "Kirjoitustyyli",
     "toneProfessional": "Ammattilainen",
     "toneFriendly": "Ystävällinen ja rento",

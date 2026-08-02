@@ -90,7 +90,7 @@
       "successDesc": "Jeśli istnieje konto pod adresem {email}, wkrótce otrzymasz link do zresetowania hasła. Sprawdź również folder ze spamem.",
       "errors": {
         "userNotFound": "Nie znaleziono konta o tym adresie e-mail.",
-        "generic": "Nie udało się wysłać linku do resetowania hasła. Spróbuj ponownie."
+        "generic": "Nie udało się wysłać linku do resetowania. Spróbuj ponownie."
       }
     },
     "resetPassword": {
@@ -146,15 +146,15 @@
       "nameLabel": "Nazwa bloga",
       "namePlaceholder": "Mój super blog",
       "slugLabel": "Skrót adresu URL",
-      "slugPlaceholder": "mój-wspaniały-blog",
+      "slugPlaceholder": "mój-super-blog",
       "slugHint": "Twój blog będzie dostępny pod adresem {slug}.smarterbloggers.com",
       "slugAvailable": "Dostępne",
       "slugTaken": "Już zajęte",
-      "slugChecking": "Sprawdzanie...",
+      "slugChecking": "Sprawdzam...",
       "descriptionLabel": "Opis",
       "descriptionPlaceholder": "Opisz swojego bloga...",
       "languageLabel": "Język",
-      "submitButton": "Utwórz bloga",
+      "submitButton": "Załóż bloga",
       "creating": "Tworzenie...",
       "stepInfo": "Informacje",
       "stepTheme": "Wybierz motyw",
@@ -271,7 +271,7 @@
     "toastArchived": "Artykuł zarchiwizowany.",
     "searchPlaceholderShort": "Wyszukaj…",
     "createShort": "Utwórz",
-    "noResultsSearch": "Nie znaleziono artykułu",
+    "noResultsSearch": "Nie znaleziono żadnego artykułu",
     "noArticlesEmpty": "Brak artykułów",
     "noArticlesEmptyDesc": "Zacznij od napisania swojego pierwszego artykułu.",
     "createFirst": "Utwórz artykuł",
@@ -306,7 +306,7 @@
       "private": "Prywatne"
     },
     "type": {
-      "standard": "Standardowy",
+      "standard": "Standard",
       "system": "System",
       "dynamic": "Dynamiczny"
     },
@@ -393,7 +393,7 @@
     "undo": "Cofnij",
     "redo": "Powtórz",
     "paragraph": "Akapit",
-    "bold": "Pogrubiona czcionka",
+    "bold": "Pogrubione",
     "italic": "Kursywa",
     "underline": "Podkreślenie",
     "strike": "Przekreślenie",
@@ -477,7 +477,7 @@
     "tabContent": "Treść",
     "tabWorkflow": "Przebieg pracy",
     "improveContentTitle": "Ulepsz treść",
-    "improveInstructionPlaceholder": "Np.: Nadaj tekstowi bardziej formalny charakter, dodaj przykłady…",
+    "improveInstructionPlaceholder": "Np.: Uformułować bardziej formalnie, dodać przykłady…",
     "improveWithAiButton": "Rozwijaj się dzięki sztucznej inteligencji",
     "improvingButton": "Poprawa…",
     "generateImagePlaceholder": "Opisz obraz, który ma zostać wygenerowany…",
@@ -797,7 +797,7 @@
     "unlockArticle": "Odblokuj ten artykuł",
     "membersOnlyContent": "Treści dostępne wyłącznie dla członków",
     "oneTime": "jednorazowy",
-    "purchaseOnceDesc": "Kup raz, czytaj kiedy chcesz. Nie trzeba wykupywać subskrypcji.",
+    "purchaseOnceDesc": "Kup raz, czytaj kiedy chcesz. Nie wymaga subskrypcji.",
     "signInToAccessDesc": "Zaloguj się, aby uzyskać dostęp do tych ekskluzywnych treści.",
     "buyFor": "Kup na stronie {price}",
     "signInToRead": "Zaloguj się, aby przeczytać",
@@ -832,7 +832,7 @@
     "companyBrandPlaceholder": "Acme Corp (opcjonalnie)",
     "adContentSectionTitle": "Treść reklamy",
     "adHeadlineLabel": "Nagłówek reklamy",
-    "adHeadlineHint": "Krótki, chwytliwy tytuł (maks. 80 znaków).",
+    "adHeadlineHint": "Krótki, chwytliwy tytuł (maksymalnie 80 znaków).",
     "adHeadlinePlaceholder": "Odkryj najlepsze narzędzie do...",
     "adDescriptionLabel": "Opis",
     "adDescriptionHint": "Krótki opis Twojej oferty (maks. 200 znaków).",
@@ -840,7 +840,7 @@
     "adImageUrlLabel": "Adres URL obrazu reklamowego",
     "adImageUrlHint": "Bezpośredni link do Twojego banera (zalecany rozmiar: 1200×628 pikseli).",
     "destinationUrlLabel": "Adres docelowy",
-    "destinationUrlHint": "Gdzie powinni trafić czytelnicy po kliknięciu w reklamę?",
+    "destinationUrlHint": "Gdzie powinni trafić czytelnicy po kliknięciu w Twoją reklamę?",
     "campaignOptionalSectionTitle": "Kampania (opcjonalnie)",
     "startDateLabel": "Data rozpoczęcia",
     "endDateLabel": "Data zakończenia",
@@ -850,7 +850,7 @@
     "scopeGlobalLabel": "Globalny",
     "scopeGlobalDesc": "Twoja reklama dociera do wszystkich czytelników, gdziekolwiek się znajdują.",
     "scopeCountryLabel": "Kraj",
-    "scopeCountryDesc": "Skieruj treści do odbiorców w konkretnym kraju.",
+    "scopeCountryDesc": "Skieruj treść do odbiorców w konkretnym kraju.",
     "scopeRegionLabel": "Region",
     "scopeRegionDesc": "Skup się na jednym stanie, prowincji lub regionie.",
     "scopeCityLabel": "Miasto",
@@ -969,7 +969,7 @@
     },
     "cta": {
       "title": "Gotowy, by założyć swojego bloga?",
-      "subtitle": "Dołącz do tysięcy twórców treści, którzy zaufali SmarterBloggers.",
+      "subtitle": "Dołącz do tysięcy twórców treści, którzy ufają SmarterBloggers.",
       "button": "Zacznij za darmo — nie potrzebujesz karty kredytowej"
     },
     "footer": {
@@ -1101,7 +1101,7 @@
     "twitterSummary": "Podsumowanie",
     "twitterSummaryLarge": "Podsumowanie z dużym zdjęciem",
     "indexing": "Zezwól na indeksowanie przez wyszukiwarki",
-    "indexingDesc": "Gdy opcja „noindex” w pliku robots.txt jest wyłączona, nakazuje to robotom indeksującym, aby nie indeksowały Twojego bloga.",
+    "indexingDesc": "Gdy opcja „noindex” w pliku robots.txt jest wyłączona, informuje to roboty indeksujące, aby nie indeksowały Twojego bloga.",
     "sitemap": "Adres URL mapy strony",
     "sitemapDesc": "Wygenerowano automatycznie — prześlij to do Google Search Console.",
     "copySitemap": "Kopiuj",
@@ -1286,7 +1286,7 @@
     "seoMetaDesc": "Domyślny opis meta",
     "seoMetaPlaceholder": "Opis dla wyszukiwarek...",
     "widths": {
-      "narrow": "Wąskie",
+      "narrow": "Wąski",
       "standard": "Standardowy",
       "wide": "Szeroki",
       "full": "Pełna szerokość"
@@ -1369,7 +1369,7 @@
     "noCategories": "Brak kategorii",
     "noCategoriesDesc": "Utwórz swoją pierwszą kategorię powyżej.",
     "deleteTitle": "Czy chcesz usunąć tę kategorię?",
-    "deleteDesc": "Artykuły z tej kategorii nie zostaną usunięte, ale przestaną należeć do tej kategorii.",
+    "deleteDesc": "Artykuły z tej kategorii nie zostaną usunięte, ale stracą przypisanie do tej kategorii.",
     "article": "artykuł",
     "articles": "artykuły"
   },
@@ -1398,7 +1398,7 @@
     "campaignSubject": "Temat wiadomości",
     "campaignSubjectPlaceholder": "Nasze najnowsze wiadomości i aktualności…",
     "campaignPreview": "Tekst podglądu",
-    "campaignPreviewPlaceholder": "Krótki zwiastun wyświetlony w skrzynce odbiorczej…",
+    "campaignPreviewPlaceholder": "Krótki zwiastun wyświetlany w skrzynce odbiorczej…",
     "campaignBody": "Treść wiadomości e-mail (HTML)",
     "campaignBodyPlaceholder": "<p>Witaj {{first_name}},</p><p>…</p>",
     "cancel": "Anuluj",
@@ -1555,7 +1555,7 @@
     "status_rejected": "Odrzucono",
     "status_spam": "Spam",
     "status_shadow_banned": "Cień",
-    "banReasonDashboard": "Zablokowane na pulpicie nawigacyjnym"
+    "banReasonDashboard": "Zablokowano dostęp do pulpitu nawigacyjnego"
   },
   "customization": {
     "title": "Dostosowanie",
@@ -1597,7 +1597,7 @@
     "estimatedRevenue": "Szacowane przychody",
     "clickRate": "Współczynnik klikalności",
     "adZones": "Strefy reklamowe",
-    "tip": "Kompatybilny z Google AdSense, Media.net, programem partnerskim Amazon oraz dowolną standardową siecią reklamową."
+    "tip": "Kompatybilny z Google AdSense, Media.net, programem partnerskim Amazon oraz każdą standardową siecią reklamową."
   },
   "social": {
     "title": "Media społecznościowe",
@@ -1624,7 +1624,7 @@
     "newPost": "Nowy wpis",
     "account": "Konto",
     "postContent": "Treść",
-    "postContentPlaceholder": "Napisz swój post…",
+    "postContentPlaceholder": "Napisz swój wpis…",
     "scheduleAt": "Harmonogram (opcjonalny)",
     "schedule": "Harmonogram",
     "postNow": "Opublikuj teraz",
@@ -1640,7 +1640,7 @@
     "shareButtons": "Przyciski udostępniania",
     "shareButtonsDesc": "Wybierz, które platformy mają być wyświetlane przy każdym artykule.",
     "profiles": "Profile w mediach społecznościowych",
-    "profilesDesc": "Wprowadź adresy URL swoich profili, aby wyświetlić linki do mediów społecznościowych na swoim blogu.",
+    "profilesDesc": "Wprowadź adresy URL swoich profili, aby wyświetlić linki do serwisów społecznościowych na swoim blogu.",
     "autoShare": "Automatyczna publikacja",
     "autoShareDesc": "Automatycznie publikuj nowe artykuły na połączonych kontach w mediach społecznościowych.",
     "autoShareLabel": "Włącz automatyczną publikację",
@@ -1649,7 +1649,7 @@
     "status_scheduled": "Zaplanowane",
     "status_published": "Opublikowano",
     "status_failed": "Nie powiodło się",
-    "status_canceled": "Odwołano",
+    "status_canceled": "Odwołane",
     "unknownPlatform": "Nieznane",
     "connectSuccess": "{platform} Połączenie nawiązano pomyślnie!",
     "oauthError": "Błąd OAuth: {error}"
@@ -1680,7 +1680,7 @@
     "upgradeNow": "Zaktualizuj teraz",
     "trialExpiredTitle": "Okres próbny wygasł",
     "trialExpiredDesc": "Wybierz plan, który pozwoli Ci nadal publikować wpisy i rozwijać swojego bloga.",
-    "trialActiveDesc": "Skorzystaj ze wszystkich funkcji przed upływem okresu próbnego.",
+    "trialActiveDesc": "Skorzystaj ze wszystkich funkcji, zanim zakończy się okres próbny.",
     "trialLastDay": "Ostatni dzień okresu próbnego!",
     "trialDaysLeft": "{days} liczba dni pozostałych do końca okresu próbnego",
     "contactModalTitle": "Przejdź na wersję „{plan}”",
@@ -1698,7 +1698,7 @@
           "1 autor",
           "1 GB pamięci",
           "poddomena smarterbloggers.com",
-          "W zestawie znajduje się szablon korporacyjny"
+          "W zestawie znajduje się szablon firmowy"
         ]
       },
       "starter": {
@@ -1774,7 +1774,7 @@
     "viewBlogTitle": "Zobacz blog"
   },
   "dashboardPage": {
-    "greeting": "Witaj, {name}",
+    "greeting": "Witam, {name}",
     "subtitle": "Oto podsumowanie Twojego konta.",
     "statsTitle": "Przegląd",
     "statBlogs": "Blogi",
@@ -1806,7 +1806,7 @@
     "blogCardSubscribers": "subskrybenci",
     "blogCardAuthors": "autorzy",
     "loadingBlogs": "Ładowanie Twoich blogów…",
-    "manageCount": "Prowadzisz blog „{count}”",
+    "manageCount": "Prowadzisz bloga „{count}”",
     "manageCountPlural": "Zarządzasz blogami serwisu {count}",
     "startNow": "Załóż swojego pierwszego bloga, aby rozpocząć.",
     "noBlogsTitle": "Jeszcze nie ma żadnych wpisów na blogu",
@@ -1999,7 +1999,7 @@
     "switchShowSocial": "Pokaż serwisy społecznościowe",
     "switchShowSocialFooterDesc": "Ikony serwisów społecznościowych skonfigurowanych w ustawieniach ogólnych.",
     "switchNewsletterLink": "Link do biuletynu",
-    "switchRssLink": "Link RSS",
+    "switchRssLink": "Link do kanału RSS",
     "switchShowButton": "Przycisk „Pokaż”",
     "switchShowSocialLinks": "Pokaż serwisy społecznościowe",
     "switchShowCategories": "Pokaż kategorie",
@@ -2078,7 +2078,7 @@
     "fieldMetaDescDefault": "Domyślny opis meta",
     "fieldMetaDescDefaultHint": "Zalecana długość: 160 znaków. Wyświetla się pod tytułem w Google.",
     "seoCharCount": "{n} / 160 znaków",
-    "fieldOgImageHint": "Wyświetlane podczas udostępniania na Twitterze, LinkedIn i Facebooku. Zalecany rozmiar to 1200×630 pikseli.",
+    "fieldOgImageHint": "Wyświetlane podczas udostępniania na Twitterze, LinkedInie i Facebooku. Zalecany rozmiar to 1200×630 pikseli.",
     "seoSitemap": "Mapa witryny w formacie XML",
     "seoRssFeed": "Kanał RSS",
     "seoView": "Wyświetl",
@@ -2162,7 +2162,7 @@
     "toolbarLinkPrompt": "Adres URL linku:",
     "toolbarImagePrompt": "Adres URL obrazu:",
     "pageAds": "Reklama",
-    "pageAdsDesc": "Sprzedawaj powierzchnię reklamową i zarządzaj kampaniami.",
+    "pageAdsDesc": "Sprzedaż powierzchni reklamowej i zarządzanie kampaniami.",
     "adsNewAd": "Nowa reklama",
     "adsTitle": "Tytuł",
     "adsDescription": "Opis",
@@ -2258,7 +2258,7 @@
     "placeholderSeoDescription": "Zapoznaj się z naszymi najlepszymi artykułami na temat…",
     "mediaVideoFormatError": "Nieobsługiwany format wideo (MP4, WebM, MOV)",
     "mediaAudioFormatError": "Nieobsługiwany format audio (MP3, WAV, OGG, AAC)",
-    "mediaUploadTimeoutError": "Wygasł limit czasu. Spróbuj skorzystać z szybszego połączenia lub przesłać mniejszy plik.",
+    "mediaUploadTimeoutError": "Wygasł limit czasu. Spróbuj skorzystać z szybszego połączenia lub pliku o mniejszym rozmiarze.",
     "mediaUploadError": "Przesyłanie nie powiodło się. Spróbuj ponownie.",
     "mediaTabGallery": "Galeria",
     "mediaTabUpload": "Prześlij",
@@ -2271,7 +2271,7 @@
     "mediaConnecting": "Łączenie…",
     "mediaDropHere": "Wpisz tutaj",
     "mediaClickOrDrag": "Kliknij lub przeciągnij i upuść",
-    "mediaVideoHint": "MP4, WebM, MOV — maks. 100 MB",
+    "mediaVideoHint": "MP4, WebM, MOV — maksymalnie 100 MB",
     "mediaAudioHint": "MP3, WAV, OGG, AAC — maks. 50 MB",
     "mediaVideoUrlPlaceholder": "https://youtube.com/watch?v=… lub https://…/video.mp4",
     "mediaAudioUrlPlaceholder": "https://…/audio.mp3 lub https://soundcloud.com/…",
@@ -2331,7 +2331,7 @@
     "search": "Szukaj...",
     "filter": "Filtr",
     "sort": "Sortuj",
-    "noResults": "Nie znaleziono żadnych wyników",
+    "noResults": "Nie znaleziono wyników",
     "required": "To pole jest obowiązkowe",
     "optional": "Opcjonalnie",
     "free": "Bezpłatny",
@@ -2446,7 +2446,7 @@
     "quickGenericError": "Wystąpił błąd. Spróbuj ponownie.",
     "quickNameTooLong": "Nazwa bloga nie może przekraczać 50 znaków.",
     "templateStep1Title": "Krok 1 — Wybierz szablon",
-    "templateStep1Desc": "Twój szablon jest stały i określa tożsamość wizualną Twojego bloga.",
+    "templateStep1Desc": "Twój szablon jest stały i określa identyfikację wizualną Twojego bloga.",
     "templateStep2Title": "Krok 2 — Szczegóły bloga",
     "coverAlt": "Okładka",
     "okButton": "OK",
@@ -2499,7 +2499,7 @@
     "continentPlaceholder": "Wybierz kontynent",
     "genderLabel": "Płeć",
     "genderPlaceholder": "Wybierz płeć",
-    "genderLocked": "Po ustaleniu płci nie można jej już zmienić.",
+    "genderLocked": "Po ustaleniu płci nie można jej zmienić.",
     "saving": "Zapisywanie...",
     "saveProfile": "Zapisz",
     "changePassword": "Zmień hasło",
@@ -2663,7 +2663,7 @@
     "walletRequiredDesc": "Aby wziąć udział w programie partnerskim i otrzymywać prowizje, musisz posiadać zarejestrowany adres portfela USDT (BEP20/BSC).",
     "walletRequiredCta": "Dodaj mój portfel",
     "waitingThresholdTitle": "Już prawie!",
-    "waitingThresholdDesc": "Twoje prowizje zostaną wypłacone automatycznie, gdy tylko saldo na Twoim koncie osiągnie {min}.",
+    "waitingThresholdDesc": "Twoje prowizje zostaną wypłacone automatycznie, gdy tylko saldo na Twoim koncie osiągnie kwotę {min}.",
     "gate": {
       "not_started": {
         "title": "Wymagana weryfikacja tożsamości",
@@ -2724,7 +2724,14 @@
     "colStatus": "Status",
     "download": "Pobierz",
     "type": {
-      "kyc_verification": "Weryfikacja KYC"
+      "kyc_verification": "Weryfikacja KYC",
+      "subscription": "Subskrypcja",
+      "paid_article": "Zakup artykułu",
+      "ad_campaign": "Kampania reklamowa",
+      "paid_newsletter": "Subskrypcja newslettera",
+      "domain_purchase": "Zakup domeny",
+      "affiliate_commission_payout": "Wypłata prowizji partnerskiej",
+      "ad_revenue_payout": "Wypłata przychodów z reklam"
     }
   },
   "advertiser": {
@@ -2738,7 +2745,7 @@
     "imageUrl": "Adres URL obrazu reklamowego",
     "imageUrlHint": "Bezpośredni link do Twojego banera (zalecany rozmiar: 1200×628 pikseli).",
     "clickUrl": "Adres docelowy",
-    "clickUrlHint": "Gdzie powinni trafić odwiedzający po kliknięciu w reklamę?",
+    "clickUrlHint": "Gdzie powinni trafić odwiedzający po kliknięciu w Twoją reklamę?",
     "startsAt": "Data rozpoczęcia",
     "endsAt": "Data zakończenia",
     "totalBudget": "Całkowity budżet",
@@ -2790,7 +2797,7 @@
     "amount": "Kwota",
     "status": "Status",
     "date": "Data",
-    "disclaimer": "Niniejszy przegląd przedstawia płatności zrealizowane za pośrednictwem serwisu SmarterBloggers. Nie stanowi on pełnego sprawozdania finansowego.",
+    "disclaimer": "Niniejszy przegląd przedstawia płatności przetworzone za pośrednictwem serwisu SmarterBloggers. Nie stanowi on pełnego sprawozdania finansowego.",
     "type_subscription": "Subskrypcja",
     "type_paid_article": "Artykuł płatny",
     "type_paid_newsletter": "Płatny biuletyn",
@@ -2846,7 +2853,7 @@
     "newEntry": "Nowy wpis",
     "newAccount": "Nowe konto",
     "code": "Kod",
-    "name": "Nazwa",
+    "name": "Imię i nazwisko",
     "class": "Klasa",
     "type": "Typ",
     "parent": "Rodzic",
@@ -2888,7 +2895,7 @@
   },
   "domains": {
     "pageTitle": "Domeny niestandardowe",
-    "pageDesc": "Podłącz własną nazwę domeny do swojego bloga.",
+    "pageDesc": "Podłącz swoją własną nazwę domeny do bloga.",
     "addDomain": "Dodaj domenę",
     "addTitle": "Dodaj domenę",
     "addButton": "Dodaj",
@@ -2904,13 +2911,13 @@
     "deleteConfirm": "Usunąć tę domenę?",
     "emptyTitle": "Nie ma jeszcze domeny własnej",
     "emptyDesc": "Podłącz własną domenę, aby nadać swojemu blogowi profesjonalny wygląd.",
-    "addedOn": "Dodano{date}",
+    "addedOn": "Dodano {date}",
     "setupTitle": "Jak podłączyć domenę (3 kroki)",
     "step1Title": "Dodaj swoją domenę",
     "step1Desc": "Kliknij „Dodaj domenę” i wprowadź nazwę zakupionej domeny (np. blog.mysite.com).",
     "step2Title": "Dodaj 2 wpisy DNS u swojego rejestratora",
     "step2Desc": "Wejdź na stronę swojego dostawcy usług DNS (Cloudflare, GoDaddy, Namecheap…) i dodaj te dwa rekordy:",
-    "step2TxtNote": "Wartość rekordu TXT jest unikalna dla każdej domeny — skopiuj ją z karty domeny wyświetlanej poniżej.",
+    "step2TxtNote": "Wartość rekordu TXT jest unikalna dla każdej domeny — skopiuj ją z karty domeny wyświetlonej poniżej.",
     "step3Title": "Kliknij „Zweryfikuj”",
     "step3Desc": "Gdy wpisy DNS zostaną zaktualizowane (w serwisie Cloudflare trwa to zazwyczaj kilka minut, a w innych serwisach może potrwać do 48 godzin), kliknij przycisk odświeżania obok swojej domeny.",
     "cloudflareTip": "Korzystasz z Cloudflare? Włącz pomarańczowy serwer proxy w swoim rekordzie CNAME — obsługa protokołu SSL zostanie wtedy załatwiona automatycznie, bez konieczności dodatkowej konfiguracji.",
@@ -2966,7 +2973,7 @@
     "status_failed": "Nie powiodło się",
     "copyLabel": "Kopiuj",
     "dnsType": "Typ",
-    "dnsName": "Nazwa",
+    "dnsName": "Imię i nazwisko",
     "dnsValue": "Wartość",
     "sslActive": "SSL włączony",
     "placeholderCustomDomainExample": "blog.mysite.com",
@@ -2989,7 +2996,7 @@
     "backupWarning": "Zachowaj te kody w bezpiecznym miejscu. Każdy kod można wykorzystać tylko raz, aby odzyskać dostęp w razie zgubienia urządzenia.",
     "copyBackupCodes": "Skopiuj wszystkie kody",
     "copiedButton": "Skopiowano!",
-    "setupError": "Nie udało się rozpocząć konfiguracji uwierzytelniania dwuskładnikowego. Spróbuj ponownie.",
+    "setupError": "Nie udało się rozpocząć konfiguracji uwierzytelniania dwuskładnikowego (2FA). Spróbuj ponownie.",
     "invalidCode": "Nieprawidłowy kod. Upewnij się, że zegar urządzenia jest zsynchronizowany, i spróbuj ponownie.",
     "enabledToast": "Uwierzytelnianie dwuskładnikowe zostało właśnie włączone!"
   },
@@ -3142,7 +3149,7 @@
       "confirmActivate": "Czy przywrócić tego bloga?",
       "confirmDelete": "Czy chcesz trwale usunąć tego bloga? Wszystkie treści zostaną utracone.",
       "owner": "Właściciel",
-      "planChangeAccountWide": "Dotyczy to całego konta ({email}) — wszystkie należące do nich blogi zostaną przełączone na ten plan.",
+      "planChangeAccountWide": "Dotyczy to całego konta ({email}) — wszystkie należące do nich blogi zostaną przeniesione na ten plan.",
       "articles": "artykuły",
       "members": "członkowie",
       "storage": "Przechowywanie",
@@ -3165,7 +3172,7 @@
       "paymentLinkGenerated": "Wygenerowano link do płatności",
       "emptyPending": "Brak ogłoszeń oczekujących na zatwierdzenie.",
       "empty": "Nie znaleziono reklam.",
-      "safetyOk": "Bezpieczny",
+      "safetyOk": "Bezpieczne",
       "safetyDangerous": "Niebezpieczne",
       "safetyUnknown": "Nieznane",
       "status": {
@@ -3284,7 +3291,7 @@
       "dropZipHint": "Plik ZIP musi zawierać plik template.json",
       "clickToChange": "Kliknij, aby zmienić plik",
       "zipFormat": "Przewidywana struktura pliku ZIP:",
-      "themeBaseNote": "Wartość `theme_base` musi być jedną z następujących opcji: {themes}",
+      "themeBaseNote": "Wartość `theme_base` musi być jedną z poniższych: {themes}",
       "emptyCustomTitle": "Brak szablonów niestandardowych",
       "emptyCustomDesc": "Prześlij plik ZIP, aby dodać własny szablon"
     },
@@ -3354,7 +3361,7 @@
       "analyticsFull": "Pełna wersja",
       "analyticsFullApi": "Full+API",
       "noPlansFound": "Nie znaleziono żadnych planów",
-      "noPlansFoundDesc": "Uruchom migrację nr 019, aby wstępnie wypełnić plany domyślne, lub utwórz je ręcznie.",
+      "noPlansFoundDesc": "Uruchom migrację nr 019, aby załadować domyślne plany, lub utwórz je ręcznie.",
       "subscribersLabel": "Subskrybenci"
     },
     "payments": {
@@ -3422,7 +3429,7 @@
         "domainMarkup": "Marża przy zakupie domeny (%)",
         "domainMarkupHint": "Dodawane do ceny rejestratora przy każdym zakupie i przedłużeniu domeny — wartość 0 oznacza odsprzedaż po kosztach",
         "paymentTolerance": "Limit płatności kryptowalutowych ($)",
-        "paymentToleranceHint": "Płatność otrzymana w ramach tego przedziału w stosunku do oczekiwanej kwoty (opłaty sieciowe, wahania kursu) jest nadal uznawana za zrealizowaną",
+        "paymentToleranceHint": "Płatność otrzymana w granicach tego przedziału w stosunku do oczekiwanej kwoty (opłaty sieciowe, wahania kursu) jest nadal uznawana za zrealizowaną",
         "kycPricePerYear": "Cena weryfikacji KYC (USD/rok)",
         "kycPricePerYearHint": "Opłata pobierana od użytkowników za każdy rok weryfikacji tożsamości, wymaganej przed uzyskaniem dostępu do programu partnerskiego"
       },
@@ -3462,7 +3469,7 @@
         "webhookSecret": "Sekret webhooka",
         "webhookSecretHint": "Sekret dotyczący weryfikacji przychodzących webhooków",
         "regenerate": "Odnowić",
-        "warning": "Natychmiastowe wygenerowanie nowego klucza powoduje unieważnienie starego. Przed wygenerowaniem nowego klucza w środowisku produkcyjnym zaktualizuj swoje integracje."
+        "warning": "Natychmiastowe wygenerowanie nowego klucza powoduje unieważnienie starego. Przed wygenerowaniem nowego klucza w środowisku produkcyjnym należy zaktualizować integracje."
       },
       "integrations": {
         "configured": "Skonfigurowano",
@@ -3540,7 +3547,7 @@
         "revenue": "Dzisiejsze przychody"
       },
       "onlineUsers": "Aktywni użytkownicy",
-      "onlineUsersDesc": "Użytkownicy, którzy pojawili się w ciągu ostatnich 15 minut",
+      "onlineUsersDesc": "Użytkownicy, których odwiedzono w ciągu ostatnich 15 minut",
       "noOnlineUsers": "W ciągu ostatnich 15 minut nie było żadnych aktywnych użytkowników",
       "activity": "Aktywność na platformie",
       "activityDesc": "Wszystkie wydarzenia z ostatnich 24 godzin",
@@ -3775,7 +3782,7 @@
       "tabAccounts": "Plan kont",
       "newAccount": "Nowe konto",
       "createAccount": "Załóż konto",
-      "approve": "Zatwierdzić",
+      "approve": "Zatwierdź",
       "reverse": "Odwrotny",
       "reverseTitle": "Utwórz zapis korygujący",
       "reverseDesc": "Ta operacja powoduje utworzenie wpisu lustrzanego (debet↔kredyt) o statusie „Oczekujące”.",
@@ -3786,8 +3793,8 @@
       "noEntriesDesc": "W tym miejscu będą wyświetlane zapisy księgowe.",
       "loading": "Ładowanie...",
       "accountCreated": "Konto zostało utworzone.",
-      "entryApproved": "Wpis zatwierdzono.",
-      "reversalCreated": "Odwrócenie zostało utworzone.",
+      "entryApproved": "Wpis zatwierdzony.",
+      "reversalCreated": "Odwrócenie utworzone.",
       "entriesCount": "{count} wpisy",
       "accountsCount": "{count} konta",
       "classes": {
@@ -3869,7 +3876,7 @@
       "cmsLabel": "CMS",
       "title": "Strony publiczne",
       "subtitle": "Treść pilotażowych stron marketingowych — przetłumaczona automatycznie za pomocą DeepL.",
-      "modifiedOn": "Zmodyfikowano dnia {date}",
+      "modifiedOn": "Zmieniono dnia {date}",
       "neverModified": "Nigdy nie modyfikowano",
       "pageLabel_home": "Strona główna",
       "pageLabel_about": "O nas",
@@ -3964,7 +3971,7 @@
     "filterPartial": "Częściowe",
     "filterFailed": "Nie powiodło się",
     "empty": "Na razie nie ma żadnych płatności.",
-    "received": "Dotychczas otrzymano {amount}",
+    "received": "Dotychczas otrzymano {amount}ów",
     "resume": "CV",
     "resumeError": "Nie udało się wznowić tej płatności. Spróbuj ponownie.",
     "type": {
@@ -4008,7 +4015,7 @@
     "colorSlate": "Łupek",
     "generateButton": "Utwórz mój blog",
     "generatingButton": "Tworzenie…",
-    "requiredFieldsNote": "* Pola oznaczone jako obowiązkowe należy wypełnić.",
+    "requiredFieldsNote": "* Pola obowiązkowe należy wypełnić.",
     "aiCreditsNote": "Ta czynność wymaga wykorzystania kredytów AI. Wygenerowanie trwa około 15–30 sekund.",
     "successToast": "Blog został pomyślnie skonfigurowany!",
     "planRequiredError": "Wymagany plan",

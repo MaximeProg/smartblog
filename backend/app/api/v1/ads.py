@@ -10,7 +10,7 @@ from fastapi import Depends
 from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
 from app.models.ad import Ad, AdLinkScan, AdRevenueShare, AdDailyStats
-from app.models.enums import AdSubmissionStatus, AdCampaignStatus, LinkSafetyStatus, UserRole, AdRevenueShareStatus
+from app.models.enums import AdSubmissionStatus, AdCampaignStatus, LinkSafetyStatus, UserRole, AdRevenueShareStatus, KycStatus
 from app.api.v1.tenants import _assert_member, _assert_role
 
 logger = logging.getLogger(__name__)
@@ -485,16 +485,22 @@ async def review_ad(
                         # 60% dus au propriétaire du blog (RG-AD-01, révisé 2026-07-23 :
                         # 80/10/10 -> 60/10/30, la part plateforme passe de 10% à 30%,
                         # l'affiliation reste inchangée à 10%) — payé directement s'il a
-                        # un wallet enregistré. Décision PDG : sans wallet, il ne
-                        # participe pas, rien n'est calculé ni mis de côté pour lui.
+                        # un wallet enregistré ET un KYC validé (décision PDG 2026-08-03,
+                        # étendue à tout versement de fonds sur la plateforme). Sans l'un
+                        # des deux, il ne participe pas, rien n'est calculé ni mis de côté.
                         owner = await db.get(User, source_user_id)
-                        if owner and owner.usdt_wallet_address and settings.NOWPAYMENTS_PAYOUT_API_KEY:
+                        if (
+                            owner and owner.usdt_wallet_address
+                            and owner.kyc_status == KycStatus.VERIFIED
+                            and settings.NOWPAYMENTS_PAYOUT_API_KEY
+                        ):
                             owner_share = round(float(ad.amount_paid) * 0.60, 2)
                             try:
                                 result = await send_single_payout(
                                     wallet_address=owner.usdt_wallet_address,
                                     amount_usd=owner_share,
                                 )
+                                payout_reference = str(result.get("id", ""))
                                 share = AdRevenueShare(
                                     ad_id=ad.id,
                                     tenant_id=tenant_id,
@@ -502,7 +508,7 @@ async def review_ad(
                                     gross_amount=float(ad.amount_paid),
                                     owner_share_amount=owner_share,
                                     status=AdRevenueShareStatus.PAID,
-                                    payout_reference=str(result.get("id", "")),
+                                    payout_reference=payout_reference,
                                     paid_at=datetime.now(timezone.utc),
                                 )
                                 db.add(share)
@@ -515,6 +521,19 @@ async def review_ad(
                                     transaction_id=str(ad.id),
                                     created_by_system_user_id=uuid.UUID(payload["sub"]),
                                 )
+
+                                # Facture — n'entrave jamais le versement déjà effectué,
+                                # ni le commit final de la fonction (ligne ~552).
+                                try:
+                                    from app.services.invoice_service import generate_and_send_invoice
+                                    await generate_and_send_invoice(
+                                        db, user=owner,
+                                        amount=owner_share, currency="USDT",
+                                        payment_reference=payout_reference,
+                                        payment_type="ad_revenue_payout",
+                                    )
+                                except Exception:
+                                    logger.exception("Invoice generation failed for ad revenue payout (ad=%s)", ad.id)
                             except Exception:
                                 logger.exception(
                                     "Échec du payout NowPayments (part propriétaire) pour l'ad %s (owner=%s, montant=%s) — rien n'est enregistré, pas de retry automatique",

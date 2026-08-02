@@ -169,7 +169,7 @@
       "descriptionOptional": "(valgfrit)",
       "backToDashboard": "Tilbage til oversigtssiden",
       "limitTitle": "Bloggrænsen er nået",
-      "limitDesc": "Med din »{plan}«-abonnement kan du oprette {max}. Opgrader til Business for at oprette flere.",
+      "limitDesc": "Med din »{plan}«-abonnement kan du oprette {max}. Opgrader til »Business« for at oprette flere.",
       "limitViewPlans": "Se tegninger",
       "limitBack": "Gå tilbage"
     },
@@ -691,7 +691,7 @@
     "topic": "emne",
     "topics": "emner",
     "inTopics": "om emnet »{count}«",
-    "inTopicsPlural": "på tværs af emnerne i »{count}«",
+    "inTopicsPlural": "på tværs af emnerne »{count}«",
     "featuredLabel": "Udvalgte",
     "otherCategories": "Andre kategorier",
     "allCategoriesLink": "Alle kategorier",
@@ -770,7 +770,7 @@
     "close": "Luk",
     "adLabel": "Annonce",
     "searchLabel": "Søg",
-    "searchArticlesPlaceholder": "Søg i artikler…",
+    "searchArticlesPlaceholder": "Søg efter artikler…",
     "listeningPlaceholder": "Lytter…",
     "stopVoiceSearch": "Stop stemmesøgning",
     "startVoiceSearch": "Start stemmesøgning",
@@ -782,7 +782,7 @@
     "useMicHint": "Brug mikrofonknappen til stemmesøgning",
     "speakNowHint": "Sig det nu…",
     "voiceTranscribedHint": "Din stemme bliver automatisk transskriberet",
-    "noResultsForQuery": "Der blev ikke fundet nogen resultater for »{query}«",
+    "noResultsForQuery": "Der blev ikke fundet resultater for »{query}«",
     "tryOtherKeywords": "Prøv med andre søgeord, eller tjek din stavning.",
     "resultsForQuery": "{count} resultat for »{query}«",
     "resultsForQueryPlural": "{count} resultater for »{query}«",
@@ -816,7 +816,7 @@
     "advertiseHeroTitlePrefix": "Kom til",
     "advertiseHeroTitleSuffix": "publikum",
     "advertiseStep1Title": "Indsend din annonce",
-    "advertiseStep1Desc": "Udfyld nedenstående formular med oplysninger om din annonce og mål-URL’en.",
+    "advertiseStep1Desc": "Udfyld nedenstående formular med oplysninger om din annonce og mål-URL.",
     "advertiseStep2Title": "Manuel gennemgang",
     "advertiseStep2Desc": "Blogejeren gennemgår dit indlæg og godkender eller afviser det.",
     "advertiseStep3Title": "Gå live",
@@ -875,7 +875,7 @@
     "paymentStep4Text": "Betaling bekræftet → din annonce sendes til blogejeren til gennemgang.",
     "paymentStep5Text": "Når din annonce er godkendt, bliver den automatisk offentliggjort.",
     "securePaymentBold": "Sikker betaling.",
-    "securePaymentDesc": "Din annonceplads er først reserveret, når betalingen er bekræftet. NowPayments accepterer over 150 kryptovalutaer samt de gængse kreditkort.",
+    "securePaymentDesc": "Din annonceplads er først reserveret, når betalingen er bekræftet. NowPayments accepterer over 150 kryptovalutaer og de gængse kreditkort.",
     "reviewSubmissionTitle": "Gennemgå din indsendelse",
     "reviewSubmissionSubtitlePrefix": "Tjek alt grundigt, inden du sender din annonceanmodning til",
     "reviewSubmissionSubtitleSuffix": ".",
@@ -1131,7 +1131,7 @@
     },
     "customization": {
       "title": "Avanceret tilpasning",
-      "description": "Redigeringsværktøj til brugerdefineret CSS, indsættelse af scripts, tilpasning af sektioner på hver enkelt side og avanceret skabelonredigeringsværktøj."
+      "description": "Redigeringsværktøj til brugerdefineret CSS, indsættelse af script, tilpasning af sektioner pr. side og avanceret skabelonredigeringsværktøj."
     }
   },
   "blogCreate": {
@@ -1141,11 +1141,11 @@
     "backToDashboard": "Tilbage til oversigtssiden",
     "mobileStep": "Trin {step} / 4",
     "errors": {
-      "createFailed": "Det lykkedes ikke at oprette bloggen. Prøv venligst igen."
+      "createFailed": "Det lykkedes ikke at oprette bloggen. Prøv igen."
     },
     "limit": {
       "title": "Bloggrænsen er nået",
-      "desc": "Med din »{plan}«-plan kan du oprette {max}. Opgrader til Business for at oprette flere.",
+      "desc": "Med din »{plan}«-abonnement kan du oprette {max}. Opgrader til Business for at oprette flere.",
       "viewPlans": "Se tegninger",
       "back": "Tilbage"
     },
@@ -1270,7 +1270,7 @@
     "primaryColor": "Primærfarve",
     "secondaryColor": "Sekundærfarve",
     "headingFont": "Overskriftsskrifttype",
-    "bodyFont": "Tekststørrelse",
+    "bodyFont": "Tekstfont",
     "contentWidth": "Indholdets bredde",
     "sidebarEnabled": "Sidebjælke aktiveret",
     "sidebarPosition": "Stillingsbetegnelse",
@@ -1304,7 +1304,7 @@
     "themes": {
       "minimal": "Overskueligt og indholdsorienteret",
       "magazine": "Moderne redaktionel stil",
-      "business": "Professionel og velstruktureret",
+      "business": "Professionel og struktureret",
       "news": "Hurtigt, kompakt nyhedsformat",
       "tech": "Mørk tilstand for udviklere",
       "portfolio": "Visuelt og kreativt"
@@ -1353,7 +1353,7 @@
     "url": "URL",
     "dragDropHint": "Slip filerne her, eller klik på »Upload«",
     "uploadVideo": "Upload video",
-    "uploadAudio": "Upload lyd",
+    "uploadAudio": "Upload lydfil",
     "uploadDoc": "Upload dokument",
     "uploadImage": "Upload billede",
     "usedInArticles": "Anvendt i {count} artikel(er)",
@@ -1575,10 +1575,10 @@
   "widgets": {
     "title": "Widgets",
     "subtitle": "Konfigurer de sidebjælke-widgets, der vises på din offentlige blog.",
-    "desc": "Træk rækkerne for at ændre rækkefølgen. Klik på titlen for at omdøbe den. Slå visning til eller fra for hver enkelt widget.",
+    "desc": "Træk rækkerne for at ændre rækkefølgen. Klik på titlen for at omdøbe den. Slå visningen til eller fra for hver enkelt widget.",
     "save": "Gem",
     "saved": "Gemt!",
-    "tipTitle": "Tip: Klik på en widgets titel for at omdøbe den. Ændringerne træder i kraft på din offentlige blog, når du har gemt."
+    "tipTitle": "Tip: Klik på en widgets titel for at omdøbe den. Ændringerne træder i kraft på din offentlige blog, når du har gemt dem."
   },
   "ai": {
     "title": "AI-assistent",
@@ -1638,7 +1638,7 @@
     "save": "Gem",
     "saved": "Gemt!",
     "shareButtons": "Del-knapper",
-    "shareButtonsDesc": "Vælg, hvilke platforme der skal vises for hver artikel.",
+    "shareButtonsDesc": "Vælg, hvilke platforme der skal vises på hver artikel.",
     "profiles": "Sociale profiler",
     "profilesDesc": "Indtast dine profil-URL’er for at vise links til sociale medier på din blog.",
     "autoShare": "Automatisk offentliggørelse",
@@ -1926,7 +1926,7 @@
     "fieldReassuranceText": "Tekst til beroligelse",
     "fieldBlockTitle": "Bloktitel",
     "fieldNavLinks": "Navigationslinks",
-    "fieldNavLinksHint": "Træk for at ændre rækkefølgen (kommer snart). Anbefalet maksimalt 6 links.",
+    "fieldNavLinksHint": "Træk for at ændre rækkefølgen (kommer snart). Det anbefales at bruge højst 6 links.",
     "fieldCopyright": "Tekst om ophavsret",
     "fieldDescriptionFooter": "Kort tekst, der vises under logoet i sidefoden.",
     "fieldNewsletterTeaser": "Teaser-tekst",
@@ -1938,7 +1938,7 @@
     "fieldOgDesc": "OG-beskrivelse",
     "fieldOgImage": "OG-billede",
     "fieldRobots": "Robotter",
-    "fieldCanonical": "Canonisk URL",
+    "fieldCanonical": "Kanonisk URL",
     "fieldMinHeadings": "Minimalt antal overskrifter",
     "fieldMinHeadingsHint": "Indholdsfortegnelsen vises kun, hvis artiklen har mindst N overskrifter.",
     "fieldArticleCount": "Antal artikler",
@@ -2258,8 +2258,8 @@
     "placeholderSeoDescription": "Se vores bedste artikler om…",
     "mediaVideoFormatError": "Videoformat understøttes ikke (MP4, WebM, MOV)",
     "mediaAudioFormatError": "Ikke-understøttet lydformat (MP3, WAV, OGG, AAC)",
-    "mediaUploadTimeoutError": "Tidsgrænsen er overskredet. Prøv en hurtigere internetforbindelse eller en mindre fil.",
-    "mediaUploadError": "Uploaden mislykkedes. Prøv venligst igen.",
+    "mediaUploadTimeoutError": "Tidsgrænsen er overskredet. Prøv en hurtigere forbindelse eller en mindre fil.",
+    "mediaUploadError": "Uploaden mislykkedes. Prøv igen.",
     "mediaTabGallery": "Galleri",
     "mediaTabUpload": "Upload",
     "mediaTabUrl": "URL",
@@ -2369,7 +2369,7 @@
     },
     "step3": {
       "title": "Tilpas din blog",
-      "subtitle": "Disse indstillinger bestemmer din blogs visuelle udseende. Alt kan ændres senere.",
+      "subtitle": "Disse indstillinger fastlægger din blogs visuelle udseende. Alt kan ændres senere.",
       "colorLabel": "Primærfarve",
       "fontLabel": "Skrifttypefamilie",
       "previewLabel": "Forhåndsvisning",
@@ -2469,7 +2469,7 @@
     "templates": {
       "editorial": {
         "tagline": "Rent · Serif · Tidløst",
-        "description": "Medium / The Atlantic-stilen. En fokuseret læseoplevelse, en fremhævet hovedperson og et elegant layout med tre spalter."
+        "description": "Medium / The Atlantic-stilen. En fokuseret læseoplevelse, en fremhævet hovedartikel og et elegant layout med tre spalter."
       },
       "magazine": {
         "tagline": "Modig · Kraftfuld · Dynamisk",
@@ -2597,7 +2597,7 @@
     "subtitle": "Tjen provision ved at henvise nye blogs til SmarterBloggers",
     "yourCode": "Din henvisningskode",
     "yourLink": "Dit henvisningslink",
-    "copyLink": "Kopier linket",
+    "copyLink": "Kopier link",
     "copied": "Kopieret!",
     "balance": "Tilgængelig saldo",
     "threshold": "Minimumsudbetaling",
@@ -2688,7 +2688,7 @@
     }
   },
   "kyc": {
-    "pageTitle": "Identitetsverifikation (KYC)",
+    "pageTitle": "Identitetsbekræftelse (KYC)",
     "pageSubtitle": "Dette skal udfyldes én gang, før du kan få adgang til partnerprogrammet og modtage provision.",
     "submitError": "Der opstod en fejl. Prøv venligst igen.",
     "statusLabel": {
@@ -2724,7 +2724,14 @@
     "colStatus": "Status",
     "download": "Download",
     "type": {
-      "kyc_verification": "KYC-verifikation"
+      "kyc_verification": "KYC-verifikation",
+      "subscription": "Abonnement",
+      "paid_article": "Køb af artikel",
+      "ad_campaign": "Reklamekampagne",
+      "paid_newsletter": "Tilmelding til nyhedsbrev",
+      "domain_purchase": "Køb af domæne",
+      "affiliate_commission_payout": "Udbetaling af affiliate-provision",
+      "ad_revenue_payout": "Udbetaling af annonceindtægter"
     }
   },
   "advertiser": {
@@ -2752,7 +2759,7 @@
     "statusPending": "Afventer gennemgang",
     "statusApproved": "Godkendt",
     "statusRejected": "Afvist",
-    "statusPaymentPending": "Betaling afventes",
+    "statusPaymentPending": "Betaling afventer",
     "statusPaid": "Betalt",
     "statusExpired": "Udløbet",
     "viewStats": "Se statistikker",
@@ -2899,7 +2906,7 @@
     "verifySuccess": "Domænet er bekræftet! Din blog er nu online på denne adresse.",
     "verifyFailed": "Bekræftelsen mislykkedes — kontroller, at begge DNS-poster er indstillet korrekt.",
     "verifyError": "Der opstod en fejl under verifikationen.",
-    "deleteSuccess": "Domænet er blevet fjernet.",
+    "deleteSuccess": "Domænet er fjernet.",
     "deleteError": "Der opstod en fejl under fjernelsen af domænet.",
     "deleteConfirm": "Skal dette domæne slettes?",
     "emptyTitle": "Der er endnu ikke angivet et brugerdefineret domæne",
@@ -2914,7 +2921,7 @@
     "step3Title": "Klik på »Bekræft«",
     "step3Desc": "Når dine DNS-poster er blevet opdateret (normalt tager det et par minutter på Cloudflare, op til 48 timer andre steder), skal du klikke på opdateringsknappen ved siden af dit domæne.",
     "cloudflareTip": "Bruger du Cloudflare? Aktiver den orange cloud-proxy i din CNAME-post — så håndteres SSL automatisk, uden at der kræves yderligere konfiguration.",
-    "hostingerTip": "Bruger du Hostinger? Hostinger tillader ikke en CNAME-post på rodniveau (@). I stedet skal du oprette en omdirigering fra dit roddomæne til »www« og derefter kun tilføje CNAME-posten for »www« samt TXT-verifikationsposten.",
+    "hostingerTip": "Bruger du Hostinger? Hostinger tillader ikke en CNAME-post i roddomænet (@). I stedet skal du oprette en omdirigering fra dit roddomæne til »www« og derefter kun tilføje CNAME-posten for »www« samt TXT-verifikationsposten.",
     "recordCname": "Post 1 — CNAME-roddomæne",
     "recordCnameWww": "Post 2 — CNAME-post for www-underdomænet",
     "recordTxt": "Post 3 — TXT (bekræftelse)",
@@ -3419,12 +3426,12 @@
         "platformName": "Platformens navn",
         "platformNameHint": "Vises på offentlige sider og i e-mails",
         "supportEmail": "Support-e-mail",
-        "domainMarkup": "Fortjeneste ved domænekøb (%)",
+        "domainMarkup": "Fortjeneste ved køb af domæner (%)",
         "domainMarkupHint": "Tillægges oven i registratorens pris ved hvert domænekøb og hver fornyelse — 0 betyder videresalg til indkøbspris",
         "paymentTolerance": "Tolerance for kryptobetalinger ($)",
-        "paymentToleranceHint": "En betaling, der modtages inden for denne margen i forhold til det forventede beløb (netværksgebyrer, kursafvigelser), betragtes stadig som gennemført",
+        "paymentToleranceHint": "En betaling, der modtages inden for denne margen i forhold til det forventede beløb (netværksgebyrer, kursafvigelser), betragtes stadig som fuldført",
         "kycPricePerYear": "Pris for KYC-verifikation ($/år)",
-        "kycPricePerYearHint": "Den pris, der opkræves hos brugerne pr. år for identitetsverifikation, som er påkrævet, før man får adgang til partnerprogrammet"
+        "kycPricePerYearHint": "Den pris, der opkræves hos brugerne pr. år for identitetsbekræftelse, som er påkrævet, før man får adgang til partnerprogrammet"
       },
       "tabs": {
         "general": "Generelt",
@@ -3454,7 +3461,7 @@
         "publicKey": "Offentlig nøgle",
         "publicKeyHint": "Anvendes på klientsiden til JS-integrationer",
         "secretKey": "Hemmelig nøgle",
-        "secretKeyHint": "Udsæt aldrig klientsiden",
+        "secretKeyHint": "Udsæt aldrig klient-siden",
         "stripeKey": "Stribe-nøgle",
         "stripeKeyHint": "Stripe-hemmelig nøgle til betalinger",
         "openaiKey": "OpenAI-nøgle",
@@ -3462,7 +3469,7 @@
         "webhookSecret": "Webhook-hemmelighed",
         "webhookSecretHint": "Hemmeligheden bag validering af indgående webhooks",
         "regenerate": "Genopret",
-        "warning": "Når man genererer en ny nøgle, bliver den gamle straks ugyldig. Sørg for at opdatere dine integrationer, inden du genererer en ny nøgle i produktionsmiljøet."
+        "warning": "Når man genererer en ny nøgle, bliver den gamle straks ugyldig. Sørg for at opdatere dine integrationer, før du genererer en ny nøgle i produktionsmiljøet."
       },
       "integrations": {
         "configured": "Konfigureret",
@@ -3827,7 +3834,7 @@
         "account": "Konto",
         "label": "Etiket",
         "total": "I alt",
-        "ref": "Ref"
+        "ref": "Ref."
       },
       "form": {
         "code": "Kode",
@@ -3906,7 +3913,7 @@
       "keyPointsLabel": "Vigtige punkter, der skal fremhæves",
       "optionalLabel": "(valgfrit)",
       "keyPointsPlaceholder": "F.eks.: grundlagt i 2024, over 500 oprettede blogs, flersproget support.",
-      "imagesNeverModifiedNote": "Der genereres kun tekstfelter — eksisterende billeder ændres aldrig.",
+      "imagesNeverModifiedNote": "Der genereres udelukkende tekstfelter — eksisterende billeder ændres aldrig.",
       "generateButton": "Generer",
       "addButton": "Tilføj",
       "addItemButton": "Tilføj en vare"
@@ -3953,7 +3960,7 @@
     "currencyPickerSearch": "Søg efter en valuta eller et netværk…",
     "currencyPickerNoResults": "Der findes ingen tilsvarende valuta.",
     "minAmountChecking": "Kontrollerer minimumsbeløbet for denne valuta…",
-    "minAmountTooLow": "Minimumsbeløb for »{currency}«: {amount} — vælg en anden valuta, eller forhøj beløbet."
+    "minAmountTooLow": "Minimumsbeløb for »{currency}«: {amount} — vælg en anden valuta eller forhøj beløbet."
   },
   "paymentCenter": {
     "title": "Betalinger",
