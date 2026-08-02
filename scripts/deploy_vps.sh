@@ -18,7 +18,13 @@ git pull origin main
 echo "--- rebuild (cache Docker, rapide si peu de changements) ---"
 sudo docker compose -f docker-compose.prod.yml build
 echo "--- migrations Alembic ---"
-sudo docker compose -f docker-compose.prod.yml run --rm api alembic upgrade head
+# -T (pas de pseudo-TTY) + stdin depuis /dev/null : `docker compose run`
+# attache sinon son stdin de façon interactive, ce qui lui fait consommer le
+# reste du heredoc SSH — les commandes suivantes (redémarrage, ps) ne sont
+# alors jamais reçues par le bash distant, bien que le script se termine en
+# exit 0 (bug réel constaté le 2026-08-02 : la migration tournait mais les
+# conteneurs n'étaient jamais recréés).
+sudo docker compose -f docker-compose.prod.yml run --rm -T api alembic upgrade head < /dev/null
 echo "--- redémarrage ---"
 # --force-recreate est indispensable : sans lui, `up -d` ne recrée pas un
 # conteneur déjà démarré juste parce que l'image sous-jacente a été
