@@ -283,6 +283,8 @@ async def list_all_users(
                 "created_at": u.created_at,
                 "plan": u.plan.value,
                 "blog_count": blog_counts.get(u.id, 0),
+                "kyc_status": u.kyc_status.value,
+                "kyc_years_remaining": u.kyc_years_remaining,
             }
             for u in users
         ],

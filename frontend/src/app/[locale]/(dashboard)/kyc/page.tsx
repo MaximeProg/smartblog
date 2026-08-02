@@ -15,6 +15,8 @@ import { getErrorMessage } from '@/lib/utils';
 const PLATFORM_TENANT_ID = process.env.NEXT_PUBLIC_PLATFORM_TENANT_ID || '00000000-0000-0000-0000-000000000001';
 
 const YEARS_OPTIONS = [1, 2, 3, 5] as const;
+const MIN_YEARS = 1;
+const MAX_YEARS = 50;
 
 const STATUS_ICON: Record<string, typeof ShieldCheck> = {
   not_started: ShieldCheck,
@@ -29,7 +31,7 @@ export default function KycPage() {
   const { toast } = useToast();
   const qc = useQueryClient();
 
-  const [years, setYears] = useState<typeof YEARS_OPTIONS[number]>(1);
+  const [years, setYears] = useState(1);
   const [payCurrency, setPayCurrency] = useState('usdtbsc');
   const [payCurrencyValid, setPayCurrencyValid] = useState(true);
   const [payment, setPayment] = useState<KycSubmitResponse | null>(null);
@@ -153,6 +155,21 @@ export default function KycPage() {
                           </button>
                         ))}
                       </div>
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-[12px] text-slate-400 dark:text-slate-500 shrink-0">{t('customDurationLabel')}</span>
+                        <input
+                          type="number"
+                          min={MIN_YEARS}
+                          max={MAX_YEARS}
+                          value={years}
+                          onChange={e => {
+                            const v = parseInt(e.target.value, 10);
+                            if (Number.isNaN(v)) { setYears(0); return; }
+                            setYears(Math.min(MAX_YEARS, Math.max(0, v)));
+                          }}
+                          className="w-20 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                        />
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800">
@@ -170,7 +187,7 @@ export default function KycPage() {
 
                     <button
                       onClick={() => submitMutation.mutate()}
-                      disabled={submitMutation.isPending || !payCurrencyValid || totalAmount <= 0}
+                      disabled={submitMutation.isPending || !payCurrencyValid || years < MIN_YEARS || totalAmount <= 0}
                       className="w-full px-4 py-3 rounded-xl bg-blue-600 text-white text-[13px] font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {submitMutation.isPending ? '…' : t('payCta', { amount: totalAmount.toFixed(2) })}

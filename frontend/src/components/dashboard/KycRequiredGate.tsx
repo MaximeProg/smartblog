@@ -13,7 +13,7 @@ const STATUS_CONFIG: Record<string, { icon: typeof ShieldCheck; color: string; b
 };
 
 export function KycRequiredGate({ kycStatus }: { kycStatus?: string }) {
-  const t = useTranslations('kyc');
+  const t = useTranslations('affiliate');
   const params = useParams();
   const locale = params.locale as string;
 

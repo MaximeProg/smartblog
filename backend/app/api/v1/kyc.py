@@ -18,17 +18,21 @@ from app.models.enums import TransactionType, KycStatus
 from app.models.kyc import KycVerification
 from app.models.user import User
 from app.services.kaluta_service import verify_kaluta_signature
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/platform/kyc", tags=["kyc"])
 
-_ALLOWED_YEARS = (1, 2, 3, 5)
+# L'utilisateur peut saisir n'importe quel nombre d'années au-delà des
+# boutons rapides (1/2/3/5) affichés côté frontend — ces bornes ne sont
+# qu'un garde-fou anti-erreur de saisie, pas une restriction produit.
+_MIN_YEARS = 1
+_MAX_YEARS = 50
 
 
 class KycSubmitRequest(BaseModel):
-    years: int
+    years: int = Field(ge=_MIN_YEARS, le=_MAX_YEARS)
     pay_currency: str = "usdtbsc"
     invoice_language: str = "en"
 
@@ -85,13 +89,11 @@ async def get_kyc_status(payload: TokenPayload, db: DBSession):
 
 @router.post("/submit", status_code=201)
 async def submit_kyc_verification(body: KycSubmitRequest, payload: TokenPayload, db: DBSession):
-    """Choix de la durée (1/2/3/5 ans) → paiement crypto. La session Kaluta
-    n'est créée qu'après confirmation du paiement (voir
-    payments.py::_finalize_transaction), jamais ici."""
+    """Choix de la durée (années, libre au-delà des suggestions rapides
+    1/2/3/5) → paiement crypto. La session Kaluta n'est créée qu'après
+    confirmation du paiement (voir payments.py::_finalize_transaction),
+    jamais ici."""
     from app.api.v1.payments import _create_crypto_transaction, _crypto_response
-
-    if body.years not in _ALLOWED_YEARS:
-        raise ValidationException(f"Years must be one of {_ALLOWED_YEARS}.")
 
     user = await db.get(User, uuid.UUID(payload["sub"]))
     if not user:

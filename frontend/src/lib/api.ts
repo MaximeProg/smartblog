@@ -841,7 +841,7 @@ export interface KycSubmitResponse {
 export const kycApi = {
   getStatus: () => api.get<KycStatusResponse>('/platform/kyc/status'),
 
-  submit: (data: { years: 1 | 2 | 3 | 5; pay_currency: string; invoice_language: string }) =>
+  submit: (data: { years: number; pay_currency: string; invoice_language: string }) =>
     api.post<KycSubmitResponse>('/platform/kyc/submit', data),
 
   retrySession: () =>
@@ -1243,6 +1243,8 @@ export interface UserAdminView {
   created_at: string;
   plan: string;
   blog_count: number;
+  kyc_status: 'not_started' | 'pending' | 'verified' | 'expired' | 'rejected';
+  kyc_years_remaining: number;
 }
 
 export interface UserTenantView {

@@ -2704,6 +2704,7 @@
     "reverifyCta": "Vérifier à nouveau mon identité",
     "purchaseTitle": "Choisissez la durée de votre vérification",
     "durationLabel": "Durée",
+    "customDurationLabel": "Ou saisissez un nombre d'années personnalisé :",
     "yearsCount": "{count, plural, one {# an} other {# ans}}",
     "totalLabel": "Total",
     "payCta": "Payer {amount}$ et vérifier",
@@ -3100,7 +3101,9 @@
         "joined": "Inscription",
         "lastLogin": "Dernière connexion",
         "twoFA": "2FA",
-        "actions": "Actions"
+        "actions": "Actions",
+        "kyc": "Statut KYC",
+        "kycYearsRemaining": "Années KYC restantes"
       },
       "blogsSection": "Blogs ({count})",
       "noBlogs": "Ce compte n'a encore créé aucun blog.",

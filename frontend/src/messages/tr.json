@@ -169,7 +169,7 @@
       "descriptionOptional": "(isteğe bağlı)",
       "backToDashboard": "Kontrol paneline geri dön",
       "limitTitle": "Blog sınırına ulaşıldı",
-      "limitDesc": "{plan}'unuzla {max} adresini oluşturabilirsiniz. Daha fazlasını oluşturmak için Business planına geçin.",
+      "limitDesc": "{plan}'unuzla {max} adresini kullanabilirsiniz. Daha fazlasını oluşturmak için Business planına geçin.",
       "limitViewPlans": "Planları görüntüle",
       "limitBack": "Geri dön"
     },
@@ -215,7 +215,7 @@
       "date": "Tarih",
       "actions": "Eylemler",
       "category": "Kategori",
-      "views": "Görüntülemeler"
+      "views": "Görüntüleme sayısı"
     },
     "status": {
       "draft": "Taslak",
@@ -311,7 +311,7 @@
       "dynamic": "Dinamik"
     },
     "actions": {
-      "edit": "Site Oluşturucu'da Düzenle",
+      "edit": "Site Oluşturucu'da düzenle",
       "publish": "Yayınla",
       "unpublish": "Yayından kaldır",
       "makePrivate": "Özel yap",
@@ -522,7 +522,7 @@
     "generatingInProgress": "Oluşturuluyor…",
     "generateArticleButton": "Makale oluştur",
     "reviewGeneratedContentHint": "Yayınlamadan önce oluşturulan içeriği daima gözden geçirin ve gerekli düzeltmeleri yapın.",
-    "articleGeneratedToast": "Makale oluşturuldu! Yayınlamadan önce gözden geçirip gerekli düzeltmeleri yapın.",
+    "articleGeneratedToast": "Makale oluşturuldu! Yayınlamadan önce gözden geçirip düzeltin.",
     "aiGenerationError": "AI ile oluşturma sırasında hata oluştu.",
     "slugLabel": "Başlık:",
     "slugPlaceholder": "benim-makalem"
@@ -939,7 +939,7 @@
       "starterF2": "En fazla 5 yazar",
       "starterF3": "10 GB depolama alanı",
       "starterF4": "Temel analitik",
-      "starterF5": "1.000 aboneye kadar olan haber bülteni",
+      "starterF5": "1.000 aboneye kadar haber bülteni",
       "proName": "Artıları",
       "proPrice": "29 dolar",
       "proMonth": "/ay",
@@ -1610,7 +1610,7 @@
     "instagramBusinessOnly": "Instagram İşletme veya Yaratıcı hesabı gerektirir.",
     "connect": "Bağlan",
     "connecting": "Bağlanıyor…",
-    "connectError": "OAuth başlatılamıyor — ortam değişkenlerindeki platform kimlik bilgilerini kontrol edin",
+    "connectError": "OAuth başlatılamıyor — ortam değişkenlerinde platform kimlik bilgilerini kontrol edin",
     "disconnect": "Bağlantıyı kes",
     "disconnectConfirm": "Bu hesabın bağlantısını kesmek ister misiniz?",
     "yes": "Evet",
@@ -1665,7 +1665,7 @@
     "popular": "Popüler",
     "upgrade": "Yükseltme",
     "pageTitle": "Planınızı seçin",
-    "pageSubtitle": "Ücretsiz olarak başlayın ve kendi hızınızda büyümeye devam edin. Tüm paketlerde tam kurumsal şablon dahildir.",
+    "pageSubtitle": "Ücretsiz olarak başlayın ve kendi hızınızda büyümeye devam edin. Tüm planlar, tam kurumsal şablonu içerir.",
     "freeLabel": "Ücretsiz",
     "perMonth": "/ay",
     "yourPlan": "Planınız",
@@ -1940,7 +1940,7 @@
     "fieldRobots": "Robotlar",
     "fieldCanonical": "Kanonik URL",
     "fieldMinHeadings": "Asgari başlık sayısı",
-    "fieldMinHeadingsHint": "Makalede en az N başlık varsa, içindekiler yalnızca bu durumda gösterilir.",
+    "fieldMinHeadingsHint": "Makalede en az N başlık varsa, içindekiler listesi gösterilir.",
     "fieldArticleCount": "Makale sayısı",
     "sectionHero": "Ana bölüm",
     "sectionFeatured": "Öne Çıkanlar bölümü",
@@ -2078,7 +2078,7 @@
     "fieldMetaDescDefault": "Varsayılan meta açıklaması",
     "fieldMetaDescDefaultHint": "Önerilen: 160 karakter. Google’da başlığın altında görüntülenir.",
     "seoCharCount": "{n} / 160 karakter",
-    "fieldOgImageHint": "Twitter, LinkedIn ve Facebook’ta paylaşım yaparken görüntülenir. İdeal boyut 1200×630 pikseldir.",
+    "fieldOgImageHint": "Twitter, LinkedIn ve Facebook’ta paylaşım yaparken görüntülenir. İdeal boyut 1200×630 piksel.",
     "seoSitemap": "XML Site Haritası",
     "seoRssFeed": "RSS Beslemesi",
     "seoView": "Görüntüle",
@@ -2162,7 +2162,7 @@
     "toolbarLinkPrompt": "Bağlantı URL'si:",
     "toolbarImagePrompt": "Resim URL'si:",
     "pageAds": "Reklamcılık",
-    "pageAdsDesc": "Reklam alanları satın ve kampanyaları yönetin.",
+    "pageAdsDesc": "Reklam alanları satmak ve kampanyaları yönetmek.",
     "adsNewAd": "Yeni reklam",
     "adsTitle": "Başlık",
     "adsDescription": "Açıklama",
@@ -2420,7 +2420,7 @@
     "quickSuccess": "Blog oluşturuldu! Yönlendiriliyor…",
     "domainRequiredNote": "Bir alan adı bağlayana kadar blogunuz ziyaretçiler tarafından görülemeyecektir. Alan adınızı oluşturduktan sonra, blogunuzun stüdyosundaki “Alan Adları” sayfasına giderek ayarlarını yapın.",
     "domainStepTitle": "Blogunuzu çevrimiçi hale getirin",
-    "domainStepSubtitle": "{name} Oluşturuldu! İnsanların siteyi bulabilmesi için şimdi bir alan adı ekleyin — ya da bu adımı atlayıp daha sonra yapabilirsiniz.",
+    "domainStepSubtitle": "{name} Oluşturuldu! İnsanların siteyi bulabilmesi için şimdi bir alan adı ekleyin — ya da bu adımı atlayıp daha sonra halledebilirsiniz.",
     "domainOptionBuyTitle": "Yeni bir alan adı satın alın",
     "domainOptionBuyDesc": "SmarterBloggers'tan ayrılmadan bir alan adı arayın ve satın alın. Kripto para ile ödeme yapın, otomatik olarak kaydedilsin.",
     "domainOptionConnectTitle": "Sahip olduğum bir alan adını bağla",
@@ -2671,7 +2671,7 @@
         "cta": "Doğrulamayı başlat"
       },
       "pending": {
-        "title": "Doğrulama devam ediyor",
+        "title": "Doğrulama işlemi devam ediyor",
         "description": "Kimlik doğrulama işleminiz inceleniyor. Bu işlem genellikle sadece birkaç dakika sürer — onaylanır onaylanmaz ortaklık bağlantınız otomatik olarak etkinleştirilecektir.",
         "cta": "Doğrulama durumunu kontrol et"
       },
@@ -2700,10 +2700,11 @@
     },
     "yearsRemaining": "{count, plural, =0 {No prepaid years remaining} one {# prepaid year remaining} other {# prepaid years remaining}}",
     "resumeVerification": "Özgeçmiş doğrulama",
-    "reverifyExplain": "Ön ödemeli olarak kalan yıllarınız olduğu için yeniden doğrulama işlemi için ek bir ücret ödemeniz gerekmez — sadece kimlik doğrulama işlemini tekrar yapmanız yeterli olacaktır.",
+    "reverifyExplain": "Ön ödemeli olarak kalan yıllarınız olduğu için yeniden doğrulama işlemi için ek bir ücret ödenmez — sadece kimlik doğrulama işlemini tekrar yapmanız gerekecektir.",
     "reverifyCta": "Kimliğimi yeniden doğrulayın",
     "purchaseTitle": "Doğrulama sürenizi seçin",
     "durationLabel": "Süre",
+    "customDurationLabel": "Ya da istediğiniz yıl sayısını girin:",
     "yearsCount": "{count, plural, one {# year} other {# years}}",
     "totalLabel": "Toplam",
     "payCta": "{amount} dolar ödeyin ve doğrulayın",
@@ -2766,13 +2767,13 @@
     "howItWorksTitle": "Nasıl çalışır?",
     "howItWorksStep1": "İlanınızı gönderin ve kripto para (USDT) ile güvenli bir şekilde ödeme yapın.",
     "howItWorksStep2": "Ekibimiz, reklamınızı ve hedef bağlantınızı güvenlik açısından inceler.",
-    "howItWorksStep3": "Onaylandıktan sonra, reklamınız SmarterBloggers ana sayfasında yayınlanır.",
+    "howItWorksStep3": "Onaylandıktan sonra, reklamınız SmarterBloggers ana sayfasında yayınlanmaya başlar.",
     "howItWorksStep4": "Bu kontrol panelinden gösterim, tıklama ve tıklama oranını (CTR) gerçek zamanlı olarak takip edin.",
     "sponsoredLabel": "Sponsorlu",
     "openButton": "Aç",
     "targetCountries": "Hedef ülkeler (isteğe bağlı)",
     "targetCountriesHint": "Reklamınızı tüm ziyaretçilere göstermek için bu alanı boş bırakın. Reklamınızı yalnızca belirli ülkelerdeki ziyaretçilere göstermek için bir veya daha fazla ülke seçin.",
-    "targetCountriesSearch": "Bir ülkeyi ara…",
+    "targetCountriesSearch": "Bir ülke arayın…",
     "targetCountriesNoResults": "Eşleşen ülke bulunamadı."
   },
   "tenantAccounting": {
@@ -2913,7 +2914,7 @@
     "step3Title": "\"Doğrula\" düğmesine tıklayın",
     "step3Desc": "DNS kayıtlarınız yayıldıktan sonra (Cloudflare'de genellikle birkaç dakika, diğer platformlarda ise en fazla 48 saat sürer), alan adınızın yanındaki yenileme düğmesine tıklayın.",
     "cloudflareTip": "Cloudflare kullanıyor musunuz? CNAME kaydınızda turuncu bulut proxy'sini etkinleştirin — böylece SSL otomatik olarak yönetilir, ek bir yapılandırma gerekmez.",
-    "hostingerTip": "Hostinger mi kullanıyorsunuz? Hostinger, kök (@) dizininde CNAME kaydı oluşturulmasına izin vermez. Bunun yerine, kök alan adınızdan www’ye bir yönlendirme ekleyin; ardından yalnızca “www” için CNAME kaydını ve TXT doğrulama kaydını ekleyin.",
+    "hostingerTip": "Hostinger mi kullanıyorsunuz? Hostinger, kök (@) dizininde CNAME kaydı oluşturulmasına izin vermez. Bunun yerine, kök alan adınızdan www'ye bir yönlendirme ekleyin, ardından yalnızca \"www\" için CNAME kaydını ve TXT doğrulama kaydını ekleyin.",
     "recordCname": "Kayıt 1 — CNAME kök etki alanı",
     "recordCnameWww": "Kayıt 2 — www alt etki alanı için CNAME",
     "recordTxt": "Kayıt 3 — TXT (doğrulama)",
@@ -3077,7 +3078,7 @@
         "activeBlogs": "Aktif Bloglar",
         "totalUsers": "Kullanıcılar",
         "revenue": "Toplam Gelir",
-        "paidPlans": "Ücretli Paketler",
+        "paidPlans": "Ücretli Planlar",
         "conversion": "Dönüşüm Oranı",
         "new24h": "Yeni (24 saat)",
         "business": "İş Planı"
@@ -3100,7 +3101,9 @@
         "joined": "Katıldı",
         "lastLogin": "Son oturum açma tarihi",
         "twoFA": "2FA",
-        "actions": "Eylemler"
+        "actions": "Eylemler",
+        "kyc": "KYC durumu",
+        "kycYearsRemaining": "KYC için kalan süre (yıl)"
       },
       "blogsSection": "Bloglar ({count})",
       "noBlogs": "Bu hesap henüz herhangi bir blog oluşturmamış.",
@@ -3271,7 +3274,7 @@
       "inactive": "Etkin değil",
       "deactivate": "Devre dışı bırak",
       "activate": "Etkinleştir",
-      "managedByCode": "Bu temalar kod tabanında tanımlanmıştır — kullanıcıların görmemesi için devre dışı bırakın.",
+      "managedByCode": "Bu temalar kod tabanında tanımlanmıştır — kullanıcılar tarafından görülmemesi için devre dışı bırakın.",
       "uploadBtn": "Şablonu yükle",
       "uploadTitle": "Özel bir şablon (.zip) yükleyin",
       "uploadSuccess": "\"{name}\" şablonu başarıyla eklendi",
@@ -3351,7 +3354,7 @@
       "analyticsFull": "Tam",
       "analyticsFullApi": "Full+API",
       "noPlansFound": "Herhangi bir plan bulunamadı",
-      "noPlansFoundDesc": "Varsayılan planları yüklemek için 019 numaralı geçiş işlemini çalıştırın veya manuel olarak bir plan oluşturun.",
+      "noPlansFoundDesc": "Varsayılan planları yüklemek için 019 numaralı geçiş işlemini çalıştırın ya da manuel olarak bir plan oluşturun.",
       "subscribersLabel": "Aboneler"
     },
     "payments": {
@@ -3528,7 +3531,7 @@
       "title": "Doğrudan Gözetim",
       "breadcrumb": "Altyapı",
       "subtitle": "{online} aktif kullanıcılar · son 15 dakika",
-      "autoRefresh": "Her 15 saniyede bir otomatik yenileme",
+      "autoRefresh": "Her 15 saniyede bir otomatik olarak yenilenir",
       "lastUpdated": "{time}'de güncellendi",
       "stats": {
         "online": "Şu anda çevrimiçi",
@@ -3790,7 +3793,7 @@
       "classes": {
         "1": "1. Sınıf — Varlıklar",
         "2": "2. Sınıf — Yükümlülükler",
-        "3": "3. Sınıf — Hisse Senedi",
+        "3": "3. Sınıf — Hisse Senetleri",
         "4": "4. Sınıf — Gelir",
         "5": "5. Sınıf — Giderler"
       },
@@ -3986,7 +3989,7 @@
     "brandNameLabel": "Blog / marka adı",
     "brandNamePlaceholder": "Örneğin: TechFlow, Easy Cooking, Zero Travel…",
     "nicheLabel": "Blog konusu / niş",
-    "nichePlaceholder": "Örneğin: Startup’lar için pazarlama ipuçları, Hızlı ve kolay vejetaryen tarifler, Güneydoğu Asya’da sırt çantasıyla seyahat…",
+    "nichePlaceholder": "Örneğin: Startup’lar için pazarlama ipuçları, Hızlı vejetaryen tarifler, Güneydoğu Asya’da sırt çantasıyla seyahat…",
     "audienceLabel": "Hedef kitle",
     "audiencePlaceholder": "Örneğin: Yeni başlayan yazılımcılar, Meşgul anneler, 25-35 yaş arası bütçeye uygun seyahat edenler…",
     "toneLabel": "Yazım üslubu",

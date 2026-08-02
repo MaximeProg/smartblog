@@ -1145,7 +1145,7 @@
     },
     "limit": {
       "title": "Bloggrænsen er nået",
-      "desc": "Med din »{plan}«-abonnement kan du oprette {max}. Opgrader til Business for at oprette flere.",
+      "desc": "Med din »{plan}«-plan kan du oprette {max}. Opgrader til Business for at oprette flere.",
       "viewPlans": "Se tegninger",
       "back": "Tilbage"
     },
@@ -1938,7 +1938,7 @@
     "fieldOgDesc": "OG-beskrivelse",
     "fieldOgImage": "OG-billede",
     "fieldRobots": "Robotter",
-    "fieldCanonical": "Kanonisk URL",
+    "fieldCanonical": "Canonisk URL",
     "fieldMinHeadings": "Minimalt antal overskrifter",
     "fieldMinHeadingsHint": "Indholdsfortegnelsen vises kun, hvis artiklen har mindst N overskrifter.",
     "fieldArticleCount": "Antal artikler",
@@ -2178,7 +2178,7 @@
     "adsClicks": "Klik",
     "adsCTR": "CTR",
     "adsCreate": "Indsend annonce",
-    "adsCreateSuccess": "Annonce indsendt til gennemgang!",
+    "adsCreateSuccess": "Annoncen er indsendt til gennemgang!",
     "adsCreateError": "Der opstod en fejl ved indsendelse af annoncen.",
     "adsNoneTitle": "Der er endnu ingen annoncer",
     "adsNoneDesc": "Opret din første annoncekampagne for at tjene penge på din blog.",
@@ -2369,7 +2369,7 @@
     },
     "step3": {
       "title": "Tilpas din blog",
-      "subtitle": "Disse indstillinger fastlægger din blogs visuelle udseende. Alt kan ændres senere.",
+      "subtitle": "Disse indstillinger bestemmer din blogs visuelle udseende. Alt kan ændres senere.",
       "colorLabel": "Primærfarve",
       "fontLabel": "Skrifttypefamilie",
       "previewLabel": "Forhåndsvisning",
@@ -2597,7 +2597,7 @@
     "subtitle": "Tjen provision ved at henvise nye blogs til SmarterBloggers",
     "yourCode": "Din henvisningskode",
     "yourLink": "Dit henvisningslink",
-    "copyLink": "Kopier link",
+    "copyLink": "Kopier linket",
     "copied": "Kopieret!",
     "balance": "Tilgængelig saldo",
     "threshold": "Minimumsudbetaling",
@@ -2634,7 +2634,7 @@
     "howItWorks": "Sådan fungerer det",
     "step1": "Del dit unikke henvisningslink med andre bloggere",
     "step2": "Når de tegner et abonnement, tjener du 10 % af deres abonnementsgebyr",
-    "step3": "Provisionerne akkumuleres, indtil du når minimumsgrænsen på 50 dollar",
+    "step3": "Provisionerne løber op, indtil du når minimumsgrænsen på 50 dollar",
     "step4": "Anmod om en udbetaling — der opkræves et gebyr på 20 $ pr. udbetaling",
     "cashoutRequested": "Anmodning om udbetaling indsendt!",
     "error": "Fejl",
@@ -2688,7 +2688,7 @@
     }
   },
   "kyc": {
-    "pageTitle": "Identitetsbekræftelse (KYC)",
+    "pageTitle": "Identitetsverifikation (KYC)",
     "pageSubtitle": "Dette skal udfyldes én gang, før du kan få adgang til partnerprogrammet og modtage provision.",
     "submitError": "Der opstod en fejl. Prøv venligst igen.",
     "statusLabel": {
@@ -2704,6 +2704,7 @@
     "reverifyCta": "Bekræft min identitet igen",
     "purchaseTitle": "Vælg varigheden af din verifikation",
     "durationLabel": "Varighed",
+    "customDurationLabel": "Eller indtast et eget antal år:",
     "yearsCount": "{count, plural, one {# year} other {# years}}",
     "totalLabel": "I alt",
     "payCta": "Betal {amount}er og bekræft",
@@ -2765,7 +2766,7 @@
     "impressionsUnit": "visninger",
     "howItWorksTitle": "Sådan fungerer det",
     "howItWorksStep1": "Indsend din annonce og betal sikkert med kryptovaluta (USDT).",
-    "howItWorksStep2": "Vores team gennemgår din annonce og linket til destinationssiden for at sikre, at de er sikre.",
+    "howItWorksStep2": "Vores team gennemgår din annonce og destinationslinket for at sikre, at de overholder sikkerhedskravene.",
     "howItWorksStep3": "Når din annonce er godkendt, bliver den offentliggjort på SmarterBloggers’ forside.",
     "howItWorksStep4": "Følg visninger, klik og CTR i realtid fra dette kontrolpanel.",
     "sponsoredLabel": "Sponsoreret",
@@ -2912,7 +2913,7 @@
     "step2TxtNote": "TXT-postens værdi er unik for hvert domæne — kopier den fra domænekortet, der vises nedenfor.",
     "step3Title": "Klik på »Bekræft«",
     "step3Desc": "Når dine DNS-poster er blevet opdateret (normalt tager det et par minutter på Cloudflare, op til 48 timer andre steder), skal du klikke på opdateringsknappen ved siden af dit domæne.",
-    "cloudflareTip": "Bruger du Cloudflare? Aktiver den orange cloud-proxy i din CNAME-post — så håndteres SSL automatisk, uden at der er behov for yderligere konfiguration.",
+    "cloudflareTip": "Bruger du Cloudflare? Aktiver den orange cloud-proxy i din CNAME-post — så håndteres SSL automatisk, uden at der kræves yderligere konfiguration.",
     "hostingerTip": "Bruger du Hostinger? Hostinger tillader ikke en CNAME-post på rodniveau (@). I stedet skal du oprette en omdirigering fra dit roddomæne til »www« og derefter kun tilføje CNAME-posten for »www« samt TXT-verifikationsposten.",
     "recordCname": "Post 1 — CNAME-roddomæne",
     "recordCnameWww": "Post 2 — CNAME-post for www-underdomænet",
@@ -3100,7 +3101,9 @@
         "joined": "Tilmeldt",
         "lastLogin": "Sidste login",
         "twoFA": "2FA",
-        "actions": "Handlinger"
+        "actions": "Handlinger",
+        "kyc": "KYC-status",
+        "kycYearsRemaining": "Antal år tilbage til KYC"
       },
       "blogsSection": "Blogs ({count})",
       "noBlogs": "Denne konto har endnu ikke oprettet nogen blog.",
@@ -3351,7 +3354,7 @@
       "analyticsFull": "Fuld",
       "analyticsFullApi": "Full+API",
       "noPlansFound": "Der blev ikke fundet nogen planer",
-      "noPlansFoundDesc": "Kør migrering 019 for at oprette standardplaner, eller opret en manuelt.",
+      "noPlansFoundDesc": "Kør migrering 019 for at indlæse standardplaner, eller opret en manuelt.",
       "subscribersLabel": "Abonnenter"
     },
     "payments": {
@@ -3416,10 +3419,10 @@
         "platformName": "Platformens navn",
         "platformNameHint": "Vises på offentlige sider og i e-mails",
         "supportEmail": "Support-e-mail",
-        "domainMarkup": "Fortjeneste ved køb af domæner (%)",
+        "domainMarkup": "Fortjeneste ved domænekøb (%)",
         "domainMarkupHint": "Tillægges oven i registratorens pris ved hvert domænekøb og hver fornyelse — 0 betyder videresalg til indkøbspris",
         "paymentTolerance": "Tolerance for kryptobetalinger ($)",
-        "paymentToleranceHint": "En betaling, der modtages inden for denne margen i forhold til det forventede beløb (netværksgebyrer, kursafvigelser), betragtes stadig som fuldført",
+        "paymentToleranceHint": "En betaling, der modtages inden for denne margen i forhold til det forventede beløb (netværksgebyrer, kursafvigelser), betragtes stadig som gennemført",
         "kycPricePerYear": "Pris for KYC-verifikation ($/år)",
         "kycPricePerYearHint": "Den pris, der opkræves hos brugerne pr. år for identitetsverifikation, som er påkrævet, før man får adgang til partnerprogrammet"
       },
@@ -3451,7 +3454,7 @@
         "publicKey": "Offentlig nøgle",
         "publicKeyHint": "Anvendes på klientsiden til JS-integrationer",
         "secretKey": "Hemmelig nøgle",
-        "secretKeyHint": "Udsæt aldrig klient-siden",
+        "secretKeyHint": "Udsæt aldrig klientsiden",
         "stripeKey": "Stribe-nøgle",
         "stripeKeyHint": "Stripe-hemmelig nøgle til betalinger",
         "openaiKey": "OpenAI-nøgle",
@@ -3824,7 +3827,7 @@
         "account": "Konto",
         "label": "Etiket",
         "total": "I alt",
-        "ref": "Ref."
+        "ref": "Ref"
       },
       "form": {
         "code": "Kode",
@@ -3849,7 +3852,7 @@
       "tabExternal": "Eksternt",
       "searchPlaceholder": "Søg i domænet…",
       "noDomainsFound": "Der blev ikke fundet nogen domæner.",
-      "registrationFailedNote": "Registreringen mislykkedes — se ordredetaljer nedenfor.",
+      "registrationFailedNote": "Registreringen mislykkedes — se ordreoplysningerne nedenfor.",
       "ordersLabel": "Bestillinger",
       "activityLogLabel": "Aktivitetslog",
       "yearsUnit": "år",
@@ -3894,7 +3897,7 @@
       "saveErrorToast": "Fejl",
       "fillPageWithAiTitle": "Udfyld denne side med AI",
       "topicLabel": "Sidens emne / beskrivelse",
-      "topicPlaceholder": "F.eks.: »Om os«-siden for en SaaS-blogplatform med flere brugere, der henvender sig til indholdsskabere.",
+      "topicPlaceholder": "F.eks.: »Om os«-siden for en SaaS-blogplatform med flere brugere, der er rettet mod indholdsskabere.",
       "toneLabel": "Tone",
       "toneProfessional": "Professionel",
       "toneFriendly": "Venlig",
@@ -3950,7 +3953,7 @@
     "currencyPickerSearch": "Søg efter en valuta eller et netværk…",
     "currencyPickerNoResults": "Der findes ingen tilsvarende valuta.",
     "minAmountChecking": "Kontrollerer minimumsbeløbet for denne valuta…",
-    "minAmountTooLow": "Minimumsbeløb for »{currency}«: {amount} — vælg en anden valuta eller forhøj beløbet."
+    "minAmountTooLow": "Minimumsbeløb for »{currency}«: {amount} — vælg en anden valuta, eller forhøj beløbet."
   },
   "paymentCenter": {
     "title": "Betalinger",

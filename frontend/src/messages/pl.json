@@ -90,7 +90,7 @@
       "successDesc": "Jeśli istnieje konto pod adresem {email}, wkrótce otrzymasz link do zresetowania hasła. Sprawdź również folder ze spamem.",
       "errors": {
         "userNotFound": "Nie znaleziono konta o tym adresie e-mail.",
-        "generic": "Nie udało się wysłać linku do resetowania. Spróbuj ponownie."
+        "generic": "Nie udało się wysłać linku do resetowania hasła. Spróbuj ponownie."
       }
     },
     "resetPassword": {
@@ -222,7 +222,7 @@
       "published": "Opublikowano",
       "scheduled": "Zaplanowane",
       "archived": "Archiwum",
-      "in_review": "Podsumowując",
+      "in_review": "Podsumowanie",
       "approved": "Zatwierdzono",
       "rejected": "Odrzucono",
       "unpublished": "Niepublikowane"
@@ -919,9 +919,9 @@
       "multiTenantTitle": "Zarządzanie wieloma blogami",
       "multiTenantDesc": "Zarządzaj wieloma niezależnymi blogami z poziomu jednego panelu administracyjnego. Każdy z nich ma własny zespół, domenę i ustawienia.",
       "teamTitle": "Współpraca zespołowa",
-      "teamDesc": "Zaproś redaktorów, autorów i czytelników. Określ, kto może pisać, recenzować i publikować.",
+      "teamDesc": "Zaproś redaktorów, autorów i czytelników. Określ, kto może tworzyć treści, recenzować je i publikować.",
       "analyticsTitle": "Wbudowane narzędzia analityczne",
-      "analyticsDesc": "Śledź liczbę wyświetleń stron, najpopularniejsze artykuły oraz wzrost liczby subskrybentów dzięki szczegółowym raportom w czasie rzeczywistym.",
+      "analyticsDesc": "Śledź liczbę wyświetleń stron, najpopularniejsze artykuły oraz wzrost liczby subskrybentów dzięki szczegółowym raportom generowanym w czasie rzeczywistym.",
       "seoTitle": "Redaktor z naciskiem na SEO",
       "seoDesc": "Wbudowane funkcje: sugestie SEO oparte na sztucznej inteligencji, automatyczne mapy witryn oraz dane strukturalne.",
       "newsletterTitle": "Wbudowany biuletyn informacyjny",
@@ -1435,7 +1435,7 @@
     "editorCtaLabelPrompt": "Tekst przycisku",
     "editorCtaLabelDefault": "Czytaj dalej →",
     "editorCtaUrlPrompt": "Przycisk URL",
-    "editorBold": "Pogrubione",
+    "editorBold": "Pogrubiona czcionka",
     "editorItalic": "Kursywa",
     "editorUnderline": "Podkreślenie",
     "editorH2": "Nagłówek 2",
@@ -1624,7 +1624,7 @@
     "newPost": "Nowy wpis",
     "account": "Konto",
     "postContent": "Treść",
-    "postContentPlaceholder": "Napisz swój wpis…",
+    "postContentPlaceholder": "Napisz swój post…",
     "scheduleAt": "Harmonogram (opcjonalny)",
     "schedule": "Harmonogram",
     "postNow": "Opublikuj teraz",
@@ -1640,7 +1640,7 @@
     "shareButtons": "Przyciski udostępniania",
     "shareButtonsDesc": "Wybierz, które platformy mają być wyświetlane przy każdym artykule.",
     "profiles": "Profile w mediach społecznościowych",
-    "profilesDesc": "Wprowadź adresy URL swoich profili, aby wyświetlić linki do serwisów społecznościowych na swoim blogu.",
+    "profilesDesc": "Wprowadź adresy URL swoich profili, aby wyświetlić linki do mediów społecznościowych na swoim blogu.",
     "autoShare": "Automatyczna publikacja",
     "autoShareDesc": "Automatycznie publikuj nowe artykuły na połączonych kontach w mediach społecznościowych.",
     "autoShareLabel": "Włącz automatyczną publikację",
@@ -1649,7 +1649,7 @@
     "status_scheduled": "Zaplanowane",
     "status_published": "Opublikowano",
     "status_failed": "Nie powiodło się",
-    "status_canceled": "Odwołane",
+    "status_canceled": "Odwołano",
     "unknownPlatform": "Nieznane",
     "connectSuccess": "{platform} Połączenie nawiązano pomyślnie!",
     "oauthError": "Błąd OAuth: {error}"
@@ -1698,7 +1698,7 @@
           "1 autor",
           "1 GB pamięci",
           "poddomena smarterbloggers.com",
-          "W zestawie znajduje się szablon firmowy"
+          "W zestawie znajduje się szablon korporacyjny"
         ]
       },
       "starter": {
@@ -1806,7 +1806,7 @@
     "blogCardSubscribers": "subskrybenci",
     "blogCardAuthors": "autorzy",
     "loadingBlogs": "Ładowanie Twoich blogów…",
-    "manageCount": "Prowadzisz bloga „{count}”",
+    "manageCount": "Prowadzisz blog „{count}”",
     "manageCountPlural": "Zarządzasz blogami serwisu {count}",
     "startNow": "Załóż swojego pierwszego bloga, aby rozpocząć.",
     "noBlogsTitle": "Jeszcze nie ma żadnych wpisów na blogu",
@@ -2078,7 +2078,7 @@
     "fieldMetaDescDefault": "Domyślny opis meta",
     "fieldMetaDescDefaultHint": "Zalecana długość: 160 znaków. Wyświetla się pod tytułem w Google.",
     "seoCharCount": "{n} / 160 znaków",
-    "fieldOgImageHint": "Wyświetlane podczas udostępniania na Twitterze, LinkedInie i Facebooku. Zalecany rozmiar to 1200×630 pikseli.",
+    "fieldOgImageHint": "Wyświetlane podczas udostępniania na Twitterze, LinkedIn i Facebooku. Zalecany rozmiar to 1200×630 pikseli.",
     "seoSitemap": "Mapa witryny w formacie XML",
     "seoRssFeed": "Kanał RSS",
     "seoView": "Wyświetl",
@@ -2129,7 +2129,7 @@
     "articleUntitled": "Bez tytułu",
     "articleTitlePlaceholder": "Tytuł artykułu…",
     "articleTitleLabel": "Tytuł artykułu",
-    "articleTitleHint": "Wymagane — wpisz co najmniej 2 znaki, aby móc zapisać ten artykuł.",
+    "articleTitleHint": "Wymagane — wprowadź co najmniej 2 znaki, aby móc zapisać ten artykuł.",
     "titleRequiredToast": "Przed zapisaniem proszę podać tytuł (co najmniej 2 znaki).",
     "articleExcerptPlaceholder": "Krótkie streszczenie wyświetlane w wykazach i wyszukiwarkach…",
     "articleContentPlaceholder": "Zacznij pisać swój artykuł…",
@@ -2349,7 +2349,7 @@
       "title": "Podstawowe informacje",
       "subtitle": "Nadaj swojemu blogowi nazwę, adres URL i kategorię.",
       "nameLabel": "Nazwa bloga",
-      "namePlaceholder": "Mój blog techniczny",
+      "namePlaceholder": "Mój blog o technologii",
       "slugLabel": "Poddomena",
       "slugPlaceholder": "mój-blog-techniczny",
       "slugAvailable": "Dostępne",
@@ -2424,13 +2424,13 @@
     "domainOptionBuyTitle": "Kup nową domenę",
     "domainOptionBuyDesc": "Wyszukaj i kup domenę bez opuszczania serwisu SmarterBloggers. Płatność kryptowalutą, automatyczna rejestracja.",
     "domainOptionConnectTitle": "Podłącz domenę, której jestem właścicielem",
-    "domainOptionConnectDesc": "Masz już domenę zarejestrowaną gdzie indziej? Skonfiguruj ją bezpłatnie tak, by kierowała na Twojego bloga — wystarczy szybka zmiana ustawień DNS.",
+    "domainOptionConnectDesc": "Masz już domenę zarejestrowaną gdzie indziej? Skonfiguruj ją bezpłatnie tak, by kierowała na Twojego bloga — wystarczy szybka konfiguracja DNS.",
     "domainOptionSkipTitle": "Pomiń na razie",
     "domainOptionSkipDesc": "Przejdź od razu do swojego studia. Twój blog pozostanie prywatny, dopóki nie dodasz później domeny.",
     "backToChoices": "Powrót",
     "domainConnectLabel": "Twoja domena",
     "domainConnectButton": "Połącz się",
-    "domainConnectHint": "Na stronie „Domeny” znajdziesz instrukcje dotyczące DNS, które pozwolą Ci zakończyć proces weryfikacji.",
+    "domainConnectHint": "Na stronie „Domeny” znajdziesz instrukcje dotyczące DNS, które pomogą Ci zakończyć proces weryfikacji.",
     "domainSearchPlaceholder": "np. myblog",
     "domainSearchButton": "Wyszukiwanie",
     "domainSearchEmpty": "Brak wyników — spróbuj wpisać inną nazwę.",
@@ -2477,11 +2477,11 @@
       },
       "creative": {
         "tagline": "Mroczny · Wizualny · Wciągający",
-        "description": "Styl Cargo Collective. Tryb ciemny z pełnym wyświetlaniem, siatka obrazów typu „masonry”, układ stawiający na pierwszym miejscu elementy wizualne."
+        "description": "Styl Cargo Collective. Tryb ciemny z pełnym wyświetlaniem, siatka obrazów typu „masonry”, układ z priorytetem elementów wizualnych."
       },
       "luminary": {
         "tagline": "Prestiż · Serif · Literacki",
-        "description": "Styl magazynów „The New Yorker” i „GQ”. Kremowo-kość słoniowa, złote akcenty, inicjały, ekskluzywny wygląd publikacji."
+        "description": "Styl magazynów „The New Yorker” i „GQ”. Kremowo-kość słoniowa, złote akcenty, inicjały, ekskluzywny styl redakcyjny."
       }
     }
   },
@@ -2499,7 +2499,7 @@
     "continentPlaceholder": "Wybierz kontynent",
     "genderLabel": "Płeć",
     "genderPlaceholder": "Wybierz płeć",
-    "genderLocked": "Po ustaleniu płci nie można jej zmienić.",
+    "genderLocked": "Po ustaleniu płci nie można jej już zmienić.",
     "saving": "Zapisywanie...",
     "saveProfile": "Zapisz",
     "changePassword": "Zmień hasło",
@@ -2545,7 +2545,7 @@
     "walletAddressPlaceholder": "Wprowadź adres wybranej sieci",
     "walletExtraIdLabel": "Notatka / Etykieta",
     "walletExtraIdPlaceholder": "Wymagane dla tej sieci",
-    "walletExtraIdHint": "Niektóre sieci (np. XRP, EOS) wymagają podania tej dodatkowej notatki/tagu wraz z adresem — bez niej środki wysłane do Ciebie mogą zostać utracone.",
+    "walletExtraIdHint": "Niektóre sieci (np. XRP, EOS) wymagają podania tego dodatkowego memu/tagu wraz z adresem — bez niego środki wysłane do Ciebie mogą zostać utracone.",
     "walletTotpLabel": "Kod z aplikacji uwierzytelniającej (2FA)",
     "walletTotpPlaceholder": "000 000",
     "walletSaveButton": "Zapisz portfel",
@@ -2585,7 +2585,7 @@
     "pushDisabled": "Powiadomienia push są wyłączone.",
     "pushDisableError": "Wystąpił błąd podczas wyłączania powiadomień push.",
     "pushDisableButton": "Wyłącz powiadomienia push",
-    "pushBlockedByBrowser": "Operacja została zablokowana przez przeglądarkę",
+    "pushBlockedByBrowser": "Operacja zablokowana przez przeglądarkę",
     "pushEnableButton": "Włącz powiadomienia push",
     "justNow": "właśnie przed chwilą",
     "minutesAgo": "{m} m temu",
@@ -2682,7 +2682,7 @@
       },
       "rejected": {
         "title": "Weryfikacja nie powiodła się",
-        "description": "Twoja ostatnia próba weryfikacji tożsamości nie została zatwierdzona. Możesz rozpocząć nową weryfikację, aby spróbować ponownie.",
+        "description": "Twoja ostatnia próba weryfikacji tożsamości nie została zatwierdzona. Możesz rozpocząć nową procedurę weryfikacji, aby spróbować ponownie.",
         "cta": "Spróbuj ponownie"
       }
     }
@@ -2704,6 +2704,7 @@
     "reverifyCta": "Ponownie zweryfikuj moją tożsamość",
     "purchaseTitle": "Wybierz okres ważności weryfikacji",
     "durationLabel": "Czas trwania",
+    "customDurationLabel": "Lub wprowadź własną liczbę lat:",
     "yearsCount": "{count, plural, one {# year} other {# years}}",
     "totalLabel": "Razem",
     "payCta": "Zapłać {amount}ów i zweryfikuj konto",
@@ -2728,7 +2729,7 @@
   },
   "advertiser": {
     "title": "Reklamuj się na SmarterBloggers",
-    "subtitle": "Umieść swoją reklamę bezpośrednio na stronie głównej SmarterBloggers — zostanie ona sprawdzona i opublikowana przez nasz zespół.",
+    "subtitle": "Umieść swoją reklamę bezpośrednio na stronie głównej serwisu SmarterBloggers — zostanie ona sprawdzona i opublikowana przez nasz zespół.",
     "newAdTitle": "Nowa reklama",
     "adTitle": "Nagłówek reklamy",
     "adTitlePlaceholder": "Odkryj najlepsze narzędzie do...",
@@ -2789,7 +2790,7 @@
     "amount": "Kwota",
     "status": "Status",
     "date": "Data",
-    "disclaimer": "Niniejszy przegląd przedstawia płatności przetworzone za pośrednictwem serwisu SmarterBloggers. Nie stanowi on pełnego sprawozdania finansowego.",
+    "disclaimer": "Niniejszy przegląd przedstawia płatności zrealizowane za pośrednictwem serwisu SmarterBloggers. Nie stanowi on pełnego sprawozdania finansowego.",
     "type_subscription": "Subskrypcja",
     "type_paid_article": "Artykuł płatny",
     "type_paid_newsletter": "Płatny biuletyn",
@@ -2880,7 +2881,7 @@
   },
   "trial": {
     "daysLeft": "{days} liczba dni pozostałych do końca okresu próbnego",
-    "lastDay": "Ostatni dzień okresu próbnego — wykup pełną wersję już dziś!",
+    "lastDay": "Ostatni dzień okresu próbnego — skorzystaj z oferty już dziś!",
     "expiredMessage": "Okres próbny dobiegł końca. Aby nadal korzystać ze wszystkich funkcji, należy wykupić pełną wersję.",
     "upgradeNow": "Zaktualizuj teraz",
     "viewPlans": "Zobacz plany"
@@ -2925,7 +2926,7 @@
     "searchButton": "Wyszukiwanie",
     "searchEmpty": "Brak wyników — spróbuj wpisać inną nazwę.",
     "priceFirstYear": "{price}a w pierwszym roku",
-    "priceRenewal": "{price}ów rocznie za przedłużenie",
+    "priceRenewal": "{price}a rocznie za przedłużenie",
     "premium": "Premium",
     "buyButton": "Kup",
     "taken": "Zrobione",
@@ -2977,7 +2978,7 @@
     "step1of3": "Krok 1 z 3 — Skanowanie",
     "step2of3": "Krok 2 z 3 — Sprawdź",
     "step3of3": "Krok 3 z 3 — Kody zapasowe",
-    "step1Desc": "Zeskanuj ten kod QR za pomocą aplikacji do uwierzytelniania (Google Authenticator, Authy itp.).",
+    "step1Desc": "Zeskanuj ten kod QR za pomocą aplikacji do uwierzytelniania (np. Google Authenticator, Authy itp.).",
     "step2Desc": "Wprowadź 6-cyfrowy kod wyświetlony w aplikacji do uwierzytelniania, aby potwierdzić konfigurację.",
     "codeLabel": "Kod uwierzytelniający",
     "nextButton": "Dalej",
@@ -3100,7 +3101,9 @@
         "joined": "Dołączył",
         "lastLogin": "Ostatnie logowanie",
         "twoFA": "2FA",
-        "actions": "Działania"
+        "actions": "Działania",
+        "kyc": "Status KYC",
+        "kycYearsRemaining": "Pozostałe lata obowiązywania procedury KYC"
       },
       "blogsSection": "Blogi ({count})",
       "noBlogs": "To konto nie utworzyło jeszcze żadnego wpisu na blogu.",
@@ -3351,7 +3354,7 @@
       "analyticsFull": "Pełna wersja",
       "analyticsFullApi": "Full+API",
       "noPlansFound": "Nie znaleziono żadnych planów",
-      "noPlansFoundDesc": "Uruchom migrację nr 019, aby załadować domyślne plany, lub utwórz je ręcznie.",
+      "noPlansFoundDesc": "Uruchom migrację nr 019, aby wstępnie wypełnić plany domyślne, lub utwórz je ręcznie.",
       "subscribersLabel": "Subskrybenci"
     },
     "payments": {
@@ -3419,7 +3422,7 @@
         "domainMarkup": "Marża przy zakupie domeny (%)",
         "domainMarkupHint": "Dodawane do ceny rejestratora przy każdym zakupie i przedłużeniu domeny — wartość 0 oznacza odsprzedaż po kosztach",
         "paymentTolerance": "Limit płatności kryptowalutowych ($)",
-        "paymentToleranceHint": "Płatność otrzymana w granicach tego przedziału w stosunku do oczekiwanej kwoty (opłaty sieciowe, wahania kursu) jest nadal uznawana za zrealizowaną",
+        "paymentToleranceHint": "Płatność otrzymana w ramach tego przedziału w stosunku do oczekiwanej kwoty (opłaty sieciowe, wahania kursu) jest nadal uznawana za zrealizowaną",
         "kycPricePerYear": "Cena weryfikacji KYC (USD/rok)",
         "kycPricePerYearHint": "Opłata pobierana od użytkowników za każdy rok weryfikacji tożsamości, wymaganej przed uzyskaniem dostępu do programu partnerskiego"
       },
@@ -3459,7 +3462,7 @@
         "webhookSecret": "Sekret webhooka",
         "webhookSecretHint": "Sekret dotyczący weryfikacji przychodzących webhooków",
         "regenerate": "Odnowić",
-        "warning": "Natychmiastowe wygenerowanie nowego klucza powoduje unieważnienie starego. Przed wygenerowaniem nowego klucza w środowisku produkcyjnym należy zaktualizować integracje."
+        "warning": "Natychmiastowe wygenerowanie nowego klucza powoduje unieważnienie starego. Przed wygenerowaniem nowego klucza w środowisku produkcyjnym zaktualizuj swoje integracje."
       },
       "integrations": {
         "configured": "Skonfigurowano",
@@ -3696,7 +3699,7 @@
       "youLabel": "Ty",
       "tenantLabel": "Najemca",
       "noMessages": "Jeszcze nie ma żadnych wiadomości",
-      "composerPlaceholder": "Wpisz swoją odpowiedź… (Enter, aby wysłać; Shift+Enter, aby rozpocząć nowy wiersz)",
+      "composerPlaceholder": "Wpisz swoją odpowiedź… (Enter, aby wysłać; Shift+Enter, aby przejść do nowego wiersza)",
       "replyTranslationNote": "Twoja odpowiedź zostanie automatycznie przetłumaczona na język użytkownika.",
       "ticketClosedMsg": "Ten zgłoszenie zostało zamknięte. Zmień status, aby udzielić odpowiedzi.",
       "replyError": "Nie udało się wysłać odpowiedzi",
@@ -3772,7 +3775,7 @@
       "tabAccounts": "Plan kont",
       "newAccount": "Nowe konto",
       "createAccount": "Załóż konto",
-      "approve": "Zatwierdź",
+      "approve": "Zatwierdzić",
       "reverse": "Odwrotny",
       "reverseTitle": "Utwórz zapis korygujący",
       "reverseDesc": "Ta operacja powoduje utworzenie wpisu lustrzanego (debet↔kredyt) o statusie „Oczekujące”.",
@@ -3986,7 +3989,7 @@
     "brandNameLabel": "Blog / nazwa marki",
     "brandNamePlaceholder": "np. TechFlow, Easy Cooking, Zero Travel…",
     "nicheLabel": "Temat bloga / nisza",
-    "nichePlaceholder": "np. Porady marketingowe dla start-upów, Szybkie przepisy wegetariańskie, Podróżowanie z plecakiem po Azji Południowo-Wschodniej…",
+    "nichePlaceholder": "np. Porady marketingowe dla start-upów, Szybkie przepisy na dania wegetariańskie, Podróżowanie z plecakiem po Azji Południowo-Wschodniej…",
     "audienceLabel": "Grupa docelowa",
     "audiencePlaceholder": "np. początkujący programiści, zapracowane mamy, podróżnicy z ograniczonym budżetem w wieku 25–35 lat…",
     "toneLabel": "Styl pisania",
@@ -4005,7 +4008,7 @@
     "colorSlate": "Łupek",
     "generateButton": "Utwórz mój blog",
     "generatingButton": "Tworzenie…",
-    "requiredFieldsNote": "* Pola obowiązkowe należy wypełnić.",
+    "requiredFieldsNote": "* Pola oznaczone jako obowiązkowe należy wypełnić.",
     "aiCreditsNote": "Ta czynność wymaga wykorzystania kredytów AI. Wygenerowanie trwa około 15–30 sekund.",
     "successToast": "Blog został pomyślnie skonfigurowany!",
     "planRequiredError": "Wymagany plan",

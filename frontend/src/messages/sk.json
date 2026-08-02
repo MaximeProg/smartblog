@@ -119,7 +119,7 @@
       "successDesc": "Vaša e-mailová adresa bola potvrdená. Teraz sa môžete prihlásiť do svojho účtu.",
       "backToLogin": "Prejsť na prihlásenie",
       "errors": {
-        "expiredCode": "Platnosť tohto overovacieho odkazu vypršala. Požiadajte o nový odkaz na stránke prihlásenia.",
+        "expiredCode": "Platnosť tohto overovacieho odkazu vypršala. Nový odkaz si prosím vyžiadajte na prihlasovacej stránke.",
         "invalidCode": "Tento overovací odkaz je neplatný alebo už bol použitý."
       }
     }
@@ -160,7 +160,7 @@
       "stepTheme": "Vyberte si tému",
       "nextStep": "Vyberte si tému",
       "backStep": "Späť",
-      "createTitle": "Vytvoriť nový blog",
+      "createTitle": "Vytvorte nový blog",
       "createDesc": "Pomenujte svoj blog a vyberte si jeho adresu.",
       "themeTitle": "Vyberte si tému",
       "themeDesc": "Verejný vzhľad vášho blogu. Pred vykonaním zmien si ho môžete prezrieť v náhľade.",
@@ -311,7 +311,7 @@
       "dynamic": "Dynamický"
     },
     "actions": {
-      "edit": "Upraviť v nástroji Site Builder",
+      "edit": "Upraviť v nástroji na tvorbu webových stránok",
       "publish": "Zverejniť",
       "unpublish": "Zrušiť zverejnenie",
       "makePrivate": "Nastaviť ako súkromné",
@@ -331,7 +331,7 @@
     "deleteDesc": "Túto akciu nie je možné vrátiť späť. Stránka a celý jej obsah budú natrvalo odstránené.",
     "confirmDelete": "Odstrániť",
     "cancel": "Zrušiť",
-    "systemWarning": "Toto je systémová stránka, ktorú nie je možné odstrániť."
+    "systemWarning": "Toto je systémová stránka, ktorú nie je možné vymazať."
   },
   "editor": {
     "titlePlaceholder": "Názov článku...",
@@ -637,7 +637,7 @@
     "subscribeDesc": "Nechajte si zasielať nové články priamo do vašej e-mailovej schránky",
     "emailPlaceholder": "Zadajte svoju e-mailovú adresu",
     "subscribeButton": "Prihlásiť sa k odberu",
-    "subscribeSuccess": "Ste prihlásený na odber! Skontrolujte si doručenú poštu.",
+    "subscribeSuccess": "Ste prihlásení k odberu! Skontrolujte si doručenú poštu.",
     "noArticles": "Zatiaľ neboli uverejnené žiadne články",
     "noArticlesDesc": "Sledujte nás, čoskoro prinesieme nový obsah",
     "backToBlog": "Späť na blog",
@@ -862,10 +862,10 @@
     "cityPlaceholder": "napr. Paríž, New York, Lagos…",
     "preferredCurrencySectionTitle": "Preferovaná mena",
     "currencyLabel": "Mena",
-    "currencyHint": "Slúži na oznámenie vášho rozpočtu. Dnes sa neuskutoční žiadna platba.",
+    "currencyHint": "Slúži na oznámenie vášho rozpočtu. Dnes sa neuskutočňuje žiadna platba.",
     "totalBudgetLabel": "Celkový rozpočet",
     "totalBudgetHint": "Toto je suma, ktorú zaplatíte za zobrazenie vašej reklamy.",
-    "paymentSubtitle": "Vaše reklamné miesto sa bezpečne platí prostredníctvom služby NowPayments – kryptomenou alebo kartou.",
+    "paymentSubtitle": "Vaše reklamné miesto sa bezpečne platí prostredníctvom služby NowPayments – kryptomenou alebo platobnou kartou.",
     "totalToPayLabel": "Celková suma k zaplateniu",
     "missingBudgetWarning": "Vráťte sa, prosím, späť a zadajte svoj rozpočet, aby ste mohli pokračovať.",
     "whatHappensNextSectionTitle": "Čo bude ďalej",
@@ -875,7 +875,7 @@
     "paymentStep4Text": "Platba potvrdená → váš inzerát bol odoslaný majiteľovi blogu na posúdenie.",
     "paymentStep5Text": "Po schválení sa vaša reklama automaticky zverejní.",
     "securePaymentBold": "Bezpečná platba.",
-    "securePaymentDesc": "Váš reklamný priestor je rezervovaný až po potvrdení platby. NowPayments prijíma viac ako 150 kryptomien a hlavné platobné karty.",
+    "securePaymentDesc": "Váš reklamný priestor je rezervovaný až po potvrdení platby. NowPayments akceptuje viac ako 150 kryptomien a hlavné platobné karty.",
     "reviewSubmissionTitle": "Skontrolujte svoj príspevok",
     "reviewSubmissionSubtitlePrefix": "Pred odoslaním žiadosti o inzerát si všetko dôkladne skontrolujte",
     "reviewSubmissionSubtitleSuffix": ".",
@@ -926,12 +926,12 @@
       "seoDesc": "Návrhy na optimalizáciu pre vyhľadávače (SEO) založené na umelej inteligencii, automatické mapy webu a štruktúrované údaje sú súčasťou systému.",
       "newsletterTitle": "Vstavaný informačný bulletin",
       "newsletterDesc": "Rozširujte a spravujte svoj zoznam odberateľov bez použitia nástrojov tretích strán.",
-      "aiTitle": "Asistent pre písanie s využitím umelej inteligencie",
+      "aiTitle": "Asistent na písanie s využitím umelej inteligencie",
       "aiDesc": "Vytvárajte, vylepšujte, zhrňujte a prekladajte obsah pomocou integrovaných funkcií umelej inteligencie."
     },
     "pricing": {
       "title": "Jednoduché a prehľadné ceny",
-      "subtitle": "Začnite zadarmo. S rastom svojej firmy prejdite na vyššiu verziu.",
+      "subtitle": "Začnite zadarmo. Rozširujte služby podľa potreby.",
       "starterName": "Predjedlo",
       "starterPrice": "Zadarmo",
       "starterDesc": "Pre jednotlivcov, ktorí začínajú",
@@ -1252,7 +1252,7 @@
   "appearance": {
     "title": "Vzhľad",
     "save": "Uložiť",
-    "saved": "Vzhľad bol uložený!",
+    "saved": "Vzhľad uložený!",
     "saveError": "Chyba pri ukladaní vzhľadu.",
     "preview": "Náhľad",
     "livePreview": "Náhľad v reálnom čase",
@@ -1305,7 +1305,7 @@
       "minimal": "Prehľadné, zamerané na obsah",
       "magazine": "Moderný redakčný štýl",
       "business": "Profesionálne a prehľadné",
-      "news": "Rýchly formát spravodajstva s vysokou hustotou informácií",
+      "news": "Rýchly formát s hustým spravodajstvom",
       "tech": "Tmavý režim pre vývojárov",
       "portfolio": "Vizuálne a kreatívne"
     }
@@ -1391,7 +1391,7 @@
     "statusHeader": "Stav",
     "dateHeader": "Prihlásený dňa",
     "noCampaigns": "Zatiaľ žiadne kampane",
-    "noCampaignsDesc": "Vytvorte si svoju prvú newsletterovú kampaň pomocou tlačidla vyššie.",
+    "noCampaignsDesc": "Vytvorte si svoju prvú kampaň s newsletterom pomocou tlačidla vyššie.",
     "newCampaign": "Nová kampaň",
     "campaignName": "Názov kampane",
     "campaignNamePlaceholder": "Septembrový spravodaj…",
@@ -1555,7 +1555,7 @@
     "status_rejected": "Zamietnuté",
     "status_spam": "Spam",
     "status_shadow_banned": "Tieň",
-    "banReasonDashboard": "Zakázané na riadiacej doske"
+    "banReasonDashboard": "Zakázané na riadiacom paneli"
   },
   "customization": {
     "title": "Prispôsobenie",
@@ -2337,7 +2337,7 @@
     "free": "Zadarmo",
     "yes": "Áno",
     "no": "Nie",
-    "copy": "Kopírovať",
+    "copy": "Kópia",
     "copied": "Skopírované!",
     "languages": {
       "en": "angličtina",
@@ -2469,7 +2469,7 @@
     "templates": {
       "editorial": {
         "tagline": "Čistý · Serif · Nadčasový",
-        "description": "Štýl Medium / The Atlantic. Sústredený čitateľský zážitok, vyzdvihnutá hlavná postava, elegantná trojstĺpcová mriežka."
+        "description": "Štýl Medium / The Atlantic. Sústredený čitateľský zážitok, zvýraznená hlavná postava, elegantná trojstĺpcová mriežka."
       },
       "magazine": {
         "tagline": "Odvážny · Intenzívny · Dynamický",
@@ -2477,7 +2477,7 @@
       },
       "creative": {
         "tagline": "Temné · Vizuálne · Pohlcujúce",
-        "description": "Štýl Cargo Collective. Tmavý režim s plným prekrytím, mriežka obrázkov typu „masonry“, rozloženie s dôrazom na vizuálnu stránku."
+        "description": "Štýl Cargo Collective. Tmavý režim s plným prekrytím, múrická mriežka obrázkov, rozloženie s dôrazom na vizuál."
       },
       "luminary": {
         "tagline": "Prestige · Serif · Literárne",
@@ -2619,7 +2619,7 @@
     "subscription": "Predplatné",
     "ad_slot": "Reklamný priestor",
     "pending": "V riešení",
-    "ready": "Pripravené na výber",
+    "ready": "Pripravené na výplatu",
     "paid": "Platené",
     "cancelled": "Zrušené",
     "requested": "Požadované",
@@ -2635,7 +2635,7 @@
     "step1": "Zdieľajte svoj jedinečný odporúčací odkaz s ostatnými blogermi",
     "step2": "Keď si predplatia službu, získate 10 % z ich predplatného",
     "step3": "Provízie sa kumulujú, kým nedosiahnete minimálnu hranicu 50 dolárov",
-    "step4": "Požiadajte o výplatu – za každý výber sa účtuje poplatok vo výške 20 USD",
+    "step4": "Požiadajte o výber peňazí — za každý výber sa účtuje poplatok vo výške 20 USD",
     "cashoutRequested": "Žiadosť o výplatu bola odoslaná!",
     "error": "Chyba",
     "cashoutError": "Žiadosť o výplatu sa nepodarilo odoslať.",
@@ -2663,11 +2663,11 @@
     "walletRequiredDesc": "Na účasť v partnerskom programe a na prijímanie provízií je potrebné mať v systéme zaregistrovanú adresu peňaženky USDT (BEP20/BSC).",
     "walletRequiredCta": "Pridať moju peňaženku",
     "waitingThresholdTitle": "Už to skoro máme!",
-    "waitingThresholdDesc": "Vaše provízie budú automaticky odoslané hneď, ako váš zostatok dosiahne hodnotu {min}.",
+    "waitingThresholdDesc": "Vaše provízie budú automaticky vyplatené hneď, ako váš zostatok dosiahne hodnotu {min}.",
     "gate": {
       "not_started": {
         "title": "Je potrebné overenie totožnosti",
-        "description": "Aby bol partnerský program bezpečný a v súlade s predpismi, musíte najskôr absolvovať jednorazové overenie totožnosti (KYC), než budete mať prístup k svojmu odporúčaciemu odkazu a budete môcť začať zarábať provízie.",
+        "description": "Aby bol partnerský program bezpečný a v súlade s predpismi, musíte najskôr absolvovať jednorazové overenie totožnosti (KYC), než budete mať prístup k svojmu odporúčaciemu odkazu a začnete zarábať provízie.",
         "cta": "Začať overovanie"
       },
       "pending": {
@@ -2677,7 +2677,7 @@
       },
       "expired": {
         "title": "Je potrebné opätovné overenie",
-        "description": "Nedávno ste si zmenili meno alebo krajinu, čo si vyžaduje nové overenie totožnosti, aby bolo možné opäť aktivovať váš partnerský odkaz. Ak vám zostávajú predplatené roky, nebude vás to stáť žiadne dodatočné náklady.",
+        "description": "Nedávno ste si zmenili meno alebo krajinu, čo si vyžaduje nové overenie totožnosti, aby bolo možné opäť aktivovať váš partnerský odkaz. Ak máte ešte predplatené roky, nebude vás to stáť žiadne dodatočné náklady.",
         "cta": "Znovu overiť moju totožnosť"
       },
       "rejected": {
@@ -2702,13 +2702,14 @@
     "resumeVerification": "Overenie životopisu",
     "reverifyExplain": "Ešte vám zostávajú roky z predplatného, takže opätovné overenie vás nebude stáť nič navyše – stačí, keď znovu prejdete procesom overenia totožnosti.",
     "reverifyCta": "Znovu overiť moju totožnosť",
-    "purchaseTitle": "Vyberte si dĺžku trvania overenia",
+    "purchaseTitle": "Vyberte si dĺžku platnosti overenia",
     "durationLabel": "Trvanie",
+    "customDurationLabel": "Alebo zadajte vlastný počet rokov:",
     "yearsCount": "{count, plural, one {# year} other {# years}}",
     "totalLabel": "Spolu",
     "payCta": "Zaplaťte {amount}ov a overte si účet",
     "paymentConfirmedTitle": "Platba bola potvrdená",
-    "paymentConfirmedDesc": "Začala sa vaša relácia overovania totožnosti — sledujte túto stránku, kde budeme zverejňovať aktuálne informácie."
+    "paymentConfirmedDesc": "Začala sa vaša relácia overovania totožnosti — sledujte túto stránku, kde budú zverejnené aktuálne informácie."
   },
   "invoices": {
     "title": "Faktúry",
@@ -2766,13 +2767,13 @@
     "howItWorksTitle": "Ako to funguje",
     "howItWorksStep1": "Zverejnite svoj inzerát a bezpečne zaplaťte kryptomenou (USDT).",
     "howItWorksStep2": "Náš tím skontroluje vašu reklamu a odkaz na cieľovú stránku z hľadiska bezpečnosti.",
-    "howItWorksStep3": "Po schválení sa vaša reklama zobrazí na úvodnej stránke SmarterBloggers.",
+    "howItWorksStep3": "Po schválení sa vaša reklama zobrazí na hlavnej stránke SmarterBloggers.",
     "howItWorksStep4": "Na tomto riadiacom paneli môžete v reálnom čase sledovať zobrazenia, kliknutia a mieru prekliku (CTR).",
     "sponsoredLabel": "Sponzorované",
     "openButton": "Otvoriť",
     "targetCountries": "Cieľové krajiny (nepovinné)",
     "targetCountriesHint": "Nechajte pole prázdne, ak chcete, aby sa vaša reklama zobrazovala návštevníkom z celého sveta. Vyberte jednu alebo viac krajín, ak chcete, aby sa reklama zobrazovala len návštevníkom z týchto krajín.",
-    "targetCountriesSearch": "Vyhľadajte krajinu…",
+    "targetCountriesSearch": "Vyhľadaj krajinu…",
     "targetCountriesNoResults": "Nenašla sa žiadna zodpovedajúca krajina."
   },
   "tenantAccounting": {
@@ -2990,7 +2991,7 @@
     "copiedButton": "Skopírované!",
     "setupError": "Nastavenie dvojfaktorovej autentifikácie sa nepodarilo spustiť. Skúste to prosím znova.",
     "invalidCode": "Neplatný kód. Skontrolujte, či sú hodiny vášho zariadenia synchronizované, a skúste to znova.",
-    "enabledToast": "Dvojfaktorová autentifikácia je teraz zapnutá!"
+    "enabledToast": "Dvojfaktorová autentifikácia je teraz aktivovaná!"
   },
   "superAdmin": {
     "console": "Administrátorská konzola",
@@ -3100,7 +3101,9 @@
         "joined": "Prihlásil sa",
         "lastLogin": "Posledné prihlásenie",
         "twoFA": "2FA",
-        "actions": "Akcie"
+        "actions": "Akcie",
+        "kyc": "Stav KYC",
+        "kycYearsRemaining": "Počet zostávajúcich rokov KYC"
       },
       "blogsSection": "Blogy ({count})",
       "noBlogs": "Tento účet zatiaľ nevytvoril žiadny blog.",
@@ -3303,7 +3306,7 @@
         "mrr": "MRR",
         "churn": "Miera odchodu zákazníkov"
       },
-      "manage": "Správa balíkov",
+      "manage": "Správa plánov",
       "manageSub": "Vytváranie, úprava a konfigurácia predplatných balíkov",
       "createPlan": "Nový plán",
       "createTitle": "Vytvoriť nový plán",
@@ -3346,7 +3349,7 @@
       "featureDomain": "Doména",
       "featureAnalytics": "Analytika",
       "analyticsBasic": "Základné",
-      "analyticsStandard": "Štandardný",
+      "analyticsStandard": "Štandard",
       "analyticsAdvanced": "Pokročilé",
       "analyticsFull": "Úplný",
       "analyticsFullApi": "Full+API",
@@ -3404,8 +3407,8 @@
       "autoSaveNote": "Nastavenia sa pri zmene automaticky uložia.",
       "envNote": "Prístupové údaje pre integráciu sa konfigurujú prostredníctvom premenných prostredia (.env).",
       "saveBtn": "Uložiť",
-      "nowpaymentsTotpTitle": "Kód 2FA pre výplatu z NowPayments",
-      "nowpaymentsTotpHint": "Aktívny overovací kód pre ručné operácie v riadiacom paneli NowPayments (zoznam povolených adries, výplaty atď.). Automaticky sa aktualizuje.",
+      "nowpaymentsTotpTitle": "Kód 2FA pre výplatu v službe NowPayments",
+      "nowpaymentsTotpHint": "Aktívny overovací kód pre ručné operácie v riadiacom paneli NowPayments (zoznam povolených adresátov, výplaty atď.). Automaticky sa aktualizuje.",
       "copyCode": "Kópia",
       "codeCopied": "Skopírované!",
       "field": {
@@ -3865,7 +3868,7 @@
     "platformPages": {
       "cmsLabel": "CMS",
       "title": "Verejné stránky",
-      "subtitle": "Obsah pilotných marketingových stránok — automaticky preložený prostredníctvom DeepL.",
+      "subtitle": "Obsah pilotných marketingových stránok — automaticky preložené prostredníctvom DeepL.",
       "modifiedOn": "Upravené d{date}",
       "neverModified": "Nikdy nebolo upravené",
       "pageLabel_home": "Domov",
@@ -3894,7 +3897,7 @@
       "saveErrorToast": "Chyba",
       "fillPageWithAiTitle": "Naplňte túto stránku pomocou umelej inteligencie",
       "topicLabel": "Názov stránky / popis",
-      "topicPlaceholder": "Napr.: Stránka „O nás“ pre blogovú platformu typu SaaS s podporou viacerých používateľov určenú pre tvorcov obsahu.",
+      "topicPlaceholder": "Napr.: Stránka „O nás“ pre blogovú platformu typu SaaS s viacerými používateľmi určenú pre tvorcov obsahu.",
       "toneLabel": "Tón",
       "toneProfessional": "Profesionálny",
       "toneFriendly": "Priateľský",
@@ -3960,7 +3963,7 @@
     "filterPending": "V riešení",
     "filterPartial": "Čiastočné",
     "filterFailed": "Neúspešné",
-    "empty": "Zatiaľ neboli uskutočnené žiadne platby.",
+    "empty": "Zatiaľ neboli vykonané žiadne platby.",
     "received": "Doposiaľ prijatých {amount}",
     "resume": "Životopis",
     "resumeError": "Túto platbu sa nepodarilo obnoviť. Skúste to prosím znova.",

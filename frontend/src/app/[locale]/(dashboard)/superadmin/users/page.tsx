@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Users, Search, Shield, ShieldCheck, X, Mail,
-  Clock, Globe, AlertCircle, RefreshCw, Loader2, Layers,
+  Clock, Globe, AlertCircle, RefreshCw, Loader2, Layers, BadgeCheck,
 } from 'lucide-react';
 import { superadminApi, type UserAdminView } from '@/lib/api';
 import { useAuthStore } from '@/store/auth.store';
@@ -44,9 +44,18 @@ function ConfirmModal({ message, onConfirm, onCancel, isPending, t }: {
 
 // ── Main ───────────────────────────────────────────────────────────────────
 
+const KYC_STATUS_COLOR: Record<string, string> = {
+  not_started: '#94a3b8',
+  pending: '#f59e0b',
+  verified: '#10b981',
+  expired: '#f59e0b',
+  rejected: '#ef4444',
+};
+
 export default function UsersPage() {
   const t  = useTranslations('superAdmin');
   const tu = useTranslations('superAdmin.users');
+  const tk = useTranslations('kyc');
   const { user: me }  = useAuthStore();
   const { toast }     = useToast();
   const qc            = useQueryClient();
@@ -342,6 +351,22 @@ export default function UsersPage() {
                 <span className="ml-auto font-semibold capitalize" style={{ color: 'var(--sa-text-2)' }}>{row.value}</span>
               </div>
             ))}
+
+            {/* KYC (décision PDG 2026-08-01) — condition d'accès à l'affiliation */}
+            <div className="flex items-center gap-3 text-[11px]">
+              <BadgeCheck className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--sa-text-3)' }} />
+              <span style={{ color: 'var(--sa-text-3)' }}>{tu('table.kyc')}</span>
+              <span className="ml-auto font-semibold" style={{ color: KYC_STATUS_COLOR[selected.kyc_status] ?? 'var(--sa-text-2)' }}>
+                {tk(`statusLabel.${selected.kyc_status}` as any)}
+              </span>
+            </div>
+            {selected.kyc_years_remaining > 0 && (
+              <div className="flex items-center gap-3 text-[11px]">
+                <Clock className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--sa-text-3)' }} />
+                <span style={{ color: 'var(--sa-text-3)' }}>{tu('table.kycYearsRemaining')}</span>
+                <span className="ml-auto font-semibold" style={{ color: 'var(--sa-text-2)' }}>{selected.kyc_years_remaining}</span>
+              </div>
+            )}
 
             {/* Blogs owned by this user */}
             <div className="pt-2 border-t" style={{ borderColor: 'var(--sa-border)' }}>

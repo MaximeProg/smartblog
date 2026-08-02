@@ -103,11 +103,11 @@
       "saveButton": "Salva la nuova password",
       "saving": "Salvataggio in corso...",
       "successTitle": "Password aggiornata!",
-      "successDesc": "La tua password è stata modificata. Ora puoi accedere utilizzando la nuova password.",
+      "successDesc": "La tua password è stata modificata. Ora puoi accedere con la nuova password.",
       "backToLogin": "Vai alla pagina di accesso",
       "errors": {
         "mismatch": "Le password non corrispondono.",
-        "expiredCode": "Questo link di reimpostazione è scaduto. Si prega di richiederne uno nuovo.",
+        "expiredCode": "Questo link di reimpostazione è scaduto. Richiedine uno nuovo.",
         "invalidCode": "Questo link di ripristino non è valido o è già stato utilizzato.",
         "generic": "Impossibile reimpostare la password. Riprova."
       }
@@ -478,7 +478,7 @@
     "tabWorkflow": "Flusso di lavoro",
     "improveContentTitle": "Migliora i contenuti",
     "improveInstructionPlaceholder": "Ad esempio: rendere il testo più formale, aggiungere esempi…",
-    "improveWithAiButton": "Migliora grazie all'IA",
+    "improveWithAiButton": "Migliora con l'IA",
     "improvingButton": "In fase di miglioramento…",
     "generateImagePlaceholder": "Descrivi l'immagine da generare…",
     "generateWithDalleTitle": "Genera con DALL-E 3",
@@ -1119,7 +1119,7 @@
     },
     "menus": {
       "title": "Gestione dei menu",
-      "description": "Crea e organizza i menu di navigazione del tuo blog. Aggiungi collegamenti alle tue pagine, alle categorie e ai contenuti esterni."
+      "description": "Crea e organizza i menu di navigazione del tuo blog. Aggiungi link alle tue pagine, alle categorie e a contenuti esterni."
     },
     "widgets": {
       "title": "Widget",
@@ -1316,7 +1316,7 @@
     "upload": "Carica",
     "uploadTitle": "Carica un file",
     "uploadDragDrop": "Trascina un file qui, oppure clicca per selezionare un file",
-    "uploadComingSoon": "A breve sarà disponibile il caricamento diretto: usa Cloudinary oppure incolla un URL nell'editor degli articoli.",
+    "uploadComingSoon": "A breve sarà disponibile il caricamento diretto: usa Cloudinary oppure incolla un URL nell'editor dell'articolo.",
     "close": "Chiudi",
     "searchPlaceholder": "Cerca file...",
     "filterAll": "Tutto",
@@ -1396,7 +1396,7 @@
     "campaignName": "Nome della campagna",
     "campaignNamePlaceholder": "Newsletter di settembre…",
     "campaignSubject": "Oggetto",
-    "campaignSubjectPlaceholder": "Le nostre ultime notizie e novità…",
+    "campaignSubjectPlaceholder": "Le nostre ultime notizie e aggiornamenti…",
     "campaignPreview": "Testo di anteprima",
     "campaignPreviewPlaceholder": "Un breve teaser visualizzato nella posta in arrivo…",
     "campaignBody": "Testo dell'e-mail (HTML)",
@@ -1476,7 +1476,7 @@
     "cancel": "Annulla",
     "delete": "Elimina",
     "deleteConfirm": "Elimina questo tag?",
-    "deleteWarning": "Questo tag è utilizzato in uno o più articoli dell'{count}. Verrà rimosso da tutti gli articoli.",
+    "deleteWarning": "Questo tag è utilizzato in uno o più articoli dell{count}. Verrà rimosso da tutti gli articoli.",
     "articles": "{count} articolo/i",
     "noArticles": "Nessun articolo",
     "merge": "Inserirsi in…",
@@ -1559,7 +1559,7 @@
   },
   "customization": {
     "title": "Personalizzazione",
-    "subtitle": "Aggiungi CSS, script e font personalizzati al tuo blog.",
+    "subtitle": "Aggiungi CSS personalizzati, script e font al tuo blog.",
     "save": "Salva",
     "saved": "Salvato!",
     "warning": "Il codice personalizzato viene inserito direttamente nel tuo blog pubblico. CSS o script non validi potrebbero compromettere il layout. Effettua dei test accurati.",
@@ -2278,7 +2278,7 @@
     "mediaUseThisUrl": "Utilizza questo URL",
     "mediaEmbedHint": "I link a YouTube e Vimeo vengono convertiti automaticamente in contenuti incorporati.",
     "collabRoleEditorDesc": "Crea, modifica e pubblica direttamente.",
-    "collabRoleAuthorDesc": "Redige e sottopone all'approvazione.",
+    "collabRoleAuthorDesc": "Redige e sottopone all’approvazione.",
     "collabRoleViewerDesc": "Accesso in sola lettura alla dashboard.",
     "cancel": "Annulla",
     "administrators": "Amministratori",
@@ -2704,6 +2704,7 @@
     "reverifyCta": "Conferma nuovamente la mia identità",
     "purchaseTitle": "Scegli la durata della verifica",
     "durationLabel": "Durata",
+    "customDurationLabel": "Oppure inserisci un numero personalizzato di anni:",
     "yearsCount": "{count, plural, one {# year} other {# years}}",
     "totalLabel": "Totale",
     "payCta": "Paga {amount}i e verifica",
@@ -3100,13 +3101,15 @@
         "joined": "Iscritto",
         "lastLogin": "Ultimo accesso",
         "twoFA": "2FA",
-        "actions": "Azioni"
+        "actions": "Azioni",
+        "kyc": "Stato KYC",
+        "kycYearsRemaining": "Anni rimanenti per il KYC"
       },
       "blogsSection": "Blog ({count})",
       "noBlogs": "Questo account non ha ancora creato alcun blog.",
       "actions": {
         "makeSuperAdmin": "Diventa super amministratore",
-        "revokeSuperAdmin": "Revoca i privilegi di superamministratore",
+        "revokeSuperAdmin": "Revoca i diritti di superamministratore",
         "viewBlogs": "Visualizza i blog",
         "sendMessage": "Invia messaggio",
         "suspend": "Sospendere",
@@ -3257,10 +3260,10 @@
     },
     "templates": {
       "title": "Libreria dei modelli",
-      "breadcrumb": "Contenuti e design",
+      "breadcrumb": "Contenuti e grafica",
       "subtitle": "{count} temi attivi",
       "toggled": "Tema aggiornato",
-      "sectionBuiltIn": "Temi integrati",
+      "sectionBuiltIn": "Temi predefiniti",
       "sectionCustom": "Modelli personalizzati",
       "colName": "Nome",
       "colTheme": "Tema",
@@ -3419,7 +3422,7 @@
         "domainMarkup": "Margine sull'acquisto di domini (%)",
         "domainMarkupHint": "Aggiunto al prezzo del registrar per ogni acquisto e rinnovo di dominio — 0 indica la rivendita al prezzo di costo",
         "paymentTolerance": "Tolleranza per i pagamenti in criptovaluta ($)",
-        "paymentToleranceHint": "Un pagamento ricevuto entro questo margine rispetto all'importo previsto (commissioni di rete, variazione del tasso) è comunque considerato completo",
+        "paymentToleranceHint": "Un pagamento ricevuto entro tale margine rispetto all'importo previsto (commissioni di rete, variazione del tasso) è comunque considerato completo",
         "kycPricePerYear": "Costo della verifica KYC ($/anno)",
         "kycPricePerYearHint": "Prezzo addebitato agli utenti per ogni anno di verifica dell'identità, richiesta prima di poter accedere al programma di affiliazione"
       },
@@ -3443,7 +3446,7 @@
         "maintenanceOn": "Abilitato — piattaforma inaccessibile",
         "maintenanceOff": "Disabile",
         "registrations": "Iscrizioni aperte",
-        "registrationsHint": "Disattiva per bloccare la creazione di nuovi account",
+        "registrationsHint": "Disattiva per bloccare i nuovi account",
         "registrationsOpen": "Apri",
         "registrationsClosed": "Chiuso"
       },
@@ -3564,7 +3567,7 @@
       "subtitle": "Stato in tempo reale · Servizi {count} monitorati",
       "allOk": "Tutti i sistemi sono operativi",
       "degradedMsg": "{count} servizio/i compromesso/i",
-      "outageMsg": "{count} servizio/i non funzionante/i",
+      "outageMsg": "{count} servizio/i non disponibile/i",
       "lastCheck": "Ultimo controllo: {time}",
       "recentIncidents": "Episodi recenti",
       "services": "Servizi",
