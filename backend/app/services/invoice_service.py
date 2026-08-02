@@ -47,9 +47,10 @@ _LABELS_EN: dict[str, str] = {
     "pdf_billed_to": "Billed to",
     "pdf_description": "Description",
     "pdf_amount": "Amount",
+    "pdf_total": "Total",
     "pdf_reference": "Payment reference",
     "pdf_status": "Status",
-    "pdf_status_issued": "Issued",
+    "pdf_status_paid": "Paid",
     "pdf_thank_you": "Thank you for your payment.",
     # Libellés par type de paiement (clé = Transaction.transaction_type.value)
     "payment_type_kyc_verification": "KYC Identity Verification",
@@ -62,46 +63,119 @@ async def _get_next_invoice_number(db) -> str:
     return f"INV-{date.today().year}-{n:05d}"
 
 
+_PDF_DARK = (15, 23, 42)
+_PDF_TEXT = (71, 85, 105)
+_PDF_MUTED = (148, 163, 184)
+_PDF_GREEN = (5, 150, 105)
+_PDF_HEADER_FILL = (241, 245, 249)
+_PDF_LEFT_COL_X = 20
+_PDF_RIGHT_COL_X = 120
+_PDF_COL_WIDTH = 70
+
+
 def render_invoice_pdf(invoice: Invoice, labels: dict[str, str]) -> bytes:
     """Rend le PDF de la facture à partir de son snapshot figé — jamais
-    recalculé depuis l'état courant de la transaction/l'utilisateur."""
+    recalculé depuis l'état courant de la transaction/l'utilisateur.
+    Mise en page à deux colonnes (émetteur à gauche / méta-facture à
+    droite) + tableau pour le détail, plutôt qu'une simple liste verticale
+    de libellé/valeur — plus lisible pour un document destiné à être
+    imprimé/archivé par l'utilisateur."""
     from fpdf import FPDF
+    from fpdf.fonts import FontFace
 
     snap = invoice.snapshot
     pdf = FPDF(format="A4")
     pdf.set_auto_page_break(auto=True, margin=20)
+    pdf.set_margins(_PDF_LEFT_COL_X, 20, _PDF_LEFT_COL_X)
     pdf.add_page()
 
-    pdf.set_font("Helvetica", "B", 20)
-    pdf.set_text_color(15, 23, 42)
-    pdf.cell(0, 12, labels.get("pdf_invoice_title", "INVOICE"), new_x="LMARGIN", new_y="NEXT")
+    # ── En-tête : émetteur à gauche, méta-facture à droite ──
+    top_y = pdf.get_y()
+    pdf.set_xy(_PDF_LEFT_COL_X, top_y)
+    pdf.set_font("Helvetica", "B", 18)
+    pdf.set_text_color(*_PDF_DARK)
+    pdf.cell(_PDF_COL_WIDTH, 8, "SmarterBloggers", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_x(_PDF_LEFT_COL_X)
+    pdf.set_font("Helvetica", "", 9)
+    pdf.set_text_color(*_PDF_MUTED)
+    pdf.cell(_PDF_COL_WIDTH, 5, "smarterbloggers.com", new_x="LMARGIN", new_y="NEXT")
 
-    pdf.set_font("Helvetica", "", 11)
-    pdf.set_text_color(71, 85, 105)
-    pdf.cell(0, 8, "SmarterBloggers", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_xy(_PDF_RIGHT_COL_X, top_y)
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.set_text_color(*_PDF_DARK)
+    pdf.cell(_PDF_COL_WIDTH, 8, labels.get("pdf_invoice_title", "INVOICE"), align="R", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_x(_PDF_RIGHT_COL_X)
+    pdf.set_font("Helvetica", "", 10)
+    pdf.set_text_color(*_PDF_TEXT)
+    pdf.cell(_PDF_COL_WIDTH, 6, f"{labels.get('pdf_invoice_number', 'Invoice number')}: {snap['invoice_number']}", align="R", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_x(_PDF_RIGHT_COL_X)
+    pdf.cell(_PDF_COL_WIDTH, 6, f"{labels.get('pdf_date', 'Date')}: {snap['issued_date']}", align="R", new_x="LMARGIN", new_y="NEXT")
+
     pdf.ln(6)
-
-    def row(label: str, value: str) -> None:
-        pdf.set_font("Helvetica", "", 11)
-        pdf.set_text_color(148, 163, 184)
-        pdf.cell(55, 8, label, new_x="LMARGIN", new_y="NEXT")
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.set_text_color(15, 23, 42)
-        pdf.cell(0, 8, value, new_x="LMARGIN", new_y="NEXT")
-        pdf.ln(2)
-
-    row(labels.get("pdf_invoice_number", "Invoice number"), snap["invoice_number"])
-    row(labels.get("pdf_date", "Date"), snap["issued_date"])
-    row(labels.get("pdf_billed_to", "Billed to"), snap["user_email"])
-    row(labels.get("pdf_description", "Description"), snap["payment_type_label"])
-    row(labels.get("pdf_amount", "Amount"), f"{snap['amount']:.2f} {snap['currency']}")
-    if snap.get("payment_reference"):
-        row(labels.get("pdf_reference", "Payment reference"), snap["payment_reference"])
-    row(labels.get("pdf_status", "Status"), labels.get("pdf_status_issued", "Issued"))
-
+    pdf.set_draw_color(226, 232, 240)
+    pdf.line(_PDF_LEFT_COL_X, pdf.get_y(), _PDF_RIGHT_COL_X + _PDF_COL_WIDTH, pdf.get_y())
     pdf.ln(8)
+
+    # ── Facturé à (gauche) + statut (droite) ──
+    mid_y = pdf.get_y()
+    pdf.set_xy(_PDF_LEFT_COL_X, mid_y)
+    pdf.set_font("Helvetica", "", 9)
+    pdf.set_text_color(*_PDF_MUTED)
+    pdf.cell(_PDF_COL_WIDTH, 5, labels.get("pdf_billed_to", "Billed to").upper(), new_x="LMARGIN", new_y="NEXT")
+    pdf.set_x(_PDF_LEFT_COL_X)
+    pdf.set_font("Helvetica", "B", 11)
+    pdf.set_text_color(*_PDF_DARK)
+    pdf.cell(_PDF_COL_WIDTH, 6, snap["user_display_name"], new_x="LMARGIN", new_y="NEXT")
+    pdf.set_x(_PDF_LEFT_COL_X)
+    pdf.set_font("Helvetica", "", 10)
+    pdf.set_text_color(*_PDF_TEXT)
+    pdf.cell(_PDF_COL_WIDTH, 6, snap["user_email"], new_x="LMARGIN", new_y="NEXT")
+
+    pdf.set_xy(_PDF_RIGHT_COL_X, mid_y)
+    pdf.set_font("Helvetica", "", 9)
+    pdf.set_text_color(*_PDF_MUTED)
+    pdf.cell(_PDF_COL_WIDTH, 5, labels.get("pdf_status", "Status").upper(), align="R", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_x(_PDF_RIGHT_COL_X)
+    pdf.set_font("Helvetica", "B", 13)
+    pdf.set_text_color(*_PDF_GREEN)
+    # Une facture n'est générée qu'après confirmation du paiement (voir
+    # payments.py::_finalize_transaction) — son existence même signifie que
+    # le paiement a réussi, d'où "Paid" toujours affiché ici (le statut
+    # "issued"/"void" de l'enregistrement lui-même est un détail comptable
+    # interne, pas ce que l'utilisateur a besoin de lire).
+    pdf.cell(_PDF_COL_WIDTH, 7, labels.get("pdf_status_paid", "Paid"), align="R", new_x="LMARGIN", new_y="NEXT")
+    if snap.get("payment_reference"):
+        pdf.set_x(_PDF_RIGHT_COL_X)
+        pdf.set_font("Helvetica", "", 8)
+        pdf.set_text_color(*_PDF_MUTED)
+        pdf.cell(_PDF_COL_WIDTH, 5, snap["payment_reference"], align="R", new_x="LMARGIN", new_y="NEXT")
+
+    pdf.ln(12)
+
+    # ── Détail (tableau) ──
+    amount_str = f"{snap['amount']:.2f} {snap['currency']}"
+    with pdf.table(
+        col_widths=(2, 1),
+        text_align=("LEFT", "RIGHT"),
+        headings_style=FontFace(emphasis="B", fill_color=_PDF_HEADER_FILL, color=_PDF_TEXT),
+        line_height=7,
+        borders_layout="MINIMAL",
+    ) as table:
+        header = table.row()
+        header.cell(labels.get("pdf_description", "Description"))
+        header.cell(labels.get("pdf_amount", "Amount"))
+
+        data = table.row()
+        data.cell(snap["payment_type_label"])
+        data.cell(amount_str)
+
+        total = table.row()
+        total.cell(labels.get("pdf_total", "Total"), style=FontFace(emphasis="B"))
+        total.cell(amount_str, style=FontFace(emphasis="B"))
+
+    pdf.ln(10)
     pdf.set_font("Helvetica", "I", 10)
-    pdf.set_text_color(148, 163, 184)
+    pdf.set_text_color(*_PDF_MUTED)
     pdf.cell(0, 8, labels.get("pdf_thank_you", "Thank you for your payment."), new_x="LMARGIN", new_y="NEXT")
 
     return bytes(pdf.output())

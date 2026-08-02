@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Script from 'next/script';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { ShieldCheck, Clock, ShieldAlert, ShieldX, ExternalLink } from 'lucide-react';
@@ -11,6 +12,12 @@ import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 import { CryptoCurrencyPicker } from '@/components/payments/CryptoCurrencyPicker';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
+
+declare global {
+  interface Window {
+    KalutaKYC?: { open: (opts: { url: string; onComplete?: () => void }) => void };
+  }
+}
 
 const PLATFORM_TENANT_ID = process.env.NEXT_PUBLIC_PLATFORM_TENANT_ID || '00000000-0000-0000-0000-000000000001';
 
@@ -25,6 +32,22 @@ const STATUS_ICON: Record<string, typeof ShieldCheck> = {
   expired: ShieldAlert,
   rejected: ShieldX,
 };
+
+/**
+ * Ouvre la vérification Kaluta dans le widget embarqué (reste sur notre
+ * site) plutôt qu'un onglet externe. `onComplete` ne débloque jamais rien
+ * lui-même (spoofable côté client) — il relance juste le polling du statut ;
+ * seul le webhook Kaluta fait foi (voir kyc.py::kaluta_webhook). Si le
+ * script embed.js n'est pas encore chargé, on retombe sur un nouvel onglet
+ * plutôt que de bloquer l'utilisateur.
+ */
+function openKalutaVerification(url: string, onComplete: () => void) {
+  if (typeof window !== 'undefined' && window.KalutaKYC) {
+    window.KalutaKYC.open({ url, onComplete });
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
 
 export default function KycPage() {
   const t = useTranslations('kyc');
@@ -62,7 +85,9 @@ export default function KycPage() {
   const retryMutation = useMutation({
     mutationFn: async () => { const { data } = await kycApi.retrySession(); return data; },
     onSuccess: (data) => {
-      if (data.verification_url) window.open(data.verification_url, '_blank', 'noopener,noreferrer');
+      if (data.verification_url) {
+        openKalutaVerification(data.verification_url, () => qc.invalidateQueries({ queryKey: ['kyc-status'] }));
+      }
       qc.invalidateQueries({ queryKey: ['kyc-status'] });
     },
     onError: (err: any) => {
@@ -74,6 +99,7 @@ export default function KycPage() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+      <Script src="https://kalutakyc.com/embed.js" strategy="afterInteractive" />
       <DashboardSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <TopBar />
@@ -106,15 +132,13 @@ export default function KycPage() {
                 </div>
 
                 {status?.kaluta_verification_url && status.kyc_status === 'pending' && (
-                  <a
-                    href={status.kaluta_verification_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-amber-600 text-white text-[13px] font-semibold hover:bg-amber-700 transition-colors"
+                  <button
+                    onClick={() => openKalutaVerification(status.kaluta_verification_url!, () => qc.invalidateQueries({ queryKey: ['kyc-status'] }))}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-amber-600 text-white text-[13px] font-semibold hover:bg-amber-700 transition-colors"
                   >
                     <ExternalLink className="h-4 w-4" />
                     {t('resumeVerification')}
-                  </a>
+                  </button>
                 )}
 
                 {/* Re-verification via prepaid years (material profile change) */}
