@@ -13,6 +13,7 @@ import {
 import { affiliateApi, type AffiliateDashboard, type AffiliateCommission, type CashoutRequest, type AffiliateReferral } from '@/lib/api';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
+import { KycRequiredGate } from '@/components/dashboard/KycRequiredGate';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
 
@@ -177,6 +178,12 @@ export default function AffiliatePage() {
               <div className="flex items-center justify-center h-64">
                 <div className="h-6 w-6 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
               </div>
+            ) : !dashboard?.can_access_affiliate ? (
+              // KYC (décision PDG 2026-08-01) : verrou de PAGE ENTIÈRE — le lien
+              // d'affiliation n'est jamais rendu (dashboard.affiliate_code est déjà
+              // null côté backend tant que can_access_affiliate est false), ce
+              // n'est pas juste masqué visuellement.
+              <KycRequiredGate kycStatus={dashboard?.kyc_status} />
             ) : (
               <>
                 {/* Wallet required banner */}

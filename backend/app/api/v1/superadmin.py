@@ -1421,6 +1421,11 @@ async def get_platform_settings(payload: TokenPayload, db: DBSession):
             "registrar": getattr(cfg, "DEFAULT_DOMAIN_REGISTRAR", "openprovider"),
             "markup_percent": overrides.get("domain_markup_percent", 20.0),
         },
+        "kyc": {
+            "configured": bool(getattr(cfg, "KALUTA_API_KEY", "")),
+            "sandbox": bool(getattr(cfg, "KALUTA_SANDBOX", True)),
+            "price_per_year": overrides.get("kyc_price_per_year", getattr(cfg, "KYC_DEFAULT_PRICE_PER_YEAR", 10.0)),
+        },
         "env": cfg.APP_ENV,
     }
 
@@ -1441,6 +1446,7 @@ async def update_platform_settings(
         "platform_name", "support_email", "max_blogs_per_user",
         "maintenance_mode", "registrations_open", "ai_model",
         "domain_markup_percent", "nowpayments_tolerance_usd",
+        "kyc_price_per_year",
     }
 
     try:

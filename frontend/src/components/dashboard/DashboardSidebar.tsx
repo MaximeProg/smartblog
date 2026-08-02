@@ -5,7 +5,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard, Newspaper, User, Bell, CreditCard, Gift,
-  Plus, LogOut, Zap, X, Wallet, Megaphone,
+  Plus, LogOut, Zap, X, Wallet, Megaphone, Receipt,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -60,6 +60,7 @@ export function DashboardSidebar() {
     { seg: 'notifications', icon: Bell,       label: t('notifications') },
     { seg: 'subscription',  icon: CreditCard, label: t('subscription') },
     { seg: 'payments',      icon: Wallet,     label: t('payments') },
+    { seg: 'invoices',      icon: Receipt,    label: t('invoices') },
     { seg: 'affiliate',     icon: Gift,       label: t('affiliate') },
     { seg: 'advertiser',    icon: Megaphone,  label: t('advertiser') },
   ];

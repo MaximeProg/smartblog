@@ -737,8 +737,14 @@ export const platformAdsApi = {
 // Un seul code/solde/arbre par UTILISATEUR (pas par blog) — voir migration 047.
 
 export interface AffiliateDashboard {
-  affiliate_code: string;
-  referral_url: string;
+  // KYC (décision PDG 2026-08-01) — tant que can_access_affiliate est false,
+  // affiliate_code/referral_url restent null (le backend ne les peuple pas,
+  // ce n'est pas juste caché côté UI).
+  kyc_status: string;
+  can_access_affiliate: boolean;
+  kyc_years_remaining: number;
+  affiliate_code: string | null;
+  referral_url: string | null;
   balance: number;
   cashout_threshold: number;
   can_cashout: boolean;
@@ -808,6 +814,60 @@ export const affiliateApi = {
 
   inviteFriend: (data: { email: string; language: string; message: string }) =>
     api.post<{ ok: boolean; sent_to: string }>('/users/me/affiliate/invite-friend', data),
+};
+
+// ── KYC (Kaluta KYC) — condition d'accès au programme d'affiliation,
+// décision PDG 2026-08-01 ─────────────────────────────────────────────────
+
+export interface KycStatusResponse {
+  kyc_status: 'not_started' | 'pending' | 'verified' | 'expired' | 'rejected';
+  kyc_years_remaining: number;
+  price_per_year: number;
+  kaluta_verification_url: string | null;
+}
+
+export interface KycSubmitResponse {
+  kyc_verification_id: string;
+  transaction_id: string;
+  order_id: string;
+  pay_address: string;
+  pay_amount: number;
+  pay_currency: string;
+  qr_code_data_uri: string;
+  expires_at: string | null;
+  amount_usd: number;
+}
+
+export const kycApi = {
+  getStatus: () => api.get<KycStatusResponse>('/platform/kyc/status'),
+
+  submit: (data: { years: 1 | 2 | 3 | 5; pay_currency: string; invoice_language: string }) =>
+    api.post<KycSubmitResponse>('/platform/kyc/submit', data),
+
+  retrySession: () =>
+    api.post<{ verification_url: string; session_id: string }>('/platform/kyc/retry-session'),
+};
+
+// ── Factures (facturation générique — pas spécifique au KYC) ──────────────
+
+export interface Invoice {
+  id: string;
+  invoice_number: string;
+  payment_type: string;
+  amount: number;
+  currency: string;
+  payment_reference: string | null;
+  status: string;
+  created_at: string;
+}
+
+export const invoicesApi = {
+  list: (limit = 50) => api.get<Invoice[]>('/users/me/invoices', { params: { limit } }),
+
+  get: (invoiceId: string) => api.get<Invoice>(`/users/me/invoices/${invoiceId}`),
+
+  download: (invoiceId: string) =>
+    api.get(`/users/me/invoices/${invoiceId}/download`, { responseType: 'blob' }),
 };
 
 // ── M24 — Accounting API ──────────────────────────────────────────────────────
@@ -1417,6 +1477,7 @@ export interface SAPlatformSettings {
   cloudinary: { configured: boolean; cloud_name: string };
   ai: { configured: boolean; model: string };
   domains: { configured: boolean; sandbox: boolean; registrar: string; markup_percent: number };
+  kyc: { configured: boolean; sandbox: boolean; price_per_year: number };
   env: string;
 }
 

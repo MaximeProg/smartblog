@@ -573,6 +573,51 @@ async def book_platform_ad_payment(
         db.add(ln)
 
 
+async def book_kyc_verification_payment(
+    db,
+    amount: float,
+    kyc_verification_id: str,
+    transaction_id: str,
+    created_by_system_user_id: uuid.UUID,
+):
+    """
+    Books a KYC verification payment (condition d'accès au programme
+    d'affiliation — décision PDG 2026-08-01), même répartition que les
+    pubs achetées sur le site principal (book_platform_ad_payment) :
+    Dr 1010 (amount)
+    Cr 4104 (81% — SmarterBloggers, revenu vérification KYC)
+    Cr 2810 (19% — Affiliate pool, versé à la chaîne de parrainage de l'utilisateur vérifié)
+    """
+    platform_commission = round(amount * 0.81, 4)
+    affiliate_pool = round(amount * 0.19, 4)
+
+    entry_number = await _get_next_entry_number(db)
+
+    entry = JournalEntry(
+        entry_number=entry_number,
+        journal_type=JournalType.SALES,
+        description=f"KYC verification payment — {kyc_verification_id}",
+        entry_date=date.today(),
+        reference=transaction_id,
+        status=JournalEntryStatus.APPROVED,
+        source_type=JournalEntrySource.NOWPAYMENTS_WEBHOOK,
+        source_id=transaction_id,
+        created_by=created_by_system_user_id,
+        approved_by=created_by_system_user_id,
+        approved_at=datetime.now(timezone.utc),
+    )
+    db.add(entry)
+    await db.flush()
+
+    lines = [
+        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1010", debit=round(amount, 4), credit=0),
+        JournalEntryLine(entry_id=entry.id, line_number=2, account_code="4104", debit=0, credit=platform_commission),
+        JournalEntryLine(entry_id=entry.id, line_number=3, account_code="2810", debit=0, credit=affiliate_pool),
+    ]
+    for ln in lines:
+        db.add(ln)
+
+
 # ── Tenant read-only view ─────────────────────────────────────────
 
 tenant_accounting_router = APIRouter(

@@ -10,6 +10,7 @@ le frontend interroge en polling et qui, si besoin, relit le statut en
 direct depuis NowPayments (GET /v1/payment/{id}). Les deux convergent vers
 la même fonction idempotente `_finalize_transaction`.
 """
+import logging
 import uuid
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Request, Header, HTTPException
@@ -33,6 +34,8 @@ from app.services.nowpayments_service import (
 )
 from app.api.v1.tenants import _assert_member, _assert_role
 from app.models.enums import UserRole
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/tenants/{tenant_id}/payments", tags=["payments"])
 
@@ -152,6 +155,7 @@ async def _create_crypto_transaction(
     campaign_id: uuid.UUID | None = None,
     platform_fee: float = 0,
     pay_currency: str = "usdtbsc",
+    extra: dict | None = None,
 ) -> tuple[Transaction, dict]:
     """Crée un paiement NowPayments direct et persiste immédiatement une
     Transaction PENDING avec l'adresse/montant — c'est la ligne que le
@@ -189,6 +193,7 @@ async def _create_crypto_transaction(
         provider_status=payment.get("payment_status"),
         article_id=article_id,
         campaign_id=campaign_id,
+        extra=extra,
     )
     db.add(tx)
     await db.commit()
@@ -369,6 +374,83 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             from app.core.arq_pool import get_arq_pool
             pool = await get_arq_pool()
             await pool.enqueue_job("register_purchased_domain", order_id=str(order.id))
+
+    elif tx.transaction_type == TransactionType.KYC_VERIFICATION:
+        from app.models.kyc import KycVerification
+        from app.models.enums import KycStatus, AffiliateCommissionSource
+        from app.models.user import User
+
+        kyc = await db.get(KycVerification, tx.campaign_id) if tx.campaign_id else None
+        if kyc:
+            kyc.amount_paid = actually_paid
+            kyc.status = KycStatus.PENDING
+
+            user = await db.get(User, tx.user_id) if tx.user_id else None
+            if user:
+                user.kyc_years_remaining = (user.kyc_years_remaining or 0) + kyc.years_purchased
+                user.kyc_status = KycStatus.PENDING
+            await db.commit()
+
+            # Commission d'affiliation (10% niveau 1 + 1% niveaux 2-10 = 19%,
+            # même barème que MAIN_SITE_AD) sur le montant réellement payé —
+            # ne bloque jamais la finalisation du paiement en cas d'échec.
+            try:
+                from app.api.v1.affiliate import compute_and_accrue_fixed_level_commissions
+                if tx.user_id:
+                    await compute_and_accrue_fixed_level_commissions(
+                        db=db,
+                        source_user_id=tx.user_id,
+                        source_type=AffiliateCommissionSource.KYC_VERIFICATION,
+                        source_transaction_id=str(tx.id),
+                        gross_amount=actually_paid,
+                        level_percentages={1: 0.10, **{lvl: 0.01 for lvl in range(2, 11)}},
+                    )
+                await db.commit()
+            except Exception:
+                logger.exception("KYC: échec du calcul des commissions d'affiliation pour la transaction %s", tx.id)
+
+            # Comptabilité — même répartition 81/19 que MAIN_SITE_AD.
+            try:
+                from app.api.v1.accounting import book_kyc_verification_payment
+                if tx.user_id:
+                    await book_kyc_verification_payment(
+                        db=db,
+                        amount=actually_paid,
+                        kyc_verification_id=str(kyc.id),
+                        transaction_id=str(tx.id),
+                        created_by_system_user_id=tx.user_id,
+                    )
+                    await db.commit()
+            except Exception:
+                logger.exception("KYC: échec de la comptabilisation du paiement pour la transaction %s", tx.id)
+
+            # Session Kaluta créée SEULEMENT après confirmation du paiement
+            # (jamais avant) — le webhook Kaluta fait ensuite foi pour passer
+            # kyc.status/user.kyc_status à VERIFIED (voir kyc.py::kaluta_webhook).
+            try:
+                from app.services.kaluta_service import create_kaluta_session
+                session = await create_kaluta_session(external_id=str(tx.user_id or kyc.id))
+                kyc.kaluta_session_id = session.get("session_id")
+                kyc.kaluta_verification_url = session.get("verification_url")
+                if user:
+                    user.kyc_provider_session_id = session.get("session_id")
+                await db.commit()
+            except Exception:
+                logger.exception("KYC: échec de la création de la session Kaluta pour la transaction %s", tx.id)
+
+            # Facture — ne bloque jamais la finalisation du paiement.
+            try:
+                from app.services.invoice_service import generate_and_send_invoice
+                if user:
+                    invoice_language = (tx.extra or {}).get("invoice_language", "en")
+                    await generate_and_send_invoice(
+                        db, user=user, transaction=tx,
+                        payment_type=TransactionType.KYC_VERIFICATION.value,
+                        language=invoice_language,
+                    )
+                    await db.commit()
+            except Exception:
+                logger.exception("KYC: échec de la génération/envoi de la facture pour la transaction %s", tx.id)
 
 
 async def _activate_subscription(db, tenant_id: uuid.UUID, plan: str, billing: str) -> None:

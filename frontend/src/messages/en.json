@@ -24,6 +24,7 @@
     "advertiser": "Advertiser",
     "support": "Support",
     "payments": "Payments",
+    "invoices": "Invoices",
     "adminConsole": "Admin Console",
     "adminConsolePlatform": "SmarterBloggers Platform"
   },
@@ -2662,7 +2663,68 @@
     "walletRequiredDesc": "You need a USDT (BEP20/BSC) wallet address on file to participate in the affiliate program and receive commissions.",
     "walletRequiredCta": "Add my wallet",
     "waitingThresholdTitle": "Almost there!",
-    "waitingThresholdDesc": "Your commissions will be sent automatically as soon as your balance reaches {min}."
+    "waitingThresholdDesc": "Your commissions will be sent automatically as soon as your balance reaches {min}.",
+    "gate": {
+      "not_started": {
+        "title": "Identity verification required",
+        "description": "To keep the affiliate program safe and compliant, you must complete a one-time KYC identity verification before you can access your referral link and start earning commissions.",
+        "cta": "Start verification"
+      },
+      "pending": {
+        "title": "Verification in progress",
+        "description": "Your identity verification is being reviewed. This usually only takes a few minutes — your affiliate link will unlock automatically as soon as it's approved.",
+        "cta": "Check verification status"
+      },
+      "expired": {
+        "title": "Re-verification required",
+        "description": "You recently changed your name or country, which requires a new identity check before your affiliate link can be reactivated. If you have prepaid years remaining, this won't cost anything extra.",
+        "cta": "Re-verify my identity"
+      },
+      "rejected": {
+        "title": "Verification unsuccessful",
+        "description": "Your last identity verification attempt was not approved. You can start a new verification to try again.",
+        "cta": "Try again"
+      }
+    }
+  },
+  "kyc": {
+    "pageTitle": "Identity verification (KYC)",
+    "pageSubtitle": "Required once before you can access the affiliate program and receive commissions.",
+    "submitError": "Something went wrong. Please try again.",
+    "statusLabel": {
+      "not_started": "Not verified yet",
+      "pending": "Verification pending",
+      "verified": "Verified",
+      "expired": "Verification expired",
+      "rejected": "Verification rejected"
+    },
+    "yearsRemaining": "{count, plural, =0 {No prepaid years remaining} one {# prepaid year remaining} other {# prepaid years remaining}}",
+    "resumeVerification": "Resume verification",
+    "reverifyExplain": "You have prepaid years remaining, so re-verifying costs nothing extra — you'll just need to go through identity verification again.",
+    "reverifyCta": "Re-verify my identity",
+    "purchaseTitle": "Choose your verification duration",
+    "durationLabel": "Duration",
+    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "totalLabel": "Total",
+    "payCta": "Pay ${amount} and verify",
+    "paymentConfirmedTitle": "Payment confirmed",
+    "paymentConfirmedDesc": "Your identity verification session has started — check back here for updates."
+  },
+  "invoices": {
+    "title": "Invoices",
+    "subtitle": "All invoices generated for your payments on SmarterBloggers.",
+    "empty": "No invoices yet.",
+    "downloadError": "Could not download the invoice.",
+    "colNumber": "Invoice #",
+    "colType": "Type",
+    "colAmount": "Amount",
+    "colDate": "Date",
+    "colReference": "Reference",
+    "colStatus": "Status",
+    "download": "Download",
+    "type": {
+      "kyc_verification": "KYC Verification"
+    }
   },
   "advertiser": {
     "title": "Advertise on SmarterBloggers",
@@ -3357,7 +3419,9 @@
         "domainMarkup": "Domain Purchase Markup (%)",
         "domainMarkupHint": "Added on top of the registrar's price for every domain purchase and renewal — 0 means resale at cost",
         "paymentTolerance": "Crypto Payment Tolerance ($)",
-        "paymentToleranceHint": "A payment received within this margin of the expected amount (network fees, rate variance) is still considered complete"
+        "paymentToleranceHint": "A payment received within this margin of the expected amount (network fees, rate variance) is still considered complete",
+        "kycPricePerYear": "KYC Verification Price ($/year)",
+        "kycPricePerYearHint": "Price charged to users per year of identity verification, required before accessing the affiliate program"
       },
       "tabs": {
         "general": "General",

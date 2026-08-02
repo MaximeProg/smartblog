@@ -1,10 +1,10 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import String, Boolean, Text, DateTime, Numeric, ForeignKey, Enum as SAEnum
+from sqlalchemy import String, Boolean, Text, DateTime, Numeric, Integer, ForeignKey, Enum as SAEnum
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from app.models.base import Base
-from app.models.enums import PlanTier, ENUM_VALUES
+from app.models.enums import PlanTier, KycStatus, ENUM_VALUES
 
 
 class User(Base):
@@ -65,6 +65,20 @@ class User(Base):
     referred_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", use_alter=True, name="fk_user_referred_by", ondelete="SET NULL"),
     )
+
+    # KYC (Kaluta KYC, décision PDG 2026-08-01) — condition d'accès au
+    # programme d'affiliation. `kyc_years_remaining` : nombre d'années
+    # prépayées restantes (décrémenté seulement par un changement important
+    # de profil nécessitant une nouvelle vérification, jamais par le simple
+    # écoulement du temps). Historique complet des cycles de vérification
+    # dans `kyc_verifications` (app/models/kyc.py).
+    kyc_status: Mapped[KycStatus] = mapped_column(
+        SAEnum(KycStatus, name="kyc_status", create_type=False, values_callable=ENUM_VALUES),
+        nullable=False, default=KycStatus.NOT_STARTED,
+    )
+    kyc_years_remaining: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    kyc_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    kyc_provider_session_id: Mapped[str | None] = mapped_column(String(255))
 
     # Activité
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

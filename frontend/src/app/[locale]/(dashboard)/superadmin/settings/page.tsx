@@ -152,6 +152,13 @@ export default function SettingsPage() {
                   className="h-9 w-24 px-3 rounded-xl border bg-transparent text-[12px] focus:outline-none"
                   style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text)' }} />
               </Field>
+              <Field label={ts('field.kycPricePerYear')} hint={ts('field.kycPricePerYearHint')}>
+                <input defaultValue={data?.kyc.price_per_year ?? 10}
+                  type="number" min={0} step={1}
+                  onBlur={e => save({ kyc_price_per_year: Number(e.target.value) })}
+                  className="h-9 w-24 px-3 rounded-xl border bg-transparent text-[12px] focus:outline-none"
+                  style={{ borderColor: 'var(--sa-border)', color: 'var(--sa-text)' }} />
+              </Field>
               <div className="py-4">
                 <p className="text-[10px]" style={{ color: 'var(--sa-text-3)' }}>{ts('autoSaveNote')}</p>
               </div>
@@ -185,6 +192,7 @@ export default function SettingsPage() {
                 { name: 'Cloudinary',  ok: data?.cloudinary?.configured ?? false, detail: data?.cloudinary?.cloud_name ?? '' },
                 { name: 'OpenAI',      ok: data?.ai?.configured ?? false,        detail: data?.ai?.model ?? '' },
                 { name: 'OpenProvider (domains)', ok: data?.domains?.configured ?? false, detail: data?.domains?.configured ? `${data.domains.sandbox ? 'Sandbox' : 'Production'} · ${data.domains.registrar}` : '' },
+                { name: 'Kaluta KYC',  ok: data?.kyc?.configured ?? false, detail: data?.kyc?.configured ? `${data.kyc.sandbox ? 'Sandbox' : 'Production'} · $${data.kyc.price_per_year}/yr` : '' },
               ].map(int => (
                 <div key={int.name} className="flex items-center justify-between px-5 py-4 rounded-xl border"
                   style={{ background: 'var(--sa-card)', borderColor: 'var(--sa-border)' }}>

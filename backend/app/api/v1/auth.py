@@ -183,6 +183,22 @@ async def update_profile(
     if not user:
         raise UnauthorizedException("User not found.")
 
+    # KYC (décision PDG 2026-08-01) : country/display_name sont les seuls
+    # champs de profil réellement vérifiés par Kaluta. Un changement de l'un
+    # des deux, une fois le KYC validé, invalide la vérification en cours
+    # sans annuler les années prépayées restantes — voir kyc.py::retry_kyc_session
+    # pour la re-vérification (déclenchée par l'utilisateur, pas ici).
+    from app.models.enums import KycStatus
+    from app.models.kyc import KycVerification
+
+    is_material_change = (
+        user.kyc_status == KycStatus.VERIFIED
+        and (
+            (body.display_name is not None and body.display_name != user.display_name)
+            or (body.country is not None and (body.country or None) != user.country)
+        )
+    )
+
     if body.display_name is not None:
         user.display_name = body.display_name
     if body.bio is not None:
@@ -196,6 +212,18 @@ async def update_profile(
     # Genre immuable : ignoré si déjà défini
     if body.gender is not None and user.gender is None:
         user.gender = body.gender
+
+    if is_material_change:
+        user.kyc_years_remaining = max(0, (user.kyc_years_remaining or 0) - 1)
+        user.kyc_status = KycStatus.EXPIRED
+        db.add(KycVerification(
+            user_id=user.id,
+            tenant_id=uuid.UUID(settings.PLATFORM_TENANT_ID),
+            years_purchased=0,
+            amount_paid=0,
+            status=KycStatus.EXPIRED,
+            is_material_change_reverification=True,
+        ))
 
     await db.commit()
     from app.schemas.auth import UserInfo

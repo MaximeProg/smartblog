@@ -129,6 +129,16 @@ class Settings(BaseSettings):
     # tenant : seul un super admin peut le gérer (voir tenants.py::_assert_member).
     PLATFORM_TENANT_ID: str = "00000000-0000-0000-0000-000000000001"
 
+    # Kaluta KYC (vérification d'identité, condition d'accès au programme
+    # d'affiliation — décision PDG 2026-08-01). KALUTA_API_KEY ne doit
+    # JAMAIS être exposée côté frontend — usage serveur-à-serveur uniquement.
+    KALUTA_API_KEY: str = ""
+    KALUTA_WEBHOOK_SECRET: str = ""
+    KALUTA_BASE_URL: str = "https://kalutakyc.com/v1"
+    KALUTA_SANDBOX: bool = True
+    # Fallback si aucun override n'existe encore dans platform:settings (Redis)
+    KYC_DEFAULT_PRICE_PER_YEAR: float = 10.0
+
     # URLs frontend supplémentaires autorisées (séparées par des virgules)
     # Ex: EXTRA_CORS_ORIGINS=https://smarterbloggers.vercel.app,https://staging.smarterbloggers.com
     EXTRA_CORS_ORIGINS: str = ""

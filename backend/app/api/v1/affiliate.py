@@ -11,17 +11,17 @@ import uuid
 import random
 import string
 from datetime import datetime, timezone
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Depends
 from fastapi.responses import StreamingResponse
 from sqlalchemy import select, func
 from pydantic import BaseModel
 
 from app.core.config import settings
-from app.core.dependencies import TokenPayload, DBSession
+from app.core.dependencies import TokenPayload, DBSession, require_kyc_verified
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
 from app.models.affiliate import AffiliateRelationship, AffiliateCommission, AffiliateCashoutRequest, AffiliateCodeAlias
 from app.models.user import User
-from app.models.enums import AffiliateCommissionStatus, CashoutStatus
+from app.models.enums import AffiliateCommissionStatus, CashoutStatus, KycStatus
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +41,16 @@ MIN_CASHOUT = 1.00
 # ── Schemas ───────────────────────────────────────────────────────
 
 class AffiliateDashboardResponse(BaseModel):
-    affiliate_code: str
-    referral_url: str
+    # KYC (décision PDG 2026-08-01) : tant que can_access_affiliate est
+    # False, affiliate_code/referral_url restent None — jamais peuplés par
+    # get_affiliate_dashboard, qui court-circuite AVANT
+    # _get_or_create_affiliate_code. C'est ce court-circuit backend, pas
+    # seulement le masquage du lien côté UI, qui constitue le vrai verrou.
+    kyc_status: str
+    can_access_affiliate: bool
+    kyc_years_remaining: int
+    affiliate_code: str | None
+    referral_url: str | None
     balance: float
     cashout_threshold: float
     can_cashout: bool
@@ -124,7 +132,9 @@ async def get_affiliate_dashboard(payload: TokenPayload, db: DBSession):
     if not user:
         raise NotFoundException("User")
 
-    code = await _get_or_create_affiliate_code(db, user)
+    can_access = user.kyc_status == KycStatus.VERIFIED
+
+    code = await _get_or_create_affiliate_code(db, user) if can_access else None
 
     total_referrals_q = await db.execute(
         select(func.count()).where(
@@ -166,8 +176,11 @@ async def get_affiliate_dashboard(payload: TokenPayload, db: DBSession):
     threshold = float(user.affiliate_cashout_threshold or MIN_CASHOUT)
 
     return AffiliateDashboardResponse(
+        kyc_status=user.kyc_status.value,
+        can_access_affiliate=can_access,
+        kyc_years_remaining=user.kyc_years_remaining,
         affiliate_code=code,
-        referral_url=f"{settings.FRONTEND_URL}/register?ref={code}",
+        referral_url=f"{settings.FRONTEND_URL}/register?ref={code}" if can_access else None,
         balance=balance,
         cashout_threshold=threshold,
         can_cashout=balance >= threshold,
@@ -186,6 +199,7 @@ async def list_commissions(
     status: str | None = Query(None),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
+    _kyc: dict = Depends(require_kyc_verified),
 ):
     user_id = uuid.UUID(payload["sub"])
 
@@ -214,7 +228,7 @@ async def list_commissions(
 
 
 @user_router.get("/cashouts")
-async def list_cashouts(payload: TokenPayload, db: DBSession):
+async def list_cashouts(payload: TokenPayload, db: DBSession, _kyc: dict = Depends(require_kyc_verified)):
     user_id = uuid.UUID(payload["sub"])
 
     result = await db.execute(
@@ -244,6 +258,7 @@ async def request_cashout(
     body: CashoutRequestBody,
     payload: TokenPayload,
     db: DBSession,
+    _kyc: dict = Depends(require_kyc_verified),
 ):
     user_id = uuid.UUID(payload["sub"])
     user = await db.get(User, user_id)
@@ -310,7 +325,7 @@ async def request_cashout(
 
 
 @user_router.get("/commissions/export")
-async def export_commissions_csv(payload: TokenPayload, db: DBSession):
+async def export_commissions_csv(payload: TokenPayload, db: DBSession, _kyc: dict = Depends(require_kyc_verified)):
     user_id = uuid.UUID(payload["sub"])
 
     result = await db.execute(
@@ -348,6 +363,7 @@ async def list_referrals(
     db: DBSession,
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
+    _kyc: dict = Depends(require_kyc_verified),
 ):
     """List direct referrals (level=1) for this affiliate."""
     user_id = uuid.UUID(payload["sub"])
@@ -403,6 +419,7 @@ async def get_referral_tree(
     payload: TokenPayload,
     db: DBSession,
     max_depth: int = Query(3, ge=1, le=5),
+    _kyc: dict = Depends(require_kyc_verified),
 ):
     """Return the referral tree up to max_depth levels."""
     user_id = uuid.UUID(payload["sub"])
@@ -439,6 +456,7 @@ async def invite_friend(
     body: InviteFriendRequest,
     payload: TokenPayload,
     db: DBSession,
+    _kyc: dict = Depends(require_kyc_verified),
 ):
     """Send a personalised referral email to a friend in their language."""
     from app.services.ai_service import translate_text

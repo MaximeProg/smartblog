@@ -76,6 +76,30 @@ def require_super_admin():
     return _check
 
 
+async def require_kyc_verified(
+    db: AsyncSession = Depends(get_db_session),
+    payload: dict = Depends(get_current_user_from_token),
+) -> dict:
+    """Bloque l'accès au programme d'affiliation tant que le KYC n'est pas
+    validé (décision PDG 2026-08-01 — condition de conformité, pas
+    seulement une restriction d'UI). Voir kyc.py et
+    affiliate.py::AffiliateDashboardResponse pour le même verrou appliqué
+    au niveau du dashboard lui-même."""
+    from app.models.enums import KycStatus
+
+    user_id = uuid.UUID(payload["sub"])
+    user = await db.get(User, user_id)
+    if user is None or user.kyc_status != KycStatus.VERIFIED:
+        raise HTTPException(
+            status_code=402,
+            detail={
+                "code": "KYC_REQUIRED",
+                "message": "KYC verification is required to access the affiliate program.",
+            },
+        )
+    return payload
+
+
 async def check_plan_active(
     tenant_id: uuid.UUID,
     db: AsyncSession = Depends(get_db_session),

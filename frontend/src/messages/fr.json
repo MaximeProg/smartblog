@@ -24,6 +24,7 @@
     "advertiser": "Annonceur",
     "support": "Support",
     "payments": "Paiements",
+    "invoices": "Factures",
     "adminConsole": "Console Admin",
     "adminConsolePlatform": "Plateforme SmarterBloggers"
   },
@@ -2662,7 +2663,68 @@
     "walletRequiredDesc": "Un wallet USDT (BEP20/BSC) est nécessaire pour participer au programme d'affiliation et recevoir vos commissions.",
     "walletRequiredCta": "Ajouter mon wallet",
     "waitingThresholdTitle": "Presque là !",
-    "waitingThresholdDesc": "Vos commissions seront envoyées automatiquement dès que votre solde atteindra {min}."
+    "waitingThresholdDesc": "Vos commissions seront envoyées automatiquement dès que votre solde atteindra {min}.",
+    "gate": {
+      "not_started": {
+        "title": "Vérification d'identité requise",
+        "description": "Pour garantir la sécurité et la conformité du programme d'affiliation, vous devez d'abord effectuer une vérification d'identité (KYC) unique avant d'accéder à votre lien de parrainage et de commencer à gagner des commissions.",
+        "cta": "Commencer la vérification"
+      },
+      "pending": {
+        "title": "Vérification en cours",
+        "description": "Votre vérification d'identité est en cours d'examen. Cela ne prend généralement que quelques minutes — votre lien d'affiliation se débloquera automatiquement dès son approbation.",
+        "cta": "Vérifier le statut"
+      },
+      "expired": {
+        "title": "Nouvelle vérification requise",
+        "description": "Vous avez récemment changé votre nom ou votre pays, ce qui nécessite une nouvelle vérification avant que votre lien d'affiliation puisse être réactivé. Si vous avez des années prépayées restantes, cela ne vous coûtera rien de plus.",
+        "cta": "Vérifier à nouveau mon identité"
+      },
+      "rejected": {
+        "title": "Échec de la vérification",
+        "description": "Votre dernière tentative de vérification d'identité n'a pas été approuvée. Vous pouvez démarrer une nouvelle vérification pour réessayer.",
+        "cta": "Réessayer"
+      }
+    }
+  },
+  "kyc": {
+    "pageTitle": "Vérification d'identité (KYC)",
+    "pageSubtitle": "Requise une seule fois avant d'accéder au programme d'affiliation et de recevoir des commissions.",
+    "submitError": "Une erreur est survenue. Veuillez réessayer.",
+    "statusLabel": {
+      "not_started": "Pas encore vérifié",
+      "pending": "Vérification en cours",
+      "verified": "Vérifié",
+      "expired": "Vérification expirée",
+      "rejected": "Vérification rejetée"
+    },
+    "yearsRemaining": "{count, plural, =0 {Aucune année prépayée restante} one {# année prépayée restante} other {# années prépayées restantes}}",
+    "resumeVerification": "Reprendre la vérification",
+    "reverifyExplain": "Il vous reste des années prépayées, la nouvelle vérification ne vous coûtera donc rien de plus — vous devrez simplement repasser la vérification d'identité.",
+    "reverifyCta": "Vérifier à nouveau mon identité",
+    "purchaseTitle": "Choisissez la durée de votre vérification",
+    "durationLabel": "Durée",
+    "yearsCount": "{count, plural, one {# an} other {# ans}}",
+    "totalLabel": "Total",
+    "payCta": "Payer {amount}$ et vérifier",
+    "paymentConfirmedTitle": "Paiement confirmé",
+    "paymentConfirmedDesc": "Votre session de vérification d'identité a démarré — revenez ici pour suivre son évolution."
+  },
+  "invoices": {
+    "title": "Factures",
+    "subtitle": "Toutes les factures générées pour vos paiements sur SmarterBloggers.",
+    "empty": "Aucune facture pour l'instant.",
+    "downloadError": "Impossible de télécharger la facture.",
+    "colNumber": "N° de facture",
+    "colType": "Type",
+    "colAmount": "Montant",
+    "colDate": "Date",
+    "colReference": "Référence",
+    "colStatus": "Statut",
+    "download": "Télécharger",
+    "type": {
+      "kyc_verification": "Vérification KYC"
+    }
   },
   "advertiser": {
     "title": "Faites de la publicité sur SmarterBloggers",
@@ -3357,7 +3419,9 @@
         "domainMarkup": "Marge sur l'achat de domaines (%)",
         "domainMarkupHint": "Ajoutée au prix du registrar pour chaque achat/renouvellement de domaine — 0 = revente au prix coûtant",
         "paymentTolerance": "Tolérance paiement crypto ($)",
-        "paymentToleranceHint": "Un paiement reçu dans cette marge par rapport au montant attendu (frais réseau, variation de cours) est quand même considéré comme complet"
+        "paymentToleranceHint": "Un paiement reçu dans cette marge par rapport au montant attendu (frais réseau, variation de cours) est quand même considéré comme complet",
+        "kycPricePerYear": "Prix de la vérification KYC ($/an)",
+        "kycPricePerYearHint": "Prix facturé aux utilisateurs par année de vérification d'identité, requise avant l'accès au programme d'affiliation"
       },
       "tabs": {
         "general": "Général",

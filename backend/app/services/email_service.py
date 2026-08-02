@@ -101,7 +101,12 @@ def _divider() -> str:
     return '<hr style="border:none;border-top:1px solid #E2E8F0;margin:24px 0;" />'
 
 
-async def _send(to: str | list[str], subject: str, html: str) -> None:
+async def _send(
+    to: str | list[str],
+    subject: str,
+    html: str,
+    attachments: list[dict] | None = None,
+) -> None:
     if not settings.RESEND_API_KEY:
         logger.warning("email._send: RESEND_API_KEY not configured, skipping")
         return
@@ -110,12 +115,15 @@ async def _send(to: str | list[str], subject: str, html: str) -> None:
     sender = _from()
     logger.info("email._send: sending", to=recipients, subject=subject, sender=sender)
     try:
-        result = resend.Emails.send({
+        payload = {
             "from": sender,
             "to": recipients,
             "subject": subject,
             "html": html,
-        })
+        }
+        if attachments:
+            payload["attachments"] = attachments
+        result = resend.Emails.send(payload)
         logger.info("email._send: sent", result=str(result))
     except Exception as exc:
         logger.error("email._send: resend API error", error=str(exc), to=recipients, subject=subject)
@@ -718,4 +726,76 @@ async def send_affiliate_commission_notification(
             preview=f"Vous venez de gagner {commission_amount:.4f} USDT en tant qu'affilié niveau {level}.",
             body_html=body,
         ),
+    )
+
+
+# ─── Factures ──────────────────────────────────────────────────────
+
+async def send_invoice_email(
+    to: str,
+    display_name: str,
+    invoice_number: str,
+    payment_type_label: str,
+    amount: float,
+    currency: str,
+    invoice_url: str,
+    pdf_bytes: bytes,
+    labels: dict[str, str],
+) -> None:
+    """Envoie la facture par email avec le PDF en pièce jointe — le lien
+    vers le Dashboard (invoice_url) reste la source canonique si le client
+    mail bloque les pièces jointes.
+
+    `labels` et `payment_type_label` sont déjà traduits (voir
+    invoice_service.py::generate_and_send_invoice, qui passe par DeepL avec
+    repli anglais automatique) — cette fonction ne fait qu'assembler le
+    HTML, elle ne traduit ni ne devine jamais de texte elle-même. Les
+    valeurs structurées (invoice_number, amount, currency) ne sont jamais
+    traduites."""
+    import base64
+
+    L = labels  # noqa: N806 — alias court, lu uniquement via .get() ci-dessous
+    subject_label = L.get("subject", "Your invoice")
+    title_label = L.get("title", "Your invoice")
+    greeting_label = L.get("greeting", "Hello")
+    intro_label = L.get("intro", "Here is your invoice for:")
+    invoice_number_label = L.get("invoice_number_label", "Invoice number")
+    amount_label = L.get("amount_label", "Amount")
+    cta_label = L.get("cta", "View my invoice")
+    footer_label = L.get("footer", "Find all your invoices anytime in Dashboard → Invoices.")
+
+    body = (
+        _h1(title_label) +
+        _p(f"{greeting_label} <strong>{display_name}</strong>,") +
+        _p(f"{intro_label} <strong>{payment_type_label}</strong>.") +
+        f'<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-left:4px solid {BRAND_BLUE};'
+        f'border-radius:8px;padding:16px 20px;margin:20px 0;">'
+        f'<table cellpadding="0" cellspacing="0" width="100%">'
+        f'<tr>'
+        f'<td style="font-size:13px;color:{BRAND_MUTED};width:150px;">{invoice_number_label}</td>'
+        f'<td style="font-size:15px;font-weight:700;color:{BRAND_DARK};">{invoice_number}</td>'
+        f'</tr>'
+        f'<tr>'
+        f'<td style="font-size:13px;color:{BRAND_MUTED};padding-top:8px;">{amount_label}</td>'
+        f'<td style="font-size:18px;font-weight:800;color:{BRAND_DARK};padding-top:8px;">{amount:.2f} {currency}</td>'
+        f'</tr>'
+        f'</table>'
+        f'</div>' +
+        _btn(cta_label, invoice_url) +
+        _divider() +
+        _note(footer_label)
+    )
+    attachments = [{
+        "filename": f"{invoice_number}.pdf",
+        "content": base64.b64encode(pdf_bytes).decode(),
+    }]
+    await _send(
+        to=to,
+        subject=f"[SmarterBloggers] {subject_label} {invoice_number}",
+        html=_base(
+            title=title_label,
+            preview=f"{invoice_number} — {amount:.2f} {currency}",
+            body_html=body,
+        ),
+        attachments=attachments,
     )

@@ -142,6 +142,7 @@ class TransactionType(str, enum.Enum):
     PAID_NEWSLETTER = "paid_newsletter"
     AD_CAMPAIGN = "ad_campaign"
     DOMAIN_PURCHASE = "domain_purchase"
+    KYC_VERIFICATION = "kyc_verification"
 
 
 class TransactionStatus(str, enum.Enum):
@@ -196,6 +197,17 @@ class AffiliateCommissionSource(str, enum.Enum):
     SUBSCRIPTION = "subscription"
     AD_SLOT = "ad_slot"
     MAIN_SITE_AD = "main_site_ad"
+    KYC_VERIFICATION = "kyc_verification"
+
+
+# ── KYC (Kaluta KYC — 2026-08-01, condition d'accès au programme d'affiliation) ──
+
+class KycStatus(str, enum.Enum):
+    NOT_STARTED = "not_started"
+    PENDING = "pending"
+    VERIFIED = "verified"
+    EXPIRED = "expired"
+    REJECTED = "rejected"
 
 
 class AffiliateCommissionStatus(str, enum.Enum):
