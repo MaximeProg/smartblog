@@ -36,13 +36,16 @@ async def create_kaluta_session(
     redirect_url: str | None = None,
     document_type: str | None = None,
     metadata: dict | None = None,
+    country: str | None = None,
 ) -> dict:
     """
     Crée une session de vérification Kaluta pour un utilisateur.
     Retourne {session_id, verification_url, expires_at}.
     Le webhook_url pointe toujours vers notre endpoint fixe — jamais fourni
     par l'appelant, pour éviter qu'un client détourne les notifications de
-    résultat vers une autre URL.
+    résultat vers une autre URL. `country` est un simple pré-remplissage
+    optionnel (déjà connu sur le compte) — Kaluta le redétecte de toute
+    façon depuis le document scanné, ça n'a pas d'incidence sur le résultat.
     """
     if not settings.KALUTA_API_KEY:
         raise RuntimeError("KALUTA_API_KEY non configuré.")
@@ -57,6 +60,8 @@ async def create_kaluta_session(
         body["redirect_url"] = redirect_url
     if metadata:
         body["metadata"] = metadata
+    if country:
+        body["country"] = country
 
     async with httpx.AsyncClient(timeout=15.0) as client:
         resp = await client.post(f"{settings.KALUTA_BASE_URL}/sessions", headers=_headers(), json=body)

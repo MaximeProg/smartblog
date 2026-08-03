@@ -471,7 +471,10 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             # kyc.status/user.kyc_status à VERIFIED (voir kyc.py::kaluta_webhook).
             try:
                 from app.services.kaluta_service import create_kaluta_session
-                session = await create_kaluta_session(external_id=str(tx.user_id or kyc.id))
+                session = await create_kaluta_session(
+                    external_id=str(tx.user_id or kyc.id),
+                    country=user.country if user else None,
+                )
                 kyc.kaluta_session_id = session.get("session_id")
                 kyc.kaluta_verification_url = session.get("verification_url")
                 if user:

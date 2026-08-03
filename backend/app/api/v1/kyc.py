@@ -150,7 +150,7 @@ async def retry_kyc_session(payload: TokenPayload, db: DBSession):
     if user.kyc_status == KycStatus.VERIFIED:
         raise ValidationException("KYC is already verified.")
 
-    session = await create_kaluta_session(external_id=str(user.id))
+    session = await create_kaluta_session(external_id=str(user.id), country=user.country)
 
     kyc = KycVerification(
         user_id=user.id,
@@ -189,8 +189,15 @@ async def kaluta_webhook(
     import json as _json
     data = _json.loads(raw)
 
+    # Le payload réel imbrique l'identifiant/les scores sous `session.*`
+    # (confirmé via https://kalutakyc.com/docs#reference le 2026-08-03) —
+    # PAS à la racine du payload comme initialement implémenté. C'était le
+    # vrai bug : `session_id` restait toujours vide, donc chaque webhook
+    # tombait dans la branche "missing_session_id" et aucune vérification
+    # ne se finalisait jamais.
     event = data.get("event", "")
-    session_id = data.get("session_id", "")
+    session_obj = data.get("session") or {}
+    session_id = session_obj.get("id") or data.get("session_id", "")
     if not session_id:
         return {"received": True, "action": "ignored", "reason": "missing_session_id"}
 
@@ -203,25 +210,30 @@ async def kaluta_webhook(
 
     user = await db.get(User, kyc.user_id)
 
+    # `session.verified` est un alias documenté de `session.approved` — Kaluta
+    # peut envoyer l'un ou l'autre selon la version déployée côté leur API.
+    APPROVED_EVENTS = ("session.approved", "session.verified")
+
     # Idempotence : un événement terminal déjà traité ne doit jamais être
     # rejoué (même contrat que `tx.status == COMPLETED` dans
     # payments.py::_finalize_transaction).
-    if kyc.status in (KycStatus.VERIFIED, KycStatus.REJECTED) and event in ("session.approved", "session.rejected"):
+    if kyc.status in (KycStatus.VERIFIED, KycStatus.REJECTED) and (event in APPROVED_EVENTS or event == "session.rejected"):
         return {"received": True, "action": "ignored", "reason": "already_processed"}
 
     kyc.raw_webhook_payload = data
-    if "document_score" in data:
-        kyc.document_score = data.get("document_score")
-    if "face_score" in data:
-        kyc.face_score = data.get("face_score")
-    if "liveness_score" in data:
-        kyc.liveness_score = data.get("liveness_score")
-    if "overall_score" in data:
-        kyc.overall_score = data.get("overall_score")
+    scores = session_obj.get("scores") or {}
+    if "document" in scores:
+        kyc.document_score = scores.get("document")
+    if "face" in scores:
+        kyc.face_score = scores.get("face")
+    if "liveness" in scores:
+        kyc.liveness_score = scores.get("liveness")
+    if "overall_score" in session_obj:
+        kyc.overall_score = session_obj.get("overall_score")
 
     from datetime import datetime, timezone
 
-    if event == "session.approved":
+    if event in APPROVED_EVENTS:
         kyc.status = KycStatus.VERIFIED
         kyc.approved_at = datetime.now(timezone.utc)
         if user:
