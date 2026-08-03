@@ -39,7 +39,7 @@
       "signInButton": "Přihlásit se",
       "signingIn": "Přihlašuji se...",
       "twoFATitle": "Dvoufaktorové ověření",
-      "twoFADesc": "Zadejte šestimístný kód z vaší aplikace pro ověřování.",
+      "twoFADesc": "Zadejte šestimístný kód z vaší autentizační aplikace.",
       "twoFAVerify": "Ověřit",
       "twoFABack": "Zpět na přihlášení",
       "googleButton": "Pokračovat přes Google",
@@ -49,7 +49,7 @@
       "signUp": "Zaregistrujte se",
       "errors": {
         "invalidCredentials": "Neplatná e-mailová adresa nebo heslo",
-        "emailNotVerified": "Před přihlášením si prosím ověřte svou e-mailovou adresu",
+        "emailNotVerified": "Před přihlášením prosím ověřte svou e-mailovou adresu",
         "generic": "Došlo k chybě. Zkuste to prosím znovu.",
         "invalid2FA": "Neplatný ověřovací kód. Zkuste to prosím znovu."
       }
@@ -83,7 +83,7 @@
       "subtitle": "Zadejte svou e-mailovou adresu a my vám zašleme odkaz pro obnovení hesla",
       "emailLabel": "E-mailová adresa",
       "emailPlaceholder": "you@example.com",
-      "sendButton": "Odeslat odkaz pro resetování",
+      "sendButton": "Odeslat odkaz pro obnovení hesla",
       "sending": "Odesílání...",
       "backToLogin": "Zpět k přihlášení",
       "successTitle": "Odkaz byl odeslán!",
@@ -155,7 +155,7 @@
       "descriptionPlaceholder": "Popište svůj blog...",
       "languageLabel": "Jazyk",
       "submitButton": "Vytvořit blog",
-      "creating": "Vytváří se...",
+      "creating": "Vytváření...",
       "stepInfo": "Informace",
       "stepTheme": "Vyberte si téma",
       "nextStep": "Vyberte si téma",
@@ -280,7 +280,7 @@
     "sendAsNewsletter": "Odeslat jako zpravodaj",
     "upgrade": "Aktualizace",
     "limitReachedTitle": "Byl dosažen limit počtu článků ({max} / {max})",
-    "limitReachedDesc": "Dosáhli jste limitu článků ve svém tarifu. Pro publikování dalších článků si pořiďte vyšší tarif.",
+    "limitReachedDesc": "Dosáhli jste limitu článků ve svém tarifu. Chcete-li publikovat více článků, přejděte na vyšší tarif.",
     "limitNearTitle": "Blížíte se ke svému limitu (články na {used} / {max})",
     "limitNearDesc": "Vyčerpali jste již více než 80 % limitu pro články stanoveného vaším tarifem.",
     "limitReachedTooltip": "Byl dosažen limit článků — proveďte upgrade, abyste mohli vytvořit další"
@@ -325,7 +325,7 @@
       "urlPreview": "URL: / {slug}",
       "create": "Vytvořit stránku",
       "cancel": "Zrušit",
-      "creating": "Vytváření..."
+      "creating": "Vytváří se..."
     },
     "deleteTitle": "Smazat tuto stránku?",
     "deleteDesc": "Tuto akci nelze vrátit zpět. Stránka i veškerý její obsah budou trvale smazány.",
@@ -480,7 +480,7 @@
     "improveInstructionPlaceholder": "Např.: Formulovat formálněji, doplnit příklady…",
     "improveWithAiButton": "Zlepšujte se díky umělé inteligenci",
     "improvingButton": "Zlepšuje se…",
-    "generateImagePlaceholder": "Popište obrázek, který se má vygenerovat…",
+    "generateImagePlaceholder": "Popište obrázek, který chcete vygenerovat…",
     "generateWithDalleTitle": "Vytvořit pomocí DALL-E 3",
     "aiSeoAnalysisTitle": "Analýza SEO pomocí umělé inteligence",
     "analyzeWithAiButton": "Analyzovat pomocí umělé inteligence",
@@ -541,8 +541,8 @@
     "topArticles": "Nejčtenější články",
     "noData": "Pro toto období nejsou k dispozici žádné údaje",
     "avgSession": "Průměrná relace",
-    "topReferrers": "Nejčastější zdroje návštěvníků",
-    "viewsOverTime": "Počet zobrazení v čase",
+    "topReferrers": "Nejčastější zdroje návštěv",
+    "viewsOverTime": "Počet zobrazení v průběhu času",
     "devices": "Zařízení"
   },
   "team": {
@@ -581,7 +581,7 @@
       "changeRole": "Změnit roli"
     },
     "confirmRemove": "Vyloučit „{name}“ z týmu?",
-    "confirmRemoveDesc": "Okamžitě jim bude odepřen přístup k tomuto blogu."
+    "confirmRemoveDesc": "Okamžitě ztratí přístup k tomuto blogu."
   },
   "settings": {
     "title": "Nastavení",
@@ -847,12 +847,12 @@
     "adTargetingTitle": "Cílení reklam",
     "adTargetingSubtitle": "Vyberte si, kde se má vaše reklama zobrazovat, a preferovanou měnu.",
     "displayScopeSectionTitle": "Rozsah zobrazení",
-    "scopeGlobalLabel": "Celosvětově",
+    "scopeGlobalLabel": "Celosvětový",
     "scopeGlobalDesc": "Vaše reklama osloví všechny čtenáře, ať už jsou kdekoli.",
     "scopeCountryLabel": "Země",
     "scopeCountryDesc": "Zaměřte se na čtenáře v konkrétní zemi.",
     "scopeRegionLabel": "Region",
-    "scopeRegionDesc": "Zaměřte se na jeden stát, provincii nebo region.",
+    "scopeRegionDesc": "Zaměřte se na konkrétní stát, provincii nebo region.",
     "scopeCityLabel": "Město",
     "scopeCityDesc": "Hyperlokální cílení v rámci města.",
     "locationDetailsSectionTitle": "Podrobnosti o lokalitě",
@@ -873,7 +873,7 @@
     "paymentStep2Text": "Klikněte na „Zaplatit nyní“ – budete přesměrováni na zabezpečenou stránku služby NowPayments.",
     "paymentStep3Text": "Zaplaťte kryptoměnou (USDT, BTC, ETH…) nebo kartou prostřednictvím jejich platformy.",
     "paymentStep4Text": "Platba potvrzena → váš inzerát byl odeslán majiteli blogu ke kontrole.",
-    "paymentStep5Text": "Jakmile bude reklama schválena, bude automaticky zveřejněna.",
+    "paymentStep5Text": "Jakmile bude vaše reklama schválena, bude automaticky zveřejněna.",
     "securePaymentBold": "Bezpečná platba.",
     "securePaymentDesc": "Váš reklamní prostor je rezervován až po potvrzení platby. NowPayments přijímá více než 150 kryptoměn a všechny hlavní platební karty.",
     "reviewSubmissionTitle": "Zkontrolujte svůj příspěvek",
@@ -908,7 +908,7 @@
     "hero": {
       "badge": "Blogový SaaS pro více uživatelů",
       "title": "Profesionální blogová platforma pro týmy",
-      "subtitle": "Založte a spravujte více blogů, spolupracujte se svým týmem a rozšiřujte své publikum – to vše z jedné výkonné platformy.",
+      "subtitle": "Založte a spravujte více blogů, spolupracujte se svým týmem a rozšiřujte svou čtenářskou základnu – to vše z jedné výkonné platformy.",
       "cta": "Začněte zdarma",
       "ctaSecondary": "Zobrazit ukázku",
       "noCreditCard": "Není nutná kreditní karta"
@@ -1087,7 +1087,7 @@
     "titleTemplate": "Šablona názvu",
     "titleTemplateHint": "Proměnné: „{title}“ · „{blog}“ · „{category}“",
     "titleTemplatePlaceholder": "'{title}' — '{blog}'",
-    "metaDesc": "Výchozí meta popisek",
+    "metaDesc": "Výchozí meta popis",
     "metaDescHint": "Používá se na úvodní stránce a na stránkách bez konkrétního popisu.",
     "metaDescPlaceholder": "Blog o technologii, designu a podnikání...",
     "googlePreview": "Náhled Google",
@@ -1101,9 +1101,9 @@
     "twitterSummary": "Shrnutí",
     "twitterSummaryLarge": "Souhrn s velkým obrázkem",
     "indexing": "Povolit indexování vyhledávači",
-    "indexingDesc": "Je-li soubor robots.txt s nastavením „noindex“ deaktivován, sděluje to prohledávačům, aby váš blog neindexovaly.",
+    "indexingDesc": "Je-li soubor robots.txt s příkazem „noindex“ deaktivován, sděluje to prohledávačům, aby váš blog neindexovaly.",
     "sitemap": "URL mapy stránek",
-    "sitemapDesc": "Automaticky vygenerováno — odešlete to do služby Google Search Console.",
+    "sitemapDesc": "Automaticky vygenerováno – odešlete to do služby Google Search Console.",
     "copySitemap": "Kopírovat",
     "copiedSitemap": "Zkopírováno!",
     "schemaOrg": "Povolit strukturovaná data článků (JSON-LD)",
@@ -1127,7 +1127,7 @@
     },
     "seo": {
       "title": "Optimalizace pro vyhledávače (SEO)",
-      "description": "Nastavte SEO svého blogu: automatický sitemap, schema.org, metadata Open Graph, sledování pozic ve vyhledávačích a audit obsahu."
+      "description": "Nastavte si SEO svého blogu: automatický sitemap, schema.org, metadata Open Graph, sledování pozic ve vyhledávačích a audit obsahu."
     },
     "customization": {
       "title": "Pokročilé přizpůsobení",
@@ -1214,7 +1214,7 @@
         "newsletter": "Sekce zpravodaje",
         "seoTitleTemplate": "Šablona SEO nadpisu",
         "seoTitleHint": "Dostupné proměnné: „{title}“, „{blog}“, „{category}“",
-        "seoDescription": "Výchozí meta popisek",
+        "seoDescription": "Výchozí meta popis",
         "seoDescriptionPlaceholder": "Popis vašeho blogu pro vyhledávače..."
       },
       "widths": {
@@ -1283,7 +1283,7 @@
     "newsletterSection": "Sekce zpravodaje",
     "seoTitleTemplate": "Šablona SEO nadpisu",
     "seoTitleHint": "Proměnné: „{title}“, „{blog}“, „{category}“",
-    "seoMetaDesc": "Výchozí meta popisek",
+    "seoMetaDesc": "Výchozí meta popis",
     "seoMetaPlaceholder": "Popis pro vyhledávače...",
     "widths": {
       "narrow": "Úzký",
@@ -1315,7 +1315,7 @@
     "itemCount": "{count, plural, =0 {No files} one {# file} other {# files}}",
     "upload": "Nahrát",
     "uploadTitle": "Nahrát soubor",
-    "uploadDragDrop": "Přetáhněte sem soubor nebo klikněte a vyberte soubor",
+    "uploadDragDrop": "Přetáhněte sem soubor nebo klikněte a vyberte jej",
     "uploadComingSoon": "Přímé nahrávání bude brzy k dispozici – použijte Cloudinary nebo vložte URL adresu do editoru článků.",
     "close": "Zavřít",
     "searchPlaceholder": "Vyhledat soubory...",
@@ -1359,7 +1359,7 @@
     "usedInArticles": "Použito v následujících článcích na webu {count}:",
     "saveFailed": "Uložení se nezdařilo",
     "uploadFailed": "Nahrání se nezdařilo",
-    "supportedFormats": "Obrázky · Videa · Zvukové soubory · PDF"
+    "supportedFormats": "Obrázky · Videa · Audio · PDF"
   },
   "categories": {
     "title": "Kategorie",
@@ -1575,18 +1575,18 @@
   "widgets": {
     "title": "Widgety",
     "subtitle": "Nastavte widgety postranního panelu, které se zobrazují na vašem veřejném blogu.",
-    "desc": "Změňte pořadí řádků přetažením. Kliknutím na název jej přejmenujte. U každého widgetu můžete zapnout nebo vypnout jeho zobrazení.",
+    "desc": "Změňte pořadí řádků přetažením. Kliknutím na název můžete změnit název. U každého widgetu můžete zapnout nebo vypnout jeho zobrazení.",
     "save": "Uložit",
     "saved": "Uloženo!",
-    "tipTitle": "Tip: Kliknutím na název widgetu jej můžete přejmenovat. Změny se na vašem veřejném blogu projeví po uložení."
+    "tipTitle": "Tip: Kliknutím na název widgetu jej můžete přejmenovat. Změny se na vašem veřejném blogu projeví až po uložení."
   },
   "ai": {
     "title": "AI asistent",
     "subtitle": "Vytvářejte, vylepšujte a optimalizujte svůj obsah pomocí umělé inteligence.",
     "tokens": "Tokeny AI",
     "tokensLeft": "zbývající",
-    "noTokensTitle": "Žádné žetony již nezbývají",
-    "noTokensDesc": "Upgradujte svůj tarif a získejte více tokenů AI za měsíc."
+    "noTokensTitle": "Žádné žetony nezbývají",
+    "noTokensDesc": "Upgradujte svůj tarif a získejte více AI tokenů měsíčně."
   },
   "ads": {
     "title": "Reklamy",
@@ -1610,7 +1610,7 @@
     "instagramBusinessOnly": "Vyžaduje účet Instagram Business nebo Creator.",
     "connect": "Připojit se",
     "connecting": "Připojuji se…",
-    "connectError": "Nelze spustit OAuth — zkontrolujte přihlašovací údaje platformy v proměnných prostředí",
+    "connectError": "Nelze spustit OAuth – zkontrolujte přihlašovací údaje platformy v proměnných prostředí",
     "disconnect": "Odpojit",
     "disconnectConfirm": "Chcete tento účet odpojit?",
     "yes": "Ano",
@@ -1651,7 +1651,7 @@
     "status_failed": "Neúspěšné",
     "status_canceled": "Zrušeno",
     "unknownPlatform": "Neznámé",
-    "connectSuccess": "{platform} Připojení proběhlo úspěšně!",
+    "connectSuccess": "{platform} Připojení se podařilo!",
     "oauthError": "Chyba OAuth: {error}"
   },
   "subscription": {
@@ -1661,7 +1661,7 @@
     "thankYou": "Děkujeme za vaši podporu.",
     "comparePlans": "Porovnejte tarify",
     "currentBadge": "Aktuální plán",
-    "choosePlan": "Vyberte si",
+    "choosePlan": "Vyberte",
     "popular": "Oblíbené",
     "upgrade": "Aktualizace",
     "pageTitle": "Vyberte si tarif",
@@ -1680,7 +1680,7 @@
     "upgradeNow": "Upgradujte hned teď",
     "trialExpiredTitle": "Vaše zkušební období vypršelo",
     "trialExpiredDesc": "Vyberte si tarif, abyste mohli i nadále publikovat příspěvky a rozvíjet svůj blog.",
-    "trialActiveDesc": "Využijte všechny funkce ještě před koncem zkušební doby.",
+    "trialActiveDesc": "Využijte všechny funkce ještě před vypršením zkušební doby.",
     "trialLastDay": "Poslední den vaší zkušební doby!",
     "trialDaysLeft": "{days} počet zbývajících dnů ve zkušební verzi",
     "contactModalTitle": "Přejděte n{plan}",
@@ -1869,7 +1869,7 @@
     "fieldShareTitle": "Název „Sdílet“",
     "fieldAuthorBioTitle": "Biografický titul",
     "pageGeneral": "Obecná nastavení",
-    "pageGeneralDesc": "Název, barva, popis a sociální sítě vašeho blogu.",
+    "pageGeneralDesc": "Název, barva, popis a odkazy na sociální sítě vašeho blogu.",
     "pageHeader": "Záhlaví",
     "pageHeaderDesc": "Nastavení horní navigační lišty.",
     "pageFooter": "Zápatí",
@@ -1981,7 +1981,7 @@
     "switchShowTocDesc": "Automaticky vygenerováno na základě nadpisů H2/H3 v článku.",
     "switchShowShare": "Zobrazit tlačítka pro sdílení",
     "switchShowAuthorBio": "Zobrazit profil autora",
-    "switchShowAuthorBioDesc": "Blok zobrazený pod článkem s avatarem autora a jeho biografií.",
+    "switchShowAuthorBioDesc": "Blok zobrazený pod článkem s avatarem autora a jeho stručným profilem.",
     "switchShowRelated": "Zobrazit související články",
     "switchEnableComments": "Povolit komentáře",
     "switchEnableCommentsDesc": "Funkce je ve vývoji.",
@@ -2071,7 +2071,7 @@
     "fieldContactEmail": "Kontaktní e-mail",
     "fieldContactPhone": "Telefon (nepovinné)",
     "fieldResponseTime": "Doba odezvy",
-    "fieldMapEmbed": "URL pro vložení do Google Maps (volitelné)",
+    "fieldMapEmbed": "URL pro vložení mapy Google (volitelné)",
     "seoGooglePreview": "Náhled Google",
     "fieldSeoTitleTemplate": "Šablona SEO nadpisu",
     "fieldSeoTitleTemplateHint": "Proměnné: {title} = název článku, {blog_name} = název blogu",
@@ -2092,7 +2092,7 @@
     "newsletterNoTitle": "Zatím žádní odběratelé",
     "newsletterNoDesc": "Jakmile se návštěvníci přihlásí k odběru vašeho zpravodaje, objeví se zde jejich jména.",
     "analyticsViews": "Celkový počet zobrazení",
-    "analyticsSessions": "Jedinečné relace",
+    "analyticsSessions": "Jedinečné sezení",
     "analyticsDuration": "Průměrná doba trvání",
     "analyticsTrend": "Trend",
     "analyticsViewsByDay": "Počet zobrazení za den",
@@ -2374,7 +2374,7 @@
       "fontLabel": "Rodina písem",
       "previewLabel": "Náhled",
       "previewTitle": "Můj první článek",
-      "previewBody": "Vítejte na mém blogu. Tento prostor je určen k sdílení mých nápadů a myšlenek.",
+      "previewBody": "Vítejte na mém blogu. Tento prostor je určený k sdílení mých nápadů a myšlenek.",
       "previewAuthor": "Autor · před 2 dny",
       "createButton": "Vytvořit můj blog",
       "creatingButton": "Vytváří se..."
@@ -2405,7 +2405,7 @@
     "mobileStep": "Krok {step} / 3",
     "back": "Zpět",
     "quickTitle": "Vytvořit nový blog",
-    "quickGreeting": "Ahoj, {name} 👋 — pojmenuj svůj blog a zadej jeho URL adresu.",
+    "quickGreeting": "Ahoj, {name} 👋 — pojmenuj svůj blog a zadej jeho URL.",
     "backToDashboard": "Zpět na hlavní obrazovku",
     "quickNameLabel": "Název blogu",
     "quickNamePlaceholder": "Příklad: SmarterBloggers Insights",
@@ -2418,7 +2418,7 @@
     "quickCreating": "Vytváření…",
     "quickCreate": "Vytvořit můj blog",
     "quickSuccess": "Blog byl vytvořen! Probíhá přesměrování…",
-    "domainRequiredNote": "Váš blog nebude pro návštěvníky viditelný, dokud k němu nepřipojíte doménu. Jakmile ji vytvoříte, přejděte ve studiu svého blogu na stránku „Domény“ a proveďte nastavení.",
+    "domainRequiredNote": "Váš blog nebude pro návštěvníky viditelný, dokud k němu nepřipojíte doménu. Po vytvoření blogu přejděte do sekce „Domény“ ve studiu svého blogu a proveďte nastavení.",
     "domainStepTitle": "Zveřejněte svůj blog na internetu",
     "domainStepSubtitle": "{name} je vytvořeno! Přidejte nyní doménu, aby ji lidé mohli skutečně najít – nebo tento krok přeskočte a proveďte ho později.",
     "domainOptionBuyTitle": "Koupit novou doménu",
@@ -2446,14 +2446,14 @@
     "quickGenericError": "Došlo k chybě. Zkuste to prosím znovu.",
     "quickNameTooLong": "Název blogu nesmí překročit 50 znaků.",
     "templateStep1Title": "Krok 1 — Vyberte si šablonu",
-    "templateStep1Desc": "Vaše šablona je trvalá a určuje vizuální podobu vašeho blogu.",
+    "templateStep1Desc": "Vaše šablona je trvalá a určuje vizuální identitu vašeho blogu.",
     "templateStep2Title": "Krok 2 — Údaje o blogu",
     "coverAlt": "Obálka",
     "okButton": "Dobře",
     "customColorTitle": "Vlastní barva",
     "cancel": "Zrušit",
     "templatePermanentTitle": "Šablona je trvalá.",
-    "templatePermanentDesc": "Vaše šablona určuje vizuální strukturu vašeho blogu a po vytvoření ji již nelze změnit. V nástroji Studio můžete přizpůsobit barvy, písma, obsah i všechna nastavení.",
+    "templatePermanentDesc": "Vaše šablona určuje vizuální strukturu vašeho blogu a po vytvoření ji již nelze změnit. V aplikaci Studio můžete přizpůsobit barvy, písma, obsah i všechna nastavení.",
     "colors": {
       "blue": "Modrá",
       "violet": "Fialová",
@@ -2468,8 +2468,8 @@
     },
     "templates": {
       "editorial": {
-        "tagline": "Čistý · Serifový · Nadčasový",
-        "description": "Medium / Styl časopisu The Atlantic. Soustředěný zážitek z čtení, zvýrazněný hlavní článek, elegantní třísloupcová mřížka."
+        "tagline": "Čistý · Serif · Nadčasový",
+        "description": "Medium / Styl časopisu The Atlantic. Soustředěný zážitek z čtení, zvýrazněná hlavní postava, elegantní třísloupcová mřížka."
       },
       "magazine": {
         "tagline": "Odvážný · Intenzivní · Dynamický",
@@ -2532,7 +2532,7 @@
     "twoFADisabledToast": "Dvoufaktorové ověřování je deaktivováno.",
     "twoFAInvalidCode": "Neplatný kód. Zkuste to prosím znovu.",
     "walletSection": "Peněženka pro výběr peněz",
-    "walletDescription": "Nutné pro získání provizí z affiliate programů a reklam. Vyberte si níže svou síť a poté zadejte platnou adresu pro danou síť.",
+    "walletDescription": "Nutné pro získání provizí z affiliate programů a reklam. Níže si vyberte svou síť a poté zadejte platnou adresu pro danou síť.",
     "walletCurrent": "Aktuální adresa",
     "walletNotSet": "Není nakonfigurováno",
     "walletAddButton": "Přidat peněženku",
@@ -2578,7 +2578,7 @@
     "allRead": "Všechny přečtené",
     "markAllRead": "Označit vše jako přečtené",
     "noneTitle": "Žádná oznámení",
-    "noneDesc": "Zde budete informováni o důležitých novinkách týkajících se vašeho účtu a blogů.",
+    "noneDesc": "Zde budete informováni o důležitých aktualizacích týkajících se vašeho účtu a blogů.",
     "pushNotSupported": "Tento prohlížeč nepodporuje push notifikace.",
     "pushEnabled": "Push notifikace jsou zapnuté!",
     "pushEnableError": "Nepodařilo se povolit push oznámení.",
@@ -2667,7 +2667,7 @@
     "gate": {
       "not_started": {
         "title": "Je nutné ověření totožnosti",
-        "description": "Aby byl partnerský program bezpečný a v souladu s předpisy, musíte nejprve absolvovat jednorázové ověření totožnosti (KYC), než získáte přístup ke svému referral odkazu a budete moci začít vydělávat provize.",
+        "description": "Aby byl partnerský program bezpečný a v souladu s předpisy, musíte nejprve absolvovat jednorázové ověření totožnosti (KYC), než získáte přístup ke svému referral odkazu a začnete vydělávat provize.",
         "cta": "Spustit ověření"
       },
       "pending": {
@@ -2797,7 +2797,7 @@
     "amount": "Částka",
     "status": "Stav",
     "date": "Datum",
-    "disclaimer": "Tento přehled zobrazuje platby zpracované prostřednictvím služby SmarterBloggers. Nejedná se o úplnou účetní závěrku.",
+    "disclaimer": "Tento přehled zobrazuje platby zpracované prostřednictvím služby SmarterBloggers. Nepředstavuje úplnou účetní závěrku.",
     "type_subscription": "Předplatné",
     "type_paid_article": "Placený článek",
     "type_paid_newsletter": "Placený zpravodaj",
@@ -2834,7 +2834,7 @@
     "noTicketsDesc": "Pokud potřebujete pomoc, zašlete nám žádost – náš tým vám odpoví do 24 hodin.",
     "urgent": "Naléhavé",
     "closeTicket": "Zavřít",
-    "ticketClosed": "Případ uzavřen",
+    "ticketClosed": "Úkol byl uzavřen",
     "noMessages": "Zatím žádné zprávy",
     "youLabel": "Ty",
     "adminLabel": "Podpora",
@@ -2920,7 +2920,7 @@
     "step2TxtNote": "Hodnota záznamu TXT je pro každou doménu jedinečná – zkopírujte ji z karty domény, která se zobrazí níže.",
     "step3Title": "Klikněte na „Ověřit“",
     "step3Desc": "Jakmile se vaše záznamy DNS synchronizují (na Cloudflare to obvykle trvá několik minut, jinde až 48 hodin), klikněte na tlačítko pro obnovení vedle vaší domény.",
-    "cloudflareTip": "Používáte Cloudflare? Zapněte ve svém záznamu CNAME oranžový cloudový proxy server – SSL se pak zpracuje automaticky, není potřeba žádná další konfigurace.",
+    "cloudflareTip": "Používáte Cloudflare? Zapněte ve svém záznamu CNAME oranžový cloudový proxy server – SSL se pak zpracuje automaticky, není třeba žádná další konfigurace.",
     "hostingerTip": "Používáte Hostinger? Hostinger neumožňuje zadat záznam CNAME v kořenovém adresáři (@). Místo toho přidejte přesměrování z vaší kořenové domény na „www“ a poté přidejte pouze záznam CNAME pro „www“ a ověřovací záznam TXT.",
     "recordCname": "Záznam 1 — CNAME kořenové domény",
     "recordCnameWww": "Záznam 2 — CNAME subdomény www",
@@ -3160,7 +3160,7 @@
     "ads": {
       "title": "Reklama",
       "breadcrumb": "Zpeněžení",
-      "subtitle": "{total} reklamy napříč platformou",
+      "subtitle": "{total} reklamy na celé platformě",
       "approve": "Schválit",
       "reject": "Odmítnout",
       "confirmReject": "Potvrdit zamítnutí",
@@ -3322,7 +3322,7 @@
       "cancel": "Zrušit",
       "deactivate": "Deaktivovat",
       "activate": "Aktivovat",
-      "confirmDeactivate": "Chcete tento tarif deaktivovat? Nájemcům, kteří jej využívají, to nebude mít okamžitý dopad.",
+      "confirmDeactivate": "Chcete tento tarif deaktivovat? Na nájemníky, kteří jej využívají, to nebude mít okamžitý dopad.",
       "created": "Plán vytvořen",
       "updated": "Plán aktualizován",
       "deactivated": "Plán deaktivován",
@@ -3401,7 +3401,10 @@
         "pending": "V řešení",
         "refunded": "Vráceno",
         "failed": "Neúspěšné",
-        "disputed": "Sporné"
+        "disputed": "Sporné",
+        "processing": "Zpracování",
+        "requested": "Požadováno",
+        "rejected": "Zamítnuto"
       }
     },
     "settings": {
@@ -3784,13 +3787,13 @@
       "breadcrumb": "Zpeněžení",
       "subtitle": "Dvojité účetnictví singapurské služby SFRS",
       "tabEntries": "Účetní zápisy",
-      "tabAccounts": "Účetní plán",
+      "tabAccounts": "Účetní osnova",
       "newAccount": "Nový účet",
       "createAccount": "Vytvořit účet",
       "approve": "Schválit",
       "reverse": "Zpět",
       "reverseTitle": "Vytvořit stornový zápis",
-      "reverseDesc": "Tato akce vytvoří zrcadlový záznam (debet↔kredit) se stavem „Čeká na zpracování“.",
+      "reverseDesc": "Tato akce vytvoří zrcadlový záznam (debet ↔ kredit) se stavem „Čeká na zpracování“.",
       "reverseReason": "Důvod zrušení",
       "reverseReasonPlaceholder": "např.: Chyba při zadávání dat",
       "unbalancedWarning": "Nesouměrný vstup – zkontrolujte vedení",
@@ -3959,13 +3962,13 @@
     "qrAlt": "Platební QR kód",
     "depositAddressLabel": "Adresa pro vklad",
     "expiresIn": "Platnost vyprší za{time}",
-    "countdownExpired": "Platnost platebního okna vypršela",
+    "countdownExpired": "Lhůta pro platbu vypršela",
     "currencyPickerLabel": "Zaplatit pomocí",
     "currencyPickerLoading": "Načítání dostupných měn…",
     "currencyPickerSearch": "Vyhledat měnu nebo síť…",
     "currencyPickerNoResults": "Nenašla se odpovídající měna.",
     "minAmountChecking": "Zjišťuji minimální částku pro tuto měnu…",
-    "minAmountTooLow": "Minimální částka pro platbu přes {currency}: {amount} – vyberte jinou měnu nebo částku navýšte."
+    "minAmountTooLow": "Minimální částka pro platbu přes {currency}: {amount} — vyberte jinou měnu nebo zvyšte částku."
   },
   "paymentCenter": {
     "title": "Platby",
@@ -3984,7 +3987,10 @@
       "paid_article": "Placený článek",
       "paid_newsletter": "Placený zpravodaj",
       "ad_campaign": "Reklama",
-      "domain_purchase": "Nákup domény"
+      "domain_purchase": "Nákup domény",
+      "kyc_verification": "Ověření KYC",
+      "affiliate_commission_payout": "Výplata provize za partnerský program",
+      "ad_revenue_payout": "Výplata výnosů z reklamy"
     },
     "status": {
       "pending": "V řešení",
@@ -3992,7 +3998,11 @@
       "completed": "Dokončeno",
       "failed": "Neúspěšné",
       "refunded": "Vráceno",
-      "disputed": "Sporné"
+      "disputed": "Sporné",
+      "requested": "Požadováno",
+      "processing": "Zpracování",
+      "paid": "Placené",
+      "rejected": "Zamítnuto"
     }
   },
   "aiBuilder": {
@@ -4025,9 +4035,9 @@
     "successToast": "Blog byl úspěšně nakonfigurován!",
     "planRequiredError": "Je třeba vypracovat plán",
     "generationFailedError": "Vytvoření se nezdařilo",
-    "checkQuotaError": "Zkontrolujte si limit pro AI nebo to zkuste znovu.",
+    "checkQuotaError": "Zkontrolujte si svůj limit pro AI nebo to zkuste znovu.",
     "doneTitle": "Váš blog je připraven!",
-    "doneDesc": "Veškerý obsah byl vygenerován a uložen. Nyní můžete každou sekci doladit ve studiu.",
+    "doneDesc": "Veškerý obsah byl vygenerován a uložen. Nyní můžete v studiu doladit jednotlivé sekce.",
     "viewGeneralSettings": "Zobrazit obecná nastavení",
     "viewHome": "Zobrazit domovskou stránku"
   }

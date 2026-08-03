@@ -51,7 +51,7 @@
         "invalidCredentials": "Ugyldig e-postadresse eller passord",
         "emailNotVerified": "Bekreft e-postadressen din før du logger inn",
         "generic": "Det oppstod en feil. Prøv på nytt.",
-        "invalid2FA": "Ugyldig bekreftelseskode. Prøv på nytt."
+        "invalid2FA": "Ugyldig autentiseringskode. Prøv på nytt."
       }
     },
     "register": {
@@ -163,13 +163,13 @@
       "createTitle": "Opprett en ny blogg",
       "createDesc": "Gi bloggen din et navn og velg en adresse.",
       "themeTitle": "Velg tema",
-      "themeDesc": "Det offentlige utseendet på bloggen din. Du kan forhåndsvise det før du endrer det.",
+      "themeDesc": "Det offentlige utseendet på bloggen din. Du kan forhåndsvise det før du gjør endringer.",
       "slugAvailableLabel": "Tilgjengelig",
       "slugTakenLabel": "Allerede opptatt",
       "descriptionOptional": "(valgfritt)",
       "backToDashboard": "Tilbake til oversikten",
       "limitTitle": "Blogggrensen er nådd",
-      "limitDesc": "Med «{plan}»-abonnementet kan du opprette {max}. Oppgrader til «Business» for å opprette flere.",
+      "limitDesc": "Med «{plan}»-abonnementet ditt kan du opprette {max}. Oppgrader til «Business» for å opprette flere.",
       "limitViewPlans": "Se planer",
       "limitBack": "Gå tilbake"
     },
@@ -404,7 +404,7 @@
     "alignLeft": "Juster til venstre",
     "alignCenter": "Juster til midten",
     "alignRight": "Juster til høyre",
-    "blockquote": "Sitat",
+    "blockquote": "Sitatblokk",
     "codeBlock": "Kodeblokk",
     "table": "Sett inn tabell",
     "image": "Sett inn bilde",
@@ -503,7 +503,7 @@
     "langArabic": "Arabisk",
     "generateButton": "Generer",
     "scoreLabel": "Poengsum",
-    "generateExcerptTitle": "Generer et utdrag fra innholdet",
+    "generateExcerptTitle": "Generer utdrag fra innholdet",
     "newArticleBreadcrumb": "Ny artikkel",
     "generateWithAiBadge": "Generer med AI",
     "upgradeToStarterLink": "Oppgrader til Starter-abonnementet →",
@@ -632,7 +632,7 @@
     "publishedOn": "Publisert på {date}",
     "updatedOn": "Oppdatert{date}",
     "by": "av {author}",
-    "minRead": "{min} lesetid",
+    "minRead": "{min} lesetid: min",
     "subscribe": "Abonner på nyhetsbrevet",
     "subscribeDesc": "Få nye artikler sendt til innboksen din",
     "emailPlaceholder": "Skriv inn e-postadressen din",
@@ -820,7 +820,7 @@
     "advertiseStep2Title": "Manuell gjennomgang",
     "advertiseStep2Desc": "Bloggeieren gjennomgår innlegget ditt og godkjenner eller avviser det.",
     "advertiseStep3Title": "Gå live",
-    "advertiseStep3Desc": "Når annonsen din er godkjent, blir den publisert og begynner å nå ut til leserne.",
+    "advertiseStep3Desc": "Når annonsen er godkjent, blir den publisert og begynner å nå ut til leserne.",
     "adDetailsStepLabel": "Annonsedetaljer",
     "targetingStepLabel": "Målretting",
     "paymentStepLabel": "Betaling",
@@ -921,11 +921,11 @@
       "teamTitle": "Samarbeid i teamet",
       "teamDesc": "Inviter redaktører, forfattere og lesere. Bestem hvem som kan skrive, gjennomgå og publisere.",
       "analyticsTitle": "Innebygd analyse",
-      "analyticsDesc": "Følg med på sidevisninger, de mest leste artiklene og abonnentveksten ved hjelp av detaljerte rapporter i sanntid.",
+      "analyticsDesc": "Følg med på sidevisninger, de mest leste artiklene og abonnentveksten med detaljerte rapporter i sanntid.",
       "seoTitle": "SEO-fokusert redaktør",
       "seoDesc": "AI-drevne SEO-forslag, automatiske nettkart og strukturerte data er integrert i løsningen.",
       "newsletterTitle": "Innebygd nyhetsbrev",
-      "newsletterDesc": "Utvid og administrer abonnentlisten din uten verktøy fra tredjeparter.",
+      "newsletterDesc": "Utvid og administrer abonnentlisten din uten å bruke verktøy fra tredjeparter.",
       "aiTitle": "AI-skriveassistent",
       "aiDesc": "Lag, forbedre, oppsummer og oversett innhold med integrerte AI-funksjoner."
     },
@@ -1075,7 +1075,7 @@
   },
   "seo": {
     "title": "SEO-innstillinger",
-    "subtitle": "Bestem selv hvordan bloggen din vises i søkemotorer og på sosiale medier.",
+    "subtitle": "Bestem selv hvordan bloggen din skal vises i søkemotorer og på sosiale medier.",
     "save": "Lagre",
     "saved": "SEO-innstillingene er lagret!",
     "saveError": "Det gikk ikke å lagre SEO-innstillingene.",
@@ -1431,7 +1431,7 @@
     "editorPlaceholder": "Skriv innholdet i e-posten din…",
     "editorLinkPrompt": "Lenke-URL",
     "editorImagePrompt": "Bilde-URL",
-    "editorImageAltPrompt": "Alternativ tekst (valgfritt)",
+    "editorImageAltPrompt": "Alternativtekst (valgfritt)",
     "editorCtaLabelPrompt": "Tekst på knappen",
     "editorCtaLabelDefault": "Les mer →",
     "editorCtaUrlPrompt": "Knapp-URL",
@@ -1763,7 +1763,7 @@
     "limitReached": "Grensen er nådd",
     "upgradeDesc": "Oppgrader til Business for å opprette flere blogger",
     "noBlogs": "Ingen blogginnlegg ennå.",
-    "noBlogsTitle": "Ingen blogger",
+    "noBlogsTitle": "Ingen blogginnlegg",
     "noBlogsQuickDesc": "Opprett din første blogg på få sekunder.",
     "noBlogsQuickCta": "Opprett min første blogg",
     "searchPlaceholder": "Søk…",
@@ -1918,7 +1918,7 @@
     "fieldContent": "Innhold",
     "fieldOptionalImage": "Bakgrunnsbilde (valgfritt)",
     "fieldIllustration": "Illustrasjonsbilde (valgfritt)",
-    "fieldSectionTitle": "Avsnittstittel",
+    "fieldSectionTitle": "Avsnitttittel",
     "fieldButtonPrimary": "Hovedknapp",
     "fieldButtonSecondary": "Sekundærknapp",
     "fieldButtonText": "Tekst på knappen",
@@ -2430,7 +2430,7 @@
     "backToChoices": "Tilbake",
     "domainConnectLabel": "Ditt domene",
     "domainConnectButton": "Koble til",
-    "domainConnectHint": "Du vil motta DNS-instruksjoner for å fullføre bekreftelsen fra siden «Domener».",
+    "domainConnectHint": "Du vil motta DNS-instruksjoner for å fullføre verifiseringen fra siden «Domener».",
     "domainSearchPlaceholder": "f.eks. myblog",
     "domainSearchButton": "Søk",
     "domainSearchEmpty": "Ingen resultater — prøv et annet navn.",
@@ -2473,11 +2473,11 @@
       },
       "magazine": {
         "tagline": "Dristig · Konsentrert · Dynamisk",
-        "description": "I stil med The Verge / Wired. Mørk topptekst, rutenett med flere lag, kategorideler, nyhetsbrev i sidefeltet."
+        "description": "I stil med The Verge / Wired. Mørk topptekst, rutenett i flere lag, kategorideler, nyhetsbrev i sidefeltet."
       },
       "creative": {
         "tagline": "Mørkt · Visuelt · Oppslukende",
-        "description": "Cargo Collective-stil. Mørk modus uten kantlinjer, bilder i «masonry»-oppsett, visuell layout."
+        "description": "Cargo Collective-stil. Mørk modus uten kantlinjer, bildeoppsett i «masonry»-stil, layout med fokus på det visuelle."
       },
       "luminary": {
         "tagline": "Prestige · Serif · Litterær",
@@ -2580,7 +2580,7 @@
     "noneTitle": "Ingen varsler",
     "noneDesc": "Her vil du motta varsler om viktige oppdateringer knyttet til kontoen din og bloggene dine.",
     "pushNotSupported": "Push-varsler støttes ikke i denne nettleseren.",
-    "pushEnabled": "Push-varsler er aktivert!",
+    "pushEnabled": "Push-varslinger er aktivert!",
     "pushEnableError": "Det var ikke mulig å aktivere push-varsler.",
     "pushDisabled": "Push-varslinger er deaktivert.",
     "pushDisableError": "Det oppstod en feil under deaktivering av push-varsler.",
@@ -2667,7 +2667,7 @@
     "gate": {
       "not_started": {
         "title": "Identitetsbekreftelse kreves",
-        "description": "For å sikre at partnerprogrammet er trygt og i samsvar med gjeldende regelverk, må du gjennomføre en engangs-KYC-identitetsverifisering før du får tilgang til henvisningslenken din og kan begynne å tjene provisjon.",
+        "description": "For å sikre at partnerprogrammet er trygt og i samsvar med gjeldende regler, må du gjennomføre en engangs-KYC-identitetsverifisering før du får tilgang til henvisningslenken din og kan begynne å tjene provisjon.",
         "cta": "Start verifisering"
       },
       "pending": {
@@ -2751,9 +2751,9 @@
     "totalBudget": "Totalt budsjett",
     "submit": "Betal og send inn",
     "submitting": "Forbereder betaling…",
-    "submitError": "Det gikk ikke å legge ut annonsen din. Prøv på nytt.",
+    "submitError": "Det gikk ikke an å sende inn annonsen din. Prøv på nytt.",
     "budgetRequired": "Vennligst oppgi et budsjett som er større enn 0.",
-    "requiredFields": "Vennligst fyll ut alle obligatoriske felt.",
+    "requiredFields": "Vennligst fyll ut alle obligatoriske felter.",
     "myAds": "Mine annonser",
     "noAds": "Du har ikke lagt ut noen annonse ennå.",
     "statusPending": "Venter på gjennomgang",
@@ -2781,7 +2781,7 @@
     "targetCountries": "Mål land (valgfritt)",
     "targetCountriesHint": "La feltet stå tomt for å vise annonsen din til besøkende overalt. Velg ett eller flere land for å vise den kun til besøkende fra disse landene.",
     "targetCountriesSearch": "Søk etter et land…",
-    "targetCountriesNoResults": "Ingen treff på land."
+    "targetCountriesNoResults": "Ingen treff for land."
   },
   "tenantAccounting": {
     "title": "Finansiell oversikt",
@@ -2872,7 +2872,7 @@
     "pending": "Venter på behandling",
     "approved": "Godkjent",
     "reversed": "Omvendt",
-    "dualControlNote": "Den som godkjenner, må være en annen person enn den som oppretter oppføringen (dobbel kontroll)",
+    "dualControlNote": "Den som godkjenner må være en annen person enn den som oppretter oppføringen (dobbel kontroll)",
     "immutabilityNote": "Godkjente oppføringer kan ikke endres. Bruk tilbakeføring for å rette opp.",
     "noEntries": "Ingen journaloppføringer ennå.",
     "balanced": "Oppføringen er balansert",
@@ -2919,8 +2919,8 @@
     "step2Desc": "Gå til DNS-leverandøren din (Cloudflare, GoDaddy, Namecheap…) og legg til disse to oppføringene:",
     "step2TxtNote": "TXT-postens verdi er unik for hvert domene — kopier den fra domenekortet som vises nedenfor.",
     "step3Title": "Klikk på «Bekreft»",
-    "step3Desc": "Når DNS-oppføringene dine har blitt oppdatert (vanligvis tar det noen minutter på Cloudflare, opptil 48 timer andre steder), klikker du på oppdateringsknappen ved siden av domenet ditt.",
-    "cloudflareTip": "Bruker du Cloudflare? Aktiver den oransje skyproxyen i CNAME-oppføringen din – da håndteres SSL automatisk, uten at det er behov for ekstra konfigurasjon.",
+    "step3Desc": "Når DNS-oppføringene dine er oppdatert (vanligvis tar det noen minutter på Cloudflare, opptil 48 timer andre steder), klikker du på oppdateringsknappen ved siden av domenet ditt.",
+    "cloudflareTip": "Bruker du Cloudflare? Aktiver den oransje skyproxyen i CNAME-oppføringen din – da håndteres SSL automatisk, uten at det er behov for ekstra konfigurering.",
     "hostingerTip": "Bruker du Hostinger? Hostinger tillater ikke en CNAME-oppføring på rotnivå (@). I stedet må du legge til en viderekobling fra rotdomenet ditt til «www», og deretter bare legge til CNAME-oppføringen for «www» og TXT-verifiseringsoppføringen.",
     "recordCname": "Oppføring 1 — CNAME-rotdomene",
     "recordCnameWww": "Oppføring 2 — CNAME for www-underdomenet",
@@ -3068,7 +3068,7 @@
       "publish": "Publiser",
       "unpublish": "Fjern publisering",
       "consoleLabel": "Konsoll",
-      "expandSidebar": "Vis sidemenyen",
+      "expandSidebar": "Vis sidefeltet",
       "collapseSidebar": "Skjul sidefeltet",
       "errorTitle": "Feil"
     },
@@ -3149,7 +3149,7 @@
       "confirmActivate": "Skal jeg aktivere denne bloggen igjen?",
       "confirmDelete": "Vil du slette denne bloggen permanent? Alt innhold vil gå tapt.",
       "owner": "Eier",
-      "planChangeAccountWide": "Dette gjelder hele kontoen ({email}) – alle bloggene de eier vil bli overført til denne planen.",
+      "planChangeAccountWide": "Dette gjelder hele kontoen ({email}) — alle bloggene de eier vil bli overført til denne planen.",
       "articles": "artikler",
       "members": "medlemmer",
       "storage": "Lagring",
@@ -3401,7 +3401,10 @@
         "pending": "Venter på behandling",
         "refunded": "Refusert",
         "failed": "Mislykket",
-        "disputed": "Omstridt"
+        "disputed": "Omstridt",
+        "processing": "Behandling",
+        "requested": "Forespurt",
+        "rejected": "Avvist"
       }
     },
     "settings": {
@@ -3431,7 +3434,7 @@
         "paymentTolerance": "Toleranse for kryptobetalinger ($)",
         "paymentToleranceHint": "En betaling som mottas innenfor denne marginen av det forventede beløpet (nettverksgebyrer, kursavvik) regnes fortsatt som fullført",
         "kycPricePerYear": "Pris for KYC-verifisering ($/år)",
-        "kycPricePerYearHint": "Pris som belastes brukerne per år for identitetsverifisering, som kreves før man får tilgang til partnerprogrammet"
+        "kycPricePerYearHint": "Pris som belastes brukerne per år for identitetsverifisering, som er påkrevd før man får tilgang til partnerprogrammet"
       },
       "tabs": {
         "general": "Generelt",
@@ -3644,7 +3647,7 @@
       }
     },
     "notifications": {
-      "title": "Varsler på plattformen",
+      "title": "Varsler fra plattformen",
       "breadcrumb": "Infrastruktur",
       "subtitle": "Send push-varsler og varsler i appen til alle brukere",
       "compose": "Ny melding",
@@ -3914,7 +3917,7 @@
       "toneProfessional": "Profesjonell",
       "toneFriendly": "Vennlig",
       "toneBold": "Fet skrift",
-      "tonePlayful": "Lekent",
+      "tonePlayful": "Lekende",
       "keyPointsLabel": "Viktige punkter å fremheve",
       "optionalLabel": "(valgfritt)",
       "keyPointsPlaceholder": "F.eks.: grunnlagt i 2024, over 500 opprettede blogger, flerspråklig støtte.",
@@ -3927,7 +3930,7 @@
   "acceptInvite": {
     "loading": "Laster inn invitasjon…",
     "noToken": "Det ble ikke funnet noe invitasjonstoken i URL-adressen.",
-    "notFound": "Denne invitasjonslenken er ugyldig, er allerede akseptert eller har utløpt.",
+    "notFound": "Denne invitasjonslenken er ugyldig, er allerede akseptert eller har gått ut.",
     "errorTitle": "Invitasjonen ble ikke funnet",
     "acceptedTitle": "Velkommen om bord!",
     "acceptedDesc": "Invitasjonen er akseptert. Du blir nå omdirigert til bloggene dine…",
@@ -3947,7 +3950,7 @@
     "title": "Betal med kryptovaluta (USDT)",
     "statusWaiting": "Venter på betaling…",
     "statusConfirming": "Betaling oppdaget — bekrefter på blokkjeden…",
-    "statusConfirmed": "Bekreftet — i ferd med å fullføres…",
+    "statusConfirmed": "Bekreftet — fullfører…",
     "statusSending": "Fullfører…",
     "statusPartiallyPaid": "Delbetaling mottatt — venter på resten…",
     "statusFinished": "Betalingen er fullført!",
@@ -3959,7 +3962,7 @@
     "qrAlt": "QR-kode for betaling",
     "depositAddressLabel": "Innskuddsadresse",
     "expiresIn": "Utløper om {time}",
-    "countdownExpired": "Betalingsfristen har utløpt",
+    "countdownExpired": "Betalingsfristen har gått ut",
     "currencyPickerLabel": "Betal med",
     "currencyPickerLoading": "Laster inn tilgjengelige valutaer…",
     "currencyPickerSearch": "Søk etter en valuta eller et nettverk…",
@@ -3984,7 +3987,10 @@
       "paid_article": "Betalt artikkel",
       "paid_newsletter": "Betalt nyhetsbrev",
       "ad_campaign": "Annonse",
-      "domain_purchase": "Kjøp av domene"
+      "domain_purchase": "Kjøp av domene",
+      "kyc_verification": "KYC-verifisering",
+      "affiliate_commission_payout": "Utbetaling av provisjon til tilknyttede partnere",
+      "ad_revenue_payout": "Utbetaling av annonseinntekter"
     },
     "status": {
       "pending": "Venter på behandling",
@@ -3992,7 +3998,11 @@
       "completed": "Fullført",
       "failed": "Mislykket",
       "refunded": "Refusert",
-      "disputed": "Omstridt"
+      "disputed": "Omstridt",
+      "requested": "Forespurt",
+      "processing": "Behandling",
+      "paid": "Betalt",
+      "rejected": "Avvist"
     }
   },
   "aiBuilder": {

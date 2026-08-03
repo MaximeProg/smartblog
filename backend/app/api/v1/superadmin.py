@@ -654,10 +654,19 @@ async def list_all_transactions(
     limit: int = Query(15, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ):
-    """Liste toutes les transactions de la plateforme (super admin)."""
+    """Liste tous les mouvements d'argent de la plateforme (super admin) —
+    paiements entrants (Transaction) ET versements sortants (commissions
+    d'affiliation, part de revenu pub), qui vivent dans des tables séparées
+    et étaient invisibles ici avant ce correctif (2026-08-04). Les filtres
+    status/tx_type ne s'appliquent qu'aux paiements entrants ; la pagination
+    de l'union des trois sources est approximative (tri en mémoire, pas une
+    vraie requête UNION) — suffisant pour la consultation, à revoir si le
+    volume de versements devient très important."""
     await _require_super_admin(payload, db)
 
     from app.models.payment import Transaction
+    from app.models.affiliate import AffiliateCashoutRequest
+    from app.models.ad import AdRevenueShare
 
     base = (
         select(
@@ -690,6 +699,80 @@ async def list_all_transactions(
     """))
     kpi = totals.first()
 
+    items = [
+        {
+            "id": str(r.Transaction.id),
+            "tenant_name": r.tenant_name,
+            "tenant_slug": r.tenant_slug,
+            "user_email": r.user_email,
+            "user_name": r.user_name,
+            "type": r.Transaction.transaction_type.value,
+            "status": r.Transaction.status.value,
+            "amount": float(r.Transaction.amount),
+            "currency": r.Transaction.currency,
+            "platform_fee": float(r.Transaction.platform_fee),
+            "gateway": r.Transaction.payment_gateway.value,
+            "nowpayments_order_id": r.Transaction.nowpayments_order_id,
+            "created_at": r.Transaction.created_at.isoformat(),
+            "direction": "in",
+        }
+        for r in rows
+    ]
+
+    # Versements sortants — seulement en l'absence de filtre type/status
+    # spécifique à Transaction (ces filtres ne s'appliquent pas aux payouts).
+    if not status and not tx_type:
+        cashout_result = await db.execute(
+            select(AffiliateCashoutRequest, User.email, User.display_name)
+            .join(User, User.id == AffiliateCashoutRequest.user_id)
+            .order_by(AffiliateCashoutRequest.requested_at.desc())
+            .limit(limit)
+        )
+        for c, email, display_name in cashout_result.all():
+            items.append({
+                "id": str(c.id),
+                "tenant_name": None,
+                "tenant_slug": None,
+                "user_email": email,
+                "user_name": display_name,
+                "type": "affiliate_commission_payout",
+                "status": c.status.value,
+                "amount": float(c.net_amount),
+                "currency": "USDT",
+                "platform_fee": 0.0,
+                "gateway": "nowpayments",
+                "nowpayments_order_id": c.payout_reference,
+                "created_at": c.requested_at.isoformat(),
+                "direction": "out",
+            })
+
+        ad_share_result = await db.execute(
+            select(AdRevenueShare, Tenant.name, Tenant.slug, User.email, User.display_name)
+            .join(Tenant, Tenant.id == AdRevenueShare.tenant_id)
+            .join(User, User.id == AdRevenueShare.owner_user_id)
+            .order_by(AdRevenueShare.created_at.desc())
+            .limit(limit)
+        )
+        for share, tenant_name, tenant_slug, email, display_name in ad_share_result.all():
+            items.append({
+                "id": str(share.id),
+                "tenant_name": tenant_name,
+                "tenant_slug": tenant_slug,
+                "user_email": email,
+                "user_name": display_name,
+                "type": "ad_revenue_payout",
+                "status": share.status.value,
+                "amount": float(share.owner_share_amount),
+                "currency": "USDT",
+                "platform_fee": 0.0,
+                "gateway": "nowpayments",
+                "nowpayments_order_id": share.payout_reference,
+                "created_at": share.created_at.isoformat(),
+                "direction": "out",
+            })
+        items.sort(key=lambda i: i["created_at"], reverse=True)
+        items = items[:limit]
+
     return {
         "kpi": {
             "total_revenue": float(kpi.total_revenue),
@@ -698,24 +781,7 @@ async def list_all_transactions(
             "failed": kpi.failed_count,
         },
         "total": total,
-        "transactions": [
-            {
-                "id": str(r.Transaction.id),
-                "tenant_name": r.tenant_name,
-                "tenant_slug": r.tenant_slug,
-                "user_email": r.user_email,
-                "user_name": r.user_name,
-                "type": r.Transaction.transaction_type.value,
-                "status": r.Transaction.status.value,
-                "amount": float(r.Transaction.amount),
-                "currency": r.Transaction.currency,
-                "platform_fee": float(r.Transaction.platform_fee),
-                "gateway": r.Transaction.payment_gateway.value,
-                "nowpayments_order_id": r.Transaction.nowpayments_order_id,
-                "created_at": r.Transaction.created_at.isoformat(),
-            }
-            for r in rows
-        ],
+        "transactions": items,
     }
 
 

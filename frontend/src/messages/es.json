@@ -49,7 +49,7 @@
       "signUp": "Regístrate",
       "errors": {
         "invalidCredentials": "Correo electrónico o contraseña incorrectos",
-        "emailNotVerified": "Por favor, verifica tu dirección de correo electrónico antes de iniciar sesión.",
+        "emailNotVerified": "Por favor, verifica tu correo electrónico antes de iniciar sesión.",
         "generic": "Se ha producido un error. Inténtalo de nuevo.",
         "invalid2FA": "Código de autenticación no válido. Inténtalo de nuevo."
       }
@@ -79,7 +79,7 @@
       }
     },
     "forgotPassword": {
-      "title": "Restablecer contraseña",
+      "title": "Restablecer la contraseña",
       "subtitle": "Introduce tu correo electrónico y te enviaremos un enlace para restablecer la contraseña",
       "emailLabel": "Dirección de correo electrónico",
       "emailPlaceholder": "you@example.com",
@@ -311,7 +311,7 @@
       "dynamic": "Dinámico"
     },
     "actions": {
-      "edit": "Editar en el creador de páginas",
+      "edit": "Editar en el creador de sitios web",
       "publish": "Publicar",
       "unpublish": "Retirar de la publicación",
       "makePrivate": "Hacer privado",
@@ -691,7 +691,7 @@
     "topic": "tema",
     "topics": "temas",
     "inTopics": "sobre un tem{count}",
-    "inTopicsPlural": "sobre temas relacionados con «{count}»",
+    "inTopicsPlural": "sobre temas relacionados c{count}",
     "featuredLabel": "Destacado",
     "otherCategories": "Otras categorías",
     "allCategoriesLink": "Todas las categorías",
@@ -934,7 +934,7 @@
       "subtitle": "Empieza gratis. Actualiza tu plan a medida que crezcas.",
       "starterName": "Entrante",
       "starterPrice": "Gratis",
-      "starterDesc": "Para quienes se inician en esto",
+      "starterDesc": "Para quienes se inician",
       "starterF1": "1 blog",
       "starterF2": "Hasta 5 autores",
       "starterF3": "10 GB de almacenamiento",
@@ -1043,7 +1043,7 @@
     "footer": "Pie de página",
     "improve": "Actualización",
     "domains": "Dominios personalizados",
-    "apiKeys": "Claves de API",
+    "apiKeys": "Claves API",
     "accounting": "Datos financieros",
     "support": "Asistencia",
     "aiBuilder": "Creador de blogs con IA",
@@ -1562,7 +1562,7 @@
     "subtitle": "Añade CSS, scripts y fuentes personalizadas a tu blog.",
     "save": "Guardar",
     "saved": "¡Guardado!",
-    "warning": "El código personalizado se inserta directamente en tu blog público. Un CSS o unos scripts no válidos podrían alterar el diseño. Prueba todo con cuidado.",
+    "warning": "El código personalizado se inserta directamente en tu blog público. Un CSS o unos scripts no válidos pueden alterar el diseño. Prueba todo con cuidado.",
     "cssDesc": "Estilos aplicados a todas las páginas de tu blog público. Anulan los estilos predeterminados del tema.",
     "headerScripts": "Scripts de cabecera",
     "headerScriptsDesc": "Se inserta en «<head>», lo que resulta ideal para píxeles de seguimiento, metaetiquetas y sugerencias de preconect.",
@@ -1640,7 +1640,7 @@
     "shareButtons": "Botones para compartir",
     "shareButtonsDesc": "Elige en qué plataformas quieres que aparezca cada artículo.",
     "profiles": "Perfiles en redes sociales",
-    "profilesDesc": "Introduce las URL de tus perfiles para mostrar los enlaces a redes sociales en tu blog.",
+    "profilesDesc": "Introduce las URL de tus perfiles para mostrar los enlaces a tus redes sociales en tu blog.",
     "autoShare": "Publicación automática",
     "autoShareDesc": "Publica automáticamente los nuevos artículos en tus cuentas de redes sociales vinculadas.",
     "autoShareLabel": "Activar la publicación automática",
@@ -1788,7 +1788,7 @@
     "upgradeDesc": "Pásate al plan Business para crear más blogs",
     "manageBlog": "Gestionar",
     "createFirstTitle": "Crea tu primer blog",
-    "createFirstDesc": "Tu cuenta ya está lista. Pon en marcha tu primer blog en unos segundos.",
+    "createFirstDesc": "Tu cuenta ya está lista. Crea tu primer blog en unos segundos.",
     "createFirstCta": "Crear mi blog",
     "planCurrent": "Plan actual",
     "planUpgrade": "Actualización",
@@ -1806,8 +1806,8 @@
     "blogCardSubscribers": "suscriptores",
     "blogCardAuthors": "autores",
     "loadingBlogs": "Cargando tus blogs…",
-    "manageCount": "Eres el responsable del blog «{count}»",
-    "manageCountPlural": "Te encargas de gestionar los blogs de {count}",
+    "manageCount": "Eres el administrador del blog «{count}»",
+    "manageCountPlural": "Te encargas de los blogs de {count}",
     "startNow": "Crea tu primer blog para dar los primeros pasos.",
     "noBlogsTitle": "Aún no hay entradas en el blog",
     "noBlogsDesc": "Crea tu primer blog y publica contenido de calidad en cuestión de minutos.",
@@ -1819,7 +1819,7 @@
     "planPro": "A favor",
     "planBusiness": "Negocios",
     "supportAlertTitle": "{count, plural, one {# open support ticket} other {# open support tickets}}",
-    "supportAlertDesc": "Haz clic aquí para ver tus conversaciones con el servicio de asistencia.",
+    "supportAlertDesc": "Haz clic aquí para ver tus conversaciones con el servicio de atención al cliente.",
     "blogCardViews": "Visitas",
     "blogCardStudio": "Estudio",
     "newBlogShort": "Nuevo",
@@ -1975,7 +1975,7 @@
     "switchShowValues": "Mostrar valores",
     "switchShowTeamOnBlog": "Mostrar la sección del equipo en el blog",
     "switchShowCta": "Mostrar CTA",
-    "switchShowProgressBar": "Mostrar barra de progreso de lectura",
+    "switchShowProgressBar": "Mostrar la barra de progreso de lectura",
     "switchShowProgressBarDesc": "Barra de progreso en la parte superior de la página mientras se lee un artículo.",
     "switchShowToc": "Mostrar índice",
     "switchShowTocDesc": "Generado automáticamente a partir de los encabezados H2/H3 del artículo.",
@@ -1995,7 +1995,7 @@
     "switchMiniNewsletter": "Mini boletín informativo",
     "switchShowTopBar": "Mostrar la barra superior",
     "switchShowTopBarDesc": "Fecha, redes sociales, boletín informativo, RSS.",
-    "switchShowDate": "Fecha del espectáculo",
+    "switchShowDate": "Fecha de la función",
     "switchShowSocial": "Mostrar redes sociales",
     "switchShowSocialFooterDesc": "Iconos de las redes sociales configuradas en los ajustes generales.",
     "switchNewsletterLink": "Enlace al boletín informativo",
@@ -2084,7 +2084,7 @@
     "seoView": "Ver",
     "seoRobotsTitle": "robots.txt",
     "seoRobotsLabel": "Contenido del archivo robots.txt",
-    "seoRobotsHint": "Délo en blanco para utilizar la configuración predeterminada (permitir todos los rastreadores). Anula el archivo generado automáticamente.",
+    "seoRobotsHint": "Déjalo en blanco para utilizar la configuración predeterminada (permitir todos los rastreadores). Anula el archivo generado automáticamente.",
     "seoRobotsViewHint": "El contenido personalizado sustituye al archivo robots.txt generado automáticamente.",
     "newsletterSubscribersLabel": "Suscriptores",
     "newsletterThisMonth": "Este mes",
@@ -2388,7 +2388,7 @@
         "status": "Estado del blog",
         "statusValue": "Listo"
       },
-      "writeFirst": "Escribir mi primer artículo",
+      "writeFirst": "Escribe mi primer artículo",
       "dashboard": "Panel de control"
     },
     "sidebar": {
@@ -2400,7 +2400,7 @@
       "information": "Información",
       "chooseTheme": "Elige un tema",
       "customize": "Personalización",
-      "done": "¡Se ha creado el blog!"
+      "done": "¡Ya está creado el blog!"
     },
     "mobileStep": "Paso {step} / 3",
     "back": "Atrás",
@@ -2436,7 +2436,7 @@
     "domainSearchEmpty": "No hay resultados. Prueba con otro nombre.",
     "domainSelectButton": "Seleccionar",
     "domainTaken": "Tomado",
-    "quickSlugTaken": "Este nombre ya está en uso; elige otro.",
+    "quickSlugTaken": "Este nombre ya está en uso; elige otro, por favor.",
     "quickDescriptionLabel": "Descripción",
     "quickDescriptionPlaceholder": "Un blog sobre tecnología, diseño y emprendimiento...",
     "quickNameHint": "Aparecerá como el nombre público de tu blog. Máximo 50 caracteres.",
@@ -2444,7 +2444,7 @@
     "quickSlugHint": "De 4 a 50 caracteres: solo letras minúsculas, números y guiones.",
     "quickCoverUploadError": "No se ha podido subir la imagen. Inténtalo de nuevo.",
     "quickGenericError": "Ha habido un error. Inténtalo de nuevo.",
-    "quickNameTooLong": "El nombre del blog debe tener 50 caracteres o menos.",
+    "quickNameTooLong": "El nombre del blog debe tener 50 caracteres como máximo.",
     "templateStep1Title": "Paso 1 — Elige tu plantilla",
     "templateStep1Desc": "Tu plantilla es permanente y define la identidad visual de tu blog.",
     "templateStep2Title": "Paso 2 — Datos del blog",
@@ -2638,7 +2638,7 @@
     "step4": "Solicitar un retiro de fondos: se aplica una comisión de 20 dólares por cada retirada.",
     "cashoutRequested": "¡Solicitud de retirada enviada!",
     "error": "Error",
-    "cashoutError": "No se ha podido enviar la solicitud de retirada de fondos.",
+    "cashoutError": "No se ha podido enviar la solicitud de retirada.",
     "referralsTab": "Mis afiliados",
     "noReferrals": "Aún no hay recomendaciones. ¡Comparte tu enlace para empezar a ganar dinero!",
     "refName": "Nombre",
@@ -2672,7 +2672,7 @@
       },
       "pending": {
         "title": "Verificación en curso",
-        "description": "Se está revisando tu verificación de identidad. Normalmente, esto solo lleva unos minutos; tu enlace de afiliado se activará automáticamente en cuanto se apruebe.",
+        "description": "Se está revisando tu verificación de identidad. Normalmente, esto solo tarda unos minutos; tu enlace de afiliado se activará automáticamente en cuanto se apruebe.",
         "cta": "Comprobar el estado de la verificación"
       },
       "expired": {
@@ -3218,7 +3218,7 @@
       "confirmReject": "¿Deseas rechazar esta solicitud de retirada?",
       "kpi": {
         "activeAffiliates": "Afiliados activos",
-        "totalReferrals": "Total de referencias",
+        "totalReferrals": "Total de derivaciones",
         "revenue": "Ingresos generados",
         "commissions": "Comisiones pendientes de pago"
       },
@@ -3401,7 +3401,10 @@
         "pending": "Pendiente",
         "refunded": "Reembolsado",
         "failed": "Fallido",
-        "disputed": "En disputa"
+        "disputed": "En disputa",
+        "processing": "Procesamiento",
+        "requested": "Solicitado",
+        "rejected": "Rechazado"
       }
     },
     "settings": {
@@ -3492,7 +3495,7 @@
       "breadcrumb": "Administración",
       "subtitle": "{count} eventos · {errors} errores · {warnings} advertencias",
       "empty": "Aún no hay registros",
-      "retention": "Conservación de registros: 90 días · Se pueden exportar en formato CSV",
+      "retention": "Conservación de registros: 90 días · Se puede exportar en formato CSV",
       "level": {
         "info": "Información",
         "success": "Éxito",
@@ -3543,7 +3546,7 @@
       "stats": {
         "online": "Conectado ahora",
         "logins": "Inicios de sesión de hoy",
-        "newUsers": "Nuevos usuarios hoy",
+        "newUsers": "Nuevos usuarios de hoy",
         "revenue": "Ingresos de hoy"
       },
       "onlineUsers": "Usuarios activos",
@@ -3573,14 +3576,14 @@
       "breadcrumb": "Infraestructura",
       "subtitle": "Estado en tiempo real · Servicios de {count} supervisados",
       "allOk": "Todos los sistemas están operativos",
-      "degradedMsg": "{count} servicio(s) con problemas de calidad",
+      "degradedMsg": "{count} servicio(s) con problemas",
       "outageMsg": "{count} servicio(s) fuera de servicio",
       "lastCheck": "Última consulta: {time}",
       "recentIncidents": "Incidentes recientes",
       "services": "Servicios",
       "database": "Base de datos",
       "uptime": "Tiempo de actividad del servidor",
-      "uptimeDesc": "Desde la última reiniciación",
+      "uptimeDesc": "Desde la última reinicio",
       "env": "Medio ambiente",
       "globalStatus": {
         "operational": "Todos los sistemas están operativos",
@@ -3946,7 +3949,7 @@
   "cryptoPayment": {
     "title": "Pagar con criptomonedas (USDT)",
     "statusWaiting": "A la espera del pago…",
-    "statusConfirming": "Se ha detectado un pago — confirmando en la cadena de bloques…",
+    "statusConfirming": "Se ha detectado un pago — confirmando en la cadena…",
     "statusConfirmed": "Confirmado — en proceso de finalización…",
     "statusSending": "Finalizando…",
     "statusPartiallyPaid": "Se ha recibido un pago parcial; a la espera del resto…",
@@ -3984,7 +3987,10 @@
       "paid_article": "Artículo de pago",
       "paid_newsletter": "Boletín informativo de pago",
       "ad_campaign": "Anuncio",
-      "domain_purchase": "Compra de dominios"
+      "domain_purchase": "Compra de dominios",
+      "kyc_verification": "Verificación KYC",
+      "affiliate_commission_payout": "Pago de comisiones de afiliados",
+      "ad_revenue_payout": "Pago de los ingresos por publicidad"
     },
     "status": {
       "pending": "Pendiente",
@@ -3992,7 +3998,11 @@
       "completed": "Finalizado",
       "failed": "Fallido",
       "refunded": "Reembolsado",
-      "disputed": "En disputa"
+      "disputed": "En disputa",
+      "requested": "Solicitado",
+      "processing": "Procesamiento",
+      "paid": "Remunerado",
+      "rejected": "Rechazado"
     }
   },
   "aiBuilder": {
@@ -4001,7 +4011,7 @@
     "brandNameLabel": "Blog / nombre de la marca",
     "brandNamePlaceholder": "Por ejemplo: TechFlow, Easy Cooking, Zero Travel…",
     "nicheLabel": "Tema o nicho del blog",
-    "nichePlaceholder": "Por ejemplo: consejos de marketing para startups, recetas vegetarianas rápidas, viajes de mochilero por el sudeste asiático…",
+    "nichePlaceholder": "Por ejemplo: consejos de marketing para startups, recetas vegetarianas rápidas, viajes con mochila por el sudeste asiático…",
     "audienceLabel": "Público objetivo",
     "audiencePlaceholder": "Por ejemplo: desarrolladores noveles, madres ocupadas, viajeros con presupuesto ajustado de entre 25 y 35 años…",
     "toneLabel": "Tono de redacción",

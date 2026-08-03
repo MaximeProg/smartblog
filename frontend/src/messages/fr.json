@@ -3401,7 +3401,10 @@
         "pending": "En attente",
         "refunded": "Remboursé",
         "failed": "Échoué",
-        "disputed": "Contesté"
+        "disputed": "Contesté",
+        "processing": "En cours",
+        "requested": "Demandé",
+        "rejected": "Rejeté"
       }
     },
     "settings": {
@@ -3984,7 +3987,10 @@
       "paid_article": "Article payant",
       "paid_newsletter": "Newsletter payante",
       "ad_campaign": "Publicité",
-      "domain_purchase": "Achat de domaine"
+      "domain_purchase": "Achat de domaine",
+      "kyc_verification": "Vérification KYC",
+      "affiliate_commission_payout": "Versement de commission d'affiliation",
+      "ad_revenue_payout": "Versement de revenus publicitaires"
     },
     "status": {
       "pending": "En attente",
@@ -3992,7 +3998,11 @@
       "completed": "Terminé",
       "failed": "Échoué",
       "refunded": "Remboursé",
-      "disputed": "Contesté"
+      "disputed": "Contesté",
+      "requested": "Demandé",
+      "processing": "En cours",
+      "paid": "Payé",
+      "rejected": "Rejeté"
     }
   },
   "aiBuilder": {

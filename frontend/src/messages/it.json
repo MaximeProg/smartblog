@@ -39,7 +39,7 @@
       "signInButton": "Accedi",
       "signingIn": "Accesso in corso...",
       "twoFATitle": "Autenticazione a due fattori",
-      "twoFADesc": "Inserisci il codice a 6 cifre generato dall'app di autenticazione.",
+      "twoFADesc": "Inserisci il codice a 6 cifre visualizzato nell'app di autenticazione.",
       "twoFAVerify": "Verifica",
       "twoFABack": "Torna alla pagina di accesso",
       "googleButton": "Continua con Google",
@@ -103,11 +103,11 @@
       "saveButton": "Salva la nuova password",
       "saving": "Salvataggio in corso...",
       "successTitle": "Password aggiornata!",
-      "successDesc": "La tua password è stata modificata. Ora puoi accedere con la nuova password.",
+      "successDesc": "La tua password è stata modificata. Ora puoi accedere utilizzando la nuova password.",
       "backToLogin": "Vai alla pagina di accesso",
       "errors": {
         "mismatch": "Le password non corrispondono.",
-        "expiredCode": "Questo link di reimpostazione è scaduto. Si prega di richiederne uno nuovo.",
+        "expiredCode": "Questo link di reimpostazione è scaduto. Ti preghiamo di richiederne uno nuovo.",
         "invalidCode": "Questo link di ripristino non è valido o è già stato utilizzato.",
         "generic": "Impossibile reimpostare la password. Riprova."
       }
@@ -476,7 +476,7 @@
     "planStarterRequiredShort": "È richiesto il piano Starter",
     "tabContent": "Contenuto",
     "tabWorkflow": "Flusso di lavoro",
-    "improveContentTitle": "Migliorare i contenuti",
+    "improveContentTitle": "Migliora i contenuti",
     "improveInstructionPlaceholder": "Ad esempio: rendere il testo più formale, aggiungere esempi…",
     "improveWithAiButton": "Migliora con l'IA",
     "improvingButton": "In fase di miglioramento…",
@@ -630,7 +630,7 @@
   "publicBlog": {
     "readMore": "Per saperne di più",
     "publishedOn": "Pubblicato su {date}",
-    "updatedOn": "Aggiornato il{date}",
+    "updatedOn": "Aggiornato il {date}",
     "by": "di {author}",
     "minRead": "{min} Tempo di lettura:",
     "subscribe": "Iscriviti alla newsletter",
@@ -690,7 +690,7 @@
     "seeAll": "Vedi tutto",
     "topic": "argomento",
     "topics": "argomenti",
-    "inTopics": "in relazione a un argomento di \"{count}\"",
+    "inTopics": "in relazione a un argomento dell{count}",
     "inTopicsPlural": "su vari argomenti relativi all'{count}",
     "featuredLabel": "In primo piano",
     "otherCategories": "Altre categorie",
@@ -699,7 +699,7 @@
     "resultCountPlural": "{count} risultati",
     "noArticlesInCategoryDesc": "Torna presto a trovarci per scoprire i nuovi contenuti di questa categoria.",
     "seeAllArticles": "Visualizza tutti gli articoli",
-    "weeklyNewsletterDesc": "Ricevi ogni settimana i nostri articoli migliori direttamente nella tua casella di posta.",
+    "weeklyNewsletterDesc": "Ricevi ogni settimana i nostri migliori articoli direttamente nella tua casella di posta.",
     "aboutAuthor": "Informazioni sull'autore",
     "seeAllAuthorArticles": "Leggi tutti i loro articoli",
     "commentFormNamePlaceholder": "Il tuo nome",
@@ -783,7 +783,7 @@
     "speakNowHint": "Dite la vostra adesso…",
     "voiceTranscribedHint": "La tua voce verrà trascritta automaticamente",
     "noResultsForQuery": "Nessun risultato per \"{query}\"",
-    "tryOtherKeywords": "Prova a inserire parole chiave diverse oppure controlla l'ortografia.",
+    "tryOtherKeywords": "Prova con parole chiave diverse oppure controlla l'ortografia.",
     "resultsForQuery": "{count} risultato per \"{query}\"",
     "resultsForQueryPlural": "{count} risultati per \"{query}\"",
     "savedArticlesLabel": "Articoli salvati",
@@ -818,7 +818,7 @@
     "advertiseStep1Title": "Invia il tuo annuncio",
     "advertiseStep1Desc": "Compila il modulo sottostante inserendo i dettagli del tuo annuncio e l'URL di destinazione.",
     "advertiseStep2Title": "Revisione manuale",
-    "advertiseStep2Desc": "Il gestore del blog esamina il contenuto inviato e lo approva o lo rifiuta.",
+    "advertiseStep2Desc": "Il gestore del blog esamina il contenuto inviato e lo approva o lo respinge.",
     "advertiseStep3Title": "Vai in diretta",
     "advertiseStep3Desc": "Una volta approvato, il tuo annuncio viene pubblicato e inizia a raggiungere i lettori.",
     "adDetailsStepLabel": "Dettagli dell'annuncio",
@@ -917,13 +917,13 @@
       "title": "Tutto ciò che ti serve per gestire un blog professionale",
       "subtitle": "Dalla scrittura alla pubblicazione, dall'analisi dei dati alla monetizzazione.",
       "multiTenantTitle": "Gestione di più blog",
-      "multiTenantDesc": "Gestisci più blog indipendenti da un'unica dashboard. Ciascuno con il proprio team, dominio e impostazioni.",
+      "multiTenantDesc": "Gestisci più blog indipendenti da un'unica dashboard. Ognuno con il proprio team, dominio e impostazioni.",
       "teamTitle": "Collaborazione in team",
       "teamDesc": "Invita redattori, autori e lettori. Decidi chi può scrivere, revisionare e pubblicare.",
       "analyticsTitle": "Funzionalità di analisi integrate",
       "analyticsDesc": "Monitora le visualizzazioni delle pagine, gli articoli più letti e la crescita del numero di iscritti grazie a report dettagliati in tempo reale.",
       "seoTitle": "Editor ottimizzato per la SEO",
-      "seoDesc": "Suggerimenti SEO basati sull'intelligenza artificiale, mappe del sito automatiche e dati strutturati integrati direttamente nella piattaforma.",
+      "seoDesc": "Suggerimenti SEO basati sull'intelligenza artificiale, mappe del sito automatiche e dati strutturati integrati direttamente nel sistema.",
       "newsletterTitle": "Newsletter integrata",
       "newsletterDesc": "Amplia e gestisci la tua lista di iscritti senza ricorrere a strumenti di terze parti.",
       "aiTitle": "Assistente di scrittura basato sull'intelligenza artificiale",
@@ -1119,7 +1119,7 @@
     },
     "menus": {
       "title": "Gestione dei menu",
-      "description": "Crea e organizza i menu di navigazione del tuo blog. Aggiungi collegamenti alle tue pagine, alle categorie e ai contenuti esterni."
+      "description": "Crea e organizza i menu di navigazione del tuo blog. Aggiungi link alle tue pagine, alle categorie e a contenuti esterni."
     },
     "widgets": {
       "title": "Widget",
@@ -1141,7 +1141,7 @@
     "backToDashboard": "Torna alla dashboard",
     "mobileStep": "Fase {step} / 4",
     "errors": {
-      "createFailed": "Impossibile creare il blog. Riprova."
+      "createFailed": "Impossibile creare il blog. Riprovare."
     },
     "limit": {
       "title": "Limite del blog raggiunto",
@@ -1270,7 +1270,7 @@
     "primaryColor": "Colore primario",
     "secondaryColor": "Colore secondario",
     "headingFont": "Carattere del titolo",
-    "bodyFont": "Carattere del corpo",
+    "bodyFont": "Carattere del corpo del testo",
     "contentWidth": "Larghezza del contenuto",
     "sidebarEnabled": "Barra laterale attivata",
     "sidebarPosition": "Posizione",
@@ -1316,7 +1316,7 @@
     "upload": "Carica",
     "uploadTitle": "Carica un file",
     "uploadDragDrop": "Trascina un file qui, oppure clicca per selezionare un file",
-    "uploadComingSoon": "A breve sarà disponibile il caricamento diretto: usa Cloudinary oppure incolla un URL nell'editor degli articoli.",
+    "uploadComingSoon": "A breve sarà disponibile il caricamento diretto: usa Cloudinary oppure incolla un URL nell'editor dell'articolo.",
     "close": "Chiudi",
     "searchPlaceholder": "Cerca file...",
     "filterAll": "Tutto",
@@ -1548,7 +1548,7 @@
     "banRemoveError": "Errore durante la rimozione del ban",
     "shadowBan": "Shadow ban",
     "banAuthor": "Autore del divieto",
-    "banSuccess": "Autore bloccato",
+    "banSuccess": "Autore bannato",
     "banError": "Errore durante il blocco dell'autore",
     "status_pending": "In sospeso",
     "status_approved": "Approvato",
@@ -1680,7 +1680,7 @@
     "upgradeNow": "Esegui subito l'aggiornamento",
     "trialExpiredTitle": "Il periodo di prova è scaduto",
     "trialExpiredDesc": "Scegli un piano per continuare a pubblicare contenuti e far crescere il tuo blog.",
-    "trialActiveDesc": "Approfitta di tutte le funzionalità prima che il periodo di prova scada.",
+    "trialActiveDesc": "Approfitta di tutte le funzionalità prima che la versione di prova scada.",
     "trialLastDay": "È l'ultimo giorno del tuo periodo di prova!",
     "trialDaysLeft": "{days} giorni rimanenti del periodo di prova",
     "contactModalTitle": "Passa a \"{plan}\"",
@@ -2259,7 +2259,7 @@
     "mediaVideoFormatError": "Formato video non supportato (MP4, WebM, MOV)",
     "mediaAudioFormatError": "Formato audio non supportato (MP3, WAV, OGG, AAC)",
     "mediaUploadTimeoutError": "Tempo di attesa scaduto. Prova a utilizzare una connessione più veloce o un file più piccolo.",
-    "mediaUploadError": "Caricamento non riuscito. Riprova.",
+    "mediaUploadError": "Caricamento non riuscito. Riprovare.",
     "mediaTabGallery": "Galleria",
     "mediaTabUpload": "Carica",
     "mediaTabUrl": "URL",
@@ -2381,7 +2381,7 @@
     },
     "step4": {
       "title": "Il blog è stato creato!",
-      "liveAt": "è in diretta su",
+      "liveAt": "è disponibile su",
       "stats": {
         "articles": "Articoli pubblicati",
         "theme": "Tema selezionato",
@@ -2545,11 +2545,11 @@
     "walletAddressPlaceholder": "Inserisci l'indirizzo della rete selezionata",
     "walletExtraIdLabel": "Promemoria / Etichetta",
     "walletExtraIdPlaceholder": "Requisiti per questa rete",
-    "walletExtraIdHint": "Alcune reti (ad esempio XRP, EOS) richiedono l'inserimento di questo memo/tag aggiuntivo insieme all'indirizzo; in sua assenza, i fondi a te destinati potrebbero andare persi.",
+    "walletExtraIdHint": "Alcune reti (ad esempio XRP, EOS) richiedono l'inserimento di questo memo/tag aggiuntivo insieme all'indirizzo; in sua assenza, i fondi che ti vengono inviati potrebbero andare persi.",
     "walletTotpLabel": "Codice di autenticazione (2FA)",
     "walletTotpPlaceholder": "000 000",
     "walletSaveButton": "Salva nel portafoglio",
-    "walletSavedToast": "L'indirizzo del portafoglio è stato salvato correttamente.",
+    "walletSavedToast": "L'indirizzo del portafoglio è stato salvato con successo.",
     "walletInvalidAddress": "Indirizzo non valido per la rete selezionata.",
     "walletInvalidTotp": "Codice 2FA non valido. Riprova.",
     "walletRequires2FA": "È necessario abilitare l'autenticazione a due fattori prima di aggiungere l'indirizzo di un portafoglio.",
@@ -2677,7 +2677,7 @@
       },
       "expired": {
         "title": "È necessaria una nuova verifica",
-        "description": "Di recente hai modificato il tuo nome o il tuo Paese, pertanto è necessaria una nuova verifica dell'identità prima che il tuo link di affiliazione possa essere riattivato. Se hai ancora anni prepagati a disposizione, questa operazione non comporterà alcun costo aggiuntivo.",
+        "description": "Di recente hai modificato il tuo nome o il tuo Paese, pertanto è necessaria una nuova verifica dell'identità prima che il tuo link di affiliazione possa essere riattivato. Se hai ancora anni prepagati a disposizione, non ti verrà addebitato alcun costo aggiuntivo.",
         "cta": "Conferma nuovamente la mia identità"
       },
       "rejected": {
@@ -2838,7 +2838,7 @@
     "noMessages": "Non ci sono ancora messaggi",
     "youLabel": "Tu",
     "adminLabel": "Assistenza",
-    "composerPlaceholder": "Scrivi il tuo messaggio… (Invio per inviare, Maiusc+Invio per passare a una nuova riga)",
+    "composerPlaceholder": "Scrivi il tuo messaggio… (Invio per inviare, Maiusc+Invio per passare alla riga successiva)",
     "translationNote": "Il tuo messaggio verrà tradotto automaticamente per il nostro team di assistenza.",
     "ticketClosedMsg": "Questo ticket è chiuso. Per riaprirlo, invia un nuovo messaggio.",
     "sendError": "Impossibile inviare il messaggio",
@@ -2890,7 +2890,7 @@
     "daysLeft": "{days} giorni rimanenti del periodo di prova",
     "lastDay": "È l'ultimo giorno del periodo di prova: passa alla versione a pagamento oggi stesso!",
     "expiredMessage": "Il periodo di prova è scaduto. Effettua l'aggiornamento per continuare a utilizzare tutte le funzionalità.",
-    "upgradeNow": "Esegui subito l'aggiornamento",
+    "upgradeNow": "Esegui l'aggiornamento ora",
     "viewPlans": "Visualizza le planimetrie"
   },
   "domains": {
@@ -2908,7 +2908,7 @@
     "verifyError": "Errore durante la verifica.",
     "deleteSuccess": "Dominio rimosso.",
     "deleteError": "Errore durante la rimozione del dominio.",
-    "deleteConfirm": "Elimina questo dominio?",
+    "deleteConfirm": "Eliminare questo dominio?",
     "emptyTitle": "Non è ancora stato impostato un dominio personalizzato",
     "emptyDesc": "Collega il tuo dominio per conferire al tuo blog un'identità professionale.",
     "addedOn": "Aggiunto il{date}",
@@ -2920,7 +2920,7 @@
     "step2TxtNote": "Il valore del record TXT è univoco per ogni dominio: copialo dalla scheda del dominio che appare qui sotto.",
     "step3Title": "Fai clic su \"Verifica\"",
     "step3Desc": "Una volta che i record DNS si sono propagati (di solito bastano pochi minuti su Cloudflare, mentre altrove possono essere necessarie fino a 48 ore), clicca sul pulsante di aggiornamento accanto al tuo dominio.",
-    "cloudflareTip": "Usi Cloudflare? Abilita il proxy con la nuvola arancione nel tuo record CNAME: in questo modo l'SSL verrà gestito automaticamente, senza bisogno di ulteriori configurazioni.",
+    "cloudflareTip": "Usi Cloudflare? Abilita il proxy con la nuvola arancione nel tuo record CNAME: l'SSL verrà gestito automaticamente, senza bisogno di ulteriori configurazioni.",
     "hostingerTip": "Usi Hostinger? Hostinger non consente di impostare un record CNAME alla radice (@). Aggiungi invece un reindirizzamento dal tuo dominio principale a \"www\", quindi aggiungi solo il record CNAME per \"www\" e il record di verifica TXT.",
     "recordCname": "Record 1 — Dominio radice CNAME",
     "recordCnameWww": "Record 2 — CNAME del sottodominio www",
@@ -2998,7 +2998,7 @@
     "copiedButton": "Copiato!",
     "setupError": "Impossibile avviare la configurazione dell'autenticazione a due fattori. Riprovare.",
     "invalidCode": "Codice non valido. Assicurati che l'orologio del dispositivo sia sincronizzato e riprova.",
-    "enabledToast": "L'autenticazione a due fattori è ora abilitata!"
+    "enabledToast": "L'autenticazione a due fattori è ora attiva!"
   },
   "superAdmin": {
     "console": "Console di amministrazione",
@@ -3008,7 +3008,7 @@
     "nav": {
       "overview": "Panoramica",
       "clients": "Clienti",
-      "content": "Contenuti e design",
+      "content": "Contenuti e grafica",
       "monetization": "Monetizzazione",
       "infrastructure": "Infrastrutture",
       "administration": "Amministrazione",
@@ -3322,7 +3322,7 @@
       "cancel": "Annulla",
       "deactivate": "Disattiva",
       "activate": "Attiva",
-      "confirmDeactivate": "Disattivare questo piano? Gli utenti che lo utilizzano non ne subiranno le conseguenze nell'immediato.",
+      "confirmDeactivate": "Disattivare questo piano? Gli utenti che lo utilizzano non ne subiranno le conseguenze immediatamente.",
       "created": "Piano creato",
       "updated": "Piano aggiornato",
       "deactivated": "Piano disattivato",
@@ -3401,7 +3401,10 @@
         "pending": "In sospeso",
         "refunded": "Rimborsato",
         "failed": "Fallito",
-        "disputed": "Controverso"
+        "disputed": "Controverso",
+        "processing": "Elaborazione",
+        "requested": "Richiesto",
+        "rejected": "Rifiutato"
       }
     },
     "settings": {
@@ -3984,7 +3987,10 @@
       "paid_article": "Articolo a pagamento",
       "paid_newsletter": "Newsletter a pagamento",
       "ad_campaign": "Pubblicità",
-      "domain_purchase": "Acquisto di un dominio"
+      "domain_purchase": "Acquisto di un dominio",
+      "kyc_verification": "Verifica KYC",
+      "affiliate_commission_payout": "Pagamento delle commissioni di affiliazione",
+      "ad_revenue_payout": "Pagamento dei ricavi pubblicitari"
     },
     "status": {
       "pending": "In sospeso",
@@ -3992,12 +3998,16 @@
       "completed": "Completato",
       "failed": "Fallito",
       "refunded": "Rimborsato",
-      "disputed": "Controverso"
+      "disputed": "Controverso",
+      "requested": "Richiesto",
+      "processing": "Lavorazione",
+      "paid": "A pagamento",
+      "rejected": "Rifiutato"
     }
   },
   "aiBuilder": {
     "title": "Generatore di blog sull'intelligenza artificiale",
-    "subtitle": "Rispondi ad alcune domande e l'intelligenza artificiale configurerà completamente il tuo blog: pagina iniziale, \"Chi siamo\", contatti, SEO, intestazione, piè di pagina e altro ancora.",
+    "subtitle": "Rispondi ad alcune domande e l'intelligenza artificiale configurerà completamente il tuo blog: pagina iniziale, \"Chi siamo\", \"Contatti\", SEO, intestazione, piè di pagina e altro ancora.",
     "brandNameLabel": "Blog / nome del marchio",
     "brandNamePlaceholder": "ad es. TechFlow, Easy Cooking, Zero Travel…",
     "nicheLabel": "Argomento / nicchia del blog",

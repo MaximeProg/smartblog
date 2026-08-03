@@ -88,18 +88,24 @@ def _require_super_admin(payload: dict):
 
 
 async def _build_entry_response(db, entry: JournalEntry, include_lines: bool = False) -> JournalEntryResponse:
+    """`include_lines=False` (list view) still fetches the lines to compute
+    real totals — it only skips building the full per-line detail objects.
+    Bug fixed 2026-08-04: the list endpoint previously left total_debit/
+    total_credit at their 0.0 default whenever include_lines was False,
+    which was always the case for GET /accounting/entries — every entry in
+    the accounting page showed 0.00/0.00 regardless of its real amount."""
     lines_data: list[JournalLineResponse] = []
     total_debit = 0.0
     total_credit = 0.0
 
-    if include_lines:
-        lines_q = await db.execute(
-            select(JournalEntryLine, ChartOfAccount)
-            .join(ChartOfAccount, JournalEntryLine.account_code == ChartOfAccount.code)
-            .where(JournalEntryLine.entry_id == entry.id)
-            .order_by(JournalEntryLine.line_number)
-        )
-        for line, account in lines_q:
+    lines_q = await db.execute(
+        select(JournalEntryLine, ChartOfAccount)
+        .join(ChartOfAccount, JournalEntryLine.account_code == ChartOfAccount.code)
+        .where(JournalEntryLine.entry_id == entry.id)
+        .order_by(JournalEntryLine.line_number)
+    )
+    for line, account in lines_q:
+        if include_lines:
             lines_data.append(JournalLineResponse(
                 id=str(line.id),
                 line_number=line.line_number,
@@ -109,8 +115,8 @@ async def _build_entry_response(db, entry: JournalEntry, include_lines: bool = F
                 credit=float(line.credit),
                 description=line.description,
             ))
-            total_debit += float(line.debit)
-            total_credit += float(line.credit)
+        total_debit += float(line.debit)
+        total_credit += float(line.credit)
 
     return JournalEntryResponse(
         id=str(entry.id),
@@ -618,6 +624,131 @@ async def book_kyc_verification_payment(
         db.add(ln)
 
 
+async def book_paid_article_payment(
+    db,
+    amount: float,
+    platform_fee: float,
+    article_id: str,
+    transaction_id: str,
+    created_by_system_user_id: uuid.UUID,
+):
+    """
+    Books a paid-article purchase (NOWPAYMENTS_PLATFORM_FEE_PERCENT, 5% par
+    défaut — voir checkout_article, payments.py). Contrairement aux pubs
+    (book_ad_slot_payment), il n'existe aujourd'hui AUCUN versement crypto
+    réel de la part du propriétaire de blog sur un article payant — la part
+    restante (95%) est donc comptabilisée comme un passif dû (2004), pas
+    comme un revenu déjà distribué :
+    Dr 1010 (amount)
+    Cr 4202 (commission plateforme, 5% par défaut)
+    Cr 2004 (95% — dû au propriétaire du blog, non versé)
+    """
+    owner_share = round(amount - platform_fee, 4)
+    entry_number = await _get_next_entry_number(db)
+
+    entry = JournalEntry(
+        entry_number=entry_number,
+        journal_type=JournalType.SALES,
+        description=f"Paid article purchase — {article_id}",
+        entry_date=date.today(),
+        reference=transaction_id,
+        status=JournalEntryStatus.APPROVED,
+        source_type=JournalEntrySource.NOWPAYMENTS_WEBHOOK,
+        source_id=transaction_id,
+        created_by=created_by_system_user_id,
+        approved_by=created_by_system_user_id,
+        approved_at=datetime.now(timezone.utc),
+    )
+    db.add(entry)
+    await db.flush()
+
+    lines = [
+        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1010", debit=round(amount, 4), credit=0),
+        JournalEntryLine(entry_id=entry.id, line_number=2, account_code="4202", debit=0, credit=round(platform_fee, 4)),
+        JournalEntryLine(entry_id=entry.id, line_number=3, account_code="2004", debit=0, credit=owner_share),
+    ]
+    for ln in lines:
+        db.add(ln)
+
+
+async def book_paid_newsletter_payment(
+    db,
+    amount: float,
+    platform_fee: float,
+    newsletter_access_id: str,
+    transaction_id: str,
+    created_by_system_user_id: uuid.UUID,
+):
+    """Même logique que book_paid_article_payment, compte 4203 (Paid
+    Newsletter Commission) au lieu de 4202."""
+    owner_share = round(amount - platform_fee, 4)
+    entry_number = await _get_next_entry_number(db)
+
+    entry = JournalEntry(
+        entry_number=entry_number,
+        journal_type=JournalType.SALES,
+        description=f"Paid newsletter purchase — {newsletter_access_id}",
+        entry_date=date.today(),
+        reference=transaction_id,
+        status=JournalEntryStatus.APPROVED,
+        source_type=JournalEntrySource.NOWPAYMENTS_WEBHOOK,
+        source_id=transaction_id,
+        created_by=created_by_system_user_id,
+        approved_by=created_by_system_user_id,
+        approved_at=datetime.now(timezone.utc),
+    )
+    db.add(entry)
+    await db.flush()
+
+    lines = [
+        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1010", debit=round(amount, 4), credit=0),
+        JournalEntryLine(entry_id=entry.id, line_number=2, account_code="4203", debit=0, credit=round(platform_fee, 4)),
+        JournalEntryLine(entry_id=entry.id, line_number=3, account_code="2004", debit=0, credit=owner_share),
+    ]
+    for ln in lines:
+        db.add(ln)
+
+
+async def book_domain_purchase_payment(
+    db,
+    amount: float,
+    domain_name: str,
+    transaction_id: str,
+    created_by_system_user_id: uuid.UUID,
+):
+    """
+    Books a custom domain purchase/renewal. Le prix déjà inclut la marge
+    (voir apply_markup, checkout_domain) — aucune répartition avec le
+    propriétaire du blog, tout revient à la plateforme :
+    Dr 1010 (amount)
+    Cr 4204 (Custom Domain Fees)
+    """
+    entry_number = await _get_next_entry_number(db)
+
+    entry = JournalEntry(
+        entry_number=entry_number,
+        journal_type=JournalType.SALES,
+        description=f"Domain purchase — {domain_name}",
+        entry_date=date.today(),
+        reference=transaction_id,
+        status=JournalEntryStatus.APPROVED,
+        source_type=JournalEntrySource.NOWPAYMENTS_WEBHOOK,
+        source_id=transaction_id,
+        created_by=created_by_system_user_id,
+        approved_by=created_by_system_user_id,
+        approved_at=datetime.now(timezone.utc),
+    )
+    db.add(entry)
+    await db.flush()
+
+    lines = [
+        JournalEntryLine(entry_id=entry.id, line_number=1, account_code="1010", debit=round(amount, 4), credit=0),
+        JournalEntryLine(entry_id=entry.id, line_number=2, account_code="4204", debit=0, credit=round(amount, 4)),
+    ]
+    for ln in lines:
+        db.add(ln)
+
+
 # ── Tenant read-only view ─────────────────────────────────────────
 
 tenant_accounting_router = APIRouter(
@@ -639,8 +770,12 @@ async def tenant_accounting_summary(
 
     await _assert_member(db, tenant_id, uuid.UUID(payload["sub"]), payload)
 
+    # Bug fixé 2026-08-04 : ces requêtes référençaient amount_fiat/
+    # amount_crypto/currency_fiat/currency_crypto/gateway_order_id, des
+    # colonnes qui n'existent pas sur le modèle Transaction réel (amount/
+    # currency/nowpayments_order_id) — cet endpoint plantait à chaque appel.
     sub_q = await db.execute(
-        select(func.coalesce(func.sum(Transaction.amount_fiat), 0)).where(
+        select(func.coalesce(func.sum(Transaction.amount), 0)).where(
             Transaction.tenant_id == tenant_id,
             Transaction.status == TransactionStatus.COMPLETED,
             Transaction.transaction_type == TransactionType.SUBSCRIPTION,
@@ -649,7 +784,7 @@ async def tenant_accounting_summary(
     total_subscription_paid = float(sub_q.scalar() or 0)
 
     ad_q = await db.execute(
-        select(func.coalesce(func.sum(Transaction.amount_fiat), 0)).where(
+        select(func.coalesce(func.sum(Transaction.amount), 0)).where(
             Transaction.tenant_id == tenant_id,
             Transaction.status == TransactionStatus.COMPLETED,
             Transaction.transaction_type == TransactionType.AD_CAMPAIGN,
@@ -673,10 +808,10 @@ async def tenant_accounting_summary(
             {
                 "id": str(t.id),
                 "type": t.transaction_type.value if hasattr(t.transaction_type, "value") else str(t.transaction_type),
-                "amount": float(t.amount_fiat or t.amount_crypto or 0),
-                "currency": t.currency_fiat or t.currency_crypto or "USDT",
+                "amount": float(t.amount or 0),
+                "currency": t.currency or "USDT",
                 "status": t.status.value if hasattr(t.status, "value") else str(t.status),
-                "reference": t.gateway_order_id,
+                "reference": t.nowpayments_order_id,
                 "created_at": t.created_at.isoformat() if t.created_at else None,
             }
             for t in transactions

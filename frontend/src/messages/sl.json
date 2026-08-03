@@ -1,7 +1,7 @@
 {
   "meta": {
     "appName": "SmarterBloggers",
-    "tagline": "Profesionalna platforma za bloge z več najemniki"
+    "tagline": "Profesionalna platforma za bloge z več uporabniki"
   },
   "nav": {
     "dashboard": "Nadzorna plošča",
@@ -74,7 +74,7 @@
       "verifiedRedirecting": "E-pošta je bila potrjena! Preusmerjam vas na stran za prijavo…",
       "errors": {
         "emailInUse": "Ta e-poštni naslov je že registriran. Poskusite se raje prijaviti.",
-        "weakPassword": "Geslo mora imeti najmanj 8 znakov.",
+        "weakPassword": "Geslo mora imeti vsaj 8 znakov.",
         "generic": "Računa ni bilo mogoče ustvariti. Poskusite še enkrat."
       }
     },
@@ -403,7 +403,7 @@
     "taskList": "Seznam nalog",
     "alignLeft": "Poravnaj levo",
     "alignCenter": "Poravnaj na sredino",
-    "alignRight": "Poravnaj desno",
+    "alignRight": "Poravnaj na desno",
     "blockquote": "Citat",
     "codeBlock": "Blok kode",
     "table": "Vstavi tabelo",
@@ -466,7 +466,7 @@
     "translationError": "Napaka pri prevodu.",
     "contentImprovedToast": "Vsebina je bila izboljšana z umetno inteligenco!",
     "improveError": "Napaka pri izboljševanju vsebine.",
-    "excerptGeneratedToast": "Izdelan je izvleček!",
+    "excerptGeneratedToast": "Izdelan je bil izvleček!",
     "excerptError": "Pri ustvarjanju izvlečka je prišlo do napake.",
     "coverGeneratedToast": "Naslovna slika je ustvarjena!",
     "coverError": "Napaka pri ustvarjanju naslovne slike.",
@@ -477,7 +477,7 @@
     "tabContent": "Vsebina",
     "tabWorkflow": "Delovni tok",
     "improveContentTitle": "Izboljšajte vsebino",
-    "improveInstructionPlaceholder": "Npr.: Oblikujte bolj formalno, dodajte primere…",
+    "improveInstructionPlaceholder": "Npr.: Napisati bolj formalno, dodati primere…",
     "improveWithAiButton": "Izboljšajte se z umetno inteligenco",
     "improvingButton": "Izboljšuje se…",
     "generateImagePlaceholder": "Opišite sliko, ki jo želite ustvariti…",
@@ -509,7 +509,7 @@
     "upgradeToStarterLink": "Prehod na paket Starter →",
     "generateArticleWithAiTitle": "Ustvari članek z umetno inteligenco",
     "articleSubjectLabel": "Tema članka *",
-    "articleSubjectPlaceholder": "Npr.: Prednosti vsebinskega marketinga za mala podjetja v letu 2025...",
+    "articleSubjectPlaceholder": "Npr.: Prednosti vsebinskega marketinga za mala podjetja leta 2025...",
     "toneLabel": "Ton",
     "toneProfessional2": "Strokovno",
     "toneCasual": "Neformalno",
@@ -865,7 +865,7 @@
     "currencyHint": "Uporablja se za sporočanje vašega proračuna. Danes se ne pobira nobeno plačilo.",
     "totalBudgetLabel": "Skupni proračun",
     "totalBudgetHint": "To je znesek, ki ga boste plačali za prikaz oglasa.",
-    "paymentSubtitle": "Vaš oglaševalski prostor se varno plača prek storitve NowPayments – s kriptovaluto ali kartico.",
+    "paymentSubtitle": "Vaš oglaševalski prostor se varno plača prek storitve NowPayments – s kriptovaluto ali s kartico.",
     "totalToPayLabel": "Skupni znesek za plačilo",
     "missingBudgetWarning": "Prosimo, vrnite se nazaj in vnesite svoj proračun, da boste lahko nadaljevali.",
     "whatHappensNextSectionTitle": "Kaj se bo zgodilo naprej",
@@ -917,7 +917,7 @@
       "title": "Vse, kar potrebujete za vodenje profesionalnega bloga",
       "subtitle": "Od pisanja do objave, od analitike do monetizacije.",
       "multiTenantTitle": "Upravljanje več blogov",
-      "multiTenantDesc": "Upravljajte več neodvisnih blogov prek ene same nadzorne plošče. Vsak ima svojo ekipo, domeno in nastavitve.",
+      "multiTenantDesc": "Upravljajte več neodvisnih blogov prek enega samega nadzornega panela. Vsak ima svojo ekipo, domeno in nastavitve.",
       "teamTitle": "Sodelovanje v skupini",
       "teamDesc": "Povabite urednike, avtorje in bralce. Določite, kdo lahko piše, pregleduje in objavlja.",
       "analyticsTitle": "Vgrajene analitične funkcije",
@@ -960,7 +960,7 @@
       "businessF3": "500 GB prostora za shranjevanje",
       "businessF4": "Celoten nabor analitičnih orodij",
       "businessF5": "Neomejen e-bilten",
-      "businessF6": "Več prilagojenih domen",
+      "businessF6": "Več po meri nastavljenih domen",
       "businessF7": "Prednostna podpora",
       "businessF8": "Možnost »white label«",
       "popular": "Najbolj priljubljeno",
@@ -1101,7 +1101,7 @@
     "twitterSummary": "Povzetek",
     "twitterSummaryLarge": "Povzetek z veliko sliko",
     "indexing": "Omogoči indeksiranje s strani iskalnikov",
-    "indexingDesc": "Če je datoteka robots.txt z nastavitvijo »noindex« onemogočena, to pomeni, da iskalnim robotom naroča, naj vašega bloga ne indeksirajo.",
+    "indexingDesc": "Če je datoteka robots.txt z nastavitvijo »noindex« onemogočena, iskalnikom sporoča, naj vašega bloga ne indeksirajo.",
     "sitemap": "URL zemljevida spletnega mesta",
     "sitemapDesc": "Samodejno ustvarjeno — pošljite ga v Google Search Console.",
     "copySitemap": "Kopiraj",
@@ -1292,7 +1292,7 @@
       "full": "Polna širina"
     },
     "themeTitle": "Tema",
-    "themeDesc": "Splošna zasnova vašega javnega bloga.",
+    "themeDesc": "Splošna zasnova vašega javnega spletnega dnevnika.",
     "lockedBadge": "Zaklenjeno po objavi",
     "colorTitle": "Osnovna barva",
     "colorDesc": "Uporablja se za gumbe, povezave in vizualne poudarke.",
@@ -1305,7 +1305,7 @@
       "minimal": "Preprost, osredotočen na vsebino",
       "magazine": "Sodoben uredniški slog",
       "business": "Strokovno in sistematično",
-      "news": "Hiter, zgoščen format poročanja",
+      "news": "Hiter, zgoščen format novic",
       "tech": "Temni način za razvijalce",
       "portfolio": "Vizualno in ustvarjalno"
     }
@@ -1565,7 +1565,7 @@
     "warning": "Prilagojena koda se vključi neposredno v vaš javni blog. Neveljavni CSS ali skripti lahko povzročijo motnje v postavitvi. Preizkusite jo temeljito.",
     "cssDesc": "Slogi, ki se uporabljajo na vseh straneh vašega javnega spletnega dnevnika. Prepisujejo privzete sloge teme.",
     "headerScripts": "Skripti v glavi",
-    "headerScriptsDesc": "Vstavljeno v '<'head'>' — idealno za sledilne piksle, meta oznake in namige za predhodno povezovanje.",
+    "headerScriptsDesc": "Vstavljeno v '<'head'>' — idealno za sledilne piksle, meta oznake in namige za predhodno vzpostavljanje povezave.",
     "footerScripts": "Skripti v nogi strani",
     "footerScriptsDesc": "Vstavi se pred '<'/body'>' — idealno za klepetalne vtičnike, analitične orodje itd.",
     "googleFonts": "URL za Google Fonts",
@@ -1578,7 +1578,7 @@
     "desc": "Vrstice premaknite z vlečenjem, da spremenite njihov vrstni red. Kliknite naslov, da ga preimenujete. Vklopite ali izklopite vidnost posameznega widgeta.",
     "save": "Shrani",
     "saved": "Shranjeno!",
-    "tipTitle": "Nasvet: kliknite naslov widgeta, da ga preimenujete. Spremembe se v vašem javnem blogu upoštevajo po shranitvi."
+    "tipTitle": "Nasvet: kliknite naslov widgeta, da ga preimenujete. Spremembe se v vašem javnem blogu upoštevajo po shranjevanju."
   },
   "ai": {
     "title": "AI-pomočnik",
@@ -1612,7 +1612,7 @@
     "connecting": "Povezovanje…",
     "connectError": "OAuth se ne more zagnati — preverite poverilnice platforme v spremenljivkah okolja",
     "disconnect": "Prekiniti povezavo",
-    "disconnectConfirm": "Ali želite ta račun odstraniti?",
+    "disconnectConfirm": "Ali želite ta račun odjaviti?",
     "yes": "Da",
     "no": "Ne",
     "oauthNotice": "Za integracijo OAuth so potrebna pooblastila za API platforme. Najprej nastavite svoje ključe v spremenljivkah okolja.",
@@ -1656,7 +1656,7 @@
   },
   "subscription": {
     "title": "Naročnina",
-    "currentPlanLabel": "Vaš trenutni paket",
+    "currentPlanLabel": "Vaš trenutni načrt",
     "upgradeDesc": "Nadgradite, da odklenete več funkcij.",
     "thankYou": "Hvala za vašo podporo.",
     "comparePlans": "Primerjaj pakete",
@@ -1895,7 +1895,7 @@
     "pageAnalytics": "Analitika",
     "pageAnalyticsDesc": "Spremljajte uspešnost svojega bloga.",
     "pageComments": "Komentarji",
-    "pageCommentsDesc": "Zmerno obravnavajte in upravljajte komentarje bralcev.",
+    "pageCommentsDesc": "Zmerno nadzorujte in upravljajte komentarje bralcev.",
     "commentStatsTotal": "Skupno število komentarjev",
     "commentStatsPending": "V obravnavi",
     "commentStatsApproved": "Odobreno",
@@ -2050,7 +2050,7 @@
     "articleCategoryLabel": "Kategorija",
     "articleNoCategory": "Brez kategorije",
     "toolbarBold": "Poudarjeno",
-    "toolbarItalic": "ležeči",
+    "toolbarItalic": "ležeče",
     "toolbarH2": "Naslov H2",
     "toolbarH3": "Naslov H3",
     "toolbarQuote": "Citat",
@@ -2064,7 +2064,7 @@
     "switchShowAddress": "Prikaži naslov",
     "fieldFormTitle": "Naslov obrazca",
     "fieldNamePlaceholder": "Mesto za ime",
-    "fieldSubjectPlaceholder": "Zamenljivka za predmet",
+    "fieldSubjectPlaceholder": "Zamenljivka za naslov",
     "fieldMessagePlaceholder": "Mesto za sporočilo",
     "fieldSubmitLabel": "Besedilo na gumbu »Pošlji«",
     "fieldSuccessMessage": "Sporočilo o uspešni izvedbi",
@@ -2134,7 +2134,7 @@
     "articleExcerptPlaceholder": "Kratek povzetek, ki se prikaže v oglasih in iskalnikih…",
     "articleContentPlaceholder": "Začnite pisati svoj članek…",
     "articleUploading": "Nalaganje…",
-    "articleDropImageHere": "Sliko vstavite tukaj",
+    "articleDropImageHere": "Sliko spustite tukaj",
     "markdownTips": "Bližnjice za Markdown",
     "livePreview": "Predogled v živo",
     "refresh": "Osveži",
@@ -2180,7 +2180,7 @@
     "adsCreate": "Objavi oglas",
     "adsCreateSuccess": "Oglas je bil poslan v pregled!",
     "adsCreateError": "Napaka pri pošiljanju oglasa.",
-    "adsNoneTitle": "Zaenkrat ni oglasov",
+    "adsNoneTitle": "Zaenkrat še ni oglasov",
     "adsNoneDesc": "Ustvarite svojo prvo oglaševalsko kampanjo, da boste s svojim blogom zaslužili.",
     "adsAdvertiser": "Ime oglaševalca",
     "adsAdvertiserEmail": "E-poštni naslov oglaševalca",
@@ -2233,7 +2233,7 @@
     "articleFieldSeason": "Sezona",
     "articleFieldPodcastTitle": "Naslov podkasta (serija)",
     "articleTypeLabel": "Vrsta vsebine",
-    "articleTypeHint": "Izberite vrsto, da se na vrhu vašega članka prikažejo ustrezna polja za medije.",
+    "articleTypeHint": "Izberite vrsto, da se na vrhu vašega članka prikažejo ustrezna polja za medijske vsebine.",
     "analyticsDevices": "Okvara naprave",
     "analyticsCountries": "Najboljše države",
     "imageFieldChange": "Sprememba",
@@ -2365,11 +2365,11 @@
     "step2": {
       "title": "Izberite temo",
       "subtitle": "Tema določa videz vašega javnega bloga. To lahko kasneje spremenite.",
-      "nextButton": "Naprej — Prilagajanje"
+      "nextButton": "Naprej — Prilagodi"
     },
     "step3": {
       "title": "Prilagodite svoj blog",
-      "subtitle": "Te nastavitve določajo vizualno podobo vašega spletnega dnevnika. Vse lahko kasneje spremenite.",
+      "subtitle": "Te nastavitve določajo vizualno podobo tvojega bloga. Vse lahko kasneje spremeniš.",
       "colorLabel": "Osnovna barva",
       "fontLabel": "Družina pisav",
       "previewLabel": "Predogled",
@@ -2420,7 +2420,7 @@
     "quickSuccess": "Blog je ustvarjen! Preusmerjanje…",
     "domainRequiredNote": "Vaš blog ne bo viden obiskovalcem, dokler ne povežete domene. Ko jo ustvarite, odprite stran »Domene« v studiu vašega bloga, da jo nastavite.",
     "domainStepTitle": "Objavite svoj blog na spletu",
-    "domainStepSubtitle": "{name} je ustvarjena! Dodajte domeno zdaj, da jo bodo ljudje lahko našli — ali pa to preskočite in storite kasneje.",
+    "domainStepSubtitle": "{name} je ustvarjena! Dodajte domeno zdaj, da jo bodo ljudje lahko našli – ali pa to preskočite in storite kasneje.",
     "domainOptionBuyTitle": "Kupite novo domeno",
     "domainOptionBuyDesc": "Poiščite in kupite domeno, ne da bi zapustili SmarterBloggers. Plačilo s kriptovaluto, samodejna registracija.",
     "domainOptionConnectTitle": "Povezovanje domene, ki mi pripada",
@@ -2583,7 +2583,7 @@
     "pushEnabled": "Oblasti za obvestila so omogočene!",
     "pushEnableError": "Push obvestil ni bilo mogoče omogočiti.",
     "pushDisabled": "Opozorila so onemogočena.",
-    "pushDisableError": "Napaka pri onemogočanju obvestil »push«.",
+    "pushDisableError": "Napaka pri onemogočanju obvestil push.",
     "pushDisableButton": "Onemogoči obvestila",
     "pushBlockedByBrowser": "Brskalnik je blokiral pošiljanje",
     "pushEnableButton": "Omogoči obvestila",
@@ -2633,7 +2633,7 @@
     "cashoutProcessedCol": "Obdelano",
     "howItWorks": "Kako deluje",
     "step1": "Svoj edinstven priporočevalni povezavo delite z drugimi blogerji",
-    "step2": "Ko se naročijo, zaslužite 10 % njihove naročnine",
+    "step2": "Ko se naročijo, zaslužiš 10 % njihove naročnine",
     "step3": "Provizije se nabirajo, dokler ne dosežete minimalnega praga v višini 50 dolarjev",
     "step4": "Zahtevajte izplačilo — za vsak izplačilni postopek se zaračuna pristojbina v višini 20 dolarjev",
     "cashoutRequested": "Zahteva za izplačilo je bila oddana!",
@@ -2666,7 +2666,7 @@
     "waitingThresholdDesc": "Vaše provizije bodo izplačane samodejno, takoj ko bo vaše stanje doseglo {min}.",
     "gate": {
       "not_started": {
-        "title": "Potrebna je preveritev identitete",
+        "title": "Potrebna je potrditev identitete",
         "description": "Da bi zagotovili varnost in skladnost partnerskega programa, morate opraviti enkratno preverjanje identitete (KYC), preden boste lahko dostopali do svoje povezave za napotitev in začeli zasluževati provizije.",
         "cta": "Začni preverjanje"
       },
@@ -2677,7 +2677,7 @@
       },
       "expired": {
         "title": "Potrebna je ponovna preveritev",
-        "description": "Pred kratkim ste spremenili svoje ime ali državo, zato je potrebna nova preveritev identitete, preden bo mogoče ponovno aktivirati vašo partnersko povezavo. Če imate še predplačana leta, vas to ne bo stalo ničesar dodatnega.",
+        "description": "Pred kratkim ste spremenili svoje ime ali državo, zaradi česar je potrebna nova preveritev identitete, preden bo mogoče ponovno aktivirati vašo partnersko povezavo. Če imate še predplačana leta, vas to ne bo stalo ničesar dodatnega.",
         "cta": "Ponovno preverite mojo identiteto"
       },
       "rejected": {
@@ -2838,7 +2838,7 @@
     "noMessages": "Še ni nobenih sporočil",
     "youLabel": "Ti",
     "adminLabel": "Podpora",
-    "composerPlaceholder": "Napišite sporočilo… (Enter za pošiljanje, Shift+Enter za novo vrstico)",
+    "composerPlaceholder": "Napišite sporočilo… (Za pošiljanje pritisnite Enter, za novo vrstico pa Shift+Enter)",
     "translationNote": "Vaše sporočilo bo samodejno prevedeno za našo ekipo za podporo uporabnikom.",
     "ticketClosedMsg": "Ta zahtevek je zaprt. Ponovno ga odprite tako, da pošljete novo sporočilo.",
     "sendError": "Pošiljanje sporočila ni uspelo",
@@ -2920,7 +2920,7 @@
     "step2TxtNote": "Vrednost zapisa TXT je edinstvena za vsako domeno – prepišite jo iz kartice domene, ki se prikaže spodaj.",
     "step3Title": "Kliknite »Preveri«",
     "step3Desc": "Ko se bodo vaši DNS-zapisi posodobili (na Cloudflareju običajno v nekaj minutah, drugje pa do 48 ur), kliknite gumb za osvežitev poleg vaše domene.",
-    "cloudflareTip": "Uporabljate Cloudflare? V svojem zapisu CNAME omogočite oranžni oblačni proxy – SSL se bo nato obdelal samodejno, dodatna konfiguracija ni potrebna.",
+    "cloudflareTip": "Uporabljate Cloudflare? V svojem zapisu CNAME omogočite oranžni oblačni proxy – SSL se bo nato obdeloval samodejno, dodatna konfiguracija ni potrebna.",
     "hostingerTip": "Uporabljate Hostinger? Hostinger ne omogoča nastavitve zapisa CNAME na korenski ravni (@). Namesto tega dodajte preusmeritev iz vaše korenske domene na »www«, nato pa dodajte le zapis CNAME za »www« in preveritveni zapis TXT.",
     "recordCname": "Zapis 1 — CNAME korenske domene",
     "recordCnameWww": "Zapis 2 — CNAME poddomene www",
@@ -2965,7 +2965,7 @@
     "orderFailedDesc": "Vaše plačilo je bilo prejeto, vendar se registracija ni mogla zaključiti: {error}",
     "orderFailedSupport": "Naša ekipa je bila obveščena. Če se težava ne bo kmalu rešila, se obrnite na podporo uporabnikom.",
     "orderRefundPendingTitle": "Poteka vračilo za »{domain}«",
-    "orderRefundPendingDesc": "Prijava ni uspela, vračilo pa je v obdelavi.",
+    "orderRefundPendingDesc": "Prijava ni uspela, vračilo pa je v postopku.",
     "orderRefundedTitle": "{domain} — povrnjeno",
     "orderRefundedDesc": "To naročilo je bilo povrnjeno, ker se registracija ni uspela izvesti.",
     "status_pending": "V obravnavi",
@@ -2993,7 +2993,7 @@
     "verifyButton": "Preveri",
     "doneButton": "Končano — 2FA je aktivna",
     "manualEntry": "Ali pa ključ vnesite ročno",
-    "backupWarning": "Te kode shranite na varno mesto. Vsaka koda se lahko uporabi le enkrat za ponovno vzpostavitev dostopa v primeru izgube naprave.",
+    "backupWarning": "Te kode shranite na varno mesto. Vsaka koda se lahko uporabi le enkrat za ponovno vzpostavitev dostopa, če izgubite svojo napravo.",
     "copyBackupCodes": "Kopiraj vse kode",
     "copiedButton": "Kopirano!",
     "setupError": "Nastavitve dvofaznega preverjanja pristnosti ni bilo mogoče začeti. Poskusite znova.",
@@ -3115,7 +3115,7 @@
       "blogsSection": "Blogi ({count})",
       "noBlogs": "Ta račun še ni ustvaril nobenega bloga.",
       "actions": {
-        "makeSuperAdmin": "Imenuj superadministratorja",
+        "makeSuperAdmin": "Imenuj superupravitelja",
         "revokeSuperAdmin": "Preklic pooblastil superadministratorja",
         "viewBlogs": "Oglej si bloge",
         "sendMessage": "Pošlji sporočilo",
@@ -3123,7 +3123,7 @@
         "deleteUser": "Izbriši uporabnika"
       },
       "confirmMakeSuperAdmin": "Ali naj temu uporabniku dodelimo pravice superadministratorja?",
-      "confirmRevokeSuperAdmin": "Ali naj prekličem privilegije superadministratorja?",
+      "confirmRevokeSuperAdmin": "Ali naj se prekličejo privilegiji superadministratorja?",
       "confirmDelete": "Ali želite tega uporabnika trajno izbrisati? Te odločitve ni mogoče preklicati.",
       "you": "Ti",
       "superAdminBadge": "SA",
@@ -3281,7 +3281,7 @@
       "inactive": "Neaktiven",
       "deactivate": "Onemogoči",
       "activate": "Aktiviraj",
-      "managedByCode": "Te teme so opredeljene v kodni bazi — onemogočite jih, če jih želite skriti pred uporabniki.",
+      "managedByCode": "Te teme so določene v kodni bazi — onemogočite jih, če jih želite skriti pred uporabniki.",
       "uploadBtn": "Naloži predlogo",
       "uploadTitle": "Naloži lastno predlogo (.zip)",
       "uploadSuccess": "Predloga »{name}« je bila uspešno dodana",
@@ -3401,7 +3401,10 @@
         "pending": "V obravnavi",
         "refunded": "Vračilo",
         "failed": "Ni uspelo",
-        "disputed": "Sporno"
+        "disputed": "Sporno",
+        "processing": "Obdelava",
+        "requested": "Zahtevano",
+        "rejected": "Zavrnjeno"
       }
     },
     "settings": {
@@ -3429,7 +3432,7 @@
         "domainMarkup": "Pribitek pri nakupu domene (%)",
         "domainMarkupHint": "Dodatek k ceni registratorja za vsak nakup in podaljšanje domene — 0 pomeni nadaljnjo prodajo po nabavni ceni",
         "paymentTolerance": "Dovoljeni znesek plačila v kriptovaluti ($)",
-        "paymentToleranceHint": "Plačilo, prejeto v okviru tega odstopanja od pričakovanega zneska (omrežne pristojbine, odstopanje od tečaja), se še vedno šteje za izvršeno",
+        "paymentToleranceHint": "Plačilo, prejeto v okviru tega odstopanja od pričakovanega zneska (omrežne pristojbine, odstopanje v tečaju), se še vedno šteje za izvršeno",
         "kycPricePerYear": "Cena preverjanja KYC ($/leto)",
         "kycPricePerYearHint": "Letna cena, ki se zaračuna uporabnikom za preverjanje identitete, ki je potrebno pred dostopom do partnerskega programa"
       },
@@ -3467,7 +3470,7 @@
         "openaiKey": "Ključ OpenAI",
         "openaiKeyHint": "API-ključ za funkcije umetne inteligence",
         "webhookSecret": "Skrivni ključ za webhook",
-        "webhookSecretHint": "Skrivnost za preverjanje veljavnosti prejetih spletnih obvestil",
+        "webhookSecretHint": "Skrivnost za preverjanje veljavnosti prejetih webhookov",
         "regenerate": "Obnovi",
         "warning": "Takojšnja ponovna generacija ključa razveljavi starega. Pred ponovno generacijo v produkcijskem okolju posodobite svoje integracije."
       },
@@ -3524,7 +3527,7 @@
       "action_plan_upgraded": "Nadgradnja načrta",
       "action_plan_downgraded": "Znižanje razreda načrta",
       "action_payment_completed": "Plačilo je bilo opravljeno",
-      "action_payment_pending": "Plačilo je v obdelavi",
+      "action_payment_pending": "Plačilo je v obravnavi",
       "action_payment_failed": "Plačilo ni uspelo",
       "action_payment_refunded": "Povračilo plačila",
       "action_affiliate_cashout_requested": "Zahtevan izplačilo",
@@ -3610,7 +3613,7 @@
     "ai": {
       "title": "Umetna inteligenca in modeli",
       "breadcrumb": "Infrastruktura",
-      "subtitle": "Konfiguracija modela umetne inteligence in z njim povezane lastnosti",
+      "subtitle": "Konfiguracija modela umetne inteligence in z njim povezane značilnosti",
       "configured": "Povezava z OpenAI",
       "notConfigured": "OpenAI ni nastavljen",
       "configuredDesc": "Funkcije umetne inteligence so aktivne — model se odziva",
@@ -3711,7 +3714,7 @@
       "youLabel": "Ti",
       "tenantLabel": "Najemnik",
       "noMessages": "Še ni nobenih sporočil",
-      "composerPlaceholder": "Napišite odgovor… (Enter za pošiljanje, Shift+Enter za novo vrstico)",
+      "composerPlaceholder": "Napišite svoj odgovor… (Enter za pošiljanje, Shift+Enter za novo vrstico)",
       "replyTranslationNote": "Vaš odgovor bo samodejno preveden v jezik uporabnika.",
       "ticketClosedMsg": "Ta zahtevek je zaprt. Posodobite status, da boste lahko odgovorili.",
       "replyError": "Pošiljanje odgovora ni uspelo",
@@ -3782,7 +3785,7 @@
     "accounting": {
       "title": "Računovodstvo",
       "breadcrumb": "Monetizacija",
-      "subtitle": "Dvojno knjigovodstvo singapurske službe za reševanje in požarno varnost (SFRS)",
+      "subtitle": "Dvojno knjigovodstvo singapurske službe za reševanje in požarno zaščito (SFRS)",
       "tabEntries": "Knjižbe v dnevniku",
       "tabAccounts": "Kontni načrt",
       "newAccount": "Nov račun",
@@ -3795,7 +3798,7 @@
       "reverseReasonPlaceholder": "npr.: Napaka pri vnosu podatkov",
       "unbalancedWarning": "Neuravnotežen vnos — preverite vrstice",
       "noEntries": "Ni vnosov",
-      "noEntriesDesc": "Tu se bodo prikazali računovodski vknjižbeni vnosi.",
+      "noEntriesDesc": "Tu se bodo prikazali računovodski vknjižni vnosi.",
       "loading": "Nalaganje...",
       "accountCreated": "Račun je bil ustvarjen.",
       "entryApproved": "Vpis je odobren.",
@@ -3941,7 +3944,7 @@
     "registerBtn": "Ustvari račun",
     "acceptBtn": "Sprejmi povabilo",
     "acceptError": "Vabila nisem mogel sprejeti.",
-    "expires": "To vabilo preneha veljati {date}."
+    "expires": "To vabilo preneha veljati dne {date}."
   },
   "cryptoPayment": {
     "title": "Plačaj s kriptovaluto (USDT)",
@@ -3984,7 +3987,10 @@
       "paid_article": "Plačljiv članek",
       "paid_newsletter": "Plačljiv e-bilten",
       "ad_campaign": "Oglas",
-      "domain_purchase": "Nakup domene"
+      "domain_purchase": "Nakup domene",
+      "kyc_verification": "Preverjanje identitete (KYC)",
+      "affiliate_commission_payout": "Izplačilo provizije partnerjem",
+      "ad_revenue_payout": "Izplačilo prihodkov iz oglaševanja"
     },
     "status": {
       "pending": "V obravnavi",
@@ -3992,7 +3998,11 @@
       "completed": "Zaključeno",
       "failed": "Ni uspelo",
       "refunded": "Vračilo",
-      "disputed": "Sporno"
+      "disputed": "Sporno",
+      "requested": "Zahtevano",
+      "processing": "Obdelava",
+      "paid": "Plačano",
+      "rejected": "Zavrnjeno"
     }
   },
   "aiBuilder": {
@@ -4003,7 +4013,7 @@
     "nicheLabel": "Tema / niša bloga",
     "nichePlaceholder": "npr. Nasveti za trženje za startupe, Hitri vegetarijanski recepti, Potovanje z nahrbtnikom po jugovzhodni Aziji…",
     "audienceLabel": "Ciljna publika",
-    "audiencePlaceholder": "npr. mladi razvijalci, zaposlene mame, popotniki z omejenim proračunom, stari 25–35 let…",
+    "audiencePlaceholder": "npr. mladi razvijalci, zaposlene mame, popotniki z omejenim proračunom, stari od 25 do 35 let…",
     "toneLabel": "Slog pisanja",
     "toneProfessional": "Strokovno",
     "toneFriendly": "Prijazno in neformalno",

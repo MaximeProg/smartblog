@@ -1164,6 +1164,7 @@ export interface UserPaymentItem {
   amount_received: number;
   currency: string;
   created_at: string;
+  direction: 'in' | 'out';
 }
 
 export const bookmarkApi = {
@@ -1352,8 +1353,8 @@ export interface SuperAdminAdView {
 
 export interface SATransaction {
   id: string;
-  tenant_name: string;
-  tenant_slug: string;
+  tenant_name: string | null;
+  tenant_slug: string | null;
   user_email: string | null;
   user_name: string | null;
   type: string;
@@ -1362,8 +1363,9 @@ export interface SATransaction {
   currency: string;
   platform_fee: number;
   gateway: string;
-  stripe_payment_intent_id: string | null;
+  nowpayments_order_id: string | null;
   created_at: string;
+  direction: 'in' | 'out';
 }
 
 export interface SATransactionsResponse {

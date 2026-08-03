@@ -639,7 +639,7 @@
     "subscribeButton": "订阅",
     "subscribeSuccess": "您已订阅！请查看您的收件箱。",
     "noArticles": "尚未发布任何文章",
-    "noArticlesDesc": "敬请期待，更多新内容即将上线",
+    "noArticlesDesc": "敬请期待，新内容即将上线",
     "backToBlog": "返回博客",
     "shareOn": "分享到",
     "tableOfContents": "目录",
@@ -714,7 +714,7 @@
     "youMightAlsoLike": "您可能还喜欢",
     "contactTitle": "联系我们",
     "contactSubtitle": "联系我们",
-    "contactDesc": "有问题吗？有想法吗？我们洗耳恭听。",
+    "contactDesc": "有问题吗？有想法吗？我们随时倾听。",
     "contactInfoSection": "信息",
     "contactInfoDesc": "如何直接联系我们",
     "contactPhone": "电话",
@@ -818,7 +818,7 @@
     "advertiseStep1Title": "提交您的广告",
     "advertiseStep1Desc": "请在下方表格中填写您的广告详情和目标网址。",
     "advertiseStep2Title": "人工审核",
-    "advertiseStep2Desc": "博客所有者会审核您的投稿，并予以批准或拒绝。",
+    "advertiseStep2Desc": "博客所有者会审核您的投稿，并决定是否通过。",
     "advertiseStep3Title": "上线",
     "advertiseStep3Desc": "广告一经审核通过，就会上线并开始触达读者。",
     "adDetailsStepLabel": "广告详情",
@@ -873,7 +873,7 @@
     "paymentStep2Text": "点击“立即支付”——您将被重定向至 NowPayments 的安全页面。",
     "paymentStep3Text": "可通过其平台使用加密货币（USDT、BTC、ETH等）或银行卡支付。",
     "paymentStep4Text": "付款已确认 → 您的广告已发送给博客所有者进行审核。",
-    "paymentStep5Text": "广告一经审核通过，便会自动上线。",
+    "paymentStep5Text": "广告一经审核通过，便会自动发布。",
     "securePaymentBold": "安全支付。",
     "securePaymentDesc": "只有在确认付款后，您的广告位才会被预留。NowPayments 支持 150 多种加密货币和主流信用卡。",
     "reviewSubmissionTitle": "请检查您的提交内容",
@@ -1400,7 +1400,7 @@
     "campaignPreview": "预览文本",
     "campaignPreviewPlaceholder": "收件箱中显示的一段简短预告片……",
     "campaignBody": "电子邮件正文（HTML）",
-    "campaignBodyPlaceholder": "<p>你好 {{first_name}},</p><p>…</p>",
+    "campaignBodyPlaceholder": "<p>你好，{{first_name}}，</p><p>…</p>",
     "cancel": "取消",
     "createDraft": "另存为草稿",
     "campaignCreated": "活动已创建",
@@ -1481,7 +1481,7 @@
     "noArticles": "没有文章",
     "merge": "并入……",
     "mergeTitle": "合并标签",
-    "mergeDesc": "将选中的标签合并为一个。选中的标签将被删除。",
+    "mergeDesc": "将选定的标签合并为一个。选定的标签将被删除。",
     "mergeTarget": "并入",
     "mergeConfirm": "合并",
     "selectTags": "选择要合并的标签……",
@@ -2220,7 +2220,7 @@
     "fieldFbPixelId": "Facebook 像素 ID",
     "fieldFbPixelIdHint": "您的 Facebook Pixel 的数字 ID。",
     "articleTypeArticle": "文章",
-    "articleTypePhoto": "图片库",
+    "articleTypePhoto": "图片集",
     "articleTypeVideo": "视频",
     "articleTypeAudio": "音频",
     "articleTypePodcast": "播客",
@@ -2271,7 +2271,7 @@
     "mediaConnecting": "正在连接……",
     "mediaDropHere": "拖放到此处",
     "mediaClickOrDrag": "点击或拖放",
-    "mediaVideoHint": "MP4、WebM、MOV — 最大 100 MB",
+    "mediaVideoHint": "MP4、WebM、MOV — 最大100 MB",
     "mediaAudioHint": "MP3、WAV、OGG、AAC — 最大 50 MB",
     "mediaVideoUrlPlaceholder": "https://youtube.com/watch?v=… 或 https://…/video.mp4",
     "mediaAudioUrlPlaceholder": "https://…/audio.mp3 或 https://soundcloud.com/…",
@@ -2575,7 +2575,7 @@
   "notifications": {
     "title": "通知",
     "unreadCount": "{n, plural, one {# unread} other {# unread}}",
-    "allRead": "已读全部",
+    "allRead": "已全部阅读",
     "markAllRead": "将所有邮件标记为已读",
     "noneTitle": "没有通知",
     "noneDesc": "您的账户和博客如有重要更新，将在此处通知您。",
@@ -2709,7 +2709,7 @@
     "totalLabel": "总计",
     "payCta": "支付 {amount} 美元并完成验证",
     "paymentConfirmedTitle": "付款已确认",
-    "paymentConfirmedDesc": "您的身份验证流程已开始——请返回此处查看最新进展。"
+    "paymentConfirmedDesc": "您的身份验证流程已开始——请返回此处查看最新动态。"
   },
   "invoices": {
     "title": "发票",
@@ -2745,7 +2745,7 @@
     "imageUrl": "广告图片网址",
     "imageUrlHint": "横幅的直接链接（推荐尺寸：1200×628 像素）。",
     "clickUrl": "目标网址",
-    "clickUrlHint": "访客点击您的广告后，应该跳转到哪个页面？",
+    "clickUrlHint": "访客点击您的广告后，应跳转到哪个页面？",
     "startsAt": "开始日期",
     "endsAt": "结束日期",
     "totalBudget": "预算总额",
@@ -2906,7 +2906,7 @@
     "verifySuccess": "域名已验证！您的博客现已在此地址上线。",
     "verifyFailed": "验证失败——请检查两个 DNS 记录是否设置正确。",
     "verifyError": "验证过程中出现错误。",
-    "deleteSuccess": "域名已被删除。",
+    "deleteSuccess": "域名已删除。",
     "deleteError": "删除域名时发生错误。",
     "deleteConfirm": "删除此域名吗？",
     "emptyTitle": "尚未设置自定义域名",
@@ -2921,7 +2921,7 @@
     "step3Title": "点击“验证”",
     "step3Desc": "待您的 DNS 记录传播完成（在 Cloudflare 上通常只需几分钟，其他平台则可能需要长达 48 小时），请点击域名旁边的刷新按钮。",
     "cloudflareTip": "正在使用 Cloudflare 吗？请在您的 CNAME 记录中启用橙色云代理——这样 SSL 就会自动处理，无需额外配置。",
-    "hostingerTip": "正在使用 Hostinger 吗？Hostinger 不允许在根域名（@）下设置 CNAME 记录。请先将根域名重定向到 www，然后仅为“www”添加 CNAME 记录和 TXT 验证记录。",
+    "hostingerTip": "正在使用 Hostinger 吗？Hostinger 不允许在根域名（@）下设置 CNAME 记录。请先将根域名重定向至 www，然后仅为“www”添加 CNAME 记录和 TXT 验证记录。",
     "recordCname": "记录 1 — CNAME 根域名",
     "recordCnameWww": "记录 2 — CNAME www 子域名",
     "recordTxt": "记录 3 — TXT（验证）",
@@ -2956,7 +2956,7 @@
     "totalPrice": "总计：{price}美元",
     "cancel": "取消",
     "proceedToPayment": "进入支付环节",
-    "purchaseSuccess": "域名已购买！目前正在注册中，稍后将在此显示。",
+    "purchaseSuccess": "域名已购买！目前正在注册中，稍后将显示在此处。",
     "purchaseError": "无法开始购买。",
     "renewError": "无法启动续订。",
     "orderRegisteringTitle": "正在注册 {domain}…",
@@ -2984,7 +2984,7 @@
     "setupTitle": "设置双因素认证",
     "step1of3": "第 1 步（共 3 步）——扫描",
     "step2of3": "第 2 步（共 3 步）—— 验证",
-    "step3of3": "第 3 步（共 3 步）—— 备用代码",
+    "step3of3": "第 3 步（共 3 步）—— 备用验证码",
     "step1Desc": "请使用您的身份验证应用（如 Google Authenticator、Authy 等）扫描此二维码。",
     "step2Desc": "请输入身份验证应用中显示的6位验证码，以确认设置。",
     "codeLabel": "验证码",
@@ -2993,7 +2993,7 @@
     "verifyButton": "验证",
     "doneButton": "已完成 — 双因素认证已启用",
     "manualEntry": "或者手动输入密钥",
-    "backupWarning": "请将这些代码保存在安全的地方。如果您丢失了设备，每个代码只能使用一次来恢复访问权限。",
+    "backupWarning": "请将这些代码保存在安全的地方。如果您丢失了设备，每个代码仅可使用一次来恢复访问权限。",
     "copyBackupCodes": "复制所有代码",
     "copiedButton": "已复制！",
     "setupError": "无法启动双因素认证设置。请重试。",
@@ -3094,7 +3094,7 @@
       "last10Events": "最近的10项活动",
       "noActivity": "近期无活动",
       "systemStatus": "系统状态",
-      "planDistribution": "计划分配"
+      "planDistribution": "计划分发"
     },
     "users": {
       "title": "用户",
@@ -3136,7 +3136,7 @@
     "tenants": {
       "title": "博客与租户",
       "breadcrumb": "客户",
-      "subtitle": "{count} 博客 · {active} 正在运行",
+      "subtitle": "{count} 博客 · {active} 正在更新",
       "searchPlaceholder": "搜索博客……",
       "actions": {
         "suspend": "暂停",
@@ -3262,7 +3262,7 @@
         "failed": "失败",
         "rejected": "被拒绝"
       },
-      "cashoutApprovedToast": "提现已获批准。",
+      "cashoutApprovedToast": "提现已批准。",
       "cashoutRejectedToast": "提现被拒绝。"
     },
     "templates": {
@@ -3286,14 +3286,14 @@
       "uploadTitle": "上传自定义模板（.zip）",
       "uploadSuccess": "模板“{name}”已成功添加",
       "uploadZip": "ZIP文件",
-      "onlyZip": "仅接受 .zip 格式的文件",
+      "onlyZip": "仅接受 .zip 文件",
       "dropZip": "将 ZIP 文件拖放到此处，或点击浏览",
       "dropZipHint": "ZIP 文件中必须包含一个 template.json 文件",
       "clickToChange": "点击更改文件",
       "zipFormat": "预期的ZIP文件结构：",
       "themeBaseNote": "theme_base 必须是以下选项之一：{themes}",
       "emptyCustomTitle": "无自定义模板",
-      "emptyCustomDesc": "上传 ZIP 文件以添加自定义模板简体中文（大陆）"
+      "emptyCustomDesc": "上传 ZIP 文件以添加自定义模板"
     },
     "plans": {
       "free": "免费",
@@ -3401,7 +3401,10 @@
         "pending": "待定",
         "refunded": "已退款",
         "failed": "失败",
-        "disputed": "有争议的"
+        "disputed": "有争议的",
+        "processing": "处理",
+        "requested": "已请求",
+        "rejected": "被拒绝"
       }
     },
     "settings": {
@@ -3711,7 +3714,7 @@
       "youLabel": "你",
       "tenantLabel": "租户",
       "noMessages": "尚无消息",
-      "composerPlaceholder": "请输入您的回复……（按回车键发送，按Shift+回车键换行）",
+      "composerPlaceholder": "请输入您的回复……（按回车键发送，按 Shift+回车键换行）",
       "replyTranslationNote": "您的回复将自动翻译成该用户的语言。",
       "ticketClosedMsg": "该工单已关闭。请将状态更新为“回复”。",
       "replyError": "发送回复失败",
@@ -3899,7 +3902,7 @@
       "pageLabel_docsApi": "文档 — API 参考",
       "pageLabel_guides": "指南",
       "pageLabel_advertiseWithUs": "广告商",
-      "sourceContentNote": "英文源内容——翻译内容会自动重新生成。",
+      "sourceContentNote": "英文源内容——翻译内容将自动重新生成。",
       "fillWithAiButton": "使用 AI 填充",
       "saveRegenTranslationsButton": "保存并重新生成翻译",
       "saveButton": "保存",
@@ -3984,7 +3987,10 @@
       "paid_article": "付费文章",
       "paid_newsletter": "付费通讯",
       "ad_campaign": "广告",
-      "domain_purchase": "域名购买"
+      "domain_purchase": "域名购买",
+      "kyc_verification": "KYC 身份验证",
+      "affiliate_commission_payout": "联盟佣金支付",
+      "ad_revenue_payout": "广告收入结算"
     },
     "status": {
       "pending": "待定",
@@ -3992,7 +3998,11 @@
       "completed": "已完成",
       "failed": "失败",
       "refunded": "已退款",
-      "disputed": "有争议的"
+      "disputed": "有争议的",
+      "requested": "已请求",
+      "processing": "处理",
+      "paid": "已支付",
+      "rejected": "被拒绝"
     }
   },
   "aiBuilder": {

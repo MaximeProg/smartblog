@@ -161,7 +161,7 @@
       "nextStep": "Pilih tema",
       "backStep": "Kembali",
       "createTitle": "Buat blog baru",
-      "createDesc": "Beri nama blog Anda dan pilih alamatnya.",
+      "createDesc": "Beri nama blog Anda dan tentukan alamatnya.",
       "themeTitle": "Pilih tema Anda",
       "themeDesc": "Tampilan umum blog Anda. Anda dapat melihat pratinjaunya sebelum melakukan perubahan.",
       "slugAvailableLabel": "Tersedia",
@@ -222,7 +222,7 @@
       "published": "Diterbitkan",
       "scheduled": "Telah dijadwalkan",
       "archived": "Diarsipkan",
-      "in_review": "Ringkasan",
+      "in_review": "Dalam ulasan",
       "approved": "Disetujui",
       "rejected": "Ditolak",
       "unpublished": "Belum diterbitkan"
@@ -290,7 +290,7 @@
     "newPage": "Halaman baru",
     "searchPlaceholder": "Halaman pencarian...",
     "noPages": "Belum ada halaman",
-    "noPagesDesc": "Buat halaman pertama Anda untuk membangun situs Anda.",
+    "noPagesDesc": "Buat halaman pertama Anda untuk membangun situs web Anda.",
     "noResults": "Tidak ada hasil",
     "noResultsDesc": "Cobalah berbagai filter.",
     "filterAll": "Semua",
@@ -441,7 +441,7 @@
     "season": "Musim",
     "articleType": "Jenis konten",
     "statusDraft": "Draf",
-    "statusInReview": "Ringkasan",
+    "statusInReview": "Dalam ulasan",
     "statusApproved": "Disetujui",
     "statusRejected": "Ditolak",
     "statusScheduled": "Telah dijadwalkan",
@@ -482,7 +482,7 @@
     "improvingButton": "Sedang diperbaiki…",
     "generateImagePlaceholder": "Jelaskan gambar tersebut untuk menghasilkan…",
     "generateWithDalleTitle": "Buat dengan DALL-E 3",
-    "aiSeoAnalysisTitle": "Analisis SEO Berbasis Kecerdasan Buatan",
+    "aiSeoAnalysisTitle": "Analisis SEO Berbasis AI",
     "analyzeWithAiButton": "Analisis dengan AI",
     "analyzingButton": "Sedang menganalisis…",
     "deeplTranslationTitle": "Terjemahan (DeepL)",
@@ -745,7 +745,7 @@
     "aboutValue3Desc": "Setiap artikel memberikan manfaat yang dapat langsung diterapkan.",
     "aboutTeamTitle": "Tim kami",
     "aboutCtaTitle": "Bergabunglah dengan komunitas kami",
-    "aboutCtaDesc": "Berlanggananlah agar selalu mendapat informasi terbaru.",
+    "aboutCtaDesc": "Berlanggananlah agar tetap mendapat informasi terbaru.",
     "aboutCtaPrimary": "Berlangganan",
     "aboutCtaSecondary": "Artikel-artikel kami",
     "aboutValuesTitle": "Nilai-nilai kami",
@@ -850,7 +850,7 @@
     "scopeGlobalLabel": "Global",
     "scopeGlobalDesc": "Iklan Anda menjangkau semua pembaca, di mana pun mereka berada.",
     "scopeCountryLabel": "Negara",
-    "scopeCountryDesc": "Menargetkan pembaca di suatu negara tertentu.",
+    "scopeCountryDesc": "Menargetkan pembaca di negara tertentu.",
     "scopeRegionLabel": "Wilayah",
     "scopeRegionDesc": "Pilih sebuah negara bagian, provinsi, atau wilayah.",
     "scopeCityLabel": "Kota",
@@ -1123,7 +1123,7 @@
     },
     "widgets": {
       "title": "Widget",
-      "description": "Atur widget blog Anda: pencarian, postingan populer, kategori, media sosial, buletin, dan iklan di sidebar."
+      "description": "Atur widget blog Anda: pencarian, postingan populer, kategori, media sosial, buletin, dan iklan di bilah samping."
     },
     "seo": {
       "title": "Optimasi SEO",
@@ -1145,7 +1145,7 @@
     },
     "limit": {
       "title": "Batas blog telah tercapai",
-      "desc": "Paket \"{plan}\" Anda memungkinkan Anda mengunggah {max}. Lakukan upgrade ke paket Business untuk mengunggah lebih banyak.",
+      "desc": "Paket \"{plan}\" Anda memungkinkan Anda mengunggah {max}. Tingkatkan ke paket \"Business\" untuk mengunggah lebih banyak.",
       "viewPlans": "Lihat denah",
       "back": "Kembali"
     },
@@ -1665,7 +1665,7 @@
     "popular": "Populer",
     "upgrade": "Peningkatan",
     "pageTitle": "Pilih paket Anda",
-    "pageSubtitle": "Mulailah secara gratis dan kembangkan bisnis Anda sesuai kecepatan Anda sendiri. Semua paket sudah termasuk templat korporat lengkap.",
+    "pageSubtitle": "Mulailah secara gratis dan kembangkan bisnis Anda sesuai kecepatan Anda sendiri. Semua paket sudah mencakup templat korporat lengkap.",
     "freeLabel": "Gratis",
     "perMonth": "/bulan",
     "yourPlan": "Rencana Anda",
@@ -1887,7 +1887,7 @@
     "pageLanguages": "Bahasa",
     "pageLanguagesDesc": "Pilih bahasa apa saja yang dapat digunakan pengunjung untuk membaca blog Anda.",
     "languagesUpsellTitle": "Tersedia mulai dari paket Starter",
-    "languagesUpsellDesc": "Tingkatkan paket Anda agar pengunjung dapat menerjemahkan blog Anda ke dalam bahasa-bahasa pilihan Anda.",
+    "languagesUpsellDesc": "Tingkatkan paket langganan Anda agar pengunjung dapat menerjemahkan blog Anda ke dalam bahasa-bahasa pilihan Anda.",
     "languagesSectionTitle": "Bahasa yang tersedia",
     "languagesSavedToast": "Bahasa yang telah diperbarui",
     "pageNewsletter": "Buletin",
@@ -1978,7 +1978,7 @@
     "switchShowProgressBar": "Tampilkan bilah kemajuan membaca",
     "switchShowProgressBarDesc": "Bilah kemajuan di bagian atas halaman saat membaca artikel.",
     "switchShowToc": "Tampilkan daftar isi",
-    "switchShowTocDesc": "Dibuat secara otomatis berdasarkan judul H2/H3 dalam artikel.",
+    "switchShowTocDesc": "Dibuat secara otomatis berdasarkan judul H2/H3 dalam artikel ini.",
     "switchShowShare": "Tampilkan tombol bagikan",
     "switchShowAuthorBio": "Tampilkan biografi penulis",
     "switchShowAuthorBioDesc": "Blok yang ditampilkan di bawah artikel, berisi avatar dan biografi penulis.",
@@ -2071,7 +2071,7 @@
     "fieldContactEmail": "Alamat email kontak",
     "fieldContactPhone": "Nomor telepon (opsional)",
     "fieldResponseTime": "Waktu respons",
-    "fieldMapEmbed": "URL penyematan Google Maps (opsional)",
+    "fieldMapEmbed": "URL penyisipan Google Maps (opsional)",
     "seoGooglePreview": "Pratinjau Google",
     "fieldSeoTitleTemplate": "Template judul SEO",
     "fieldSeoTitleTemplateHint": "Variabel: {title} = judul artikel, {blog_name} = nama blog",
@@ -2084,7 +2084,7 @@
     "seoView": "Lihat",
     "seoRobotsTitle": "robots.txt",
     "seoRobotsLabel": "Isi berkas robots.txt",
-    "seoRobotsHint": "Biarkan kosong untuk menggunakan pengaturan default (mengizinkan semua crawler). Pengaturan ini akan menggantikan berkas yang dibuat secara otomatis.",
+    "seoRobotsHint": "Biarkan kosong untuk menggunakan pengaturan default (mengizinkan semua crawler). Pengaturan ini akan menggantikan file yang dibuat secara otomatis.",
     "seoRobotsViewHint": "Konten khusus menggantikan berkas robots.txt yang dibuat secara otomatis.",
     "newsletterSubscribersLabel": "Pelanggan",
     "newsletterThisMonth": "Bulan ini",
@@ -2200,7 +2200,7 @@
     "collabInviteEmail": "Alamat email",
     "collabInviteRole": "Peran yang akan ditugaskan",
     "collabInviteSend": "Kirim undangan",
-    "collabInviteSuccess": "Undangan sudah dikirim!",
+    "collabInviteSuccess": "Undangan sudah terkirim!",
     "collabInviteError": "Gagal mengirim undangan.",
     "collabRoleChanged": "Peran telah diperbarui.",
     "collabRemoved": "Anggota telah dihapus.",
@@ -2433,7 +2433,7 @@
     "domainConnectHint": "Anda akan mendapatkan petunjuk DNS untuk menyelesaikan proses verifikasi dari halaman Domains.",
     "domainSearchPlaceholder": "misalnya: myblog",
     "domainSearchButton": "Cari",
-    "domainSearchEmpty": "Tidak ada hasil — coba gunakan nama yang berbeda.",
+    "domainSearchEmpty": "Tidak ada hasil — coba gunakan nama yang lain.",
     "domainSelectButton": "Pilih",
     "domainTaken": "Diambil",
     "quickSlugTaken": "Nama pengguna ini sudah digunakan, silakan pilih yang lain.",
@@ -2462,7 +2462,7 @@
       "orange": "Oranye",
       "green": "Hijau",
       "cyan": "Cyan",
-      "slate": "Batu lempeng",
+      "slate": "Batu lempung",
       "gold": "Emas",
       "black": "Hitam"
     },
@@ -2649,7 +2649,7 @@
     "exportCSV": "Ekspor CSV",
     "exportError": "Ekspor gagal",
     "inviteFriendTitle": "Ajak teman",
-    "inviteFriendDesc": "Kirimkan tautan rujukan Anda langsung ke seorang teman dengan pesan pribadi dalam bahasa mereka.",
+    "inviteFriendDesc": "Kirim tautan rujukan Anda langsung ke seorang teman dengan pesan pribadi dalam bahasa mereka.",
     "inviteFriendEmail": "Email teman",
     "inviteFriendLanguage": "Bahasa teman",
     "inviteFriendMessage": "Pesan pribadi Anda",
@@ -2672,17 +2672,17 @@
       },
       "pending": {
         "title": "Proses verifikasi sedang berlangsung",
-        "description": "Verifikasi identitas Anda sedang diproses. Proses ini biasanya hanya memakan waktu beberapa menit — tautan afiliasi Anda akan aktif secara otomatis begitu disetujui.",
+        "description": "Verifikasi identitas Anda sedang diperiksa. Proses ini biasanya hanya memakan waktu beberapa menit — tautan afiliasi Anda akan aktif secara otomatis begitu disetujui.",
         "cta": "Periksa status verifikasi"
       },
       "expired": {
         "title": "Diperlukan verifikasi ulang",
-        "description": "Anda baru-baru ini mengubah nama atau negara, sehingga diperlukan verifikasi identitas baru sebelum tautan afiliasi Anda dapat diaktifkan kembali. Jika Anda masih memiliki sisa masa berlangganan prabayar, hal ini tidak akan dikenakan biaya tambahan.",
+        "description": "Anda baru-baru ini mengubah nama atau negara Anda, sehingga diperlukan verifikasi identitas baru sebelum tautan afiliasi Anda dapat diaktifkan kembali. Jika Anda masih memiliki sisa masa berlangganan prabayar, hal ini tidak akan dikenakan biaya tambahan.",
         "cta": "Verifikasi kembali identitas saya"
       },
       "rejected": {
         "title": "Verifikasi gagal",
-        "description": "Upaya verifikasi identitas Anda yang terakhir tidak disetujui. Anda dapat memulai proses verifikasi baru untuk mencoba lagi.",
+        "description": "Upaya verifikasi identitas terakhir Anda tidak disetujui. Anda dapat memulai proses verifikasi baru untuk mencoba lagi.",
         "cta": "Coba lagi"
       }
     }
@@ -2767,12 +2767,12 @@
     "totalImpressions": "Kesan",
     "totalClicks": "Klik",
     "ctr": "Tingkat klik-melalui",
-    "spend": "Jumlah yang telah dibayarkan",
+    "spend": "Jumlah yang dibayarkan",
     "daysRemaining": "Hari yang tersisa",
     "dailyTrend": "30 hari terakhir",
     "impressionsUnit": "tayangan",
     "howItWorksTitle": "Cara kerjanya",
-    "howItWorksStep1": "Kirimkan iklan Anda dan lakukan pembayaran dengan aman menggunakan kripto (USDT).",
+    "howItWorksStep1": "Kirimkan iklan Anda dan lakukan pembayaran secara aman menggunakan kripto (USDT).",
     "howItWorksStep2": "Tim kami memeriksa iklan Anda dan tautan tujuan untuk memastikan keamanannya.",
     "howItWorksStep3": "Setelah disetujui, iklan Anda akan ditayangkan di halaman utama SmarterBloggers.",
     "howItWorksStep4": "Pantau tayangan, klik, dan CTR secara langsung dari dasbor ini.",
@@ -2931,7 +2931,7 @@
     "searchTitle": "Cari domain",
     "searchPlaceholder": "misalnya: myblog",
     "searchButton": "Cari",
-    "searchEmpty": "Tidak ada hasil — coba gunakan nama yang berbeda.",
+    "searchEmpty": "Tidak ada hasil — coba gunakan nama yang lain.",
     "priceFirstYear": "$ {price}, tahun pertama",
     "priceRenewal": "${price} per tahun (perpanjangan)",
     "premium": "Premium",
@@ -2963,7 +2963,7 @@
     "orderRegisteringDesc": "Pembayaran telah dikonfirmasi — kami sedang menyelesaikan proses pendaftaran domain dan pengaturan DNS. Proses ini biasanya memakan waktu kurang dari satu menit.",
     "orderFailedTitle": "Pendaftaran untuk {domain} gagal",
     "orderFailedDesc": "Pembayaran Anda telah diterima, namun proses pendaftaran tidak dapat diselesaikan: {error}",
-    "orderFailedSupport": "Tim kami telah diberi tahu. Jika masalah ini tidak segera terselesaikan, silakan hubungi bagian dukungan.",
+    "orderFailedSupport": "Tim kami sudah diberi tahu. Jika masalah ini tidak segera terselesaikan, silakan hubungi bagian dukungan.",
     "orderRefundPendingTitle": "Proses pengembalian dana sedang berlangsung untuk {domain}",
     "orderRefundPendingDesc": "Pendaftaran gagal dan pengembalian dana sedang diproses.",
     "orderRefundedTitle": "{domain} — dikembalikan",
@@ -3082,7 +3082,7 @@
       "subtitle": "Gambaran umum platform secara real-time",
       "kpi": {
         "totalBlogs": "Jumlah Blog",
-        "activeBlogs": "Blog yang Aktif",
+        "activeBlogs": "Blog Aktif",
         "totalUsers": "Pengguna",
         "revenue": "Pendapatan Kumulatif",
         "paidPlans": "Paket Berbayar",
@@ -3215,7 +3215,7 @@
       "payoutRef": "Referensi pembayaran",
       "notes": "Catatan (opsional)",
       "confirmApprove": "Apakah akan menyetujui penarikan dana ini dan menandainya sebagai sudah dibayarkan?",
-      "confirmReject": "Apakah Anda ingin menolak permintaan penarikan ini?",
+      "confirmReject": "Apakah Anda ingin menolak permintaan penarikan dana ini?",
       "kpi": {
         "activeAffiliates": "Mitra Aktif",
         "totalReferrals": "Jumlah Rujukan",
@@ -3322,7 +3322,7 @@
       "cancel": "Batal",
       "deactivate": "Nonaktifkan",
       "activate": "Aktifkan",
-      "confirmDeactivate": "Apakah ingin menonaktifkan paket ini? Pengguna yang sedang menggunakan paket ini tidak akan langsung terkena dampaknya.",
+      "confirmDeactivate": "Apakah ingin menonaktifkan paket ini? Pengguna yang sedang menggunakan paket ini tidak akan langsung terpengaruh.",
       "created": "Rencana telah dibuat",
       "updated": "Rencana telah diperbarui",
       "deactivated": "Paket dinonaktifkan",
@@ -3342,7 +3342,7 @@
       "sortOrder": "Urutan Penyortiran",
       "isActive": "Aktif",
       "tenants": "{count} penyewa",
-      "defaultBadge": "Default",
+      "defaultBadge": "Standar",
       "inactiveBadge": "Tidak aktif",
       "tabs": {
         "stats": "Statistik",
@@ -3390,7 +3390,7 @@
       "types": {
         "subscription": "Langganan",
         "paid_article": "Artikel Berbayar",
-        "paid_newsletter": "Buletin Berbayar",
+        "paid_newsletter": "Buletin Berlangganan Berbayar",
         "ad_campaign": "Kampanye Iklan",
         "ad": "Iklan",
         "upgrade": "Peningkatan"
@@ -3401,7 +3401,10 @@
         "pending": "Sedang diproses",
         "refunded": "Dikembalikan",
         "failed": "Gagal",
-        "disputed": "Dipersengketakan"
+        "disputed": "Dipersengketakan",
+        "processing": "Pemrosesan",
+        "requested": "Diminta",
+        "rejected": "Ditolak"
       }
     },
     "settings": {
@@ -3421,7 +3424,7 @@
       "field": {
         "maintenance": "Mode Pemeliharaan",
         "maintenanceHint": "Menampilkan halaman pemeliharaan untuk semua pengguna",
-        "registrations": "Pendaftaran Dibuka",
+        "registrations": "Pendaftaran Telah Dibuka",
         "registrationsHint": "Nonaktifkan untuk memblokir pembuatan akun baru",
         "platformName": "Nama Platform",
         "platformNameHint": "Ditampilkan di halaman publik dan email",
@@ -3452,7 +3455,7 @@
         "maintenanceHint": "Menampilkan halaman pemeliharaan untuk semua pengguna",
         "maintenanceOn": "Diaktifkan — platform tidak dapat diakses",
         "maintenanceOff": "Cacat",
-        "registrations": "Pendaftaran Telah Dibuka",
+        "registrations": "Pendaftaran Dibuka",
         "registrationsHint": "Nonaktifkan untuk memblokir akun baru",
         "registrationsOpen": "Buka",
         "registrationsClosed": "Tutup"
@@ -3711,7 +3714,7 @@
       "youLabel": "Kamu",
       "tenantLabel": "Penyewa",
       "noMessages": "Belum ada pesan",
-      "composerPlaceholder": "Tulis balasan Anda… (Tekan Enter untuk mengirim, Shift+Enter untuk membuat baris baru)",
+      "composerPlaceholder": "Tulis balasan Anda… (Tekan Enter untuk mengirim, Shift+Enter untuk baris baru)",
       "replyTranslationNote": "Balasan Anda akan diterjemahkan secara otomatis ke dalam bahasa pengguna.",
       "ticketClosedMsg": "Tiket ini telah ditutup. Perbarui statusnya menjadi \"balas\".",
       "replyError": "Gagal mengirim balasan",
@@ -3984,7 +3987,10 @@
       "paid_article": "Artikel berbayar",
       "paid_newsletter": "Buletin berbayar",
       "ad_campaign": "Iklan",
-      "domain_purchase": "Pembelian domain"
+      "domain_purchase": "Pembelian domain",
+      "kyc_verification": "Verifikasi KYC",
+      "affiliate_commission_payout": "Pembayaran komisi afiliasi",
+      "ad_revenue_payout": "Pembayaran pendapatan iklan"
     },
     "status": {
       "pending": "Sedang diproses",
@@ -3992,7 +3998,11 @@
       "completed": "Selesai",
       "failed": "Gagal",
       "refunded": "Dikembalikan",
-      "disputed": "Dipersengketakan"
+      "disputed": "Dipersengketakan",
+      "requested": "Diminta",
+      "processing": "Pemrosesan",
+      "paid": "Dibayar",
+      "rejected": "Ditolak"
     }
   },
   "aiBuilder": {

@@ -3401,7 +3401,10 @@
         "pending": "Pending",
         "refunded": "Refunded",
         "failed": "Failed",
-        "disputed": "Disputed"
+        "disputed": "Disputed",
+        "processing": "Processing",
+        "requested": "Requested",
+        "rejected": "Rejected"
       }
     },
     "settings": {
@@ -3984,7 +3987,10 @@
       "paid_article": "Paid article",
       "paid_newsletter": "Paid newsletter",
       "ad_campaign": "Advertisement",
-      "domain_purchase": "Domain purchase"
+      "domain_purchase": "Domain purchase",
+      "kyc_verification": "KYC Verification",
+      "affiliate_commission_payout": "Affiliate commission payout",
+      "ad_revenue_payout": "Ad revenue payout"
     },
     "status": {
       "pending": "Pending",
@@ -3992,7 +3998,11 @@
       "completed": "Completed",
       "failed": "Failed",
       "refunded": "Refunded",
-      "disputed": "Disputed"
+      "disputed": "Disputed",
+      "requested": "Requested",
+      "processing": "Processing",
+      "paid": "Paid",
+      "rejected": "Rejected"
     }
   },
   "aiBuilder": {

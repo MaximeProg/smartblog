@@ -513,7 +513,7 @@ async def review_ad(
                                 )
                                 db.add(share)
 
-                                # Écriture comptable 10/10/80 (RG-AD-01)
+                                # Écriture comptable 60/10/30 (RG-AD-01 — propriétaire/affiliation/plateforme)
                                 await book_ad_slot_payment(
                                     db=db,
                                     amount=float(ad.amount_paid),

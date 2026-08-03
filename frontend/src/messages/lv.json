@@ -69,9 +69,9 @@
       "orDivider": "vai",
       "alreadyAccount": "Vai jums jau ir konts?",
       "signIn": "Pieslēgties",
-      "verificationSent": "Pārbaudiet savu iesūtņu pastkastīti",
+      "verificationSent": "Pārbaudiet savu iesūtņu kastīti",
       "verificationDesc": "Mēs esam nosūtījuši apstiprinājuma saiti uz {email}. Noklikšķiniet uz tās, lai aktivizētu savu kontu, un pēc tam ieietiet sistēmā.",
-      "verifiedRedirecting": "E-pasts apstiprināts! Notiek pāradresēšana uz pieteikšanos…",
+      "verifiedRedirecting": "E-pasts apstiprināts! Notiek pāradresācija uz pieteikšanos…",
       "errors": {
         "emailInUse": "Šis e-pasta adrese jau ir reģistrēta. Mēģiniet drīzāk ieiet sistēmā.",
         "weakPassword": "Parolei jābūt vismaz 8 rakstzīmes garai.",
@@ -126,7 +126,7 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Laipni lūgti atpakaļ, „{name}“!",
+    "welcome": "Laipni lūdzam atpakaļ, „{name}“!",
     "overview": "Šeit ir pārskats par jūsu blogiem",
     "yourBlogs": "Tavi blogi",
     "createBlog": "Izveidot blogu",
@@ -222,7 +222,7 @@
       "published": "Publicēts",
       "scheduled": "Plānots",
       "archived": "Arhivēts",
-      "in_review": "Kopsavilkumā",
+      "in_review": "Kopsavilkums",
       "approved": "Apstiprināts",
       "rejected": "Noraidīts",
       "unpublished": "Nepublicēts"
@@ -282,7 +282,7 @@
     "limitReachedTitle": "Sasniegts rakstu skaita limits ({max} / {max})",
     "limitReachedDesc": "Jūs esat sasniedzis savā plānā noteikto rakstu limitu. Veiciet plāna uzlabojumu, lai varētu publicēt vairāk rakstu.",
     "limitNearTitle": "Tuvojoties savai robežai (raksti {used} / {max})",
-    "limitNearDesc": "Jūs esat izmantojis vairāk nekā 80 % no jūsu plānā paredzētā rakstu limita.",
+    "limitNearDesc": "Jūs esat izsmēlis vairāk nekā 80 % no jūsu plānā paredzētā rakstu limita.",
     "limitReachedTooltip": "Sasniegts rakstu skaita limits — veiciet uzlabojumu, lai varētu izveidot vairāk rakstu"
   },
   "pages": {
@@ -396,7 +396,7 @@
     "bold": "Treknraksts",
     "italic": "Kursīvs",
     "underline": "Pārvilkt ar līniju",
-    "strike": "Pārvilkts",
+    "strike": "Pārvilkts teksts",
     "code": "Iekļautais kods",
     "bulletList": "Uzskaitījums ar punktiem",
     "orderedList": "Sakārtots saraksts",
@@ -542,7 +542,7 @@
     "noData": "Par šo periodu nav datu",
     "avgSession": "Vidējā sesija",
     "topReferrers": "Populārākie atsauces avoti",
-    "viewsOverTime": "Skatījumu dinamika laika gaitā",
+    "viewsOverTime": "Skatījumu skaits laika gaitā",
     "devices": "Ierīces"
   },
   "team": {
@@ -559,12 +559,12 @@
       "viewer": "Skatītājs"
     },
     "invite": {
-      "title": "Uzaicināt komandas biedru",
+      "title": "Uzaicināt komandas locekli",
       "emailLabel": "E-pasta adrese",
       "emailPlaceholder": "colleague@example.com",
       "roleLabel": "Loma",
       "messageLabel": "Personīgs ziņojums (pēc izvēles)",
-      "messagePlaceholder": "Es vēlētos uzaicināt jūs sadarboties mūsu blogā...",
+      "messagePlaceholder": "Es vēlētos uzaicināt tevi sadarboties mūsu blogā...",
       "sendButton": "Nosūtīt ielūgumu",
       "sending": "Nosūtīšana...",
       "success": "Ielūgums veiksmīgi nosūtīts",
@@ -622,7 +622,7 @@
       "deleteBlogDescription": "Kad šo blogu izdzēsīsiet, atpakaļceļa vairs nebūs. Visi raksti, abonenti un dati tiks neatgriezeniski dzēsti.",
       "deleteButton": "Dzēst blogu",
       "confirmTitle": "Vai tu esi pilnīgi pārliecināts?",
-      "confirmDescription": "Šo darbību nevar atcelt. Ierakstiet bloga nosaukumu, lai apstiprinātu.",
+      "confirmDescription": "Šo darbību nevar atcelt. Lai apstiprinātu, ievadiet bloga nosaukumu.",
       "confirmPlaceholder": "Ierakstiet bloga nosaukumu, lai apstiprinātu",
       "confirmButton": "Jā, izdzēst neatgriezeniski"
     }
@@ -740,9 +740,9 @@
     "aboutValue1Title": "Kvalitāte",
     "aboutValue1Desc": "Saturs, kas izstrādāts ar rūpību un profesionālu kompetenci.",
     "aboutValue2Title": "Pārredzamība",
-    "aboutValue2Desc": "Pārbaudīta, avotu norādīta un patiesa informācija.",
+    "aboutValue2Desc": "Pārbaudīta, no uzticamiem avotiem iegūta un patiesa informācija.",
     "aboutValue3Title": "Ietekme",
-    "aboutValue3Desc": "Katrs raksts sniedz praktiski izmantojamu vērtību.",
+    "aboutValue3Desc": "Katrs raksts sniedz praktisku vērtību.",
     "aboutTeamTitle": "Mūsu komanda",
     "aboutCtaTitle": "Pievienojies mūsu kopienai",
     "aboutCtaDesc": "Abonējieties, lai saņemtu jaunāko informāciju.",
@@ -814,9 +814,9 @@
     "episodeCountPlural": "{count} sērijas",
     "advertiseWithUsBadge": "Reklāmējieties pie mums",
     "advertiseHeroTitlePrefix": "Sasniedziet",
-    "advertiseHeroTitleSuffix": "publikums",
+    "advertiseHeroTitleSuffix": "publikas",
     "advertiseStep1Title": "Ievietojiet savu sludinājumu",
-    "advertiseStep1Desc": "Aizpildiet zemāk esošo veidlapu, norādot reklāmas informāciju un mērķa URL.",
+    "advertiseStep1Desc": "Aizpildiet zemāk esošo veidlapu, norādot sludinājuma informāciju un mērķa URL.",
     "advertiseStep2Title": "Manuālā pārbaude",
     "advertiseStep2Desc": "Bloga īpašnieks izskata jūsu iesniegumu un to apstiprina vai noraida.",
     "advertiseStep3Title": "Sākt darbību",
@@ -869,7 +869,7 @@
     "totalToPayLabel": "Kopējā maksājamā summa",
     "missingBudgetWarning": "Lūdzu, atgriezieties atpakaļ un ievadiet savu budžetu, lai turpinātu.",
     "whatHappensNextSectionTitle": "Kas notiks tālāk?",
-    "paymentStep1Text": "Noklikšķiniet uz zemāk esošās saites „Pārskatīt un samaksāt“ — jūs redzēsiet savas reklāmas kopsavilkumu.",
+    "paymentStep1Text": "Noklikšķiniet uz zemāk esošās pogas „Pārskatīt un samaksāt“ — jūs redzēsiet savas reklāmas kopsavilkumu.",
     "paymentStep2Text": "Noklikšķiniet uz „Maksāt tagad“ — jūs tiksiet pāradresēts uz „NowPayments“ drošo lapu.",
     "paymentStep3Text": "Veiciet maksājumu ar kriptovalūtu (USDT, BTC, ETH…) vai ar karti, izmantojot viņu platformu.",
     "paymentStep4Text": "Maksājums apstiprināts → jūsu reklāma tiek nosūtīta bloga īpašniekam pārskatīšanai.",
@@ -914,7 +914,7 @@
       "noCreditCard": "Kredītkarte nav nepieciešama"
     },
     "features": {
-      "title": "Viss, kas nepieciešams, lai uzturētu profesionālu blogu",
+      "title": "Viss, kas nepieciešams, lai vadītu profesionālu blogu",
       "subtitle": "No rakstīšanas līdz publicēšanai, no analītikas līdz ieņēmumu gūšanai.",
       "multiTenantTitle": "Vairāku blogu pārvaldība",
       "multiTenantDesc": "Pārvaldiet vairākus neatkarīgus blogus no vienas vadības paneļa. Katram no tiem ir sava komanda, domēns un iestatījumi.",
@@ -922,12 +922,12 @@
       "teamDesc": "Uzaiciniet redaktorus, autorus un lasītājus. Noteikt, kurš var rakstīt, pārskatīt un publicēt.",
       "analyticsTitle": "Iebūvēta analītika",
       "analyticsDesc": "Izsekot lapas skatījumiem, populārākajiem rakstiem un abonentu skaita pieaugumam, izmantojot detalizētus reāllaika pārskatus.",
-      "seoTitle": "Redaktors, kas prioritāri pievēršas SEO",
+      "seoTitle": "Redaktors, kas prioritāri ņem vērā SEO",
       "seoDesc": "Ar mākslīgo intelektu balstīti SEO ieteikumi, automātiski izveidotas vietņu kartes un strukturēti dati, kas jau ir integrēti sistēmā.",
-      "newsletterTitle": "Iebūvēta jaunumu vēstule",
-      "newsletterDesc": "Paplašiniet un pārvaldiet savu abonentu sarakstu, neizmantojot nekādus trešo pušu rīkus.",
+      "newsletterTitle": "Iebūvēta biļetena funkcija",
+      "newsletterDesc": "Paplašiniet un pārvaldiet savu abonentu sarakstu bez jebkādu trešo pušu rīku izmantošanas.",
       "aiTitle": "AI rakstīšanas palīgs",
-      "aiDesc": "Izveidojiet, uzlabojiet, apkopojiet un tulkojiet saturu, izmantojot integrētās mākslīgā intelekta funkcijas."
+      "aiDesc": "Izveidojiet, uzlabojiet, apkopojiet un tulkojiet saturu, izmantojot integrētās mākslīgā intelekta iespējas."
     },
     "pricing": {
       "title": "Vienkārša un pārredzama cenu noteikšana",
@@ -1033,7 +1033,7 @@
     "settings": "Bloga iestatījumi",
     "soon": "Drīz",
     "upgrade": "Atjaunināt",
-    "sectionPages": "Lapas",
+    "sectionPages": "Lappuses",
     "pageHome": "Sākums",
     "pageAbout": "Par",
     "pageContact": "Kontakti",
@@ -1103,7 +1103,7 @@
     "indexing": "Atļaut indeksēšanu meklētājprogrammās",
     "indexingDesc": "Ja ir atspējots, robots.txt fails ar iestatījumu „noindex“ norāda indeksēšanas robotiem, ka jūsu blogs nav jāindeksē.",
     "sitemap": "Lapas kartes URL",
-    "sitemapDesc": "Automatiski ģenerēts — nosūtiet to uz Google Search Console.",
+    "sitemapDesc": "Automatiski ģenerēts — iesniedziet to Google Search Console.",
     "copySitemap": "Kopēt",
     "copiedSitemap": "Kopēts!",
     "schemaOrg": "Iespējot raksta strukturētos datus (JSON-LD)",
@@ -1152,7 +1152,7 @@
     "step1": {
       "label": "Izvēlieties veidni",
       "title": "Izvēlieties savu veidni",
-      "subtitle": "Katra veidne ir gatavs dizains. Vēlāk visu varat pielāgot pēc saviem ieskatiem.",
+      "subtitle": "Katra veidne ir gatavs dizains. Vēlāk visu varat pielāgot savām vajadzībām.",
       "next": "Izmantojiet šo veidni"
     },
     "step2": {
@@ -1475,7 +1475,7 @@
     "save": "Saglabāt",
     "cancel": "Atcelt",
     "delete": "Dzēst",
-    "deleteConfirm": "Dzēst šo tagu?",
+    "deleteConfirm": "Dzēst šo birku?",
     "deleteWarning": "Šo tagu izmanto {count} rakstā(-os). Tas tiks noņemts no visiem rakstiem.",
     "articles": "{count} raksts(-i)",
     "noArticles": "Nav rakstu",
@@ -1562,7 +1562,7 @@
     "subtitle": "Pievienojiet savam blogam pielāgotu CSS, skriptus un fontus.",
     "save": "Saglabāt",
     "saved": "Saglabāts!",
-    "warning": "Pielāgotais kods tiek ievietots tieši jūsu publiskajā blogā. Nepareizi CSS vai skripti var izjaukt izkārtojumu. Rūpīgi pārbaudiet.",
+    "warning": "Pielāgotais kods tiek ievietots tieši jūsu publiskajā blogā. Nepareizi CSS vai skripti var sabojāt izkārtojumu. Rūpīgi pārbaudiet.",
     "cssDesc": "Stili, kas tiek piemēroti visām jūsu publiskā bloga lapām. Aizstāj tēmas noklusējuma stilus.",
     "headerScripts": "Galvenes skripti",
     "headerScriptsDesc": "Ievietots elementā „<'head'>“ — ideāli piemērots izsekošanas pikseļiem, metatagiem un „preconnect“ norādēm.",
@@ -1662,7 +1662,7 @@
     "comparePlans": "Salīdzināt tarifu plānus",
     "currentBadge": "Pašreizējais plāns",
     "choosePlan": "Izvēlieties",
-    "popular": "Populārs",
+    "popular": "Populāri",
     "upgrade": "Atjaunināt",
     "pageTitle": "Izvēlieties savu plānu",
     "pageSubtitle": "Sāciet bez maksas un paplašinieties savā tempā. Visi plāni ietver pilnu korporatīvo veidni.",
@@ -1670,7 +1670,7 @@
     "perMonth": "/mēnesī",
     "yourPlan": "Tavs plāns",
     "currentPlanButton": "Pašreizējais plāns",
-    "footerNote": "Drošs maksājums · Atcelt jebkurā brīdī · Bez slēptām komisijām",
+    "footerNote": "Drošs maksājums · Var atcelt jebkurā brīdī · Nav slēptu maksājumu",
     "checkoutError": "Norēķināšanās neizdevās. Lūdzu, mēģiniet vēlreiz.",
     "checkoutSuccess": "Maksājums apstiprināts — jūsu abonements ir paaugstināts.",
     "preparingPayment": "Tiek sagatavots maksājums…",
@@ -1847,7 +1847,7 @@
     "fieldAddress": "Adrese",
     "fieldSlugHint": "Pēc izveides slugu vairs nevar mainīt.",
     "fieldColor": "Krāsa",
-    "fieldColorHint": "Tiek izmantots pogām, saitēm un bloga izcēlumiem.",
+    "fieldColorHint": "Tiek izmantots pogām, saitēm un akcentiem blogā.",
     "fieldRss": "RSS plūsma",
     "sectionDesign": "Dizains",
     "fieldLogo": "Logotips",
@@ -1886,10 +1886,10 @@
     "pageSeoDesc": "Optimizējiet savu blogu meklētājprogrammām.",
     "pageLanguages": "Valodas",
     "pageLanguagesDesc": "Izvēlieties, kādās valodās apmeklētāji var lasīt jūsu blogu.",
-    "languagesUpsellTitle": "Pieejams, sākot no „Starter“ plāna",
+    "languagesUpsellTitle": "Pieejams, sākot ar „Starter“ plānu",
     "languagesUpsellDesc": "Paplašiniet savu abonementu, lai apmeklētāji varētu tulkot jūsu blogu jūsu izvēlētajās valodās.",
     "languagesSectionTitle": "Pieejamās valodas",
-    "languagesSavedToast": "Atjauninātās valodas",
+    "languagesSavedToast": "Atjauninātas valodas",
     "pageNewsletter": "Biļetens",
     "pageNewsletterDesc": "Pārvaldiet savu jaunumraksta abonentus.",
     "pageAnalytics": "Analītika",
@@ -1976,7 +1976,7 @@
     "switchShowTeamOnBlog": "Parādīt komandas sadaļu blogā",
     "switchShowCta": "Rādīt CTA",
     "switchShowProgressBar": "Rādīt lasīšanas progresa joslu",
-    "switchShowProgressBarDesc": "Lapas augšdaļā redzamā progresa josla raksta lasīšanas laikā.",
+    "switchShowProgressBarDesc": "Lapas augšdaļā redzamais progresa indikators raksta lasīšanas laikā.",
     "switchShowToc": "Rādīt satura rādītāju",
     "switchShowTocDesc": "Automātiski ģenerēts, izmantojot raksta H2/H3 virsrakstus.",
     "switchShowShare": "Rādīt kopīgošanas pogas",
@@ -2033,7 +2033,7 @@
     "aboutSavedToast": "Lapa „Par mums“ ir saglabāta!",
     "contactSavedToast": "Saziņas lapa ir saglabāta!",
     "articlePageSavedToast": "Raksta lapa saglabāta!",
-    "seoSavedToast": "SEO saglabāts!",
+    "seoSavedToast": "SEO ir saglabāts!",
     "articleSavedToast": "Raksts saglabāts.",
     "articlePublishedToast": "Raksts publicēts!",
     "articleArchivedToast": "Raksts arhivēts.",
@@ -2076,7 +2076,7 @@
     "fieldSeoTitleTemplate": "SEO virsraksta veidne",
     "fieldSeoTitleTemplateHint": "Mainīgie: {title} = raksta nosaukums, {blog_name} = bloga nosaukums",
     "fieldMetaDescDefault": "Noklusējuma meta apraksts",
-    "fieldMetaDescDefaultHint": "Ieteicams: 160 rakstzīmes. Google meklēšanas rezultātos parādās zem virsraksta.",
+    "fieldMetaDescDefaultHint": "Ieteicams: 160 rakstzīmes. Google meklētājā parādās zem virsraksta.",
     "seoCharCount": "{n} / 160 rakstzīmes",
     "fieldOgImageHint": "Tiek parādīts, daloties ar saturu vietnēs „Twitter“, „LinkedIn“ un „Facebook“. Ideāli — 1200×630 pikseļu izmērā.",
     "seoSitemap": "XML vietnes karte",
@@ -2130,7 +2130,7 @@
     "articleTitlePlaceholder": "Raksta nosaukums…",
     "articleTitleLabel": "Raksta nosaukums",
     "articleTitleHint": "Obligāts — ievadiet vismaz 2 rakstzīmes, lai varētu saglabāt šo rakstu.",
-    "titleRequiredToast": "Lūdzu, pirms saglabāšanas pievienojiet nosaukumu (vismaz 2 rakstzīmes).",
+    "titleRequiredToast": "Lūdzu, pirms saglabāšanas pievienojiet virsrakstu (vismaz 2 rakstzīmes).",
     "articleExcerptPlaceholder": "Īss kopsavilkums, kas tiek parādīts sarakstos un meklētājprogrammās…",
     "articleContentPlaceholder": "Sāciet rakstīt savu rakstu…",
     "articleUploading": "Augšupielāde…",
@@ -2422,7 +2422,7 @@
     "domainStepTitle": "Izveidojiet savu blogu internetā",
     "domainStepSubtitle": "{name} ir izveidots! Pievienojiet domēnu jau tagad, lai cilvēki to varētu atrast — vai arī izlaidiet šo soli un izdariet to vēlāk.",
     "domainOptionBuyTitle": "Iegādājieties jaunu domēnu",
-    "domainOptionBuyDesc": "Meklējiet un iegādājieties domēnu, neizejot no SmarterBloggers. Apmaksa ar kriptovalūtu, reģistrācija notiek automātiski.",
+    "domainOptionBuyDesc": "Meklējiet un iegādājieties domēnu, neizejot no SmarterBloggers. Maksājiet ar kriptovalūtu, reģistrācija notiek automātiski.",
     "domainOptionConnectTitle": "Pievienot man piederošu domēnu",
     "domainOptionConnectDesc": "Jums jau ir domēns citur? Norādiet to uz savu blogu bez maksas — pietiek ar ātru DNS konfigurāciju.",
     "domainOptionSkipTitle": "Pagaidām izlaist",
@@ -2468,7 +2468,7 @@
     },
     "templates": {
       "editorial": {
-        "tagline": "Tīrs · Serifs · Mūžīgs",
+        "tagline": "Tīrs · Serifs · Klasisks",
         "description": "„Medium“ / „The Atlantic“ stils. Koncentrēta lasīšanas pieredze, izcelts galvenais varonis, elegants trīs kolonnu izkārtojums."
       },
       "magazine": {
@@ -2481,7 +2481,7 @@
       },
       "luminary": {
         "tagline": "Prestižs · Serifs · Literārais",
-        "description": "„The New Yorker“ / „GQ“ stils. Krēmkrāsas ziloņkaula toņi, zelta akcenti, iniciāļi, augstvērtīga izdevuma izskats."
+        "description": "„The New Yorker“ / „GQ“ stils. Krēmkrāsas ziloņkaula toņi, zelta akcenti, iniciāļi, augstvērtīga izdevuma izjūta."
       }
     }
   },
@@ -2519,7 +2519,7 @@
     "profileUpdateError": "Kļūda profila atjaunināšanā.",
     "passwordUpdatedToast": "Parole ir atjaunināta!",
     "pwFillAll": "Aizpildiet visus laukus.",
-    "pwTooShort": "Jaunajai parolai jābūt vismaz 8 rakstzīmēm garai.",
+    "pwTooShort": "Jaunajai parolai jābūt vismaz 8 rakstzīmes garai.",
     "pwMismatch": "Paroles nesakrīt.",
     "twoFASection": "Divpakāpju autentifikācija",
     "twoFAStatusEnabled": "Ieslēgts — jūsu konts ir aizsargāts",
@@ -2541,7 +2541,7 @@
     "walletCurrencyLoading": "Tiek ielādēti pieejamie tīkli…",
     "walletCurrencySearch": "Meklēt valūtu vai tīklu…",
     "walletCurrencyNoResults": "Nav atbilstošas valūtas.",
-    "walletAddressLabel": "Maksājumu adreses",
+    "walletAddressLabel": "Maksas adrese",
     "walletAddressPlaceholder": "Ievadiet izvēlētā tīkla adresi",
     "walletExtraIdLabel": "Piezīme / Etiķete",
     "walletExtraIdPlaceholder": "Šim tīklam nepieciešams",
@@ -2635,7 +2635,7 @@
     "step1": "Dalies ar savu unikālo ieteikuma saiti ar citiem blogeriem",
     "step2": "Kad viņi abonē, jūs saņemat 10 % no viņu abonēšanas maksas",
     "step3": "Komisijas maksas uzkrājas, līdz tiek sasniegta minimālā robežvērtība 50 dolāru apmērā",
-    "step4": "Pieprasiet naudas izņemšanu — par katru izņemšanu tiek piemērota 20 ASV dolāru maksa",
+    "step4": "Pieprasiet naudas izmaksu — par katru izmaksu tiek piemērota 20 ASV dolāru liela komisijas maksa",
     "cashoutRequested": "Izņemšanas pieprasījums ir iesniegts!",
     "error": "Kļūda",
     "cashoutError": "Neizdevās iesniegt izmaksas pieprasījumu.",
@@ -2649,7 +2649,7 @@
     "exportCSV": "Eksportēt CSV",
     "exportError": "Eksportēšana neizdevās",
     "inviteFriendTitle": "Uzaicini draugu",
-    "inviteFriendDesc": "Nosūti savu ieteikuma saiti tieši draugam, pievienojot personisku ziņojumu viņa valodā.",
+    "inviteFriendDesc": "Nosūti savu ieteikuma saiti tieši draugam, pievienojot personīgu ziņojumu viņa valodā.",
     "inviteFriendEmail": "Drauga e-pasts",
     "inviteFriendLanguage": "Drauga valoda",
     "inviteFriendMessage": "Jūsu personīgais ziņojums",
@@ -2658,16 +2658,16 @@
     "inviteFriendSend": "Nosūtīt ielūgumu",
     "inviteSentTitle": "Ielūgums nosūtīts!",
     "inviteSentDesc": "Jūsu ielūgums tika nosūtīts uz {email}.",
-    "inviteError": "Neizdevās nosūtīt ielūgumu.",
+    "inviteError": "Neizdevās nosūtīt uzaicinājumu.",
     "walletRequiredTitle": "Pievienojiet savu USDT-BSC maku, lai saņemtu maksājumus",
     "walletRequiredDesc": "Lai piedalītos partnerprogrammā un saņemtu komisijas maksas, jums ir jāreģistrē USDT (BEP20/BSC) maku adrese.",
     "walletRequiredCta": "Pievienot manu elektronisko maku",
-    "waitingThresholdTitle": "Vairs nav tālu!",
+    "waitingThresholdTitle": "Vairs tikai nedaudz!",
     "waitingThresholdDesc": "Jūsu komisijas tiks nosūtītas automātiski, tiklīdz jūsu atlikums sasniegs {min}.",
     "gate": {
       "not_started": {
         "title": "Nepieciešama identitātes pārbaude",
-        "description": "Lai nodrošinātu partnerprogrammas drošību un atbilstību noteikumiem, jums ir jāveic vienreizēja KYC identitātes pārbaude, pirms varēsiet piekļūt savai ieteikuma saitei un sākt pelnīt komisijas maksu.",
+        "description": "Lai nodrošinātu partnerprogrammas drošību un atbilstību noteikumiem, jums ir jāveic vienreizēja KYC identitātes pārbaude, pirms varēsiet piekļūt savai ieteikuma saitei un sākt pelnīt komisijas naudu.",
         "cta": "Sākt pārbaudi"
       },
       "pending": {
@@ -2689,7 +2689,7 @@
   },
   "kyc": {
     "pageTitle": "Identitātes pārbaude (KYC)",
-    "pageSubtitle": "Tas ir jāizdara vienu reizi, pirms varēsiet piekļūt partnerprogrammai un saņemt komisijas maksas.",
+    "pageSubtitle": "Tas ir jāizdara vienu reizi, pirms varēsiet piekļūt partnerprogrammai un saņemt komisijas maksājumus.",
     "submitError": "Kaut kas nogāja greizi. Lūdzu, mēģiniet vēlreiz.",
     "statusLabel": {
       "not_started": "Vēl nav pārbaudīts",
@@ -2700,7 +2700,7 @@
     },
     "yearsRemaining": "{count, plural, =0 {No prepaid years remaining} one {# prepaid year remaining} other {# prepaid years remaining}}",
     "resumeVerification": "CV pārbaude",
-    "reverifyExplain": "Jums vēl ir atlikuši priekšapmaksātie gadi, tāpēc atkārtota identifikācijas pārbaude neko papildus nemaksā — jums vienkārši būs atkārtoti jāiziet identifikācijas pārbaude.",
+    "reverifyExplain": "Jums vēl ir atlikuši priekšapmaksātie gadi, tāpēc atkārtota verifikācija neko papildus nemaksā — jums vienkārši būs atkārtoti jāiziet identitātes pārbaude.",
     "reverifyCta": "Atkārtoti apstiprināt manu identitāti",
     "purchaseTitle": "Izvēlieties apstiprinājuma termiņu",
     "durationLabel": "Ilgums",
@@ -2745,13 +2745,13 @@
     "imageUrl": "Reklāmas attēla URL",
     "imageUrlHint": "Tieša saite uz jūsu baneri (ieteicams: 1200×628 pikseļi).",
     "clickUrl": "Mērķa URL",
-    "clickUrlHint": "Uz kādu lapu apmeklētājiem vajadzētu nokļūt, kad viņi noklikšķina uz jūsu reklāmas?",
+    "clickUrlHint": "Uz kādu lapu apmeklētājiem vajadzētu nokļūt, noklikšķinot uz jūsu reklāmas?",
     "startsAt": "Sākuma datums",
     "endsAt": "Beigu datums",
     "totalBudget": "Kopējais budžets",
     "submit": "Apmaksāt un iesniegt",
     "submitting": "Tiek sagatavots maksājums…",
-    "submitError": "Jūsu sludinājumu neizdevās nosūtīt. Lūdzu, mēģiniet vēlreiz.",
+    "submitError": "Jūsu sludinājumu neizdevās publicēt. Lūdzu, mēģiniet vēlreiz.",
     "budgetRequired": "Lūdzu, ievadiet budžetu, kas ir lielāks par 0.",
     "requiredFields": "Lūdzu, aizpildiet visus obligātos laukus.",
     "myAds": "Mani sludinājumi",
@@ -2939,7 +2939,7 @@
     "taken": "Uzņemts",
     "primaryBadge": "Pamatskola",
     "purchasedBadge": "Iegādāts",
-    "expiresOn": "Derīguma termiņš beidzas {date}",
+    "expiresOn": "Derīguma termiņš beidzas{date}",
     "renewButton": "Atjaunot",
     "setPrimaryButton": "Iestatīt kā galveno domēnu",
     "purchaseTitle": "Iegādājieties „{domain}“",
@@ -3401,7 +3401,10 @@
         "pending": "Gaida izskatīšanu",
         "refunded": "Atmaksāts",
         "failed": "Neizdevās",
-        "disputed": "Apstrīdēts"
+        "disputed": "Apstrīdēts",
+        "processing": "Apstrāde",
+        "requested": "Pieprasīts",
+        "rejected": "Noraidīts"
       }
     },
     "settings": {
@@ -3411,7 +3414,7 @@
       "saved": "Iestatījumi saglabāti",
       "configured": "Konfigurēts",
       "notConfigured": "Nav konfigurēts",
-      "autoSaveNote": "Iestatījumi tiek saglabāti automātiski, tiklīdz tiek veiktas izmaiņas.",
+      "autoSaveNote": "Iestatījumi tiek saglabāti automātiski pēc izmaiņu veikšanas.",
       "envNote": "Integrācijas autentifikācijas dati tiek konfigurēti, izmantojot vides mainīgos (.env).",
       "saveBtn": "Saglabāt",
       "nowpaymentsTotpTitle": "NowPayments izmaksas 2FA kods",
@@ -3542,7 +3545,7 @@
       "lastUpdated": "Atjaunināts{time}",
       "stats": {
         "online": "Šobrīd tiešsaistē",
-        "logins": "Šodienas pieteikšanās reizes",
+        "logins": "Šodienas pieteikšanās",
         "newUsers": "Jaunie lietotāji šodien",
         "revenue": "Šodienas ieņēmumi"
       },
@@ -3573,7 +3576,7 @@
       "breadcrumb": "Infrastruktūra",
       "subtitle": "Stāvoklis reālajā laikā · Uzraudzīti „{count}“ pakalpojumi",
       "allOk": "Visas sistēmas darbojas",
-      "degradedMsg": "{count} pakalpojuma(-u) kvalitātes pasliktināšanās",
+      "degradedMsg": "{count} pakalpojuma(-u) kvalitāte pasliktinājusies",
       "outageMsg": "{count} pakalpojums(-i) nedarbojas",
       "lastCheck": "Pēdējā pārbaude: {time}",
       "recentIncidents": "Nesenie notikumi",
@@ -3941,11 +3944,11 @@
     "registerBtn": "Izveidot kontu",
     "acceptBtn": "Pieņemt uzaicinājumu",
     "acceptError": "Nespēju pieņemt uzaicinājumu.",
-    "expires": "Šis uzaicinājums ir spēkā līdz {date}."
+    "expires": "Šis uzaicinājums ir derīgs līdz {date}."
   },
   "cryptoPayment": {
     "title": "Maksājiet ar kriptovalūtu (USDT)",
-    "statusWaiting": "Gaida maksājumu…",
+    "statusWaiting": "Gaidām maksājumu…",
     "statusConfirming": "Konstatēts maksājums — tiek veikta apstiprināšana ķēdē…",
     "statusConfirmed": "Apstiprināts — tiek pabeigta…",
     "statusSending": "Pabeigšana…",
@@ -3984,7 +3987,10 @@
       "paid_article": "Maksas raksts",
       "paid_newsletter": "Maksas biļetens",
       "ad_campaign": "Reklāma",
-      "domain_purchase": "Domēna iegāde"
+      "domain_purchase": "Domēna iegāde",
+      "kyc_verification": "KYC pārbaude",
+      "affiliate_commission_payout": "Partnerprogrammas komisijas izmaksa",
+      "ad_revenue_payout": "Ienākumu izmaksa no reklāmām"
     },
     "status": {
       "pending": "Gaida izskatīšanu",
@@ -3992,7 +3998,11 @@
       "completed": "Pabeigts",
       "failed": "Neizdevās",
       "refunded": "Atmaksāts",
-      "disputed": "Apstrīdēts"
+      "disputed": "Apstrīdēts",
+      "requested": "Pieprasīts",
+      "processing": "Apstrāde",
+      "paid": "Maksas",
+      "rejected": "Noraidīts"
     }
   },
   "aiBuilder": {
@@ -4003,7 +4013,7 @@
     "nicheLabel": "Bloga tēma / niša",
     "nichePlaceholder": "piem., Mārketinga padomi start-up uzņēmumiem, Ātrās veģetāriešu receptes, Ceļošana ar mugursomu Dienvidaustrumāzijā…",
     "audienceLabel": "Mērķauditorija",
-    "audiencePlaceholder": "piem., jaunākie programmētāji, aizņemtās mammas, ceļotāji ar ierobežotu budžetu vecumā no 25 līdz 35 gadiem…",
+    "audiencePlaceholder": "piem., jaunākie programmētāji, aizņemtās māmiņas, ceļotāji ar ierobežotu budžetu vecumā no 25 līdz 35 gadiem…",
     "toneLabel": "Rakstīšanas stils",
     "toneProfessional": "Profesionāls",
     "toneFriendly": "Draudzīgs un neformāls",

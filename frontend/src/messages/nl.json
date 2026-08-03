@@ -704,7 +704,7 @@
     "seeAllAuthorArticles": "Bekijk al hun artikelen",
     "commentFormNamePlaceholder": "Je naam",
     "commentFormEmailPlaceholder": "email@example.com",
-    "commentFormPlaceholder": "Deel je mening, ervaringen of stel een vraag…",
+    "commentFormPlaceholder": "Deel je mening of ervaringen, of stel een vraag…",
     "backToArticles": "Terug naar de artikelen",
     "leaveComment": "Laat een reactie achter",
     "commentFormNameLabel": "Naam",
@@ -779,7 +779,7 @@
     "enterEscHint": "Enter · Esc",
     "searchOnBlogPlaceholder": "Zoek op {blog}…",
     "typeOrSpeakHint": "Typ of spreek om artikelen te zoeken",
-    "useMicHint": "Gebruik de microfoonknop voor spraakgestuurd zoeken",
+    "useMicHint": "Gebruik de microfoonknop voor spraakzoekopdrachten",
     "speakNowHint": "Zeg het nu maar…",
     "voiceTranscribedHint": "Uw spraak wordt automatisch getranscribeerd",
     "noResultsForQuery": "Geen resultaten voor \"{query}\"",
@@ -803,7 +803,7 @@
     "signInToRead": "Log in om verder te lezen",
     "signInAlreadyPurchased": "Inloggen (al aangeschaft)",
     "backToBlogName": "Terug naar {blog}",
-    "secureBadges": "Veilig betalen · Directe toegang · Lees het op elk apparaat",
+    "secureBadges": "Veilig betalen · Directe toegang · Lees op elk apparaat",
     "anonymousAuthor": "Anoniem",
     "loading": "Bezig met laden…",
     "podcastLabel": "Podcast",
@@ -863,7 +863,7 @@
     "preferredCurrencySectionTitle": "Voorkeursvaluta",
     "currencyLabel": "Valuta",
     "currencyHint": "Wordt gebruikt om uw budget door te geven. Er wordt vandaag geen betaling geïnd.",
-    "totalBudgetLabel": "Totaalbudget",
+    "totalBudgetLabel": "Totaal budget",
     "totalBudgetHint": "Dit is het bedrag dat je betaalt om je advertentie te laten verschijnen.",
     "paymentSubtitle": "Je advertentieruimte wordt veilig betaald via NowPayments — met cryptovaluta of een kaart.",
     "totalToPayLabel": "Totaal te betalen bedrag",
@@ -923,7 +923,7 @@
       "analyticsTitle": "Ingebouwde analysefuncties",
       "analyticsDesc": "Houd het aantal paginaweergaven, de populairste artikelen en de groei van het aantal abonnees bij met gedetailleerde realtime rapporten.",
       "seoTitle": "SEO-gerichte redacteur",
-      "seoDesc": "Door AI aangestuurde SEO-suggesties, automatische sitemaps en ingebouwde gestructureerde gegevens.",
+      "seoDesc": "Door AI aangestuurde SEO-suggesties, automatische sitemaps en gestructureerde gegevens die standaard zijn ingebouwd.",
       "newsletterTitle": "Ingebouwde nieuwsbrief",
       "newsletterDesc": "Breid je abonneelijst uit en beheer deze zonder hulpmiddelen van derden.",
       "aiTitle": "AI-schrijfassistent",
@@ -1127,7 +1127,7 @@
     },
     "seo": {
       "title": "SEO-optimalisatie",
-      "description": "Stel de SEO-instellingen van je blog in: automatische sitemap, schema.org, Open Graph-metadata, ranking-tracking en inhoudscontrole."
+      "description": "Stel de SEO-instellingen van je blog in: automatische sitemap, schema.org, Open Graph-metadata, het bijhouden van zoekresultaten en een inhoudscontrole."
     },
     "customization": {
       "title": "Geavanceerde aanpassingsmogelijkheden",
@@ -1141,7 +1141,7 @@
     "backToDashboard": "Terug naar het dashboard",
     "mobileStep": "Stap {step} / 4",
     "errors": {
-      "createFailed": "Het aanmaken van de blog is mislukt. Probeer het nog eens."
+      "createFailed": "Het is niet gelukt om de blog aan te maken. Probeer het nog eens."
     },
     "limit": {
       "title": "Bloglimiet bereikt",
@@ -1783,7 +1783,7 @@
     "statAuthors": "Auteurs",
     "myBlogsTitle": "Mijn blogs",
     "seeAllBlogs": "Alles bekijken",
-    "moreBlogs": "+{count} en nog veel meer",
+    "moreBlogs": "+{count} en meer",
     "limitReached": "Limiet bereikt",
     "upgradeDesc": "Upgrade naar Business om meer blogs te maken",
     "manageBlog": "Beheren",
@@ -1926,7 +1926,7 @@
     "fieldReassuranceText": "Geruststellende tekst",
     "fieldBlockTitle": "Bloktitel",
     "fieldNavLinks": "Navigatielinks",
-    "fieldNavLinksHint": "Versleep om de volgorde te wijzigen (binnenkort beschikbaar). Aanbevolen: maximaal 6 links.",
+    "fieldNavLinksHint": "Versleep om de volgorde te wijzigen (binnenkort beschikbaar). Aanbevolen maximum: 6 links.",
     "fieldCopyright": "Tekst over auteursrecht",
     "fieldDescriptionFooter": "Korte tekst die onder het logo in de voettekst wordt weergegeven.",
     "fieldNewsletterTeaser": "Teasertitel",
@@ -2090,7 +2090,7 @@
     "newsletterThisMonth": "Deze maand",
     "newsletterSearchPlaceholder": "Zoek een abonnee…",
     "newsletterNoTitle": "Nog geen abonnees",
-    "newsletterNoDesc": "Zodra bezoekers zich aanmelden voor je nieuwsbrief, verschijnen hun gegevens hier.",
+    "newsletterNoDesc": "Zodra bezoekers zich aanmelden voor je nieuwsbrief, verschijnen ze hier.",
     "analyticsViews": "Totaal aantal weergaven",
     "analyticsSessions": "Unieke sessies",
     "analyticsDuration": "Gemiddelde duur",
@@ -2278,7 +2278,7 @@
     "mediaUseThisUrl": "Gebruik deze URL",
     "mediaEmbedHint": "Links naar YouTube en Vimeo worden automatisch omgezet in insluitingen.",
     "collabRoleEditorDesc": "Maakt, bewerkt en publiceert direct.",
-    "collabRoleAuthorDesc": "Schrijft en dient het ter goedkeuring in.",
+    "collabRoleAuthorDesc": "Schrijft en dient ter goedkeuring in.",
     "collabRoleViewerDesc": "Alleen-lezen-toegang tot het dashboard.",
     "cancel": "Annuleren",
     "administrators": "Beheerders",
@@ -2374,7 +2374,7 @@
       "fontLabel": "Lettertypefamilie",
       "previewLabel": "Voorbeeld",
       "previewTitle": "Mijn eerste artikel",
-      "previewBody": "Welkom op mijn blog. Op deze plek deel ik mijn ideeën en gedachten.",
+      "previewBody": "Welkom op mijn blog. Op deze plek deel ik graag mijn ideeën en gedachten.",
       "previewAuthor": "Auteur · 2 dagen geleden",
       "createButton": "Mijn blog aanmaken",
       "creatingButton": "Bezig met laden..."
@@ -2418,7 +2418,7 @@
     "quickCreating": "Bezig met laden…",
     "quickCreate": "Mijn blog aanmaken",
     "quickSuccess": "Blog aangemaakt! Wordt doorgestuurd…",
-    "domainRequiredNote": "Je blog is pas zichtbaar voor bezoekers als je een domein hebt gekoppeld. Ga na het aanmaken ervan naar de pagina ‘Domeinen’ in de studio van je blog om dit in te stellen.",
+    "domainRequiredNote": "Je blog is pas zichtbaar voor bezoekers als je een domein hebt gekoppeld. Ga na het aanmaken naar de pagina ‘Domeinen’ in de studio van je blog om dit in te stellen.",
     "domainStepTitle": "Zet je blog online",
     "domainStepSubtitle": "{name} is aangemaakt! Voeg nu een domein toe, zodat mensen het ook daadwerkelijk kunnen vinden — of sla deze stap over en doe het later.",
     "domainOptionBuyTitle": "Een nieuw domein kopen",
@@ -2453,7 +2453,7 @@
     "customColorTitle": "Aangepaste kleur",
     "cancel": "Annuleren",
     "templatePermanentTitle": "Het sjabloon is permanent.",
-    "templatePermanentDesc": "Je sjabloon bepaalt de visuele opmaak van je blog en kan na het aanmaken niet meer worden gewijzigd. Je kunt kleuren, lettertypen, inhoud en alle instellingen aanpassen in de Studio.",
+    "templatePermanentDesc": "Je sjabloon bepaalt de visuele opbouw van je blog en kan na het aanmaken niet meer worden gewijzigd. Je kunt kleuren, lettertypen, inhoud en alle instellingen aanpassen in de Studio.",
     "colors": {
       "blue": "Blauw",
       "violet": "Violet",
@@ -2545,7 +2545,7 @@
     "walletAddressPlaceholder": "Voer het adres van het geselecteerde netwerk in",
     "walletExtraIdLabel": "Notitie / Label",
     "walletExtraIdPlaceholder": "Vereist voor dit netwerk",
-    "walletExtraIdHint": "Bij sommige netwerken (bijv. XRP, EOS) moet je naast het adres ook deze extra memo/tag vermelden — zonder deze memo/tag kunnen de naar jou verzonden bedragen verloren gaan.",
+    "walletExtraIdHint": "Bij sommige netwerken (bijv. XRP, EOS) moet je naast het adres ook deze extra memo/tag vermelden — zonder deze memo/tag kunnen de naar jou verzonden middelen verloren gaan.",
     "walletTotpLabel": "Authenticatiecode (2FA)",
     "walletTotpPlaceholder": "000 000",
     "walletSaveButton": "Portemonnee opslaan",
@@ -2643,13 +2643,13 @@
     "noReferrals": "Nog geen doorverwijzingen. Deel je link om te beginnen met verdienen!",
     "refName": "Naam",
     "refPlan": "Plan",
-    "refJoined": "Lid sinds",
+    "refJoined": "Lid geworden",
     "refCommissions": "Verdiende provisies",
     "treeTab": "Verwijzingsboom",
     "exportCSV": "CSV exporteren",
     "exportError": "Exporteren is mislukt",
     "inviteFriendTitle": "Nodig een vriend uit",
-    "inviteFriendDesc": "Stuur je aanbevelingslink rechtstreeks naar een vriend, samen met een persoonlijk bericht in zijn of haar taal.",
+    "inviteFriendDesc": "Stuur je aanbevelingslink rechtstreeks naar een vriend(in), samen met een persoonlijk bericht in zijn of haar taal.",
     "inviteFriendEmail": "E-mailadres van een vriend(in)",
     "inviteFriendLanguage": "De taal van een vriend",
     "inviteFriendMessage": "Uw persoonlijke bericht",
@@ -2677,7 +2677,7 @@
       },
       "expired": {
         "title": "Opnieuw verifiëren vereist",
-        "description": "Je hebt onlangs je naam of land gewijzigd, waardoor er een nieuwe identiteitscontrole nodig is voordat je affiliate-link opnieuw kan worden geactiveerd. Als je nog vooruitbetaalde jaren over hebt, zijn hier geen extra kosten aan verbonden.",
+        "description": "Je hebt onlangs je naam of land gewijzigd, waardoor er een nieuwe identiteitscontrole nodig is voordat je affiliate-link opnieuw kan worden geactiveerd. Als je nog vooruitbetaalde jaren over hebt, kost dit je niets extra.",
         "cta": "Mijn identiteit opnieuw verifiëren"
       },
       "rejected": {
@@ -2713,7 +2713,7 @@
   },
   "invoices": {
     "title": "Facturen",
-    "subtitle": "Alle facturen die zijn aangemaakt voor uw betalingen op SmarterBloggers.",
+    "subtitle": "Alle facturen die zijn aangemaakt voor je betalingen op SmarterBloggers.",
     "empty": "Nog geen facturen.",
     "downloadError": "De factuur kon niet worden gedownload.",
     "colNumber": "Factuurnummer #",
@@ -2751,7 +2751,7 @@
     "totalBudget": "Totaal budget",
     "submit": "Betalen en verzenden",
     "submitting": "Betaling wordt verwerkt…",
-    "submitError": "Uw advertentie kon niet worden geplaatst. Probeer het nog eens.",
+    "submitError": "Uw advertentie kon niet worden verzonden. Probeer het nog eens.",
     "budgetRequired": "Voer een budget in dat groter is dan 0.",
     "requiredFields": "Vul alstublieft alle verplichte velden in.",
     "myAds": "Mijn advertenties",
@@ -2797,7 +2797,7 @@
     "amount": "Bedrag",
     "status": "Status",
     "date": "Datum",
-    "disclaimer": "Dit overzicht toont de betalingen die via SmarterBloggers zijn verwerkt. Het vormt geen volledige financiële overzichten.",
+    "disclaimer": "Dit overzicht geeft een beeld van de betalingen die via SmarterBloggers zijn verwerkt. Het vormt geen volledige financiële overzichten.",
     "type_subscription": "Abonnement",
     "type_paid_article": "Betaald artikel",
     "type_paid_newsletter": "Betaalde nieuwsbrief",
@@ -2874,7 +2874,7 @@
     "reversed": "Omgekeerd",
     "dualControlNote": "De goedkeurder moet een andere persoon zijn dan de maker van de invoer (dubbele controle)",
     "immutabilityNote": "Goedgekeurde boekingen kunnen niet meer worden gewijzigd. Gebruik de terugboeking om correcties aan te brengen.",
-    "noEntries": "Er zijn nog geen dagboekvermeldingen.",
+    "noEntries": "Er zijn nog geen dagboekberichten.",
     "balanced": "De boeking is in evenwicht",
     "unbalanced": "De boeking is niet in evenwicht",
     "sales": "Verkoop",
@@ -2923,7 +2923,7 @@
     "cloudflareTip": "Gebruik je Cloudflare? Schakel dan de oranje cloudproxy in op je CNAME-record — SSL wordt dan automatisch afgehandeld, zonder dat je iets extra's hoeft in te stellen.",
     "hostingerTip": "Gebruik je Hostinger? Hostinger staat geen CNAME-record toe op het hoofddomein (@). Voeg in plaats daarvan een omleiding toe van je hoofddomein naar www, en voeg vervolgens alleen het CNAME-record voor \"www\" en het TXT-verificatierecord toe.",
     "recordCname": "Record 1 — CNAME-rootdomein",
-    "recordCnameWww": "Record 2 — CNAME-record voor het subdomein www",
+    "recordCnameWww": "Record 2 — CNAME www-subdomein",
     "recordTxt": "Record 3 — TXT (verificatie)",
     "verifiedDesc": "Je blog staat nu online op dit domein. Bezoekers kunnen de blog rechtstreeks bezoeken.",
     "tabConnect": "Bestaande verbinden",
@@ -2964,7 +2964,7 @@
     "orderFailedTitle": "De registratie voor {domain} is mislukt",
     "orderFailedDesc": "Uw betaling is ontvangen, maar de registratie kon niet worden voltooid: {error}",
     "orderFailedSupport": "Ons team is hiervan op de hoogte gesteld. Mocht dit niet snel worden opgelost, neem dan contact op met de klantenservice.",
-    "orderRefundPendingTitle": "Terugbetaling voor {domain} is in behandeling",
+    "orderRefundPendingTitle": "Terugbetaling voor {domain} wordt momenteel verwerkt",
     "orderRefundPendingDesc": "De registratie is mislukt en de terugbetaling wordt momenteel verwerkt.",
     "orderRefundedTitle": "{domain} — terugbetaald",
     "orderRefundedDesc": "Deze bestelling is terugbetaald nadat de registratie was mislukt.",
@@ -3322,7 +3322,7 @@
       "cancel": "Annuleren",
       "deactivate": "Deactiveren",
       "activate": "Activeren",
-      "confirmDeactivate": "Dit abonnement deactiveren? Dit heeft geen onmiddellijke gevolgen voor de gebruikers ervan.",
+      "confirmDeactivate": "Dit abonnement deactiveren? Huurders die hiervan gebruikmaken, ondervinden hier niet onmiddellijk gevolgen van.",
       "created": "Plan opgesteld",
       "updated": "Plan bijgewerkt",
       "deactivated": "Plan gedeactiveerd",
@@ -3401,7 +3401,10 @@
         "pending": "In behandeling",
         "refunded": "Terugbetaald",
         "failed": "Mislukt",
-        "disputed": "Omstreden"
+        "disputed": "Omstreden",
+        "processing": "Verwerking",
+        "requested": "Aangevraagd",
+        "rejected": "Afgewezen"
       }
     },
     "settings": {
@@ -3427,7 +3430,7 @@
         "platformNameHint": "Wordt weergegeven op openbare pagina’s en in e-mails",
         "supportEmail": "E-mailadres voor ondersteuning",
         "domainMarkup": "Winstmarge bij domeinaankoop (%)",
-        "domainMarkupHint": "Wordt bovenop de prijs van de registrar in rekening gebracht bij elke domeinaankoop en -verlenging — 0 betekent doorverkoop tegen kostprijs",
+        "domainMarkupHint": "Wordt bovenop de prijs van de registrar in rekening gebracht bij elke aankoop en verlenging van een domein — 0 betekent doorverkoop tegen kostprijs",
         "paymentTolerance": "Tolerantie voor cryptobetalingen ($)",
         "paymentToleranceHint": "Een betaling die binnen deze marge van het verwachte bedrag (netwerkkosten, tariefverschil) wordt ontvangen, wordt nog steeds als voltooid beschouwd",
         "kycPricePerYear": "Prijs voor KYC-verificatie ($/jaar)",
@@ -3529,7 +3532,7 @@
       "action_payment_refunded": "Betaling teruggestort",
       "action_affiliate_cashout_requested": "Uitbetaling aangevraagd",
       "action_affiliate_cashout_approved": "Uitbetaling goedgekeurd",
-      "action_affiliate_cashout_rejected": "Uitbetaling geweigerd",
+      "action_affiliate_cashout_rejected": "Uitbetaling afgewezen",
       "action_admin_settings_updated": "Instellingen bijgewerkt",
       "action_admin_plan_updated": "Plan bijgewerkt",
       "action_admin_plan_created": "Plan opgesteld"
@@ -3683,7 +3686,7 @@
     "roles": {
       "title": "Rollen en rechten",
       "breadcrumb": "Administratie",
-      "subtitle": "{count} Geconfigureerde rollen · Volledige machtigingsmatrix",
+      "subtitle": "{count} Geconfigureerde rollen · Volledige machtigingenmatrix",
       "newRole": "Nieuwe functie",
       "permissionMatrix": "Toestemmingsmatrix",
       "permissions": "Toestemmingsmatrix",
@@ -3984,7 +3987,10 @@
       "paid_article": "Betaald artikel",
       "paid_newsletter": "Betaalde nieuwsbrief",
       "ad_campaign": "Advertentie",
-      "domain_purchase": "Aankoop van een domeinnaam"
+      "domain_purchase": "Aankoop van een domeinnaam",
+      "kyc_verification": "KYC-verificatie",
+      "affiliate_commission_payout": "Uitbetaling van affiliatecommissies",
+      "ad_revenue_payout": "Uitbetaling van advertentie-inkomsten"
     },
     "status": {
       "pending": "In behandeling",
@@ -3992,7 +3998,11 @@
       "completed": "Voltooid",
       "failed": "Mislukt",
       "refunded": "Terugbetaald",
-      "disputed": "Omstreden"
+      "disputed": "Omstreden",
+      "requested": "Aangevraagd",
+      "processing": "Verwerking",
+      "paid": "Betaald",
+      "rejected": "Afgewezen"
     }
   },
   "aiBuilder": {

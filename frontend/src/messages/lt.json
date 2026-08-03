@@ -90,7 +90,7 @@
       "successDesc": "Jei turite paskyrą adresu {email}, netrukus gausite nuorodą, kuria galėsite atkurti slaptažodį. Taip pat patikrinkite savo šlamšto aplanką.",
       "errors": {
         "userNotFound": "Šio el. pašto adreso paskyros nerasta.",
-        "generic": "Nepavyko išsiųsti nuorodos, skirtos paskyrai atkurti. Prašome bandyti dar kartą."
+        "generic": "Nepavyko išsiųsti nuorodos paskyrai atkurti. Prašome bandyti dar kartą."
       }
     },
     "resetPassword": {
@@ -192,7 +192,7 @@
       "settingsLabel": "Nustatymai",
       "settingsDesc": "Nustatykite savo tinklaraštį",
       "inviteTeam": "Pakvieskite komandos narį",
-      "viewAnalytics": "Peržiūrėti analizės duomenis",
+      "viewAnalytics": "Peržiūrėti analitinius duomenis",
       "recentArticles": "Naujausi straipsniai",
       "viewAll": "Peržiūrėti viską",
       "noArticles": "Straipsnių dar nėra",
@@ -244,7 +244,7 @@
       "viewOnline": "Peržiūrėti internete"
     },
     "newArticle": "Naujas straipsnis",
-    "noArticlesDesc": "Pradėkite rašyti, kad papildytumėte savo tinklaraštį.",
+    "noArticlesDesc": "Pradėkite rašyti, kad užpildytumėte savo tinklaraštį.",
     "noResults": "Nėra rezultatų",
     "noResultsDesc": "Išbandykite įvairius filtrus.",
     "writeFirst": "Parašykite mano pirmąjį straipsnį",
@@ -266,7 +266,7 @@
     "archiveAction": "Archyvas",
     "deleteAction": "Ištrinti",
     "toastDeleted": "Straipsnis ištrintas.",
-    "toastDeleteError": "Kilo klaida trinant.",
+    "toastDeleteError": "Klaida trinant.",
     "toastPublished": "Straipsnis paskelbtas!",
     "toastArchived": "Straipsnis archyvuotas.",
     "searchPlaceholderShort": "Ieškoti…",
@@ -280,7 +280,7 @@
     "sendAsNewsletter": "Siųsti kaip naujienlaiškį",
     "upgrade": "Atnaujinimas",
     "limitReachedTitle": "Pasiektas straipsnių skaičiaus limitas ({max} / {max})",
-    "limitReachedDesc": "Pasiekėte savo plano straipsnių skaičiaus limitą. Atnaujinkite planą, kad galėtumėte publikuoti daugiau.",
+    "limitReachedDesc": "Pasiekėte savo plano straipsnių skaičiaus limitą. Atnaujinkite planą, kad galėtumėte paskelbti daugiau straipsnių.",
     "limitNearTitle": "Artėjimas prie savo ribos (straipsniai „{used}“ / „{max}“)",
     "limitNearDesc": "Jūs jau išnaudojote daugiau nei 80 % savo plano straipsnių limito.",
     "limitReachedTooltip": "Pasiektas straipsnių skaičiaus limitas — atnaujinkite, kad galėtumėte sukurti daugiau"
@@ -464,7 +464,7 @@
     "seoAiError": "AI SEO klaida.",
     "translationAppliedToast": "Vertimas atliktas.",
     "translationError": "Vertimo klaida.",
-    "contentImprovedToast": "Turinys patobulintas dirbtinio intelekto pagalba!",
+    "contentImprovedToast": "Turinys patobulintas naudojant dirbtinį intelektą!",
     "improveError": "Įvyko klaida atnaujinant turinį.",
     "excerptGeneratedToast": "Ištrauka sugeneruota!",
     "excerptError": "Kilo klaida kuriant ištrauką.",
@@ -619,7 +619,7 @@
     "danger": {
       "title": "Pavojinga zona",
       "deleteBlog": "Ištrinti šį tinklaraštį",
-      "deleteBlogDescription": "Ištrinus šį tinklaraštį, atgal nebus kelio. Visi straipsniai, prenumeratoriai ir duomenys bus negrįžtamai ištrinti.",
+      "deleteBlogDescription": "Ištrinus šį tinklaraštį, šio veiksmo atšaukti nebus galima. Visi straipsniai, prenumeratoriai ir duomenys bus negrįžtamai ištrinti.",
       "deleteButton": "Ištrinti tinklaraštį",
       "confirmTitle": "Ar esi visiškai tikras?",
       "confirmDescription": "Šio veiksmo atšaukti negalima. Įveskite tinklaraščio pavadinimą, kad patvirtintumėte.",
@@ -657,7 +657,7 @@
     "searchPlaceholder": "Ieškoti...",
     "navHome": "Pagrindinis puslapis",
     "navAbout": "Apie",
-    "navContact": "Susisiekite su mumis",
+    "navContact": "Susisiekite",
     "navRss": "RSS srautas",
     "searchResults": "Paieškos rezultatai",
     "categoryLabel": "Kategorija",
@@ -740,7 +740,7 @@
     "aboutValue1Title": "Kokybė",
     "aboutValue1Desc": "Turinys, parengtas kruopščiai ir profesionaliai.",
     "aboutValue2Title": "Skaidrumas",
-    "aboutValue2Desc": "Patikrinta, patikimų šaltinių pagrįsta ir teisinga informacija.",
+    "aboutValue2Desc": "Patikrinta, iš patikimų šaltinių gauta ir teisinga informacija.",
     "aboutValue3Title": "Poveikis",
     "aboutValue3Desc": "Kiekvienas straipsnis suteikia praktinės naudos.",
     "aboutTeamTitle": "Mūsų komanda",
@@ -797,7 +797,7 @@
     "unlockArticle": "Atskleisti šį straipsnį",
     "membersOnlyContent": "Tik nariams skirtas turinys",
     "oneTime": "vienkartinis",
-    "purchaseOnceDesc": "Įsigykite vieną kartą, skaitykite bet kada. Nereikia prenumeratos.",
+    "purchaseOnceDesc": "Pirkite vieną kartą, skaitykite bet kada. Nereikia prenumeratos.",
     "signInToAccessDesc": "Prisijunkite, kad galėtumėte peržiūrėti šį išskirtinį turinį.",
     "buyFor": "Pirkite „{price}“",
     "signInToRead": "Prisijunkite, kad galėtumėte skaityti",
@@ -844,7 +844,7 @@
     "campaignOptionalSectionTitle": "Kampanija (neprivaloma)",
     "startDateLabel": "Pradžios data",
     "endDateLabel": "Pabaigos data",
-    "adTargetingTitle": "Skelbimų tikslų nustatymas",
+    "adTargetingTitle": "Skelbimų tikslinių grupių nustatymas",
     "adTargetingSubtitle": "Pasirinkite, kur turėtų būti rodomas jūsų skelbimas, ir pageidaujamą valiutą.",
     "displayScopeSectionTitle": "Rodymo sritis",
     "scopeGlobalLabel": "Pasaulinis",
@@ -869,7 +869,7 @@
     "totalToPayLabel": "Bendra mokėtina suma",
     "missingBudgetWarning": "Prašome grįžti atgal ir įvesti savo biudžetą, kad galėtumėte tęsti.",
     "whatHappensNextSectionTitle": "Kas bus toliau",
-    "paymentStep1Text": "Spustelėkite žemiau esančią nuorodą „Peržiūrėti ir sumokėti“ – pamatysite savo skelbimo santrauką.",
+    "paymentStep1Text": "Spustelėkite žemiau esantį mygtuką „Peržiūrėti ir sumokėti“ — pamatysite savo skelbimo santrauką.",
     "paymentStep2Text": "Spustelėkite „Sumokėti dabar“ — būsite nukreipti į saugų „NowPayments“ puslapį.",
     "paymentStep3Text": "Apmokėkite kriptovaliuta (USDT, BTC, ETH…) arba kortele per jų platformą.",
     "paymentStep4Text": "Mokėjimas patvirtintas → jūsų skelbimas perduodamas tinklaraščio savininkui peržiūrai.",
@@ -882,7 +882,7 @@
     "companyLabel": "Įmonė",
     "headlineLabel": "Antraštė",
     "imageUrlLabel": "Vaizdo URL",
-    "campaignTargetingSectionLabel": "Kampanijos ir tikslinė auditorija",
+    "campaignTargetingSectionLabel": "Kampanijos ir tikslinė reklama",
     "budgetLabel": "Biudžetas",
     "globalAllReadersLabel": "Visame pasaulyje (visi skaitytojai)",
     "paymentReceivedTitle": "Mokėjimas gautas!",
@@ -919,11 +919,11 @@
       "multiTenantTitle": "Kelių tinklaraščių valdymas",
       "multiTenantDesc": "Valdykite kelis nepriklausomus tinklaraščius iš vienos valdymo panelės. Kiekvienas iš jų turi savo komandą, domeną ir nustatymus.",
       "teamTitle": "Komandos bendradarbiavimas",
-      "teamDesc": "Kvieskite redaktorius, autorius ir skaitytojus. Nustatykite, kas gali rašyti, recenzuoti ir skelbti.",
+      "teamDesc": "Kvieskite redaktorius, autorius ir skaitytojus. Nustatykite, kas gali rašyti, peržiūrėti ir skelbti.",
       "analyticsTitle": "Įdiegtos analizės priemonės",
       "analyticsDesc": "Stebėkite puslapių peržiūras, populiariausius straipsnius ir prenumeratorių skaičiaus augimą naudodamiesi išsamiomis ataskaitomis realiuoju laiku.",
       "seoTitle": "„SEO-first“ redaktorius",
-      "seoDesc": "Įdiegtos dirbtinio intelekto pagrįstos SEO rekomendacijos, automatiniai svetainių žemėlapiai ir struktūruoti duomenys.",
+      "seoDesc": "Įdiegtos dirbtinio intelekto pagrįstos SEO rekomendacijos, automatiniai svetainių žemėlapiai ir struktūrizuoti duomenys.",
       "newsletterTitle": "Įdiegta naujienlaiškio funkcija",
       "newsletterDesc": "Plėskite ir tvarkykite savo prenumeratorių sąrašą be jokių trečiųjų šalių įrankių.",
       "aiTitle": "Dirbtinio intelekto rašymo asistentas",
@@ -1103,7 +1103,7 @@
     "indexing": "Leisti paieškos sistemoms indeksuoti",
     "indexingDesc": "Kai ši funkcija išjungta, „noindex“ nustatymas „robots.txt“ faile nurodo paieškos robotams neindeksuoti jūsų tinklaraščio.",
     "sitemap": "Svetainės žemėlapio URL",
-    "sitemapDesc": "Sukurta automatiškai — pateikite ją „Google Search Console“.",
+    "sitemapDesc": "Sukurta automatiškai — pateikite ją į „Google Search Console“.",
     "copySitemap": "Kopijuoti",
     "copiedSitemap": "Nukopijuota!",
     "schemaOrg": "Įjungti straipsnio struktūrizuotus duomenis (JSON-LD)",
@@ -1115,7 +1115,7 @@
     "badge": "Netrukus",
     "pages": {
       "title": "Statiniai puslapiai",
-      "description": "Sukurkite ir tvarkykite savo tinklaraščio statinius puslapius: „Apie mus“, „Kontaktai“, „Teisinis pranešimas“ ir kt."
+      "description": "Sukurkite ir tvarkykite savo tinklaraščio statinius puslapius: „Apie mus“, „Kontaktai“, „Teisinė informacija“ ir kt."
     },
     "menus": {
       "title": "Meniu valdymas",
@@ -1176,7 +1176,7 @@
     "step3": {
       "label": "Pritaikyti",
       "title": "Pritaikyti savo dizainą",
-      "subtitle": "Kiekvienas pakeitimas matomas dešinėje realiuoju laiku.",
+      "subtitle": "Kiekvienas pakeitimas matomas realiuoju laiku dešinėje pusėje.",
       "publish": "Paskelbti tinklaraštį",
       "publishing": "Skelbiama...",
       "previewLabel": "Peržiūra realiuoju laiku",
@@ -1389,7 +1389,7 @@
     "emailHeader": "El. paštas",
     "nameHeader": "Vardas",
     "statusHeader": "Būklė",
-    "dateHeader": "Užsiprenumeruota",
+    "dateHeader": "Prenumeruota nuo",
     "noCampaigns": "Kol kas nėra jokių kampanijų",
     "noCampaignsDesc": "Sukurkite savo pirmąją naujienlaiškio kampaniją naudodami viršuje esantį mygtuką.",
     "newCampaign": "Nauja kampanija",
@@ -1440,7 +1440,7 @@
     "editorUnderline": "Pabraukti",
     "editorH2": "2 antraštė",
     "editorH3": "3 antraštė",
-    "editorBulletList": "Sąrašas su žymėmis",
+    "editorBulletList": "Sąrašas su punkteliais",
     "editorOrderedList": "Numeruotas sąrašas",
     "editorQuote": "Cituojama",
     "editorImage": "Vaizdas",
@@ -1476,18 +1476,18 @@
     "cancel": "Atšaukti",
     "delete": "Ištrinti",
     "deleteConfirm": "Ištrinti šią žymą?",
-    "deleteWarning": "Ši žyma naudojama {count} straipsnyje (-iuose). Ji bus pašalinta iš visų straipsnių.",
+    "deleteWarning": "Ši žyma naudojama {count} straipsniuose. Ji bus pašalinta iš visų straipsnių.",
     "articles": "{count} straipsnis (-iai)",
     "noArticles": "Nėra straipsnių",
     "merge": "Sujungti su…",
     "mergeTitle": "Sujungti žymes",
-    "mergeDesc": "Sujunkite pasirinktas žymes į vieną. Pasirinktos žymės bus ištrintos.",
+    "mergeDesc": "Sujungti pasirinktas žymes į vieną. Pasirinktos žymės bus ištrintos.",
     "mergeTarget": "Įsilieti į",
     "mergeConfirm": "Sujungti",
     "selectTags": "Pasirinkite žymes, kurias norite sujungti…",
     "renameError": "Klaida pervadinant žymą",
     "deleteError": "Klaida ištrinant žymę",
-    "createError": "Klaida kuriant žymę",
+    "createError": "Klaida kuriant žymą",
     "mergeError": "Klaida sujungiant žymes"
   },
   "apiKeys": {
@@ -1555,17 +1555,17 @@
     "status_rejected": "Atmesta",
     "status_spam": "Šlamštas",
     "status_shadow_banned": "Šešėlis",
-    "banReasonDashboard": "Uždrausta rodyti prietaisų skydelyje"
+    "banReasonDashboard": "Užblokuota prietaisų skydelyje"
   },
   "customization": {
     "title": "Pritaikymas",
-    "subtitle": "Pridėkite į savo tinklaraštį pasirinktinius CSS, skriptus ir šriftus.",
+    "subtitle": "Pridėkite į savo tinklaraštį pasirinktą CSS, skriptus ir šriftus.",
     "save": "Išsaugoti",
     "saved": "Išsaugota!",
     "warning": "Pasirinktas kodas įterpiamas tiesiai į jūsų viešąjį tinklaraštį. Netinkamas CSS arba skriptai gali sugadinti išdėstymą. Atidžiai išbandykite.",
     "cssDesc": "Šie stiliai taikomi visoms jūsų viešojo tinklaraščio puslapiams. Jie pakeičia temos numatytuosius stilius.",
     "headerScripts": "Antraštės skriptai",
-    "headerScriptsDesc": "Įterpiama į „<'head'>“ — idealiai tinka sekimo pikseliams, metagairėms ir „preconnect“ nurodymams.",
+    "headerScriptsDesc": "Įterpiama į „<'head'>“ — puikiai tinka sekimo pikseliams, metagairėms ir „preconnect“ nurodymams.",
     "footerScripts": "Apatinės dalies skriptai",
     "footerScriptsDesc": "Įterpiama prieš „<“/„body“> — idealiai tinka pokalbių valdikliams, analizės įrankiams ir pan.",
     "googleFonts": "„Google Fonts“ URL",
@@ -1596,7 +1596,7 @@
     "activeZones": "Aktyviosios zonos",
     "estimatedRevenue": "Numatomos pajamos",
     "clickRate": "Paspaudimų rodiklis",
-    "adZones": "Reklamų zonos",
+    "adZones": "Reklamos zonos",
     "tip": "Suderinama su „Google AdSense“, „Media.net“, „Amazon Associates“ ir bet kuriuo standartiniu reklamos tinklu."
   },
   "social": {
@@ -1618,7 +1618,7 @@
     "oauthNotice": "OAuth integracijai reikalingi platformos API prisijungimo duomenys. Pirmiausia nustatykite savo raktus aplinkos kintamuosiuose.",
     "autoPostBanner": "Susiekite paskyras ir įjunkite automatinį skelbimą – straipsniai bus automatiškai skelbiami visuose susietuose tinkluose.",
     "autoPostOn": "Automatinis skelbimas: Įjungta",
-    "autoPostOff": "Automatinis skelbimas: išjungtas",
+    "autoPostOff": "Automatinis skelbimas: IŠJUNGTA",
     "disconnected": "Paskyra atjungta",
     "disconnectError": "Klaida atjungiant paskyrą",
     "newPost": "Naujas įrašas",
@@ -1775,7 +1775,7 @@
   },
   "dashboardPage": {
     "greeting": "Sveiki, „{name}“",
-    "subtitle": "Čia pateikiama jūsų sąskaitos apžvalga.",
+    "subtitle": "Čia pateikiama jūsų sąskaitos santrauka.",
     "statsTitle": "Apžvalga",
     "statBlogs": "Tinklaraščiai",
     "statArticles": "Straipsniai",
@@ -1788,7 +1788,7 @@
     "upgradeDesc": "Perjunkite į „Business“ planą, kad galėtumėte kurti daugiau tinklaraščių",
     "manageBlog": "Valdyti",
     "createFirstTitle": "Sukurkite savo pirmąjį tinklaraštį",
-    "createFirstDesc": "Jūsų paskyra jau sukurta. Per kelias sekundes galite pradėti savo pirmąjį tinklaraštį.",
+    "createFirstDesc": "Jūsų paskyra jau sukurta. Per kelias sekundes galėsite paleisti savo pirmąjį tinklaraštį.",
     "createFirstCta": "Sukurti mano tinklaraštį",
     "planCurrent": "Dabartinis planas",
     "planUpgrade": "Atnaujinimas",
@@ -1944,7 +1944,7 @@
     "fieldArticleCount": "Straipsnių skaičius",
     "sectionHero": "Pagrindinis skyrius",
     "sectionFeatured": "Rekomenduojama rubrika",
-    "sectionStats": "Pagrindiniai skaičiai",
+    "sectionStats": "Pagrindiniai rodikliai",
     "sectionMission": "Misija",
     "sectionValues": "Vertybės",
     "sectionTeam": "Komanda",
@@ -2155,7 +2155,7 @@
     "imagePreviewAlt": "Peržiūra",
     "toolbarUnderline": "Pabraukti",
     "toolbarStrikethrough": "Perbraukta",
-    "toolbarBulletList": "Sąrašas su punkteliais",
+    "toolbarBulletList": "Sąrašas su žymėmis",
     "toolbarOrderedList": "Numeruotas sąrašas",
     "toolbarUndo": "Atšaukti",
     "toolbarRedo": "Pakartoti",
@@ -2364,7 +2364,7 @@
     },
     "step2": {
       "title": "Pasirinkite temą",
-      "subtitle": "Šablonas nulemia jūsų viešojo tinklaraščio išvaizdą. Vėliau jį galėsite pakeisti.",
+      "subtitle": "Šablonas nulemia jūsų viešojo tinklaraščio išvaizdą. Jį galėsite pakeisti vėliau.",
       "nextButton": "Toliau — Pritaikyti"
     },
     "step3": {
@@ -2418,7 +2418,7 @@
     "quickCreating": "Kuriama…",
     "quickCreate": "Sukurti mano tinklaraštį",
     "quickSuccess": "Tinklaraštis sukurtas! Peradresuojama…",
-    "domainRequiredNote": "Jūsų tinklaraštis nebus matomas lankytojams, kol neprisijungsite domeno. Sukūrę domeną, eikite į tinklaraščio valdymo skydo puslapį „Domenai“ ir jį sukonfigūruokite.",
+    "domainRequiredNote": "Jūsų tinklaraštis nebus matomas lankytojams, kol neprisijungsite domeno. Sukūrę domeną, eikite į tinklaraščio valdymo skyriuje esantį puslapį „Domenai“ ir jį sukonfigūruokite.",
     "domainStepTitle": "Paskelbkite savo tinklaraštį internete",
     "domainStepSubtitle": "{name} Sukurta! Dabar pridėkite domeną, kad žmonės galėtų jį rasti — arba praleiskite šį žingsnį ir atlikite jį vėliau.",
     "domainOptionBuyTitle": "Įsigykite naują domeną",
@@ -2450,7 +2450,7 @@
     "templateStep2Title": "2 žingsnis — Tinklaraščio duomenys",
     "coverAlt": "Viršelis",
     "okButton": "Gerai",
-    "customColorTitle": "Pasirinktinė spalva",
+    "customColorTitle": "Pasirinkta spalva",
     "cancel": "Atšaukti",
     "templatePermanentTitle": "Šablonas yra nuolatinis.",
     "templatePermanentDesc": "Jūsų šablonas apibrėžia jūsų tinklaraščio vizualinę struktūrą ir jo negalima keisti po sukūrimo. „Studio“ galite pritaikyti spalvas, šriftus, turinį ir visus nustatymus.",
@@ -2469,7 +2469,7 @@
     "templates": {
       "editorial": {
         "tagline": "Švarus · Serifinis · Klasikinis",
-        "description": "„Medium“ / „The Atlantic“ stilius. Koncentruota skaitymo patirtis, išskirtinis herojus, elegantiškas trijų stulpelių išdėstymas."
+        "description": "„Medium“ / „The Atlantic“ stilius. Koncentruota skaitymo patirtis, išskirtinis pagrindinis veikėjas, elegantiškas trijų stulpelių išdėstymas."
       },
       "magazine": {
         "tagline": "Ryškus · Tankus · Dinamiškas",
@@ -2578,7 +2578,7 @@
     "allRead": "Visi perskaityti",
     "markAllRead": "Pažymėti viską kaip perskaitytą",
     "noneTitle": "Pranešimų nėra",
-    "noneDesc": "Čia gausite pranešimus apie svarbius su jūsų paskyra ir tinklaraščiais susijusius atnaujinimus.",
+    "noneDesc": "Čia gausite pranešimus apie svarbius jūsų paskyros ir tinklaraščių atnaujinimus.",
     "pushNotSupported": "Ši naršyklė nepalaiko stumiamųjų pranešimų.",
     "pushEnabled": "Įjungti stumiamieji pranešimai!",
     "pushEnableError": "Nepavyko įjungti „push“ pranešimų.",
@@ -2633,8 +2633,8 @@
     "cashoutProcessedCol": "Apdorota",
     "howItWorks": "Kaip tai veikia",
     "step1": "Pasidalinkite savo unikalia rekomendacijos nuoroda su kitais tinklaraštininkais",
-    "step2": "Kai jie užsiprenumeruoja, jūs uždirbate 10 % jų prenumeratos mokesčio",
-    "step3": "Komisijos kaupiasi, kol pasiekiate 50 JAV dolerių minimalų slenkstį",
+    "step2": "Kai jie užsiprenumeruoja, jūs gaunate 10 % jų prenumeratos mokesčio",
+    "step3": "Komisijos kaupiasi, kol pasiekiate 50 JAV dolerių minimalią ribą",
     "step4": "Prašykite išmokėti pinigus — už kiekvieną išėmimą taikomas 20 $ mokestis",
     "cashoutRequested": "Prašymas išimti pinigus pateiktas!",
     "error": "Klaida",
@@ -2677,7 +2677,7 @@
       },
       "expired": {
         "title": "Reikia pakartotinio patvirtinimo",
-        "description": "Neseniai pakeitėte savo vardą ir pavardę arba šalį, todėl, prieš reaktyvuojant jūsų partnerystės nuorodą, būtina atlikti naują tapatybės patikrinimą. Jei turite likusių iš anksto apmokėtų metų, tai jums nieko papildomai nekainuos.",
+        "description": "Neseniai pakeitėte savo vardą ir pavardę arba šalį, todėl, prieš reaktyvuojant jūsų partnerio nuorodą, būtina atlikti naują tapatybės patikrinimą. Jei turite likusių iš anksto apmokėtų metų, tai jums nieko papildomai nekainuos.",
         "cta": "Pakartotinai patvirtinti mano tapatybę"
       },
       "rejected": {
@@ -2752,7 +2752,7 @@
     "submit": "Apmokėti ir pateikti",
     "submitting": "Rengiamas mokėjimas…",
     "submitError": "Nepavyko paskelbti skelbimo. Prašome bandyti dar kartą.",
-    "budgetRequired": "Įveskite didesnį nei 0 biudžetą.",
+    "budgetRequired": "Įveskite biudžetą, didesnį už 0.",
     "requiredFields": "Prašome užpildyti visus privalomus laukelius.",
     "myAds": "Mano skelbimai",
     "noAds": "Jūs dar nepateikėte nė vieno skelbimo.",
@@ -2779,7 +2779,7 @@
     "sponsoredLabel": "Rėmėjų",
     "openButton": "Atidaryti",
     "targetCountries": "Tikslinės šalys (neprivaloma)",
-    "targetCountriesHint": "Palikite laukelį tuščią, jei norite, kad jūsų skelbimas būtų rodomas lankytojams visur. Pasirinkite vieną ar daugiau šalių, jei norite, kad skelbimas būtų rodomas tik tų šalių lankytojams.",
+    "targetCountriesHint": "Palikite lauką tuščią, kad jūsų skelbimas būtų rodomas lankytojams visur. Pasirinkite vieną ar daugiau šalių, kad skelbimas būtų rodomas tik lankytojams iš tų šalių.",
     "targetCountriesSearch": "Ieškoti šalies…",
     "targetCountriesNoResults": "Nerasta atitinkančios šalies."
   },
@@ -2811,7 +2811,7 @@
     "title": "Pagalba",
     "description": "Jei reikės pagalbos su savo tinklaraščiu, susisiekite su mūsų komanda.",
     "newTicket": "Naujas bilietas",
-    "newTicketTitle": "Pateikti pagalbos užklausą",
+    "newTicketTitle": "Atidaryti pagalbos užklausą",
     "subject": "Tema",
     "subjectPlaceholder": "Pvz., problema su mano pasirinktu domenu",
     "message": "Aprašykite savo problemą",
@@ -2921,7 +2921,7 @@
     "step3Title": "Spustelėkite „Patvirtinti“",
     "step3Desc": "Kai jūsų DNS įrašai bus atnaujinti (paprastai „Cloudflare“ tai užtrunka keletą minučių, kitur – iki 48 val.), spustelėkite atnaujinimo mygtuką šalia savo domeno.",
     "cloudflareTip": "Naudojate „Cloudflare“? Įjunkite oranžinį „Cloudflare“ proxy savo CNAME įraše – tuomet SSL bus tvarkomas automatiškai, nereikės jokio papildomo konfigūravimo.",
-    "hostingerTip": "Naudojatės „Hostinger“ paslaugomis? „Hostinger“ neleidžia nustatyti CNAME įrašo šakninėje (@) srityje. Vietoj to pridėkite nukreipimą iš savo šakninio domeno į „www“, tada pridėkite tik „www“ CNAME įrašą ir TXT patvirtinimo įrašą.",
+    "hostingerTip": "Naudojatės „Hostinger“? „Hostinger“ neleidžia nustatyti CNAME įrašo šakninėje (@) srityje. Vietoj to pridėkite nukreipimą iš savo šakninio domeno į „www“, tada pridėkite tik „www“ CNAME įrašą ir TXT patvirtinimo įrašą.",
     "recordCname": "Įrašas Nr. 1 — CNAME šakninis domenas",
     "recordCnameWww": "Įrašas Nr. 2 — CNAME „www“ subdomenas",
     "recordTxt": "Įrašas Nr. 3 — TXT (patvirtinimas)",
@@ -2991,7 +2991,7 @@
     "nextButton": "Toliau",
     "backButton": "Atgal",
     "verifyButton": "Patikrinti",
-    "doneButton": "Atlikta — dviejų veiksnių autentifikavimas (2FA) įjungtas",
+    "doneButton": "Atlikta — dviejų veiksnių autentifikavimas įjungtas",
     "manualEntry": "Arba įveskite raktą rankiniu būdu",
     "backupWarning": "Šiuos kodus išsaugokite saugioje vietoje. Kiekvieną kodą galima panaudoti tik vieną kartą, kad atkurtumėte prieigą, jei prarastumėte savo įrenginį.",
     "copyBackupCodes": "Nukopijuoti visus kodus",
@@ -3401,7 +3401,10 @@
         "pending": "Laukiama",
         "refunded": "Grąžinta",
         "failed": "Nepavyko",
-        "disputed": "Ginčytinas"
+        "disputed": "Ginčytinas",
+        "processing": "Apdorojimas",
+        "requested": "Prašoma",
+        "rejected": "Atmesta"
       }
     },
     "settings": {
@@ -3450,7 +3453,7 @@
         "defaultLocale": "Numatytasis kalbos nustatymas",
         "maintenance": "Priežiūros režimas",
         "maintenanceHint": "Rodo techninės priežiūros puslapį visiems vartotojams",
-        "maintenanceOn": "Įjungta — prieiga prie platformos neįmanoma",
+        "maintenanceOn": "Įjungta — negalima prisijungti prie platformos",
         "maintenanceOff": "Neįgalieji",
         "registrations": "Pradėta registracija",
         "registrationsHint": "Išjunkite naujų paskyrų blokavimą",
@@ -3469,7 +3472,7 @@
         "webhookSecret": "Webhook slaptažodis",
         "webhookSecretHint": "Būdas, kaip patvirtinti gaunamus „webhook“ pranešimus",
         "regenerate": "Atkurti",
-        "warning": "Iš karto sukūrus naują raktą, senasis tampa negaliojantis. Prieš kurdami naują raktą gamybinėje aplinkoje, atnaujinkite savo integracijas."
+        "warning": "Iš karto sukūrus naują raktą, senasis tampa negaliojantis. Prieš kurdami naują raktą gaminimo aplinkoje, atnaujinkite savo integracijas."
       },
       "integrations": {
         "configured": "Nustatyta",
@@ -3527,9 +3530,9 @@
       "action_payment_pending": "Mokėjimas laukia patvirtinimo",
       "action_payment_failed": "Mokėjimas nepavyko",
       "action_payment_refunded": "Grąžinta suma",
-      "action_affiliate_cashout_requested": "Prašoma išimti pinigus",
+      "action_affiliate_cashout_requested": "Prašoma išmokėti pinigus",
       "action_affiliate_cashout_approved": "Išmoka patvirtinta",
-      "action_affiliate_cashout_rejected": "Išmokėjimas atmestas",
+      "action_affiliate_cashout_rejected": "Išmokėjimo prašymas atmestas",
       "action_admin_settings_updated": "Nustatymai atnaujinti",
       "action_admin_plan_updated": "Planas atnaujintas",
       "action_admin_plan_created": "Planas parengtas"
@@ -3689,7 +3692,7 @@
       "permissions": "Leidimų lentelė",
       "permission": "Leidimas",
       "ofUsers": "komandos narių",
-      "superAdmins": "{count} vyriausiasis administratorius (-iai)",
+      "superAdmins": "{count} vyriausiasis (-ieji) administratorius (-iai)",
       "superAdminDesc": "Visapusiška prieiga prie visų platformos funkcijų ir duomenų",
       "perm": {
         "publish": "Paskelbti turinį",
@@ -3790,7 +3793,7 @@
       "approve": "Patvirtinti",
       "reverse": "Atvirkštinė pusė",
       "reverseTitle": "Sukurti atstatymo įrašą",
-      "reverseDesc": "Šis veiksmas sukuria veidrodinį įrašą (debetas ↔ kreditas) su būsena „Laukia patvirtinimo“.",
+      "reverseDesc": "Šis veiksmas sukuria atspindinį įrašą (debetas ↔ kreditas) su būsena „Laukiama“.",
       "reverseReason": "Panaikinimo priežastis",
       "reverseReasonPlaceholder": "Pvz.: Duomenų įvedimo klaida",
       "unbalancedWarning": "Nesubalansuotas įrašas — patikrinkite eilutes",
@@ -3885,7 +3888,7 @@
       "neverModified": "Niekada nebuvo keista",
       "pageLabel_home": "Pagrindinis puslapis",
       "pageLabel_about": "Apie",
-      "pageLabel_contact": "Susisiekite",
+      "pageLabel_contact": "Susisiekite su mumis",
       "pageLabel_careers": "Karjera",
       "pageLabel_press": "Spauda",
       "pageLabel_changelog": "Pakeitimų sąrašas",
@@ -3903,7 +3906,7 @@
       "fillWithAiButton": "Užpildyti naudojant AI",
       "saveRegenTranslationsButton": "Išsaugoti + atkurti vertimus",
       "saveButton": "Išsaugoti",
-      "contentGeneratedToast": "Sukurta medžiaga — peržiūrėkite ir išsaugokite.",
+      "contentGeneratedToast": "Sukurta turinio versija — peržiūrėkite ir išsaugokite.",
       "aiGenerationFailedToast": "Nepavyko sugeneruoti AI turinio",
       "pageSavedToast": "Puslapis išsaugotas",
       "saveErrorToast": "Klaida",
@@ -3930,7 +3933,7 @@
     "notFound": "Ši kvietimo nuoroda yra negaliojanti, jau priimta arba jos galiojimo laikas pasibaigęs.",
     "errorTitle": "Kvietimo nerasta",
     "acceptedTitle": "Sveiki atvykę!",
-    "acceptedDesc": "Kvietimas priimtas. Perkeliame jus į jūsų tinklaraščius…",
+    "acceptedDesc": "Kvietimas priimtas. Peradresuojame jus į jūsų tinklaraščius…",
     "title": "Tu esi pakviestas!",
     "subtitle": "{name} pakvietė jus bendradarbiauti kuriant tinklaraštį.",
     "blog": "Tinklaraštis",
@@ -3941,7 +3944,7 @@
     "registerBtn": "Sukurti paskyrą",
     "acceptBtn": "Priimti kvietimą",
     "acceptError": "Nepavyko priimti kvietimo.",
-    "expires": "Šis kvietimas galioja iki {date}."
+    "expires": "Šis kvietimas galioja iki „{date}“."
   },
   "cryptoPayment": {
     "title": "Apmokėkite kriptovaliuta (USDT)",
@@ -3984,7 +3987,10 @@
       "paid_article": "Mokamas straipsnis",
       "paid_newsletter": "Mokamas naujienlaiškis",
       "ad_campaign": "Reklama",
-      "domain_purchase": "Domeno įsigijimas"
+      "domain_purchase": "Domeno įsigijimas",
+      "kyc_verification": "KYC patikrinimas",
+      "affiliate_commission_payout": "Partnerių komisinių išmoka",
+      "ad_revenue_payout": "Pajamų iš reklamos išmoka"
     },
     "status": {
       "pending": "Laukiama",
@@ -3992,7 +3998,11 @@
       "completed": "Baigta",
       "failed": "Nepavyko",
       "refunded": "Grąžinta",
-      "disputed": "Ginčytinas"
+      "disputed": "Ginčytinas",
+      "requested": "Prašoma",
+      "processing": "Apdorojimas",
+      "paid": "Apmokėta",
+      "rejected": "Atmesta"
     }
   },
   "aiBuilder": {
@@ -4003,7 +4013,7 @@
     "nicheLabel": "Tinklaraščio tema / niša",
     "nichePlaceholder": "Pvz., rinkodaros patarimai startuoliams, greiti vegetariški receptai, kelionės su kuprine po Pietryčių Aziją…",
     "audienceLabel": "Tikslinė auditorija",
-    "audiencePlaceholder": "Pvz., pradedantieji programuotojai, užimtos mamos, 25–35 metų amžiaus keliautojai su ribotu biudžetu…",
+    "audiencePlaceholder": "Pvz., pradedantieji programuotojai, užimtos mamos, 25–35 metų keliautojai su ribotu biudžetu…",
     "toneLabel": "Rašymo stilius",
     "toneProfessional": "Profesionalus",
     "toneFriendly": "Draugiška ir neformali atmosfera",
@@ -4021,10 +4031,10 @@
     "generateButton": "Sukurti mano tinklaraštį",
     "generatingButton": "Kuriama…",
     "requiredFieldsNote": "* Privalomi laukeliai turi būti užpildyti.",
-    "aiCreditsNote": "Ši veiksmo vykdymui sunaudojami AI kreditai. Sukūrimas trunka apie 15–30 sekundžių.",
+    "aiCreditsNote": "Ši veiksmo vykdymui naudojami AI kreditai. Sukūrimas trunka apie 15–30 sekundžių.",
     "successToast": "Tinklaraštis sėkmingai sukonfigūruotas!",
     "planRequiredError": "Reikalingas planas",
-    "generationFailedError": "Sukūrimas nepavyko",
+    "generationFailedError": "Sukūrimo klaida",
     "checkQuotaError": "Patikrinkite savo AI limitą arba pabandykite dar kartą.",
     "doneTitle": "Tavo tinklaraštis jau paruoštas!",
     "doneDesc": "Visas turinys buvo sukurtas ir išsaugotas. Dabar studijoje galite patobulinti kiekvieną skyrių.",

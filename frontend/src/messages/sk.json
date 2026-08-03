@@ -119,13 +119,13 @@
       "successDesc": "Vaša e-mailová adresa bola potvrdená. Teraz sa môžete prihlásiť do svojho účtu.",
       "backToLogin": "Prejsť na prihlásenie",
       "errors": {
-        "expiredCode": "Platnosť tohto overovacieho odkazu vypršala. Nový odkaz si prosím vyžiadajte na prihlasovacej stránke.",
+        "expiredCode": "Platnosť tohto overovacieho odkazu vypršala. Požiadajte o nový odkaz na stránke prihlásenia.",
         "invalidCode": "Tento overovací odkaz je neplatný alebo už bol použitý."
       }
     }
   },
   "dashboard": {
-    "title": "Nástrojová doska",
+    "title": "Nástenná doska",
     "welcome": "Vitaj späť, {name}!",
     "overview": "Tu je prehľad vašich blogov",
     "yourBlogs": "Vaše blogy",
@@ -279,10 +279,10 @@
     "countPlural": "{n} články",
     "sendAsNewsletter": "Odoslať ako newsletter",
     "upgrade": "Aktualizácia",
-    "limitReachedTitle": "Dosiahol sa limit článkov ({max} / {max})",
+    "limitReachedTitle": "Dosiahnutý limit článkov ({max} / {max})",
     "limitReachedDesc": "Dosiahli ste limit článkov vo vašom pláne. Prejdite na vyšší plán, aby ste mohli publikovať viac.",
     "limitNearTitle": "Blížite sa k svojmu limitu (články na stránkach {used} a {max})",
-    "limitNearDesc": "Vyčerpali ste už viac ako 80 % limitu článkov stanoveného vo vašom pláne.",
+    "limitNearDesc": "Vyčerpali ste viac ako 80 % limitu článkov stanoveného vo vašom pláne.",
     "limitReachedTooltip": "Dosiahol sa limit článkov — prejdite na vyššiu verziu, aby ste mohli vytvoriť ďalšie"
   },
   "pages": {
@@ -311,11 +311,11 @@
       "dynamic": "Dynamický"
     },
     "actions": {
-      "edit": "Upraviť v nástroji Site Builder",
+      "edit": "Upraviť v nástroji na tvorbu webových stránok",
       "publish": "Zverejniť",
       "unpublish": "Zrušiť zverejnenie",
       "makePrivate": "Nastaviť ako súkromné",
-      "setHomepage": "Nastaviť ako úvodnú stránku",
+      "setHomepage": "Nastaviť ako domovskú stránku",
       "delete": "Odstrániť",
       "viewOnline": "Zobraziť online"
     },
@@ -331,7 +331,7 @@
     "deleteDesc": "Túto akciu nie je možné vrátiť späť. Stránka a celý jej obsah budú natrvalo odstránené.",
     "confirmDelete": "Odstrániť",
     "cancel": "Zrušiť",
-    "systemWarning": "Toto je systémová stránka, ktorú nie je možné odstrániť."
+    "systemWarning": "Toto je systémová stránka, ktorú nie je možné vymazať."
   },
   "editor": {
     "titlePlaceholder": "Názov článku...",
@@ -358,7 +358,7 @@
     "createTag": "Vytvorte súbor „{name}“",
     "noTagsFound": "Nenašli sa žiadne tagy",
     "visibility": "Viditeľnosť",
-    "visibilityPublic": "Verejnosť",
+    "visibilityPublic": "Verejné",
     "visibilityPublicDesc": "Viditeľné pre všetkých",
     "visibilityPrivate": "Súkromné",
     "visibilityPrivateDesc": "Len pre členov",
@@ -563,8 +563,8 @@
       "emailLabel": "E-mailová adresa",
       "emailPlaceholder": "colleague@example.com",
       "roleLabel": "Úloha",
-      "messageLabel": "Osobná správa (voliteľné)",
-      "messagePlaceholder": "Rád by som ťa pozval na spoluprácu na našom blogu...",
+      "messageLabel": "Osobná správa (nepovinné)",
+      "messagePlaceholder": "Rád by som vás pozval na spoluprácu na našom blogu...",
       "sendButton": "Odoslať pozvánku",
       "sending": "Odosielanie...",
       "success": "Pozvánka bola úspešne odoslaná",
@@ -609,7 +609,7 @@
     },
     "appearance": {
       "logo": "Logo",
-      "coverImage": "Obalová fotografia",
+      "coverImage": "Obrázok na obálke",
       "favicon": "Favikona",
       "theme": "Téma",
       "primaryColor": "Základná farba",
@@ -865,7 +865,7 @@
     "currencyHint": "Slúži na oznámenie vášho rozpočtu. Dnes sa neuskutoční žiadna platba.",
     "totalBudgetLabel": "Celkový rozpočet",
     "totalBudgetHint": "Toto je suma, ktorú zaplatíte za zobrazenie vašej reklamy.",
-    "paymentSubtitle": "Vaše reklamné miesto sa bezpečne platí prostredníctvom služby NowPayments – kryptomenou alebo kartou.",
+    "paymentSubtitle": "Vaše reklamné miesto sa bezpečne platí prostredníctvom služby NowPayments – kryptomenou alebo platobnou kartou.",
     "totalToPayLabel": "Celková suma k zaplateniu",
     "missingBudgetWarning": "Vráťte sa, prosím, späť a zadajte svoj rozpočet, aby ste mohli pokračovať.",
     "whatHappensNextSectionTitle": "Čo bude ďalej",
@@ -888,7 +888,7 @@
     "paymentReceivedTitle": "Platba bola prijatá!",
     "paymentReceivedDescPrefix": "Vaša platba bola potvrdená. Váš inzerát bol odoslaný na",
     "paymentReceivedDescSuffix": "na posúdenie.",
-    "paymentReceivedNote": "Po schválení sa vaša reklama automaticky zverejní. Ak budú potrebné nejaké zmeny, majiteľ blogu vás o tom informuje.",
+    "paymentReceivedNote": "Po schválení sa váš inzerát automaticky zverejní. Ak budú potrebné nejaké zmeny, majiteľ blogu vás o tom informuje.",
     "submitAnotherAdButton": "Zverejniť ďalší inzerát",
     "fillRequiredFieldsError": "Pred pokračovaním prosím vyplňte všetky povinné polia.",
     "genericSubmitError": "Niečo sa nepodarilo. Skúste to prosím znova.",
@@ -926,7 +926,7 @@
       "seoDesc": "Návrhy na optimalizáciu pre vyhľadávače (SEO) založené na umelej inteligencii, automatické mapy webu a štruktúrované údaje sú súčasťou systému.",
       "newsletterTitle": "Vstavaný informačný bulletin",
       "newsletterDesc": "Rozširujte a spravujte svoj zoznam odberateľov bez použitia nástrojov tretích strán.",
-      "aiTitle": "Asistent na písanie s využitím umelej inteligencie",
+      "aiTitle": "Asistent pre písanie s využitím umelej inteligencie",
       "aiDesc": "Vytvárajte, vylepšujte, zhrňujte a prekladajte obsah pomocou integrovaných funkcií umelej inteligencie."
     },
     "pricing": {
@@ -962,14 +962,14 @@
       "businessF5": "Neobmedzený newsletter",
       "businessF6": "Viac vlastných domén",
       "businessF7": "Prednostná podpora",
-      "businessF8": "Možnosť „white label“",
+      "businessF8": "Možnosť „white-label“",
       "popular": "Najpopulárnejšie",
       "cta": "Začnite",
       "ctaFree": "Začnite zadarmo"
     },
     "cta": {
       "title": "Ste pripravení spustiť svoj blog?",
-      "subtitle": "Pridajte sa k tisíckam tvorcov obsahu, ktorí dôverujú SmarterBloggers.",
+      "subtitle": "Pridajte sa k tisícom tvorcov obsahu, ktorí dôverujú SmarterBloggers.",
       "button": "Začnite zadarmo — kreditná karta nie je potrebná"
     },
     "footer": {
@@ -1104,7 +1104,7 @@
     "indexingDesc": "Ak je súbor robots.txt nastavený na „noindex“, vyhľadávače nebudú váš blog indexovať.",
     "sitemap": "URL mapy stránok",
     "sitemapDesc": "Automaticky vygenerované — odošlite to do služby Google Search Console.",
-    "copySitemap": "Kopírovať",
+    "copySitemap": "Kópia",
     "copiedSitemap": "Skopírované!",
     "schemaOrg": "Aktivovať štruktúrované údaje článku (JSON-LD)",
     "schemaOrgDesc": "Pomáha vyhľadávačom porozumieť vášmu obsahu a môže umožniť zobrazenie rozšírených výsledkov.",
@@ -1126,7 +1126,7 @@
       "description": "Nastavte si widgety svojho blogu: vyhľadávanie, obľúbené príspevky, kategórie, sociálne siete, newsletter a reklamy v bočnom paneli."
     },
     "seo": {
-      "title": "SEO optimalizácia",
+      "title": "Optimalizácia pre vyhľadávače (SEO)",
       "description": "Nastavte si SEO nastavenia svojho blogu: automatický súbor Sitemap, schema.org, metadáta Open Graph, sledovanie pozícií vo vyhľadávačoch a audit obsahu."
     },
     "customization": {
@@ -1208,7 +1208,7 @@
         "right": "Vpravo",
         "stickyHeader": "Lepivá hlavička",
         "headerStyle": "Štýl záhlavia",
-        "heroEnabled": "Sekcia „Hero“",
+        "heroEnabled": "Sekcia „Hrdina“",
         "featuredPosts": "Vybrané príspevky",
         "categories": "Sekcia „Kategórie“",
         "newsletter": "Sekcia „Newsletter“",
@@ -1238,7 +1238,7 @@
     "step4": {
       "label": "Blog bol zverejnený",
       "title": "Blog bol vytvorený!",
-      "liveAt": "je k dispozícii na adrese",
+      "liveAt": "je k dispozícii na",
       "stats": {
         "articles": "Uverejnené články",
         "template": "Vybraná šablóna",
@@ -1270,14 +1270,14 @@
     "primaryColor": "Základná farba",
     "secondaryColor": "Doplňková farba",
     "headingFont": "Písmo nadpisu",
-    "bodyFont": "Písmo v tele textu",
+    "bodyFont": "Písmo v texte",
     "contentWidth": "Šírka obsahu",
     "sidebarEnabled": "Bočný panel je zapnutý",
     "sidebarPosition": "Pozícia",
     "left": "Vľavo",
     "right": "Vpravo",
     "stickyHeader": "Lepivá hlavička",
-    "heroEnabled": "Sekcia „Hrdina“",
+    "heroEnabled": "Sekcia „Hero“",
     "featuredPosts": "Vybrané príspevky",
     "categoriesSection": "Sekcia „Kategórie“",
     "newsletterSection": "Sekcia „Newsletter“",
@@ -1287,7 +1287,7 @@
     "seoMetaPlaceholder": "Popis pre vyhľadávače...",
     "widths": {
       "narrow": "Úzke",
-      "standard": "Štandardný",
+      "standard": "Štandard",
       "wide": "Široký",
       "full": "Celá šírka"
     },
@@ -1369,7 +1369,7 @@
     "noCategories": "Žiadne kategórie",
     "noCategoriesDesc": "Vytvorte si hore svoju prvú kategóriu.",
     "deleteTitle": "Chcete túto kategóriu odstrániť?",
-    "deleteDesc": "Články v tejto kategórii nebudú vymazané, ale stratia príslušnosť k tejto kategórii.",
+    "deleteDesc": "Články v tejto kategórii nebudú vymazané, ale stratia svoju kategóriu.",
     "article": "článok",
     "articles": "články"
   },
@@ -1398,7 +1398,7 @@
     "campaignSubject": "Predmet správy",
     "campaignSubjectPlaceholder": "Naše najnovšie správy a aktuality…",
     "campaignPreview": "Náhľad textu",
-    "campaignPreviewPlaceholder": "Krátka upútavka zobrazená v doručenej pošte…",
+    "campaignPreviewPlaceholder": "Krátky upútavkový klip zobrazený v doručenej pošte…",
     "campaignBody": "Text e-mailu (HTML)",
     "campaignBodyPlaceholder": "<p>Ahoj {{first_name}},</p><p>…</p>",
     "cancel": "Zrušiť",
@@ -1420,7 +1420,7 @@
     "campaignScheduled": "Naplánovaná kampaň",
     "sentAt": "Odoslané",
     "import": "Importovať CSV",
-    "importSuccess": "Importovaní odberatelia z {imported} ({skipped} boli vynechaní)",
+    "importSuccess": "Importovaní odberatelia z {imported} ({skipped} boli vynechané)",
     "importError": "Import sa nepodaril",
     "filterByTag": "Štítok",
     "allTags": "Všetko",
@@ -1633,7 +1633,7 @@
     "cancel": "Zrušiť",
     "noPosts": "Zatiaľ žiadne príspevky",
     "noPostsDesc": "Najskôr sa prihláste do účtu a potom vytvorte svoj prvý príspevok.",
-    "postDeleted": "Príspevok bol vymazaný",
+    "postDeleted": "Príspevok bol odstránený",
     "postDeleteError": "Chyba pri mazaní príspevku",
     "save": "Uložiť",
     "saved": "Uložené!",
@@ -1757,7 +1757,7 @@
     "createFirst": "Vytvorte si svoj prvý blog",
     "createFirstDesc": "Vyberte si názov, tému a spustite svoj blog behom niekoľkých sekúnd.",
     "createFirstCta": "Vytvoriť môj prvý blog",
-    "createNew": "Vytvorte nový blog",
+    "createNew": "Vytvoriť nový blog",
     "manage": "Spravovať",
     "view": "Zobraziť",
     "limitReached": "Limit bol dosiahnutý",
@@ -1769,7 +1769,7 @@
     "searchPlaceholder": "Vyhľadávať…",
     "noSearchResults": "Žiadne výsledky pre „{q}“",
     "noSearchResultsHint": "Skúste iný výraz.",
-    "blogsCount": "{count} vytvorenie blogu",
+    "blogsCount": "{count} vytvorený blog",
     "blogsCountPlural": "{count} vytvorené blogy",
     "viewBlogTitle": "Zobraziť blog"
   },
@@ -1841,7 +1841,7 @@
     "sectionSocial": "Sociálne siete",
     "fieldBlogName": "Názov blogu",
     "fieldDescription": "Popis",
-    "fieldDescriptionHint": "Zobrazuje sa v pätičke a v meta tagoch pre SEO.",
+    "fieldDescriptionHint": "Zobrazuje sa v pätičke a v meta údajoch pre SEO.",
     "fieldThumbnail": "Miniatúra",
     "fieldThumbnailHint": "Obrázok zobrazený na vašom riadiacom paneli a v kartách blogu.",
     "fieldAddress": "Adresa",
@@ -1851,7 +1851,7 @@
     "fieldRss": "RSS kanál",
     "sectionDesign": "Dizajn",
     "fieldLogo": "Logo",
-    "fieldFavicon": "Favikona",
+    "fieldFavicon": "Favicon",
     "fieldCoverImage": "Obalová fotografia",
     "fieldFontFamily": "Písmo",
     "fieldSocialLinks": "Odkazy na sociálne siete",
@@ -2027,7 +2027,7 @@
     "memberBio": "Životopis",
     "memberAvatar": "URL avatara",
     "blogTitleSavedToast": "Nastavenia boli uložené!",
-    "headerSavedToast": "Nadpis bol uložený!",
+    "headerSavedToast": "Záhlavie bolo uložené!",
     "footerSavedToast": "Pätica bola uložená!",
     "homeSavedToast": "Domovská stránka uložená!",
     "aboutSavedToast": "Stránka „O nás“ bola uložená!",
@@ -2078,7 +2078,7 @@
     "fieldMetaDescDefault": "Predvolený meta popis",
     "fieldMetaDescDefaultHint": "Odporúčané: 160 znakov. Zobrazuje sa pod nadpisom v Google.",
     "seoCharCount": "{n} / 160 znakov",
-    "fieldOgImageHint": "Zobrazuje sa pri zdieľaní na Twitteri, LinkedIn a Facebooku. Ideálny rozmer je 1200×630 px.",
+    "fieldOgImageHint": "Zobrazuje sa pri zdieľaní na Twitteri, LinkedIn a Facebooku. Ideálna veľkosť je 1200×630 px.",
     "seoSitemap": "Mapa webu vo formáte XML",
     "seoRssFeed": "RSS kanál",
     "seoView": "Zobraziť",
@@ -2120,7 +2120,7 @@
     "catToastDeleted": "Kategória bola odstránená.",
     "catToastDeleteError": "Pri odstraňovaní kategórie došlo k chybe.",
     "catNoneTitle": "Žiadne kategórie",
-    "catNoneDesc": "Vytvorte si prvú kategóriu, aby ste si usporiadali svoje články.",
+    "catNoneDesc": "Vytvorte si svoju prvú kategóriu, aby ste si usporiadali články.",
     "catClickToEdit": "Kliknite na kategóriu, ktorú chcete upraviť.",
     "catNewButton": "Nová kategória",
     "articleSave": "Uložiť",
@@ -2239,12 +2239,12 @@
     "imageFieldChange": "Zmena",
     "imageFieldUploading": "Nahrávanie…",
     "imageFieldAdd": "Pridať obrázok",
-    "navLinkLabel": "Názov",
+    "navLinkLabel": "Štítok",
     "navLinkUrlPlaceholder": "/page alebo https://...",
     "navLinkAdd": "Pridať odkaz",
     "arrayItemDefault": "Číslo položky{n}",
     "arrayAdd": "Pridať",
-    "defaultSubscribeLabel": "Prihlásiť sa k odberu",
+    "defaultSubscribeLabel": "Prihlásiť sa na odber",
     "placeholderHeroTitle": "Vybrané",
     "placeholderExplore": "Objavovať",
     "placeholderNewsletterTitle": "Buďte v obraze",
@@ -2364,7 +2364,7 @@
     },
     "step2": {
       "title": "Vyberte si tému",
-      "subtitle": "Šablóna určuje vzhľad vášho verejného blogu. Neskôr ju môžete zmeniť.",
+      "subtitle": "Šablóna určuje vzhľad vášho verejného blogu. Môžete ju neskôr zmeniť.",
       "nextButton": "Ďalej — Prispôsobiť"
     },
     "step3": {
@@ -2414,7 +2414,7 @@
     "quickCoverLabel": "Miniatúra blogu",
     "quickCoverOptional": "(voliteľné)",
     "quickCoverPlaceholder": "https://example.com/image.jpg",
-    "quickCoverError": "Neplatná URL adresa alebo nedostupný obrázok",
+    "quickCoverError": "Neplatná adresa URL alebo nedostupný obrázok",
     "quickCreating": "Vytváranie…",
     "quickCreate": "Vytvoriť môj blog",
     "quickSuccess": "Blog bol vytvorený! Preusmerňujem…",
@@ -2436,7 +2436,7 @@
     "domainSearchEmpty": "Žiadne výsledky — skúste iný názov.",
     "domainSelectButton": "Vybrať",
     "domainTaken": "Zaznamenané",
-    "quickSlugTaken": "Tento názov je už obsadený, prosím, vyberte si iný.",
+    "quickSlugTaken": "Tento názov je už obsadený, vyberte si prosím iný.",
     "quickDescriptionLabel": "Popis",
     "quickDescriptionPlaceholder": "Blog o technológiách, dizajne a podnikaní...",
     "quickNameHint": "Zobrazí sa ako verejný názov vášho blogu. Maximálne 50 znakov.",
@@ -2453,7 +2453,7 @@
     "customColorTitle": "Vlastná farba",
     "cancel": "Zrušiť",
     "templatePermanentTitle": "Šablóna je trvalá.",
-    "templatePermanentDesc": "Vaša šablóna určuje vizuálnu štruktúru vášho blogu a po vytvorení ju už nie je možné zmeniť. V nástroji Studio si môžete prispôsobiť farby, písma, obsah a všetky nastavenia.",
+    "templatePermanentDesc": "Vaša šablóna určuje vizuálnu štruktúru vášho blogu a po vytvorení ju už nie je možné zmeniť. V aplikácii Studio si môžete prispôsobiť farby, písma, obsah a všetky nastavenia.",
     "colors": {
       "blue": "Modrá",
       "violet": "Fialová",
@@ -2477,7 +2477,7 @@
       },
       "creative": {
         "tagline": "Temné · Vizuálne · Pohlcujúce",
-        "description": "Štýl Cargo Collective. Tmavý režim s plným prekrytím, mriežka obrázkov typu „masonry“, rozloženie s dôrazom na vizuálnu stránku."
+        "description": "Štýl Cargo Collective. Tmavý režim s plným prekrytím, mriežka obrázkov typu „masonry“, rozloženie s dôrazom na vizuál."
       },
       "luminary": {
         "tagline": "Prestige · Serif · Literárne",
@@ -2552,7 +2552,7 @@
     "walletSavedToast": "Adresa peňaženky bola úspešne uložená.",
     "walletInvalidAddress": "Neplatná adresa pre vybranú sieť.",
     "walletInvalidTotp": "Neplatný kód 2FA. Skúste to prosím znova.",
-    "walletRequires2FA": "Pred pridaním adresy peňaženky musíte aktivovať dvojfaktorovú autentizáciu.",
+    "walletRequires2FA": "Pred pridaním adresy peňaženky musíte aktivovať dvojfaktorovú autentifikáciu.",
     "avatarChange": "Zmeniť fotografiu",
     "avatarUpdated": "Aktualizovaná profilová fotografia.",
     "avatarError": "Nahratie fotografie sa nepodarilo. Skúste to prosím znova.",
@@ -2663,7 +2663,7 @@
     "walletRequiredDesc": "Na účasť v partnerskom programe a na prijímanie provízií je potrebné mať v systéme zaregistrovanú adresu peňaženky USDT (BEP20/BSC).",
     "walletRequiredCta": "Pridať moju peňaženku",
     "waitingThresholdTitle": "Už to skoro máme!",
-    "waitingThresholdDesc": "Vaše provízie budú automaticky vyplatené hneď, ako váš zostatok dosiahne hodnotu {min}.",
+    "waitingThresholdDesc": "Vaše provízie budú odoslané automaticky, hneď ako váš zostatok dosiahne hodnotu {min}.",
     "gate": {
       "not_started": {
         "title": "Je potrebné overenie totožnosti",
@@ -2702,14 +2702,14 @@
     "resumeVerification": "Overenie životopisu",
     "reverifyExplain": "Ešte vám zostávajú roky z predplatného, takže opätovné overenie vás nebude stáť nič navyše – stačí, keď znovu prejdete procesom overenia totožnosti.",
     "reverifyCta": "Znovu overiť moju totožnosť",
-    "purchaseTitle": "Vyberte si dĺžku trvania overenia",
+    "purchaseTitle": "Vyberte si dĺžku overenia",
     "durationLabel": "Trvanie",
     "customDurationLabel": "Alebo zadajte vlastný počet rokov:",
     "yearsCount": "{count, plural, one {# year} other {# years}}",
     "totalLabel": "Spolu",
     "payCta": "Zaplaťte {amount}ov a overte si účet",
     "paymentConfirmedTitle": "Platba bola potvrdená",
-    "paymentConfirmedDesc": "Začala sa vaša relácia overovania totožnosti — sledujte túto stránku, kde budú uverejnené aktuálne informácie."
+    "paymentConfirmedDesc": "Začala sa vaša relácia overovania totožnosti — sledujte túto stránku, kde budeme zverejňovať aktuálne informácie."
   },
   "invoices": {
     "title": "Faktúry",
@@ -3322,7 +3322,7 @@
       "cancel": "Zrušiť",
       "deactivate": "Deaktivovať",
       "activate": "Aktivovať",
-      "confirmDeactivate": "Deaktivovať tento plán? Nájomcovia, ktorí ho využívajú, nebudú ovplyvnení okamžite.",
+      "confirmDeactivate": "Deaktivovať tento plán? Nájomcovia, ktorí ho využívajú, nebudú týmto krokom bezprostredne ovplyvnení.",
       "created": "Vytvorený plán",
       "updated": "Plán bol aktualizovaný",
       "deactivated": "Plán deaktivovaný",
@@ -3339,7 +3339,7 @@
       "maxDomains": "Maximálny počet vlastných domén (-1 = neobmedzený počet)",
       "features": "Funkcie",
       "featuresHint": "Jedna vlastnosť na riadok",
-      "sortOrder": "Poradie zoradenia",
+      "sortOrder": "Poradie triedenia",
       "isActive": "Aktívny",
       "tenants": "{count} nájomníci",
       "defaultBadge": "Predvolené nastavenie",
@@ -3401,7 +3401,10 @@
         "pending": "V riešení",
         "refunded": "Vrátené",
         "failed": "Neúspešné",
-        "disputed": "Sporné"
+        "disputed": "Sporné",
+        "processing": "Spracovanie",
+        "requested": "Požadované",
+        "rejected": "Zamietnuté"
       }
     },
     "settings": {
@@ -3409,7 +3412,7 @@
       "breadcrumb": "Správa",
       "subtitle": "Globálna konfigurácia služby SmarterBloggers SaaS",
       "saved": "Nastavenia boli uložené",
-      "configured": "Nakonfigurované",
+      "configured": "Nastavené",
       "notConfigured": "Nenastavené",
       "autoSaveNote": "Nastavenia sa pri zmene automaticky uložia.",
       "envNote": "Prístupové údaje pre integráciu sa konfigurujú prostredníctvom premenných prostredia (.env).",
@@ -3472,7 +3475,7 @@
         "warning": "Okamžitá regenerácia kľúča spôsobí neplatnosť starého kľúča. Pred regeneráciou v produkčnom prostredí aktualizujte svoje integrácie."
       },
       "integrations": {
-        "configured": "Nastavené",
+        "configured": "Nakonfigurované",
         "notConfigured": "Nenastavené",
         "configure": "Nastaviť",
         "modify": "Upraviť"
@@ -3491,7 +3494,7 @@
       "title": "Záznam aktivít",
       "breadcrumb": "Správa",
       "subtitle": "{count} udalosti · {errors} chyby · {warnings} varovania",
-      "empty": "Zatiaľ nie sú žiadne záznamy",
+      "empty": "Zatiaľ nie sú k dispozícii žiadne záznamy",
       "retention": "Doba uchovávania protokolov: 90 dní · Možnosť exportu do formátu CSV",
       "level": {
         "info": "Informácie",
@@ -3790,7 +3793,7 @@
       "approve": "Schváliť",
       "reverse": "Späť",
       "reverseTitle": "Vytvoriť stornovaciu položku",
-      "reverseDesc": "Táto operácia vytvorí zrkadlový záznam (debet ↔ kredit) so stavom „Čaká na spracovanie“.",
+      "reverseDesc": "Táto operácia vytvorí zrkadlový záznam (debet↔kredit) so stavom „Čaká na spracovanie“.",
       "reverseReason": "Dôvod zrušenia",
       "reverseReasonPlaceholder": "napr.: Chyba pri vkladaní údajov",
       "unbalancedWarning": "Nesúmerný záznam — skontrolujte riadky",
@@ -3807,7 +3810,7 @@
         "2": "Trieda 2 – Záväzky",
         "3": "Trieda 3 — Akcie",
         "4": "Trieda 4 — Príjmy",
-        "5": "Trieda 5 – Výdavky"
+        "5": "Trieda 5 — Výdavky"
       },
       "journalTypes": {
         "general": "Všeobecné informácie",
@@ -3927,7 +3930,7 @@
   "acceptInvite": {
     "loading": "Načítava sa pozvánka…",
     "noToken": "V adrese URL nebol nájdený žiadny token pozvánky.",
-    "notFound": "Tento pozývací odkaz je neplatný, už bol prijatý alebo jeho platnosť vypršala.",
+    "notFound": "Tento pozývací odkaz je neplatný, už bol prijatý alebo vypršala jeho platnosť.",
     "errorTitle": "Pozvánka nebola nájdená",
     "acceptedTitle": "Vitajte na palube!",
     "acceptedDesc": "Pozvánka bola prijatá. Presmerovávame vás na vaše blogy…",
@@ -3975,7 +3978,7 @@
     "filterPending": "V riešení",
     "filterPartial": "Čiastočné",
     "filterFailed": "Neúspešné",
-    "empty": "Zatiaľ neboli vykonané žiadne platby.",
+    "empty": "Zatiaľ neboli uskutočnené žiadne platby.",
     "received": "Doposiaľ prijatých {amount}",
     "resume": "Životopis",
     "resumeError": "Túto platbu sa nepodarilo obnoviť. Skúste to prosím znova.",
@@ -3984,7 +3987,10 @@
       "paid_article": "Platený článok",
       "paid_newsletter": "Platený spravodajský bulletin",
       "ad_campaign": "Reklama",
-      "domain_purchase": "Kúpa domény"
+      "domain_purchase": "Kúpa domény",
+      "kyc_verification": "Overenie KYC",
+      "affiliate_commission_payout": "Výplata provízie partnerom",
+      "ad_revenue_payout": "Výplata príjmov z reklamy"
     },
     "status": {
       "pending": "V riešení",
@@ -3992,12 +3998,16 @@
       "completed": "Dokončené",
       "failed": "Neúspešné",
       "refunded": "Vrátené",
-      "disputed": "Sporné"
+      "disputed": "Sporné",
+      "requested": "Požadované",
+      "processing": "Spracovanie",
+      "paid": "Platené",
+      "rejected": "Zamietnuté"
     }
   },
   "aiBuilder": {
     "title": "Nástroj na tvorbu blogov s umelou inteligenciou",
-    "subtitle": "Odpovedzte na niekoľko otázok a umelá inteligencia vám blog kompletne nakonfiguruje: úvodnú stránku, sekciu „O nás“, kontaktné údaje, SEO, hlavičku, pätičku a ďalšie.",
+    "subtitle": "Odpovedzte na niekoľko otázok a umelá inteligencia vám blog kompletne nakonfiguruje: úvodnú stránku, sekciu „O nás“, kontaktné údaje, SEO, hlavičku, pätičku a ďalšie prvky.",
     "brandNameLabel": "Blog / názov značky",
     "brandNamePlaceholder": "napr. TechFlow, Easy Cooking, Zero Travel…",
     "nicheLabel": "Téma blogu / špecializácia",
@@ -4009,7 +4019,7 @@
     "toneFriendly": "Priateľská a neformálna atmosféra",
     "toneInspiring": "Inšpirujúce",
     "toneEducational": "Vzdelávacie",
-    "toneBold": "Odvážne a priamočiare",
+    "toneBold": "Odvážne a priame",
     "languageLabel": "Jazyk blogu",
     "colorLabel": "Základná farba",
     "colorBlue": "Modrá",
@@ -4027,7 +4037,7 @@
     "generationFailedError": "Generovanie sa nepodarilo",
     "checkQuotaError": "Skontrolujte si kvótu pre AI alebo to skúste znova.",
     "doneTitle": "Tvoj blog je pripravený!",
-    "doneDesc": "Všetok obsah bol vygenerovaný a uložený. Teraz môžete v štúdiu doladiť každú časť.",
+    "doneDesc": "Všetok obsah bol vygenerovaný a uložený. Teraz môžete v štúdiu doladiť každú sekciu.",
     "viewGeneralSettings": "Zobraziť všeobecné nastavenia",
     "viewHome": "Zobraziť domovskú stránku"
   }

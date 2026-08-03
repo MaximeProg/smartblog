@@ -10,11 +10,15 @@ import SAPagination from '@/components/superadmin/SAPagination';
 const PAGE_SIZE = 15;
 
 const STATUS_CLS: Record<string, string> = {
-  completed: 'text-emerald-500 bg-emerald-500/10',
-  pending:   'text-amber-500  bg-amber-500/10',
-  refunded:  'text-blue-500   bg-blue-500/10',
-  failed:    'text-red-500    bg-red-500/10',
-  disputed:  'text-purple-500 bg-purple-500/10',
+  completed:  'text-emerald-500 bg-emerald-500/10',
+  pending:    'text-amber-500  bg-amber-500/10',
+  refunded:   'text-blue-500   bg-blue-500/10',
+  failed:     'text-red-500    bg-red-500/10',
+  disputed:   'text-purple-500 bg-purple-500/10',
+  paid:       'text-emerald-500 bg-emerald-500/10',
+  processing: 'text-amber-500  bg-amber-500/10',
+  requested:  'text-slate-400  bg-slate-400/10',
+  rejected:   'text-red-500    bg-red-500/10',
 };
 
 function fmtDate(s: string) {
@@ -120,11 +124,11 @@ export default function PaymentsPage() {
                 {rows.map((tx: SATransaction) => (
                   <tr key={tx.id} className="hover:bg-[var(--sa-surface)] transition-colors">
                     <td className="px-4 py-2.5 whitespace-nowrap font-mono text-[10px]" style={{ color: 'var(--sa-text-3)' }}>{fmtDate(tx.created_at)}</td>
-                    <td className="px-4 py-2.5 font-semibold" style={{ color: 'var(--sa-text)' }}>{tx.tenant_name}</td>
+                    <td className="px-4 py-2.5 font-semibold" style={{ color: 'var(--sa-text)' }}>{tx.tenant_name ?? '—'}</td>
                     <td className="px-4 py-2.5" style={{ color: 'var(--sa-text-3)' }}>{tx.user_email ?? '—'}</td>
-                    <td className="px-4 py-2.5 capitalize" style={{ color: 'var(--sa-text-2)' }}>{tx.type.replace('_', ' ')}</td>
-                    <td className="px-4 py-2.5 font-bold tabular-nums" style={{ color: 'var(--sa-text)' }}>
-                      ${tx.amount.toFixed(2)} <span className="text-[10px] font-normal" style={{ color: 'var(--sa-text-3)' }}>{tx.currency}</span>
+                    <td className="px-4 py-2.5 capitalize" style={{ color: 'var(--sa-text-2)' }}>{tx.type.replace(/_/g, ' ')}</td>
+                    <td className="px-4 py-2.5 font-bold tabular-nums" style={{ color: tx.direction === 'out' ? '#ef4444' : 'var(--sa-text)' }}>
+                      {tx.direction === 'out' ? '-' : ''}${tx.amount.toFixed(2)} <span className="text-[10px] font-normal" style={{ color: 'var(--sa-text-3)' }}>{tx.currency}</span>
                     </td>
                     <td className="px-4 py-2.5 capitalize" style={{ color: 'var(--sa-text-3)' }}>{tx.gateway}</td>
                     <td className="px-4 py-2.5">

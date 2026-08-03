@@ -87,7 +87,7 @@
       "sending": "Sender...",
       "backToLogin": "Tilbage til login",
       "successTitle": "Linket er sendt!",
-      "successDesc": "Hvis der findes en konto til {email}, vil du om kort tid modtage et link til at nulstille adgangskoden. Tjek også din spam-mappe.",
+      "successDesc": "Hvis der findes en konto til {email}, vil du snart modtage et link til at nulstille adgangskoden. Tjek også din spam-mappe.",
       "errors": {
         "userNotFound": "Der blev ikke fundet nogen konto til denne e-mailadresse.",
         "generic": "Det var ikke muligt at sende linket til nulstilling. Prøv venligst igen."
@@ -131,7 +131,7 @@
     "yourBlogs": "Dine blogs",
     "createBlog": "Opret en blog",
     "noBlogs": "Der er endnu ingen blogindlæg",
-    "noBlogsDescription": "Opret din første blog, så du kan begynde at udgive indlæg",
+    "noBlogsDescription": "Opret din første blog, så du kan komme i gang med at udgive indlæg",
     "stats": {
       "articles": "Artikler",
       "subscribers": "Abonnenter",
@@ -169,7 +169,7 @@
       "descriptionOptional": "(valgfrit)",
       "backToDashboard": "Tilbage til oversigtssiden",
       "limitTitle": "Bloggrænsen er nået",
-      "limitDesc": "Med din »{plan}«-plan kan du oprette {max}. Opgrader til Business for at oprette flere.",
+      "limitDesc": "Med din »{plan}«-abonnement kan du oprette {max}. Opgrader til Business for at oprette flere.",
       "limitViewPlans": "Se tegninger",
       "limitBack": "Gå tilbage"
     },
@@ -387,7 +387,7 @@
       "link": "Link",
       "image": "Billede",
       "undo": "Fortryd",
-      "redo": "Gør om"
+      "redo": "Gentag"
     },
     "placeholder": "Begynd at skrive din artikel...",
     "undo": "Fortryd",
@@ -639,7 +639,7 @@
     "subscribeButton": "Abonner",
     "subscribeSuccess": "Du er nu tilmeldt! Tjek din indbakke.",
     "noArticles": "Der er endnu ikke offentliggjort nogen artikler",
-    "noArticlesDesc": "Kig forbi igen snart for nyt indhold",
+    "noArticlesDesc": "Kig forbi igen snart for at se nyt indhold",
     "backToBlog": "Tilbage til bloggen",
     "shareOn": "Del på",
     "tableOfContents": "Indholdsfortegnelse",
@@ -649,7 +649,7 @@
     "allCategories": "Se alle kategorier",
     "navigation": "Navigation",
     "subscribeFree": "Abonner gratis",
-    "poweredBy": "Drevet af",
+    "poweredBy": "Leveret af",
     "stayInformed": "Hold dig opdateret",
     "subscribeSending": "Sender...",
     "subscribeError": "Der opstod en fejl. Prøv igen.",
@@ -675,7 +675,7 @@
     "comments": "Kommentarer",
     "commentLabel": "Kommentar",
     "commentPublished": "Kommentaren er blevet offentliggjort!",
-    "commentPending": "Tak! Din kommentar er sendt til godkendelse og vil blive vist, så snart den er godkendt.",
+    "commentPending": "Tak! Din kommentar afventer godkendelse og vises, så snart den er godkendt.",
     "commentSubmitButton": "Skriv en kommentar",
     "beFirstToComment": "Vær den første til at kommentere denne artikel.",
     "replyButton": "Svar",
@@ -704,14 +704,14 @@
     "seeAllAuthorArticles": "Se alle deres artikler",
     "commentFormNamePlaceholder": "Dit navn",
     "commentFormEmailPlaceholder": "email@example.com",
-    "commentFormPlaceholder": "Del dine tanker, erfaringer eller still et spørgsmål…",
+    "commentFormPlaceholder": "Del dine tanker og erfaringer, eller still et spørgsmål…",
     "backToArticles": "Tilbage til artiklerne",
     "leaveComment": "Skriv en kommentar",
     "commentFormNameLabel": "Navn",
     "commentFormEmailLabel": "E-mail",
     "commentFormEmailNote": "(ikke offentliggjort)",
     "commentFormEmailPrivacy": "Din e-mailadresse vil aldrig blive vist eller videregivet.",
-    "youMightAlsoLike": "Det her kunne også være noget for dig",
+    "youMightAlsoLike": "Det her kunne også interessere dig",
     "contactTitle": "Kontakt os",
     "contactSubtitle": "Kontakt",
     "contactDesc": "Har du et spørgsmål? En idé? Vi lytter gerne.",
@@ -864,7 +864,7 @@
     "currencyLabel": "Valuta",
     "currencyHint": "Bruges til at oplyse om dit budget. Der opkræves ingen betaling i dag.",
     "totalBudgetLabel": "Samlet budget",
-    "totalBudgetHint": "Dette er det beløb, du skal betale for at vise din annonce.",
+    "totalBudgetHint": "Dette er det beløb, du skal betale for at få din annonce vist.",
     "paymentSubtitle": "Betalingen for din annonceplads foregår sikkert via NowPayments — med kryptovaluta eller kort.",
     "totalToPayLabel": "Samlet beløb, der skal betales",
     "missingBudgetWarning": "Gå venligst tilbage og indtast dit budget for at fortsætte.",
@@ -934,7 +934,7 @@
       "subtitle": "Kom i gang gratis. Opgrader i takt med, at din virksomhed vokser.",
       "starterName": "Forret",
       "starterPrice": "Gratis",
-      "starterDesc": "For personer, der er ved at komme i gang",
+      "starterDesc": "For personer, der er nye i faget",
       "starterF1": "1 blog",
       "starterF2": "Op til 5 forfattere",
       "starterF3": "10 GB lagerplads",
@@ -1064,7 +1064,7 @@
     "addSubItem": "Tilføj underpunkt",
     "itemProperties": "Vareegenskaber",
     "itemLabel": "Etiket",
-    "labelOverrideHint": "Lad feltet være tomt for at bruge sidens titel",
+    "labelOverrideHint": "Lad feltet stå tomt for at bruge sidens titel",
     "openNewTab": "Åbn i en ny fane",
     "empty": "Denne menu er tom",
     "emptyHint": "Tilføj sider eller brugerdefinerede links fra venstre panel.",
@@ -1101,7 +1101,7 @@
     "twitterSummary": "Resumé",
     "twitterSummaryLarge": "Oversigt med stort billede",
     "indexing": "Tillad indeksering af søgemaskiner",
-    "indexingDesc": "Når den er deaktiveret, fortæller en »noindex«-angivelse i robots.txt-filen søgerobotterne, at de ikke skal indeksere din blog.",
+    "indexingDesc": "Når den er deaktiveret, fortæller en robots.txt-fil med »noindex«, at søgerobotterne ikke skal indeksere din blog.",
     "sitemap": "URL til indholdsfortegnelse",
     "sitemapDesc": "Genereret automatisk — indsend den til Google Search Console.",
     "copySitemap": "Kopier",
@@ -1131,7 +1131,7 @@
     },
     "customization": {
       "title": "Avanceret tilpasning",
-      "description": "Redigeringsværktøj til brugerdefineret CSS, indsættelse af scripts, tilpasning af sektioner på hver enkelt side og avanceret skabelonredigeringsværktøj."
+      "description": "Redigeringsværktøj til brugerdefineret CSS, indsættelse af script, tilpasning af sektioner pr. side og avanceret skabelonredigeringsværktøj."
     }
   },
   "blogCreate": {
@@ -1141,11 +1141,11 @@
     "backToDashboard": "Tilbage til oversigtssiden",
     "mobileStep": "Trin {step} / 4",
     "errors": {
-      "createFailed": "Det lykkedes ikke at oprette bloggen. Prøv venligst igen."
+      "createFailed": "Det lykkedes ikke at oprette bloggen. Prøv igen."
     },
     "limit": {
       "title": "Bloggrænsen er nået",
-      "desc": "Med din »{plan}«-plan kan du oprette {max}. Opgrader til Business for at oprette flere.",
+      "desc": "Med din »{plan}«-abonnement kan du oprette {max}. Opgrader til Business for at oprette flere.",
       "viewPlans": "Se tegninger",
       "back": "Tilbage"
     },
@@ -1200,7 +1200,7 @@
         "primaryColor": "Primærfarve",
         "secondaryColor": "Sekundærfarve",
         "headingFont": "Overskriftsskrifttype",
-        "bodyFont": "Tekststørrelse",
+        "bodyFont": "Tekstfont",
         "contentWidth": "Indholdets bredde",
         "sidebarEnabled": "Sidebjælke aktiveret",
         "sidebarPosition": "Sidebarens placering",
@@ -1238,7 +1238,7 @@
     "step4": {
       "label": "Blogindlæg offentliggjort",
       "title": "Bloggen er oprettet!",
-      "liveAt": "er live på",
+      "liveAt": "kan ses live på",
       "stats": {
         "articles": "Udgivne artikler",
         "template": "Valgt skabelon",
@@ -1270,7 +1270,7 @@
     "primaryColor": "Primærfarve",
     "secondaryColor": "Sekundærfarve",
     "headingFont": "Overskriftsskrifttype",
-    "bodyFont": "Tekstfont",
+    "bodyFont": "Tekststørrelse",
     "contentWidth": "Indholdets bredde",
     "sidebarEnabled": "Sidebjælke aktiveret",
     "sidebarPosition": "Stillingsbetegnelse",
@@ -1482,9 +1482,9 @@
     "merge": "Flet ind i…",
     "mergeTitle": "Flet tags",
     "mergeDesc": "Flet de valgte tags til ét. De valgte tags vil blive slettet.",
-    "mergeTarget": "Kør ind i",
+    "mergeTarget": "Flet ind i",
     "mergeConfirm": "Flet",
-    "selectTags": "Vælg tags, der skal sammenlægges…",
+    "selectTags": "Vælg tags, der skal slås sammen…",
     "renameError": "Fejl ved omdøbning af tag",
     "deleteError": "Fejl ved sletning af tag",
     "createError": "Fejl ved oprettelse af tag",
@@ -1549,7 +1549,7 @@
     "shadowBan": "Skjult udelukkelse",
     "banAuthor": "Forfatteren af forbuddet",
     "banSuccess": "Forfatter udelukket",
-    "banError": "Fejl ved spærring af forfatter",
+    "banError": "Fejl ved udelukkelse af forfatter",
     "status_pending": "Afventer",
     "status_approved": "Godkendt",
     "status_rejected": "Afvist",
@@ -1562,7 +1562,7 @@
     "subtitle": "Tilføj brugerdefineret CSS, scripts og skrifttyper til din blog.",
     "save": "Gem",
     "saved": "Gemt!",
-    "warning": "Brugerdefineret kode indsættes direkte i din offentlige blog. Ugyldig CSS eller scripts kan ødelægge layoutet. Test det omhyggeligt.",
+    "warning": "Brugerdefineret kode indsættes direkte i din offentlige blog. Ugyldig CSS eller scripts kan forstyrre layoutet. Test det omhyggeligt.",
     "cssDesc": "Stilarter, der anvendes på alle sider i din offentlige blog. Overskriver temaets standardstilarter.",
     "headerScripts": "Header-scripts",
     "headerScriptsDesc": "Indsat i '<'head'>' — ideelt til sporingspixels, metatags og preconnect-hints.",
@@ -1575,10 +1575,10 @@
   "widgets": {
     "title": "Widgets",
     "subtitle": "Konfigurer de sidebjælke-widgets, der vises på din offentlige blog.",
-    "desc": "Træk rækkerne for at ændre rækkefølgen. Klik på titlen for at omdøbe den. Slå visning til eller fra for hver enkelt widget.",
+    "desc": "Træk rækkerne for at ændre rækkefølgen. Klik på titlen for at omdøbe den. Slå visningen til eller fra for hver enkelt widget.",
     "save": "Gem",
     "saved": "Gemt!",
-    "tipTitle": "Tip: Klik på en widgets titel for at omdøbe den. Ændringerne træder i kraft på din offentlige blog, når du har gemt dem."
+    "tipTitle": "Tip: Klik på titlen på en widget for at omdøbe den. Ændringerne træder i kraft på din offentlige blog, når du har gemt dem."
   },
   "ai": {
     "title": "AI-assistent",
@@ -1618,7 +1618,7 @@
     "oauthNotice": "OAuth-integration kræver API-adgangskoder til platformen. Konfigurer først dine nøgler i miljøvariablerne.",
     "autoPostBanner": "Forbind konti og aktiver »Auto-post« — artiklerne vil blive offentliggjort automatisk på alle tilknyttede netværk.",
     "autoPostOn": "Automatisk opslag: TIL",
-    "autoPostOff": "Automatisk opslag: FRA",
+    "autoPostOff": "Automatisk opslag: SLÅET FRA",
     "disconnected": "Kontoen er afbrudt",
     "disconnectError": "Fejl ved afmelding af konto",
     "newPost": "Nyt indlæg",
@@ -1926,7 +1926,7 @@
     "fieldReassuranceText": "Tekst til beroligelse",
     "fieldBlockTitle": "Bloktitel",
     "fieldNavLinks": "Navigationslinks",
-    "fieldNavLinksHint": "Træk for at ændre rækkefølgen (kommer snart). Anbefalet maksimalt 6 links.",
+    "fieldNavLinksHint": "Træk for at ændre rækkefølgen (kommer snart). Det anbefales at bruge højst 6 links.",
     "fieldCopyright": "Tekst om ophavsret",
     "fieldDescriptionFooter": "Kort tekst, der vises under logoet i sidefoden.",
     "fieldNewsletterTeaser": "Teaser-tekst",
@@ -2115,7 +2115,7 @@
     "catSave": "Gem",
     "catToastCreated": "Kategorien er oprettet!",
     "catToastCreateError": "Der opstod en fejl ved oprettelsen af kategorien.",
-    "catToastUpdated": "Kategorien er opdateret.",
+    "catToastUpdated": "Kategorien er blevet opdateret.",
     "catToastUpdateError": "Der opstod en fejl under opdatering af kategorien.",
     "catToastDeleted": "Kategorien er slettet.",
     "catToastDeleteError": "Der opstod en fejl ved sletning af kategorien.",
@@ -2430,7 +2430,7 @@
     "backToChoices": "Tilbage",
     "domainConnectLabel": "Dit domæne",
     "domainConnectButton": "Opret forbindelse",
-    "domainConnectHint": "Du får DNS-instruktioner til at afslutte bekræftelsen på siden »Domæner«.",
+    "domainConnectHint": "Du får DNS-instruktioner til at afslutte verifikationen på siden »Domæner«.",
     "domainSearchPlaceholder": "f.eks. myblog",
     "domainSearchButton": "Søg",
     "domainSearchEmpty": "Ingen resultater — prøv med et andet navn.",
@@ -2555,7 +2555,7 @@
     "walletRequires2FA": "Du skal aktivere tofaktorautentificering, før du tilføjer en tegnebogsadresse.",
     "avatarChange": "Skift billede",
     "avatarUpdated": "Profilbilledet er blevet opdateret.",
-    "avatarError": "Det lykkedes ikke at uploade billedet. Prøv venligst igen.",
+    "avatarError": "Det lykkedes ikke at uploade billedet. Prøv igen.",
     "avatarAlt": "avatar",
     "continents": {
       "AF": "Afrika",
@@ -2654,7 +2654,7 @@
     "inviteFriendLanguage": "En vens sprog",
     "inviteFriendMessage": "Din personlige besked",
     "inviteFriendMessagePlaceholder": "Jeg har brugt SmarterBloggers, og jeg tror, du vil synes rigtig godt om det…",
-    "inviteFriendTranslationNote": "Din besked bliver automatisk oversat til din vens sprog.",
+    "inviteFriendTranslationNote": "Din besked oversættes automatisk til din vens sprog.",
     "inviteFriendSend": "Send invitation",
     "inviteSentTitle": "Invitationen er sendt!",
     "inviteSentDesc": "Din invitation er blevet sendt til {email}.",
@@ -2700,7 +2700,7 @@
     },
     "yearsRemaining": "{count, plural, =0 {No prepaid years remaining} one {# prepaid year remaining} other {# prepaid years remaining}}",
     "resumeVerification": "Bekræftelse af CV",
-    "reverifyExplain": "Du har stadig forudbetalte år tilbage, så det koster ikke noget ekstra at få din konto bekræftet igen — du skal blot gennemføre identitetsbekræftelsen endnu en gang.",
+    "reverifyExplain": "Du har stadig forudbetalte år tilbage, så det koster ikke noget ekstra at få det bekræftet igen — du skal blot gennemgå identitetsbekræftelsen endnu en gang.",
     "reverifyCta": "Bekræft min identitet igen",
     "purchaseTitle": "Vælg varigheden af din verifikation",
     "durationLabel": "Varighed",
@@ -2747,7 +2747,7 @@
     "clickUrl": "Mål-URL",
     "clickUrlHint": "Hvor skal besøgende ledes hen, når de klikker på din annonce?",
     "startsAt": "Startdato",
-    "endsAt": "Afslutningsdato",
+    "endsAt": "Slutdato",
     "totalBudget": "Samlet budget",
     "submit": "Betal og indsend",
     "submitting": "Betalingen forberedes…",
@@ -2773,7 +2773,7 @@
     "impressionsUnit": "visninger",
     "howItWorksTitle": "Sådan fungerer det",
     "howItWorksStep1": "Indsend din annonce og betal sikkert med kryptovaluta (USDT).",
-    "howItWorksStep2": "Vores team gennemgår din annonce og destinationslinket for at sikre, at de overholder sikkerhedskravene.",
+    "howItWorksStep2": "Vores team gennemgår din annonce og linket til destinationssiden for at sikre, at de overholder sikkerhedskravene.",
     "howItWorksStep3": "Når din annonce er godkendt, bliver den offentliggjort på SmarterBloggers’ forside.",
     "howItWorksStep4": "Følg visninger, klik og CTR i realtid fra dette kontrolpanel.",
     "sponsoredLabel": "Sponsoreret",
@@ -2906,7 +2906,7 @@
     "verifySuccess": "Domænet er bekræftet! Din blog er nu online på denne adresse.",
     "verifyFailed": "Bekræftelsen mislykkedes — kontroller, at begge DNS-poster er indstillet korrekt.",
     "verifyError": "Der opstod en fejl under verifikationen.",
-    "deleteSuccess": "Domænet er blevet fjernet.",
+    "deleteSuccess": "Domænet er fjernet.",
     "deleteError": "Der opstod en fejl under fjernelsen af domænet.",
     "deleteConfirm": "Skal dette domæne slettes?",
     "emptyTitle": "Der er endnu ikke angivet et brugerdefineret domæne",
@@ -2920,7 +2920,7 @@
     "step2TxtNote": "TXT-postens værdi er unik for hvert domæne — kopier den fra domænekortet, der vises nedenfor.",
     "step3Title": "Klik på »Bekræft«",
     "step3Desc": "Når dine DNS-poster er blevet opdateret (normalt tager det et par minutter på Cloudflare, op til 48 timer andre steder), skal du klikke på opdateringsknappen ved siden af dit domæne.",
-    "cloudflareTip": "Bruger du Cloudflare? Aktiver den orange cloud-proxy i din CNAME-post — så håndteres SSL automatisk, uden at der kræves yderligere konfiguration.",
+    "cloudflareTip": "Bruger du Cloudflare? Aktiver den orange cloud-proxy i din CNAME-post — så håndteres SSL automatisk, uden at der er behov for yderligere konfiguration.",
     "hostingerTip": "Bruger du Hostinger? Hostinger tillader ikke en CNAME-post på rodniveau (@). I stedet skal du oprette en omdirigering fra dit roddomæne til »www« og derefter kun tilføje CNAME-posten for »www« samt TXT-verifikationsposten.",
     "recordCname": "Post 1 — CNAME-roddomæne",
     "recordCnameWww": "Post 2 — CNAME-post for www-underdomænet",
@@ -3087,7 +3087,7 @@
         "revenue": "Akkumuleret omsætning",
         "paidPlans": "Betalingsabonnementer",
         "conversion": "Konverteringsfrekvens",
-        "new24h": "Nyt (24 timer)",
+        "new24h": "Nyt (inden for de sidste 24 timer)",
         "business": "Forretningsplan"
       },
       "recentActivity": "Seneste aktivitet",
@@ -3145,7 +3145,7 @@
         "delete": "Slet",
         "visit": "Besøg"
       },
-      "confirmSuspend": "Skal denne blog lukkes ned? Brugerne mister straks adgangen.",
+      "confirmSuspend": "Skal denne blog lukkes? Brugerne mister straks adgangen.",
       "confirmActivate": "Skal denne blog genaktiveres?",
       "confirmDelete": "Vil du slette denne blog permanent? Alt indhold vil gå tabt.",
       "owner": "Ejeren",
@@ -3153,7 +3153,7 @@
       "articles": "artikler",
       "members": "medlemmer",
       "storage": "Opbevaring",
-      "blogSuspendedToast": "Bloggen er sat på pause.",
+      "blogSuspendedToast": "Bloggen er midlertidigt lukket.",
       "blogActivatedToast": "Bloggen er aktiveret.",
       "blogDeletedToast": "Bloggen er slettet."
     },
@@ -3323,7 +3323,7 @@
       "deactivate": "Deaktiver",
       "activate": "Aktivér",
       "confirmDeactivate": "Skal denne plan deaktiveres? De lejere, der benytter den, vil ikke blive berørt med det samme.",
-      "created": "Planen er udarbejdet",
+      "created": "Plan udarbejdet",
       "updated": "Planen er opdateret",
       "deactivated": "Planen er deaktiveret",
       "planId": "Plan-ID",
@@ -3401,7 +3401,10 @@
         "pending": "Afventer",
         "refunded": "Refunderet",
         "failed": "Mislykket",
-        "disputed": "Omstridt"
+        "disputed": "Omstridt",
+        "processing": "Behandling",
+        "requested": "Anmodet om",
+        "rejected": "Afvist"
       }
     },
     "settings": {
@@ -3427,7 +3430,7 @@
         "platformNameHint": "Vises på offentlige sider og i e-mails",
         "supportEmail": "Support-e-mail",
         "domainMarkup": "Fortjeneste ved køb af domæner (%)",
-        "domainMarkupHint": "Tillægges oven i registratorens pris ved hvert domænekøb og hver fornyelse — 0 betyder videresalg til indkøbspris",
+        "domainMarkupHint": "Tilkommer oven i registratorens pris ved hvert domænekøb og hver fornyelse — 0 betyder videresalg til indkøbspris",
         "paymentTolerance": "Tolerance for kryptobetalinger ($)",
         "paymentToleranceHint": "En betaling, der modtages inden for denne margen i forhold til det forventede beløb (netværksgebyrer, kursafvigelser), betragtes stadig som fuldført",
         "kycPricePerYear": "Pris for KYC-verifikation ($/år)",
@@ -3646,7 +3649,7 @@
     "notifications": {
       "title": "Meddelelser fra platformen",
       "breadcrumb": "Infrastruktur",
-      "subtitle": "Send push-beskeder og meddelelser i appen til alle brugere",
+      "subtitle": "Send push-beskeder og notifikationer i appen til alle brugere",
       "compose": "Ny meddelelse",
       "send": "Send besked",
       "sent": "Meddelelsen er sendt!",
@@ -3706,7 +3709,7 @@
       "subtitle": "{count} billetter",
       "all": "Alle",
       "emptyTitle": "Der er endnu ingen billetter",
-      "emptyDesc": "Supportanmodninger vises her, så snart brugerne indsender dem",
+      "emptyDesc": "Supportanmodninger vises her, når brugerne indsender anmodninger",
       "you": "Du",
       "youLabel": "Du",
       "tenantLabel": "Lejer",
@@ -3864,7 +3867,7 @@
       "tabExternal": "Eksternt",
       "searchPlaceholder": "Søg i domænet…",
       "noDomainsFound": "Der blev ikke fundet nogen domæner.",
-      "registrationFailedNote": "Registreringen mislykkedes — se ordredetaljer nedenfor.",
+      "registrationFailedNote": "Registreringen mislykkedes — se ordreoplysningerne nedenfor.",
       "ordersLabel": "Bestillinger",
       "activityLogLabel": "Aktivitetslog",
       "yearsUnit": "år",
@@ -3965,7 +3968,7 @@
     "currencyPickerSearch": "Søg efter en valuta eller et netværk…",
     "currencyPickerNoResults": "Der findes ingen tilsvarende valuta.",
     "minAmountChecking": "Kontrollerer minimumsbeløbet for denne valuta…",
-    "minAmountTooLow": "Minimumsbeløb for »{currency}«: {amount} — vælg en anden valuta eller forhøj beløbet."
+    "minAmountTooLow": "Minimumsbeløb for »{currency}«: {amount} — vælg en anden valuta, eller forhøj beløbet."
   },
   "paymentCenter": {
     "title": "Betalinger",
@@ -3984,7 +3987,10 @@
       "paid_article": "Betalt artikel",
       "paid_newsletter": "Betalt nyhedsbrev",
       "ad_campaign": "Annonce",
-      "domain_purchase": "Køb af domæne"
+      "domain_purchase": "Køb af domæne",
+      "kyc_verification": "KYC-verifikation",
+      "affiliate_commission_payout": "Udbetaling af affiliate-provision",
+      "ad_revenue_payout": "Udbetaling af annonceindtægter"
     },
     "status": {
       "pending": "Afventer",
@@ -3992,7 +3998,11 @@
       "completed": "Afsluttet",
       "failed": "Mislykket",
       "refunded": "Refunderet",
-      "disputed": "Omstridt"
+      "disputed": "Omstridt",
+      "requested": "Anmodet om",
+      "processing": "Behandling",
+      "paid": "Betalt",
+      "rejected": "Afvist"
     }
   },
   "aiBuilder": {

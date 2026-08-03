@@ -71,7 +71,7 @@
       "signIn": "Logga in",
       "verificationSent": "Kolla din inkorg",
       "verificationDesc": "Vi har skickat en verifieringslänk till {email}. Klicka på den för att aktivera ditt konto och logga sedan in.",
-      "verifiedRedirecting": "E-postadressen har verifierats! Du omdirigeras för att logga in…",
+      "verifiedRedirecting": "E-postadressen har verifierats! Du omdirigeras nu för att logga in…",
       "errors": {
         "emailInUse": "Den här e-postadressen är redan registrerad. Försök att logga in istället.",
         "weakPassword": "Lösenordet måste bestå av minst 8 tecken.",
@@ -282,7 +282,7 @@
     "limitReachedTitle": "Gränsen för antalet artiklar har nåtts ({max} / {max})",
     "limitReachedDesc": "Du har nått artikelgränsen för ditt abonnemang. Uppgradera för att kunna publicera fler artiklar.",
     "limitNearTitle": "Närmar sig sin gräns (artiklar på {used} / {max})",
-    "limitNearDesc": "Du har använt mer än 80 % av artikelkvoten i ditt abonnemang.",
+    "limitNearDesc": "Du har använt mer än 80 % av det tillåtna antalet artiklar enligt ditt abonnemang.",
     "limitReachedTooltip": "Gränsen för artiklar har nåtts — uppgradera för att skapa fler"
   },
   "pages": {
@@ -455,8 +455,8 @@
     "ttsReady": "Ljudklart",
     "ttsError": "Det gick inte att skapa ljud",
     "unpublishedToast": "Opublicerad",
-    "unpublishButton": "Ta bort publiceringen",
-    "scheduledToast": "Artikeln är schemalagd!",
+    "unpublishButton": "Ta bort publicering",
+    "scheduledToast": "Artikeln är inplanerad!",
     "scheduleError": "Fel vid schemaläggning.",
     "scheduleCancelledToast": "Schemat har ställts in.",
     "genericError": "Fel.",
@@ -477,7 +477,7 @@
     "tabContent": "Innehåll",
     "tabWorkflow": "Arbetsflöde",
     "improveContentTitle": "Förbättra innehållet",
-    "improveInstructionPlaceholder": "T.ex.: Skriv mer formellt, lägg till exempel…",
+    "improveInstructionPlaceholder": "T.ex.: Formulera mer formellt, lägg till exempel…",
     "improveWithAiButton": "Förbättra med AI",
     "improvingButton": "Förbättras…",
     "generateImagePlaceholder": "Beskriv bilden som ska genereras…",
@@ -581,7 +581,7 @@
       "changeRole": "Byt roll"
     },
     "confirmRemove": "Ska {name} tas bort från laget?",
-    "confirmRemoveDesc": "De kommer omedelbart att förlora tillgången till den här bloggen."
+    "confirmRemoveDesc": "De kommer omedelbart att förlora åtkomsten till den här bloggen."
   },
   "settings": {
     "title": "Inställningar",
@@ -632,7 +632,7 @@
     "publishedOn": "Publicerad på {date}",
     "updatedOn": "Uppdaterad den {date}",
     "by": "av {author}",
-    "minRead": "{min} Läsningstid:",
+    "minRead": "{min} Läsningstid: min",
     "subscribe": "Prenumerera på nyhetsbrevet",
     "subscribeDesc": "Få nya artiklar direkt till din inkorg",
     "emailPlaceholder": "Ange din e-postadress",
@@ -820,7 +820,7 @@
     "advertiseStep2Title": "Manuell granskning",
     "advertiseStep2Desc": "Bloggägaren granskar ditt inlägg och godkänner eller avvisar det.",
     "advertiseStep3Title": "Gå live",
-    "advertiseStep3Desc": "När annonsen har godkänts publiceras den och börjar nå läsarna.",
+    "advertiseStep3Desc": "När annonsen har godkänts publiceras den och börjar nå ut till läsarna.",
     "adDetailsStepLabel": "Annonsinformation",
     "targetingStepLabel": "Målgruppsanpassning",
     "paymentStepLabel": "Betalning",
@@ -873,7 +873,7 @@
     "paymentStep2Text": "Klicka på ”Betala nu” – du omdirigeras till NowPayments säkra sida.",
     "paymentStep3Text": "Betala med kryptovaluta (USDT, BTC, ETH…) eller med kort via deras plattform.",
     "paymentStep4Text": "Betalningen har bekräftats → din annons skickas till bloggägaren för granskning.",
-    "paymentStep5Text": "När din annons har godkänts publiceras den automatiskt.",
+    "paymentStep5Text": "När annonsen har godkänts publiceras den automatiskt.",
     "securePaymentBold": "Säker betalning.",
     "securePaymentDesc": "Din annonsplats reserveras först när betalningen har bekräftats. NowPayments accepterar över 150 kryptovalutor och de vanligaste betalkorten.",
     "reviewSubmissionTitle": "Granska din inlämning",
@@ -882,7 +882,7 @@
     "companyLabel": "Företag",
     "headlineLabel": "Rubrik",
     "imageUrlLabel": "Bildens webbadress",
-    "campaignTargetingSectionLabel": "Kampanjer och målgruppsanpassning",
+    "campaignTargetingSectionLabel": "Kampanj och målgruppsanpassning",
     "budgetLabel": "Budget",
     "globalAllReadersLabel": "Globalt (alla läsare)",
     "paymentReceivedTitle": "Betalningen har mottagits!",
@@ -923,7 +923,7 @@
       "analyticsTitle": "Inbyggda analysverktyg",
       "analyticsDesc": "Följ upp sidvisningar, populära artiklar och prenumeranttillväxt med detaljerade rapporter i realtid.",
       "seoTitle": "SEO-inriktad redaktör",
-      "seoDesc": "AI-baserade SEO-förslag, automatiska webbplatskartor och strukturerade data som är inbyggda direkt i systemet.",
+      "seoDesc": "AI-baserade SEO-förslag, automatiska webbplatskartor och strukturerade data som är inbyggda.",
       "newsletterTitle": "Inbyggt nyhetsbrev",
       "newsletterDesc": "Utöka och hantera din prenumerantlista utan hjälp av verktyg från tredje part.",
       "aiTitle": "AI-skrivassistent",
@@ -1123,7 +1123,7 @@
     },
     "widgets": {
       "title": "Widgets",
-      "description": "Konfigurera widgetarna på din blogg: sökfunktion, populära inlägg, kategorier, sociala medier, nyhetsbrev och annonser i sidfältet."
+      "description": "Konfigurera widgetarna på din blogg: sökfunktion, populära inlägg, kategorier, sociala medier, nyhetsbrev och annonser i sidomenyn."
     },
     "seo": {
       "title": "SEO-optimering",
@@ -1158,7 +1158,7 @@
     "step2": {
       "label": "Konfigurera bloggen",
       "title": "Konfigurera din blogg",
-      "subtitle": "Valda mallar",
+      "subtitle": "Valda mall",
       "nameLabel": "Bloggens namn",
       "namePlaceholder": "Min fantastiska blogg",
       "slugLabel": "Underdomän",
@@ -1241,7 +1241,7 @@
       "liveAt": "finns live på",
       "stats": {
         "articles": "Publicerade artiklar",
-        "template": "Valda mall",
+        "template": "Valda mallar",
         "status": "Status",
         "statusValue": "Klar"
       },
@@ -1297,7 +1297,7 @@
     "colorTitle": "Grundfärg",
     "colorDesc": "Används för knappar, länkar och visuella accenter.",
     "fontTitle": "Typografi",
-    "fontDesc": "Teckensnitt som används på hela din blogg.",
+    "fontDesc": "Teckensnitt som används i hela din blogg.",
     "unsavedChanges": "Du har ändringar som inte har sparats.",
     "saveChanges": "Spara ändringarna",
     "saving": "Sparar...",
@@ -1344,7 +1344,7 @@
     "dimensions": "Mått",
     "fileSize": "Filstorlek",
     "format": "Format",
-    "uploadDate": "Laddad den",
+    "uploadDate": "Laddad upp den",
     "duration": "Varaktighet",
     "viewOriginal": "Visa originalet",
     "uploading": "Laddar upp… {pct} %",
@@ -1375,7 +1375,7 @@
   },
   "newsletter": {
     "title": "Nyhetsbrev",
-    "subscriberCount": "abonnenter",
+    "subscriberCount": "prenumeranter",
     "tabSubscribers": "Prenumeranter",
     "tabCampaigns": "Kampanjer",
     "totalSubscribers": "Totalt antal abonnenter",
@@ -1389,7 +1389,7 @@
     "emailHeader": "E-post",
     "nameHeader": "Namn",
     "statusHeader": "Status",
-    "dateHeader": "Prenumererade den",
+    "dateHeader": "Prenumererar sedan",
     "noCampaigns": "Inga kampanjer ännu",
     "noCampaignsDesc": "Skapa din första nyhetsbrevskampanj med hjälp av knappen ovan.",
     "newCampaign": "Ny kampanj",
@@ -1620,7 +1620,7 @@
     "autoPostOn": "Automatisk publicering: PÅ",
     "autoPostOff": "Automatisk publicering: AV",
     "disconnected": "Konton har kopplats bort",
-    "disconnectError": "Fel vid avkoppling av konto",
+    "disconnectError": "Fel vid frånkoppling av konto",
     "newPost": "Nytt inlägg",
     "account": "Konto",
     "postContent": "Innehåll",
@@ -1665,7 +1665,7 @@
     "popular": "Populärt",
     "upgrade": "Uppgradering",
     "pageTitle": "Välj ditt abonnemang",
-    "pageSubtitle": "Kom igång gratis och utöka verksamheten i din egen takt. Alla abonnemang inkluderar den fullständiga företagsmallen.",
+    "pageSubtitle": "Kom igång gratis och utöka verksamheten i din egen takt. Alla abonnemang innehåller den fullständiga företagsmallen.",
     "freeLabel": "Gratis",
     "perMonth": "/månad",
     "yourPlan": "Din plan",
@@ -1718,7 +1718,7 @@
       },
       "pro": {
         "name": "Fördelar",
-        "badge": "Rekommenderat",
+        "badge": "Rekommenderas",
         "cta": "Byt till Pro",
         "features": [
           "10 bloggar",
@@ -1946,7 +1946,7 @@
     "sectionFeatured": "Utvalda artiklar",
     "sectionStats": "Nyckeltal",
     "sectionMission": "Uppdrag",
-    "sectionValues": "Värderingar",
+    "sectionValues": "Värden",
     "sectionTeam": "Team",
     "sectionCta": "CTA-block",
     "sectionProgress": "Förloppsindikator",
@@ -2099,7 +2099,7 @@
     "analyticsTopArticles": "Populära artiklar",
     "analyticsSources": "Trafikkällor",
     "analyticsNoDataTitle": "Inga uppgifter för denna period",
-    "analyticsNoDataDesc": "Publicera artiklar och dela din blogg för att se statistiken.",
+    "analyticsNoDataDesc": "Publicera artiklar och dela din blogg för att se statistik.",
     "analyticsPeriod7": "7 d",
     "analyticsPeriod30": "30 d",
     "analyticsPeriod90": "90 d",
@@ -2127,8 +2127,8 @@
     "articleUnsaved": "Ej sparad",
     "articleArchiveAction": "Arkiv",
     "articleUntitled": "Utan titel",
-    "articleTitlePlaceholder": "Artikelns rubrik…",
-    "articleTitleLabel": "Artikelns titel",
+    "articleTitlePlaceholder": "Artikelns titel…",
+    "articleTitleLabel": "Artikelns rubrik",
     "articleTitleHint": "Obligatoriskt — ange minst 2 tecken för att kunna spara den här artikeln.",
     "titleRequiredToast": "Ange en titel (minst 2 tecken) innan du sparar.",
     "articleExcerptPlaceholder": "En kort sammanfattning som visas i listor och sökmotorer…",
@@ -2233,7 +2233,7 @@
     "articleFieldSeason": "Säsong",
     "articleFieldPodcastTitle": "Podcastens titel (serie)",
     "articleTypeLabel": "Innehållstyp",
-    "articleTypeHint": "Välj en typ för att visa de motsvarande mediefälten högst upp i artikeln.",
+    "articleTypeHint": "Välj en typ för att visa de relevanta mediefälten högst upp i artikeln.",
     "analyticsDevices": "Enhetsfel",
     "analyticsCountries": "De främsta länderna",
     "imageFieldChange": "Ändra",
@@ -2414,7 +2414,7 @@
     "quickCoverLabel": "Miniatyrbild för bloggen",
     "quickCoverOptional": "(valfritt)",
     "quickCoverPlaceholder": "https://example.com/image.jpg",
-    "quickCoverError": "Ogiltig URL eller bild som inte går att nå",
+    "quickCoverError": "Ogiltig URL eller bild som inte går att öppna",
     "quickCreating": "Skapar…",
     "quickCreate": "Skapa min blogg",
     "quickSuccess": "Bloggen har skapats! Omdirigerar…",
@@ -2422,7 +2422,7 @@
     "domainStepTitle": "Lägg upp din blogg på nätet",
     "domainStepSubtitle": "{name} är skapad! Lägg till en domän nu så att folk faktiskt kan hitta den – eller hoppa över det och gör det senare.",
     "domainOptionBuyTitle": "Köp en ny domän",
-    "domainOptionBuyDesc": "Sök efter och köp en domän utan att lämna SmarterBloggers. Betala med kryptovaluta – registreringen sker automatiskt.",
+    "domainOptionBuyDesc": "Sök efter och köp en domän utan att lämna SmarterBloggers. Betalas med kryptovaluta och registreras automatiskt.",
     "domainOptionConnectTitle": "Anslut en domän som jag äger",
     "domainOptionConnectDesc": "Har du redan en domän någon annanstans? Koppla den till din blogg helt gratis – det krävs bara en snabb DNS-konfiguration.",
     "domainOptionSkipTitle": "Hoppa över det här för tillfället",
@@ -2473,7 +2473,7 @@
       },
       "magazine": {
         "tagline": "Djärv · Kraftfull · Dynamisk",
-        "description": "I stil med The Verge och Wired. Mörk sidhuvud, rutnät i flera lager, kategorisektioner, nyhetsbrev i sidomenyn."
+        "description": "I stil med The Verge och Wired. Mörk sidhuvud, rutnät i flera lager, kategorisektioner, nyhetsbrev i sidfältet."
       },
       "creative": {
         "tagline": "Mörkt · Visuellt · Fängslande",
@@ -2545,7 +2545,7 @@
     "walletAddressPlaceholder": "Ange adressen för det valda nätverket",
     "walletExtraIdLabel": "Anteckning / Etikett",
     "walletExtraIdPlaceholder": "Krävs för detta nätverk",
-    "walletExtraIdHint": "Vissa nätverk (t.ex. XRP, EOS) kräver att man anger denna extra memo/tagg tillsammans med adressen – utan den kan de medel som skickas till dig gå förlorade.",
+    "walletExtraIdHint": "Vissa nätverk (t.ex. XRP, EOS) kräver att detta extra memo/tag anges tillsammans med adressen – utan det kan de medel som skickas till dig gå förlorade.",
     "walletTotpLabel": "Autentiseringskod (2FA)",
     "walletTotpPlaceholder": "000 000",
     "walletSaveButton": "Spara plånbok",
@@ -2692,7 +2692,7 @@
     "pageSubtitle": "Detta måste göras en gång innan du kan få tillgång till partnerprogrammet och ta emot provision.",
     "submitError": "Något gick fel. Försök igen.",
     "statusLabel": {
-      "not_started": "Ännu inte verifierat",
+      "not_started": "Har ännu inte verifierats",
       "pending": "Verifiering pågår",
       "verified": "Verifierad",
       "expired": "Verifieringen har gått ut",
@@ -2920,12 +2920,12 @@
     "step2TxtNote": "Värdet för TXT-posten är unikt för varje domän – kopiera det från domänkortet som visas nedan.",
     "step3Title": "Klicka på ”Verifiera”",
     "step3Desc": "När dina DNS-poster har spridits (vanligtvis några minuter på Cloudflare, upp till 48 timmar på andra platser) klickar du på uppdateringsknappen bredvid din domän.",
-    "cloudflareTip": "Använder du Cloudflare? Aktivera den orangea molnproxyn i din CNAME-post – då hanteras SSL automatiskt utan att någon ytterligare konfiguration behövs.",
-    "hostingerTip": "Använder du Hostinger? Hostinger tillåter inte CNAME-poster på rotnivån (@). Lägg istället till en omdirigering från din rotdomän till www, och lägg sedan endast till CNAME-posten för ”www” samt TXT-verifieringsposten.",
+    "cloudflareTip": "Använder du Cloudflare? Aktivera den orangea molnproxyn i din CNAME-post – då hanteras SSL automatiskt, utan att någon ytterligare konfiguration behövs.",
+    "hostingerTip": "Använder du Hostinger? Hostinger tillåter inte en CNAME-post på rotnivån (@). Lägg istället till en omdirigering från din rotdomän till www, och lägg sedan endast till CNAME-posten för ”www” samt TXT-verifieringsposten.",
     "recordCname": "Post 1 — CNAME-rotdomän",
     "recordCnameWww": "Post 2 — CNAME-post för underdomänen www",
     "recordTxt": "Post 3 — TXT (verifiering)",
-    "verifiedDesc": "Din blogg är nu tillgänglig på den här domänen. Besökare kan nå den direkt.",
+    "verifiedDesc": "Din blogg är nu tillgänglig på den här domänen. Besökare kan komma åt den direkt.",
     "tabConnect": "Anslut befintlig",
     "tabBuy": "Köp en domän",
     "searchTitle": "Sök efter en domän",
@@ -2985,7 +2985,7 @@
     "step1of3": "Steg 1 av 3 — Skanna",
     "step2of3": "Steg 2 av 3 – Kontrollera",
     "step3of3": "Steg 3 av 3 — Reservkoder",
-    "step1Desc": "Skanna den här QR-koden med din autentiseringsapp (Google Authenticator, Authy osv.).",
+    "step1Desc": "Skanna den här QR-koden med din autentiseringsapp (Google Authenticator, Authy m.fl.).",
     "step2Desc": "Ange den 6-siffriga koden som visas i din autentiseringsapp för att bekräfta inställningen.",
     "codeLabel": "Autentiseringskod",
     "nextButton": "Nästa",
@@ -3092,7 +3092,7 @@
       },
       "recentActivity": "Senaste aktivitet",
       "last10Events": "De senaste 10 evenemangen",
-      "noActivity": "Ingen aktivitet på senare tid",
+      "noActivity": "Ingen aktivitet på sistone",
       "systemStatus": "Systemstatus",
       "planDistribution": "Planfördelning"
     },
@@ -3113,7 +3113,7 @@
         "kycYearsRemaining": "År kvar till KYC"
       },
       "blogsSection": "Bloggar ({count})",
-      "noBlogs": "Det här kontot har ännu inte skapat någon blogg.",
+      "noBlogs": "Det här kontot har inte skapat någon blogg än.",
       "actions": {
         "makeSuperAdmin": "Utnämn till superadministratör",
         "revokeSuperAdmin": "Återkalla superadministratörsbehörighet",
@@ -3122,7 +3122,7 @@
         "suspend": "Avbryta",
         "deleteUser": "Ta bort användare"
       },
-      "confirmMakeSuperAdmin": "Ska den här användaren beviljas superadministratörsbehörighet?",
+      "confirmMakeSuperAdmin": "Ska denna användare beviljas superadministratörsbehörighet?",
       "confirmRevokeSuperAdmin": "Ska superadministratörsbehörigheterna återkallas?",
       "confirmDelete": "Vill du radera den här användaren permanent? Detta går inte att ångra.",
       "you": "Du",
@@ -3323,11 +3323,11 @@
       "deactivate": "Inaktivera",
       "activate": "Aktivera",
       "confirmDeactivate": "Vill du inaktivera den här planen? De hyresgäster som använder den kommer inte att påverkas omedelbart.",
-      "created": "Planen har upprättats",
+      "created": "Planen har skapats",
       "updated": "Planen har uppdaterats",
       "deactivated": "Planen har inaktiverats",
       "planId": "Plan-ID",
-      "planIdHint": "Unikt ID (t.ex. tillväxt). Kan inte ändras efter att det har skapats.",
+      "planIdHint": "Unikt slug (t.ex. tillväxt). Kan inte ändras efter att det har skapats.",
       "planName": "Visningsnamn",
       "description": "Beskrivning",
       "priceMonthly": "Månadspris ($)",
@@ -3401,7 +3401,10 @@
         "pending": "Väntar på beslut",
         "refunded": "Återbetalat",
         "failed": "Misslyckades",
-        "disputed": "Omtvistat"
+        "disputed": "Omtvistat",
+        "processing": "Bearbetning",
+        "requested": "Begärt",
+        "rejected": "Avvisad"
       }
     },
     "settings": {
@@ -3410,7 +3413,7 @@
       "subtitle": "Global konfiguration av SmarterBloggers SaaS",
       "saved": "Inställningarna har sparats",
       "configured": "Konfigurerad",
-      "notConfigured": "Ej konfigurerat",
+      "notConfigured": "Ej konfigurerad",
       "autoSaveNote": "Inställningarna sparas automatiskt när de ändras.",
       "envNote": "Integrationsuppgifterna konfigureras via miljövariabler (.env).",
       "saveBtn": "Spara",
@@ -3427,7 +3430,7 @@
         "platformNameHint": "Visas på offentliga sidor och i e-postmeddelanden",
         "supportEmail": "Support-e-post",
         "domainMarkup": "Påslag vid domänköp (%)",
-        "domainMarkupHint": "Läggs till utöver registratorns pris vid varje domänköp och förnyelse — 0 innebär återförsäljning till självkostnad",
+        "domainMarkupHint": "Läggs till utöver registratorns pris vid varje domänköp och förnyelse — 0 innebär återförsäljning till självkostnadspris",
         "paymentTolerance": "Tolerans för kryptobetalningar ($)",
         "paymentToleranceHint": "En betalning som mottas inom denna marginal i förhållande till det förväntade beloppet (nätverksavgifter, kursavvikelse) betraktas fortfarande som fullständig",
         "kycPricePerYear": "Pris för KYC-verifiering ($/år)",
@@ -3551,7 +3554,7 @@
       "noOnlineUsers": "Inga aktiva användare under de senaste 15 minuterna",
       "activity": "Aktivitet på plattformen",
       "activityDesc": "Alla händelser under de senaste 24 timmarna",
-      "noActivity": "Ingen aktivitet på sistone",
+      "noActivity": "Ingen aktivitet på senare tid",
       "types": {
         "login": "Logga in",
         "registration": "Registrering",
@@ -3751,7 +3754,7 @@
         "date": "Uppladdat"
       },
       "stats": {
-        "storage": "Använt lagringsutrymme",
+        "storage": "Använd lagringsutrymme",
         "totalFiles": "Totalt antal filer",
         "globalMedia": "Global Media"
       }
@@ -3901,7 +3904,7 @@
       "pageLabel_advertiseWithUs": "Annonsörer",
       "sourceContentNote": "Engelskt källinnehåll — översättningarna genereras automatiskt på nytt.",
       "fillWithAiButton": "Fyll i med AI",
-      "saveRegenTranslationsButton": "Spara + återskapa översättningar",
+      "saveRegenTranslationsButton": "Spara och återskapa översättningar",
       "saveButton": "Spara",
       "contentGeneratedToast": "Innehåll har skapats – granska och spara.",
       "aiGenerationFailedToast": "Genereringen med AI misslyckades",
@@ -3984,7 +3987,10 @@
       "paid_article": "Betald artikel",
       "paid_newsletter": "Betalt nyhetsbrev",
       "ad_campaign": "Annons",
-      "domain_purchase": "Köp av domän"
+      "domain_purchase": "Köp av domän",
+      "kyc_verification": "KYC-verifiering",
+      "affiliate_commission_payout": "Utbetalning av affiliate-provision",
+      "ad_revenue_payout": "Utbetalning av annonsintäkter"
     },
     "status": {
       "pending": "Väntar på beslut",
@@ -3992,7 +3998,11 @@
       "completed": "Avslutat",
       "failed": "Misslyckades",
       "refunded": "Återbetalat",
-      "disputed": "Omtvistat"
+      "disputed": "Omtvistat",
+      "requested": "Begärt",
+      "processing": "Bearbetning",
+      "paid": "Betalt",
+      "rejected": "Avvisad"
     }
   },
   "aiBuilder": {

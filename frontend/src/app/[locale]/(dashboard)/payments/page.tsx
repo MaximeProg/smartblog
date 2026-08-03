@@ -19,6 +19,10 @@ const STATUS_STYLE: Record<string, string> = {
   failed: 'text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-900/30',
   refunded: 'text-blue-700 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30',
   disputed: 'text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-900/30',
+  paid: 'text-emerald-700 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/30',
+  processing: 'text-amber-700 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/30',
+  requested: 'text-slate-500 bg-slate-100 dark:text-slate-400 dark:bg-slate-700',
+  rejected: 'text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-900/30',
 };
 
 export default function PaymentsPage() {
@@ -108,7 +112,7 @@ export default function PaymentsPage() {
                     <div key={item.id} className="flex items-center gap-4 px-5 py-3.5">
                       <div className="flex-1 min-w-0">
                         <p className="text-[13px] font-semibold text-slate-800 dark:text-slate-200 truncate">
-                          {t(`type.${item.transaction_type}` as any)} — {item.tenant_name}
+                          {t(`type.${item.transaction_type}` as any)}{item.tenant_name ? ` — ${item.tenant_name}` : ''}
                         </p>
                         <p className="text-[11px] text-slate-400 mt-0.5">
                           {new Date(item.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
@@ -116,8 +120,8 @@ export default function PaymentsPage() {
                       </div>
 
                       <div className="text-right shrink-0">
-                        <p className="text-[13px] font-bold text-slate-800 dark:text-slate-200">
-                          ${item.amount.toFixed(2)} {item.currency}
+                        <p className={`text-[13px] font-bold ${item.direction === 'out' ? 'text-red-600 dark:text-red-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                          {item.direction === 'out' ? '-' : ''}${item.amount.toFixed(2)} {item.currency}
                         </p>
                         {item.status === 'partially_paid' && (
                           <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-0.5">

@@ -298,6 +298,23 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
         billing = parts[3] if len(parts) >= 5 else "monthly"
         await _activate_subscription(db, tx.tenant_id, plan, billing)
 
+        # Comptabilité — book_subscription_payment existait déjà mais n'était
+        # jamais appelée : aucune facture de revenu n'était jamais posée au
+        # grand livre pour les abonnements avant ce correctif (2026-08-04).
+        try:
+            from app.api.v1.accounting import book_subscription_payment
+            await book_subscription_payment(
+                db=db,
+                amount=actually_paid,
+                plan_code=plan,
+                transaction_id=str(tx.id),
+                is_annual=(billing == "annual"),
+                created_by_system_user_id=tx.user_id,
+            )
+            await db.commit()
+        except Exception:
+            logger.exception("Échec de la comptabilisation de l'abonnement pour la transaction %s", tx.id)
+
         from app.api.v1.affiliate import compute_and_accrue_commissions
         from app.services.tenant_service import get_tenant_owner_user_id
         source_user_id = await get_tenant_owner_user_id(db, tx.tenant_id)
@@ -360,6 +377,20 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
                 article_id=tx.article_id, transaction_id=tx.id,
             ))
         await db.commit()
+
+        try:
+            from app.api.v1.accounting import book_paid_article_payment
+            await book_paid_article_payment(
+                db=db,
+                amount=actually_paid,
+                platform_fee=float(tx.platform_fee or 0),
+                article_id=str(tx.article_id),
+                transaction_id=str(tx.id),
+                created_by_system_user_id=tx.user_id,
+            )
+            await db.commit()
+        except Exception:
+            logger.exception("Échec de la comptabilisation de l'article payant pour la transaction %s", tx.id)
 
         await _maybe_generate_invoice(db, tx, TransactionType.PAID_ARTICLE.value)
 
@@ -431,6 +462,24 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             access.amount_paid = actually_paid
         await db.commit()
 
+        # `user_id` peut être None (achat identifié par email seul, sans
+        # compte) — même limitation que KYC/AD_CAMPAIGN ci-dessus : pas de
+        # created_by possible sans utilisateur, donc pas d'écriture pour ce cas.
+        if tx.user_id:
+            try:
+                from app.api.v1.accounting import book_paid_newsletter_payment
+                await book_paid_newsletter_payment(
+                    db=db,
+                    amount=actually_paid,
+                    platform_fee=float(tx.platform_fee or 0),
+                    newsletter_access_id=str(access.id) if access else str(tx.id),
+                    transaction_id=str(tx.id),
+                    created_by_system_user_id=tx.user_id,
+                )
+                await db.commit()
+            except Exception:
+                logger.exception("Échec de la comptabilisation de la newsletter payante pour la transaction %s", tx.id)
+
         # `user_id` peut être None (achat newsletter identifié par email seul,
         # sans compte) — `_maybe_generate_invoice` ignore ce cas silencieusement.
         await _maybe_generate_invoice(db, tx, TransactionType.PAID_NEWSLETTER.value)
@@ -449,6 +498,20 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             from app.core.arq_pool import get_arq_pool
             pool = await get_arq_pool()
             await pool.enqueue_job("register_purchased_domain", order_id=str(order.id))
+
+            if tx.user_id:
+                try:
+                    from app.api.v1.accounting import book_domain_purchase_payment
+                    await book_domain_purchase_payment(
+                        db=db,
+                        amount=actually_paid,
+                        domain_name=order.domain_name,
+                        transaction_id=str(tx.id),
+                        created_by_system_user_id=tx.user_id,
+                    )
+                    await db.commit()
+                except Exception:
+                    logger.exception("Échec de la comptabilisation de l'achat de domaine pour la transaction %s", tx.id)
 
             await _maybe_generate_invoice(db, tx, TransactionType.DOMAIN_PURCHASE.value)
 
@@ -976,6 +1039,11 @@ class UserPaymentItem(BaseModel):
     amount_received: float
     currency: str
     created_at: datetime
+    # "in" = paiement reçu par la plateforme (Transaction), "out" = argent
+    # versé À l'utilisateur (commission d'affiliation, part de revenu pub) —
+    # ces deux derniers ne sont pas des lignes `Transaction` du tout, d'où
+    # ce champ pour les distinguer dans une liste unifiée.
+    direction: str = "in"
 
 
 @me_payments_router.get("", response_model=list[UserPaymentItem])
@@ -984,11 +1052,20 @@ async def list_my_payments(
     db: DBSession,
     limit: int = 50,
 ):
-    """Tous les paiements de l'utilisateur, tous blogs confondus — contrairement
-    à /tenants/{tenant_id}/payments/transactions (scopé à un blog, rôle EDITOR+),
-    cette vue sert le \"centre de paiements\" du dashboard principal."""
+    """Tous les mouvements d'argent de l'utilisateur, tous blogs confondus —
+    paiements entrants (Transaction) ET versements sortants (commissions
+    d'affiliation, part de revenu pub) qui vivent dans des tables séparées
+    et n'apparaissaient nulle part ici avant ce correctif (2026-08-04).
+    Contrairement à /tenants/{tenant_id}/payments/transactions (scopé à un
+    blog, rôle EDITOR+), cette vue sert le \"centre de paiements\" du
+    dashboard principal."""
+    from app.models.affiliate import AffiliateCashoutRequest
+    from app.models.ad import AdRevenueShare
+
     user_id = uuid.UUID(payload["sub"])
-    result = await db.execute(
+    items: list[UserPaymentItem] = []
+
+    tx_result = await db.execute(
         select(Transaction, Tenant.name)
         .join(Tenant, Tenant.id == Transaction.tenant_id)
         .where(
@@ -998,8 +1075,8 @@ async def list_my_payments(
         .order_by(Transaction.created_at.desc())
         .limit(limit)
     )
-    return [
-        UserPaymentItem(
+    for tx, tenant_name in tx_result.all():
+        items.append(UserPaymentItem(
             id=str(tx.id),
             order_id=tx.nowpayments_order_id or "",
             tenant_id=str(tx.tenant_id),
@@ -1010,9 +1087,54 @@ async def list_my_payments(
             amount_received=float(tx.amount_received or 0),
             currency=tx.currency,
             created_at=tx.created_at,
-        )
-        for tx, tenant_name in result.all()
-    ]
+            direction="in",
+        ))
+
+    cashout_result = await db.execute(
+        select(AffiliateCashoutRequest)
+        .where(AffiliateCashoutRequest.user_id == user_id)
+        .order_by(AffiliateCashoutRequest.requested_at.desc())
+        .limit(limit)
+    )
+    for c in cashout_result.scalars().all():
+        items.append(UserPaymentItem(
+            id=str(c.id),
+            order_id=c.payout_reference or "",
+            tenant_id="",
+            tenant_name="",
+            transaction_type="affiliate_commission_payout",
+            status=c.status.value,
+            amount=float(c.net_amount),
+            amount_received=float(c.net_amount) if c.status.value == "paid" else 0,
+            currency="USDT",
+            created_at=c.requested_at,
+            direction="out",
+        ))
+
+    ad_share_result = await db.execute(
+        select(AdRevenueShare, Tenant.name)
+        .join(Tenant, Tenant.id == AdRevenueShare.tenant_id)
+        .where(AdRevenueShare.owner_user_id == user_id)
+        .order_by(AdRevenueShare.created_at.desc())
+        .limit(limit)
+    )
+    for share, tenant_name in ad_share_result.all():
+        items.append(UserPaymentItem(
+            id=str(share.id),
+            order_id=share.payout_reference or "",
+            tenant_id=str(share.tenant_id),
+            tenant_name=tenant_name,
+            transaction_type="ad_revenue_payout",
+            status=share.status.value,
+            amount=float(share.owner_share_amount),
+            amount_received=float(share.owner_share_amount) if share.status.value == "paid" else 0,
+            currency="USDT",
+            created_at=share.created_at,
+            direction="out",
+        ))
+
+    items.sort(key=lambda i: i.created_at, reverse=True)
+    return items[:limit]
 
 
 @router.get("/access/{article_id}")
