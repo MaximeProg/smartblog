@@ -132,6 +132,7 @@ async def publish(
         from app.models.tenant import Tenant as _Tenant
         from app.services.email_service import send_superadmin_event
         from app.services.auth_service import _get_super_admin_emails
+        from app.services.notification_service import notify_super_admins
         sa_emails = await _get_super_admin_emails(db)
         author_res = await db.execute(_select(_User).where(_User.id == uuid.UUID(payload["sub"])))
         author = author_res.scalar_one_or_none()
@@ -144,6 +145,13 @@ async def publish(
             details=f"Blog: {tenant_obj.slug if tenant_obj else tenant_id}",
             actor_email=author.email if author else None,
         )
+        await notify_super_admins(
+            db, type="info", category="article",
+            title=f"Article published — {result.title[:60]}",
+            body=f"Blog: {tenant_obj.slug if tenant_obj else tenant_id}",
+            action_url=f"/blogs/{tenant_id}/articles",
+        )
+        await db.commit()
     except Exception:
         pass
     return result
@@ -194,7 +202,8 @@ async def submit_review(
                 User.id != uuid.UUID(payload["sub"]),
             )
         )
-        editor_emails = [u.email for u in editors_res.scalars().all()]
+        editors = editors_res.scalars().all()
+        editor_emails = [u.email for u in editors]
         if editor_emails:
             review_url = f"{_cfg.FRONTEND_URL}/blogs/{tenant_id}/articles/{article_id}/edit"
             await send_article_submitted_notification(
@@ -203,6 +212,15 @@ async def submit_review(
                 author_name=author_name,
                 review_url=review_url,
             )
+        from app.services.notification_service import notify_user
+        for editor in editors:
+            await notify_user(
+                db, editor.id, type="info", category="article",
+                title="Article submitted for review",
+                body=f"\"{result.title}\" by {author_name}",
+                action_url=f"/blogs/{tenant_id}/articles/{article_id}/edit",
+            )
+        await db.commit()
     except Exception as exc:
         logger.warning("submit_review: email notification failed", error=str(exc))
 
@@ -279,6 +297,14 @@ async def reject(
                     reason=body.reason,
                     dashboard_url=dashboard_url,
                 )
+                from app.services.notification_service import notify_user
+                await notify_user(
+                    db, author.id, type="warning", category="article",
+                    title="Article needs changes",
+                    body=f"\"{result.title}\" was sent back: {body.reason}",
+                    action_url=dashboard_url.replace(_cfg.FRONTEND_URL, ""),
+                )
+                await db.commit()
     except Exception as exc:
         logger.warning("reject: email notification failed", error=str(exc))
 

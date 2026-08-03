@@ -334,6 +334,7 @@ async def kaluta_webhook(
     # Notifications — ne bloquent jamais le traitement du webhook lui-même.
     if user:
         try:
+            from app.services.notification_service import notify_user, notify_super_admins
             if event in APPROVED_EVENTS:
                 from app.services.email_service import send_kyc_verified_email, send_superadmin_event
                 from app.services.auth_service import _get_super_admin_emails
@@ -350,6 +351,16 @@ async def kaluta_webhook(
                     details=f"User: {user.email}",
                     actor_email=user.email,
                 )
+                await notify_user(
+                    db, user.id, type="success", category="kyc",
+                    title="Identity verified", body="Your affiliate link is now unlocked.",
+                    action_url="/affiliate",
+                )
+                await notify_super_admins(
+                    db, type="info", category="kyc",
+                    title="KYC verification approved", body=f"User: {user.email}",
+                    action_url="/superadmin/users",
+                )
             elif event == "session.rejected":
                 from app.services.email_service import send_kyc_rejected_email
                 await send_kyc_rejected_email(
@@ -357,6 +368,13 @@ async def kaluta_webhook(
                     display_name=user.display_name or user.email,
                     kyc_url=f"{settings.FRONTEND_URL}/kyc",
                 )
+                await notify_user(
+                    db, user.id, type="warning", category="kyc",
+                    title="Identity verification unsuccessful",
+                    body="You can try again at no extra cost.",
+                    action_url="/kyc",
+                )
+            await db.commit()
         except Exception:
             logger.exception("Kaluta webhook: notification failed for session_id=%s event=%s", session_id, event)
 

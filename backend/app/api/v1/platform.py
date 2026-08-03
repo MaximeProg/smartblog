@@ -327,6 +327,18 @@ async def submit_contact_message(body: ContactMessageBody, request: Request, db:
     except Exception:
         pass  # Le message est déjà persisté — l'échec d'email ne doit jamais faire échouer la requête visiteur
 
+    try:
+        from app.services.notification_service import notify_super_admins
+        await notify_super_admins(
+            db, type="info", category="support",
+            title=f"New contact message: {body.subject.strip()}",
+            body=f"{body.name.strip()} ({body.email}) · {channel}",
+            action_url="/superadmin",
+        )
+        await db.commit()
+    except Exception:
+        pass
+
     await _push_all_super_admins(
         db,
         title="New contact message",

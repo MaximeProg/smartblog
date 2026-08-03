@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { Bell, CheckCheck, Info, AlertTriangle, Zap, Loader2, BellRing, BellOff } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
@@ -53,25 +53,6 @@ async function registerPush(vapidKey: string) {
   return sub;
 }
 
-// ── Read-state persistence (localStorage) ─────────────────────────
-
-const STORAGE_KEY = 'smarterbloggers:notif-read';
-
-function getReadIds(): Set<string> {
-  if (typeof window === 'undefined') return new Set();
-  try {
-    return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as string[]);
-  } catch {
-    return new Set();
-  }
-}
-
-function persistReadIds(ids: Set<string>) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]));
-  } catch { /* quota exceeded — ignore */ }
-}
-
 // ── Page ──────────────────────────────────────────────────────────
 
 export default function NotificationsPage() {
@@ -81,9 +62,8 @@ export default function NotificationsPage() {
   const params = useParams();
   const locale = params.locale as string;
   const [pushState, setPushState] = useState<'unknown' | 'granted' | 'denied' | 'loading'>('unknown');
-  const [readIds, setReadIds] = useState<Set<string>>(() => getReadIds());
 
-  const { data: rawNotifications = [], isLoading } = useQuery({
+  const { data: notifications = [], isLoading } = useQuery({
     queryKey: ['notifications'],
     queryFn: async () => {
       const { data } = await authApi.notifications();
@@ -92,12 +72,6 @@ export default function NotificationsPage() {
     staleTime: 30_000,
     refetchInterval: 30_000,
   });
-
-  // Merge API data with persisted local read state
-  const notifications = rawNotifications.map(n => ({
-    ...n,
-    read: n.read || readIds.has(n.id),
-  }));
 
   const unread = notifications.filter(n => !n.read).length;
 
@@ -149,12 +123,22 @@ export default function NotificationsPage() {
     }
   }, [toast, t]);
 
-  function markAllRead() {
-    const newReadIds = new Set([...readIds, ...notifications.map(n => n.id)]);
-    setReadIds(newReadIds);
-    persistReadIds(newReadIds);
-    qc.setQueryData(['notifications-count'], { unread: 0, total: notifications.length });
-  }
+  const { mutate: markAllRead } = useMutation({
+    mutationFn: () => authApi.markAllNotificationsRead(),
+    onSuccess: () => {
+      qc.setQueryData(['notifications'], (prev: typeof notifications = []) => prev.map(n => ({ ...n, read: true })));
+      qc.setQueryData(['notifications-count'], { unread: 0, total: notifications.length });
+    },
+  });
+
+  const { mutate: markRead } = useMutation({
+    mutationFn: (id: string) => authApi.markNotificationRead(id),
+    onSuccess: (_data, id) => {
+      qc.setQueryData(['notifications'], (prev: typeof notifications = []) =>
+        prev.map(n => (n.id === id ? { ...n, read: true } : n)));
+      qc.invalidateQueries({ queryKey: ['notifications-count'] });
+    },
+  });
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
@@ -205,7 +189,7 @@ export default function NotificationsPage() {
 
                 {unread > 0 && (
                   <button
-                    onClick={markAllRead}
+                    onClick={() => markAllRead()}
                     className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[12px] font-medium text-slate-600 dark:text-slate-400 transition-colors"
                   >
                     <CheckCheck className="h-3.5 w-3.5" />
@@ -234,7 +218,8 @@ export default function NotificationsPage() {
                 {notifications.map(notif => {
                   const cfg = TYPE_CONFIG[notif.type] ?? TYPE_CONFIG.info;
                   const Wrapper = notif.action_url ? Link : 'div';
-                  const wrapperProps = notif.action_url ? { href: `/${locale}${notif.action_url}` } : {};
+                  const wrapperProps: Record<string, unknown> = notif.action_url ? { href: `/${locale}${notif.action_url}` } : {};
+                  if (!notif.read) wrapperProps.onClick = () => markRead(notif.id);
                   return (
                     <Wrapper
                       key={notif.id}

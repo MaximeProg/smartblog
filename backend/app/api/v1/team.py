@@ -187,6 +187,22 @@ async def accept_invite(
     ))
     inv.accepted_at = datetime.now(timezone.utc)
     await db.commit()
+
+    if inv.invited_by:
+        try:
+            from app.services.notification_service import notify_user
+            member_result = await db.execute(select(User).where(User.id == uuid.UUID(payload["sub"])))
+            member = member_result.scalar_one_or_none()
+            await notify_user(
+                db, inv.invited_by, type="success", category="team",
+                title="Team invitation accepted",
+                body=f"{member.email if member else inv.email} joined as {inv.role.value if hasattr(inv.role, 'value') else inv.role}.",
+                action_url=f"/blogs/{tenant_id}/team",
+            )
+            await db.commit()
+        except Exception:
+            pass
+
     return {"message": "Invitation acceptée."}
 
 
@@ -216,6 +232,19 @@ async def update_member_role(
     tu, user = row
     tu.role = body.role
     await db.commit()
+
+    try:
+        from app.services.notification_service import notify_user
+        await notify_user(
+            db, user.id, type="info", category="team",
+            title="Your team role changed",
+            body=f"You are now {body.role.value if hasattr(body.role, 'value') else body.role} on this blog.",
+            action_url=f"/blogs/{tenant_id}/team",
+        )
+        await db.commit()
+    except Exception:
+        pass
+
     return MemberResponse(
         id=str(tu.id), user_id=str(user.id), email=user.email,
         display_name=user.display_name, avatar_url=user.avatar_url,

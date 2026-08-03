@@ -160,6 +160,22 @@ async def suspend_tenant(
     await log_event(db, "tenant.suspended", actor_id=admin.id, actor_email=admin.email,
                     level="warning", target_type="tenant", target_id=str(tenant.id),
                     details=f"Blog: {tenant.slug}")
+
+    try:
+        from app.services.tenant_service import get_tenant_owner_user_id
+        from app.services.notification_service import notify_user
+        owner_id = await get_tenant_owner_user_id(db, tenant_id)
+        if owner_id:
+            await notify_user(
+                db, owner_id, type="error", category="admin",
+                title="Blog suspended",
+                body=f"{tenant.name} has been suspended by an administrator.",
+                action_url=f"/blogs/{tenant_id}",
+            )
+            await db.commit()
+    except Exception:
+        pass
+
     return {"message": f"{tenant.name} suspendu."}
 
 
@@ -179,6 +195,22 @@ async def activate_tenant(
     await log_event(db, "tenant.reactivated", actor_id=admin.id, actor_email=admin.email,
                     level="success", target_type="tenant", target_id=str(tenant.id),
                     details=f"Blog: {tenant.slug}")
+
+    try:
+        from app.services.tenant_service import get_tenant_owner_user_id
+        from app.services.notification_service import notify_user
+        owner_id = await get_tenant_owner_user_id(db, tenant_id)
+        if owner_id:
+            await notify_user(
+                db, owner_id, type="success", category="admin",
+                title="Blog reactivated",
+                body=f"{tenant.name} is active again.",
+                action_url=f"/blogs/{tenant_id}",
+            )
+            await db.commit()
+    except Exception:
+        pass
+
     return {"message": f"{tenant.name} activé."}
 
 
@@ -218,6 +250,20 @@ async def change_plan(
     await log_event(db, action, actor_id=admin.id, actor_email=admin.email,
                     level="info", target_type="user", target_id=str(owner_user_id),
                     details=f"{old_plan} → {plan.value} (compte : {owner.email}, déclenché depuis le blog {tenant.slug})")
+
+    try:
+        from app.services.notification_service import notify_user
+        verb = "upgraded" if action == "plan.upgraded" else "downgraded"
+        await notify_user(
+            db, owner_user_id, type="info", category="admin",
+            title=f"Your plan was {verb}",
+            body=f"{old_plan.title()} → {plan.value.title()} — applies to all your blogs.",
+            action_url="/subscription",
+        )
+        await db.commit()
+    except Exception:
+        pass
+
     return {"message": f"Plan changé → {plan.value} (appliqué à tous les blogs du compte)"}
 
 
@@ -230,6 +276,10 @@ async def delete_tenant(
     tenant = result.scalar_one_or_none()
     if not tenant:
         raise NotFoundException("Tenant")
+
+    from app.services.tenant_service import get_tenant_owner_user_id
+    owner_id = await get_tenant_owner_user_id(db, tenant_id)
+
     tenant.status = TenantStatus.DELETED
     await db.commit()
 
@@ -237,6 +287,19 @@ async def delete_tenant(
     await log_event(db, "tenant.deleted", actor_id=admin.id, actor_email=admin.email,
                     level="error", target_type="tenant", target_id=str(tenant.id),
                     details=f"Blog: {tenant.slug}")
+
+    if owner_id:
+        try:
+            from app.services.notification_service import notify_user
+            await notify_user(
+                db, owner_id, type="error", category="admin",
+                title="Blog deleted",
+                body=f"{tenant.name} has been deleted by an administrator.",
+                action_url="/blogs",
+            )
+            await db.commit()
+        except Exception:
+            pass
 
 
 # ── Gestion utilisateurs ──────────────────────────────────────────
@@ -319,6 +382,19 @@ async def make_super_admin(
     await log_event(db, "admin.role_granted", actor_id=admin.id, actor_email=admin.email,
                     level="warning", target_type="user", target_id=str(user.id),
                     details=f"Super-admin granted to {user.email}")
+
+    try:
+        from app.services.notification_service import notify_user
+        await notify_user(
+            db, user.id, type="success", category="admin",
+            title="You are now a Super Admin",
+            body="Your account was granted Super Admin privileges.",
+            action_url="/superadmin",
+        )
+        await db.commit()
+    except Exception:
+        pass
+
     return {"message": f"{user.email} est maintenant super-admin."}
 
 
@@ -340,6 +416,19 @@ async def revoke_super_admin(
     await log_event(db, "admin.role_revoked", actor_id=admin.id, actor_email=admin.email,
                     level="warning", target_type="user", target_id=str(user.id),
                     details=f"Super-admin revoked from {user.email}")
+
+    try:
+        from app.services.notification_service import notify_user
+        await notify_user(
+            db, user.id, type="warning", category="admin",
+            title="Super Admin access revoked",
+            body="Your Super Admin privileges have been revoked.",
+            action_url="/dashboard",
+        )
+        await db.commit()
+    except Exception:
+        pass
+
     return {"message": f"Droits super-admin révoqués pour {user.email}."}
 
 
@@ -1669,6 +1758,16 @@ async def admin_reply(ticket_id: str, body: AdminReplyBody, payload: TokenPayloa
             for tu in tenant_users
         ]
         await _asyncio.gather(*tasks, return_exceptions=True)
+
+        from app.services.notification_service import notify_user
+        for tu in tenant_users:
+            await notify_user(
+                db, tu.user_id, type="info", category="support",
+                title="Support replied to your ticket",
+                body=f"{ticket.subject}: {push_body}",
+                action_url=f"/blogs/{ticket.tenant_id}/support/{ticket_id}",
+            )
+        await db.commit()
     except Exception:
         pass
 
@@ -1716,6 +1815,22 @@ async def update_ticket_status(ticket_id: str, body: UpdateTicketBody, payload: 
 
     ticket.updated_at = datetime.now(timezone.utc)
     await db.commit()
+
+    if body.status:
+        try:
+            from app.services.notification_service import notify_user
+            tu_r = await db.execute(select(TenantUser).where(TenantUser.tenant_id == ticket.tenant_id))
+            for tu in tu_r.scalars().all():
+                await notify_user(
+                    db, tu.user_id, type="info", category="support",
+                    title="Support ticket status updated",
+                    body=f"{ticket.subject} — now {ticket.status.value}",
+                    action_url=f"/blogs/{ticket.tenant_id}/support/{ticket_id}",
+                )
+            await db.commit()
+        except Exception:
+            pass
+
     return {"ok": True, "status": ticket.status.value, "priority": ticket.priority.value}
 
 

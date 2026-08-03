@@ -320,6 +320,7 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
         try:
             from app.services.email_service import send_superadmin_event
             from app.services.auth_service import _get_super_admin_emails
+            from app.services.notification_service import notify_super_admins, notify_user
             sa_emails = await _get_super_admin_emails(db)
             await send_superadmin_event(
                 to=sa_emails,
@@ -327,6 +328,20 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
                 title=f"New subscription — {plan.title()} {billing}",
                 details=f"Tenant: {tenant_name} · Amount: ${actually_paid:.2f} USDT",
             )
+            await notify_super_admins(
+                db, type="success", category="payment",
+                title=f"New subscription — {plan.title()} {billing}",
+                body=f"Tenant: {tenant_name} · ${actually_paid:.2f} USDT",
+                action_url="/superadmin/payments",
+            )
+            if source_user_id:
+                await notify_user(
+                    db, source_user_id, type="success", category="payment",
+                    title="Subscription payment confirmed",
+                    body=f"{plan.title()} — {billing} · ${actually_paid:.2f} USDT",
+                    action_url="/payments",
+                )
+            await db.commit()
         except Exception:
             pass
 
@@ -367,6 +382,7 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             try:
                 from app.services.email_service import send_superadmin_event
                 from app.services.auth_service import _get_super_admin_emails
+                from app.services.notification_service import notify_super_admins
                 tenant_obj = await db.get(Tenant, tx.tenant_id)
                 sa_emails = await _get_super_admin_emails(db)
                 await send_superadmin_event(
@@ -376,13 +392,32 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
                     details=f"Budget: {actually_paid:.2f} USDT · Blog: {tenant_obj.slug if tenant_obj else tx.tenant_id}",
                     actor_email=ad_obj.advertiser_email,
                 )
+                await notify_super_admins(
+                    db, type="warning", category="ad",
+                    title=f"New ad submission — {ad_obj.title}",
+                    body=f"Budget: ${actually_paid:.2f} USDT · Blog: {tenant_obj.slug if tenant_obj else tx.tenant_id}",
+                    action_url=f"/blogs/{tx.tenant_id}/ads",
+                )
+                await db.commit()
             except Exception:
                 pass
         else:
             await db.commit()
 
         # `user_id` peut être None (soumission anonyme via public_ads_router)
-        # — `_maybe_generate_invoice` ignore silencieusement ce cas.
+        # — `_maybe_generate_invoice` et notify_user ignorent ce cas.
+        if tx.user_id:
+            try:
+                from app.services.notification_service import notify_user
+                await notify_user(
+                    db, tx.user_id, type="success", category="ad",
+                    title="Ad payment confirmed",
+                    body=f"${actually_paid:.2f} USDT — your ad is now under review.",
+                    action_url="/advertiser",
+                )
+                await db.commit()
+            except Exception:
+                pass
         await _maybe_generate_invoice(db, tx, TransactionType.AD_CAMPAIGN.value)
 
     elif tx.transaction_type == TransactionType.PAID_NEWSLETTER:
@@ -490,6 +525,7 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             try:
                 from app.services.email_service import send_superadmin_event
                 from app.services.auth_service import _get_super_admin_emails
+                from app.services.notification_service import notify_super_admins, notify_user
                 sa_emails = await _get_super_admin_emails(db)
                 await send_superadmin_event(
                     to=sa_emails,
@@ -498,6 +534,20 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
                     details=f"Amount: ${actually_paid:.2f} USDT · User: {user.email if user else tx.user_id}",
                     actor_email=user.email if user else None,
                 )
+                await notify_super_admins(
+                    db, type="success", category="payment",
+                    title=f"New KYC verification payment — {kyc.years_purchased} year(s)",
+                    body=f"${actually_paid:.2f} USDT · User: {user.email if user else tx.user_id}",
+                    action_url="/superadmin/users",
+                )
+                if user:
+                    await notify_user(
+                        db, user.id, type="success", category="payment",
+                        title="KYC payment confirmed",
+                        body=f"{kyc.years_purchased} year(s) — ${actually_paid:.2f} USDT. Verification is starting.",
+                        action_url="/kyc",
+                    )
+                await db.commit()
             except Exception:
                 logger.exception("KYC: échec de l'alerte super admins pour la transaction %s", tx.id)
 

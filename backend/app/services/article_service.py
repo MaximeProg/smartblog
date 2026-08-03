@@ -624,6 +624,14 @@ async def _on_article_published(
                         article_title=article.title,
                         article_url=article_url,
                     )
+                    from app.services.notification_service import notify_user
+                    await notify_user(
+                        db, author.id, type="success", category="article",
+                        title="Your article is published",
+                        body=article.title,
+                        action_url=f"/blogs/{tenant_id}/articles",
+                    )
+                    await db.commit()
         except Exception as exc:
             logger.warning("Article published email failed", article_id=str(article.id), error=str(exc))
 

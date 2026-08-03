@@ -3652,6 +3652,11 @@
       "sent": "Notification envoyée !",
       "history": "Historique",
       "empty": "Aucune notification envoyée pour l'instant",
+      "markAllRead": "Tout marquer comme lu",
+      "tabs": {
+        "activity": "Activité",
+        "broadcast": "Diffusion"
+      },
       "newNotification": "Nouvelle notification",
       "titleLabel": "Titre",
       "bodyLabel": "Message",

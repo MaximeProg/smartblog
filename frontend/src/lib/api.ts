@@ -189,6 +189,12 @@ export const authApi = {
   notificationsCount: () =>
     api.get<{ unread: number; total: number }>('/auth/me/notifications/count'),
 
+  markNotificationRead: (id: string) =>
+    api.post<{ ok: boolean }>(`/auth/me/notifications/${id}/read`),
+
+  markAllNotificationsRead: () =>
+    api.post<{ ok: boolean }>('/auth/me/notifications/read-all'),
+
   savePushSubscription: (sub: { endpoint: string; keys: { p256dh: string; auth: string } }) =>
     api.post('/auth/me/push-subscription', sub),
 

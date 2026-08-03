@@ -343,6 +343,21 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                                 details=f"{order.domain_name} via {order.registrar} — {order.years} an(s)")
                 logger.info("register_purchased_domain: renewal success", order_id=order_id, domain=order.domain_name)
 
+                try:
+                    from app.services.tenant_service import get_tenant_owner_user_id
+                    from app.services.notification_service import notify_user
+                    owner_id = await get_tenant_owner_user_id(db, order.tenant_id)
+                    if owner_id:
+                        await notify_user(
+                            db, owner_id, type="success", category="domain",
+                            title="Domain renewed",
+                            body=f"{order.domain_name} — {order.years} year(s)",
+                            action_url="/domains",
+                        )
+                        await db.commit()
+                except Exception:
+                    pass
+
             else:
                 # ── Nouvel enregistrement ─────────────────────────────────
                 result = await registrar.register_domain(
@@ -403,6 +418,21 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                                 details=f"{order.domain_name} via {order.registrar}")
                 logger.info("register_purchased_domain: success", order_id=order_id, domain=order.domain_name)
 
+                try:
+                    from app.services.tenant_service import get_tenant_owner_user_id
+                    from app.services.notification_service import notify_user
+                    owner_id = await get_tenant_owner_user_id(db, order.tenant_id)
+                    if owner_id:
+                        await notify_user(
+                            db, owner_id, type="success", category="domain",
+                            title="Domain is live",
+                            body=f"{order.domain_name} has been registered and connected to your blog.",
+                            action_url="/domains",
+                        )
+                        await db.commit()
+                except Exception:
+                    pass
+
         except RegistrarError as exc:
             order.status = DomainOrderStatus.REGISTRATION_FAILED
             order.error_message = str(exc)[:2000]
@@ -411,6 +441,7 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                             target_type="domain_order", target_id=str(order.id),
                             details=f"{order.domain_name}: {exc}")
             logger.error("register_purchased_domain: registrar error", order_id=order_id, error=str(exc))
+            await _notify_domain_registration_failed(db, order, str(exc))
         except Exception as exc:
             order.status = DomainOrderStatus.REGISTRATION_FAILED
             order.error_message = str(exc)[:2000]
@@ -419,6 +450,34 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                             target_type="domain_order", target_id=str(order.id),
                             details=f"{order.domain_name}: unexpected error — {exc}")
             logger.error("register_purchased_domain: unexpected error", order_id=order_id, error=str(exc))
+            await _notify_domain_registration_failed(db, order, str(exc))
+
+
+async def _notify_domain_registration_failed(db, order, error: str) -> None:
+    """Argent déjà encaissé (order.status passait par PAID avant ce job) —
+    un échec d'enregistrement doit être visible, pas seulement loggé.
+    Notifie le propriétaire du tenant ET les super admins (remboursement/
+    action manuelle probablement nécessaire côté registrar)."""
+    try:
+        from app.services.tenant_service import get_tenant_owner_user_id
+        from app.services.notification_service import notify_user, notify_super_admins
+        owner_id = await get_tenant_owner_user_id(db, order.tenant_id)
+        if owner_id:
+            await notify_user(
+                db, owner_id, type="error", category="domain",
+                title="Domain registration failed",
+                body=f"{order.domain_name} could not be registered. Our team has been notified.",
+                action_url="/domains",
+            )
+        await notify_super_admins(
+            db, type="error", category="domain",
+            title="Domain registration failed",
+            body=f"{order.domain_name} ({order.registrar}): {error[:200]}",
+            action_url="/superadmin",
+        )
+        await db.commit()
+    except Exception:
+        pass
 
 
 # ── Synchronisation statut domaines (cron quotidien) ─────────────────────────
@@ -507,6 +566,14 @@ async def send_domain_renewal_reminders(ctx: dict) -> None:
                     domain=d.domain,
                     expires_at=d.expires_at.strftime("%Y-%m-%d") if d.expires_at else "soon",
                 )
+                from app.services.notification_service import notify_user
+                await notify_user(
+                    db, owner_id, type="warning", category="domain",
+                    title="Domain expiring soon",
+                    body=f"{d.domain} expires on {d.expires_at.strftime('%Y-%m-%d') if d.expires_at else 'soon'}.",
+                    action_url="/domains",
+                )
+                await db.commit()
                 logger.info("send_domain_renewal_reminders: sent", domain=d.domain, to=owner.email)
             except Exception as exc:
                 logger.error("send_domain_renewal_reminders: failed", domain=d.domain, error=str(exc))

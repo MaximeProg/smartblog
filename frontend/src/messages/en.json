@@ -3652,6 +3652,11 @@
       "sent": "Notification sent!",
       "history": "History",
       "empty": "No notifications sent yet",
+      "markAllRead": "Mark all as read",
+      "tabs": {
+        "activity": "Activity",
+        "broadcast": "Broadcast"
+      },
       "newNotification": "New Notification",
       "titleLabel": "Title",
       "bodyLabel": "Message",

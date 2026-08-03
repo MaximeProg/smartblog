@@ -341,23 +341,23 @@ async def update_wallet(
 
 @router.get("/me/notifications")
 async def list_notifications(payload: TokenPayload, db: DBSession):
-    """Aggregate activity across all user tenants, plus personal financial
-    events (payments, KYC, commissions) that don't depend on owning a blog
-    — as in-app notifications. Computed on the fly (no persistence/read
-    state — the frontend tracks "read" in localStorage), same pattern for
-    every section below."""
+    """Union de deux sources : (a) les notifications réelles et persistées
+    (table `notifications` — paiements, KYC, commissions, domaines, actions
+    admin, etc., voir notification_service.py, insérées au moment de
+    l'événement) et (b) les tuiles d'activité agrégées, calculées à la volée
+    pour les blogs possédés (commentaires en attente, nouveaux abonnés,
+    articles publiés) — ces dernières restent inchangées, ce sont des
+    résumés et non des événements discrets."""
     import uuid
     from datetime import datetime, timedelta
-    from sqlalchemy import select, and_
+    from sqlalchemy import select
     from app.models.tenant import Tenant
     from app.models.tenant_user import TenantUser
     from app.models.comment import Comment
     from app.models.newsletter import NewsletterSubscriber
     from app.models.article import Article
-    from app.models.payment import Transaction
-    from app.models.kyc import KycVerification
-    from app.models.affiliate import AffiliateCommission
-    from app.models.enums import CommentStatus, ArticleStatus, TransactionStatus, KycStatus
+    from app.models.notification import Notification
+    from app.models.enums import CommentStatus, ArticleStatus
 
     user_id = uuid.UUID(payload["sub"])
     since_30d = datetime.utcnow() - timedelta(days=30)
@@ -365,72 +365,24 @@ async def list_notifications(payload: TokenPayload, db: DBSession):
 
     notifications = []
 
-    # ── Événements personnels (indépendants de la possession d'un blog —
-    # un compte purement affilié/KYC doit aussi recevoir ses notifications) ──
+    # ── Notifications réelles et persistées (indépendantes de la possession
+    # d'un blog — un compte purement affilié/KYC en reçoit aussi) ──
 
-    completed_tx_result = await db.execute(
-        select(Transaction)
-        .where(
-            Transaction.user_id == user_id,
-            Transaction.status == TransactionStatus.COMPLETED,
-            Transaction.updated_at >= since_30d,
-        )
-        .order_by(Transaction.updated_at.desc())
-        .limit(10)
+    persisted_result = await db.execute(
+        select(Notification)
+        .where(Notification.recipient_user_id == user_id)
+        .order_by(Notification.created_at.desc())
+        .limit(50)
     )
-    for tx in completed_tx_result.scalars().all():
+    for n in persisted_result.scalars().all():
         notifications.append({
-            "id": f"payment-{tx.id}",
-            "type": "success",
-            "title": "Payment confirmed",
-            "body": f"{tx.transaction_type.value.replace('_', ' ').title()} — ${float(tx.amount):.2f} {tx.currency}",
-            "time": tx.updated_at.isoformat(),
-            "read": False,
-            "action_url": "/payments",
-        })
-
-    kyc_result = await db.execute(
-        select(KycVerification)
-        .where(
-            KycVerification.user_id == user_id,
-            KycVerification.status.in_([KycStatus.VERIFIED, KycStatus.REJECTED]),
-            KycVerification.updated_at >= since_30d,
-        )
-        .order_by(KycVerification.updated_at.desc())
-        .limit(5)
-    )
-    for kyc in kyc_result.scalars().all():
-        is_verified = kyc.status == KycStatus.VERIFIED
-        notifications.append({
-            "id": f"kyc-{kyc.id}",
-            "type": "success" if is_verified else "warning",
-            "title": "Identity verified" if is_verified else "Identity verification unsuccessful",
-            "body": "Your affiliate link is now unlocked." if is_verified else "You can try again at no extra cost.",
-            "time": (kyc.approved_at or kyc.rejected_at or kyc.updated_at).isoformat(),
-            "read": False,
-            "action_url": "/affiliate" if is_verified else "/kyc",
-        })
-
-    commissions_result = await db.execute(
-        select(AffiliateCommission)
-        .where(
-            AffiliateCommission.affiliate_user_id == user_id,
-            AffiliateCommission.created_at >= since_7d,
-        )
-        .order_by(AffiliateCommission.created_at.desc())
-        .limit(10)
-    )
-    recent_commissions = commissions_result.scalars().all()
-    if recent_commissions:
-        total = sum(float(c.commission_amount) for c in recent_commissions)
-        notifications.append({
-            "id": "recent-commissions",
-            "type": "success",
-            "title": f"{len(recent_commissions)} new affiliate commission{'s' if len(recent_commissions) > 1 else ''}",
-            "body": f"${total:.2f} credited to your affiliate balance this week.",
-            "time": recent_commissions[0].created_at.isoformat(),
-            "read": False,
-            "action_url": "/affiliate",
+            "id": str(n.id),
+            "type": n.type,
+            "title": n.title,
+            "body": n.body,
+            "time": n.created_at.isoformat(),
+            "read": n.is_read,
+            "action_url": n.action_url,
         })
 
     # ── Activité liée aux blogs possédés (inchangé) ──
@@ -529,6 +481,53 @@ async def notifications_count(payload: TokenPayload, db: DBSession):
     notifs = await list_notifications(payload, db)
     unread = sum(1 for n in notifs if not n.get("read", True))
     return {"unread": unread, "total": len(notifs)}
+
+
+@router.post("/me/notifications/{notification_id}/read")
+async def mark_notification_read(notification_id: str, payload: TokenPayload, db: DBSession):
+    """Marque une notification persistée comme lue — état serveur, plus de
+    localStorage côté frontend. Ignore silencieusement les tuiles agrégées
+    (id non-UUID, ex. "pending-comments") : elles n'ont pas d'état lu réel."""
+    import uuid
+    from sqlalchemy import select
+    from datetime import datetime, timezone
+    from app.models.notification import Notification
+
+    try:
+        notif_uuid = uuid.UUID(notification_id)
+    except ValueError:
+        return {"ok": True}
+
+    result = await db.execute(
+        select(Notification).where(
+            Notification.id == notif_uuid,
+            Notification.recipient_user_id == uuid.UUID(payload["sub"]),
+        )
+    )
+    notif = result.scalar_one_or_none()
+    if notif and not notif.is_read:
+        notif.is_read = True
+        notif.read_at = datetime.now(timezone.utc)
+        await db.commit()
+    return {"ok": True}
+
+
+@router.post("/me/notifications/read-all")
+async def mark_all_notifications_read(payload: TokenPayload, db: DBSession):
+    """Marque toutes les notifications persistées de l'utilisateur comme lues."""
+    import uuid
+    from sqlalchemy import update
+    from datetime import datetime, timezone
+    from app.models.notification import Notification
+
+    user_id = uuid.UUID(payload["sub"])
+    await db.execute(
+        update(Notification)
+        .where(Notification.recipient_user_id == user_id, Notification.is_read == False)  # noqa: E712
+        .values(is_read=True, read_at=datetime.now(timezone.utc))
+    )
+    await db.commit()
+    return {"ok": True}
 
 
 # ── Push subscriptions ─────────────────────────────────────────────

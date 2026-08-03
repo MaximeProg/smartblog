@@ -167,6 +167,17 @@ async def create_ticket(
         body=f"{sender_name}: {body.subject}",
         url=f"/superadmin/support/{ticket.id}",
     )
+    try:
+        from app.services.notification_service import notify_super_admins
+        await notify_super_admins(
+            db, type="warning", category="support",
+            title="New support ticket",
+            body=f"{sender_name}: {body.subject}",
+            action_url=f"/superadmin/support/{ticket.id}",
+        )
+        await db.commit()
+    except Exception:
+        pass
 
     return _ticket_dict(ticket)
 
@@ -280,6 +291,17 @@ async def send_message(
         body=push_body,
         url=f"/superadmin/support/{ticket_id}",
     )
+    try:
+        from app.services.notification_service import notify_super_admins
+        await notify_super_admins(
+            db, type="info", category="support",
+            title=f"Reply on: {ticket.subject}",
+            body=push_body,
+            action_url=f"/superadmin/support/{ticket_id}",
+        )
+        await db.commit()
+    except Exception:
+        pass
 
     return _msg_dict(msg)
 
@@ -307,5 +329,17 @@ async def close_ticket(
     ticket.status = TicketStatus.closed
     ticket.resolved_at = datetime.utcnow()
     await db.commit()
+
+    try:
+        from app.services.notification_service import notify_super_admins
+        await notify_super_admins(
+            db, type="info", category="support",
+            title="Support ticket closed by tenant",
+            body=ticket.subject,
+            action_url="/superadmin/support",
+        )
+        await db.commit()
+    except Exception:
+        pass
 
     return {"ok": True, "status": ticket.status.value}

@@ -633,6 +633,7 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
     # Email de notification
     try:
         from app.services.email_service import send_affiliate_commission_notification
+        from app.services.notification_service import notify_user
         affiliate_dashboard_url = f"{settings.FRONTEND_URL}/affiliate"
         await send_affiliate_commission_notification(
             to=user.email,
@@ -643,6 +644,13 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
             level=level,
             dashboard_url=affiliate_dashboard_url,
         )
+        await notify_user(
+            db, user.id, type="success", category="affiliate",
+            title="Affiliate commission credited",
+            body=f"+${float(commission_amount):.2f} (level {level}) — balance ${new_balance:.2f}",
+            action_url="/affiliate",
+        )
+        await db.commit()
     except Exception:
         pass
 
@@ -812,6 +820,24 @@ async def _confirm_payout_and_finalize(
                         commission.status = AffiliateCommissionStatus.PENDING
                         commission.cashout_request_id = None
                 await db.commit()
+
+                try:
+                    from app.services.notification_service import notify_user, notify_super_admins
+                    await notify_user(
+                        db, user_id, type="error", category="affiliate",
+                        title="Affiliate payout failed",
+                        body=f"Your ${attempt_amount:.2f} payout was rejected — the amount is back in your balance, you can retry.",
+                        action_url="/affiliate",
+                    )
+                    await notify_super_admins(
+                        db, type="warning", category="affiliate",
+                        title="Affiliate payout rejected by NowPayments",
+                        body=f"Batch {batch_id} · ${attempt_amount:.2f} · status={wstatus}",
+                        action_url="/superadmin",
+                    )
+                    await db.commit()
+                except Exception:
+                    pass
                 break
             logger.warning("Payout %s rejeté par NowPayments (status=%s) — commissions remises en PENDING pour retry.", batch_id, wstatus)
             return

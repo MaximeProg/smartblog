@@ -35,6 +35,7 @@ async def _send_new_user_emails(db: AsyncSession, email: str, display_name: str 
     n'est créé qu'à ce moment-là pour ce flux)."""
     try:
         from app.services.email_service import send_welcome_email, send_superadmin_event
+        from app.services.notification_service import notify_super_admins
         dashboard_url = f"{settings.FRONTEND_URL}/dashboard"
         await send_welcome_email(to=email, display_name=display_name or "", dashboard_url=dashboard_url)
         sa_emails = await _get_super_admin_emails(db)
@@ -43,6 +44,11 @@ async def _send_new_user_emails(db: AsyncSession, email: str, display_name: str 
                 to=sa_emails, event_type="user.register",
                 title="New user registered", details=f"Email: {email}", actor_email=email,
             )
+        await notify_super_admins(
+            db, type="info", category="admin",
+            title="New user registered", body=f"Email: {email}", action_url="/superadmin/users",
+        )
+        await db.commit()
     except Exception as exc:
         logger.warning("new user emails failed", error=str(exc), email=email)
 

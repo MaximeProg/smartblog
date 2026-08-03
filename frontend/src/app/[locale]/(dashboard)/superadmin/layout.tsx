@@ -5,7 +5,7 @@ import { useRouter, useParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
-import { superadminApi } from '@/lib/api';
+import { authApi } from '@/lib/api';
 import {
   LayoutDashboard, Users, Building2, CreditCard, FileText,
   Layers, FolderOpen, Image, Megaphone, GitBranch, BookOpen,
@@ -41,13 +41,13 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  const { data: openTicketCount } = useQuery({
-    queryKey: ['sa-bell-count'],
-    queryFn: () => superadminApi.listSupportTickets({ status: 'open' }).then(r => r.data.total ?? 0),
+  const { data: notifCount } = useQuery({
+    queryKey: ['notifications-count'],
+    queryFn: () => authApi.notificationsCount().then(r => r.data.unread ?? 0),
     refetchInterval: 60000,
     retry: false,
   });
-  const bellCount = openTicketCount ?? 0;
+  const bellCount = notifCount ?? 0;
 
   useEffect(() => {
     const html = document.documentElement;
@@ -275,12 +275,12 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
 
           {/* Right: bell + theme toggle + profile dropdown */}
           <div className="flex items-center gap-2">
-            {/* Notification bell — links to open support tickets */}
+            {/* Notification bell — links to the real notification feed */}
             <Link
-              href={`${b}/support`}
+              href={`${b}/notifications`}
               className="relative h-8 w-8 flex items-center justify-center rounded-lg transition-colors hover:bg-[var(--sa-surface)]"
               style={{ border: '1px solid var(--sa-border)', color: 'var(--sa-text-3)' }}
-              title={t('nav.support')}
+              title={t('nav.notifications')}
             >
               <Bell className="h-4 w-4" />
               {bellCount > 0 && (

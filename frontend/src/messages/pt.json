@@ -115,7 +115,7 @@
     "verifyEmail": {
       "title": "Confirme o seu endereço de e-mail",
       "subtitle": "A confirmar o seu endereço de e-mail…",
-      "successTitle": "E-mail verificado!",
+      "successTitle": "E-mail confirmado!",
       "successDesc": "O teu endereço de e-mail foi confirmado. Já podes iniciar sessão na tua conta.",
       "backToLogin": "Ir para a página de início de sessão",
       "errors": {
@@ -144,7 +144,7 @@
       "title": "Criar um novo blogue",
       "subtitle": "Crie o seu blogue em segundos",
       "nameLabel": "Nome do blogue",
-      "namePlaceholder": "O Meu Blog Fantástico",
+      "namePlaceholder": "O meu blogue fantástico",
       "slugLabel": "Slug da URL",
       "slugPlaceholder": "o-meu-blog-fantástico",
       "slugHint": "O teu blogue estará em {slug}.smarterbloggers.com",
@@ -161,7 +161,7 @@
       "nextStep": "Escolha um tema",
       "backStep": "Voltar",
       "createTitle": "Criar um novo blogue",
-      "createDesc": "Dá um nome ao teu blogue e escolhe o endereço.",
+      "createDesc": "Dá um nome ao teu blogue e escolhe o seu endereço.",
       "themeTitle": "Escolha o seu tema",
       "themeDesc": "O design público do teu blogue. Podes pré-visualizá-lo antes de o alterares.",
       "slugAvailableLabel": "Disponível",
@@ -369,7 +369,7 @@
     "schedule": "Agendar a publicação",
     "seoSection": "SEO",
     "seoMetaTitle": "Título meta",
-    "seoMetaTitlePlaceholder": "Título SEO (máx. 60 caracteres)",
+    "seoMetaTitlePlaceholder": "Título SEO (máximo de 60 caracteres)",
     "seoMetaDescription": "Meta descrição",
     "seoMetaDescriptionPlaceholder": "Breve descrição para os motores de busca (máximo de 160 caracteres)",
     "toolbar": {
@@ -464,7 +464,7 @@
     "seoAiError": "Erro de SEO da IA.",
     "translationAppliedToast": "Tradução aplicada.",
     "translationError": "Erro de tradução.",
-    "contentImprovedToast": "Conteúdo otimizado pela IA!",
+    "contentImprovedToast": "Conteúdo melhorado pela IA!",
     "improveError": "Erro ao melhorar o conteúdo.",
     "excerptGeneratedToast": "Extrato gerado!",
     "excerptError": "Erro ao gerar o excerto.",
@@ -473,7 +473,7 @@
     "articlesBreadcrumb": "Artigos",
     "planStarterRequired": "Disponível a partir do plano Starter",
     "planRequiredShort": "É necessário um plano",
-    "planStarterRequiredShort": "É necessário o plano Starter",
+    "planStarterRequiredShort": "É necessário um plano inicial",
     "tabContent": "Conteúdo",
     "tabWorkflow": "Fluxo de trabalho",
     "improveContentTitle": "Melhorar o conteúdo",
@@ -870,7 +870,7 @@
     "missingBudgetWarning": "Por favor, volte atrás e introduza o seu orçamento para continuar.",
     "whatHappensNextSectionTitle": "O que acontece a seguir",
     "paymentStep1Text": "Clique em «Revisar e pagar» abaixo — irá ver o resumo do seu anúncio.",
-    "paymentStep2Text": "Clique em «Pagar agora» — será redirecionado para a página segura da NowPayments.",
+    "paymentStep2Text": "Clique em «Pagar agora» — será redirecionado para a página segura do NowPayments.",
     "paymentStep3Text": "Pague com criptomoedas (USDT, BTC, ETH…) ou com cartão através da plataforma deles.",
     "paymentStep4Text": "Pagamento confirmado → o seu anúncio é enviado ao proprietário do blogue para revisão.",
     "paymentStep5Text": "Assim que for aprovado, o seu anúncio fica ativo automaticamente.",
@@ -937,7 +937,7 @@
       "starterDesc": "Para quem está a dar os primeiros passos",
       "starterF1": "1 blogue",
       "starterF2": "Até 5 autores",
-      "starterF3": "10 GB de espaço de armazenamento",
+      "starterF3": "10 GB de armazenamento",
       "starterF4": "Análise básica",
       "starterF5": "Boletim informativo com até 1 000 assinantes",
       "proName": "Prós",
@@ -1046,7 +1046,7 @@
     "apiKeys": "Chaves API",
     "accounting": "Dados financeiros",
     "support": "Apoio",
-    "aiBuilder": "Criador de blogues de IA",
+    "aiBuilder": "Criador de blogues com IA",
     "languages": "Idiomas",
     "sectionSite": "Site",
     "sectionSettings": "Definições"
@@ -1088,7 +1088,7 @@
     "titleTemplateHint": "Variáveis: «{title}» · «{blog}» · «{category}»",
     "titleTemplatePlaceholder": "'{title}' — '{blog}'",
     "metaDesc": "Meta descrição predefinida",
-    "metaDescHint": "Utilizado na página inicial e nas páginas sem uma descrição específica.",
+    "metaDescHint": "Utilizado na página inicial e em páginas sem uma descrição específica.",
     "metaDescPlaceholder": "Um blogue sobre tecnologia, design e empreendedorismo...",
     "googlePreview": "Pré-visualização do Google",
     "ogImage": "Imagem OG predefinida",
@@ -1101,7 +1101,7 @@
     "twitterSummary": "Resumo",
     "twitterSummaryLarge": "Resumo com imagem grande",
     "indexing": "Permitir a indexação pelos motores de busca",
-    "indexingDesc": "Quando desativado, um ficheiro robots.txt com a diretiva «noindex» indica aos rastreadores para não indexarem o seu blogue.",
+    "indexingDesc": "Quando desativado, um ficheiro robots.txt com a diretiva «noindex» indica aos rastreadores que não indexem o seu blogue.",
     "sitemap": "URL do mapa do site",
     "sitemapDesc": "Gerado automaticamente — envie-o para a Google Search Console.",
     "copySitemap": "Copiar",
@@ -1385,7 +1385,7 @@
     "export": "Exportar CSV",
     "searchPlaceholder": "Pesquisar por e-mail ou nome...",
     "noSubscribers": "Ainda não há assinantes",
-    "noSubscribersDesc": "Os assinantes aparecerão aqui assim que os visitantes se inscreverem no teu blogue.",
+    "noSubscribersDesc": "Os assinantes aparecerão aqui assim que os visitantes se inscreverem no seu blogue.",
     "emailHeader": "E-mail",
     "nameHeader": "Nome",
     "statusHeader": "Estado",
@@ -1545,7 +1545,7 @@
     "banList": "Utilizadores banidos",
     "noBans": "Ainda não há proibições",
     "banRemoved": "Suspensão levantada",
-    "banRemoveError": "Erro ao remover o bloqueio",
+    "banRemoveError": "Erro ao remover o banimento",
     "shadowBan": "Banimento oculto",
     "banAuthor": "Autor da proibição",
     "banSuccess": "Autor banido",
@@ -1578,7 +1578,7 @@
     "desc": "Arraste as linhas para as reorganizar. Clique no título para renomear. Ative ou desative a visibilidade de cada widget.",
     "save": "Guardar",
     "saved": "Guardado!",
-    "tipTitle": "Dica: clica no título de um widget para o renomear. As alterações são aplicadas ao teu blogue público após guardares."
+    "tipTitle": "Dica: clica no título de um widget para o renomear. As alterações serão aplicadas ao teu blogue público após guardares."
   },
   "ai": {
     "title": "Assistente de IA",
@@ -1783,7 +1783,7 @@
     "statAuthors": "Autores",
     "myBlogsTitle": "Os meus blogs",
     "seeAllBlogs": "Ver tudo",
-    "moreBlogs": "+ {count}. e outros",
+    "moreBlogs": "+ {count} e outros",
     "limitReached": "Limite atingido",
     "upgradeDesc": "Atualize para o plano Business para criar mais blogs",
     "manageBlog": "Gerir",
@@ -2078,7 +2078,7 @@
     "fieldMetaDescDefault": "Meta descrição predefinida",
     "fieldMetaDescDefaultHint": "Recomendado: 160 caracteres. Aparece abaixo do título no Google.",
     "seoCharCount": "{n} / 160 caracteres",
-    "fieldOgImageHint": "Exibida ao partilhar no Twitter, LinkedIn e Facebook. O ideal é que tenha 1200×630 px.",
+    "fieldOgImageHint": "Exibida ao partilhar no Twitter, LinkedIn e Facebook. O ideal é 1200×630 px.",
     "seoSitemap": "Mapa do site em XML",
     "seoRssFeed": "Feed RSS",
     "seoView": "Ver",
@@ -2481,12 +2481,12 @@
       },
       "luminary": {
         "tagline": "Prestígio · Serif · Literária",
-        "description": "Estilo da revista «The New Yorker» / «GQ». Tom creme-marfim, detalhes dourados, letras maiúsculas decorativas, aspeto editorial de alta qualidade."
+        "description": "Estilo da revista «The New Yorker» / «GQ». Tom creme-marfim, detalhes dourados, letras maiúsculas decorativas, estilo editorial de alta qualidade."
       }
     }
   },
   "profile": {
-    "personalInfo": "Informações pessoais",
+    "personalInfo": "Dados pessoais",
     "displayNameLabel": "Nome de exibição",
     "displayNamePlaceholder": "O teu nome",
     "emailLabel": "Endereço de e-mail",
@@ -2607,7 +2607,7 @@
     "totalPaidOut": "Total pago",
     "totalReferrals": "Encaminhamentos diretos",
     "pendingCommissions": "Comissões pendentes",
-    "commissionsTitle": "Histórico da Comissão",
+    "commissionsTitle": "Histórico da comissão",
     "cashoutsTitle": "Histórico de levantamentos",
     "noCommissions": "Ainda não há comissões. Partilha o teu link de referência para começares.",
     "noCashouts": "Ainda não há pedidos de levantamento.",
@@ -2653,7 +2653,7 @@
     "inviteFriendEmail": "E-mail de um amigo",
     "inviteFriendLanguage": "A língua do amigo",
     "inviteFriendMessage": "A sua mensagem pessoal",
-    "inviteFriendMessagePlaceholder": "Tenho usado o SmarterBloggers e acho que ias adorar…",
+    "inviteFriendMessagePlaceholder": "Tenho usado o SmarterBloggers e acho que vais adorar…",
     "inviteFriendTranslationNote": "A tua mensagem será traduzida automaticamente para a língua do teu amigo.",
     "inviteFriendSend": "Enviar convite",
     "inviteSentTitle": "Convite enviado!",
@@ -2781,7 +2781,7 @@
     "targetCountries": "Países-alvo (opcional)",
     "targetCountriesHint": "Deixe em branco para mostrar o seu anúncio a visitantes de todo o mundo. Selecione um ou mais países para o mostrar apenas a visitantes desses países.",
     "targetCountriesSearch": "Pesquisar um país…",
-    "targetCountriesNoResults": "Não foi encontrado nenhum país correspondente."
+    "targetCountriesNoResults": "Não existe nenhum país correspondente."
   },
   "tenantAccounting": {
     "title": "Panorâmica financeira",
@@ -2889,7 +2889,7 @@
   "trial": {
     "daysLeft": "{days} dias restantes do teu período de avaliação",
     "lastDay": "Último dia do seu período de avaliação — faça o upgrade hoje mesmo!",
-    "expiredMessage": "O seu período de avaliação expirou. Atualize a sua subscrição para continuar a utilizar todas as funcionalidades.",
+    "expiredMessage": "O seu período de avaliação expirou. Atualize a sua conta para continuar a utilizar todas as funcionalidades.",
     "upgradeNow": "Atualize agora",
     "viewPlans": "Ver plantas"
   },
@@ -2904,7 +2904,7 @@
     "addError": "Erro ao adicionar o domínio.",
     "verifyButton": "Verificar",
     "verifySuccess": "Domínio verificado! O teu blogue já está online neste endereço.",
-    "verifyFailed": "A verificação falhou — verifique se ambos os registos DNS estão configurados corretamente.",
+    "verifyFailed": "A verificação falhou — verifique se ambos os registos DNS estão corretamente configurados.",
     "verifyError": "Erro durante a verificação.",
     "deleteSuccess": "Domínio removido.",
     "deleteError": "Erro ao remover o domínio.",
@@ -3415,7 +3415,7 @@
       "envNote": "As credenciais de integração são configuradas através de variáveis de ambiente (.env).",
       "saveBtn": "Guardar",
       "nowpaymentsTotpTitle": "Código de autenticação de duas etapas (2FA) do NowPayments",
-      "nowpaymentsTotpHint": "Código de verificação em tempo real para ações manuais no painel de controlo do NowPayments (lista de autorizações, pagamentos, etc.). Atualiza-se automaticamente.",
+      "nowpaymentsTotpHint": "Código de verificação em tempo real para ações manuais no painel do NowPayments (lista de permissões, pagamentos, etc.). Atualiza-se automaticamente.",
       "copyCode": "Copiar",
       "codeCopied": "Copiado!",
       "field": {
@@ -3429,7 +3429,7 @@
         "domainMarkup": "Margem de lucro na compra de domínios (%)",
         "domainMarkupHint": "Acrescentado ao preço do registador em cada compra e renovação de domínio — 0 significa revenda ao preço de custo",
         "paymentTolerance": "Limite de pagamento em criptomoedas ($)",
-        "paymentToleranceHint": "Um pagamento recebido dentro desta margem do montante esperado (taxas de rede, variação da taxa) continua a ser considerado completo",
+        "paymentToleranceHint": "Um pagamento recebido dentro desta margem do montante previsto (taxas de rede, variação da taxa) continua a ser considerado completo",
         "kycPricePerYear": "Preço da verificação KYC ($/ano)",
         "kycPricePerYearHint": "Preço cobrado aos utilizadores por ano pela verificação de identidade, necessária antes de acederem ao programa de afiliados"
       },
@@ -3652,6 +3652,11 @@
       "sent": "Notificação enviada!",
       "history": "História",
       "empty": "Ainda não foram enviadas notificações",
+      "markAllRead": "Marcar tudo como lido",
+      "tabs": {
+        "activity": "Atividade",
+        "broadcast": "Transmissão"
+      },
       "newNotification": "Nova notificação",
       "titleLabel": "Título",
       "bodyLabel": "Mensagem",
@@ -3799,7 +3804,7 @@
       "accountsCount": "{count} contas",
       "classes": {
         "1": "Classe 1 — Ativos",
-        "2": "Classe 2 — Passivos",
+        "2": "Classe 2 — Passivo",
         "3": "Classe 3 — Ações",
         "4": "Classe 4 — Receitas",
         "5": "Classe 5 — Despesas"
@@ -3964,7 +3969,7 @@
   },
   "paymentCenter": {
     "title": "Pagamentos",
-    "subtitle": "Todos os teus pagamentos em todos os blogs de que és proprietário.",
+    "subtitle": "Todos os teus pagamentos em todos os blogs que possuis.",
     "filterAll": "Todos",
     "filterCompleted": "Concluído",
     "filterPending": "Em espera",
@@ -3979,7 +3984,7 @@
       "paid_article": "Artigo pago",
       "paid_newsletter": "Boletim informativo pago",
       "ad_campaign": "Anúncio",
-      "domain_purchase": "Compra de domínio"
+      "domain_purchase": "Compra de domínios"
     },
     "status": {
       "pending": "Em espera",
