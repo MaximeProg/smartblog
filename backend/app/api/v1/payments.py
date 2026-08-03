@@ -485,6 +485,22 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
 
             await _maybe_generate_invoice(db, tx, TransactionType.KYC_VERIFICATION.value)
 
+            # Alerte super admins — même pattern que SUBSCRIPTION/AD_CAMPAIGN
+            # ci-dessus, jusqu'ici absente pour le paiement KYC.
+            try:
+                from app.services.email_service import send_superadmin_event
+                from app.services.auth_service import _get_super_admin_emails
+                sa_emails = await _get_super_admin_emails(db)
+                await send_superadmin_event(
+                    to=sa_emails,
+                    event_type="payment.completed",
+                    title=f"New KYC verification payment — {kyc.years_purchased} year(s)",
+                    details=f"Amount: ${actually_paid:.2f} USDT · User: {user.email if user else tx.user_id}",
+                    actor_email=user.email if user else None,
+                )
+            except Exception:
+                logger.exception("KYC: échec de l'alerte super admins pour la transaction %s", tx.id)
+
 
 async def _activate_subscription(db, tenant_id: uuid.UUID, plan: str, billing: str) -> None:
     from datetime import timedelta

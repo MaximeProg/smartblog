@@ -558,6 +558,58 @@ async def send_password_reset_email(
     )
 
 
+async def send_kyc_verified_email(
+    to: str,
+    display_name: str,
+    affiliate_url: str,
+) -> None:
+    """Envoyé à l'utilisateur dès que Kaluta confirme session.approved/
+    verified (voir kyc.py::kaluta_webhook) — c'est ce webhook, pas le
+    paiement, qui débloque réellement le programme d'affiliation."""
+    body = (
+        _h1("Your identity has been verified") +
+        _p(f"Hello <strong>{display_name}</strong>,") +
+        _p("Good news — your KYC identity verification has been approved. The affiliate program is now unlocked on your account and your referral link is ready to share.") +
+        _btn("Go to my affiliate dashboard", affiliate_url, "#10B981") +
+        _note("You'll only need to verify again if you change your name or country, or if a prepaid verification cycle expires.")
+    )
+    await _send(
+        to=to,
+        subject="Your identity verification is approved — SmarterBloggers",
+        html=_base(
+            title="Identity verified",
+            preview="Your KYC verification was approved — the affiliate program is now unlocked.",
+            body_html=body,
+        ),
+    )
+
+
+async def send_kyc_rejected_email(
+    to: str,
+    display_name: str,
+    kyc_url: str,
+) -> None:
+    """Envoyé à l'utilisateur quand Kaluta renvoie session.rejected — pour
+    qu'il sache qu'il doit relancer une vérification (années déjà
+    prépayées, pas de nouveau paiement — voir kyc.py::retry_kyc_session)."""
+    body = (
+        _h1("Your identity verification wasn't approved") +
+        _p(f"Hello <strong>{display_name}</strong>,") +
+        _p("Your last identity verification attempt could not be approved (this can happen for reasons like a blurry document photo or a failed face match). You can try again at no extra cost — any prepaid years are preserved.") +
+        _btn("Try again", kyc_url, "#F59E0B") +
+        _note("If this keeps happening, feel free to reach out to support.")
+    )
+    await _send(
+        to=to,
+        subject="Action needed: identity verification unsuccessful — SmarterBloggers",
+        html=_base(
+            title="Verification unsuccessful",
+            preview="Your last KYC verification attempt was not approved — you can retry at no extra cost.",
+            body_html=body,
+        ),
+    )
+
+
 async def send_superadmin_event(
     to: list[str],
     event_type: str,
@@ -574,6 +626,7 @@ async def send_superadmin_event(
         "payment.completed": ("#6366F1", "#EEF2FF", "#C7D2FE"),
         "ad.submitted":      ("#F59E0B", "#FFFBEB", "#FDE68A"),
         "article.published": ("#3B82F6", "#EFF6FF", "#BFDBFE"),
+        "kyc.verified":      ("#10B981", "#F0FDF4", "#BBF7D0"),
     }
     accent, bg, border = color_map.get(event_type, ("#6366F1", "#EEF2FF", "#C7D2FE"))
 

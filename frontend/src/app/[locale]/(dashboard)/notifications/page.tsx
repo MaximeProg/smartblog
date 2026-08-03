@@ -3,6 +3,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bell, CheckCheck, Info, AlertTriangle, Zap, Loader2, BellRing, BellOff } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
@@ -76,6 +78,8 @@ export default function NotificationsPage() {
   const t = useTranslations('notifications');
   const { toast } = useToast();
   const qc = useQueryClient();
+  const params = useParams();
+  const locale = params.locale as string;
   const [pushState, setPushState] = useState<'unknown' | 'granted' | 'denied' | 'loading'>('unknown');
   const [readIds, setReadIds] = useState<Set<string>>(() => getReadIds());
 
@@ -229,10 +233,13 @@ export default function NotificationsPage() {
               <div className="space-y-2">
                 {notifications.map(notif => {
                   const cfg = TYPE_CONFIG[notif.type] ?? TYPE_CONFIG.info;
+                  const Wrapper = notif.action_url ? Link : 'div';
+                  const wrapperProps = notif.action_url ? { href: `/${locale}${notif.action_url}` } : {};
                   return (
-                    <div
+                    <Wrapper
                       key={notif.id}
-                      className={`flex items-start gap-4 p-4 rounded-2xl border bg-white dark:bg-slate-900 shadow-sm transition-all hover:shadow-md dark:border-slate-700 ${notif.read ? 'opacity-60' : ''}`}
+                      {...(wrapperProps as any)}
+                      className={`flex items-start gap-4 p-4 rounded-2xl border bg-white dark:bg-slate-900 shadow-sm transition-all hover:shadow-md dark:border-slate-700 ${notif.read ? 'opacity-60' : ''} ${notif.action_url ? 'cursor-pointer' : ''}`}
                     >
                       <div className={`h-9 w-9 rounded-xl border ${cfg.border} ${cfg.bg} flex items-center justify-center shrink-0 mt-0.5`}>
                         <cfg.icon className={`h-4 w-4 ${cfg.icon_cls}`} />
@@ -247,7 +254,7 @@ export default function NotificationsPage() {
                         <p className="text-[12.5px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{notif.body}</p>
                         <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">{timeAgo(notif.time, t)}</p>
                       </div>
-                    </div>
+                    </Wrapper>
                   );
                 })}
               </div>

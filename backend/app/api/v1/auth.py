@@ -341,7 +341,11 @@ async def update_wallet(
 
 @router.get("/me/notifications")
 async def list_notifications(payload: TokenPayload, db: DBSession):
-    """Aggregate activity across all user tenants as in-app notifications."""
+    """Aggregate activity across all user tenants, plus personal financial
+    events (payments, KYC, commissions) that don't depend on owning a blog
+    — as in-app notifications. Computed on the fly (no persistence/read
+    state — the frontend tracks "read" in localStorage), same pattern for
+    every section below."""
     import uuid
     from datetime import datetime, timedelta
     from sqlalchemy import select, and_
@@ -350,98 +354,167 @@ async def list_notifications(payload: TokenPayload, db: DBSession):
     from app.models.comment import Comment
     from app.models.newsletter import NewsletterSubscriber
     from app.models.article import Article
-    from app.models.enums import CommentStatus, ArticleStatus
+    from app.models.payment import Transaction
+    from app.models.kyc import KycVerification
+    from app.models.affiliate import AffiliateCommission
+    from app.models.enums import CommentStatus, ArticleStatus, TransactionStatus, KycStatus
 
     user_id = uuid.UUID(payload["sub"])
+    since_30d = datetime.utcnow() - timedelta(days=30)
+    since_7d = datetime.utcnow() - timedelta(days=7)
 
-    # Get all tenant IDs the user belongs to
+    notifications = []
+
+    # ── Événements personnels (indépendants de la possession d'un blog —
+    # un compte purement affilié/KYC doit aussi recevoir ses notifications) ──
+
+    completed_tx_result = await db.execute(
+        select(Transaction)
+        .where(
+            Transaction.user_id == user_id,
+            Transaction.status == TransactionStatus.COMPLETED,
+            Transaction.updated_at >= since_30d,
+        )
+        .order_by(Transaction.updated_at.desc())
+        .limit(10)
+    )
+    for tx in completed_tx_result.scalars().all():
+        notifications.append({
+            "id": f"payment-{tx.id}",
+            "type": "success",
+            "title": "Payment confirmed",
+            "body": f"{tx.transaction_type.value.replace('_', ' ').title()} — ${float(tx.amount):.2f} {tx.currency}",
+            "time": tx.updated_at.isoformat(),
+            "read": False,
+            "action_url": "/payments",
+        })
+
+    kyc_result = await db.execute(
+        select(KycVerification)
+        .where(
+            KycVerification.user_id == user_id,
+            KycVerification.status.in_([KycStatus.VERIFIED, KycStatus.REJECTED]),
+            KycVerification.updated_at >= since_30d,
+        )
+        .order_by(KycVerification.updated_at.desc())
+        .limit(5)
+    )
+    for kyc in kyc_result.scalars().all():
+        is_verified = kyc.status == KycStatus.VERIFIED
+        notifications.append({
+            "id": f"kyc-{kyc.id}",
+            "type": "success" if is_verified else "warning",
+            "title": "Identity verified" if is_verified else "Identity verification unsuccessful",
+            "body": "Your affiliate link is now unlocked." if is_verified else "You can try again at no extra cost.",
+            "time": (kyc.approved_at or kyc.rejected_at or kyc.updated_at).isoformat(),
+            "read": False,
+            "action_url": "/affiliate" if is_verified else "/kyc",
+        })
+
+    commissions_result = await db.execute(
+        select(AffiliateCommission)
+        .where(
+            AffiliateCommission.affiliate_user_id == user_id,
+            AffiliateCommission.created_at >= since_7d,
+        )
+        .order_by(AffiliateCommission.created_at.desc())
+        .limit(10)
+    )
+    recent_commissions = commissions_result.scalars().all()
+    if recent_commissions:
+        total = sum(float(c.commission_amount) for c in recent_commissions)
+        notifications.append({
+            "id": "recent-commissions",
+            "type": "success",
+            "title": f"{len(recent_commissions)} new affiliate commission{'s' if len(recent_commissions) > 1 else ''}",
+            "body": f"${total:.2f} credited to your affiliate balance this week.",
+            "time": recent_commissions[0].created_at.isoformat(),
+            "read": False,
+            "action_url": "/affiliate",
+        })
+
+    # ── Activité liée aux blogs possédés (inchangé) ──
+
     tenant_rows = await db.execute(
         select(Tenant.id, Tenant.name)
         .join(TenantUser, TenantUser.tenant_id == Tenant.id)
         .where(TenantUser.user_id == user_id, Tenant.deleted_at.is_(None))
     )
     tenants = {str(r.id): r.name for r in tenant_rows.all()}
-
-    if not tenants:
-        return []
-
     tenant_ids = [uuid.UUID(tid) for tid in tenants]
-    since_30d = datetime.utcnow() - timedelta(days=30)
-    since_7d = datetime.utcnow() - timedelta(days=7)
 
-    notifications = []
-
-    # Pending comments needing moderation (last 30 days)
-    pending_result = await db.execute(
-        select(Comment)
-        .where(
-            Comment.tenant_id.in_(tenant_ids),
-            Comment.status == CommentStatus.PENDING,
-            Comment.created_at >= since_30d,
+    if tenant_ids:
+        # Pending comments needing moderation (last 30 days)
+        pending_result = await db.execute(
+            select(Comment)
+            .where(
+                Comment.tenant_id.in_(tenant_ids),
+                Comment.status == CommentStatus.PENDING,
+                Comment.created_at >= since_30d,
+            )
+            .order_by(Comment.created_at.desc())
+            .limit(20)
         )
-        .order_by(Comment.created_at.desc())
-        .limit(20)
-    )
-    pending_comments = pending_result.scalars().all()
-    if pending_comments:
-        blog_name = tenants.get(str(pending_comments[0].tenant_id), "")
-        count = len(pending_comments)
-        notifications.append({
-            "id": "pending-comments",
-            "type": "warning",
-            "title": f"{count} comment{'s' if count > 1 else ''} awaiting moderation",
-            "body": f"Review and approve comments on {blog_name}{'and other blogs' if len(tenants) > 1 else ''}.",
-            "time": pending_comments[0].created_at.isoformat(),
-            "read": False,
-            "action_url": None,
-        })
+        pending_comments = pending_result.scalars().all()
+        if pending_comments:
+            blog_name = tenants.get(str(pending_comments[0].tenant_id), "")
+            count = len(pending_comments)
+            notifications.append({
+                "id": "pending-comments",
+                "type": "warning",
+                "title": f"{count} comment{'s' if count > 1 else ''} awaiting moderation",
+                "body": f"Review and approve comments on {blog_name}{'and other blogs' if len(tenants) > 1 else ''}.",
+                "time": pending_comments[0].created_at.isoformat(),
+                "read": False,
+                "action_url": None,
+            })
 
-    # New newsletter subscribers (last 7 days)
-    subs_result = await db.execute(
-        select(NewsletterSubscriber)
-        .where(
-            NewsletterSubscriber.tenant_id.in_(tenant_ids),
-            NewsletterSubscriber.created_at >= since_7d,
+        # New newsletter subscribers (last 7 days)
+        subs_result = await db.execute(
+            select(NewsletterSubscriber)
+            .where(
+                NewsletterSubscriber.tenant_id.in_(tenant_ids),
+                NewsletterSubscriber.created_at >= since_7d,
+            )
+            .order_by(NewsletterSubscriber.created_at.desc())
+            .limit(50)
         )
-        .order_by(NewsletterSubscriber.created_at.desc())
-        .limit(50)
-    )
-    new_subs = subs_result.scalars().all()
-    if new_subs:
-        count = len(new_subs)
-        notifications.append({
-            "id": "new-subscribers",
-            "type": "success",
-            "title": f"{count} new subscriber{'s' if count > 1 else ''} this week",
-            "body": "Your newsletter is growing! Keep publishing great content.",
-            "time": new_subs[0].created_at.isoformat(),
-            "read": False,
-            "action_url": None,
-        })
+        new_subs = subs_result.scalars().all()
+        if new_subs:
+            count = len(new_subs)
+            notifications.append({
+                "id": "new-subscribers",
+                "type": "success",
+                "title": f"{count} new subscriber{'s' if count > 1 else ''} this week",
+                "body": "Your newsletter is growing! Keep publishing great content.",
+                "time": new_subs[0].created_at.isoformat(),
+                "read": False,
+                "action_url": None,
+            })
 
-    # Recently published articles (last 7 days)
-    articles_result = await db.execute(
-        select(Article)
-        .where(
-            Article.tenant_id.in_(tenant_ids),
-            Article.status == ArticleStatus.PUBLISHED,
-            Article.published_at >= since_7d,
+        # Recently published articles (last 7 days)
+        articles_result = await db.execute(
+            select(Article)
+            .where(
+                Article.tenant_id.in_(tenant_ids),
+                Article.status == ArticleStatus.PUBLISHED,
+                Article.published_at >= since_7d,
+            )
+            .order_by(Article.published_at.desc())
+            .limit(10)
         )
-        .order_by(Article.published_at.desc())
-        .limit(10)
-    )
-    recent_articles = articles_result.scalars().all()
-    for article in recent_articles[:3]:
-        blog_name = tenants.get(str(article.tenant_id), "")
-        notifications.append({
-            "id": f"article-{article.id}",
-            "type": "info",
-            "title": f"Article published on {blog_name}",
-            "body": article.title,
-            "time": article.published_at.isoformat() if article.published_at else datetime.utcnow().isoformat(),
-            "read": True,
-            "action_url": None,
-        })
+        recent_articles = articles_result.scalars().all()
+        for article in recent_articles[:3]:
+            blog_name = tenants.get(str(article.tenant_id), "")
+            notifications.append({
+                "id": f"article-{article.id}",
+                "type": "info",
+                "title": f"Article published on {blog_name}",
+                "body": article.title,
+                "time": article.published_at.isoformat() if article.published_at else datetime.utcnow().isoformat(),
+                "read": True,
+                "action_url": None,
+            })
 
     # Sort by time descending
     notifications.sort(key=lambda n: n["time"], reverse=True)
