@@ -97,6 +97,15 @@ export default function KycPage() {
 
   const Icon = status ? (STATUS_ICON[status.kyc_status] ?? ShieldCheck) : ShieldCheck;
 
+  const yearsRemaining = status?.kyc_years_remaining ?? 0;
+  // Un rejet Kaluta (document illisible, mauvaise photo...) ne veut pas dire
+  // que l'utilisateur doit repayer — il a déjà des années prépayées. Seul un
+  // solde à 0 (jamais payé, ou années épuisées) doit ramener au formulaire
+  // de paiement.
+  const canReverifyWithPrepaidYears = (status?.kyc_status === 'expired' || status?.kyc_status === 'rejected') && yearsRemaining > 0;
+  const needsNewPurchase = status?.kyc_status === 'not_started'
+    || ((status?.kyc_status === 'expired' || status?.kyc_status === 'rejected') && yearsRemaining === 0);
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
       <Script src="https://kalutakyc.com/embed.js" strategy="afterInteractive" />
@@ -141,8 +150,8 @@ export default function KycPage() {
                   </button>
                 )}
 
-                {/* Re-verification via prepaid years (material profile change) */}
-                {(status?.kyc_status === 'expired') && (status?.kyc_years_remaining ?? 0) > 0 && (
+                {/* Re-verification via prepaid years (material change, or a plain Kaluta rejection) */}
+                {canReverifyWithPrepaidYears && (
                   <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm p-6">
                     <p className="text-[13px] text-slate-600 dark:text-slate-400 mb-4">{t('reverifyExplain')}</p>
                     <button
@@ -156,7 +165,7 @@ export default function KycPage() {
                 )}
 
                 {/* New purchase */}
-                {(status?.kyc_status === 'not_started' || status?.kyc_status === 'rejected' || ((status?.kyc_years_remaining ?? 0) === 0 && status?.kyc_status !== 'pending' && status?.kyc_status !== 'verified')) && (
+                {needsNewPurchase && (
                   <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm p-6 space-y-5">
                     <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t('purchaseTitle')}</h2>
 

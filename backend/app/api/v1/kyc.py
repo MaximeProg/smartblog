@@ -192,7 +192,10 @@ async def retry_kyc_session(payload: TokenPayload, db: DBSession):
         status=KycStatus.PENDING,
         kaluta_session_id=session.get("session_id"),
         kaluta_verification_url=session.get("verification_url"),
-        is_material_change_reverification=True,
+        # Vrai seulement pour le cas "changement important de profil" —
+        # un simple rejet Kaluta (document illisible, mauvaise photo, etc.)
+        # n'est pas un changement de profil, juste une nouvelle tentative.
+        is_material_change_reverification=(user.kyc_status == KycStatus.EXPIRED),
     )
     db.add(kyc)
     user.kyc_status = KycStatus.PENDING
