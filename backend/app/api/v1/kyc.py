@@ -242,17 +242,47 @@ async def kaluta_webhook(
     event = data.get("event", "")
     session_obj = data.get("session") or {}
     session_id = session_obj.get("id") or data.get("session_id", "")
-    if not session_id:
-        logger.warning("Kaluta webhook: missing session_id in payload, keys=%s", list(data.keys()))
+    external_id = session_obj.get("external_id") or data.get("external_id", "")
+    if not session_id and not external_id:
+        logger.warning("Kaluta webhook: missing session_id/external_id in payload, keys=%s", list(data.keys()))
         return {"received": True, "action": "ignored", "reason": "missing_session_id"}
 
-    result = await db.execute(
-        select(KycVerification).where(KycVerification.kaluta_session_id == session_id)
-    )
-    kyc = result.scalar_one_or_none()
+    kyc = None
+    if session_id:
+        result = await db.execute(
+            select(KycVerification).where(KycVerification.kaluta_session_id == session_id)
+        )
+        kyc = result.scalar_one_or_none()
+
+    if not kyc and external_id:
+        # Repli : `session.id` renvoyé par le webhook ne correspond pas
+        # toujours au `session_id` reçu à la création (constaté le
+        # 2026-08-03, cause probable de la mise à jour Kaluta annoncée par
+        # l'utilisateur). `external_id`, lui, est TOUJOURS l'ID que nous
+        # avons fourni nous-mêmes (str(user.id) — voir create_kaluta_session
+        # dans payments.py et kyc.py::retry_kyc_session) — donc fiable.
+        try:
+            user_id = uuid.UUID(external_id)
+        except ValueError:
+            user_id = None
+        if user_id:
+            result = await db.execute(
+                select(KycVerification)
+                .where(KycVerification.user_id == user_id)
+                .order_by(KycVerification.created_at.desc())
+                .limit(1)
+            )
+            kyc = result.scalar_one_or_none()
+
     if not kyc:
-        logger.warning("Kaluta webhook: unknown session_id=%s (event=%s)", session_id, event)
+        logger.warning("Kaluta webhook: unknown session_id=%s external_id=%s (event=%s)", session_id, external_id, event)
         return {"received": True, "action": "ignored", "reason": "unknown_session_id"}
+
+    # Auto-correction : si trouvé via external_id avec un session_id qui ne
+    # correspondait pas encore, on l'aligne pour que les prochains webhooks
+    # de ce même cycle matchent directement sans repli.
+    if session_id and kyc.kaluta_session_id != session_id:
+        kyc.kaluta_session_id = session_id
 
     user = await db.get(User, kyc.user_id)
 
