@@ -44,6 +44,38 @@ class KycStatusResponse(BaseModel):
     kaluta_verification_url: str | None
 
 
+def _log_kaluta_signature_failure(raw: bytes, signature_header: str) -> None:
+    """Diagnostic temporaire (2026-08-03) — n'expose jamais
+    KALUTA_WEBHOOK_SECRET, seulement la nature de l'échec (en-tête absent,
+    timestamp trop ancien, ou signature qui ne correspond pas)."""
+    import hashlib
+    import hmac
+    import time
+
+    if not signature_header:
+        logger.warning("Kaluta webhook: missing X-Kaluta-Signature header")
+        return
+    try:
+        parts = dict(p.split("=", 1) for p in signature_header.split(","))
+        t = parts.get("t", "")
+        v1 = parts.get("v1", "")
+        age = time.time() - int(t) if t else None
+        if not settings.KALUTA_WEBHOOK_SECRET:
+            logger.warning("Kaluta webhook: KALUTA_WEBHOOK_SECRET not configured on this environment")
+            return
+        if age is not None and abs(age) > 300:
+            logger.warning("Kaluta webhook: timestamp too old/skewed, age=%.1fs t=%s", age, t)
+            return
+        signed_payload = f"{t}.{raw.decode()}"
+        expected = hmac.new(settings.KALUTA_WEBHOOK_SECRET.encode(), signed_payload.encode(), hashlib.sha256).hexdigest()
+        logger.warning(
+            "Kaluta webhook: signature mismatch. received_v1=%s expected_prefix=%s age=%.1fs",
+            v1, expected[:12], age,
+        )
+    except Exception:
+        logger.exception("Kaluta webhook: signature header unparsable: %r", signature_header)
+
+
 async def _get_kyc_price_per_year() -> float:
     """Prix configurable par le Super Admin (platform:settings en Redis) —
     même mécanisme que nowpayments_tolerance_usd/domain_markup_percent
@@ -183,11 +215,23 @@ async def kaluta_webhook(
     payments.py::_finalize_transaction)."""
     raw = await request.body()
 
+    # Journalisation temporaire de diagnostic (2026-08-03) — les webhooks
+    # arrivent mais échouent la vérification de signature de façon
+    # intermittente ; jamais la clé/secret elle-même, juste de quoi
+    # comprendre pourquoi (timestamp trop vieux vs signature qui ne
+    # correspond pas).
+    logger.info(
+        "Kaluta webhook received: sig_header=%r body_len=%d body_preview=%s",
+        x_kaluta_signature, len(raw), raw[:800].decode(errors="replace"),
+    )
+
     if not verify_kaluta_signature(raw, x_kaluta_signature):
+        _log_kaluta_signature_failure(raw, x_kaluta_signature)
         raise HTTPException(status_code=400, detail="Invalid Kaluta webhook signature.")
 
     import json as _json
     data = _json.loads(raw)
+    logger.info("Kaluta webhook signature OK: event=%s", data.get("event"))
 
     # Le payload réel imbrique l'identifiant/les scores sous `session.*`
     # (confirmé via https://kalutakyc.com/docs#reference le 2026-08-03) —
@@ -199,6 +243,7 @@ async def kaluta_webhook(
     session_obj = data.get("session") or {}
     session_id = session_obj.get("id") or data.get("session_id", "")
     if not session_id:
+        logger.warning("Kaluta webhook: missing session_id in payload, keys=%s", list(data.keys()))
         return {"received": True, "action": "ignored", "reason": "missing_session_id"}
 
     result = await db.execute(
@@ -206,6 +251,7 @@ async def kaluta_webhook(
     )
     kyc = result.scalar_one_or_none()
     if not kyc:
+        logger.warning("Kaluta webhook: unknown session_id=%s (event=%s)", session_id, event)
         return {"received": True, "action": "ignored", "reason": "unknown_session_id"}
 
     user = await db.get(User, kyc.user_id)
@@ -250,5 +296,6 @@ async def kaluta_webhook(
             user.kyc_status = KycStatus.EXPIRED
 
     await db.commit()
+    logger.info("Kaluta webhook processed: event=%s session_id=%s new_kyc_status=%s", event, session_id, kyc.status)
 
     return {"received": True, "action": "processed", "event": event}
