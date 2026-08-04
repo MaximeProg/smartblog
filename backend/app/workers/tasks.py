@@ -300,6 +300,7 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
     from app.core.database import AsyncSessionLocal
     from app.models.domain import DomainOrder, CustomDomain
     from app.models.enums import DomainOrderStatus, DomainSource, DomainVerificationStatus
+    from app.models.payment import Transaction  # noqa: F401 — DomainOrder.transaction_id FK doit trouver ce modèle enregistré dans ce process worker (import local, sinon NoReferencedTableError)
     from app.services.registrars.registry import get_registrar
     from app.services.registrars.base import RegistrarError
     from app.services.log_service import log_event
