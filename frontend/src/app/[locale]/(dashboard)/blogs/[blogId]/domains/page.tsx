@@ -154,6 +154,15 @@ export default function DomainsPage() {
     onError: (err: any) => toast({ variant: 'destructive', title: getErrorMessage(err, t('renewError')) }),
   });
 
+  const retryOrderMut = useMutation({
+    mutationFn: (orderId: string) => domainsApi.retryOrder(blogId, orderId).then((r) => r.data),
+    onSuccess: () => {
+      toast({ title: t('orderRetryStarted') });
+      qc.invalidateQueries({ queryKey: ['domain-pending-orders', blogId] });
+    },
+    onError: (err: any) => toast({ variant: 'destructive', title: getErrorMessage(err, t('orderRetryError')) }),
+  });
+
   function handlePaymentConfirmed() {
     setPayment(null);
     setPurchaseTarget(null);
@@ -413,11 +422,21 @@ export default function DomainsPage() {
                 return (
                   <div key={o.id} className="flex items-start gap-3 rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
                     <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <p className="text-[13px] font-bold text-red-700 dark:text-red-400">{t('orderFailedTitle', { domain: o.domain_name })}</p>
                       <p className="text-[12px] text-red-600/80 dark:text-red-400/80 mt-0.5">{t('orderFailedDesc', { error: o.error_message ?? '—' })}</p>
                       <p className="text-[11.5px] text-red-500/70 dark:text-red-400/70 mt-1">{t('orderFailedSupport')}</p>
                     </div>
+                    <button
+                      onClick={() => retryOrderMut.mutate(o.id)}
+                      disabled={retryOrderMut.isPending}
+                      className="shrink-0 flex items-center gap-1.5 h-8 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-[12px] font-bold transition-colors disabled:opacity-50"
+                    >
+                      {retryOrderMut.isPending
+                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        : <RefreshCw className="h-3.5 w-3.5" />}
+                      {t('orderRetryButton')}
+                    </button>
                   </div>
                 );
               }

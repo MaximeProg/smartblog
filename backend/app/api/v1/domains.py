@@ -128,6 +128,44 @@ async def list_pending_domain_orders(tenant_id: uuid.UUID, payload: TokenPayload
     ]
 
 
+# ── POST /domains/orders/{order_id}/retry ──────────────────────────
+
+@router.post("/orders/{order_id}/retry", response_model=DomainOrderStatusResponse)
+async def retry_domain_order(tenant_id: uuid.UUID, order_id: uuid.UUID, payload: TokenPayload, db: DBSession):
+    """Relance l'enregistrement d'une commande en échec (registrar_error,
+    solde insuffisant côté registrar, etc.) sans faire repayer le client —
+    le paiement est déjà acquis, seul l'appel au registrar avait échoué.
+    Remet la commande en PAID (register_purchased_domain est idempotent et
+    n'agit que sur ce statut) puis ré-enfile le job ARQ."""
+    await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+
+    from app.models.domain import DomainOrder
+    from app.models.enums import DomainOrderStatus
+
+    order = await db.get(DomainOrder, order_id)
+    if not order or order.tenant_id != tenant_id:
+        raise NotFoundException("Domain order")
+    if order.status != DomainOrderStatus.REGISTRATION_FAILED:
+        raise ValidationException("Only a failed order can be retried.")
+
+    order.status = DomainOrderStatus.PAID
+    order.error_message = None
+    await db.commit()
+
+    from app.core.arq_pool import get_arq_pool
+    pool = await get_arq_pool()
+    await pool.enqueue_job("register_purchased_domain", order_id=str(order.id))
+
+    return DomainOrderStatusResponse(
+        id=str(order.id),
+        domain_name=order.domain_name,
+        status=order.status.value,
+        error_message=order.error_message,
+        created_at=order.created_at,
+        registered_at=order.registered_at,
+    )
+
+
 # ── POST /domains ─────────────────────────────────────────────────
 
 @router.post("", response_model=DomainResponse, status_code=201)

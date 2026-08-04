@@ -1060,6 +1060,9 @@ export const domainsApi = {
 
   pendingOrders: (tenantId: string) =>
     api.get<DomainOrderStatusInfo[]>(`/tenants/${tenantId}/domains/pending-orders`),
+
+  retryOrder: (tenantId: string, orderId: string) =>
+    api.post<DomainOrderStatusInfo>(`/tenants/${tenantId}/domains/orders/${orderId}/retry`),
 };
 
 // ─── AI ───────────────────────────────────────────────────────────────────────
