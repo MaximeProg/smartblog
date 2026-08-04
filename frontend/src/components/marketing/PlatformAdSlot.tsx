@@ -29,13 +29,13 @@ export function PlatformAdSlot() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/platform-ads-proxy/active', { cache: 'no-store' })
+    fetch('/api/sponsor-feed/active', { cache: 'no-store' })
       .then(res => (res.ok ? res.json() : null))
       .then((data: PlatformAdData | null) => {
         if (cancelled || !data) return;
         setAd(data);
         if (trackedRef.current !== data.id) {
-          fetch(`/api/platform-ads-proxy/${data.id}/impression`, { method: 'POST' }).catch(() => {});
+          fetch(`/api/sponsor-feed/${data.id}/impression`, { method: 'POST' }).catch(() => {});
           trackedRef.current = data.id;
         }
       })
@@ -49,7 +49,7 @@ export function PlatformAdSlot() {
 
   function handleClick() {
     if (!ad) return;
-    fetch(`/api/platform-ads-proxy/${ad.id}/click`, { method: 'POST' }).catch(() => {});
+    fetch(`/api/sponsor-feed/${ad.id}/click`, { method: 'POST' }).catch(() => {});
     window.open(ad.click_url, '_blank', 'noopener,noreferrer');
   }
 
