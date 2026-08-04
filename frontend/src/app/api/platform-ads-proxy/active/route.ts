@@ -7,7 +7,11 @@ export async function GET(request: NextRequest) {
   const url = `${API_BASE}/api/v1/platform/ads/active${exclude ? `?exclude=${encodeURIComponent(exclude)}` : ''}`;
 
   try {
-    const res = await fetch(url, { cache: 'no-store' });
+    const cfCountry = request.headers.get('CF-IPCountry');
+    const res = await fetch(url, {
+      cache: 'no-store',
+      headers: cfCountry ? { 'CF-IPCountry': cfCountry } : undefined,
+    });
     const data: unknown = await res.json();
     return NextResponse.json(data, { status: res.status });
   } catch {
