@@ -282,11 +282,6 @@ async def get_active_platform_ad(request: Request, db: DBSession, exclude: str |
         or request.headers.get("X-Vercel-IP-Country")
         or request.headers.get("CloudFront-Viewer-Country")
     )
-    logger.warning(  # diagnostic temporaire 2026-08-04 — logger.info est silencieux en prod (aucun basicConfig sur le logger stdlib), voir si Cloudflare détecte bien le pays post-migration VPS
-        "get_active_platform_ad: CF-IPCountry=%r X-Vercel-IP-Country=%r CloudFront-Viewer-Country=%r resolved=%r",
-        request.headers.get("CF-IPCountry"), request.headers.get("X-Vercel-IP-Country"),
-        request.headers.get("CloudFront-Viewer-Country"), visitor_country,
-    )
     if visitor_country in ("XX", "T1", "--", "A1", "A2"):
         visitor_country = None
     if visitor_country:
