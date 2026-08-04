@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { MapPin, ArrowRight, Heart, Globe2, Zap, Coffee, type LucideIcon } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
+import { PlatformAdSlot } from '@/components/marketing/PlatformAdSlot';
 import { getPlatformPage } from '@/lib/platform-api';
 
 export const dynamic = 'force-dynamic';
@@ -63,6 +64,8 @@ export default async function CareersPage({
           </a>
         </div>
       </section>
+
+      <PlatformAdSlot />
 
       <section className="py-16 px-6 bg-slate-50 dark:bg-slate-900/40 border-y border-slate-200 dark:border-slate-800">
         <div className="max-w-4xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

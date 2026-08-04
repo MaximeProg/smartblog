@@ -2779,6 +2779,8 @@
     "sponsoredLabel": "Sponsored",
     "openButton": "Open",
     "closeButton": "Close ad",
+    "collapseButton": "Collapse",
+    "showAdButton": "Show ad",
     "targetCountries": "Target countries (optional)",
     "targetCountriesHint": "Leave empty to show your ad to visitors everywhere. Select one or more countries to only show it to visitors from those countries.",
     "targetCountriesSearch": "Search a country…",

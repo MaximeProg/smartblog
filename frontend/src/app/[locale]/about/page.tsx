@@ -4,6 +4,7 @@ import { Shield, Globe2, Zap, BarChart2, FileText, Bot, Check, Link2, UserPlus, 
 import Link from 'next/link';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
+import { PlatformAdSlot } from '@/components/marketing/PlatformAdSlot';
 import { getPlatformPage } from '@/lib/platform-api';
 
 export const dynamic = 'force-dynamic';
@@ -123,6 +124,8 @@ export default async function AboutPage({
           </p>
         </div>
       </section>
+
+      <PlatformAdSlot />
 
       {/* ─── Mission ────────────────────────────────────────────────── */}
       <section className="py-12 md:py-20 px-4 sm:px-6">

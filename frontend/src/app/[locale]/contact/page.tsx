@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Mail, MessageSquare, Headphones, type LucideIcon } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
+import { PlatformAdSlot } from '@/components/marketing/PlatformAdSlot';
 import { siteConfig } from '@/config/site';
 import { getPlatformPage, getUiTranslations } from '@/lib/platform-api';
 import { ContactForm, type ContactFormErrors } from './ContactForm';
@@ -105,6 +106,8 @@ export default async function ContactPage({
           </p>
         </div>
       </section>
+
+      <PlatformAdSlot />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
