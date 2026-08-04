@@ -46,8 +46,8 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
   async function fetchAd(currentExcludeId?: string) {
     try {
       const url = currentExcludeId
-        ? `/api/ads-proxy/${slug}/rotator?exclude=${encodeURIComponent(currentExcludeId)}`
-        : `/api/ads-proxy/${slug}/rotator`;
+        ? `/api/sponsor-rotator/${slug}/rotator?exclude=${encodeURIComponent(currentExcludeId)}`
+        : `/api/sponsor-rotator/${slug}/rotator`;
       const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) return;
       const data: AdData | null = await res.json();
@@ -62,12 +62,12 @@ export function AdRotator({ slug, primaryColor = '#2563eb', variant = 'inline', 
   }
 
   function trackImpression(adId: string) {
-    fetch(`/api/ads-proxy/${slug}/${adId}/impression`, { method: 'POST' }).catch(() => {});
+    fetch(`/api/sponsor-rotator/${slug}/${adId}/impression`, { method: 'POST' }).catch(() => {});
   }
 
   function handleClick() {
     if (!ad) return;
-    fetch(`/api/ads-proxy/${slug}/${ad.id}/click`, { method: 'POST' }).catch(() => {});
+    fetch(`/api/sponsor-rotator/${slug}/${ad.id}/click`, { method: 'POST' }).catch(() => {});
     window.open(ad.click_url, '_blank', 'noopener,noreferrer');
   }
 

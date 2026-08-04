@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+// Réseau Docker interne : évite un aller-retour par le domaine public qui
+// traverserait Cloudflare une seconde fois et écraserait CF-IPCountry.
+const API_BASE = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 export async function GET(request: NextRequest) {
   const exclude = new URL(request.url).searchParams.get('exclude');
