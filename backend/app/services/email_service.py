@@ -610,6 +610,67 @@ async def send_kyc_rejected_email(
     )
 
 
+async def send_ad_approved_email(
+    to: str,
+    ad_title: str,
+    dashboard_url: str,
+) -> None:
+    """Envoyé à l'annonceur quand un super admin approuve sa publicité —
+    manquait jusqu'ici (seule une notification push existait, ads.py::
+    review_ad, qui ne touche que les utilisateurs ayant activé le push)."""
+    body = (
+        _h1("Your ad is now live! 🎉") +
+        f'<div style="background:#F0FDF4;border:1px solid #BBF7D0;border-left:4px solid #10B981;border-radius:8px;padding:14px 18px;margin:16px 0;">'
+        f'<p style="margin:0;font-size:14px;font-weight:600;color:#065F46;">{ad_title}</p>'
+        f'</div>' +
+        _p("Your ad has been approved and is now running on SmarterBloggers.") +
+        _btn("View my ad performance", dashboard_url, "#10B981")
+    )
+    await _send(
+        to=to,
+        subject=f"✅ Your ad is live: {ad_title}",
+        html=_base(
+            title="Ad approved",
+            preview=f"Your ad \"{ad_title}\" is now live",
+            body_html=body,
+        ),
+    )
+
+
+async def send_ad_rejected_email(
+    to: str,
+    ad_title: str,
+    reason: str | None,
+    dashboard_url: str,
+) -> None:
+    """Envoyé à l'annonceur quand un super admin rejette sa publicité."""
+    reason_block = ""
+    if reason:
+        reason_block = (
+            f'<div style="background:#FEF2F2;border:1px solid #FECACA;border-left:4px solid #EF4444;'
+            f'border-radius:8px;padding:14px 18px;margin:16px 0;">'
+            f'<p style="margin:0 0 4px;font-size:11px;font-weight:700;color:#991B1B;text-transform:uppercase;letter-spacing:0.5px;">Reason</p>'
+            f'<p style="margin:0;font-size:14px;color:#7F1D1D;">{reason}</p>'
+            f'</div>'
+        )
+    body = (
+        _h1("Your ad was not approved") +
+        _p(f"Your ad <strong>\"{ad_title}\"</strong> was rejected during review.") +
+        reason_block +
+        _p("Please reach out to support if you have questions about this decision.") +
+        _btn("View my ads", dashboard_url)
+    )
+    await _send(
+        to=to,
+        subject=f"Your ad was not approved: {ad_title}",
+        html=_base(
+            title="Ad rejected",
+            preview=f"Your ad \"{ad_title}\" was not approved",
+            body_html=body,
+        ),
+    )
+
+
 async def send_superadmin_event(
     to: list[str],
     event_type: str,

@@ -282,6 +282,11 @@ async def get_active_platform_ad(request: Request, db: DBSession, exclude: str |
         or request.headers.get("X-Vercel-IP-Country")
         or request.headers.get("CloudFront-Viewer-Country")
     )
+    logger.info(  # diagnostic temporaire 2026-08-04 — voir si Cloudflare détecte bien le pays post-migration VPS
+        "get_active_platform_ad: CF-IPCountry=%r X-Vercel-IP-Country=%r CloudFront-Viewer-Country=%r resolved=%r",
+        request.headers.get("CF-IPCountry"), request.headers.get("X-Vercel-IP-Country"),
+        request.headers.get("CloudFront-Viewer-Country"), visitor_country,
+    )
     if visitor_country in ("XX", "T1", "--", "A1", "A2"):
         visitor_country = None
     if visitor_country:
@@ -552,9 +557,12 @@ async def review_ad(
     await db.commit()
     await db.refresh(ad)
 
-    # Notification in-app à l'annonceur connecté (impossible pour le flux
-    # anonyme des pubs de blog, qui n'a qu'un email de contact) — voir
-    # exigence PDG "vraiment penser à tout" côté annonceur.
+    # Notification à l'annonceur connecté (impossible pour le flux anonyme
+    # des pubs de blog, qui n'a qu'un email de contact) — voir exigence PDG
+    # "vraiment penser à tout" côté annonceur. Le push seul ne suffisait pas
+    # (2026-08-04) : il exige que l'utilisateur ait déjà activé le push ET
+    # ait un onglet ouvert — aucun email n'était jamais envoyé, l'annonceur
+    # n'avait donc souvent aucun moyen de savoir que sa pub était validée.
     if ad.is_platform_ad and ad.advertiser_user_id:
         try:
             from app.services.push_service import send_push_to_user
@@ -565,6 +573,40 @@ async def review_ad(
             await send_push_to_user(db, ad.advertiser_user_id, title, msg, url="/advertiser")
         except Exception:
             pass
+
+        try:
+            from app.services.notification_service import notify_user
+            if body.decision == AdSubmissionStatus.APPROVED:
+                await notify_user(
+                    db, ad.advertiser_user_id, type="success", category="ad",
+                    title="Ad approved", body=f"\"{ad.title}\" is now live on SmarterBloggers.",
+                    action_url="/advertiser",
+                )
+            else:
+                await notify_user(
+                    db, ad.advertiser_user_id, type="error", category="ad",
+                    title="Ad rejected",
+                    body=f"\"{ad.title}\" was rejected." + (f" Reason: {body.rejection_reason}" if body.rejection_reason else ""),
+                    action_url="/advertiser",
+                )
+            await db.commit()
+        except Exception:
+            logger.exception("Échec de la notification in-app pour l'ad %s", ad.id)
+
+        if ad.advertiser_email:
+            try:
+                from app.core.config import settings as _cfg
+                from app.services.email_service import send_ad_approved_email, send_ad_rejected_email
+                dashboard_url = f"{_cfg.FRONTEND_URL}/advertiser"
+                if body.decision == AdSubmissionStatus.APPROVED:
+                    await send_ad_approved_email(to=ad.advertiser_email, ad_title=ad.title, dashboard_url=dashboard_url)
+                else:
+                    await send_ad_rejected_email(
+                        to=ad.advertiser_email, ad_title=ad.title,
+                        reason=body.rejection_reason, dashboard_url=dashboard_url,
+                    )
+            except Exception:
+                logger.exception("Échec de l'email d'approbation/rejet pour l'ad %s", ad.id)
 
     return _ad_response(ad)
 
