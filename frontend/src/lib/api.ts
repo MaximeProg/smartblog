@@ -1340,6 +1340,7 @@ export interface SuperAdminAdView {
   link_safety_status: string;
   total_budget: number | null;
   price_per_day: number | null;
+  amount_paid: number;
   payment_link_url: string | null;
   rejection_reason: string | null;
   impressions_count: number;

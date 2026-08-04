@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
+import { PlatformAdSlot } from '@/components/marketing/PlatformAdSlot';
 import { getPricingPlans, getPlatformStats, getPlatformPage, getUiTranslations, type PricingPlan } from '@/lib/platform-api';
 
 export const dynamic = 'force-dynamic';
@@ -221,6 +222,9 @@ export default async function HomePage({
           <div className="h-1.5 w-1.5 rounded-full bg-white/60" />
         </div>
       </section>
+
+      {/* ─── PUB PLATEFORME (juste après le hero, emplacement le plus visible) ─ */}
+      <PlatformAdSlot />
 
       {/* ─── STATS ─────────────────────────────────────────────────────────── */}
       <section className="py-10 md:py-14 bg-slate-100 dark:bg-slate-900/60">

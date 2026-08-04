@@ -61,7 +61,7 @@ export function PlatformAdSlot() {
             {ad.image_url && !imgError && (
               <button
                 onClick={handleClick}
-                className="shrink-0 overflow-hidden cursor-pointer w-full sm:w-[260px] h-[160px] sm:h-auto"
+                className="shrink-0 overflow-hidden cursor-pointer w-full h-[140px] sm:w-[220px] sm:h-[140px]"
                 aria-label={ad.title}
               >
                 <img

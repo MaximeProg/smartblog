@@ -2,7 +2,7 @@
 import { PenLine, Twitter, Github, Linkedin, Mail } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { getUiTranslations } from '@/lib/platform-api';
-import { PlatformAdSlot } from '@/components/marketing/PlatformAdSlot';
+import { PlatformAdFloatingBar } from '@/components/marketing/PlatformAdFloatingBar';
 
 interface PublicFooterProps {
   locale: string;
@@ -191,10 +191,10 @@ export async function PublicFooter({ locale, lang: langProp }: PublicFooterProps
         </div>
       </div>
 
-      {/* Pub site principal — second emplacement, visible sur toutes les pages
-          publiques partageant ce footer (contrairement au premier, monté une
-          seule fois sur la page d'accueil) */}
-      <PlatformAdSlot />
+      {/* Bandeau pub flottant — position fixed, donc peu importe qu'il soit
+          monté ici : il reste ancré en bas de l'écran sur toutes les pages
+          publiques partageant ce footer, indépendamment du défilement. */}
+      <PlatformAdFloatingBar />
 
       {/* Newsletter bar */}
       <div className="border-t border-slate-200 dark:border-slate-800">

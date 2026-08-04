@@ -69,6 +69,7 @@ function AdRow({
 
   const isPendingAd = ad.submission_status === 'pending';
   const isDangerous = ad.link_safety_status === 'dangerous';
+  const isPaid = ad.amount_paid > 0;
 
   return (
     <div className="rounded-xl overflow-hidden border" style={{ borderColor: 'var(--sa-border)' }}>
@@ -88,6 +89,13 @@ function AdRow({
         {ad.total_budget && (
           <span className="shrink-0 text-[12px] font-bold text-emerald-500">{fmtBudget(ad.total_budget)}</span>
         )}
+        <span className={`shrink-0 flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+          isPaid
+            ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/20'
+            : 'bg-red-500/15 text-red-500 border-red-500/20'
+        }`}>
+          <DollarSign className="h-3 w-3" /> {isPaid ? ta('paidBadge') : ta('unpaidBadge')}
+        </span>
         <Shield className={`h-3.5 w-3.5 shrink-0 ${SAFETY_COLOR[ad.link_safety_status] ?? 'text-slate-400'}`} />
         {isDangerous && <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-red-500" />}
         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${STATUS_COLOR[ad.submission_status] ?? 'bg-slate-500/15 text-slate-400 border-slate-500/20'}`}>
@@ -113,6 +121,9 @@ function AdRow({
             />
             <DetailItem icon={DollarSign}   label={ta('table.budget')}       value={fmtBudget(ad.total_budget)} />
             <DetailItem icon={DollarSign}   label={ta('table.pricePerDay')}  value={fmtBudget(ad.price_per_day)} />
+            <DetailItem icon={DollarSign}   label={ta('table.amountPaid')}
+              value={<span className={isPaid ? 'text-emerald-500 font-bold' : 'text-red-500 font-bold'}>{fmtBudget(ad.amount_paid)}</span>}
+            />
             <DetailItem icon={Eye}          label={ta('table.impressions')}  value={ad.impressions_count.toLocaleString()} />
             <DetailItem icon={MousePointer} label={ta('table.clicks')}       value={ad.clicks_count.toLocaleString()} />
             {ad.placement  && <DetailItem icon={Megaphone} label={ta('table.placement')} value={ad.placement} />}
@@ -190,7 +201,8 @@ function AdRow({
               ) : (
                 <div className="flex gap-2">
                   <button
-                    disabled={isDangerous || mutPending}
+                    disabled={isDangerous || !isPaid || mutPending}
+                    title={!isPaid ? ta('unpaidBadge') : undefined}
                     onClick={() => onApprove(ad.id, ad.tenant_id)}
                     className="flex items-center gap-2 h-9 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-bold transition-colors disabled:opacity-40"
                   >
