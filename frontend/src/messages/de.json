@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Um am Partnerprogramm teilzunehmen und Provisionen zu erhalten, müssen Sie eine USDT-Wallet-Adresse (BEP20/BSC) hinterlegt haben.",
     "walletRequiredCta": "Meine Geldbörse hinzufügen",
     "waitingThresholdTitle": "Fast geschafft!",
-    "waitingThresholdDesc": "Ihre Provisionen werden automatisch ausgezahlt, sobald Ihr Guthaben {min} erreicht hat.",
-    "gate": {
-      "not_started": {
-        "title": "Identitätsprüfung erforderlich",
-        "description": "Um die Sicherheit und die Einhaltung der Vorschriften im Rahmen des Partnerprogramms zu gewährleisten, müssen Sie eine einmalige KYC-Identitätsprüfung absolvieren, bevor Sie auf Ihren Empfehlungslink zugreifen und Provisionen verdienen können.",
-        "cta": "Überprüfung starten"
-      },
-      "pending": {
-        "title": "Überprüfung läuft",
-        "description": "Ihre Identitätsprüfung wird derzeit geprüft. Dies dauert in der Regel nur wenige Minuten – Ihr Partnerlink wird automatisch freigeschaltet, sobald die Prüfung abgeschlossen ist.",
-        "cta": "Überprüfen Sie den Verifizierungsstatus"
-      },
-      "expired": {
-        "title": "Erneute Überprüfung erforderlich",
-        "description": "Sie haben kürzlich Ihren Namen oder Ihr Land geändert, weshalb eine neue Identitätsprüfung erforderlich ist, bevor Ihr Partnerlink wieder aktiviert werden kann. Falls Sie noch im Voraus bezahlte Jahre übrig haben, entstehen Ihnen dadurch keine zusätzlichen Kosten.",
-        "cta": "Meine Identität erneut bestätigen"
-      },
-      "rejected": {
-        "title": "Überprüfung fehlgeschlagen",
-        "description": "Ihr letzter Versuch zur Identitätsprüfung wurde nicht genehmigt. Sie können eine neue Identitätsprüfung starten, um es erneut zu versuchen.",
-        "cta": "Versuche es noch einmal"
-      }
-    }
+    "waitingThresholdDesc": "Ihre Provisionen werden automatisch ausgezahlt, sobald Ihr Guthaben {min} erreicht hat."
   },
   "kyc": {
     "pageTitle": "Identitätsprüfung (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Überprüfung des Lebenslaufs",
     "reverifyExplain": "Da Sie noch im Voraus bezahlte Jahre übrig haben, entstehen Ihnen durch die erneute Überprüfung keine zusätzlichen Kosten – Sie müssen lediglich die Identitätsprüfung erneut durchlaufen.",
     "reverifyCta": "Meine Identität erneut bestätigen",
-    "purchaseTitle": "Wählen Sie die Dauer Ihrer Verifizierung aus",
-    "durationLabel": "Dauer",
-    "customDurationLabel": "Oder geben Sie eine beliebige Anzahl von Jahren ein:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Bestätigen Sie Ihre Identität",
     "totalLabel": "Gesamt",
     "payCta": "Zahlen Sie {amount} und verifizieren Sie",
     "paymentConfirmedTitle": "Zahlung bestätigt",
-    "paymentConfirmedDesc": "Der Vorgang zur Identitätsprüfung hat begonnen – hier finden Sie aktuelle Informationen dazu."
+    "paymentConfirmedDesc": "Der Vorgang zur Identitätsprüfung hat begonnen – hier finden Sie aktuelle Informationen dazu.",
+    "oneYear": "1 Jahr"
   },
   "invoices": {
     "title": "Rechnungen",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Zielländer (optional)",
     "targetCountriesHint": "Lassen Sie das Feld leer, damit Ihre Anzeige allen Besuchern angezeigt wird. Wählen Sie ein oder mehrere Länder aus, um die Anzeige nur Besuchern aus diesen Ländern anzuzeigen.",
     "targetCountriesSearch": "Ein Land suchen…",
-    "targetCountriesNoResults": "Es wurde kein passendes Land gefunden."
+    "targetCountriesNoResults": "Es wurde kein passendes Land gefunden.",
+    "closeButton": "Anzeige schließen",
+    "collapseButton": "Zusammenklappen",
+    "showAdButton": "Anzeige anzeigen"
   },
   "tenantAccounting": {
     "title": "Finanzüberblick",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL aktiv",
     "placeholderCustomDomainExample": "blog.meinewebsite.com",
     "bannerNotVisible": "Dein Blog ist noch nicht online – Leser können nicht darauf zugreifen.",
-    "bannerAddDomain": "Domain hinzufügen"
+    "bannerAddDomain": "Domain hinzufügen",
+    "orderRetryButton": "Erneut versuchen",
+    "orderRetryStarted": "Die Registrierung wird erneut versucht – dies kann bis zu einer Minute dauern.",
+    "orderRetryError": "Der erneute Versuch konnte nicht gestartet werden. Bitte versuchen Sie es erneut."
   },
   "twoFA": {
     "setupTitle": "Zwei-Faktor-Authentifizierung einrichten",
@@ -3201,8 +3183,11 @@
         "startDate": "Startdatum",
         "endDate": "Enddatum",
         "visual": "Visuell",
-        "rejectionReason": "Grund für die Ablehnung"
-      }
+        "rejectionReason": "Grund für die Ablehnung",
+        "amountPaid": "Gezahlter Betrag"
+      },
+      "paidBadge": "Bezahlt",
+      "unpaidBadge": "Unbezahlt"
     },
     "affiliate": {
       "title": "Partnerprogramm",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Alle Inhalte wurden erstellt und gespeichert. Sie können nun jeden Abschnitt im Studio noch genauer anpassen.",
     "viewGeneralSettings": "Allgemeine Einstellungen anzeigen",
     "viewHome": "Startseite anzeigen"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Identität bestätigt",
+    "status": {
+      "not_started": {
+        "title": "Bestätigen Sie Ihr Konto",
+        "description": "Bestätigen Sie Ihre Identität, um das Partnerprogramm freizuschalten und Provisionen zu verdienen.",
+        "cta": "Jetzt überprüfen"
+      },
+      "pending": {
+        "title": "Schließen Sie die Verifizierung ab, um Ihr Konto zu aktivieren",
+        "description": "Ihre Zahlung ist eingegangen – schließen Sie bitte die Identitätsprüfung (Ausweis + Selfie) ab, um die Verifizierung Ihres Kontos abzuschließen und Provisionen zu verdienen.",
+        "cta": "Vollständige Überprüfung"
+      },
+      "expired": {
+        "title": "Erneute Überprüfung erforderlich",
+        "description": "Da Sie kürzlich Ihren Namen oder Ihr Land geändert haben, muss Ihre Verifizierung erneut durchgeführt werden.",
+        "cta": "Jetzt erneut überprüfen"
+      },
+      "rejected": {
+        "title": "Überprüfung fehlgeschlagen",
+        "description": "Ihr letzter Verifizierungsversuch wurde nicht genehmigt. Sie können es ohne zusätzliche Kosten erneut versuchen.",
+        "cta": "Versuche es noch einmal"
+      }
+    }
   }
 }

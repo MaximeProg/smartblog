@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "アフィリエイトプログラムに参加し、コミッションを受け取るには、登録済みのUSDT（BEP20/BSC）ウォレットアドレスが必要です。",
     "walletRequiredCta": "ウォレットを追加する",
     "waitingThresholdTitle": "あと少しだ！",
-    "waitingThresholdDesc": "残高が{min}に達し次第、報酬は自動的に送金されます。",
-    "gate": {
-      "not_started": {
-        "title": "本人確認が必要です",
-        "description": "アフィリエイトプログラムの安全性とコンプライアンスを確保するため、紹介リンクにアクセスしてコミッションの獲得を開始するには、初回に限りKYC本人確認を完了する必要があります。",
-        "cta": "検証を開始する"
-      },
-      "pending": {
-        "title": "確認中",
-        "description": "本人確認の審査が行われています。通常、審査には数分しかかかりません。承認され次第、アフィリエイトリンクは自動的に有効になります。",
-        "cta": "確認状況を確認する"
-      },
-      "expired": {
-        "title": "再確認が必要です",
-        "description": "最近、お名前または居住国を変更されたため、アフィリエイトリンクを再開するには、改めて本人確認を行う必要があります。残りの有効期間が前払い済みの場合は、追加費用は一切かかりません。",
-        "cta": "本人確認を再度行う"
-      },
-      "rejected": {
-        "title": "検証に失敗しました",
-        "description": "前回の本人確認の申請は承認されませんでした。新しい本人確認手続きを開始して、再度お試しください。",
-        "cta": "もう一度試してみてください"
-      }
-    }
+    "waitingThresholdDesc": "残高が{min}に達し次第、報酬は自動的に送金されます。"
   },
   "kyc": {
     "pageTitle": "本人確認（KYC）",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "履歴書の確認",
     "reverifyExplain": "まだ前払い分の有効期間が残っているため、再確認に追加費用はかかりません。ただ、本人確認の手続きをもう一度行う必要があります。",
     "reverifyCta": "本人確認を再度行う",
-    "purchaseTitle": "認証期間を選択してください",
-    "durationLabel": "所要時間",
-    "customDurationLabel": "または、任意の年数を入力してください：",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "本人確認を行ってください",
     "totalLabel": "合計",
     "payCta": "{amount}ドルを支払い、本人確認を行ってください",
     "paymentConfirmedTitle": "お支払いが確認されました",
-    "paymentConfirmedDesc": "本人確認の手続きが開始されました。最新情報については、こちらをご確認ください。"
+    "paymentConfirmedDesc": "本人確認の手続きが開始されました。最新情報については、こちらをご確認ください。",
+    "oneYear": "1年"
   },
   "invoices": {
     "title": "請求書",
@@ -2781,7 +2757,10 @@
     "targetCountries": "対象国（任意）",
     "targetCountriesHint": "空欄のままにすると、すべての訪問者に広告が表示されます。1つ以上の国を選択すると、その国の訪問者にのみ広告が表示されます。",
     "targetCountriesSearch": "国を検索…",
-    "targetCountriesNoResults": "該当する国はありません。"
+    "targetCountriesNoResults": "該当する国はありません。",
+    "closeButton": "広告を閉じる",
+    "collapseButton": "折りたたむ",
+    "showAdButton": "広告を表示"
   },
   "tenantAccounting": {
     "title": "財務概要",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSLが有効",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "あなたのブログはまだ公開されていません。読者はアクセスできません。",
-    "bannerAddDomain": "ドメインを追加"
+    "bannerAddDomain": "ドメインを追加",
+    "orderRetryButton": "再試行",
+    "orderRetryStarted": "登録を再試行しています。完了まで最大1分ほどかかる場合があります。",
+    "orderRetryError": "再試行を開始できませんでした。もう一度お試しください。"
   },
   "twoFA": {
     "setupTitle": "二要素認証を設定する",
@@ -3201,8 +3183,11 @@
         "startDate": "開始日",
         "endDate": "終了日",
         "visual": "ビジュアル",
-        "rejectionReason": "却下理由"
-      }
+        "rejectionReason": "却下理由",
+        "amountPaid": "支払額"
+      },
+      "paidBadge": "有料",
+      "unpaidBadge": "未払い"
     },
     "affiliate": {
       "title": "アフィリエイトプログラム",
@@ -4040,5 +4025,30 @@
     "doneDesc": "すべてのコンテンツが生成され、保存されました。これで、スタジオで各セクションの微調整を行うことができます。",
     "viewGeneralSettings": "一般設定を表示する",
     "viewHome": "ホームを表示"
+  },
+  "kycBanner": {
+    "verifiedBadge": "本人確認済み",
+    "status": {
+      "not_started": {
+        "title": "アカウントの確認",
+        "description": "本人確認を行って、アフィリエイトプログラムのロックを解除し、コミッションの獲得を始めましょう。",
+        "cta": "今すぐ確認する"
+      },
+      "pending": {
+        "title": "本人確認を完了して、アカウントを有効にしてください",
+        "description": "お支払いが確認されました。本人確認（身分証明書＋自撮り写真）を完了させて、アカウントの認証を終え、コミッションの獲得を開始してください。",
+        "cta": "検証を完了する"
+      },
+      "expired": {
+        "title": "再確認が必要です",
+        "description": "最近、お名前またはお住まいの国を変更されたため、本人確認の手続きを再度行う必要があります。",
+        "cta": "今すぐ再確認してください"
+      },
+      "rejected": {
+        "title": "検証に失敗しました",
+        "description": "前回の認証申請は承認されませんでした。追加費用なしで再申請できます。",
+        "cta": "もう一度試してみてください"
+      }
+    }
   }
 }

@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Du måste ha en USDT-plånboksadress (BEP20/BSC) registrerad för att kunna delta i partnerprogrammet och få provision.",
     "walletRequiredCta": "Lägg till min plånbok",
     "waitingThresholdTitle": "Snart klart!",
-    "waitingThresholdDesc": "Dina provisioner kommer att betalas ut automatiskt så snart ditt saldo uppgår till {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Identitetsverifiering krävs",
-        "description": "För att säkerställa att affiliateprogrammet är säkert och följer gällande regler måste du genomföra en engångsverifiering av din identitet (KYC) innan du får tillgång till din rekommendationslänk och kan börja tjäna provision.",
-        "cta": "Starta verifieringen"
-      },
-      "pending": {
-        "title": "Verifiering pågår",
-        "description": "Din identitetsverifiering granskas just nu. Det tar vanligtvis bara några minuter – din affiliate-länk aktiveras automatiskt så snart den har godkänts.",
-        "cta": "Kontrollera verifieringsstatus"
-      },
-      "expired": {
-        "title": "Omverifiering krävs",
-        "description": "Du har nyligen bytt namn eller land, vilket innebär att en ny identitetskontroll måste genomföras innan din affiliate-länk kan återaktiveras. Om du har förbetalda år kvar kostar detta inget extra.",
-        "cta": "Bekräfta min identitet på nytt"
-      },
-      "rejected": {
-        "title": "Verifieringen misslyckades",
-        "description": "Ditt senaste försök att verifiera din identitet godkändes inte. Du kan påbörja en ny verifiering för att försöka igen.",
-        "cta": "Försök igen"
-      }
-    }
+    "waitingThresholdDesc": "Dina provisioner kommer att betalas ut automatiskt så snart ditt saldo uppgår till {min}."
   },
   "kyc": {
     "pageTitle": "Identitetskontroll (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Verifiering av CV",
     "reverifyExplain": "Du har fortfarande förbetalda år kvar, så det kostar inget extra att verifiera dig på nytt – du behöver bara genomgå identitetsverifieringen en gång till.",
     "reverifyCta": "Bekräfta min identitet på nytt",
-    "purchaseTitle": "Välj giltighetstid för verifieringen",
-    "durationLabel": "Varaktighet",
-    "customDurationLabel": "Eller ange ett eget antal år:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Bekräfta din identitet",
     "totalLabel": "Totalt",
     "payCta": "Betala {amount} och verifiera",
     "paymentConfirmedTitle": "Betalningen har bekräftats",
-    "paymentConfirmedDesc": "Din identitetsverifiering har påbörjats – kom tillbaka hit för uppdateringar."
+    "paymentConfirmedDesc": "Din identitetsverifiering har påbörjats – kom tillbaka hit för uppdateringar.",
+    "oneYear": "1 år"
   },
   "invoices": {
     "title": "Fakturor",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Måländer (valfritt)",
     "targetCountriesHint": "Lämna fältet tomt för att visa din annons för besökare överallt. Välj ett eller flera länder för att endast visa annonsen för besökare från dessa länder.",
     "targetCountriesSearch": "Sök efter ett land…",
-    "targetCountriesNoResults": "Inget land som stämmer överens."
+    "targetCountriesNoResults": "Inget land som stämmer överens.",
+    "closeButton": "Stäng annonsen",
+    "collapseButton": "Dölj",
+    "showAdButton": "Visa annons"
   },
   "tenantAccounting": {
     "title": "Finansiell översikt",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL aktiverat",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Din blogg är inte publicerad än – läsarna kan inte komma åt den.",
-    "bannerAddDomain": "Lägg till domän"
+    "bannerAddDomain": "Lägg till domän",
+    "orderRetryButton": "Försök igen",
+    "orderRetryStarted": "Registreringen försöks igen – detta kan ta upp till en minut.",
+    "orderRetryError": "Det gick inte att starta omförsöket. Försök igen."
   },
   "twoFA": {
     "setupTitle": "Konfigurera tvåfaktorsautentisering",
@@ -3201,8 +3183,11 @@
         "startDate": "Startdatum",
         "endDate": "Slutdatum",
         "visual": "Visuellt",
-        "rejectionReason": "Orsak till avslag"
-      }
+        "rejectionReason": "Orsak till avslag",
+        "amountPaid": "Betalt belopp"
+      },
+      "paidBadge": "Betalt",
+      "unpaidBadge": "Obetalt"
     },
     "affiliate": {
       "title": "Partnerprogram",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Allt innehåll har skapats och sparats. Du kan nu finjustera varje avsnitt i studion.",
     "viewGeneralSettings": "Visa allmänna inställningar",
     "viewHome": "Visa hem"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Identitet verifierad",
+    "status": {
+      "not_started": {
+        "title": "Bekräfta ditt konto",
+        "description": "Bekräfta din identitet för att få tillgång till partnerprogrammet och börja tjäna provision.",
+        "cta": "Kontrollera nu"
+      },
+      "pending": {
+        "title": "Slutför verifieringen för att aktivera ditt konto",
+        "description": "Din betalning har mottagits – slutför din identitetskontroll (ID + selfie) för att slutföra verifieringen av ditt konto och börja tjäna provision.",
+        "cta": "Fullständig verifiering"
+      },
+      "expired": {
+        "title": "Omverifiering krävs",
+        "description": "Du har nyligen bytt namn eller land, så din verifiering måste göras om.",
+        "cta": "Bekräfta på nytt nu"
+      },
+      "rejected": {
+        "title": "Verifieringen misslyckades",
+        "description": "Ditt senaste verifieringsförsök godkändes inte. Du kan försöka igen utan extra kostnad.",
+        "cta": "Försök igen"
+      }
+    }
   }
 }

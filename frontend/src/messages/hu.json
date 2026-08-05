@@ -1711,7 +1711,7 @@
           "5 000 hírlevél-előfizető",
           "3 szerző",
           "5 GB tárhely",
-          "Egyéni domain",
+          "Egyéni domainnév",
           "Fejlett elemzés",
           "Elsőbbségi támogatás"
         ]
@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Ahhoz, hogy részt vehessen az affiliate programban és jutalékot kaphasson, regisztrálnia kell egy USDT (BEP20/BSC) pénztárca-címet.",
     "walletRequiredCta": "Pénztárcám hozzáadása",
     "waitingThresholdTitle": "Már majdnem ott vagyunk!",
-    "waitingThresholdDesc": "A jutalékod automatikusan kifizetésre kerül, amint egyenleged eléri a {min} összeget.",
-    "gate": {
-      "not_started": {
-        "title": "Személyazonosság-ellenőrzés szükséges",
-        "description": "Az affiliate program biztonságának és a szabályoknak való megfelelésének biztosítása érdekében el kell végeznie egy egyszeri KYC személyazonosság-ellenőrzést, mielőtt hozzáférhetne az ajánló linkjéhez és elkezdhetne jutalékot szerezni.",
-        "cta": "Ellenőrzés indítása"
-      },
-      "pending": {
-        "title": "Ellenőrzés folyamatban",
-        "description": "Jelenleg ellenőrizzük a személyazonosságodat. Ez általában csak néhány percet vesz igénybe — az affiliate-linked automatikusan aktiválódik, amint jóváhagyják.",
-        "cta": "Ellenőrizze az ellenőrzés állapotát"
-      },
-      "expired": {
-        "title": "Újraellenőrzés szükséges",
-        "description": "Nemrég megváltoztattad a nevedet vagy az országodat, ezért új személyazonosság-ellenőrzésre van szükség ahhoz, hogy az affiliate-linkedet újraaktiválhassuk. Ha még vannak előre kifizetett éveid, ez nem jár további költséggel.",
-        "cta": "Személyazonosságom újbóli igazolása"
-      },
-      "rejected": {
-        "title": "Az ellenőrzés sikertelen volt",
-        "description": "A legutóbbi személyazonosság-ellenőrzési kísérletét nem hagyták jóvá. Új ellenőrzést indíthat, hogy újra megpróbálja.",
-        "cta": "Próbáld meg újra"
-      }
-    }
+    "waitingThresholdDesc": "A jutalékod automatikusan kifizetésre kerül, amint egyenleged eléri a {min} összeget."
   },
   "kyc": {
     "pageTitle": "Személyazonosság-ellenőrzés (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Önéletrajz-ellenőrzés",
     "reverifyExplain": "Mivel még vannak előre kifizetett éveid, az újbóli igazolás nem jár többletköltséggel — csupán újra át kell esned a személyazonosság-ellenőrzésen.",
     "reverifyCta": "Személyazonosságom újbóli igazolása",
-    "purchaseTitle": "Válassza ki az azonosítás időtartamát",
-    "durationLabel": "Időtartam",
-    "customDurationLabel": "Vagy adjon meg egy egyéni évszámot:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Ellenőrizze személyazonosságát",
     "totalLabel": "Összesen",
     "payCta": "Fizessen be {amount}-t, majd végezze el a hitelesítést",
     "paymentConfirmedTitle": "A fizetés megerősítve",
-    "paymentConfirmedDesc": "Megkezdődött az azonosítás – a legfrissebb információkért kérjük, látogasson vissza ide."
+    "paymentConfirmedDesc": "Megkezdődött az azonosítás – a legfrissebb információkért kérjük, látogasson vissza ide.",
+    "oneYear": "1 év"
   },
   "invoices": {
     "title": "Számlák",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Célországok (opcionális)",
     "targetCountriesHint": "Ha üresen hagyja, a hirdetés minden látogató számára megjelenik. Válasszon ki egy vagy több országot, ha a hirdetést csak az adott országokból érkező látogatóknak szeretné megjeleníteni.",
     "targetCountriesSearch": "Ország keresése…",
-    "targetCountriesNoResults": "Nincs megfelelő ország."
+    "targetCountriesNoResults": "Nincs megfelelő ország.",
+    "closeButton": "Hirdetés bezárása",
+    "collapseButton": "Összecsukás",
+    "showAdButton": "Hirdetés megjelenítése"
   },
   "tenantAccounting": {
     "title": "Pénzügyi áttekintés",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL aktív",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "A blogod még nem elérhető — az olvasók nem tudnak hozzáférni.",
-    "bannerAddDomain": "Domain hozzáadása"
+    "bannerAddDomain": "Domain hozzáadása",
+    "orderRetryButton": "Újrapróbálás",
+    "orderRetryStarted": "A regisztráció újbóli megkísérlése — ez akár egy percig is eltarthat.",
+    "orderRetryError": "Nem sikerült elindítani az újrapróbálkozást. Kérjük, próbálja meg újra."
   },
   "twoFA": {
     "setupTitle": "A kétfaktoros hitelesítés beállítása",
@@ -3201,8 +3183,11 @@
         "startDate": "Kezdési dátum",
         "endDate": "Zárónap",
         "visual": "Vizuális",
-        "rejectionReason": "Elutasítás oka"
-      }
+        "rejectionReason": "Elutasítás oka",
+        "amountPaid": "Kifizetett összeg"
+      },
+      "paidBadge": "Fizetett",
+      "unpaidBadge": "Kifizetetlen"
     },
     "affiliate": {
       "title": "Partnerprogram",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Az összes tartalom létrehozásra és mentésre került. Mostantól a stúdióban finomhangolhatod az egyes szakaszokat.",
     "viewGeneralSettings": "Általános beállítások megtekintése",
     "viewHome": "Főoldal megtekintése"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Az identitás ellenőrzése megtörtént",
+    "status": {
+      "not_started": {
+        "title": "Ellenőrizze fiókját",
+        "description": "Erősítse meg személyazonosságát, hogy hozzáférést kapjon az affiliate programhoz, és elkezdhesse a jutalékok megszerzését.",
+        "cta": "Ellenőrizze most"
+      },
+      "pending": {
+        "title": "Fejezd be az azonosítást a fiókod aktiválásához",
+        "description": "Beérkezett a befizetésed — végezd el a személyazonosság-ellenőrzést (személyi igazolvány + szelfi), hogy befejezd a fiókod hitelesítését, és elkezdhess jutalékot szerezni.",
+        "cta": "Teljes körű ellenőrzés"
+      },
+      "expired": {
+        "title": "Újraellenőrzés szükséges",
+        "description": "Nemrég megváltoztattad a nevedet vagy az országodat, ezért újra el kell végezni a személyazonosság-ellenőrzést.",
+        "cta": "Most ellenőrizze újra"
+      },
+      "rejected": {
+        "title": "Az ellenőrzés sikertelen volt",
+        "description": "A legutóbbi hitelesítési kísérletedet nem hagyták jóvá. További költségek nélkül újra megpróbálhatod.",
+        "cta": "Próbáld meg újra"
+      }
+    }
   }
 }

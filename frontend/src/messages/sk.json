@@ -1727,7 +1727,7 @@
           "10 autorov",
           "50 GB úložného priestoru",
           "Vlastná doména",
-          "Komplexná analytika + SEO",
+          "Komplexná analýza + SEO",
           "Prístup k API",
           "Špecializovaná podpora"
         ]
@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Na účasť v partnerskom programe a na prijímanie provízií je potrebné mať v systéme zaregistrovanú adresu peňaženky USDT (BEP20/BSC).",
     "walletRequiredCta": "Pridať moju peňaženku",
     "waitingThresholdTitle": "Už to skoro máme!",
-    "waitingThresholdDesc": "Vaše provízie budú odoslané automaticky, hneď ako váš zostatok dosiahne hodnotu {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Je potrebné overenie totožnosti",
-        "description": "Aby bol partnerský program bezpečný a v súlade s predpismi, musíte najskôr absolvovať jednorazové overenie totožnosti (KYC), než budete mať prístup k svojmu odporúčaciemu odkazu a začnete zarábať provízie.",
-        "cta": "Začať overovanie"
-      },
-      "pending": {
-        "title": "Prebieha overovanie",
-        "description": "Vaše overenie totožnosti sa práve posudzuje. Zvyčajne to trvá len niekoľko minút – váš partnerský odkaz sa automaticky odblokuje hneď po schválení.",
-        "cta": "Skontrolujte stav overenia"
-      },
-      "expired": {
-        "title": "Je potrebné opätovné overenie",
-        "description": "Nedávno ste si zmenili meno alebo krajinu, čo si vyžaduje nové overenie totožnosti, aby bolo možné opäť aktivovať váš partnerský odkaz. Ak máte ešte predplatené roky, nebude vás to stáť žiadne dodatočné náklady.",
-        "cta": "Znovu overiť moju totožnosť"
-      },
-      "rejected": {
-        "title": "Overenie sa nepodarilo",
-        "description": "Váš posledný pokus o overenie totožnosti nebol schválený. Môžete začať nové overenie a skúsiť to znovu.",
-        "cta": "Skúste to znova"
-      }
-    }
+    "waitingThresholdDesc": "Vaše provízie budú odoslané automaticky, hneď ako váš zostatok dosiahne hodnotu {min}."
   },
   "kyc": {
     "pageTitle": "Overenie totožnosti (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Overenie životopisu",
     "reverifyExplain": "Ešte vám zostávajú roky z predplatného, takže opätovné overenie vás nebude stáť nič navyše – stačí, keď znovu prejdete procesom overenia totožnosti.",
     "reverifyCta": "Znovu overiť moju totožnosť",
-    "purchaseTitle": "Vyberte si dĺžku overenia",
-    "durationLabel": "Trvanie",
-    "customDurationLabel": "Alebo zadajte vlastný počet rokov:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Overte svoju totožnosť",
     "totalLabel": "Spolu",
     "payCta": "Zaplaťte {amount}ov a overte si účet",
     "paymentConfirmedTitle": "Platba bola potvrdená",
-    "paymentConfirmedDesc": "Začala sa vaša relácia overovania totožnosti — sledujte túto stránku, kde budeme zverejňovať aktuálne informácie."
+    "paymentConfirmedDesc": "Začala sa vaša relácia overovania totožnosti — sledujte túto stránku, kde budeme zverejňovať aktuálne informácie.",
+    "oneYear": "1 rok"
   },
   "invoices": {
     "title": "Faktúry",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Cieľové krajiny (nepovinné)",
     "targetCountriesHint": "Nechajte pole prázdne, ak chcete, aby sa vaša reklama zobrazovala návštevníkom z celého sveta. Vyberte jednu alebo viac krajín, ak chcete, aby sa reklama zobrazovala len návštevníkom z týchto krajín.",
     "targetCountriesSearch": "Vyhľadajte krajinu…",
-    "targetCountriesNoResults": "Nenašla sa žiadna zodpovedajúca krajina."
+    "targetCountriesNoResults": "Nenašla sa žiadna zodpovedajúca krajina.",
+    "closeButton": "Zatvoriť reklamu",
+    "collapseButton": "Zatvoriť",
+    "showAdButton": "Zobraziť reklamu"
   },
   "tenantAccounting": {
     "title": "Finančný prehľad",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL je aktívne",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Váš blog ešte nie je sprístupnený – čitatelia k nemu nemajú prístup.",
-    "bannerAddDomain": "Pridať doménu"
+    "bannerAddDomain": "Pridať doménu",
+    "orderRetryButton": "Skúsiť znova",
+    "orderRetryStarted": "Opakovaná registrácia — môže to trvať až jednu minútu.",
+    "orderRetryError": "Opätovný pokus sa nepodarilo spustiť. Skúste to prosím znova."
   },
   "twoFA": {
     "setupTitle": "Nastavte dvojfaktorovú autentifikáciu",
@@ -3201,8 +3183,11 @@
         "startDate": "Dátum začiatku",
         "endDate": "Dátum ukončenia",
         "visual": "Vizuálne",
-        "rejectionReason": "Dôvod zamietnutia"
-      }
+        "rejectionReason": "Dôvod zamietnutia",
+        "amountPaid": "Zaplatená suma"
+      },
+      "paidBadge": "Platené",
+      "unpaidBadge": "Nezaplatené"
     },
     "affiliate": {
       "title": "Partnerský program",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Všetok obsah bol vygenerovaný a uložený. Teraz môžete v štúdiu doladiť každú sekciu.",
     "viewGeneralSettings": "Zobraziť všeobecné nastavenia",
     "viewHome": "Zobraziť domovskú stránku"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Totožnosť overená",
+    "status": {
+      "not_started": {
+        "title": "Overte si svoj účet",
+        "description": "Potvrďte svoju totožnosť, aby ste si odomkli partnerský program a mohli začať zarábať provízie.",
+        "cta": "Overiť teraz"
+      },
+      "pending": {
+        "title": "Dokončite overenie a aktivujte si účet",
+        "description": "Vaša platba bola prijatá — dokončite overenie totožnosti (preukaz totožnosti + selfie), aby ste dokončili overenie svojho účtu a mohli začať zarábať provízie.",
+        "cta": "Úplné overenie"
+      },
+      "expired": {
+        "title": "Je potrebné opätovné overenie",
+        "description": "Nedávno ste si zmenili meno alebo krajinu, preto je potrebné overenie zopakovať.",
+        "cta": "Overiť znova teraz"
+      },
+      "rejected": {
+        "title": "Overenie sa nepodarilo",
+        "description": "Váš posledný pokus o overenie nebol schválený. Môžete to skúsiť znova bez ďalších nákladov.",
+        "cta": "Skúste to znova"
+      }
+    }
   }
 }

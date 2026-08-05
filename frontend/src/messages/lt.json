@@ -631,7 +631,7 @@
     "readMore": "Skaityti daugiau",
     "publishedOn": "Paskelbta svetainėje „{date}“",
     "updatedOn": "Atnaujinta{date}",
-    "by": "",
+    "by": "autorius: {author}",
     "minRead": "{min} skaitymo trukmė",
     "subscribe": "Prenumeruokite naujienlaiškį",
     "subscribeDesc": "Gaukite naujus straipsnius tiesiai į savo pašto dėžutę",
@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Norėdami dalyvauti partnerių programoje ir gauti komisinius, turite turėti užregistruotą USDT (BEP20/BSC) piniginės adresą.",
     "walletRequiredCta": "Pridėti mano piniginę",
     "waitingThresholdTitle": "Jau beveik pasiekėme tikslą!",
-    "waitingThresholdDesc": "Jūsų komisiniai bus pervesti automatiškai, kai tik jūsų sąskaitos likutis pasieks {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Reikia patvirtinti tapatybę",
-        "description": "Kad partnerių programa būtų saugi ir atitiktų reikalavimus, prieš gaudami prieigą prie savo rekomendacinės nuorodos ir pradėdami uždirbti komisinius, turite atlikti vienkartinį tapatybės patvirtinimą (KYC).",
-        "cta": "Pradėti patikrinimą"
-      },
-      "pending": {
-        "title": "Vyksta patikrinimas",
-        "description": "Šiuo metu tikrinamas jūsų tapatybės patvirtinimas. Tai paprastai užtrunka tik keletą minučių – jūsų partnerio nuoroda bus aktyvuota automatiškai, kai tik bus patvirtinta.",
-        "cta": "Patikrinti patvirtinimo būseną"
-      },
-      "expired": {
-        "title": "Reikia pakartotinio patvirtinimo",
-        "description": "Neseniai pakeitėte savo vardą ir pavardę arba šalį, todėl, prieš reaktyvuojant jūsų partnerio nuorodą, būtina atlikti naują tapatybės patikrinimą. Jei turite likusių iš anksto apmokėtų metų, tai jums nieko papildomai nekainuos.",
-        "cta": "Pakartotinai patvirtinti mano tapatybę"
-      },
-      "rejected": {
-        "title": "Patikrinimas nepavyko",
-        "description": "Jūsų paskutinis tapatybės patvirtinimo bandymas nebuvo patvirtintas. Galite pradėti naują patvirtinimo procedūrą ir pabandyti dar kartą.",
-        "cta": "Pabandykite dar kartą"
-      }
-    }
+    "waitingThresholdDesc": "Jūsų komisiniai bus pervesti automatiškai, kai tik jūsų sąskaitos likutis pasieks {min}."
   },
   "kyc": {
     "pageTitle": "Tapatybės patvirtinimas (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "CV patikrinimas",
     "reverifyExplain": "Jums dar liko iš anksto apmokėtų metų, todėl pakartotinis tapatybės patvirtinimas nieko papildomai nekainuoja — tiesiog turėsite dar kartą atlikti tapatybės patvirtinimą.",
     "reverifyCta": "Pakartotinai patvirtinti mano tapatybę",
-    "purchaseTitle": "Pasirinkite patvirtinimo trukmę",
-    "durationLabel": "Trukmė",
-    "customDurationLabel": "Arba įveskite norimą metų skaičių:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Patvirtinkite savo tapatybę",
     "totalLabel": "Iš viso",
     "payCta": "Sumokėkite {amount}ų dolerių ir atlikite patvirtinimą",
     "paymentConfirmedTitle": "Mokėjimas patvirtintas",
-    "paymentConfirmedDesc": "Pradėta jūsų tapatybės patvirtinimo sesija — čia rasite naujausią informaciją."
+    "paymentConfirmedDesc": "Pradėta jūsų tapatybės patvirtinimo sesija — čia rasite naujausią informaciją.",
+    "oneYear": "1 metai"
   },
   "invoices": {
     "title": "Sąskaitos faktūros",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Tikslinės šalys (neprivaloma)",
     "targetCountriesHint": "Palikite lauką tuščią, kad jūsų skelbimas būtų rodomas lankytojams visur. Pasirinkite vieną ar daugiau šalių, kad skelbimas būtų rodomas tik lankytojams iš tų šalių.",
     "targetCountriesSearch": "Ieškoti šalies…",
-    "targetCountriesNoResults": "Nerasta atitinkančios šalies."
+    "targetCountriesNoResults": "Nerasta atitinkančios šalies.",
+    "closeButton": "Uždaryti skelbimą",
+    "collapseButton": "Sutraukti",
+    "showAdButton": "Rodyti skelbimą"
   },
   "tenantAccounting": {
     "title": "Finansinė apžvalga",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL įjungtas",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Jūsų tinklaraštis dar neveikia — skaitytojai negali jo pasiekti.",
-    "bannerAddDomain": "Pridėti domeną"
+    "bannerAddDomain": "Pridėti domeną",
+    "orderRetryButton": "Bandyk dar kartą",
+    "orderRetryStarted": "Bandoma pakartotinai užregistruoti — tai gali užtrukti iki vienos minutės.",
+    "orderRetryError": "Nepavyko pradėti pakartotinės bandymo. Prašome bandyti dar kartą."
   },
   "twoFA": {
     "setupTitle": "Nustatykite dviejų veiksnių autentifikavimą",
@@ -3201,8 +3183,11 @@
         "startDate": "Pradžios data",
         "endDate": "Pabaigos data",
         "visual": "Vaizdinė",
-        "rejectionReason": "Atmetimo priežastis"
-      }
+        "rejectionReason": "Atmetimo priežastis",
+        "amountPaid": "Sumokėta suma"
+      },
+      "paidBadge": "Apmokėta",
+      "unpaidBadge": "Neapmokėta"
     },
     "affiliate": {
       "title": "Partnerių programa",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Visas turinys buvo sukurtas ir išsaugotas. Dabar studijoje galite patobulinti kiekvieną skyrių.",
     "viewGeneralSettings": "Peržiūrėti bendruosius nustatymus",
     "viewHome": "Peržiūrėti pagrindinį puslapį"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Tapatybė patvirtinta",
+    "status": {
+      "not_started": {
+        "title": "Patvirtinkite savo paskyrą",
+        "description": "Patvirtinkite savo tapatybę, kad galėtumėte naudotis partnerių programa ir pradėti uždirbti komisinius.",
+        "cta": "Patikrinkite dabar"
+      },
+      "pending": {
+        "title": "Užbaigkite patvirtinimą, kad aktyvuotumėte savo paskyrą",
+        "description": "Jūsų mokėjimas gautas — atlikite tapatybės patikrinimą (asmens tapatybės dokumentas + asmenukė), kad užbaigtumėte paskyros patvirtinimą ir pradėtumėte uždirbti komisinius.",
+        "cta": "Išsamus patikrinimas"
+      },
+      "expired": {
+        "title": "Reikia pakartotinio patvirtinimo",
+        "description": "Neseniai pakeitėte savo vardą ir pavardę arba šalį, todėl reikia iš naujo atlikti jūsų tapatybės patvirtinimą.",
+        "cta": "Patikrinkite dar kartą dabar"
+      },
+      "rejected": {
+        "title": "Patikrinimas nepavyko",
+        "description": "Jūsų paskutinis patvirtinimo bandymas nebuvo patvirtintas. Galite bandyti dar kartą be jokių papildomų išlaidų.",
+        "cta": "Pabandykite dar kartą"
+      }
+    }
   }
 }

@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Pentru a participa la programul de afiliere și a primi comisioane, trebuie să aveți înregistrată o adresă de portofel USDT (BEP20/BSC).",
     "walletRequiredCta": "Adaugă-mi portofelul",
     "waitingThresholdTitle": "Aproape am ajuns!",
-    "waitingThresholdDesc": "Comisioanele dumneavoastră vor fi trimise automat imediat ce soldul dumneavoastră va ajunge la {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Este necesară verificarea identității",
-        "description": "Pentru a asigura siguranța și conformitatea programului de afiliere, trebuie să efectuați o verificare unică a identității (KYC) înainte de a putea accesa linkul dvs. de recomandare și de a începe să câștigați comisioane.",
-        "cta": "Începe verificarea"
-      },
-      "pending": {
-        "title": "Verificare în curs",
-        "description": "Verificarea identității tale este în curs de analiză. De obicei, acest proces durează doar câteva minute — linkul tău de afiliat se va activa automat imediat ce va fi aprobat.",
-        "cta": "Verificați starea verificării"
-      },
-      "expired": {
-        "title": "Este necesară o nouă verificare",
-        "description": "Ți-ai schimbat recent numele sau țara, ceea ce necesită o nouă verificare a identității înainte ca linkul tău de afiliat să poată fi reactivat. Dacă mai ai ani preplătiți rămași, acest lucru nu va implica niciun cost suplimentar.",
-        "cta": "Verifică din nou identitatea mea"
-      },
-      "rejected": {
-        "title": "Verificarea nu a reușit",
-        "description": "Ultima ta încercare de verificare a identității nu a fost aprobată. Poți iniția o nouă verificare pentru a încerca din nou.",
-        "cta": "Încearcă din nou"
-      }
-    }
+    "waitingThresholdDesc": "Comisioanele dumneavoastră vor fi trimise automat imediat ce soldul dumneavoastră va ajunge la {min}."
   },
   "kyc": {
     "pageTitle": "Verificarea identității (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Verificarea CV-ului",
     "reverifyExplain": "Mai ai ani plătiți în avans, așa că reverificarea nu implică costuri suplimentare — va trebui doar să parcurgi din nou procedura de verificare a identității.",
     "reverifyCta": "Verifică din nou identitatea mea",
-    "purchaseTitle": "Alegeți durata verificării",
-    "durationLabel": "Durată",
-    "customDurationLabel": "Sau introduceți un număr personalizat de ani:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Confirmă-ți identitatea",
     "totalLabel": "Total",
     "payCta": "Plătește {amount} și verifică",
     "paymentConfirmedTitle": "Plata a fost confirmată",
-    "paymentConfirmedDesc": "Sesiunea de verificare a identității a început — reveniți aici pentru noutăți."
+    "paymentConfirmedDesc": "Sesiunea de verificare a identității a început — reveniți aici pentru noutăți.",
+    "oneYear": "1 an"
   },
   "invoices": {
     "title": "Facturi",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Țări țintă (opțional)",
     "targetCountriesHint": "Lăsați câmpul necompletat pentru a afișa anunțul vizitatorilor din întreaga lume. Selectați una sau mai multe țări pentru a-l afișa doar vizitatorilor din acele țări.",
     "targetCountriesSearch": "Căutați o țară…",
-    "targetCountriesNoResults": "Nu s-a găsit nicio țară corespunzătoare."
+    "targetCountriesNoResults": "Nu s-a găsit nicio țară corespunzătoare.",
+    "closeButton": "Închide reclama",
+    "collapseButton": "Reducere",
+    "showAdButton": "Afișează anunțul"
   },
   "tenantAccounting": {
     "title": "Prezentare generală financiară",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL activ",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Blogul tău nu este încă public — cititorii nu îl pot accesa.",
-    "bannerAddDomain": "Adăugare domeniu"
+    "bannerAddDomain": "Adăugare domeniu",
+    "orderRetryButton": "Reîncearcă",
+    "orderRetryStarted": "Se reîncearcă înregistrarea — acest proces poate dura până la un minut.",
+    "orderRetryError": "Nu s-a putut iniția reîncercarea. Vă rugăm să încercați din nou."
   },
   "twoFA": {
     "setupTitle": "Configurarea autentificării în doi pași",
@@ -3201,8 +3183,11 @@
         "startDate": "Data de începere",
         "endDate": "Data de încheiere",
         "visual": "Vizual",
-        "rejectionReason": "Motivul respingerii"
-      }
+        "rejectionReason": "Motivul respingerii",
+        "amountPaid": "Suma plătită"
+      },
+      "paidBadge": "Plătit",
+      "unpaidBadge": "Neplătit"
     },
     "affiliate": {
       "title": "Programul de afiliere",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Tot conținutul a fost generat și salvat. Acum poți ajusta fiecare secțiune în studio.",
     "viewGeneralSettings": "Vizualizează setările generale",
     "viewHome": "Vizualizează pagina principală"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Identitate verificată",
+    "status": {
+      "not_started": {
+        "title": "Verifică-ți contul",
+        "description": "Confirmă-ți identitatea pentru a debloca programul de afiliere și a începe să câștigi comisioane.",
+        "cta": "Verifică acum"
+      },
+      "pending": {
+        "title": "Finalizează procesul de verificare pentru a-ți activa contul",
+        "description": "Plata ta a fost primită — finalizează verificarea identității (act de identitate + selfie) pentru a-ți finaliza verificarea contului și a începe să câștigi comisioane.",
+        "cta": "Verificare completă"
+      },
+      "expired": {
+        "title": "Este necesară o nouă verificare",
+        "description": "Ți-ai schimbat recent numele sau țara, așa că trebuie să refaci procesul de verificare.",
+        "cta": "Verifică din nou acum"
+      },
+      "rejected": {
+        "title": "Verificarea nu a reușit",
+        "description": "Ultima ta încercare de verificare nu a fost aprobată. Poți încerca din nou fără costuri suplimentare.",
+        "cta": "Încearcă din nou"
+      }
+    }
   }
 }

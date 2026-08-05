@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "É necessário ter um endereço de carteira USDT (BEP20/BSC) registado para participar no programa de afiliados e receber comissões.",
     "walletRequiredCta": "Adicionar a minha carteira",
     "waitingThresholdTitle": "Já quase lá!",
-    "waitingThresholdDesc": "As suas comissões serão enviadas automaticamente assim que o seu saldo atingir {min}.",
-    "gate": {
-      "not_started": {
-        "title": "É necessária a verificação da identidade",
-        "description": "Para garantir a segurança e a conformidade do programa de afiliados, terá de efetuar uma verificação de identidade KYC única antes de poder aceder ao seu link de referência e começar a ganhar comissões.",
-        "cta": "Iniciar verificação"
-      },
-      "pending": {
-        "title": "Verificação em curso",
-        "description": "A verificação da sua identidade está a ser analisada. Normalmente, este processo demora apenas alguns minutos — o seu link de afiliado será desbloqueado automaticamente assim que for aprovado.",
-        "cta": "Verificar o estado da verificação"
-      },
-      "expired": {
-        "title": "É necessária uma nova verificação",
-        "description": "Alterou recentemente o seu nome ou país, o que exige uma nova verificação de identidade antes de o seu link de afiliado poder ser reativado. Se ainda tiver anos pré-pagos, isto não terá qualquer custo adicional.",
-        "cta": "Verificar novamente a minha identidade"
-      },
-      "rejected": {
-        "title": "A verificação não foi bem-sucedida",
-        "description": "A sua última tentativa de verificação de identidade não foi aprovada. Pode iniciar uma nova verificação para tentar novamente.",
-        "cta": "Tenta novamente"
-      }
-    }
+    "waitingThresholdDesc": "As suas comissões serão enviadas automaticamente assim que o seu saldo atingir {min}."
   },
   "kyc": {
     "pageTitle": "Verificação de identidade (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Verificação do currículo",
     "reverifyExplain": "Ainda tem anos pré-pagos, pelo que a nova verificação não implica qualquer custo adicional — só terá de passar novamente pelo processo de verificação de identidade.",
     "reverifyCta": "Verificar novamente a minha identidade",
-    "purchaseTitle": "Escolha a duração da verificação",
-    "durationLabel": "Duração",
-    "customDurationLabel": "Ou introduza um número personalizado de anos:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Confirme a sua identidade",
     "totalLabel": "Total",
     "payCta": "Pague {amount} e verifique",
     "paymentConfirmedTitle": "Pagamento confirmado",
-    "paymentConfirmedDesc": "A sua sessão de verificação de identidade já começou — volte aqui para ver as atualizações."
+    "paymentConfirmedDesc": "A sua sessão de verificação de identidade já começou — volte aqui para ver as atualizações.",
+    "oneYear": "1 ano"
   },
   "invoices": {
     "title": "Faturas",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Países-alvo (opcional)",
     "targetCountriesHint": "Deixe em branco para mostrar o seu anúncio a visitantes de todo o mundo. Selecione um ou mais países para o mostrar apenas a visitantes desses países.",
     "targetCountriesSearch": "Pesquisar um país…",
-    "targetCountriesNoResults": "Não existe nenhum país correspondente."
+    "targetCountriesNoResults": "Não existe nenhum país correspondente.",
+    "closeButton": "Fechar anúncio",
+    "collapseButton": "Recolher",
+    "showAdButton": "Mostrar anúncio"
   },
   "tenantAccounting": {
     "title": "Panorâmica financeira",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL ativo",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "O teu blogue ainda não está online — os leitores não conseguem aceder a ele.",
-    "bannerAddDomain": "Adicionar domínio"
+    "bannerAddDomain": "Adicionar domínio",
+    "orderRetryButton": "Tentar novamente",
+    "orderRetryStarted": "A tentar efetuar o registo novamente — isto pode demorar até um minuto.",
+    "orderRetryError": "Não foi possível iniciar a nova tentativa. Por favor, tente novamente."
   },
   "twoFA": {
     "setupTitle": "Configurar a autenticação de dois fatores",
@@ -3201,8 +3183,11 @@
         "startDate": "Data de início",
         "endDate": "Data de término",
         "visual": "Visual",
-        "rejectionReason": "Motivo da rejeição"
-      }
+        "rejectionReason": "Motivo da rejeição",
+        "amountPaid": "Montante pago"
+      },
+      "paidBadge": "Pago",
+      "unpaidBadge": "Por pagar"
     },
     "affiliate": {
       "title": "Programa de Afiliados",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Todo o conteúdo foi gerado e guardado. Agora pode aperfeiçoar cada secção no estúdio.",
     "viewGeneralSettings": "Ver definições gerais",
     "viewHome": "Ver página inicial"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Identidade verificada",
+    "status": {
+      "not_started": {
+        "title": "Verifique a sua conta",
+        "description": "Confirme a sua identidade para desbloquear o programa de afiliados e começar a ganhar comissões.",
+        "cta": "Verifique agora"
+      },
+      "pending": {
+        "title": "Conclua a verificação para ativar a sua conta",
+        "description": "O seu pagamento foi recebido — conclua a verificação da sua identidade (documento de identificação + selfie) para finalizar a verificação da sua conta e começar a ganhar comissões.",
+        "cta": "Verificação completa"
+      },
+      "expired": {
+        "title": "É necessária uma nova verificação",
+        "description": "Alterou recentemente o seu nome ou país, pelo que é necessário repetir o processo de verificação.",
+        "cta": "Verifique novamente agora"
+      },
+      "rejected": {
+        "title": "A verificação não foi bem-sucedida",
+        "description": "A sua última tentativa de verificação não foi aprovada. Pode tentar novamente sem custos adicionais.",
+        "cta": "Tenta novamente"
+      }
+    }
   }
 }

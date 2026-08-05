@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Jotta voit osallistua kumppaniohjelmaan ja saada provisioita, sinulla on oltava rekisteröity USDT (BEP20/BSC) -lompakko-osoite.",
     "walletRequiredCta": "Lisää lompakkoni",
     "waitingThresholdTitle": "Melkein perillä!",
-    "waitingThresholdDesc": "Palkkiosi maksetaan automaattisesti heti, kun saldosi nousee vähintään {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Henkilöllisyyden todentaminen vaaditaan",
-        "description": "Jotta kumppaniohjelma pysyy turvallisena ja säännösten mukaisena, sinun on suoritettava kertaluonteinen KYC-henkilöllisyystodentaminen, ennen kuin pääset käyttämään suosittelulinkkiäsi ja aloittamaan provisioiden ansaitsemisen.",
-        "cta": "Aloita vahvistus"
-      },
-      "pending": {
-        "title": "Tarkistus käynnissä",
-        "description": "Henkilöllisyytesi vahvistusta tarkistetaan parhaillaan. Tämä kestää yleensä vain muutaman minuutin – kumppanilinkkisi aktivoituu automaattisesti heti, kun se on hyväksytty.",
-        "cta": "Tarkista vahvistustila"
-      },
-      "expired": {
-        "title": "Uudelleentarkastus vaaditaan",
-        "description": "Olet äskettäin muuttanut nimesi tai maasi, minkä vuoksi henkilöllisyytesi on tarkistettava uudelleen, ennen kuin kumppanilinkkisi voidaan aktivoida uudelleen. Jos sinulla on jäljellä ennakkomaksettuja vuosia, tästä ei aiheudu lisäkustannuksia.",
-        "cta": "Vahvista henkilöllisyyteni uudelleen"
-      },
-      "rejected": {
-        "title": "Vahvistus epäonnistui",
-        "description": "Viimeisin henkilöllisyyden vahvistusyrityksesi ei hyväksytty. Voit aloittaa uuden vahvistusprosessin ja yrittää uudelleen.",
-        "cta": "Yritä uudelleen"
-      }
-    }
+    "waitingThresholdDesc": "Palkkiosi maksetaan automaattisesti heti, kun saldosi nousee vähintään {min}."
   },
   "kyc": {
     "pageTitle": "Henkilöllisyyden todentaminen (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Ansioluettelon tarkistus",
     "reverifyExplain": "Sinulla on vielä jäljellä ennakkomaksettuja vuosia, joten uudelleentarkistuksesta ei aiheudu lisäkustannuksia — sinun tarvitsee vain suorittaa henkilöllisyyden vahvistus uudelleen.",
     "reverifyCta": "Vahvista henkilöllisyyteni uudelleen",
-    "purchaseTitle": "Valitse vahvistuksen kesto",
-    "durationLabel": "Kesto",
-    "customDurationLabel": "Tai syötä haluamasi vuosimäärä:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Vahvista henkilöllisyytesi",
     "totalLabel": "Yhteensä",
     "payCta": "Maksa {amount} ja vahvista",
     "paymentConfirmedTitle": "Maksu vahvistettu",
-    "paymentConfirmedDesc": "Henkilöllisyytesi vahvistus on alkanut — tarkista täältä uusimmat tiedot."
+    "paymentConfirmedDesc": "Henkilöllisyytesi vahvistus on alkanut — tarkista täältä uusimmat tiedot.",
+    "oneYear": "1 vuosi"
   },
   "invoices": {
     "title": "Laskut",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Kohdemaat (valinnainen)",
     "targetCountriesHint": "Jätä kenttä tyhjäksi, jos haluat näyttää mainoksesi kaikille kävijöille. Valitse yksi tai useampi maa, jos haluat näyttää mainoksen vain kyseisistä maista tuleville kävijöille.",
     "targetCountriesSearch": "Hae maata…",
-    "targetCountriesNoResults": "Ei vastaavaa maata."
+    "targetCountriesNoResults": "Ei vastaavaa maata.",
+    "closeButton": "Sulje mainos",
+    "collapseButton": "Piilota",
+    "showAdButton": "Näytä mainos"
   },
   "tenantAccounting": {
     "title": "Taloudellinen katsaus",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL käytössä",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Blogiasi ei ole vielä julkaistu — lukijat eivät pääse lukemaan sitä.",
-    "bannerAddDomain": "Lisää verkkotunnus"
+    "bannerAddDomain": "Lisää verkkotunnus",
+    "orderRetryButton": "Yritä uudelleen",
+    "orderRetryStarted": "Rekisteröinnin uudelleenkäynnistys — tämä voi kestää jopa minuutin.",
+    "orderRetryError": "Uudelleenkäynnistystä ei voitu suorittaa. Yritä uudelleen."
   },
   "twoFA": {
     "setupTitle": "Kaksivaiheisen todennuksen määrittäminen",
@@ -3201,8 +3183,11 @@
         "startDate": "Aloituspäivä",
         "endDate": "Päättymispäivä",
         "visual": "Visuaalinen",
-        "rejectionReason": "Hylkäysperuste"
-      }
+        "rejectionReason": "Hylkäysperuste",
+        "amountPaid": "Maksettu summa"
+      },
+      "paidBadge": "Maksettu",
+      "unpaidBadge": "Maksamaton"
     },
     "affiliate": {
       "title": "Kumppaniohjelma",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Kaikki sisältö on luotu ja tallennettu. Voit nyt hienosäätää kutakin osiota studiossa.",
     "viewGeneralSettings": "Näytä yleiset asetukset",
     "viewHome": "Näytä etusivu"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Henkilöllisyys vahvistettu",
+    "status": {
+      "not_started": {
+        "title": "Vahvista tilisi",
+        "description": "Vahvista henkilöllisyytesi, jotta voit aktivoida kumppaniohjelman ja alkaa ansaita provisioita.",
+        "cta": "Tarkista nyt"
+      },
+      "pending": {
+        "title": "Viimeistele vahvistus, jotta tilisi aktivoituu",
+        "description": "Maksusi on vastaanotettu — suorita henkilöllisyystarkastus (henkilötodistus + selfie), jotta tilisi vahvistus saadaan päätökseen ja voit alkaa ansaita provisioita.",
+        "cta": "Täydellinen todentaminen"
+      },
+      "expired": {
+        "title": "Uudelleentarkastus vaaditaan",
+        "description": "Olet äskettäin muuttanut nimesi tai maasi, joten vahvistus on suoritettava uudelleen.",
+        "cta": "Vahvista tiedot uudelleen nyt"
+      },
+      "rejected": {
+        "title": "Vahvistus epäonnistui",
+        "description": "Viimeisin vahvistusyrityksesi ei hyväksytty. Voit yrittää uudelleen ilman lisäkustannuksia.",
+        "cta": "Yritä uudelleen"
+      }
+    }
   }
 }

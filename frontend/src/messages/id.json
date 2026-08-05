@@ -2394,7 +2394,7 @@
     "sidebar": {
       "assistant": "Panduan pembuatan",
       "connectedAs": "Terhubung sebagai",
-      "plan": ""
+      "plan": "Rencana {plan}"
     },
     "steps": {
       "information": "Informasi",
@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Anda harus sudah mendaftarkan alamat dompet USDT (BEP20/BSC) untuk dapat berpartisipasi dalam program afiliasi dan menerima komisi.",
     "walletRequiredCta": "Tambahkan dompet saya",
     "waitingThresholdTitle": "Sudah hampir sampai!",
-    "waitingThresholdDesc": "Komisi Anda akan dikirimkan secara otomatis begitu saldo Anda mencapai {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Diperlukan verifikasi identitas",
-        "description": "Agar program afiliasi tetap aman dan sesuai dengan ketentuan, Anda harus menyelesaikan proses verifikasi identitas KYC yang hanya perlu dilakukan sekali sebelum dapat mengakses tautan rujukan Anda dan mulai memperoleh komisi.",
-        "cta": "Mulai verifikasi"
-      },
-      "pending": {
-        "title": "Proses verifikasi sedang berlangsung",
-        "description": "Verifikasi identitas Anda sedang diperiksa. Proses ini biasanya hanya memakan waktu beberapa menit — tautan afiliasi Anda akan aktif secara otomatis begitu disetujui.",
-        "cta": "Periksa status verifikasi"
-      },
-      "expired": {
-        "title": "Diperlukan verifikasi ulang",
-        "description": "Anda baru-baru ini mengubah nama atau negara Anda, sehingga diperlukan verifikasi identitas baru sebelum tautan afiliasi Anda dapat diaktifkan kembali. Jika Anda masih memiliki sisa masa berlangganan prabayar, hal ini tidak akan dikenakan biaya tambahan.",
-        "cta": "Verifikasi kembali identitas saya"
-      },
-      "rejected": {
-        "title": "Verifikasi gagal",
-        "description": "Upaya verifikasi identitas terakhir Anda tidak disetujui. Anda dapat memulai proses verifikasi baru untuk mencoba lagi.",
-        "cta": "Coba lagi"
-      }
-    }
+    "waitingThresholdDesc": "Komisi Anda akan dikirimkan secara otomatis begitu saldo Anda mencapai {min}."
   },
   "kyc": {
     "pageTitle": "Verifikasi identitas (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Verifikasi riwayat hidup",
     "reverifyExplain": "Anda masih memiliki sisa masa berlangganan yang telah dibayar di muka, jadi proses verifikasi ulang tidak dikenakan biaya tambahan — Anda hanya perlu menjalani proses verifikasi identitas sekali lagi.",
     "reverifyCta": "Verifikasi kembali identitas saya",
-    "purchaseTitle": "Pilih jangka waktu verifikasi Anda",
-    "durationLabel": "Durasi",
-    "customDurationLabel": "Atau masukkan jumlah tahun sesuai keinginan:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Verifikasi identitas Anda",
     "totalLabel": "Jumlah",
     "payCta": "Bayar ${amount}, lalu lakukan verifikasi",
     "paymentConfirmedTitle": "Pembayaran telah dikonfirmasi",
-    "paymentConfirmedDesc": "Proses verifikasi identitas Anda telah dimulai — silakan periksa kembali halaman ini untuk informasi terbaru."
+    "paymentConfirmedDesc": "Proses verifikasi identitas Anda telah dimulai — silakan periksa kembali halaman ini untuk informasi terbaru.",
+    "oneYear": "1 tahun"
   },
   "invoices": {
     "title": "Faktur",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Negara sasaran (opsional)",
     "targetCountriesHint": "Biarkan kosong agar iklan Anda ditampilkan kepada pengunjung di mana pun. Pilih satu atau lebih negara agar iklan hanya ditampilkan kepada pengunjung dari negara-negara tersebut.",
     "targetCountriesSearch": "Cari negara…",
-    "targetCountriesNoResults": "Tidak ada negara yang sesuai."
+    "targetCountriesNoResults": "Tidak ada negara yang sesuai.",
+    "closeButton": "Tutup iklan",
+    "collapseButton": "Lipat",
+    "showAdButton": "Tampilkan iklan"
   },
   "tenantAccounting": {
     "title": "Gambaran umum keuangan",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL aktif",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Blog Anda belum ditayangkan — pembaca belum bisa mengaksesnya.",
-    "bannerAddDomain": "Tambahkan domain"
+    "bannerAddDomain": "Tambahkan domain",
+    "orderRetryButton": "Coba Lagi",
+    "orderRetryStarted": "Mencoba kembali proses pendaftaran — proses ini bisa memakan waktu hingga satu menit.",
+    "orderRetryError": "Tidak dapat memulai upaya ulang. Silakan coba lagi."
   },
   "twoFA": {
     "setupTitle": "Mengaktifkan otentikasi dua faktor",
@@ -3201,8 +3183,11 @@
         "startDate": "Tanggal Mulai",
         "endDate": "Tanggal Akhir",
         "visual": "Visual",
-        "rejectionReason": "Alasan Penolakan"
-      }
+        "rejectionReason": "Alasan Penolakan",
+        "amountPaid": "Jumlah yang Telah Dibayarkan"
+      },
+      "paidBadge": "Dibayar",
+      "unpaidBadge": "Belum dibayar"
     },
     "affiliate": {
       "title": "Program Afiliasi",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Semua konten telah dibuat dan disimpan. Sekarang Anda dapat menyempurnakan setiap bagian di studio.",
     "viewGeneralSettings": "Lihat pengaturan umum",
     "viewHome": "Lihat beranda"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Identitas telah diverifikasi",
+    "status": {
+      "not_started": {
+        "title": "Verifikasi akun Anda",
+        "description": "Konfirmasikan identitas Anda untuk mengaktifkan program afiliasi dan mulai mendapatkan komisi.",
+        "cta": "Verifikasi sekarang"
+      },
+      "pending": {
+        "title": "Selesaikan proses verifikasi Anda untuk mengaktifkan akun Anda",
+        "description": "Pembayaran Anda telah diterima — selesaikan proses verifikasi identitas (KTP + foto selfie) untuk menyelesaikan verifikasi akun Anda dan mulai mendapatkan komisi.",
+        "cta": "Verifikasi lengkap"
+      },
+      "expired": {
+        "title": "Diperlukan verifikasi ulang",
+        "description": "Anda baru-baru ini mengubah nama atau negara Anda, sehingga proses verifikasi Anda perlu dilakukan kembali.",
+        "cta": "Lakukan verifikasi ulang sekarang"
+      },
+      "rejected": {
+        "title": "Verifikasi gagal",
+        "description": "Upaya verifikasi terakhir Anda tidak disetujui. Anda dapat mencobanya lagi tanpa biaya tambahan.",
+        "cta": "Coba lagi"
+      }
+    }
   }
 }

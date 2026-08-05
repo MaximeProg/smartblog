@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Ortaklık programına katılmak ve komisyon almak için kayıtlı bir USDT (BEP20/BSC) cüzdan adresinizin olması gerekir.",
     "walletRequiredCta": "Cüzdanımı ekle",
     "waitingThresholdTitle": "Neredeyse bitti!",
-    "waitingThresholdDesc": "Bakiyeniz {min}'a ulaşır ulaşmaz komisyonlarınız otomatik olarak gönderilecektir.",
-    "gate": {
-      "not_started": {
-        "title": "Kimlik doğrulaması gereklidir",
-        "description": "Ortaklık programının güvenli ve mevzuata uygun bir şekilde yürütülmesi için, yönlendirme bağlantınıza erişip komisyon kazanmaya başlamadan önce tek seferlik bir KYC kimlik doğrulama işlemini tamamlamanız gerekmektedir.",
-        "cta": "Doğrulamayı başlat"
-      },
-      "pending": {
-        "title": "Doğrulama devam ediyor",
-        "description": "Kimlik doğrulama işleminiz inceleniyor. Bu işlem genellikle sadece birkaç dakika sürer — onaylanır onaylanmaz ortaklık bağlantınız otomatik olarak etkinleştirilecektir.",
-        "cta": "Doğrulama durumunu kontrol et"
-      },
-      "expired": {
-        "title": "Yeniden doğrulama gerekiyor",
-        "description": "Kısa bir süre önce adınızı veya ülkenizi değiştirdiniz; bu nedenle, ortaklık bağlantınızın yeniden etkinleştirilebilmesi için yeni bir kimlik doğrulaması yapılması gerekiyor. Önceden ödediğiniz ve henüz kullanılmamış yıllarınız varsa, bu işlem için ek bir ücret talep edilmeyecektir.",
-        "cta": "Kimliğimi yeniden doğrulayın"
-      },
-      "rejected": {
-        "title": "Doğrulama başarısız",
-        "description": "Son kimlik doğrulama denemeniz onaylanmadı. Tekrar denemek için yeni bir doğrulama işlemi başlatabilirsiniz.",
-        "cta": "Tekrar deneyin"
-      }
-    }
+    "waitingThresholdDesc": "Bakiyeniz {min}'a ulaşır ulaşmaz komisyonlarınız otomatik olarak gönderilecektir."
   },
   "kyc": {
     "pageTitle": "Kimlik doğrulama (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Özgeçmiş doğrulama",
     "reverifyExplain": "Ön ödemeli olarak kalan yıllarınız olduğu için yeniden doğrulama işlemi için ek bir ücret ödemeniz gerekmez — sadece kimlik doğrulama işlemini tekrar yapmanız yeterli olacaktır.",
     "reverifyCta": "Kimliğimi yeniden doğrulayın",
-    "purchaseTitle": "Doğrulama sürenizi seçin",
-    "durationLabel": "Süre",
-    "customDurationLabel": "Ya da istediğiniz yıl sayısını girin:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Kimliğinizi doğrulayın",
     "totalLabel": "Toplam",
     "payCta": "{amount} dolar ödeyin ve doğrulayın",
     "paymentConfirmedTitle": "Ödeme onaylandı",
-    "paymentConfirmedDesc": "Kimlik doğrulama işleminiz başladı — güncellemeler için burayı takip edin."
+    "paymentConfirmedDesc": "Kimlik doğrulama işleminiz başladı — güncellemeler için burayı takip edin.",
+    "oneYear": "1 yıl"
   },
   "invoices": {
     "title": "Faturalar",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Hedef ülkeler (isteğe bağlı)",
     "targetCountriesHint": "Reklamınızı tüm ziyaretçilere göstermek için bu alanı boş bırakın. Reklamınızı yalnızca belirli ülkelerdeki ziyaretçilere göstermek için bir veya daha fazla ülke seçin.",
     "targetCountriesSearch": "Bir ülke arayın…",
-    "targetCountriesNoResults": "Eşleşen ülke bulunamadı."
+    "targetCountriesNoResults": "Eşleşen ülke bulunamadı.",
+    "closeButton": "Reklamı kapat",
+    "collapseButton": "Daralt",
+    "showAdButton": "Reklamı göster"
   },
   "tenantAccounting": {
     "title": "Mali genel bakış",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL etkin",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Blogunuz henüz yayında değil — okuyucular blogunuza erişemiyor.",
-    "bannerAddDomain": "Etki alanı ekle"
+    "bannerAddDomain": "Etki alanı ekle",
+    "orderRetryButton": "Tekrar dene",
+    "orderRetryStarted": "Kayıt işlemi yeniden deneniyor — bu işlem bir dakikaya kadar sürebilir.",
+    "orderRetryError": "Yeniden deneme başlatılamadı. Lütfen tekrar deneyin."
   },
   "twoFA": {
     "setupTitle": "İki faktörlü kimlik doğrulamayı ayarlayın",
@@ -3201,8 +3183,11 @@
         "startDate": "Başlangıç Tarihi",
         "endDate": "Bitiş Tarihi",
         "visual": "Görsel",
-        "rejectionReason": "Reddedilme Nedeni"
-      }
+        "rejectionReason": "Reddedilme Nedeni",
+        "amountPaid": "Ödenen Tutar"
+      },
+      "paidBadge": "Ücretli",
+      "unpaidBadge": "Ödenmemiş"
     },
     "affiliate": {
       "title": "Ortaklık Programı",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Tüm içerik oluşturuldu ve kaydedildi. Artık stüdyoda her bir bölümü ince ayar yapabilirsiniz.",
     "viewGeneralSettings": "Genel ayarları görüntüle",
     "viewHome": "Ana sayfaya git"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Kimlik doğrulandı",
+    "status": {
+      "not_started": {
+        "title": "Hesabınızı doğrulayın",
+        "description": "Ortaklık programının kilidini açmak ve komisyon kazanmaya başlamak için kimliğinizi doğrulayın.",
+        "cta": "Şimdi doğrulayın"
+      },
+      "pending": {
+        "title": "Hesabınızı etkinleştirmek için doğrulama işlemini tamamlayın",
+        "description": "Ödemeniz alındı — hesabınızın doğrulama işlemini tamamlamak ve komisyon kazanmaya başlamak için kimlik doğrulamanızı (kimlik + selfie) tamamlayın.",
+        "cta": "Doğrulamanın tamamlanması"
+      },
+      "expired": {
+        "title": "Yeniden doğrulama gerekiyor",
+        "description": "Kısa bir süre önce adınızı veya ülkenizi değiştirdiniz; bu nedenle kimlik doğrulama işleminizin yeniden yapılması gerekiyor.",
+        "cta": "Şimdi yeniden doğrulayın"
+      },
+      "rejected": {
+        "title": "Doğrulama başarısız",
+        "description": "Son doğrulama denemeniz onaylanmadı. Ekstra bir ücret ödemeden tekrar deneyebilirsiniz.",
+        "cta": "Tekrar deneyin"
+      }
+    }
   }
 }

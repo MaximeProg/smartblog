@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Abyste se mohli zapojit do partnerského programu a dostávat provize, musíte mít v systému uloženou adresu peněženky pro USDT (BEP20/BSC).",
     "walletRequiredCta": "Přidat mou peněženku",
     "waitingThresholdTitle": "Už to skoro máme!",
-    "waitingThresholdDesc": "Vaše provize budou odeslány automaticky, jakmile váš zůstatek dosáhne částky {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Je nutné ověření totožnosti",
-        "description": "Aby byl partnerský program bezpečný a v souladu s předpisy, musíte nejprve absolvovat jednorázové ověření totožnosti (KYC), než získáte přístup ke svému referral odkazu a začnete vydělávat provize.",
-        "cta": "Spustit ověření"
-      },
-      "pending": {
-        "title": "Probíhá ověřování",
-        "description": "Vaše ověření totožnosti se právě posuzuje. Obvykle to trvá jen pár minut – váš partnerský odkaz se automaticky odblokuje, jakmile bude schválen.",
-        "cta": "Zkontrolovat stav ověření"
-      },
-      "expired": {
-        "title": "Je nutné provést opětovné ověření",
-        "description": "Nedávno jste si změnili jméno nebo zemi, a proto je před opětovnou aktivací vašeho partnerského odkazu nutné provést nové ověření totožnosti. Pokud vám zbývají předplacené roky, nebude vás to stát žádné další náklady.",
-        "cta": "Znovu ověřit mou totožnost"
-      },
-      "rejected": {
-        "title": "Ověření se nezdařilo",
-        "description": "Váš poslední pokus o ověření totožnosti nebyl schválen. Můžete zahájit nové ověření a zkusit to znovu.",
-        "cta": "Zkuste to znovu"
-      }
-    }
+    "waitingThresholdDesc": "Vaše provize budou odeslány automaticky, jakmile váš zůstatek dosáhne částky {min}."
   },
   "kyc": {
     "pageTitle": "Ověření totožnosti (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Ověření životopisu",
     "reverifyExplain": "Ještě vám zbývají roky z předplaceného období, takže opětovné ověření vás nebude stát nic navíc – stačí jen znovu projít procesem ověření totožnosti.",
     "reverifyCta": "Znovu ověřit mou totožnost",
-    "purchaseTitle": "Vyberte si dobu platnosti ověření",
-    "durationLabel": "Doba trvání",
-    "customDurationLabel": "Nebo zadejte vlastní počet let:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Ověřte svou totožnost",
     "totalLabel": "Celkem",
     "payCta": "Zaplaťte {amount}ů a proveďte ověření",
     "paymentConfirmedTitle": "Platba potvrzena",
-    "paymentConfirmedDesc": "Proběhlo ověření vaší identity – aktuální informace najdete zde."
+    "paymentConfirmedDesc": "Proběhlo ověření vaší identity – aktuální informace najdete zde.",
+    "oneYear": "1 rok"
   },
   "invoices": {
     "title": "Faktury",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Cílové země (nepovinné)",
     "targetCountriesHint": "Nechte pole prázdné, aby se vaše reklama zobrazovala návštěvníkům z celého světa. Vyberte jednu nebo více zemí, aby se reklama zobrazovala pouze návštěvníkům z těchto zemí.",
     "targetCountriesSearch": "Vyhledat zemi…",
-    "targetCountriesNoResults": "Nenašla se žádná odpovídající země."
+    "targetCountriesNoResults": "Nenašla se žádná odpovídající země.",
+    "closeButton": "Zavřít reklamu",
+    "collapseButton": "Sbalit",
+    "showAdButton": "Zobrazit reklamu"
   },
   "tenantAccounting": {
     "title": "Finanční přehled",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL je aktivní",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Váš blog ještě není zveřejněn – čtenáři k němu nemají přístup.",
-    "bannerAddDomain": "Přidat doménu"
+    "bannerAddDomain": "Přidat doménu",
+    "orderRetryButton": "Zkusit znovu",
+    "orderRetryStarted": "Opakování registrace — může to trvat až jednu minutu.",
+    "orderRetryError": "Opětovný pokus se nepodařilo spustit. Zkuste to prosím znovu."
   },
   "twoFA": {
     "setupTitle": "Nastavení dvoufaktorového ověřování",
@@ -3201,8 +3183,11 @@
         "startDate": "Datum zahájení",
         "endDate": "Datum ukončení",
         "visual": "Vizuální",
-        "rejectionReason": "Důvod zamítnutí"
-      }
+        "rejectionReason": "Důvod zamítnutí",
+        "amountPaid": "Vyplacená částka"
+      },
+      "paidBadge": "Placené",
+      "unpaidBadge": "Neuhrazené"
     },
     "affiliate": {
       "title": "Partnerský program",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Veškerý obsah byl vygenerován a uložen. Nyní můžete v studiu doladit jednotlivé sekce.",
     "viewGeneralSettings": "Zobrazit obecná nastavení",
     "viewHome": "Zobrazit domovskou stránku"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Totožnost ověřena",
+    "status": {
+      "not_started": {
+        "title": "Ověřte svůj účet",
+        "description": "Ověřte svou totožnost, abyste odemkli partnerský program a mohli začít získávat provize.",
+        "cta": "Ověřte to hned"
+      },
+      "pending": {
+        "title": "Dokončete ověření a aktivujte si svůj účet",
+        "description": "Vaše platba byla přijata – proveďte ověření totožnosti (doklad totožnosti + selfie), abyste dokončili ověření svého účtu a mohli začít získávat provize.",
+        "cta": "Úplné ověření"
+      },
+      "expired": {
+        "title": "Je nutné provést opětovné ověření",
+        "description": "Nedávno jste si změnili jméno nebo zemi, proto je nutné ověření provést znovu.",
+        "cta": "Ověřte to znovu"
+      },
+      "rejected": {
+        "title": "Ověření se nezdařilo",
+        "description": "Váš poslední pokus o ověření nebyl schválen. Můžete to zkusit znovu bez dalších nákladů.",
+        "cta": "Zkuste to znovu"
+      }
+    }
   }
 }

@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "제휴 프로그램에 참여하고 수수료를 받으려면 등록된 USDT (BEP20/BSC) 지갑 주소가 필요합니다.",
     "walletRequiredCta": "내 지갑 추가하기",
     "waitingThresholdTitle": "이제 거의 다 왔어요!",
-    "waitingThresholdDesc": "잔액이 {min}에 도달하는 즉시 수수료가 자동으로 지급됩니다.",
-    "gate": {
-      "not_started": {
-        "title": "신원 확인이 필요합니다",
-        "description": "제휴 프로그램을 안전하게 운영하고 관련 규정을 준수하기 위해, 추천 링크에 접속하여 수수료를 적립하기 전에 일회성 KYC 신원 확인 절차를 완료하셔야 합니다.",
-        "cta": "검증 시작"
-      },
-      "pending": {
-        "title": "검증 중입니다",
-        "description": "신원 확인 절차가 검토 중입니다. 보통 몇 분 정도 소요되며, 승인되는 대로 제휴 링크가 자동으로 활성화됩니다.",
-        "cta": "인증 상태 확인"
-      },
-      "expired": {
-        "title": "재확인 필요",
-        "description": "최근에 이름이나 국가를 변경하셨기 때문에, 제휴 링크를 다시 활성화하기 전에 신원 확인 절차를 다시 거쳐야 합니다. 선불로 결제하신 기간이 남아 있다면, 이에 따른 추가 비용은 발생하지 않습니다.",
-        "cta": "제 신원을 다시 확인해 주세요"
-      },
-      "rejected": {
-        "title": "인증에 실패했습니다.",
-        "description": "마지막 신원 확인 시도가 승인되지 않았습니다. 새로운 확인 절차를 시작하여 다시 시도할 수 있습니다.",
-        "cta": "다시 시도해 보세요"
-      }
-    }
+    "waitingThresholdDesc": "잔액이 {min}에 도달하는 즉시 수수료가 자동으로 지급됩니다."
   },
   "kyc": {
     "pageTitle": "신원 확인 (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "이력서 확인",
     "reverifyExplain": "선불로 결제하신 이용 기간이 남아 있으므로, 재인증 시 추가 비용이 발생하지 않습니다. 단지 신원 확인 절차를 다시 거치시면 됩니다.",
     "reverifyCta": "제 신원을 다시 확인해 주세요",
-    "purchaseTitle": "인증 기간을 선택하세요",
-    "durationLabel": "기간",
-    "customDurationLabel": "또는 원하는 연수를 직접 입력하세요:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "신원을 확인해 주세요",
     "totalLabel": "합계",
     "payCta": "{amount}달러를 지불하고 인증하세요",
     "paymentConfirmedTitle": "결제 확인됨",
-    "paymentConfirmedDesc": "신원 확인 절차가 시작되었습니다. 최신 소식은 이곳에서 확인해 주세요."
+    "paymentConfirmedDesc": "신원 확인 절차가 시작되었습니다. 최신 소식은 이곳에서 확인해 주세요.",
+    "oneYear": "1년"
   },
   "invoices": {
     "title": "청구서",
@@ -2781,7 +2757,10 @@
     "targetCountries": "대상 국가 (선택 사항)",
     "targetCountriesHint": "모든 지역의 방문자에게 광고를 표시하려면 비워 두세요. 특정 국가 하나 이상을 선택하면 해당 국가의 방문자에게만 광고가 표시됩니다.",
     "targetCountriesSearch": "국가 검색…",
-    "targetCountriesNoResults": "해당하는 국가가 없습니다."
+    "targetCountriesNoResults": "해당하는 국가가 없습니다.",
+    "closeButton": "광고 닫기",
+    "collapseButton": "접기",
+    "showAdButton": "광고 표시"
   },
   "tenantAccounting": {
     "title": "재무 개요",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL 활성화됨",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "귀하의 블로그는 아직 공개되지 않았습니다. 독자들이 접속할 수 없습니다.",
-    "bannerAddDomain": "도메인 추가"
+    "bannerAddDomain": "도메인 추가",
+    "orderRetryButton": "다시 시도",
+    "orderRetryStarted": "등록을 다시 시도 중입니다. 이 과정은 최대 1분 정도 소요될 수 있습니다.",
+    "orderRetryError": "재시도를 시작할 수 없습니다. 다시 시도해 주세요."
   },
   "twoFA": {
     "setupTitle": "2단계 인증 설정하기",
@@ -3201,8 +3183,11 @@
         "startDate": "시작일",
         "endDate": "종료일",
         "visual": "시각적",
-        "rejectionReason": "거절 사유"
-      }
+        "rejectionReason": "거절 사유",
+        "amountPaid": "지급액"
+      },
+      "paidBadge": "유료",
+      "unpaidBadge": "미지급"
     },
     "affiliate": {
       "title": "제휴 프로그램",
@@ -4040,5 +4025,30 @@
     "doneDesc": "모든 콘텐츠가 생성 및 저장되었습니다. 이제 스튜디오에서 각 섹션을 세부적으로 조정할 수 있습니다.",
     "viewGeneralSettings": "일반 설정 보기",
     "viewHome": "홈 보기"
+  },
+  "kycBanner": {
+    "verifiedBadge": "신원 확인 완료",
+    "status": {
+      "not_started": {
+        "title": "계정 확인하기",
+        "description": "신원을 확인하여 제휴 프로그램을 활성화하고 수수료를 적립하기 시작하세요.",
+        "cta": "지금 확인하세요"
+      },
+      "pending": {
+        "title": "계정을 활성화하려면 인증 절차를 완료해 주세요",
+        "description": "결제가 완료되었습니다. 신원 확인(신분증 + 셀카)을 완료하여 계정 인증을 마치고 수수료를 적립하기 시작하세요.",
+        "cta": "검증 완료"
+      },
+      "expired": {
+        "title": "재확인 필요",
+        "description": "최근에 이름이나 거주 국가를 변경하셨으므로, 인증 절차를 다시 진행하셔야 합니다.",
+        "cta": "지금 다시 확인하세요"
+      },
+      "rejected": {
+        "title": "인증에 실패했습니다.",
+        "description": "마지막 인증 시도가 승인되지 않았습니다. 추가 비용 없이 다시 시도하실 수 있습니다.",
+        "cta": "다시 시도해 보세요"
+      }
+    }
   }
 }

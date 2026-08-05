@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Per partecipare al programma di affiliazione e ricevere le commissioni, è necessario avere registrato un indirizzo di portafoglio USDT (BEP20/BSC).",
     "walletRequiredCta": "Aggiungi il mio portafoglio",
     "waitingThresholdTitle": "Ci siamo quasi!",
-    "waitingThresholdDesc": "Le tue commissioni ti saranno inviate automaticamente non appena il tuo saldo raggiungerà l'{min}e.",
-    "gate": {
-      "not_started": {
-        "title": "È richiesta la verifica dell'identità",
-        "description": "Per garantire la sicurezza e la conformità del programma di affiliazione, è necessario completare una verifica unica dell'identità (KYC) prima di poter accedere al proprio link di riferimento e iniziare a guadagnare commissioni.",
-        "cta": "Avvia la verifica"
-      },
-      "pending": {
-        "title": "Verifica in corso",
-        "description": "La verifica della tua identità è in fase di esame. Di solito ci vogliono solo pochi minuti: il tuo link di affiliazione verrà sbloccato automaticamente non appena sarà approvato.",
-        "cta": "Verifica lo stato della verifica"
-      },
-      "expired": {
-        "title": "È necessaria una nuova verifica",
-        "description": "Di recente hai modificato il tuo nome o il tuo Paese, pertanto è necessaria una nuova verifica dell'identità prima che il tuo link di affiliazione possa essere riattivato. Se hai ancora anni prepagati a disposizione, non ti verrà addebitato alcun costo aggiuntivo.",
-        "cta": "Conferma nuovamente la mia identità"
-      },
-      "rejected": {
-        "title": "Verifica non riuscita",
-        "description": "Il tuo ultimo tentativo di verifica dell'identità non è stato approvato. Puoi avviare una nuova procedura di verifica per riprovare.",
-        "cta": "Riprova"
-      }
-    }
+    "waitingThresholdDesc": "Le tue commissioni ti saranno inviate automaticamente non appena il tuo saldo raggiungerà l'{min}e."
   },
   "kyc": {
     "pageTitle": "Verifica dell'identità (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Verifica del curriculum",
     "reverifyExplain": "Hai ancora anni prepagati a disposizione, quindi la nuova verifica non comporta alcun costo aggiuntivo: dovrai semplicemente ripetere la procedura di verifica dell'identità.",
     "reverifyCta": "Conferma nuovamente la mia identità",
-    "purchaseTitle": "Scegli la durata della verifica",
-    "durationLabel": "Durata",
-    "customDurationLabel": "Oppure inserisci un numero personalizzato di anni:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Verifica la tua identità",
     "totalLabel": "Totale",
     "payCta": "Paga {amount}i e verifica",
     "paymentConfirmedTitle": "Pagamento confermato",
-    "paymentConfirmedDesc": "La sessione di verifica dell'identità è iniziata: torna su questa pagina per eventuali aggiornamenti."
+    "paymentConfirmedDesc": "La sessione di verifica dell'identità è iniziata: torna su questa pagina per eventuali aggiornamenti.",
+    "oneYear": "1 anno"
   },
   "invoices": {
     "title": "Fatture",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Paesi di destinazione (facoltativo)",
     "targetCountriesHint": "Lascia il campo vuoto per mostrare il tuo annuncio ai visitatori di tutto il mondo. Seleziona uno o più paesi per mostrarlo solo ai visitatori provenienti da quei paesi.",
     "targetCountriesSearch": "Cerca un paese…",
-    "targetCountriesNoResults": "Nessun paese corrispondente."
+    "targetCountriesNoResults": "Nessun paese corrispondente.",
+    "closeButton": "Chiudi l'annuncio",
+    "collapseButton": "Chiudi",
+    "showAdButton": "Mostra annuncio"
   },
   "tenantAccounting": {
     "title": "Panoramica finanziaria",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL attivo",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Il tuo blog non è ancora online: i lettori non possono accedervi.",
-    "bannerAddDomain": "Aggiungi dominio"
+    "bannerAddDomain": "Aggiungi dominio",
+    "orderRetryButton": "Riprova",
+    "orderRetryStarted": "Si sta riprovando a effettuare la registrazione: l'operazione potrebbe richiedere fino a un minuto.",
+    "orderRetryError": "Impossibile avviare il nuovo tentativo. Riprovare."
   },
   "twoFA": {
     "setupTitle": "Configurare l'autenticazione a due fattori",
@@ -3201,8 +3183,11 @@
         "startDate": "Data di inizio",
         "endDate": "Data di scadenza",
         "visual": "Visivo",
-        "rejectionReason": "Motivo del rifiuto"
-      }
+        "rejectionReason": "Motivo del rifiuto",
+        "amountPaid": "Importo pagato"
+      },
+      "paidBadge": "A pagamento",
+      "unpaidBadge": "Non pagato"
     },
     "affiliate": {
       "title": "Programma di affiliazione",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Tutti i contenuti sono stati generati e salvati. Ora puoi perfezionare ogni sezione nello studio.",
     "viewGeneralSettings": "Visualizza le impostazioni generali",
     "viewHome": "Vai alla home"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Identità verificata",
+    "status": {
+      "not_started": {
+        "title": "Verifica il tuo account",
+        "description": "Conferma la tua identità per sbloccare il programma di affiliazione e iniziare a guadagnare commissioni.",
+        "cta": "Verifica ora"
+      },
+      "pending": {
+        "title": "Completa la verifica per attivare il tuo account",
+        "description": "Il tuo pagamento è stato ricevuto: completa la verifica dell'identità (documento d'identità + selfie) per completare la verifica del tuo account e iniziare a guadagnare commissioni.",
+        "cta": "Verifica completa"
+      },
+      "expired": {
+        "title": "È necessaria una nuova verifica",
+        "description": "Di recente hai cambiato nome o paese, quindi è necessario ripetere la procedura di verifica.",
+        "cta": "Verifica nuovamente ora"
+      },
+      "rejected": {
+        "title": "Verifica non riuscita",
+        "description": "Il tuo ultimo tentativo di verifica non è stato approvato. Puoi riprovare senza alcun costo aggiuntivo.",
+        "cta": "Riprova"
+      }
+    }
   }
 }

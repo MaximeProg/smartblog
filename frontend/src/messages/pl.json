@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Aby wziąć udział w programie partnerskim i otrzymywać prowizje, musisz posiadać zarejestrowany adres portfela USDT (BEP20/BSC).",
     "walletRequiredCta": "Dodaj mój portfel",
     "waitingThresholdTitle": "Już prawie!",
-    "waitingThresholdDesc": "Twoje prowizje zostaną wypłacone automatycznie, gdy tylko saldo na Twoim koncie osiągnie {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Wymagana weryfikacja tożsamości",
-        "description": "Aby zapewnić bezpieczeństwo i zgodność programu partnerskiego z przepisami, musisz przejść jednorazową weryfikację tożsamości (KYC), zanim uzyskasz dostęp do swojego linku polecającego i zaczniesz zarabiać prowizje.",
-        "cta": "Rozpocznij weryfikację"
-      },
-      "pending": {
-        "title": "Trwa weryfikacja",
-        "description": "Twoja weryfikacja tożsamości jest obecnie sprawdzana. Zazwyczaj zajmuje to tylko kilka minut — Twój link partnerski zostanie odblokowany automatycznie zaraz po zatwierdzeniu.",
-        "cta": "Sprawdź status weryfikacji"
-      },
-      "expired": {
-        "title": "Konieczna ponowna weryfikacja",
-        "description": "Niedawno zmieniłeś imię i nazwisko lub kraj, co wymaga przeprowadzenia nowej weryfikacji tożsamości przed ponownym aktywowaniem Twojego linku partnerskiego. Jeśli masz jeszcze przedpłacone lata, nie poniesiesz żadnych dodatkowych kosztów.",
-        "cta": "Ponownie zweryfikuj moją tożsamość"
-      },
-      "rejected": {
-        "title": "Weryfikacja nie powiodła się",
-        "description": "Twoja ostatnia próba weryfikacji tożsamości nie została zatwierdzona. Możesz rozpocząć nową procedurę weryfikacji, aby spróbować ponownie.",
-        "cta": "Spróbuj ponownie"
-      }
-    }
+    "waitingThresholdDesc": "Twoje prowizje zostaną wypłacone automatycznie, gdy tylko saldo na Twoim koncie osiągnie {min}."
   },
   "kyc": {
     "pageTitle": "Weryfikacja tożsamości (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Weryfikacja CV",
     "reverifyExplain": "Masz jeszcze przedpłacone lata, więc ponowna weryfikacja nie wiąże się z żadnymi dodatkowymi kosztami — wystarczy, że ponownie przejdziesz proces weryfikacji tożsamości.",
     "reverifyCta": "Ponownie zweryfikuj moją tożsamość",
-    "purchaseTitle": "Wybierz okres ważności weryfikacji",
-    "durationLabel": "Czas trwania",
-    "customDurationLabel": "Lub wprowadź własną liczbę lat:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Zweryfikuj swoją tożsamość",
     "totalLabel": "Razem",
     "payCta": "Zapłać {amount}ów i zweryfikuj konto",
     "paymentConfirmedTitle": "Płatność potwierdzona",
-    "paymentConfirmedDesc": "Rozpoczęła się sesja weryfikacji Twojej tożsamości — zaglądaj tutaj, aby śledzić aktualizacje."
+    "paymentConfirmedDesc": "Rozpoczęła się sesja weryfikacji Twojej tożsamości — zaglądaj tutaj, aby śledzić aktualizacje.",
+    "oneYear": "1 rok"
   },
   "invoices": {
     "title": "Faktury",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Kraje docelowe (opcjonalnie)",
     "targetCountriesHint": "Pozostaw to pole puste, aby Twoja reklama była wyświetlana wszystkim odwiedzającym. Wybierz jeden lub więcej krajów, aby reklama była wyświetlana wyłącznie odwiedzającym z tych krajów.",
     "targetCountriesSearch": "Wyszukaj kraj…",
-    "targetCountriesNoResults": "Nie znaleziono pasującego kraju."
+    "targetCountriesNoResults": "Nie znaleziono pasującego kraju.",
+    "closeButton": "Zamknij reklamę",
+    "collapseButton": "Zwiń",
+    "showAdButton": "Pokaż reklamę"
   },
   "tenantAccounting": {
     "title": "Przegląd finansowy",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL włączony",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Twój blog nie jest jeszcze dostępny — czytelnicy nie mają do niego dostępu.",
-    "bannerAddDomain": "Dodaj domenę"
+    "bannerAddDomain": "Dodaj domenę",
+    "orderRetryButton": "Spróbuj ponownie",
+    "orderRetryStarted": "Ponowna próba rejestracji — może to potrwać do jednej minuty.",
+    "orderRetryError": "Nie udało się rozpocząć ponownej próby. Spróbuj ponownie."
   },
   "twoFA": {
     "setupTitle": "Skonfiguruj uwierzytelnianie dwuskładnikowe",
@@ -3201,8 +3183,11 @@
         "startDate": "Data rozpoczęcia",
         "endDate": "Data zakończenia",
         "visual": "Wizualne",
-        "rejectionReason": "Powód odrzucenia"
-      }
+        "rejectionReason": "Powód odrzucenia",
+        "amountPaid": "Wypłacona kwota"
+      },
+      "paidBadge": "Płatne",
+      "unpaidBadge": "Niewypłacone"
     },
     "affiliate": {
       "title": "Program partnerski",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Cała treść została wygenerowana i zapisana. Teraz możesz dopracować każdą sekcję w studiu.",
     "viewGeneralSettings": "Wyświetl ustawienia ogólne",
     "viewHome": "Przejdź do strony głównej"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Tożsamość zweryfikowana",
+    "status": {
+      "not_started": {
+        "title": "Zweryfikuj swoje konto",
+        "description": "Potwierdź swoją tożsamość, aby odblokować program partnerski i zacząć zarabiać prowizje.",
+        "cta": "Sprawdź teraz"
+      },
+      "pending": {
+        "title": "Zakończ proces weryfikacji, aby aktywować swoje konto",
+        "description": "Otrzymaliśmy Twoją płatność — dokonaj weryfikacji tożsamości (dokument tożsamości + selfie), aby zakończyć weryfikację konta i zacząć zarabiać prowizje.",
+        "cta": "Pełna weryfikacja"
+      },
+      "expired": {
+        "title": "Konieczna ponowna weryfikacja",
+        "description": "Niedawno zmieniłeś imię i nazwisko lub kraj, więc konieczne jest ponowne przeprowadzenie weryfikacji.",
+        "cta": "Zweryfikuj ponownie teraz"
+      },
+      "rejected": {
+        "title": "Weryfikacja nie powiodła się",
+        "description": "Twoja ostatnia próba weryfikacji nie została zatwierdzona. Możesz spróbować ponownie bez dodatkowych kosztów.",
+        "cta": "Spróbuj ponownie"
+      }
+    }
   }
 }

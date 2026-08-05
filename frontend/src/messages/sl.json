@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Za sodelovanje v partnerskem programu in prejemanje provizij morate imeti v evidenci naslov denarnice za USDT (BEP20/BSC).",
     "walletRequiredCta": "Dodaj mojo denarnico",
     "waitingThresholdTitle": "Skoraj smo tam!",
-    "waitingThresholdDesc": "Vaše provizije bodo izplačane samodejno, takoj ko bo vaše stanje doseglo {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Potrebna je potrditev identitete",
-        "description": "Da bi zagotovili varnost in skladnost partnerskega programa, morate opraviti enkratno preverjanje identitete (KYC), preden boste lahko dostopali do svoje povezave za napotitev in začeli zasluževati provizije.",
-        "cta": "Začni preverjanje"
-      },
-      "pending": {
-        "title": "Preverjanje poteka",
-        "description": "Vaša preveritev identitete je v pregledu. To običajno traja le nekaj minut – vaša partnerska povezava se bo samodejno odklenila takoj, ko bo odobrena.",
-        "cta": "Preveri stanje preverjanja"
-      },
-      "expired": {
-        "title": "Potrebna je ponovna preveritev",
-        "description": "Pred kratkim ste spremenili svoje ime ali državo, zaradi česar je potrebna nova preveritev identitete, preden bo mogoče ponovno aktivirati vašo partnersko povezavo. Če imate še predplačana leta, vas to ne bo stalo ničesar dodatnega.",
-        "cta": "Ponovno preverite mojo identiteto"
-      },
-      "rejected": {
-        "title": "Preverjanje ni uspelo",
-        "description": "Vaš zadnji poskus preverjanja identitete ni bil odobren. Lahko začnete novo preverjanje in poskusite še enkrat.",
-        "cta": "Poskusi še enkrat"
-      }
-    }
+    "waitingThresholdDesc": "Vaše provizije bodo izplačane samodejno, takoj ko bo vaše stanje doseglo {min}."
   },
   "kyc": {
     "pageTitle": "Preverjanje identitete (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Preverjanje življenjepisa",
     "reverifyExplain": "Ker imate še nekaj let predplačanega obdobja, ponovna preveritev ne stane ničesar dodatno — le ponovno boste morali opraviti preverjanje identitete.",
     "reverifyCta": "Ponovno preverite mojo identiteto",
-    "purchaseTitle": "Izberite trajanje preverjanja",
-    "durationLabel": "Trajanje",
-    "customDurationLabel": "Ali pa vnesite poljubno število let:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Preverite svojo identiteto",
     "totalLabel": "Skupaj",
     "payCta": "Plačajte {amount}ov in opravite preverjanje",
     "paymentConfirmedTitle": "Plačilo je potrjeno",
-    "paymentConfirmedDesc": "Postopek preverjanja vaše identitete se je začel — tukaj boste našli najnovejše informacije."
+    "paymentConfirmedDesc": "Postopek preverjanja vaše identitete se je začel — tukaj boste našli najnovejše informacije.",
+    "oneYear": "1 leto"
   },
   "invoices": {
     "title": "Računi",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Ciljne države (neobvezno)",
     "targetCountriesHint": "Pustite polje prazno, če želite oglas prikazati obiskovalcem povsod. Izberite eno ali več držav, če želite oglas prikazati le obiskovalcem iz teh držav.",
     "targetCountriesSearch": "Poišči državo…",
-    "targetCountriesNoResults": "Ni ustrezne države."
+    "targetCountriesNoResults": "Ni ustrezne države.",
+    "closeButton": "Zapri oglas",
+    "collapseButton": "Zloži",
+    "showAdButton": "Prikaži oglas"
   },
   "tenantAccounting": {
     "title": "Finančni pregled",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL je aktiven",
     "placeholderCustomDomainExample": "blog.moja-spletna-stran.com",
     "bannerNotVisible": "Tvoj blog še ni objavljen — bralci nimajo dostopa do njega.",
-    "bannerAddDomain": "Dodaj domeno"
+    "bannerAddDomain": "Dodaj domeno",
+    "orderRetryButton": "Ponovi poskus",
+    "orderRetryStarted": "Ponovni poskus registracije — to lahko traja do ene minute.",
+    "orderRetryError": "Ponovni poskus se ni uspel začeti. Poskusite še enkrat."
   },
   "twoFA": {
     "setupTitle": "Nastavite dvofaktorsko avtentifikacijo",
@@ -3201,8 +3183,11 @@
         "startDate": "Datum začetka",
         "endDate": "Datum zaključka",
         "visual": "Vizualno",
-        "rejectionReason": "Razlog za zavrnitev"
-      }
+        "rejectionReason": "Razlog za zavrnitev",
+        "amountPaid": "Izplačani znesek"
+      },
+      "paidBadge": "Plačano",
+      "unpaidBadge": "Neporavnano"
     },
     "affiliate": {
       "title": "Partnerški program",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Vsa vsebina je bila ustvarjena in shranjena. Zdaj lahko vsak del natančno prilagodite v studiu.",
     "viewGeneralSettings": "Poglej splošne nastavitve",
     "viewHome": "Oglej si domačo stran"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Identiteta je bila preverjena",
+    "status": {
+      "not_started": {
+        "title": "Preverite svoj račun",
+        "description": "Potrdite svojo identiteto, da odklenete partnerski program in začnete zasluževati provizije.",
+        "cta": "Preveri zdaj"
+      },
+      "pending": {
+        "title": "Dokončajte postopek preverjanja, da aktivirate svoj račun",
+        "description": "Vaše plačilo je bilo prejeto — opravite preverjanje identitete (osebna izkaznica + selfie), da dokončate potrditev računa in začnete zasluževati provizije.",
+        "cta": "Popolna preveritev"
+      },
+      "expired": {
+        "title": "Potrebna je ponovna preveritev",
+        "description": "Ker si pred kratkim spremenil svoje ime ali državo, je treba ponovno opraviti postopek preverjanja.",
+        "cta": "Ponovno preverite zdaj"
+      },
+      "rejected": {
+        "title": "Preverjanje ni uspelo",
+        "description": "Vaš zadnji poskus preverjanja ni bil odobren. Lahko poskusite še enkrat brez dodatnih stroškov.",
+        "cta": "Poskusi še enkrat"
+      }
+    }
   }
 }

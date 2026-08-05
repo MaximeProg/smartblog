@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "您需要在系统中登记一个 USDT（BEP20/BSC）钱包地址，才能参与联盟计划并获得佣金。",
     "walletRequiredCta": "添加我的钱包",
     "waitingThresholdTitle": "快到了！",
-    "waitingThresholdDesc": "一旦您的余额达到{min}，佣金将自动发放。",
-    "gate": {
-      "not_started": {
-        "title": "需要进行身份验证",
-        "description": "为了确保联盟计划的安全性和合规性，您必须先完成一次性的KYC身份验证，才能获取您的推荐链接并开始赚取佣金。",
-        "cta": "开始验证"
-      },
-      "pending": {
-        "title": "正在验证中",
-        "description": "您的身份验证正在审核中。这通常只需几分钟——一旦审核通过，您的联盟链接将自动解锁。",
-        "cta": "查看验证状态"
-      },
-      "expired": {
-        "title": "需要重新验证",
-        "description": "您最近更改了姓名或所在国家/地区，因此需要重新进行身份验证，才能重新激活您的联盟链接。如果您还有预付的剩余年限，则无需支付任何额外费用。",
-        "cta": "重新验证我的身份"
-      },
-      "rejected": {
-        "title": "验证失败",
-        "description": "您上次进行的身份验证未获批准。您可以开始新的验证流程，再次尝试。",
-        "cta": "请重试"
-      }
-    }
+    "waitingThresholdDesc": "一旦您的余额达到{min}，佣金将自动发放。"
   },
   "kyc": {
     "pageTitle": "身份验证（KYC）",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "简历核实",
     "reverifyExplain": "您还有预付的剩余年限，因此重新验证无需额外费用——您只需再次完成身份验证即可。",
     "reverifyCta": "重新验证我的身份",
-    "purchaseTitle": "选择验证时长",
-    "durationLabel": "时长",
-    "customDurationLabel": "或者输入自定义的年数：",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "验证您的身份",
     "totalLabel": "总计",
     "payCta": "支付 {amount} 美元并完成验证",
     "paymentConfirmedTitle": "付款已确认",
-    "paymentConfirmedDesc": "您的身份验证流程已开始——请返回此处查看最新动态。"
+    "paymentConfirmedDesc": "您的身份验证流程已开始——请返回此处查看最新动态。",
+    "oneYear": "1年"
   },
   "invoices": {
     "title": "发票",
@@ -2781,7 +2757,10 @@
     "targetCountries": "目标国家（可选）",
     "targetCountriesHint": "留空即可向所有地区的访客展示您的广告。选择一个或多个国家/地区，仅向来自这些国家的访客展示广告。",
     "targetCountriesSearch": "搜索一个国家……",
-    "targetCountriesNoResults": "未找到匹配的国家。"
+    "targetCountriesNoResults": "未找到匹配的国家。",
+    "closeButton": "关闭广告",
+    "collapseButton": "折叠",
+    "showAdButton": "显示广告"
   },
   "tenantAccounting": {
     "title": "财务概况",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL 已启用",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "您的博客尚未发布——读者无法访问。",
-    "bannerAddDomain": "添加域名"
+    "bannerAddDomain": "添加域名",
+    "orderRetryButton": "重试",
+    "orderRetryStarted": "正在重试注册——此过程可能需要长达一分钟。",
+    "orderRetryError": "无法启动重试。请重试。"
   },
   "twoFA": {
     "setupTitle": "设置双因素认证",
@@ -3201,8 +3183,11 @@
         "startDate": "开始日期",
         "endDate": "结束日期",
         "visual": "视觉",
-        "rejectionReason": "拒绝理由"
-      }
+        "rejectionReason": "拒绝理由",
+        "amountPaid": "已支付金额"
+      },
+      "paidBadge": "已支付",
+      "unpaidBadge": "未支付"
     },
     "affiliate": {
       "title": "联盟计划",
@@ -4040,5 +4025,30 @@
     "doneDesc": "所有内容均已生成并保存。现在，您可以在工作室中对每个部分进行微调。",
     "viewGeneralSettings": "查看常规设置",
     "viewHome": "查看首页"
+  },
+  "kycBanner": {
+    "verifiedBadge": "身份已验证",
+    "status": {
+      "not_started": {
+        "title": "验证您的账户",
+        "description": "请验证您的身份，以解锁联盟计划并开始赚取佣金。",
+        "cta": "立即验证"
+      },
+      "pending": {
+        "title": "完成验证以激活您的账户",
+        "description": "已收到您的付款——请完成身份验证（身份证+自拍），以完成账户验证并开始赚取佣金。",
+        "cta": "完成验证"
+      },
+      "expired": {
+        "title": "需要重新验证",
+        "description": "您最近更改了姓名或所在国家/地区，因此需要重新进行身份验证。",
+        "cta": "立即重新验证"
+      },
+      "rejected": {
+        "title": "验证失败",
+        "description": "您上次验证尝试未获批准。您可以免费再次尝试。",
+        "cta": "请重试"
+      }
+    }
   }
 }

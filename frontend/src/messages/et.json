@@ -1741,7 +1741,7 @@
           "Piiramatu arv tellijaid",
           "Piiramatu arv autoreid",
           "Piiramatu salvestusruum",
-          "Mitme domeeni",
+          "Mitme valdkonna",
           "White-label",
           "Tagatud SLA",
           "Spetsiaalne sissejuhatus",
@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Partnerprogrammis osalemiseks ja komisjonitasude saamiseks peab teie andmetes olema registreeritud USDT (BEP20/BSC) rahakoti aadress.",
     "walletRequiredCta": "Lisa mu rahakott",
     "waitingThresholdTitle": "Peaaegu kohal!",
-    "waitingThresholdDesc": "Teie komisjonitasud makstakse välja automaatselt niipea, kui teie saldo jõuab {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Vajalik isiku tuvastamine",
-        "description": "Selleks et partnerprogramm oleks turvaline ja vastaks nõuetele, peate läbima ühekordse KYC-identiteedikontrolli, enne kui saate juurdepääsu oma soovitamislingile ja hakata teenima komisjonitasusid.",
-        "cta": "Alusta kontrollimist"
-      },
-      "pending": {
-        "title": "Kinnitamine käimas",
-        "description": "Sinu isikuandmete kinnitamine on praegu läbivaatamisel. See võtab tavaliselt vaid paar minutit – sinu partnerlink avatakse automaatselt niipea, kui see on heaks kiidetud.",
-        "cta": "Kontrolli kinnituse staatust"
-      },
-      "expired": {
-        "title": "Vajalik on uuesti kontrollimine",
-        "description": "Olete hiljuti muutnud oma nime või riiki, mistõttu on vaja läbi viia uus isikuandmete kontroll, enne kui teie partnerlinki saab uuesti aktiveerida. Kui teil on veel ettemakstud aastaid jäänud, ei kaasne sellega mingeid lisakulusid.",
-        "cta": "Kinnita minu isikut uuesti"
-      },
-      "rejected": {
-        "title": "Kinnitamine ebaõnnestus",
-        "description": "Teie viimane isiku tuvastamise katse ei läbinud kinnitust. Võite alustada uut tuvastamist ja uuesti proovida.",
-        "cta": "Proovi uuesti"
-      }
-    }
+    "waitingThresholdDesc": "Teie komisjonitasud makstakse välja automaatselt niipea, kui teie saldo jõuab {min}."
   },
   "kyc": {
     "pageTitle": "Isiku tuvastamine (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "CV kontrollimine",
     "reverifyExplain": "Sul on veel ettemakstud aastaid jäänud, seega ei maksa uuesti kinnitamine midagi lisaks — pead lihtsalt uuesti läbima isiku tuvastamise.",
     "reverifyCta": "Kinnita minu isikut uuesti",
-    "purchaseTitle": "Valige oma kinnituse kehtivusaeg",
-    "durationLabel": "Kestus",
-    "customDurationLabel": "Või sisesta soovitud aastate arv:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Kinnita oma isikusamasus",
     "totalLabel": "Kokku",
     "payCta": "Maksa {amount}i ja kinnita",
     "paymentConfirmedTitle": "Makse on kinnitatud",
-    "paymentConfirmedDesc": "Teie isiku tuvastamise protsess on alanud — jälgige siit värskendusi."
+    "paymentConfirmedDesc": "Teie isiku tuvastamise protsess on alanud — jälgige siit värskendusi.",
+    "oneYear": "1 aasta"
   },
   "invoices": {
     "title": "Arved",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Sihtriigid (vabatahtlik)",
     "targetCountriesHint": "Jäta tühjaks, et näidata oma reklaami kõikidele külastajatele. Vali üks või mitu riiki, et näidata reklaami ainult nendest riikidest pärit külastajatele.",
     "targetCountriesSearch": "Otsi riiki…",
-    "targetCountriesNoResults": "Sobivat riiki ei leitud."
+    "targetCountriesNoResults": "Sobivat riiki ei leitud.",
+    "closeButton": "Sulge reklaam",
+    "collapseButton": "Kokku klappida",
+    "showAdButton": "Näita reklaami"
   },
   "tenantAccounting": {
     "title": "Finantsülevaade",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL on aktiivne",
     "placeholderCustomDomainExample": "blog.mysite.com",
     "bannerNotVisible": "Sinu blogi pole veel avatud – lugejad ei saa sellele juurde pääseda.",
-    "bannerAddDomain": "Lisa domeen"
+    "bannerAddDomain": "Lisa domeen",
+    "orderRetryButton": "Proovi uuesti",
+    "orderRetryStarted": "Registreerimise uuesti proovimine — see võib kesta kuni ühe minuti.",
+    "orderRetryError": "Korduskatse ei õnnestunud. Palun proovi uuesti."
   },
   "twoFA": {
     "setupTitle": "Kahefaktorilise autentimise seadistamine",
@@ -3201,8 +3183,11 @@
         "startDate": "Alguskuupäev",
         "endDate": "Lõppkuupäev",
         "visual": "Visuaalne",
-        "rejectionReason": "Tagasilükkamise põhjus"
-      }
+        "rejectionReason": "Tagasilükkamise põhjus",
+        "amountPaid": "Makstud summa"
+      },
+      "paidBadge": "Tasuline",
+      "unpaidBadge": "Maksmata"
     },
     "affiliate": {
       "title": "Partnerprogramm",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Kogu sisu on loodud ja salvestatud. Nüüd saad stuudios iga osa täpsemalt viimistleda.",
     "viewGeneralSettings": "Vaata üldseadeid",
     "viewHome": "Vaata kodu"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Isikuandmed on kinnitatud",
+    "status": {
+      "not_started": {
+        "title": "Kinnita oma konto",
+        "description": "Kinnita oma isikusamasus, et avada partnerprogramm ja hakata teenima komisjonitasusid.",
+        "cta": "Kontrolli kohe"
+      },
+      "pending": {
+        "title": "Viige kinnitamine lõpule, et oma konto aktiveerida",
+        "description": "Teie makse on laekunud — viige lõpule isiku tuvastamine (isikutunnistus + selfie), et lõpetada konto kinnitamine ja alustada komisjonitasude teenimist.",
+        "cta": "Täielik kontrollimine"
+      },
+      "expired": {
+        "title": "Vajalik on uuesti kontrollimine",
+        "description": "Sa oled hiljuti muutnud oma nime või riiki, seega tuleb sinu kinnitamine uuesti läbi viia.",
+        "cta": "Kinnita uuesti kohe"
+      },
+      "rejected": {
+        "title": "Kinnitamine ebaõnnestus",
+        "description": "Teie viimane kinnitamiskatse ei läbinud heakskiitu. Võite uuesti proovida ilma lisatasuta.",
+        "cta": "Proovi uuesti"
+      }
+    }
   }
 }

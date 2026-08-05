@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Je moet een USDT (BEP20/BSC)-walletadres in ons systeem hebben geregistreerd om deel te nemen aan het partnerprogramma en commissies te ontvangen.",
     "walletRequiredCta": "Mijn portemonnee toevoegen",
     "waitingThresholdTitle": "We zijn er bijna!",
-    "waitingThresholdDesc": "Je commissies worden automatisch uitbetaald zodra je saldo {min} bereikt.",
-    "gate": {
-      "not_started": {
-        "title": "Identiteitscontrole vereist",
-        "description": "Om het partnerprogramma veilig en conform de regels te houden, moet je een eenmalige KYC-identiteitscontrole doorlopen voordat je toegang krijgt tot je verwijzingslink en commissies kunt gaan verdienen.",
-        "cta": "Start de verificatie"
-      },
-      "pending": {
-        "title": "Controle wordt uitgevoerd",
-        "description": "Je identiteitsverificatie wordt momenteel gecontroleerd. Dit duurt meestal maar een paar minuten — je affiliate-link wordt automatisch geactiveerd zodra deze is goedgekeurd.",
-        "cta": "Controleer de verificatiestatus"
-      },
-      "expired": {
-        "title": "Opnieuw verifiëren vereist",
-        "description": "Je hebt onlangs je naam of land gewijzigd, waardoor er een nieuwe identiteitscontrole nodig is voordat je affiliate-link opnieuw kan worden geactiveerd. Als je nog vooruitbetaalde jaren over hebt, kost dit je niets extra.",
-        "cta": "Mijn identiteit opnieuw verifiëren"
-      },
-      "rejected": {
-        "title": "Verificatie is mislukt",
-        "description": "Je laatste poging tot identiteitsverificatie is niet goedgekeurd. Je kunt een nieuwe verificatie starten om het nog eens te proberen.",
-        "cta": "Probeer het nog eens"
-      }
-    }
+    "waitingThresholdDesc": "Je commissies worden automatisch uitbetaald zodra je saldo {min} bereikt."
   },
   "kyc": {
     "pageTitle": "Identiteitscontrole (KYC)",
@@ -2702,14 +2680,12 @@
     "resumeVerification": "Controle van het cv",
     "reverifyExplain": "Je hebt nog vooruitbetaalde jaren over, dus een nieuwe verificatie kost niets extra — je hoeft alleen maar de identiteitscontrole nogmaals te doorlopen.",
     "reverifyCta": "Mijn identiteit opnieuw verifiëren",
-    "purchaseTitle": "Kies de geldigheidsduur van je verificatie",
-    "durationLabel": "Duur",
-    "customDurationLabel": "Of voer een eigen aantal jaren in:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Bevestig je identiteit",
     "totalLabel": "Totaal",
     "payCta": "Betaal {amount} en verifieer",
     "paymentConfirmedTitle": "Betaling bevestigd",
-    "paymentConfirmedDesc": "De verificatie van uw identiteit is gestart — kom hier later terug voor updates."
+    "paymentConfirmedDesc": "De verificatie van uw identiteit is gestart — kom hier later terug voor updates.",
+    "oneYear": "1 jaar"
   },
   "invoices": {
     "title": "Facturen",
@@ -2781,7 +2757,10 @@
     "targetCountries": "Doellanden (optioneel)",
     "targetCountriesHint": "Laat dit veld leeg om uw advertentie aan alle bezoekers te tonen. Selecteer een of meer landen om de advertentie alleen aan bezoekers uit die landen te tonen.",
     "targetCountriesSearch": "Zoek een land…",
-    "targetCountriesNoResults": "Geen overeenkomend land gevonden."
+    "targetCountriesNoResults": "Geen overeenkomend land gevonden.",
+    "closeButton": "Advertentie sluiten",
+    "collapseButton": "Samenvouwen",
+    "showAdButton": "Advertentie weergeven"
   },
   "tenantAccounting": {
     "title": "Financieel overzicht",
@@ -2978,7 +2957,10 @@
     "sslActive": "SSL actief",
     "placeholderCustomDomainExample": "blog.mijnsite.com",
     "bannerNotVisible": "Je blog is nog niet online — lezers hebben er geen toegang toe.",
-    "bannerAddDomain": "Domein toevoegen"
+    "bannerAddDomain": "Domein toevoegen",
+    "orderRetryButton": "Opnieuw proberen",
+    "orderRetryStarted": "De registratie wordt opnieuw geprobeerd — dit kan tot een minuut duren.",
+    "orderRetryError": "De herhaling kon niet worden gestart. Probeer het nog eens."
   },
   "twoFA": {
     "setupTitle": "Tweefactorauthenticatie instellen",
@@ -3201,8 +3183,11 @@
         "startDate": "Startdatum",
         "endDate": "Einddatum",
         "visual": "Visueel",
-        "rejectionReason": "Reden voor afwijzing"
-      }
+        "rejectionReason": "Reden voor afwijzing",
+        "amountPaid": "Betaald bedrag"
+      },
+      "paidBadge": "Betaald",
+      "unpaidBadge": "Onbetaald"
     },
     "affiliate": {
       "title": "Partnerprogramma",
@@ -4040,5 +4025,30 @@
     "doneDesc": "Alle inhoud is gegenereerd en opgeslagen. Je kunt nu elk onderdeel in de studio verder verfijnen.",
     "viewGeneralSettings": "Algemene instellingen bekijken",
     "viewHome": "Naar de startpagina"
+  },
+  "kycBanner": {
+    "verifiedBadge": "Identiteit geverifieerd",
+    "status": {
+      "not_started": {
+        "title": "Bevestig je account",
+        "description": "Bevestig je identiteit om toegang te krijgen tot het partnerprogramma en commissies te gaan verdienen.",
+        "cta": "Nu controleren"
+      },
+      "pending": {
+        "title": "Voltooi je verificatie om je account te activeren",
+        "description": "Je betaling is ontvangen — voltooi je identiteitscontrole (identiteitsbewijs + selfie) om de verificatie van je account af te ronden en commissies te gaan verdienen.",
+        "cta": "Volledige verificatie"
+      },
+      "expired": {
+        "title": "Opnieuw verifiëren vereist",
+        "description": "Je hebt onlangs je naam of land gewijzigd, dus je verificatie moet opnieuw worden uitgevoerd.",
+        "cta": "Nu opnieuw verifiëren"
+      },
+      "rejected": {
+        "title": "Verificatie is mislukt",
+        "description": "Je laatste verificatiepoging is niet goedgekeurd. Je kunt het zonder extra kosten nog eens proberen.",
+        "cta": "Probeer het nog eens"
+      }
+    }
   }
 }
