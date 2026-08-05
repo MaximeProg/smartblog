@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Dane kontaktowe rejestrującego są wymagane przez rejestry domen (WHOIS) i nie będą publicznie widoczne, jeśli włączona jest ochrona prywatności.",
     "fieldName": "Pełne imię i nazwisko",
     "fieldEmail": "Adres e-mail",
-    "fieldPhone": "Numer telefonu (np. +1 555 0100)",
+    "fieldPhone": "Numer telefonu (np. 555 0100)",
     "fieldAddress": "Adres",
     "fieldCity": "Miasto",
     "fieldZip": "Kod pocztowy",

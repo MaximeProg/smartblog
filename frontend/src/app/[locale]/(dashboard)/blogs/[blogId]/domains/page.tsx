@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth.store';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 import { CryptoCurrencyPicker } from '@/components/payments/CryptoCurrencyPicker';
-import { getErrorMessage } from '@/lib/utils';
+import { getErrorMessage, formatRegistrantPhone } from '@/lib/utils';
 import { COUNTRIES } from '@/lib/constants/countries';
 
 const STATUS_CONFIG = {
@@ -138,7 +138,7 @@ export default function DomainsPage() {
       years: purchaseForm.years,
       auto_renew: purchaseForm.autoRenew,
       registrant: {
-        name: purchaseForm.name, email: purchaseForm.email, phone: purchaseForm.phone,
+        name: purchaseForm.name, email: purchaseForm.email, phone: formatRegistrantPhone(purchaseForm.country, purchaseForm.phone),
         address: purchaseForm.address, city: purchaseForm.city,
         country: purchaseForm.country, zipcode: purchaseForm.zipcode,
       },
@@ -646,19 +646,24 @@ export default function DomainsPage() {
                 placeholder={t('fieldName')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
               <input value={purchaseForm.email} onChange={(e) => setPurchaseForm(f => ({ ...f, email: e.target.value }))}
                 placeholder={t('fieldEmail')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
-              <input value={purchaseForm.phone} onChange={(e) => setPurchaseForm(f => ({ ...f, phone: e.target.value }))}
-                placeholder={t('fieldPhone')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+              <select value={purchaseForm.country} onChange={(e) => setPurchaseForm(f => ({ ...f, country: e.target.value }))}
+                className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                <option value="">{t('fieldCountry')}</option>
+                {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+              </select>
+              <div className="col-span-2 flex gap-1.5">
+                <span className="h-9 px-3 flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/60 text-[13px] text-slate-500 dark:text-slate-400 shrink-0">
+                  {COUNTRIES.find(c => c.code === purchaseForm.country)?.dialCode ?? '+…'}
+                </span>
+                <input value={purchaseForm.phone} onChange={(e) => setPurchaseForm(f => ({ ...f, phone: e.target.value }))}
+                  placeholder={t('fieldPhone')} className="flex-1 min-w-0 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+              </div>
               <input value={purchaseForm.address} onChange={(e) => setPurchaseForm(f => ({ ...f, address: e.target.value }))}
                 placeholder={t('fieldAddress')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
               <input value={purchaseForm.city} onChange={(e) => setPurchaseForm(f => ({ ...f, city: e.target.value }))}
                 placeholder={t('fieldCity')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
               <input value={purchaseForm.zipcode} onChange={(e) => setPurchaseForm(f => ({ ...f, zipcode: e.target.value }))}
                 placeholder={t('fieldZip')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
-              <select value={purchaseForm.country} onChange={(e) => setPurchaseForm(f => ({ ...f, country: e.target.value }))}
-                className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20">
-                <option value="">{t('fieldCountry')}</option>
-                {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-              </select>
             </div>
 
             <div className="flex items-center justify-between mt-3.5">

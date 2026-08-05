@@ -1,8 +1,34 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { COUNTRIES } from '@/lib/constants/countries';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+// Le pays choisi dans le formulaire (dropdown obligatoire) fournit déjà
+// l'indicatif — l'utilisateur ne tape que son numéro local, jamais le
+// format international complet. Élimine la classe de bug "téléphone mal
+// formé" (ex: indicatif absent -> OpenProvider "Invalid telephone country
+// code", ou un utilisateur qui tape son numéro dans un format inattendu)
+// rencontrée en production le 2026-08-05.
+export function formatRegistrantPhone(countryCode: string, localNumber: string): string {
+  const dialCode = COUNTRIES.find(c => c.code === countryCode)?.dialCode ?? '';
+  const dialDigits = dialCode.replace(/[^\d]/g, '');
+  let digits = localNumber.trim().replace(/[^\d]/g, '');
+  // L'autofill du navigateur (profil enregistré) remplit parfois le champ
+  // avec le numéro international complet malgré le badge d'indicatif déjà
+  // affiché séparément -- sans ce garde-fou, on obtiendrait un indicatif
+  // dupliqué (ex: "+255" + "255712345678" au lieu de "+255712345678").
+  if (dialDigits && digits.startsWith(dialDigits)) {
+    digits = digits.slice(dialDigits.length);
+  } else {
+    // Sinon, un numéro local commence souvent par un 0 de composition
+    // nationale, qui ne fait pas partie du numéro une fois l'indicatif
+    // international ajouté.
+    digits = digits.replace(/^0+/, '');
+  }
+  return `${dialCode}${digits}`;
 }
 
 export function formatDate(date: string | Date, locale = 'en'): string {

@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Domēna reģistriem (WHOIS) ir nepieciešama reģistranta kontaktinformācija, taču, ja ir ieslēgta privātuma aizsardzība, tā netiks publiski parādīta.",
     "fieldName": "Pilns vārds",
     "fieldEmail": "E-pasta adrese",
-    "fieldPhone": "Tālrunis (piem., +1 555 0100)",
+    "fieldPhone": "Tālrunis (piem., 555 0100)",
     "fieldAddress": "Ielas adrese",
     "fieldCity": "Pilsēta",
     "fieldZip": "ZIP / pasta indekss",

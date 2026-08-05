@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "도메인 등록 기관(WHOIS)에서는 등록자의 연락처 정보를 요구하며, 개인정보 보호 기능이 활성화되어 있는 경우 해당 정보는 공개되지 않습니다.",
     "fieldName": "성명",
     "fieldEmail": "이메일 주소",
-    "fieldPhone": "전화번호 (예: +1 555 0100)",
+    "fieldPhone": "전화번호 (예: 555 0100)",
     "fieldAddress": "주소",
     "fieldCity": "도시",
     "fieldZip": "우편번호",

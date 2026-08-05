@@ -2949,7 +2949,7 @@
     "purchaseSubtitle": "Les coordonnées du titulaire sont exigées par les registres de domaines (WHOIS) et ne seront pas affichées publiquement grâce à la protection de la vie privée.",
     "fieldName": "Nom complet",
     "fieldEmail": "Adresse email",
-    "fieldPhone": "Téléphone (ex : +33 6 12 34 56 78)",
+    "fieldPhone": "Téléphone (ex : 6 12 34 56 78)",
     "fieldAddress": "Adresse postale",
     "fieldCity": "Ville",
     "fieldZip": "Code postal",

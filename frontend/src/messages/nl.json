@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "De contactgegevens van de registrant zijn verplicht volgens de domeinregisters (WHOIS) en worden niet openbaar weergegeven als de privacybescherming is ingeschakeld.",
     "fieldName": "Volledige naam",
     "fieldEmail": "E-mailadres",
-    "fieldPhone": "Telefoonnummer (bijv. +1 555 0100)",
+    "fieldPhone": "Telefoonnummer (bijv. 555 0100)",
     "fieldAddress": "Straatadres",
     "fieldCity": "Stad",
     "fieldZip": "Postcode",

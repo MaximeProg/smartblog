@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Kontaktni podatki registranta so obvezni za domenske registre (WHOIS) in se ob vklopljeni zaščiti zasebnosti ne bodo javno prikazovali.",
     "fieldName": "Polno ime",
     "fieldEmail": "E-poštni naslov",
-    "fieldPhone": "Telefonska številka (npr. +1 555 0100)",
+    "fieldPhone": "Telefonska številka (npr. 555 0100)",
     "fieldAddress": "Naslov",
     "fieldCity": "Mesto",
     "fieldZip": "ZIP / poštna številka",

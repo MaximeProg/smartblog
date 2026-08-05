@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "A domain-nyilvántartók (WHOIS) előírják a regisztráló elérhetőségi adatainak megadását, amelyek azonban az adatvédelmi beállítások engedélyezése esetén nem kerülnek nyilvánosságra.",
     "fieldName": "Teljes név",
     "fieldEmail": "E-mail-cím",
-    "fieldPhone": "Telefonszám (pl. +1 555 0100)",
+    "fieldPhone": "Telefonszám (pl. 555 0100)",
     "fieldAddress": "Cím",
     "fieldCity": "Város",
     "fieldZip": "Irányítószám",

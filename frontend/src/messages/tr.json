@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Alan adı kayıt kuruluşları (WHOIS) tarafından kayıt sahibinin iletişim bilgilerinin sağlanması zorunludur; gizlilik koruması etkinleştirildiğinde bu bilgiler kamuya açık olarak gösterilmez.",
     "fieldName": "Tam adı",
     "fieldEmail": "E-posta adresi",
-    "fieldPhone": "Telefon (örn. +1 555 0100)",
+    "fieldPhone": "Telefon (örn. 555 0100)",
     "fieldAddress": "Sokak adresi",
     "fieldCity": "Şehir",
     "fieldZip": "Posta kodu",

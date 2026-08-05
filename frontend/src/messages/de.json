@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Die Kontaktdaten des Registranten werden von den Domain-Registrierungsstellen (WHOIS) verlangt und werden bei aktiviertem Datenschutz nicht öffentlich angezeigt.",
     "fieldName": "Vollständiger Name",
     "fieldEmail": "E-Mail-Adresse",
-    "fieldPhone": "Telefonnummer (z. B. +1 555 0100)",
+    "fieldPhone": "Telefonnummer (z. B. 555 0100)",
     "fieldAddress": "Anschrift",
     "fieldCity": "Stadt",
     "fieldZip": "Postleitzahl",

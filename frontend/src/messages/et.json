@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Domeeniregistrid (WHOIS) nõuavad registreerija kontaktandmeid, kuid need ei kuvata avalikult, kui privaatsuskaitse on aktiveeritud.",
     "fieldName": "Täisnimi",
     "fieldEmail": "E-posti aadress",
-    "fieldPhone": "Telefon (nt +1 555 0100)",
+    "fieldPhone": "Telefon (nt 555 0100)",
     "fieldAddress": "Tänava aadress",
     "fieldCity": "Linn",
     "fieldZip": "ZIP-kood / postikood",

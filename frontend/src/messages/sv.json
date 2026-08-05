@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Domänregistren (WHOIS) kräver att registrantens kontaktuppgifter anges, men dessa visas inte offentligt om integritetsskyddet är aktiverat.",
     "fieldName": "Fullständigt namn",
     "fieldEmail": "E-postadress",
-    "fieldPhone": "Telefonnummer (t.ex. +1 555 0100)",
+    "fieldPhone": "Telefonnummer (t.ex. 555 0100)",
     "fieldAddress": "Gatuadress",
     "fieldCity": "Stad",
     "fieldZip": "Postnummer",

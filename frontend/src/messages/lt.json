@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Domeno registrų (WHOIS) reikalavimu būtina pateikti registruotojo kontaktinius duomenis, tačiau, įjungus privatumo apsaugą, jie nebus viešai rodomi.",
     "fieldName": "Pilnas vardas ir pavardė",
     "fieldEmail": "El. pašto adresas",
-    "fieldPhone": "Telefonas (pvz., +1 555 0100)",
+    "fieldPhone": "Telefonas (pvz., 555 0100)",
     "fieldAddress": "Gatvės adresas",
     "fieldCity": "Miestas",
     "fieldZip": "Pašto kodas",

@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Os dados de contacto do registante são exigidos pelos registos de domínios (WHOIS) e não serão divulgados publicamente se a proteção de privacidade estiver ativada.",
     "fieldName": "Nome completo",
     "fieldEmail": "Endereço de e-mail",
-    "fieldPhone": "Telefone (por exemplo, +1 555 0100)",
+    "fieldPhone": "Telefone (por exemplo, 555 0100)",
     "fieldAddress": "Morada",
     "fieldCity": "Cidade",
     "fieldZip": "Código postal",

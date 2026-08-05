@@ -15,7 +15,7 @@ import {
   tenantsApi, mediaApi, domainsApi, paymentsApi,
   type DomainSearchResult, type CryptoPaymentResponse,
 } from '@/lib/api';
-import { slugify, getErrorMessage } from '@/lib/utils';
+import { slugify, getErrorMessage, formatRegistrantPhone } from '@/lib/utils';
 import { COUNTRIES } from '@/lib/constants/countries';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
@@ -240,7 +240,7 @@ export default function CreateBlogPage() {
       domain_name: selectedDomain!.domain,
       years: registrantYears,
       auto_renew: registrantAutoRenew,
-      registrant,
+      registrant: { ...registrant, phone: formatRegistrantPhone(registrant.country, registrant.phone) },
     }).then(r => r.data),
     onSuccess: (data) => setPayment(data),
   });
@@ -554,14 +554,19 @@ export default function CreateBlogPage() {
                     <div className="grid grid-cols-2 gap-2.5">
                       <input value={registrant.name} onChange={e => setRegistrant(r => ({ ...r, name: e.target.value }))} placeholder={td('fieldName')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
                       <input value={registrant.email} onChange={e => setRegistrant(r => ({ ...r, email: e.target.value }))} placeholder={td('fieldEmail')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
-                      <input value={registrant.phone} onChange={e => setRegistrant(r => ({ ...r, phone: e.target.value }))} placeholder={td('fieldPhone')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
-                      <input value={registrant.address} onChange={e => setRegistrant(r => ({ ...r, address: e.target.value }))} placeholder={td('fieldAddress')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
-                      <input value={registrant.city} onChange={e => setRegistrant(r => ({ ...r, city: e.target.value }))} placeholder={td('fieldCity')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
-                      <input value={registrant.zipcode} onChange={e => setRegistrant(r => ({ ...r, zipcode: e.target.value }))} placeholder={td('fieldZip')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
                       <select value={registrant.country} onChange={e => setRegistrant(r => ({ ...r, country: e.target.value }))} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]">
                         <option value="">{td('fieldCountry')}</option>
                         {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
                       </select>
+                      <div className="col-span-2 flex gap-1.5">
+                        <span className="h-9 px-3 flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/60 text-[13px] text-slate-500 dark:text-slate-400 shrink-0">
+                          {COUNTRIES.find(c => c.code === registrant.country)?.dialCode ?? '+…'}
+                        </span>
+                        <input value={registrant.phone} onChange={e => setRegistrant(r => ({ ...r, phone: e.target.value }))} placeholder={td('fieldPhone')} className="flex-1 min-w-0 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      </div>
+                      <input value={registrant.address} onChange={e => setRegistrant(r => ({ ...r, address: e.target.value }))} placeholder={td('fieldAddress')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      <input value={registrant.city} onChange={e => setRegistrant(r => ({ ...r, city: e.target.value }))} placeholder={td('fieldCity')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      <input value={registrant.zipcode} onChange={e => setRegistrant(r => ({ ...r, zipcode: e.target.value }))} placeholder={td('fieldZip')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
                     </div>
                     <div className="flex items-center justify-between mt-3.5">
                       <label className="flex items-center gap-2 text-[12px] text-slate-600 dark:text-slate-400">

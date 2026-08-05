@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Rincian kontak pendaftar wajib diisi sesuai ketentuan lembaga pendaftaran domain (WHOIS) dan tidak akan ditampilkan secara publik jika fitur perlindungan privasi diaktifkan.",
     "fieldName": "Nama lengkap",
     "fieldEmail": "Alamat email",
-    "fieldPhone": "Nomor telepon (misalnya +1 555 0100)",
+    "fieldPhone": "Nomor telepon (misalnya 555 0100)",
     "fieldAddress": "Alamat jalan",
     "fieldCity": "Kota",
     "fieldZip": "Kode Pos",

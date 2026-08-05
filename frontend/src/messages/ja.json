@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "ドメインレジストリ（WHOIS）では登録者の連絡先情報の提供が義務付けられていますが、プライバシー保護機能が有効になっている場合、これらの情報は一般に公開されません。",
     "fieldName": "氏名（フルネーム）",
     "fieldEmail": "メールアドレス",
-    "fieldPhone": "電話番号（例：+1 555 0100）",
+    "fieldPhone": "電話番号（例：555 0100）",
     "fieldAddress": "住所",
     "fieldCity": "都市",
     "fieldZip": "郵便番号",

@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Datele de contact ale titularului sunt solicitate de registrele de domenii (WHOIS) și nu vor fi afișate public dacă este activată protecția confidențialității.",
     "fieldName": "Numele complet",
     "fieldEmail": "Adresă de e-mail",
-    "fieldPhone": "Număr de telefon (de exemplu, +1 555 0100)",
+    "fieldPhone": "Număr de telefon (de exemplu, 555 0100)",
     "fieldAddress": "Adresa",
     "fieldCity": "Oraș",
     "fieldZip": "Cod poștal / ZIP",

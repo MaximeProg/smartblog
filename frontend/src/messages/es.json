@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Los registros de dominios (WHOIS) exigen los datos de contacto del titular del dominio, pero estos no se mostrarán públicamente si se activa la protección de la privacidad.",
     "fieldName": "Nombre completo",
     "fieldEmail": "Dirección de correo electrónico",
-    "fieldPhone": "Teléfono (p. ej., +1 555 0100)",
+    "fieldPhone": "Teléfono (p. ej., 555 0100)",
     "fieldAddress": "Dirección postal",
     "fieldCity": "Ciudad",
     "fieldZip": "Código postal",

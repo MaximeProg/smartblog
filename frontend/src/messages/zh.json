@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "域名注册局（WHOIS）要求提供注册人的联系方式，但启用隐私保护后，这些信息将不会公开显示。",
     "fieldName": "全名",
     "fieldEmail": "电子邮箱地址",
-    "fieldPhone": "电话（例如：+1 555 0100）",
+    "fieldPhone": "电话（例如：555 0100）",
     "fieldAddress": "街道地址",
     "fieldCity": "城市",
     "fieldZip": "邮政编码",

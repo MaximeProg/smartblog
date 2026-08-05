@@ -2949,7 +2949,7 @@
     "purchaseSubtitle": "Registrant contact details are required by domain registries (WHOIS) and won't be shown publicly with privacy protection enabled.",
     "fieldName": "Full name",
     "fieldEmail": "Email address",
-    "fieldPhone": "Phone (e.g. +1 555 0100)",
+    "fieldPhone": "Phone (e.g. 555 0100)",
     "fieldAddress": "Street address",
     "fieldCity": "City",
     "fieldZip": "ZIP / postal code",

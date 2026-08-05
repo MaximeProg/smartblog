@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Kontaktné údaje registrujúceho vyžadujú registre domén (WHOIS) a pri aktivovanej ochrane súkromia nebudú verejne zobrazené.",
     "fieldName": "Celé meno",
     "fieldEmail": "E-mailová adresa",
-    "fieldPhone": "Telefón (napr. +1 555 0100)",
+    "fieldPhone": "Telefón (napr. 555 0100)",
     "fieldAddress": "Adresa",
     "fieldCity": "Mesto",
     "fieldZip": "PSČ",

@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Kontaktní údaje držitele domény jsou vyžadovány registrátory domén (WHOIS) a při zapnuté ochraně soukromí nebudou veřejně zobrazeny.",
     "fieldName": "Celé jméno",
     "fieldEmail": "E-mailová adresa",
-    "fieldPhone": "Telefon (např. +1 555 0100)",
+    "fieldPhone": "Telefon (např. 555 0100)",
     "fieldAddress": "Adresa",
     "fieldCity": "Město",
     "fieldZip": "PSČ",

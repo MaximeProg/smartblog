@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Kontaktopplysningene til registranten er påkrevd av domeneregistrene (WHOIS) og vil ikke vises offentlig når personvernbeskyttelsen er aktivert.",
     "fieldName": "Fullt navn",
     "fieldEmail": "E-postadresse",
-    "fieldPhone": "Telefonnummer (f.eks. +1 555 0100)",
+    "fieldPhone": "Telefonnummer (f.eks. 555 0100)",
     "fieldAddress": "Gateadresse",
     "fieldCity": "By",
     "fieldZip": "Postnummer",

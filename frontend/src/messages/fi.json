@@ -2946,7 +2946,7 @@
     "purchaseSubtitle": "Verkkotunnusrekisterit (WHOIS) vaativat rekisteröijän yhteystiedot, mutta niitä ei näytetä julkisesti, jos tietosuojasetukset on otettu käyttöön.",
     "fieldName": "Koko nimi",
     "fieldEmail": "Sähköpostiosoite",
-    "fieldPhone": "Puhelinnumero (esim. +1 555 0100)",
+    "fieldPhone": "Puhelinnumero (esim. 555 0100)",
     "fieldAddress": "Katuosoite",
     "fieldCity": "Kaupunki",
     "fieldZip": "Postinumero",
