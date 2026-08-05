@@ -20,16 +20,16 @@
 - Environnements de développement avec providers mock/local derrière chaque interface adapter ✅ (13 capacités, `PROVIDERS_MODE=mock`).
 - Documentation des risques d'intégration et questions ouvertes pour la future inspection du repository ✅ (trackée comme dépendance formelle D1 — voir §10 ci-dessous).
 
-**Gate** : ~~les contrats et ADRs sont revus~~ **✅ satisfait (2026-08-04)** — tous les livrables ci-dessus existent et sont documentés ; modèle de données migré et vérifié (Neon en dev, Postgres dédié en production sur le VPS), API skeleton fonctionnelle, déploiement de bout en bout vérifié (`/healthz` répond en local et en production). **Seul écart identifié** : les policies RLS PostgreSQL réelles ne sont pas encore créées (isolation actuellement assurée au niveau applicatif uniquement — voir [07_threat_model.md §5](./07_threat_model.md#5-action-recommandée-avant-de-démarrer-la-phase-2)), à ajouter avant d'aller plus loin en Phase 2.
+**Gate** : ~~les contrats et ADRs sont revus~~ **✅ satisfait (2026-08-04)** — tous les livrables ci-dessus existent et sont documentés ; modèle de données migré et vérifié (Neon en dev, Postgres dédié en production sur le VPS), API skeleton fonctionnelle, déploiement de bout en bout vérifié (`/healthz` répond en local et en production). ~~Seul écart identifié : policies RLS PostgreSQL réelles non créées~~ **corrigé le 2026-08-05** — voir [07_threat_model.md §3.2](./07_threat_model.md).
 
 ---
 
 ## Phase 2 — Foundation
 
 **Livrables :**
-- Schéma de base de données et migrations ; isolation tenant ; création de projet (wizard complet en 3 étapes, incluant l'outil de raffinement de thème et les presets) ; création de personnage (les 7 méthodes) ; Character Bible ; versioning et états de cycle de vie des personnages ; previews statiques et reference packs ; permissions de projet/RBAC ; stockage d'assets (stockage objet, URLs signées) ; interfaces de provider avec implémentations mock ; contrôles de sécurité de base ; écrans UI 1–5.
+- Schéma de base de données et migrations ✅ ; isolation tenant ✅ (RLS réellement effectif depuis le 08-05) ; création de projet (wizard complet en 3 étapes, incluant l'outil de raffinement de thème et les presets) ✅ (étape 1 + FR-CON-002/003 le 08-04 ; étapes 2/3 + FR-WIZ-005/006/007 le 08-05) ; création de personnage (les 7 méthodes) ✅ (08-05) ; Character Bible ✅ (`GET /characters/{id}/bible`, 08-05) ; versioning et états de cycle de vie des personnages ✅ (`PATCH`/`POST .../lifecycle`, 08-05) ; previews statiques et reference packs ✅ reference packs (upload + approbation gate réelle) — previews statiques proprement dites reportées à la Phase 3 (génération d'image) ; permissions de projet/RBAC ✅ (viewer lecture seule, owner/admin seuls pour le cycle de vie) ; stockage d'assets ✅ (mock, `app/services/storage_service.py`, URLs signées) ; interfaces de provider avec implémentations mock ✅ (Phase 1) ; contrôles de sécurité de base ✅ ; **écrans UI 1–5 : décision PDG du 2026-08-05 — le backend est fait et testé en entier d'abord, l'intégration UI (et son emplacement : frontend SmarterBloggers vs frontend dédié) est un chantier séparé, pas encore démarré.**
 
-**Gate** : un utilisateur peut créer un projet, créer et versionner un personnage approuvé avec un reference pack complet, et le scoring de cohérence tourne dessus.
+**Gate** : un utilisateur peut créer un projet, créer et versionner un personnage approuvé avec un reference pack complet, et le scoring de cohérence tourne dessus. **✅ satisfait côté API** (vérifié par la suite de tests, 43/43 verts) — le gate décrit une capacité utilisateur testable, pas une UI ; la partie UI reste un chantier explicitement reporté (voir ci-dessus).
 
 ---
 
