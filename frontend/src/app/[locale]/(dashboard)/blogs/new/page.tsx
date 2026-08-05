@@ -16,6 +16,7 @@ import {
   type DomainSearchResult, type CryptoPaymentResponse,
 } from '@/lib/api';
 import { slugify, getErrorMessage } from '@/lib/utils';
+import { COUNTRIES } from '@/lib/constants/countries';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
@@ -557,7 +558,10 @@ export default function CreateBlogPage() {
                       <input value={registrant.address} onChange={e => setRegistrant(r => ({ ...r, address: e.target.value }))} placeholder={td('fieldAddress')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
                       <input value={registrant.city} onChange={e => setRegistrant(r => ({ ...r, city: e.target.value }))} placeholder={td('fieldCity')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
                       <input value={registrant.zipcode} onChange={e => setRegistrant(r => ({ ...r, zipcode: e.target.value }))} placeholder={td('fieldZip')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
-                      <input value={registrant.country} onChange={e => setRegistrant(r => ({ ...r, country: e.target.value.toUpperCase().slice(0, 2) }))} placeholder={td('fieldCountry')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                      <select value={registrant.country} onChange={e => setRegistrant(r => ({ ...r, country: e.target.value }))} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]">
+                        <option value="">{td('fieldCountry')}</option>
+                        {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+                      </select>
                     </div>
                     <div className="flex items-center justify-between mt-3.5">
                       <label className="flex items-center gap-2 text-[12px] text-slate-600 dark:text-slate-400">
