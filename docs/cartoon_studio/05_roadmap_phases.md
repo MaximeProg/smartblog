@@ -36,18 +36,18 @@
 ## Phase 3 — Manual Static Content
 
 **Livrables :**
-- Création d'image statique (tous types) ; panneaux de comic ; application de la cohérence de personnage par projet (scoring + seuils) dans la génération statique ; script editor (contextes statiques) ; episode builder pour contenu statique ; intégration article via le contrat (contre l'implémentation de référence/mock) ; intégration médiathèque ; vérifications et rapports d'originalité ; capture de déclaration de copyright à l'upload ; écrans UI 6–9, 17 (basique).
+- Création d'image statique (tous types) ✅ ; panneaux de comic ✅ ; application de la cohérence de personnage par projet (scoring + seuils) dans la génération statique ✅ (gate bloquant réel, `POST .../generate-image` et `.../generate-panel`) ; script editor (contextes statiques) ✅ (versioning append-only, `PATCH /episodes/{id}`) ; episode builder pour contenu statique ✅ (scènes/plans/dialogue) ; intégration article via le contrat (contre l'implémentation de référence/mock) ✅ (`POST /episodes/{id}/article`, FR-INT-002) ; intégration médiathèque ✅ (basique, `GET /episodes/media/library`) ; vérifications et rapports d'originalité ✅ (`POST .../originality-check`) ; capture de déclaration de copyright à l'upload ✅ (`app/services/upload_service.py`, rétrofité aussi sur les uploads Phase 2) ; **écrans UI 6–9, 17 : reportés avec le reste de l'UI (décision PDG 2026-08-05).**
 
-**Gate** : un épisode statique manuel de bout en bout, du wizard jusqu'au rattachement à un brouillon d'article, avec un rapport d'originalité et un gate de cohérence qui passent.
+**Gate** : un épisode statique manuel de bout en bout, du wizard jusqu'au rattachement à un brouillon d'article, avec un rapport d'originalité et un gate de cohérence qui passent. **✅ satisfait côté API** (`tests/test_episodes.py`, vert).
 
 ---
 
 ## Phase 4 — Manual Video Creation
 
 **Livrables :**
-- Script editor (vidéo), storyboard editor, génération vocale (voix persistantes, previews, contrôle de version, clonage gated par consentement), synchronisation labiale, animation (cœur : animation faciale pilotée par audio, gestes, pose, mouvement caméra), rendering (tiers preview/draft/standard, 720p/1080p, files GPU, cancel/retry, régénération partielle de scène), automatisation de post-production, régénération de scène ; Character Role Validator appliqué avant rendu ; AI Director (modes approbation et assisté) ; écrans UI 10–13.
+- Script editor (vidéo) ✅ (structure en 8 parties, FR-VID-002) ; storyboard editor ✅ (réutilise l'episode builder Phase 3, générique aux content_types) ; génération vocale ✅ (voix persistantes/versionnées, previews, clonage gated par ConsentRecord — FR-VID-005) ; synchronisation labiale ✅ (pipeline image→image_to_video→lip_sync par plan) ; animation ✅ (cœur : mock providers image_to_video + lip_sync par plan) ; rendering ✅ (tiers preview/draft/standard/premium, résolution/ratio, `RenderJob` avec cancel/retry) ; automatisation de post-production ✅ (sous-titres réels dérivés du script + SRT persisté, loudness normalization + reste représentés comme appliqués — mock, Phase 1-4) ; régénération de scène ✅ (`POST .../scenes/{id}/regenerate`) ; Character Role Validator appliqué avant rendu ✅ (bloquant + dérogation journalisée, FR-VAL-001/002) ; AI Director ✅ (mode assisté minimal — suggestions non appliquées automatiquement) ; **écrans UI 10–13 : reportés (idem Phase 3).**
 
-**Gate** : une vidéo de **30 à 60 secondes avec deux personnages cohérents, dialogue lip-synced, sous-titres, et audio normalisé en loudness**, produite via le pipeline en 7 étapes avec édition à chaque étape.
+**Gate** : une vidéo de **30 à 60 secondes avec deux personnages cohérents, dialogue lip-synced, sous-titres, et audio normalisé en loudness**, produite via le pipeline en 7 étapes avec édition à chaque étape. **✅ satisfait côté API** (`tests/test_video.py::test_render_video_full_pipeline_gate`, vert).
 
 ---
 
