@@ -419,17 +419,54 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                                 details=f"{order.domain_name} via {order.registrar}")
                 logger.info("register_purchased_domain: success", order_id=order_id, domain=order.domain_name)
 
+                # Vhost Apache + certificat SSL sur le VPS — sans ça, le domaine
+                # est "enregistré" en base mais affiche le JSON brut de l'API en
+                # le visitant (bug réel découvert le 2026-08-05, businessfolio.blog).
+                # Ne bloque jamais l'enregistrement déjà acquis chez le registrar :
+                # échec = notification honnête + log d'erreur, pas une exception
+                # qui ferait perdre le paiement/l'enregistrement déjà effectués.
+                hosting_provisioned = False
+                try:
+                    from app.services.hosting_service import provision_domain_hosting
+                    await provision_domain_hosting(order.domain_name)
+                    hosting_provisioned = True
+                except Exception as exc:
+                    logger.error("register_purchased_domain: hosting provisioning failed",
+                                order_id=order_id, domain=order.domain_name, error=str(exc))
+                    await log_event(db, "domain.hosting_provisioning_failed", level="error",
+                                    target_type="custom_domain", target_id=str(custom_domain.id),
+                                    details=f"{order.domain_name}: {exc}")
+                    try:
+                        from app.services.notification_service import notify_super_admins
+                        await notify_super_admins(
+                            db, type="error", category="domain",
+                            title="Domain hosting provisioning failed",
+                            body=f"{order.domain_name} is registered but its vhost/SSL setup failed — manual intervention needed.",
+                            action_url="/superadmin",
+                        )
+                    except Exception:
+                        pass
+                    await db.commit()
+
                 try:
                     from app.services.tenant_service import get_tenant_owner_user_id
                     from app.services.notification_service import notify_user
                     owner_id = await get_tenant_owner_user_id(db, order.tenant_id)
                     if owner_id:
-                        await notify_user(
-                            db, owner_id, type="success", category="domain",
-                            title="Domain is live",
-                            body=f"{order.domain_name} has been registered and connected to your blog.",
-                            action_url="/domains",
-                        )
+                        if hosting_provisioned:
+                            await notify_user(
+                                db, owner_id, type="success", category="domain",
+                                title="Domain is live",
+                                body=f"{order.domain_name} has been registered and connected to your blog.",
+                                action_url="/domains",
+                            )
+                        else:
+                            await notify_user(
+                                db, owner_id, type="warning", category="domain",
+                                title="Domain registered — final setup in progress",
+                                body=f"{order.domain_name} was registered successfully. Our team has been notified to finish connecting it to your blog.",
+                                action_url="/domains",
+                            )
                         await db.commit()
                 except Exception:
                     pass

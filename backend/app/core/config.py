@@ -73,6 +73,13 @@ class Settings(BaseSettings):
     DEFAULT_DOMAIN_REGISTRAR: str = "openprovider"
     DOMAIN_SEARCH_TLDS: list[str] = ["com", "net", "org", "blog", "ai", "io", "co", "dev"]
 
+    # Provisioning automatique du vhost Apache + certificat SSL pour un domaine
+    # acheté (voir app/services/hosting_service.py) — le worker (conteneur)
+    # SSH vers l'hôte VPS lui-même avec une clé dédiée restreinte par forced
+    # command (authorized_keys), jamais un shell arbitraire.
+    DOMAIN_PROVISIONING_SSH_KEY_PATH: str = "/app/secrets/id_ed25519_domain_provisioning"
+    DOMAIN_PROVISIONING_SSH_USER: str = "deploy"
+
     # Email (Resend)
     RESEND_API_KEY: str = ""
     EMAIL_FROM_NAME: str = "SmarterBloggers"

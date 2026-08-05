@@ -48,5 +48,6 @@ docker-compose.override.yml
 # ── Secrets ───────────────────────────────────────────────────────────
 *.pem
 *.key
+/secrets/
 firebase-service-account.json
 serviceAccountKey.json

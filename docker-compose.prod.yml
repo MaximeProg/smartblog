@@ -51,6 +51,11 @@ services:
     env_file:
       - ./backend/.env.production
     command: arq app.workers.settings.WorkerSettings
+    # Clé privée dédiée (jamais dans git) : le worker SSH vers l'hôte VPS
+    # lui-même pour provisionner le vhost/SSL d'un domaine acheté — voir
+    # app/services/hosting_service.py. Montée en lecture seule.
+    volumes:
+      - ./secrets/id_ed25519_domain_provisioning:/app/secrets/id_ed25519_domain_provisioning:ro
     depends_on:
       postgres:
         condition: service_healthy
