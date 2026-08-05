@@ -41,11 +41,16 @@ MIN_CASHOUT = 1.00
 # ── Schemas ───────────────────────────────────────────────────────
 
 class AffiliateDashboardResponse(BaseModel):
-    # KYC (décision PDG 2026-08-01) : tant que can_access_affiliate est
-    # False, affiliate_code/referral_url restent None — jamais peuplés par
-    # get_affiliate_dashboard, qui court-circuite AVANT
-    # _get_or_create_affiliate_code. C'est ce court-circuit backend, pas
-    # seulement le masquage du lien côté UI, qui constitue le vrai verrou.
+    # Revirement PDG 2026-08-05 : la page affiliation n'est plus verrouillée
+    # entièrement tant que le KYC n'est pas validé — affiliate_code/
+    # referral_url sont désormais toujours peuplés, pour que l'utilisateur
+    # puisse partager son lien et commencer à parrainer immédiatement. Le
+    # vrai verrou reste ailleurs (_accrue_commission plus bas + les endpoints
+    # protégés par require_kyc_verified) : aucune commission n'est jamais
+    # créditée à un compte qui n'est pas kyc_status=VERIFIED et n'a pas de
+    # wallet USDT renseigné, donc rien à protéger côté génération du lien.
+    # can_access_affiliate reste renvoyé (== kyc_status verified) pour que le
+    # frontend sache quand afficher la bannière de statut KYC non bloquante.
     kyc_status: str
     can_access_affiliate: bool
     kyc_years_remaining: int
@@ -134,7 +139,7 @@ async def get_affiliate_dashboard(payload: TokenPayload, db: DBSession):
 
     can_access = user.kyc_status == KycStatus.VERIFIED
 
-    code = await _get_or_create_affiliate_code(db, user) if can_access else None
+    code = await _get_or_create_affiliate_code(db, user)
 
     total_referrals_q = await db.execute(
         select(func.count()).where(
@@ -180,7 +185,7 @@ async def get_affiliate_dashboard(payload: TokenPayload, db: DBSession):
         can_access_affiliate=can_access,
         kyc_years_remaining=user.kyc_years_remaining,
         affiliate_code=code,
-        referral_url=f"{settings.FRONTEND_URL}/register?ref={code}" if can_access else None,
+        referral_url=f"{settings.FRONTEND_URL}/register?ref={code}",
         balance=balance,
         cashout_threshold=threshold,
         can_cashout=balance >= threshold,

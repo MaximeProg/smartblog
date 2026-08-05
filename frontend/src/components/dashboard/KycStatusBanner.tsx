@@ -15,12 +15,11 @@ const STATUS_CONFIG: Record<string, { icon: typeof ShieldCheck; iconBg: string; 
 };
 
 /**
- * Statut de vérification KYC + bouton de vérification, réutilisé sur le
- * dashboard (variant="banner", animé, attire l'attention) et sur le profil
- * (variant="compact", ligne d'info discrète) — demande PDG 2026-08-05.
- * Ne remplace pas KycRequiredGate (verrouillage plein-écran de la page
- * affiliation, qui reste en place) : ceci est un simple statut + CTA,
- * jamais bloquant.
+ * Statut de vérification KYC + bouton de vérification — réutilisé sur le
+ * dashboard, le profil et la page affiliation (demandes PDG 2026-08-05).
+ * Jamais bloquant : simple statut + CTA, ne verrouille aucune page (l'ancien
+ * KycRequiredGate plein-écran a été retiré le même jour — la page
+ * affiliation ne doit plus jamais être bloquée par le KYC).
  */
 export function KycStatusBanner({ variant = 'banner' }: { variant?: 'banner' | 'compact' }) {
   const t = useTranslations('kycBanner');

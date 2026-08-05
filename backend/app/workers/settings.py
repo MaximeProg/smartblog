@@ -8,12 +8,12 @@ from app.workers.tasks import (
     publish_to_social, auto_send_scheduled_newsletters,
     health_check_ping,
     register_purchased_domain, sync_purchased_domains_status,
-    send_domain_renewal_reminders,
+    send_domain_renewal_reminders, retry_domain_hosting_provisioning,
 )
 
 
 class WorkerSettings:
-    functions = [send_newsletter_campaign, publish_to_social, register_purchased_domain]
+    functions = [send_newsletter_campaign, publish_to_social, register_purchased_domain, retry_domain_hosting_provisioning]
     cron_jobs = [
         cron(auto_publish_scheduled, second=0),              # toutes les 60 secondes
         cron(auto_send_scheduled_newsletters, second=30),    # décalé de 30s

@@ -11,6 +11,7 @@ import {
 import { tenantsApi, aiApi } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
+import { CMS_SUPPORTED_LANGS } from '@/config/cms';
 
 // ── Types ─────────────────────────────────────────────────────────
 
@@ -61,7 +62,7 @@ export default function AiBuilderPage() {
     niche: '',
     audience: '',
     tone: 'professional',
-    language: locale === 'fr' ? 'fr' : 'en',
+    language: locale,
     color_preference: 'blue',
   });
   const [loading, setLoading] = useState(false);
@@ -248,21 +249,15 @@ export default function AiBuilderPage() {
             <Globe className="h-3.5 w-3.5 text-blue-500" />
             {t('languageLabel')}
           </label>
-          <div className="flex gap-2">
-            {[{ value: 'fr', label: '🇫🇷 Français' }, { value: 'en', label: '🇬🇧 English' }].map(l => (
-              <button
-                key={l.value}
-                onClick={() => set('language', l.value)}
-                className={`flex-1 py-2 rounded-xl text-[13px] font-bold border transition-all ${
-                  form.language === l.value
-                    ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
-                    : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'
-                }`}
-              >
-                {l.label}
-              </button>
+          <select
+            value={form.language}
+            onChange={e => set('language', e.target.value)}
+            className="w-full h-10 px-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 text-[13.5px] font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors appearance-none cursor-pointer"
+          >
+            {CMS_SUPPORTED_LANGS.map(l => (
+              <option key={l.code} value={l.code}>{l.flag} {l.label}</option>
             ))}
-          </div>
+          </select>
         </div>
 
         {/* Color */}

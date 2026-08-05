@@ -13,7 +13,7 @@ import {
 import { affiliateApi, type AffiliateDashboard, type AffiliateCommission, type CashoutRequest, type AffiliateReferral } from '@/lib/api';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
-import { KycRequiredGate } from '@/components/dashboard/KycRequiredGate';
+import { KycStatusBanner } from '@/components/dashboard/KycStatusBanner';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
 
@@ -178,14 +178,17 @@ export default function AffiliatePage() {
               <div className="flex items-center justify-center h-64">
                 <div className="h-6 w-6 rounded-full border-2 border-blue-600 border-t-transparent animate-spin" />
               </div>
-            ) : !dashboard?.can_access_affiliate ? (
-              // KYC (décision PDG 2026-08-01) : verrou de PAGE ENTIÈRE — le lien
-              // d'affiliation n'est jamais rendu (dashboard.affiliate_code est déjà
-              // null côté backend tant que can_access_affiliate est false), ce
-              // n'est pas juste masqué visuellement.
-              <KycRequiredGate kycStatus={dashboard?.kyc_status} />
             ) : (
               <>
+                {/* KYC (revirement PDG 2026-08-05) : la page n'est plus verrouillée
+                    pour un compte non vérifié — l'utilisateur peut déjà partager son
+                    lien de parrainage, seul le versement réel des commissions reste
+                    conditionné à la vérification (voir _accrue_commission côté
+                    backend). Simple bannière de statut, jamais bloquante. */}
+                {!dashboard?.can_access_affiliate && (
+                  <KycStatusBanner variant="banner" />
+                )}
+
                 {/* Wallet required banner */}
                 {!dashboard?.has_wallet && (
                   <div className="relative overflow-hidden bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">

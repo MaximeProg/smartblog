@@ -45,6 +45,21 @@ else
     echo "VHOST_ALREADY_EXISTS:${DOMAIN}"
 fi
 
+# Attend que le DNS ait propagé avant d'appeler certbot : le challenge
+# http-01 échoue en NXDOMAIN si le domaine (juste enregistré chez le
+# registrar) ne résout pas encore publiquement — bug réel constaté le
+# 2026-08-05 (kalutaecosystem.blog), qui laissait Apache retomber sur son
+# vhost SSL par défaut (mauvais certificat affiché au client). Jusqu'à 60s
+# d'attente ici ; si le DNS n'a toujours pas propagé, on laisse certbot
+# échouer normalement — le worker Python réessaiera automatiquement plus
+# tard (register_purchased_domain / retry_domain_hosting_provisioning).
+for i in $(seq 1 12); do
+    if host "${DOMAIN}" >/dev/null 2>&1; then
+        break
+    fi
+    sleep 5
+done
+
 sudo certbot --apache -d "${DOMAIN}" -d "www.${DOMAIN}" --non-interactive --agree-tos --register-unsafely-without-email --keep-until-expiring
 
 echo "PROVISIONED:${DOMAIN}"

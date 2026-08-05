@@ -2663,29 +2663,7 @@
     "walletRequiredDesc": "Un wallet USDT (BEP20/BSC) est nécessaire pour participer au programme d'affiliation et recevoir vos commissions.",
     "walletRequiredCta": "Ajouter mon wallet",
     "waitingThresholdTitle": "Presque là !",
-    "waitingThresholdDesc": "Vos commissions seront envoyées automatiquement dès que votre solde atteindra {min}.",
-    "gate": {
-      "not_started": {
-        "title": "Vérification d'identité requise",
-        "description": "Pour garantir la sécurité et la conformité du programme d'affiliation, vous devez d'abord effectuer une vérification d'identité (KYC) unique avant d'accéder à votre lien de parrainage et de commencer à gagner des commissions.",
-        "cta": "Commencer la vérification"
-      },
-      "pending": {
-        "title": "Vérification en cours",
-        "description": "Votre vérification d'identité est en cours d'examen. Cela ne prend généralement que quelques minutes — votre lien d'affiliation se débloquera automatiquement dès son approbation.",
-        "cta": "Vérifier le statut"
-      },
-      "expired": {
-        "title": "Nouvelle vérification requise",
-        "description": "Vous avez récemment changé votre nom ou votre pays, ce qui nécessite une nouvelle vérification avant que votre lien d'affiliation puisse être réactivé. Si vous avez des années prépayées restantes, cela ne vous coûtera rien de plus.",
-        "cta": "Vérifier à nouveau mon identité"
-      },
-      "rejected": {
-        "title": "Échec de la vérification",
-        "description": "Votre dernière tentative de vérification d'identité n'a pas été approuvée. Vous pouvez démarrer une nouvelle vérification pour réessayer.",
-        "cta": "Réessayer"
-      }
-    }
+    "waitingThresholdDesc": "Vos commissions seront envoyées automatiquement dès que votre solde atteindra {min}."
   },
   "kycBanner": {
     "verifiedBadge": "Identité vérifiée",
@@ -2696,9 +2674,9 @@
         "cta": "Vérifier maintenant"
       },
       "pending": {
-        "title": "Vérification en cours",
-        "description": "Nous examinons votre vérification d'identité — cela ne prend généralement que quelques minutes.",
-        "cta": "Voir le statut"
+        "title": "Terminez votre vérification pour activer votre compte",
+        "description": "Votre paiement a bien été reçu — complétez votre vérification d'identité (pièce d'identité + selfie) pour finaliser la vérification de votre compte et commencer à gagner des commissions.",
+        "cta": "Terminer la vérification"
       },
       "expired": {
         "title": "Nouvelle vérification requise",

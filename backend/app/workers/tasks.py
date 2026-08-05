@@ -386,7 +386,7 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                     tenant_id=order.tenant_id,
                     domain=order.domain_name,
                     verification_status=DomainVerificationStatus.VERIFIED,
-                    ssl_enabled=True,
+                    ssl_enabled=False,  # passe à True seulement une fois le certificat réellement provisionné, plus bas
                     verified_at=datetime.now(timezone.utc),
                     source=DomainSource.PURCHASED,
                     is_primary=False,
@@ -430,23 +430,38 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                     from app.services.hosting_service import provision_domain_hosting
                     await provision_domain_hosting(order.domain_name)
                     hosting_provisioned = True
+                    custom_domain.ssl_enabled = True
+                    await db.commit()
                 except Exception as exc:
-                    logger.error("register_purchased_domain: hosting provisioning failed",
+                    # Cause la plus fréquente : le DNS du domaine (juste enregistré
+                    # chez le registrar) n'a pas encore propagé au moment où
+                    # certbot tente son challenge http-01 — NXDOMAIN côté Let's
+                    # Encrypt, échec quasi certain du 1er essai. Bug réel constaté
+                    # le 2026-08-05 (kalutaecosystem.blog) : Apache retombait alors
+                    # sur le vhost SSL par défaut, affichant le mauvais certificat
+                    # (avertissement "site non sécurisé" pour le client). Plutôt
+                    # que d'abandonner et d'exiger une intervention manuelle
+                    # immédiate, on réessaie automatiquement (le DNS a de bonnes
+                    # chances d'avoir propagé quelques minutes plus tard).
+                    logger.error("register_purchased_domain: hosting provisioning failed, scheduling retry",
                                 order_id=order_id, domain=order.domain_name, error=str(exc))
                     await log_event(db, "domain.hosting_provisioning_failed", level="error",
                                     target_type="custom_domain", target_id=str(custom_domain.id),
-                                    details=f"{order.domain_name}: {exc}")
+                                    details=f"{order.domain_name}: {exc} (retry 2/4 dans 5 min)")
+                    await db.commit()
                     try:
-                        from app.services.notification_service import notify_super_admins
-                        await notify_super_admins(
-                            db, type="error", category="domain",
-                            title="Domain hosting provisioning failed",
-                            body=f"{order.domain_name} is registered but its vhost/SSL setup failed — manual intervention needed.",
-                            action_url="/superadmin",
+                        from app.core.arq_pool import get_arq_pool
+                        pool = await get_arq_pool()
+                        await pool.enqueue_job(
+                            "retry_domain_hosting_provisioning",
+                            custom_domain_id=str(custom_domain.id),
+                            domain=order.domain_name,
+                            attempt=2,
+                            _defer_by=300,
                         )
                     except Exception:
-                        pass
-                    await db.commit()
+                        logger.error("register_purchased_domain: failed to schedule hosting retry",
+                                    order_id=order_id, domain=order.domain_name)
 
                 try:
                     from app.services.tenant_service import get_tenant_owner_user_id
@@ -464,7 +479,7 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
                             await notify_user(
                                 db, owner_id, type="warning", category="domain",
                                 title="Domain registered — final setup in progress",
-                                body=f"{order.domain_name} was registered successfully. Our team has been notified to finish connecting it to your blog.",
+                                body=f"{order.domain_name} was registered successfully. We're finishing connecting it to your blog — this can take a few minutes.",
                                 action_url="/domains",
                             )
                         await db.commit()
@@ -516,6 +531,91 @@ async def _notify_domain_registration_failed(db, order, error: str) -> None:
         await db.commit()
     except Exception:
         pass
+
+
+_RETRY_DELAYS_SECONDS = {2: 300, 3: 1200, 4: 3600}  # essai -> délai avant CET essai (5 min, 20 min, 60 min après l'échec précédent)
+_MAX_HOSTING_ATTEMPTS = 4
+
+
+async def retry_domain_hosting_provisioning(ctx: dict, custom_domain_id: str, domain: str, attempt: int) -> None:
+    """Réessaie provision_domain_hosting après un premier échec — typiquement
+    un DNS pas encore propagé au moment du 1er essai (voir le commentaire dans
+    register_purchased_domain). Jusqu'à _MAX_HOSTING_ATTEMPTS essais au total,
+    espacés de plus en plus, avant d'abandonner et de notifier les super
+    admins pour une intervention manuelle."""
+    from app.core.database import AsyncSessionLocal
+    from app.models.domain import CustomDomain
+    from app.services.hosting_service import provision_domain_hosting
+    from app.services.log_service import log_event
+
+    async with AsyncSessionLocal() as db:
+        custom_domain = await db.get(CustomDomain, uuid.UUID(custom_domain_id))
+        if not custom_domain or custom_domain.ssl_enabled:
+            return  # déjà provisionné entre-temps (ex. fix manuel) — rien à faire
+
+        try:
+            await provision_domain_hosting(domain)
+            custom_domain.ssl_enabled = True
+            await db.commit()
+            await log_event(db, "domain.hosting_provisioning_succeeded", level="success",
+                            target_type="custom_domain", target_id=str(custom_domain.id),
+                            details=f"{domain} (essai {attempt}/{_MAX_HOSTING_ATTEMPTS})")
+            logger.info("retry_domain_hosting_provisioning: succeeded", domain=domain, attempt=attempt)
+
+            try:
+                from app.services.tenant_service import get_tenant_owner_user_id
+                from app.services.notification_service import notify_user
+                owner_id = await get_tenant_owner_user_id(db, custom_domain.tenant_id)
+                if owner_id:
+                    await notify_user(
+                        db, owner_id, type="success", category="domain",
+                        title="Domain is live",
+                        body=f"{domain} is now fully connected and secured.",
+                        action_url="/domains",
+                    )
+                    await db.commit()
+            except Exception:
+                pass
+
+        except Exception as exc:
+            logger.error("retry_domain_hosting_provisioning: attempt failed",
+                        domain=domain, attempt=attempt, error=str(exc))
+
+            if attempt < _MAX_HOSTING_ATTEMPTS:
+                await log_event(db, "domain.hosting_provisioning_failed", level="error",
+                                target_type="custom_domain", target_id=str(custom_domain.id),
+                                details=f"{domain}: {exc} (essai {attempt}/{_MAX_HOSTING_ATTEMPTS}, nouvelle tentative programmée)")
+                await db.commit()
+                try:
+                    from app.core.arq_pool import get_arq_pool
+                    pool = await get_arq_pool()
+                    next_attempt = attempt + 1
+                    await pool.enqueue_job(
+                        "retry_domain_hosting_provisioning",
+                        custom_domain_id=custom_domain_id,
+                        domain=domain,
+                        attempt=next_attempt,
+                        _defer_by=_RETRY_DELAYS_SECONDS[next_attempt],
+                    )
+                except Exception:
+                    logger.error("retry_domain_hosting_provisioning: failed to schedule next retry",
+                                domain=domain, attempt=attempt)
+            else:
+                await log_event(db, "domain.hosting_provisioning_failed", level="error",
+                                target_type="custom_domain", target_id=str(custom_domain.id),
+                                details=f"{domain}: {exc} (échec définitif après {_MAX_HOSTING_ATTEMPTS} essais)")
+                await db.commit()
+                try:
+                    from app.services.notification_service import notify_super_admins
+                    await notify_super_admins(
+                        db, type="error", category="domain",
+                        title="Domain hosting provisioning failed",
+                        body=f"{domain} is registered but its vhost/SSL setup failed after {_MAX_HOSTING_ATTEMPTS} attempts — manual intervention needed.",
+                        action_url="/superadmin",
+                    )
+                    await db.commit()
+                except Exception:
+                    pass
 
 
 # ── Synchronisation statut domaines (cron quotidien) ─────────────────────────
