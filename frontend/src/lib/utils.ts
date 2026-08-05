@@ -31,6 +31,26 @@ export function formatRegistrantPhone(countryCode: string, localNumber: string):
   return `${dialCode}${digits}`;
 }
 
+// Filtre à appliquer à CHAQUE frappe dans le champ numéro local — élimine
+// la classe "l'utilisateur tape n'importe quoi" (lettres, espaces,
+// ponctuation) à la source plutôt que de la détecter après coup.
+export function sanitizePhoneDigitsInput(raw: string): string {
+  return raw.replace(/[^\d]/g, '');
+}
+
+/** true si `localNumber` (chiffres déjà filtrés côté saisie) a un nombre de
+ * chiffres cohérent avec le plan de numérotation du pays choisi. Un champ
+ * vide n'est jamais "valide" ici — la validation obligatoire du champ reste
+ * une vérification séparée (bouton désactivé), celle-ci porte uniquement
+ * sur le FORMAT une fois que l'utilisateur a commencé à taper. */
+export function isValidLocalPhoneNumber(countryCode: string, localNumber: string): boolean {
+  const country = COUNTRIES.find(c => c.code === countryCode);
+  if (!country) return false;
+  const digits = localNumber.replace(/[^\d]/g, '');
+  const [min, max] = country.phoneDigits;
+  return digits.length >= min && digits.length <= max;
+}
+
 export function formatDate(date: string | Date, locale = 'en'): string {
   return new Intl.DateTimeFormat(locale, {
     year: 'numeric',

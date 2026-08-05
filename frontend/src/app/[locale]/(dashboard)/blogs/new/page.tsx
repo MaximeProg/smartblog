@@ -15,7 +15,7 @@ import {
   tenantsApi, mediaApi, domainsApi, paymentsApi,
   type DomainSearchResult, type CryptoPaymentResponse,
 } from '@/lib/api';
-import { slugify, getErrorMessage, formatRegistrantPhone } from '@/lib/utils';
+import { slugify, getErrorMessage, formatRegistrantPhone, sanitizePhoneDigitsInput, isValidLocalPhoneNumber } from '@/lib/utils';
 import { COUNTRIES } from '@/lib/constants/countries';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
@@ -562,7 +562,15 @@ export default function CreateBlogPage() {
                         <span className="h-9 px-3 flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/60 text-[13px] text-slate-500 dark:text-slate-400 shrink-0">
                           {COUNTRIES.find(c => c.code === registrant.country)?.dialCode ?? '+…'}
                         </span>
-                        <input value={registrant.phone} onChange={e => setRegistrant(r => ({ ...r, phone: e.target.value }))} placeholder={td('fieldPhone')} className="flex-1 min-w-0 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
+                        <input
+                          value={registrant.phone}
+                          onChange={e => setRegistrant(r => ({ ...r, phone: sanitizePhoneDigitsInput(e.target.value) }))}
+                          placeholder={td('fieldPhone')}
+                          inputMode="numeric"
+                          autoComplete="off"
+                          maxLength={COUNTRIES.find(c => c.code === registrant.country)?.phoneDigits[1] ?? 15}
+                          className="flex-1 min-w-0 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]"
+                        />
                       </div>
                       <input value={registrant.address} onChange={e => setRegistrant(r => ({ ...r, address: e.target.value }))} placeholder={td('fieldAddress')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
                       <input value={registrant.city} onChange={e => setRegistrant(r => ({ ...r, city: e.target.value }))} placeholder={td('fieldCity')} className="h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px]" />
@@ -579,7 +587,7 @@ export default function CreateBlogPage() {
                     </div>
                     <button
                       onClick={() => purchaseMut.mutate()}
-                      disabled={purchaseMut.isPending || !registrant.name || !registrant.email || !registrant.phone || !registrant.address || !registrant.city || !registrant.country || !registrant.zipcode}
+                      disabled={purchaseMut.isPending || !registrant.name || !registrant.email || !registrant.address || !registrant.city || !registrant.country || !registrant.zipcode || !isValidLocalPhoneNumber(registrant.country, registrant.phone)}
                       className="w-full mt-4 flex items-center justify-center gap-2 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-bold disabled:opacity-50"
                     >
                       {purchaseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}

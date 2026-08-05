@@ -15,7 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/store/auth.store';
 import { CryptoPaymentPanel } from '@/components/payments/CryptoPaymentPanel';
 import { CryptoCurrencyPicker } from '@/components/payments/CryptoCurrencyPicker';
-import { getErrorMessage, formatRegistrantPhone } from '@/lib/utils';
+import { getErrorMessage, formatRegistrantPhone, sanitizePhoneDigitsInput, isValidLocalPhoneNumber } from '@/lib/utils';
 import { COUNTRIES } from '@/lib/constants/countries';
 
 const STATUS_CONFIG = {
@@ -655,8 +655,15 @@ export default function DomainsPage() {
                 <span className="h-9 px-3 flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/60 text-[13px] text-slate-500 dark:text-slate-400 shrink-0">
                   {COUNTRIES.find(c => c.code === purchaseForm.country)?.dialCode ?? '+…'}
                 </span>
-                <input value={purchaseForm.phone} onChange={(e) => setPurchaseForm(f => ({ ...f, phone: e.target.value }))}
-                  placeholder={t('fieldPhone')} className="flex-1 min-w-0 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+                <input
+                  value={purchaseForm.phone}
+                  onChange={(e) => setPurchaseForm(f => ({ ...f, phone: sanitizePhoneDigitsInput(e.target.value) }))}
+                  placeholder={t('fieldPhone')}
+                  inputMode="numeric"
+                  autoComplete="off"
+                  maxLength={COUNTRIES.find(c => c.code === purchaseForm.country)?.phoneDigits[1] ?? 15}
+                  className="flex-1 min-w-0 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                />
               </div>
               <input value={purchaseForm.address} onChange={(e) => setPurchaseForm(f => ({ ...f, address: e.target.value }))}
                 placeholder={t('fieldAddress')} className="col-span-2 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
@@ -699,7 +706,7 @@ export default function DomainsPage() {
               </button>
               <button
                 onClick={() => purchaseMut.mutate()}
-                disabled={purchaseMut.isPending || !payCurrencyValid || !purchaseForm.name || !purchaseForm.email || !purchaseForm.phone || !purchaseForm.address || !purchaseForm.city || !purchaseForm.country || !purchaseForm.zipcode}
+                disabled={purchaseMut.isPending || !payCurrencyValid || !purchaseForm.name || !purchaseForm.email || !purchaseForm.address || !purchaseForm.city || !purchaseForm.country || !purchaseForm.zipcode || !isValidLocalPhoneNumber(purchaseForm.country, purchaseForm.phone)}
                 className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[12.5px] font-bold disabled:opacity-50"
               >
                 {purchaseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
