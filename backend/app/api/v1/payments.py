@@ -15,7 +15,7 @@ import uuid
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, Request, Header, HTTPException
 from sqlalchemy import select, text
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.core.config import settings
 from app.core.dependencies import TokenPayload, DBSession
@@ -59,7 +59,12 @@ class ArticleCheckoutRequest(BaseModel):
 class RegistrantInfo(BaseModel):
     name: str
     email: str
-    phone: str
+    # Un champ vide passait la validation Pydantic (str vide = str valide) et
+    # produisait un indicatif téléphonique vide envoyé tel quel à OpenProvider
+    # -> "Invalid telephone country code!" (code 131), incompréhensible pour
+    # le client. Bug réel constaté le 2026-08-05 (le formulaire frontend ne
+    # bloquait pas non plus sur un téléphone vide, corrigé au même moment).
+    phone: str = Field(min_length=5)
     address: str
     city: str
     country: str  # code ISO 2 lettres, ex: "FR"

@@ -694,7 +694,7 @@ export default function DomainsPage() {
               </button>
               <button
                 onClick={() => purchaseMut.mutate()}
-                disabled={purchaseMut.isPending || !payCurrencyValid || !purchaseForm.name || !purchaseForm.email || !purchaseForm.address || !purchaseForm.city || !purchaseForm.country || !purchaseForm.zipcode}
+                disabled={purchaseMut.isPending || !payCurrencyValid || !purchaseForm.name || !purchaseForm.email || !purchaseForm.phone || !purchaseForm.address || !purchaseForm.city || !purchaseForm.country || !purchaseForm.zipcode}
                 className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[12.5px] font-bold disabled:opacity-50"
               >
                 {purchaseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}

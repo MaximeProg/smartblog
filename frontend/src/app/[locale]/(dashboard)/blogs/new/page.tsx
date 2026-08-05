@@ -574,7 +574,7 @@ export default function CreateBlogPage() {
                     </div>
                     <button
                       onClick={() => purchaseMut.mutate()}
-                      disabled={purchaseMut.isPending || !registrant.name || !registrant.email || !registrant.address || !registrant.city || !registrant.country || !registrant.zipcode}
+                      disabled={purchaseMut.isPending || !registrant.name || !registrant.email || !registrant.phone || !registrant.address || !registrant.city || !registrant.country || !registrant.zipcode}
                       className="w-full mt-4 flex items-center justify-center gap-2 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-bold disabled:opacity-50"
                     >
                       {purchaseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}
