@@ -847,7 +847,9 @@ export interface KycSubmitResponse {
 export const kycApi = {
   getStatus: () => api.get<KycStatusResponse>('/platform/kyc/status'),
 
-  submit: (data: { years: number; pay_currency: string; invoice_language: string }) =>
+  // Toujours 1 an (décision PDG 2026-08-05) — plus de paramètre "years",
+  // voir backend/app/api/v1/kyc.py::_KYC_YEARS.
+  submit: (data: { pay_currency: string; invoice_language: string }) =>
     api.post<KycSubmitResponse>('/platform/kyc/submit', data),
 
   retrySession: () =>

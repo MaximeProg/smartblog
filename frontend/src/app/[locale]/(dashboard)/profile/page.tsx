@@ -6,6 +6,7 @@ import { Save, Loader2, User, Mail, Shield, Key, Eye, EyeOff, Phone, Globe, Lock
 import { useTranslations } from 'next-intl';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
+import { KycStatusBanner } from '@/components/dashboard/KycStatusBanner';
 import { useAuthStore } from '@/store/auth.store';
 import { authApi, type PayoutCurrencyInfo } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
@@ -359,6 +360,10 @@ export default function ProfilePage() {
                 </h2>
                 <p className="text-[13px] text-slate-500 dark:text-slate-400 mt-0.5">{user?.email}</p>
               </div>
+            </div>
+
+            <div className="mb-4">
+              <KycStatusBanner variant="compact" />
             </div>
 
             {/* ── Informations personnelles ──────────────────────── */}

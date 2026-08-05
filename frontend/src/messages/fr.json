@@ -2687,6 +2687,31 @@
       }
     }
   },
+  "kycBanner": {
+    "verifiedBadge": "Identité vérifiée",
+    "status": {
+      "not_started": {
+        "title": "Vérifiez votre compte",
+        "description": "Confirmez votre identité pour débloquer le programme d'affiliation et commencer à gagner des commissions.",
+        "cta": "Vérifier maintenant"
+      },
+      "pending": {
+        "title": "Vérification en cours",
+        "description": "Nous examinons votre vérification d'identité — cela ne prend généralement que quelques minutes.",
+        "cta": "Voir le statut"
+      },
+      "expired": {
+        "title": "Nouvelle vérification requise",
+        "description": "Vous avez récemment changé votre nom ou votre pays, votre vérification doit donc être refaite.",
+        "cta": "Vérifier à nouveau"
+      },
+      "rejected": {
+        "title": "Vérification échouée",
+        "description": "Votre dernière tentative de vérification n'a pas été approuvée. Vous pouvez réessayer sans frais supplémentaires.",
+        "cta": "Réessayer"
+      }
+    }
+  },
   "kyc": {
     "pageTitle": "Vérification d'identité (KYC)",
     "pageSubtitle": "Requise une seule fois avant d'accéder au programme d'affiliation et de recevoir des commissions.",
@@ -2702,10 +2727,8 @@
     "resumeVerification": "Reprendre la vérification",
     "reverifyExplain": "Il vous reste des années prépayées, la nouvelle vérification ne vous coûtera donc rien de plus — vous devrez simplement repasser la vérification d'identité.",
     "reverifyCta": "Vérifier à nouveau mon identité",
-    "purchaseTitle": "Choisissez la durée de votre vérification",
-    "durationLabel": "Durée",
-    "customDurationLabel": "Ou saisissez un nombre d'années personnalisé :",
-    "yearsCount": "{count, plural, one {# an} other {# ans}}",
+    "purchaseTitle": "Vérifiez votre identité",
+    "oneYear": "1 an",
     "totalLabel": "Total",
     "payCta": "Payer {amount}$ et vérifier",
     "paymentConfirmedTitle": "Paiement confirmé",

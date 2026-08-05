@@ -7,6 +7,7 @@ import { Plus, Newspaper, Mail, Users, ExternalLink, Settings, TrendingUp, Eye, 
 import Link from 'next/link';
 import { DashboardSidebar } from '@/components/dashboard/DashboardSidebar';
 import { TopBar } from '@/components/dashboard/TopBar';
+import { KycStatusBanner } from '@/components/dashboard/KycStatusBanner';
 import { useAuthStore } from '@/store/auth.store';
 import { tenantsApi, analyticsApi, supportApi } from '@/lib/api';
 import type { TenantInfo, DailyMetric } from '@/types';
@@ -253,6 +254,8 @@ export default function DashboardPage() {
                 <span className="sm:hidden">{t('newBlogShort')}</span>
               </button>
             </div>
+
+            <KycStatusBanner variant="banner" />
 
             {/* Support alert */}
             {!blogsLoading && openTicketsCount > 0 && firstBlogId && (

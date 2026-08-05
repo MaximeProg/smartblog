@@ -18,21 +18,24 @@ from app.models.enums import TransactionType, KycStatus
 from app.models.kyc import KycVerification
 from app.models.user import User
 from app.services.kaluta_service import verify_kaluta_signature
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/platform/kyc", tags=["kyc"])
 
-# L'utilisateur peut saisir n'importe quel nombre d'années au-delà des
-# boutons rapides (1/2/3/5) affichés côté frontend — ces bornes ne sont
-# qu'un garde-fou anti-erreur de saisie, pas une restriction produit.
-_MIN_YEARS = 1
-_MAX_YEARS = 50
+# Décision PDG 2026-08-05 : la vérification est TOUJOURS d'exactement 1 an,
+# jamais un achat multi-années — un changement de donnée importante du
+# profil (voir auth.py::update_profile) annule la vérification en cours
+# (kyc_years_remaining -> 0), l'utilisateur doit alors revérifier. Ancien
+# comportement (1-50 ans, boutons rapides 1/2/3/5) supprimé ; les achats
+# multi-années déjà effectués avant cette date restent visibles tels quels
+# dans l'historique (kyc_verifications.years_purchased), seul le solde
+# courant (users.kyc_years_remaining) a été ramené à 1 (migration ponctuelle).
+_KYC_YEARS = 1
 
 
 class KycSubmitRequest(BaseModel):
-    years: int = Field(ge=_MIN_YEARS, le=_MAX_YEARS)
     pay_currency: str = "usdtbsc"
     invoice_language: str = "en"
 
@@ -132,13 +135,13 @@ async def submit_kyc_verification(body: KycSubmitRequest, payload: TokenPayload,
         raise NotFoundException("User")
 
     price_per_year = await _get_kyc_price_per_year()
-    total_amount = round(price_per_year * body.years, 2)
+    total_amount = round(price_per_year * _KYC_YEARS, 2)
 
     tenant_id = uuid.UUID(settings.PLATFORM_TENANT_ID)
     kyc = KycVerification(
         user_id=user.id,
         tenant_id=tenant_id,
-        years_purchased=body.years,
+        years_purchased=_KYC_YEARS,
         amount_paid=0,
         status=KycStatus.NOT_STARTED,
     )
@@ -154,7 +157,7 @@ async def submit_kyc_verification(body: KycSubmitRequest, payload: TokenPayload,
         transaction_type=TransactionType.KYC_VERIFICATION,
         amount_usd=total_amount,
         order_id=order_id,
-        order_description=f"KYC verification — {body.years} year(s)",
+        order_description="KYC verification — 1 year",
         campaign_id=kyc.id,
         pay_currency=body.pay_currency,
         extra={"invoice_language": body.invoice_language},

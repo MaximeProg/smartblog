@@ -2687,6 +2687,31 @@
       }
     }
   },
+  "kycBanner": {
+    "verifiedBadge": "Identity verified",
+    "status": {
+      "not_started": {
+        "title": "Verify your account",
+        "description": "Confirm your identity to unlock the affiliate program and start earning commissions.",
+        "cta": "Verify now"
+      },
+      "pending": {
+        "title": "Verification in progress",
+        "description": "We're reviewing your identity verification — this usually only takes a few minutes.",
+        "cta": "Check status"
+      },
+      "expired": {
+        "title": "Re-verification required",
+        "description": "You recently changed your name or country, so your verification needs to be redone.",
+        "cta": "Re-verify now"
+      },
+      "rejected": {
+        "title": "Verification unsuccessful",
+        "description": "Your last verification attempt wasn't approved. You can try again at no extra cost.",
+        "cta": "Try again"
+      }
+    }
+  },
   "kyc": {
     "pageTitle": "Identity verification (KYC)",
     "pageSubtitle": "Required once before you can access the affiliate program and receive commissions.",
@@ -2702,10 +2727,8 @@
     "resumeVerification": "Resume verification",
     "reverifyExplain": "You have prepaid years remaining, so re-verifying costs nothing extra — you'll just need to go through identity verification again.",
     "reverifyCta": "Re-verify my identity",
-    "purchaseTitle": "Choose your verification duration",
-    "durationLabel": "Duration",
-    "customDurationLabel": "Or enter a custom number of years:",
-    "yearsCount": "{count, plural, one {# year} other {# years}}",
+    "purchaseTitle": "Verify your identity",
+    "oneYear": "1 year",
     "totalLabel": "Total",
     "payCta": "Pay ${amount} and verify",
     "paymentConfirmedTitle": "Payment confirmed",

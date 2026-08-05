@@ -21,10 +21,6 @@ declare global {
 
 const PLATFORM_TENANT_ID = process.env.NEXT_PUBLIC_PLATFORM_TENANT_ID || '00000000-0000-0000-0000-000000000001';
 
-const YEARS_OPTIONS = [1, 2, 3, 5] as const;
-const MIN_YEARS = 1;
-const MAX_YEARS = 50;
-
 const STATUS_ICON: Record<string, typeof ShieldCheck> = {
   not_started: ShieldCheck,
   pending: Clock,
@@ -54,7 +50,6 @@ export default function KycPage() {
   const { toast } = useToast();
   const qc = useQueryClient();
 
-  const [years, setYears] = useState(1);
   const [payCurrency, setPayCurrency] = useState('usdtbsc');
   const [payCurrencyValid, setPayCurrencyValid] = useState(true);
   const [payment, setPayment] = useState<KycSubmitResponse | null>(null);
@@ -64,7 +59,8 @@ export default function KycPage() {
     queryFn: async () => { const { data } = await kycApi.getStatus(); return data; },
   });
 
-  const totalAmount = (status?.price_per_year ?? 0) * years;
+  // Toujours 1 an (décision PDG 2026-08-05) — price_per_year EST le total.
+  const totalAmount = status?.price_per_year ?? 0;
 
   const submitMutation = useMutation({
     mutationFn: async () => {
@@ -73,7 +69,7 @@ export default function KycPage() {
       const invoice_language = typeof window !== 'undefined'
         ? (window.location.pathname.split('/')[1] || 'en')
         : 'en';
-      const { data } = await kycApi.submit({ years, pay_currency: payCurrency, invoice_language });
+      const { data } = await kycApi.submit({ pay_currency: payCurrency, invoice_language });
       return data;
     },
     onSuccess: (data) => setPayment(data),
@@ -169,45 +165,9 @@ export default function KycPage() {
                   <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm p-6 space-y-5">
                     <h2 className="font-semibold text-slate-900 dark:text-slate-100">{t('purchaseTitle')}</h2>
 
-                    <div>
-                      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">
-                        {t('durationLabel')}
-                      </label>
-                      <div className="grid grid-cols-4 gap-2">
-                        {YEARS_OPTIONS.map(y => (
-                          <button
-                            key={y}
-                            onClick={() => setYears(y)}
-                            className={`px-3 py-2.5 rounded-xl border text-[13px] font-semibold transition-colors ${
-                              years === y
-                                ? 'bg-blue-600 border-blue-600 text-white'
-                                : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
-                            }`}
-                          >
-                            {t('yearsCount', { count: y })}
-                          </button>
-                        ))}
-                      </div>
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="text-[12px] text-slate-400 dark:text-slate-500 shrink-0">{t('customDurationLabel')}</span>
-                        <input
-                          type="number"
-                          min={MIN_YEARS}
-                          max={MAX_YEARS}
-                          value={years}
-                          onChange={e => {
-                            const v = parseInt(e.target.value, 10);
-                            if (Number.isNaN(v)) { setYears(0); return; }
-                            setYears(Math.min(MAX_YEARS, Math.max(0, v)));
-                          }}
-                          className="w-20 h-9 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-                        />
-                      </div>
-                    </div>
-
                     <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800">
                       <span className="text-[12.5px] text-slate-500 dark:text-slate-400">{t('totalLabel')}</span>
-                      <span className="text-[18px] font-black text-slate-900 dark:text-slate-100">${totalAmount.toFixed(2)}</span>
+                      <span className="text-[18px] font-black text-slate-900 dark:text-slate-100">${totalAmount.toFixed(2)} <span className="text-[12px] font-semibold text-slate-400">/ {t('oneYear')}</span></span>
                     </div>
 
                     <CryptoCurrencyPicker
@@ -220,7 +180,7 @@ export default function KycPage() {
 
                     <button
                       onClick={() => submitMutation.mutate()}
-                      disabled={submitMutation.isPending || !payCurrencyValid || years < MIN_YEARS || totalAmount <= 0}
+                      disabled={submitMutation.isPending || !payCurrencyValid || totalAmount <= 0}
                       className="w-full px-4 py-3 rounded-xl bg-blue-600 text-white text-[13px] font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {submitMutation.isPending ? '…' : t('payCta', { amount: totalAmount.toFixed(2) })}
