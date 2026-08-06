@@ -211,17 +211,18 @@ export default function DomainsPage() {
               <ShoppingCart className="h-3.5 w-3.5" /> {t('tabBuy')}
             </button>
           </div>
-          {tab === 'buy' && (
-            <Link
-              href={`/${locale}/legal/domain-purchase-terms`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
-            >
-              <ScrollText className="h-3.5 w-3.5" />
-              {tTerms('checkboxLinkText')}
-            </Link>
-          )}
+          {/* Toujours visible sur cette page (liste des domaines du blog), pas
+              seulement pendant un achat actif — l'utilisateur doit pouvoir
+              relire les CGV à tout moment. */}
+          <Link
+            href={`/${locale}/legal/domain-purchase-terms`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
+          >
+            <ScrollText className="h-3.5 w-3.5" />
+            {tTerms('checkboxLinkText')}
+          </Link>
         </div>
 
         {/* ── Buy a domain ─────────────────────────────────────────── */}
