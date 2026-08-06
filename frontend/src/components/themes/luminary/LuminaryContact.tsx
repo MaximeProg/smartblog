@@ -7,6 +7,7 @@ import type { ContactProps } from '@/components/themes/ThemeRenderer';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
 import { EditableSection } from '@/components/themes/shared/EditableSection';
 import { InlineEditable } from '@/components/themes/shared/InlineEditable';
+import { sanitizeHtml } from '@/components/themes/shared/renderContent';
 
 export default function LuminaryContact({ blog, categories, basePath, editMode, selectedSectionId, onSectionClick, onSectionHover }: ContactProps) {
   const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
@@ -74,7 +75,7 @@ export default function LuminaryContact({ blog, categories, basePath, editMode, 
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
             <InlineEditable path="template_config.contact.hero.subtitle" value={heroSubtitle} editMode={editMode} tag="p" className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-6" />
             <InlineEditable path="template_config.contact.hero.title" value={heroTitle} editMode={editMode} tag="h1" className="font-serif italic text-5xl sm:text-6xl text-white mb-6" />
-            <div className="font-sans text-zinc-400 text-lg max-w-xl mx-auto" dangerouslySetInnerHTML={{ __html: heroDesc }} />
+            <div className="font-sans text-zinc-400 text-lg max-w-xl mx-auto" dangerouslySetInnerHTML={{ __html: sanitizeHtml(heroDesc) }} />
           </div>
         </section>
       </EditableSection>

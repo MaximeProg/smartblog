@@ -7,6 +7,7 @@ import type { ContactProps } from '@/components/themes/ThemeRenderer';
 import { EditorialHeader, EditorialFooter } from './EditorialShared';
 import { EditableSection } from '@/components/themes/shared/EditableSection';
 import { InlineEditable } from '@/components/themes/shared/InlineEditable';
+import { sanitizeHtml } from '@/components/themes/shared/renderContent';
 
 export default function EditorialContact({ blog, categories, basePath, editMode, selectedSectionId, onSectionClick, onSectionHover }: ContactProps) {
   const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
@@ -75,7 +76,7 @@ export default function EditorialContact({ blog, categories, basePath, editMode,
           <div className="relative max-w-4xl mx-auto text-center">
             <InlineEditable path="template_config.contact.hero.subtitle" value={heroSubtitle} editMode={editMode} tag="p" className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: primaryColor }} />
             <InlineEditable path="template_config.contact.hero.title" value={heroTitle} editMode={editMode} tag="h1" className="text-4xl sm:text-5xl font-bold leading-tight mb-4" />
-            <div className="text-zinc-400 text-lg max-w-xl mx-auto" dangerouslySetInnerHTML={{ __html: heroDesc }} />
+            <div className="text-zinc-400 text-lg max-w-xl mx-auto" dangerouslySetInnerHTML={{ __html: sanitizeHtml(heroDesc) }} />
           </div>
         </section>
       </EditableSection>

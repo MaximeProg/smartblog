@@ -3,6 +3,49 @@
  * Shared by all blog templates.
  */
 
+import DOMPurify, { type Config } from 'isomorphic-dompurify';
+
+// Restreint aux balises/attributs que markdownToHtml() produit réellement,
+// plus ceux qu'un article édité en HTML brut (WYSIWYG) peut légitimement
+// contenir — jamais <script>, <style>, gestionnaires on*, javascript: URLs,
+// etc. Sans ça, le contenu d'un article est injecté tel quel via
+// dangerouslySetInnerHTML sur une page publique visitée par n'importe qui ;
+// combiné au token d'auth stocké en localStorage, un article piégé
+// suffirait à voler la session de n'importe quel visiteur connecté (vrai
+// gap trouvé lors de l'audit de sécurité du 2026-08-06).
+const SANITIZE_CONFIG: Config = {
+  ALLOWED_TAGS: [
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'br', 'hr',
+    'ul', 'ol', 'li', 'blockquote', 'pre', 'code',
+    'strong', 'em', 'b', 'i', 'u', 's', 'sub', 'sup', 'mark',
+    'a', 'img', 'div', 'span', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'iframe',
+  ],
+  ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'style', 'target', 'rel', 'class', 'colspan', 'rowspan', 'allowfullscreen', 'loading', 'frameborder'],
+};
+
+// <iframe src> ne doit jamais accepter un domaine arbitraire (DOMPurify
+// n'a pas de restriction par-domaine intégrée dans sa config déclarative) —
+// seuls les lecteurs vidéo YouTube/Vimeo que markdownToHtml() génère
+// lui-même sont légitimes ; tout le reste est retiré.
+const IFRAME_SRC_ALLOWLIST = [/^https:\/\/www\.youtube(?:-nocookie)?\.com\/embed\//, /^https:\/\/player\.vimeo\.com\/video\//];
+let hookRegistered = false;
+function ensureIframeHook(): void {
+  if (hookRegistered) return;
+  hookRegistered = true;
+  DOMPurify.addHook('uponSanitizeElement', (node) => {
+    if (node.nodeName?.toLowerCase() !== 'iframe') return;
+    const src = (node as HTMLIFrameElement).getAttribute?.('src') ?? '';
+    if (!IFRAME_SRC_ALLOWLIST.some(re => re.test(src))) {
+      node.parentNode?.removeChild(node);
+    }
+  });
+}
+
+export function sanitizeHtml(html: string): string {
+  ensureIframeHook();
+  return DOMPurify.sanitize(html, SANITIZE_CONFIG) as unknown as string;
+}
+
 export function markdownToHtml(md: string): string {
   // Pre-process: extract video/audio embed lines before HTML escaping
   const embeds: string[] = [];
@@ -93,10 +136,14 @@ export function markdownToHtml(md: string): string {
 }
 
 /**
- * Renders article content: auto-detects Markdown vs HTML and converts if needed.
+ * Renders article content: auto-detects Markdown vs HTML and converts if
+ * needed, then sanitizes — the result is only ever safe to hand to
+ * dangerouslySetInnerHTML because of this last step (never skip it, and
+ * never render `source` directly without going through this function).
  */
 export function renderContent(source: string | null | undefined): string {
   if (!source) return '<p>No content available.</p>';
   const isMarkdown = !/<[a-z][\s\S]*>/i.test(source);
-  return isMarkdown ? markdownToHtml(source) : source;
+  const html = isMarkdown ? markdownToHtml(source) : source;
+  return sanitizeHtml(html);
 }

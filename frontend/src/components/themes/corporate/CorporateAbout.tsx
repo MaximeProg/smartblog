@@ -9,6 +9,7 @@ import { CorporateHeader, CorporateFooter, NewsletterSection } from './shared';
 import type { AboutProps } from '@/components/themes/ThemeRenderer';
 import { EditableSection } from '@/components/themes/shared/EditableSection';
 import { InlineEditable } from '@/components/themes/shared/InlineEditable';
+import { sanitizeHtml } from '@/components/themes/shared/renderContent';
 
 export default function CorporateAboutPage({ blog, categories, basePath, editMode, selectedSectionId, onSectionClick, onSectionHover }: AboutProps) {
   const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
@@ -98,7 +99,7 @@ export default function CorporateAboutPage({ blog, categories, basePath, editMod
               className="text-4xl sm:text-5xl font-black leading-tight mb-6"
             />
             <div className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto mb-10"
-              dangerouslySetInnerHTML={{ __html: heroDesc }} />
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(heroDesc) }} />
             <Link
               href={basePath || "/"}
               className="inline-flex items-center gap-2 h-12 px-8 rounded-2xl text-sm font-bold border border-white/20 text-white hover:bg-white/5 transition-colors"
@@ -139,7 +140,7 @@ export default function CorporateAboutPage({ blog, categories, basePath, editMod
                   className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight mb-6"
                 />
                 <div className="text-lg text-slate-500 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: missionDesc }} />
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(missionDesc) }} />
               </div>
               {missionImageUrl && (
                 <div className="rounded-2xl overflow-hidden shadow-lg">
@@ -245,7 +246,7 @@ export default function CorporateAboutPage({ blog, categories, basePath, editMod
                 className="text-3xl font-black mb-4"
               />
               <div className="text-slate-400 text-lg mb-8"
-                dangerouslySetInnerHTML={{ __html: ctaDesc }} />
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(ctaDesc) }} />
               <div className="flex flex-wrap gap-4 justify-center">
                 <a
                   href="#newsletter"

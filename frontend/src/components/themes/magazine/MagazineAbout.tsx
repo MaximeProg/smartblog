@@ -10,6 +10,7 @@ import { getFetchErrorMessage } from '@/lib/utils';
 import { MagazineHeader, MagazineFooter } from './MagazineShared';
 import { EditableSection } from '@/components/themes/shared/EditableSection';
 import { InlineEditable } from '@/components/themes/shared/InlineEditable';
+import { sanitizeHtml } from '@/components/themes/shared/renderContent';
 
 export default function MagazineAbout({ blog, categories, basePath, editMode, selectedSectionId, onSectionClick, onSectionHover }: AboutProps) {
   const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
@@ -97,7 +98,7 @@ export default function MagazineAbout({ blog, categories, basePath, editMode, se
             <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-16">
               <InlineEditable path="template_config.about.hero.subtitle" value={heroSubtitle} editMode={editMode} tag="span" className="text-[10px] font-black uppercase tracking-widest mb-4 block" style={{ color: primaryColor }} />
               <InlineEditable path="template_config.about.hero.title" value={heroTitle} editMode={editMode} tag="h1" className="text-5xl sm:text-7xl font-black text-white leading-none mb-6" />
-              <div className="text-zinc-400 text-xl max-w-2xl leading-relaxed" dangerouslySetInnerHTML={{ __html: heroDesc }} />
+              <div className="text-zinc-400 text-xl max-w-2xl leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(heroDesc) }} />
               <Link href={basePath || "/"} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 text-sm font-black hover:bg-white/5 transition-colors">
                 {t('readArticles')} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -131,7 +132,7 @@ export default function MagazineAbout({ blog, categories, basePath, editMode, se
             <div className={missionImageUrl ? 'grid grid-cols-1 lg:grid-cols-2 gap-12 items-center' : ''}>
               <div>
                 <InlineEditable path="template_config.about.mission.title" value={missionTitle} editMode={editMode} tag="h2" className="text-3xl font-black text-zinc-950 mb-6" />
-                <div className="text-lg text-zinc-500 leading-relaxed" dangerouslySetInnerHTML={{ __html: missionDesc }} />
+                <div className="text-lg text-zinc-500 leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(missionDesc) }} />
               </div>
               {missionImageUrl && (
                 <div className="overflow-hidden shadow-lg">
@@ -203,7 +204,7 @@ export default function MagazineAbout({ blog, categories, basePath, editMode, se
             <div className="py-16" style={{ backgroundColor: primaryColor }}>
               <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center">
                 <InlineEditable path="template_config.about.cta.title" value={ctaTitle} editMode={editMode} tag="h2" className="text-3xl font-black text-white mb-3" />
-                <div className="text-white/80 mb-8" dangerouslySetInnerHTML={{ __html: ctaDesc }} />
+                <div className="text-white/80 mb-8" dangerouslySetInnerHTML={{ __html: sanitizeHtml(ctaDesc) }} />
                 <a href="#newsletter" className="inline-flex items-center gap-2 bg-white px-8 py-3 text-sm font-black hover:opacity-90 transition-opacity" style={{ color: primaryColor }}>
                   <Mail className="h-4 w-4" /> {ctaConfig.primaryLabel || t('aboutCtaPrimary')}
                 </a>

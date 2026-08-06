@@ -145,6 +145,11 @@ class Settings(BaseSettings):
     KALUTA_SANDBOX: bool = True
     # Fallback si aucun override n'existe encore dans platform:settings (Redis)
     KYC_DEFAULT_PRICE_PER_YEAR: float = 10.0
+    # Idem — plancher de budget pour une campagne pub (self-serve ou plateforme).
+    # Avant le 2026-08-06, seul un `> 0` était vérifié côté serveur : un
+    # total_budget arbitrairement bas (ex. 0.01$) était accepté sans plancher,
+    # contrairement à tous les autres flux payants de la plateforme.
+    AD_MIN_BUDGET_USD: float = 10.0
 
     # URLs frontend supplémentaires autorisées (séparées par des virgules)
     # Ex: EXTRA_CORS_ORIGINS=https://smarterbloggers.vercel.app,https://staging.smarterbloggers.com

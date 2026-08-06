@@ -1596,6 +1596,9 @@ async def get_platform_settings(payload: TokenPayload, db: DBSession):
             "sandbox": bool(getattr(cfg, "KALUTA_SANDBOX", True)),
             "price_per_year": overrides.get("kyc_price_per_year", getattr(cfg, "KYC_DEFAULT_PRICE_PER_YEAR", 10.0)),
         },
+        "ads": {
+            "min_budget_usd": overrides.get("ad_min_budget_usd", getattr(cfg, "AD_MIN_BUDGET_USD", 10.0)),
+        },
         "env": cfg.APP_ENV,
     }
 
@@ -1616,7 +1619,7 @@ async def update_platform_settings(
         "platform_name", "support_email", "max_blogs_per_user",
         "maintenance_mode", "registrations_open", "ai_model",
         "domain_markup_percent", "nowpayments_tolerance_usd",
-        "kyc_price_per_year",
+        "kyc_price_per_year", "ad_min_budget_usd",
     }
 
     try:

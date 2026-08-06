@@ -10,6 +10,7 @@ import { getFetchErrorMessage } from '@/lib/utils';
 import { CreativeHeader, CreativeFooter } from './CreativeShared';
 import { EditableSection } from '@/components/themes/shared/EditableSection';
 import { InlineEditable } from '@/components/themes/shared/InlineEditable';
+import { sanitizeHtml } from '@/components/themes/shared/renderContent';
 
 export default function CreativeAbout({ blog, categories, basePath, editMode, selectedSectionId, onSectionClick, onSectionHover }: AboutProps) {
   const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
@@ -95,7 +96,7 @@ export default function CreativeAbout({ blog, categories, basePath, editMode, se
           <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
             <InlineEditable path="template_config.about.hero.subtitle" value={heroSubtitle} editMode={editMode} tag="span" className="text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full mb-8 inline-block text-zinc-950" style={{ backgroundColor: primaryColor }} />
             <InlineEditable path="template_config.about.hero.title" value={heroTitle} editMode={editMode} tag="h1" className="text-6xl sm:text-8xl font-black text-white leading-none mb-6" />
-            <div className="text-zinc-400 text-xl max-w-2xl leading-relaxed" dangerouslySetInnerHTML={{ __html: heroDesc }} />
+            <div className="text-zinc-400 text-xl max-w-2xl leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(heroDesc) }} />
             <Link href={basePath || "/"} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 rounded-xl text-sm font-black hover:bg-white/5 transition-colors">
               {t('readArticles')} <ArrowRight className="h-4 w-4" />
             </Link>
@@ -126,7 +127,7 @@ export default function CreativeAbout({ blog, categories, basePath, editMode, se
             <div className={missionImageUrl ? 'grid grid-cols-1 lg:grid-cols-2 gap-12 items-center' : 'max-w-3xl'}>
               <div>
                 <InlineEditable path="template_config.about.mission.title" value={missionTitle} editMode={editMode} tag="h2" className="text-3xl font-black text-zinc-950 mb-6" />
-                <div className="text-lg text-zinc-500 leading-relaxed" dangerouslySetInnerHTML={{ __html: missionDesc }} />
+                <div className="text-lg text-zinc-500 leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(missionDesc) }} />
               </div>
               {missionImageUrl && (
                 <div className="rounded-2xl overflow-hidden shadow-lg">
@@ -198,7 +199,7 @@ export default function CreativeAbout({ blog, categories, basePath, editMode, se
           <section className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
             <div className="bg-zinc-950 rounded-2xl px-8 sm:px-16 py-16 text-center">
               <InlineEditable path="template_config.about.cta.title" value={ctaTitle} editMode={editMode} tag="h2" className="text-4xl font-black text-white mb-4" />
-              <div className="text-zinc-400 text-base mb-8 max-w-md mx-auto" dangerouslySetInnerHTML={{ __html: ctaDesc }} />
+              <div className="text-zinc-400 text-base mb-8 max-w-md mx-auto" dangerouslySetInnerHTML={{ __html: sanitizeHtml(ctaDesc) }} />
               <a href="#newsletter" className="inline-flex items-center gap-2 px-8 py-3 rounded-xl text-sm font-black text-zinc-950 hover:opacity-90 transition-opacity" style={{ backgroundColor: primaryColor }}>
                 <Mail className="h-4 w-4" /> {ctaConfig.primaryLabel || t('aboutCtaPrimary')}
               </a>

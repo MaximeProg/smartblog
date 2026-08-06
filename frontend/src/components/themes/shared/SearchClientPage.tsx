@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { publicApi, type BlogInfo } from '@/lib/public-api';
 import { Search, Clock, Tag, ArrowLeft, Loader2, Mic, MicOff } from 'lucide-react';
 import { useVoiceSearch } from '@/hooks/useVoiceSearch';
+import { sanitizeHtml } from '@/components/themes/shared/renderContent';
 
 type SearchHit = {
   id: string;
@@ -53,9 +54,11 @@ function HighlightSnippet({ hit }: { hit: SearchHit }) {
   return (
     <p
       className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mt-1"
-      // highlight tags come from ES <em> tags — safe since we control the index
+      // The <em> tags are ES's own highlighting, but the surrounding excerpt
+      // text is derived from article content — which can contain arbitrary
+      // HTML (see renderContent.ts) — so this still needs sanitizing.
       // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{ __html: excerpt.replace(/<em>/g, '<mark class="bg-yellow-100 dark:bg-yellow-900/40 text-inherit not-italic rounded px-0.5">').replace(/<\/em>/g, '</mark>') }}
+      dangerouslySetInnerHTML={{ __html: sanitizeHtml(excerpt.replace(/<em>/g, '<mark class="bg-yellow-100 dark:bg-yellow-900/40 text-inherit not-italic rounded px-0.5">').replace(/<\/em>/g, '</mark>')) }}
     />
   );
 }

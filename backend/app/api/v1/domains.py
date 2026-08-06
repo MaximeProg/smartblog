@@ -404,8 +404,29 @@ async def renew_domain_endpoint(
 
     if d.source != DomainSource.PURCHASED:
         raise ValidationException("Only domains purchased through SmarterBloggers can be renewed here.")
-    if d.renewal_price is None:
-        raise ValidationException("Renewal price unavailable for this domain.")
+
+    # Bug de sécurité réel corrigé le 2026-08-06 : `years` (paramètre libre
+    # côté client) déterminait la durée réellement demandée au registrar
+    # (register_purchased_domain -> registrar.renew_domain(years=order.years)),
+    # mais le montant facturé restait toujours l'ancien d.renewal_price —
+    # un simple instantané figé au moment de l'achat initial (potentiellement
+    # pour un nombre d'années différent), jamais recalculé pour la durée
+    # demandée ici. `.../renew?years=10` faisait renouveler 10 ans chez
+    # OpenProvider en ne payant que le prix figé — sous-paiement réel.
+    # Fix : cote de renouvellement fraîche, pour la durée EXACTE demandée,
+    # exactement comme checkout_domain le fait pour un premier achat.
+    years = max(1, min(years, 10))
+
+    from app.services.registrars.registry import get_registrar
+    from app.services.registrars.pricing import apply_markup
+    from app.services.registrars.base import RegistrarError
+
+    registrar = get_registrar(d.registrar)
+    try:
+        raw_price, currency = await registrar.get_renewal_price(domain=d.domain, years=years)
+    except RegistrarError as e:
+        raise HTTPException(status_code=502, detail=f"Registrar unavailable: {e}")
+    price = await apply_markup(raw_price)
 
     from app.models.domain import DomainOrder
     from app.models.enums import DomainOrderStatus, TransactionType
@@ -418,12 +439,12 @@ async def renew_domain_endpoint(
         custom_domain_id=d.id,
         domain_name=d.domain,
         tld=d.domain.split(".", 1)[1],
-        years=max(1, years),
+        years=years,
         registrar=d.registrar or "openprovider",
         registrant_info={},
         status=DomainOrderStatus.PENDING_PAYMENT,
-        renewal_price=d.renewal_price,
-        currency="USD",
+        renewal_price=price,
+        currency=currency,
         auto_renew=d.auto_renew,
     )
     db.add(order)
@@ -435,7 +456,7 @@ async def renew_domain_endpoint(
         tenant_id=tenant_id,
         user_id=user_id,
         transaction_type=TransactionType.DOMAIN_PURCHASE,
-        amount_usd=float(d.renewal_price),
+        amount_usd=price,
         order_id=order_id,
         order_description=f"Renew {d.domain} ({years} an(s))",
         campaign_id=order.id,
@@ -444,7 +465,7 @@ async def renew_domain_endpoint(
     order.transaction_id = tx.id
     await db.commit()
 
-    return _crypto_response(tx, float(d.renewal_price))
+    return _crypto_response(tx, price)
 
 
 # ── GET /domains/{id}/history ──────────────────────────────────────

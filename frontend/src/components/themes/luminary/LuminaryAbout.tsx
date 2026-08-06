@@ -10,6 +10,7 @@ import { getFetchErrorMessage } from '@/lib/utils';
 import { LuminaryHeader, LuminaryFooter } from './LuminaryShared';
 import { EditableSection } from '@/components/themes/shared/EditableSection';
 import { InlineEditable } from '@/components/themes/shared/InlineEditable';
+import { sanitizeHtml } from '@/components/themes/shared/renderContent';
 
 export default function LuminaryAbout({ blog, categories, basePath, editMode, selectedSectionId, onSectionClick, onSectionHover }: AboutProps) {
   const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
@@ -96,7 +97,7 @@ export default function LuminaryAbout({ blog, categories, basePath, editMode, se
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <InlineEditable path="template_config.about.hero.subtitle" value={heroSubtitle} editMode={editMode} tag="p" className="font-sans text-[10px] uppercase tracking-[0.25em] text-zinc-500 mb-6" />
           <InlineEditable path="template_config.about.hero.title" value={heroTitle} editMode={editMode} tag="h1" className="font-serif italic text-5xl sm:text-6xl lg:text-7xl leading-tight mb-6" />
-          <div className="font-sans text-zinc-400 text-lg max-w-xl mx-auto leading-relaxed" dangerouslySetInnerHTML={{ __html: heroDesc }} />
+          <div className="font-sans text-zinc-400 text-lg max-w-xl mx-auto leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(heroDesc) }} />
           <Link href={basePath || "/"} className="inline-flex items-center gap-2 mt-8 border border-white/20 text-white px-6 py-3 text-sm font-sans hover:bg-white/5 transition-colors">
             {t('readArticles')} <ArrowRight className="h-4 w-4" />
           </Link>
@@ -130,7 +131,7 @@ export default function LuminaryAbout({ blog, categories, basePath, editMode, se
                   <InlineEditable path="template_config.about.mission.title" value={missionTitle} editMode={editMode} tag="span" className="font-sans text-[10px] uppercase tracking-[0.2em] text-zinc-400" />
                   <div className="flex-1 h-px bg-zinc-200" />
                 </div>
-                <div className="font-serif text-xl text-zinc-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: missionDesc }} />
+                <div className="font-serif text-xl text-zinc-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(missionDesc) }} />
               </div>
               {missionImageUrl && (
                 <div className="overflow-hidden">
@@ -208,7 +209,7 @@ export default function LuminaryAbout({ blog, categories, basePath, editMode, se
           <section className="bg-zinc-950 py-20 px-4 text-center">
             <div className="max-w-2xl mx-auto">
               <InlineEditable path="template_config.about.cta.title" value={ctaTitle} editMode={editMode} tag="h2" className="font-serif italic text-4xl text-white mb-4" />
-              <div className="font-sans text-zinc-400 mb-8" dangerouslySetInnerHTML={{ __html: ctaDesc }} />
+              <div className="font-sans text-zinc-400 mb-8" dangerouslySetInnerHTML={{ __html: sanitizeHtml(ctaDesc) }} />
               <a href="#newsletter" className="inline-flex items-center gap-2 px-8 py-3 text-sm font-sans text-zinc-950 hover:opacity-90 transition-opacity" style={{ backgroundColor: primaryColor }}>
                 <Mail className="h-4 w-4" /> {ctaConfig.primaryLabel || t('aboutCtaPrimary')}
               </a>

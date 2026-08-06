@@ -34,6 +34,23 @@ public_ads_router = APIRouter(prefix="/tenants/{tenant_id}/ads", tags=["ads"])
 platform_ads_router = APIRouter(prefix="/platform/ads", tags=["platform-ads"])
 
 
+async def _get_min_ad_budget() -> float:
+    """Plancher configurable par le Super Admin (platform:settings en Redis) —
+    même mécanisme que kyc_price_per_year/domain_markup_percent. Corrige un
+    vrai gap de sécurité (2026-08-06) : total_budget n'était vérifié que
+    `> 0`, sans aucun plancher, contrairement à tous les autres flux payants
+    de la plateforme (KYC, abonnements, domaines)."""
+    from app.core.redis_client import redis
+    import json
+    try:
+        raw = await redis.get("platform:settings")
+        overrides = json.loads(raw) if raw else {}
+        value = overrides.get("ad_min_budget_usd")
+        return float(value) if value is not None else settings.AD_MIN_BUDGET_USD
+    except Exception:
+        return settings.AD_MIN_BUDGET_USD
+
+
 # ── Schemas ───────────────────────────────────────────────────────
 
 class SubmitAdRequest(BaseModel):
@@ -138,8 +155,9 @@ async def submit_ad(
     from app.api.v1.payments import _create_crypto_transaction, _crypto_response
     from app.models.enums import TransactionType
 
-    if body.total_budget <= 0:
-        raise ValidationException("Budget must be greater than 0.")
+    min_budget = await _get_min_ad_budget()
+    if body.total_budget < min_budget:
+        raise ValidationException(f"Budget must be at least ${min_budget:.2f}.")
 
     ad = Ad(
         tenant_id=tenant_id,
@@ -201,8 +219,9 @@ async def submit_platform_ad(
     from app.models.enums import TransactionType
     from app.models.user import User
 
-    if body.total_budget <= 0:
-        raise ValidationException("Budget must be greater than 0.")
+    min_budget = await _get_min_ad_budget()
+    if body.total_budget < min_budget:
+        raise ValidationException(f"Budget must be at least ${min_budget:.2f}.")
 
     user = await db.get(User, uuid.UUID(payload["sub"]))
     if not user:

@@ -8,6 +8,7 @@ import { CorporateHeader, CorporateFooter } from './shared';
 import type { ContactProps } from '@/components/themes/ThemeRenderer';
 import { EditableSection } from '@/components/themes/shared/EditableSection';
 import { InlineEditable } from '@/components/themes/shared/InlineEditable';
+import { sanitizeHtml } from '@/components/themes/shared/renderContent';
 
 export default function CorporateContactPage({ blog, categories, basePath, editMode, selectedSectionId, onSectionClick, onSectionHover }: ContactProps) {
   const editProps = { editMode, selectedSectionId, onSectionClick, onSectionHover };
@@ -97,7 +98,7 @@ export default function CorporateContactPage({ blog, categories, basePath, editM
               tag="h1"
               className="text-4xl sm:text-5xl font-black leading-tight mb-6"
             />
-            <div className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: heroDesc }} />
+            <div className="text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: sanitizeHtml(heroDesc) }} />
           </div>
         </section>
       </EditableSection>
