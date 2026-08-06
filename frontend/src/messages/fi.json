@@ -2599,12 +2599,12 @@
     "yourLink": "Suosittelulinkkisi",
     "copyLink": "Kopioi linkki",
     "copied": "Kopioitu!",
-    "balance": "Käytettävissä oleva saldo",
+    "balance": "Maksamaton summa",
     "threshold": "Vähimmäisnosto",
     "requestCashout": "Pyydä nostopyyntöä",
     "cashoutFee": "Maksu",
     "totalEarned": "Ansaittu yhteensä",
-    "totalPaidOut": "Maksettu kokonaissumma",
+    "totalPaidOut": "Maksettu summa",
     "totalReferrals": "Suorat lähetteet",
     "pendingCommissions": "Käsiteltävänä olevat toimeksiannot",
     "commissionsTitle": "Komission historia",
@@ -3863,7 +3863,10 @@
       "status_registered": "Rekisteröity",
       "status_registration_failed": "Rekisteröinti epäonnistui",
       "status_refund_pending": "Palautus odottaa käsittelyä",
-      "status_refunded": "Hyvitetty"
+      "status_refunded": "Hyvitetty",
+      "termsAcceptedLabel": "Hyväksytyt ehdot",
+      "termsCurrentVersion": "nykyinen versio",
+      "termsOutdatedVersion": "vanhentunut versio"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Yritä uudelleen"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Takaisin",
+    "checkboxLabel": "Olen lukenut ja hyväksyn",
+    "checkboxLinkText": "Verkkotunnuksen rekisteröintiä ja ostamista koskevat ehdot",
+    "consentRequired": "Jotta voit jatkaa, sinun on hyväksyttävä verkkotunnuksen rekisteröintiä ja ostamista koskevat käyttöehdot."
   }
 }

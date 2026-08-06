@@ -2599,12 +2599,12 @@
     "yourLink": "Вашата препращаща връзка",
     "copyLink": "Копирай линка",
     "copied": "Копирано!",
-    "balance": "Наличен баланс",
+    "balance": "Неизплатена сума",
     "threshold": "Минимална сума за теглене",
     "requestCashout": "Заявка за теглене",
     "cashoutFee": "Такса",
     "totalEarned": "Общо спечелено",
-    "totalPaidOut": "Обща изплатена сума",
+    "totalPaidOut": "Изплатена сума",
     "totalReferrals": "Пряко насочени пациенти",
     "pendingCommissions": "Неизпълнени поръчки",
     "commissionsTitle": "Хронология на Комисията",
@@ -3863,7 +3863,10 @@
       "status_registered": "Регистриран",
       "status_registration_failed": "Регистрацията се провали",
       "status_refund_pending": "В очакване на възстановяване на сумата",
-      "status_refunded": "Възстановена"
+      "status_refunded": "Възстановена",
+      "termsAcceptedLabel": "Приети условия",
+      "termsCurrentVersion": "текуща версия",
+      "termsOutdatedVersion": "остаряла версия"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Опитайте отново"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Назад",
+    "checkboxLabel": "Прочетох и приемам",
+    "checkboxLinkText": "Общи условия за регистрация и закупуване на домейни",
+    "consentRequired": "За да продължите, трябва да приемете Общите условия за регистрация и закупуване на домейни."
   }
 }

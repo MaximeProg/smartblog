@@ -1741,7 +1741,7 @@
           "Piiramatu arv tellijaid",
           "Piiramatu arv autoreid",
           "Piiramatu salvestusruum",
-          "Mitme valdkonna",
+          "Mitme domeeni",
           "White-label",
           "Tagatud SLA",
           "Spetsiaalne sissejuhatus",
@@ -2599,12 +2599,12 @@
     "yourLink": "Sinu soovituse link",
     "copyLink": "Kopeeri link",
     "copied": "Kopeeritud!",
-    "balance": "Kasutatav saldo",
+    "balance": "Tasumata summa",
     "threshold": "Minimaalne väljamakse",
     "requestCashout": "Taotleda väljamakset",
     "cashoutFee": "Tasu",
     "totalEarned": "Kogutulu",
-    "totalPaidOut": "Väljamakstud summa kokku",
+    "totalPaidOut": "Makstud summa",
     "totalReferrals": "Otsesed suunamised",
     "pendingCommissions": "Ootel olevad tellimused",
     "commissionsTitle": "Komisjoni ajalugu",
@@ -3863,7 +3863,10 @@
       "status_registered": "Registreeritud",
       "status_registration_failed": "Registreerimine ebaõnnestus",
       "status_refund_pending": "Tagasimakse ootab kinnitamist",
-      "status_refunded": "Tagasimakstud"
+      "status_refunded": "Tagasimakstud",
+      "termsAcceptedLabel": "Tingimused on heaks kiidetud",
+      "termsCurrentVersion": "praegune versioon",
+      "termsOutdatedVersion": "vananenud versioon"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Proovi uuesti"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Tagasi",
+    "checkboxLabel": "Olen lugenud ja nõustun järgmisega:",
+    "checkboxLinkText": "Domeeni registreerimise ja ostmise tingimused",
+    "consentRequired": "Jätkamiseks peate nõustuma domeeni registreerimise ja ostmise tingimustega."
   }
 }

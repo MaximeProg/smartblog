@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -53,9 +54,11 @@ function DnsRow({ label, value, copyable }: { label: string; value: string; copy
 export default function DomainsPage() {
   const params = useParams();
   const blogId = params.blogId as string;
+  const locale = params.locale as string;
   const { toast } = useToast();
   const qc = useQueryClient();
   const t = useTranslations('domains');
+  const tTerms = useTranslations('domainTerms');
   const { user } = useAuthStore();
   const [newDomain, setNewDomain] = useState('');
   const [showAdd, setShowAdd] = useState(false);
@@ -72,6 +75,7 @@ export default function DomainsPage() {
   });
   const [payCurrency, setPayCurrency] = useState('usdtbsc');
   const [payCurrencyValid, setPayCurrencyValid] = useState(true);
+  const [termsConsent, setTermsConsent] = useState(false);
 
   const { data: pendingOrders = [] } = useQuery({
     queryKey: ['domain-pending-orders', blogId],
@@ -143,6 +147,7 @@ export default function DomainsPage() {
         country: purchaseForm.country, zipcode: purchaseForm.zipcode,
       },
       pay_currency: payCurrency,
+      consent: termsConsent,
     }).then((r) => r.data),
     onSuccess: (data) => setPayment(data),
     onError: (err: any) => toast({ variant: 'destructive', title: getErrorMessage(err, t('purchaseError')) }),
@@ -700,13 +705,34 @@ export default function DomainsPage() {
               />
             </div>
 
+            <label className="flex items-start gap-2 mt-3.5 text-[12px] text-slate-600 dark:text-slate-400">
+              <input
+                type="checkbox"
+                checked={termsConsent}
+                onChange={e => setTermsConsent(e.target.checked)}
+                className="rounded mt-0.5 shrink-0"
+              />
+              <span>
+                {tTerms('checkboxLabel')}{' '}
+                <Link
+                  href={`/${locale}/legal/domain-purchase-terms`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={e => e.stopPropagation()}
+                  className="font-semibold text-blue-600 hover:underline"
+                >
+                  {tTerms('checkboxLinkText')}
+                </Link>
+              </span>
+            </label>
+
             <div className="flex items-center gap-2 mt-4">
               <button onClick={() => setPurchaseTarget(null)} className="flex-1 h-10 rounded-xl border border-slate-200 dark:border-slate-700 text-[12.5px] font-bold text-slate-600 dark:text-slate-300">
                 {t('cancel')}
               </button>
               <button
                 onClick={() => purchaseMut.mutate()}
-                disabled={purchaseMut.isPending || !payCurrencyValid || !purchaseForm.name || !purchaseForm.email || !purchaseForm.address || !purchaseForm.city || !purchaseForm.country || !purchaseForm.zipcode || !isValidLocalPhoneNumber(purchaseForm.country, purchaseForm.phone)}
+                disabled={purchaseMut.isPending || !payCurrencyValid || !purchaseForm.name || !purchaseForm.email || !purchaseForm.address || !purchaseForm.city || !purchaseForm.country || !purchaseForm.zipcode || !isValidLocalPhoneNumber(purchaseForm.country, purchaseForm.phone) || !termsConsent}
                 className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[12.5px] font-bold disabled:opacity-50"
               >
                 {purchaseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}

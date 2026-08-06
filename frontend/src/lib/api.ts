@@ -1193,7 +1193,7 @@ export const paymentsApi = {
   createSubscriptionCheckout: (tenantId: string, data: { plan: string; billing?: 'monthly' | 'annual'; pay_currency?: string }) =>
     api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/checkout-subscription`, data),
 
-  createDomainCheckout: (tenantId: string, data: { domain_name: string; years: number; auto_renew: boolean; registrant: RegistrantInfo; pay_currency?: string }) =>
+  createDomainCheckout: (tenantId: string, data: { domain_name: string; years: number; auto_renew: boolean; registrant: RegistrantInfo; pay_currency?: string; consent: boolean }) =>
     api.post<CryptoPaymentResponse>(`/tenants/${tenantId}/payments/checkout-domain`, data),
 
   getCurrencies: (tenantId: string) =>
@@ -1318,11 +1318,13 @@ export interface SuperAdminDomainDetail {
     registrar: string | null; registrar_domain_id: string | null;
     expires_at: string | null; auto_renew: boolean;
   };
+  current_terms_content_hash: string | null;
   orders: {
     id: string; status: string; years: number;
     purchase_price: number | null; renewal_price: number | null;
     transaction_id: string | null; error_message: string | null;
     created_at: string; registered_at: string | null;
+    terms_content_hash: string | null; terms_accepted_at: string | null; terms_accepted_ip: string | null;
   }[];
   logs: { action: string; level: string; details: string | null; ts: string }[];
 }
@@ -1856,4 +1858,10 @@ export const platformApi = {
 
   sendContactMessage: (body: { channel: string; name: string; email: string; subject: string; message: string }) =>
     api.post<{ ok: boolean }>('/platform/contact', body),
+
+  getPage: (slug: string, lang: string) =>
+    api.get<{ slug: string; lang: string; content: { hero: { title: string; subtitle: string }; sections: { icon: string; title: string; body: string; items: string[] }[] } }>(
+      `/platform/pages/${slug}`,
+      { params: { lang } },
+    ),
 };

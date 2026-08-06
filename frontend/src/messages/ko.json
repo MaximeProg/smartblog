@@ -2599,12 +2599,12 @@
     "yourLink": "귀하의 추천 링크",
     "copyLink": "링크 복사",
     "copied": "복사했습니다!",
-    "balance": "사용 가능 잔액",
+    "balance": "미수금",
     "threshold": "최소 출금 금액",
     "requestCashout": "출금 요청",
     "cashoutFee": "수수료",
     "totalEarned": "총 적립액",
-    "totalPaidOut": "지급 총액",
+    "totalPaidOut": "지급액",
     "totalReferrals": "직접 추천",
     "pendingCommissions": "처리 중인 수수료",
     "commissionsTitle": "위원회 연혁",
@@ -3863,7 +3863,10 @@
       "status_registered": "등록됨",
       "status_registration_failed": "등록에 실패했습니다",
       "status_refund_pending": "환불 처리 중",
-      "status_refunded": "환불됨"
+      "status_refunded": "환불됨",
+      "termsAcceptedLabel": "수락된 약관",
+      "termsCurrentVersion": "현재 버전",
+      "termsOutdatedVersion": "구버전"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "다시 시도해 보세요"
       }
     }
+  },
+  "domainTerms": {
+    "back": "뒤로",
+    "checkboxLabel": "저는 다음 내용을 읽었으며 이에 동의합니다.",
+    "checkboxLinkText": "도메인 등록 및 구매 이용 약관",
+    "consentRequired": "계속 진행하려면 도메인 등록 및 구매 이용 약관에 동의하셔야 합니다."
   }
 }

@@ -2599,12 +2599,12 @@
     "yourLink": "您的推荐链接",
     "copyLink": "复制链接",
     "copied": "已复制！",
-    "balance": "可用余额",
+    "balance": "未结金额",
     "threshold": "最低提现金额",
     "requestCashout": "申请提现",
     "cashoutFee": "费用",
     "totalEarned": "总收入",
-    "totalPaidOut": "已支付总额",
+    "totalPaidOut": "已支付金额",
     "totalReferrals": "直接推荐",
     "pendingCommissions": "待处理的佣金",
     "commissionsTitle": "委员会沿革",
@@ -3863,7 +3863,10 @@
       "status_registered": "已注册",
       "status_registration_failed": "注册失败",
       "status_refund_pending": "退款待处理",
-      "status_refunded": "已退款"
+      "status_refunded": "已退款",
+      "termsAcceptedLabel": "条款已接受",
+      "termsCurrentVersion": "当前版本",
+      "termsOutdatedVersion": "过时的版本"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "请重试"
       }
     }
+  },
+  "domainTerms": {
+    "back": "返回",
+    "checkboxLabel": "我已阅读并同意",
+    "checkboxLinkText": "域名注册与购买条款与条件",
+    "consentRequired": "您必须接受《域名注册与购买条款与条件》才能继续。"
   }
 }

@@ -2599,12 +2599,12 @@
     "yourLink": "Il tuo link di riferimento",
     "copyLink": "Copia il link",
     "copied": "Copiato!",
-    "balance": "Saldo disponibile",
+    "balance": "Importo residuo",
     "threshold": "Prelievo minimo",
     "requestCashout": "Richiedi prelievo",
     "cashoutFee": "Tariffa",
     "totalEarned": "Totale maturato",
-    "totalPaidOut": "Totale erogato",
+    "totalPaidOut": "Importo pagato",
     "totalReferrals": "Segnalazioni dirette",
     "pendingCommissions": "Commissioni in sospeso",
     "commissionsTitle": "Cronologia della Commissione",
@@ -3863,7 +3863,10 @@
       "status_registered": "Iscritto",
       "status_registration_failed": "La registrazione non è andata a buon fine",
       "status_refund_pending": "Rimborso in sospeso",
-      "status_refunded": "Rimborsato"
+      "status_refunded": "Rimborsato",
+      "termsAcceptedLabel": "Condizioni accettate",
+      "termsCurrentVersion": "versione attuale",
+      "termsOutdatedVersion": "versione obsoleta"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Riprova"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Indietro",
+    "checkboxLabel": "Ho letto e accetto i",
+    "checkboxLinkText": "Termini e condizioni per la registrazione e l'acquisto di domini",
+    "consentRequired": "Per proseguire è necessario accettare i Termini e le condizioni di registrazione e acquisto del dominio."
   }
 }

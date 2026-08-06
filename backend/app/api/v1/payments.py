@@ -77,6 +77,10 @@ class DomainCheckoutRequest(BaseModel):
     auto_renew: bool = False
     registrant: RegistrantInfo
     pay_currency: str = "usdtbsc"
+    # Case à cocher obligatoire (CGV d'achat de domaine, décision PDG
+    # 2026-08-06) — voir checkout_domain, qui rejette toute requête où ce
+    # champ n'est pas explicitement True avant même de contacter le registrar.
+    consent: bool = False
 
 
 class CryptoPaymentResponse(BaseModel):
@@ -784,12 +788,23 @@ async def checkout_article(
 
 # ── Checkout achat de domaine ─────────────────────────────────────
 
+def _get_client_ip(request: Request) -> str:
+    """IP réelle du client derrière le reverse-proxy Apache (X-Forwarded-For
+    posé automatiquement par mod_proxy) — repli sur la connexion directe pour
+    les environnements sans proxy (tests, dev local)."""
+    xff = request.headers.get("x-forwarded-for")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
 @router.post("/checkout-domain", response_model=CryptoPaymentResponse, status_code=201)
 async def checkout_domain(
     tenant_id: uuid.UUID,
     body: DomainCheckoutRequest,
     payload: TokenPayload,
     db: DBSession,
+    request: Request,
 ):
     """Crée un paiement NowPayments intégré pour acheter un nom de domaine.
     L'enregistrement registrar lui-même se fait après confirmation du
@@ -797,6 +812,18 @@ async def checkout_domain(
     jamais avant, pour ne jamais facturer un domaine qui échoue à s'enregistrer
     sans paiement confirmé au préalable."""
     await _assert_role(db, tenant_id, uuid.UUID(payload["sub"]), payload, UserRole.TENANT_ADMIN)
+
+    # CGV d'achat de domaine (décision PDG 2026-08-06) : le consentement est
+    # exigé et vérifié AVANT tout appel au registrar, jamais après — voir
+    # legal-domain-purchase-terms (platform_pages) pour le contenu accepté.
+    if not body.consent:
+        raise ValidationException("You must accept the Domain Registration and Purchase Terms & Conditions before continuing.")
+
+    terms_row = (await db.execute(
+        text("SELECT content_hash FROM platform_pages WHERE slug = 'legal-domain-purchase-terms'"),
+    )).fetchone()
+    if not terms_row:
+        raise ValidationException("Domain purchase terms are not currently available. Please try again shortly.")
 
     domain_name = body.domain_name.strip().lower()
     if "." not in domain_name:
@@ -844,6 +871,9 @@ async def checkout_domain(
         purchase_price=price,
         renewal_price=renewal_price,
         currency=match.currency,
+        terms_content_hash=terms_row.content_hash,
+        terms_accepted_at=datetime.now(timezone.utc),
+        terms_accepted_ip=_get_client_ip(request),
     )
     db.add(order)
     await db.flush()

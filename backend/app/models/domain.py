@@ -70,3 +70,11 @@ class DomainOrder(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     registered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    # ── Consentement CGV d'achat de domaine (décision PDG 2026-08-06) ────
+    # terms_content_hash = content_hash de platform_pages("legal-domain-purchase-terms")
+    # au moment de l'acceptation — sert de "version acceptée" sans champ
+    # version à maintenir manuellement (voir migration 068).
+    terms_content_hash: Mapped[str | None] = mapped_column(String(64))
+    terms_accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    terms_accepted_ip: Mapped[str | None] = mapped_column(String(45))

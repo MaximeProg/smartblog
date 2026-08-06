@@ -2599,12 +2599,12 @@
     "yourLink": "Tavsiye bağlantınız",
     "copyLink": "Bağlantıyı kopyala",
     "copied": "Kopyalandı!",
-    "balance": "Kullanılabilir bakiye",
+    "balance": "Ödenmemiş tutar",
     "threshold": "Asgari para çekme tutarı",
     "requestCashout": "Para çekme talebi",
     "cashoutFee": "Ücret",
     "totalEarned": "Toplam kazanç",
-    "totalPaidOut": "Ödenen toplam tutar",
+    "totalPaidOut": "Ödenen tutar",
     "totalReferrals": "Doğrudan yönlendirmeler",
     "pendingCommissions": "Bekleyen komisyonlar",
     "commissionsTitle": "Komisyonun geçmişi",
@@ -3863,7 +3863,10 @@
       "status_registered": "Kayıtlı",
       "status_registration_failed": "Kayıt işlemi başarısız oldu",
       "status_refund_pending": "Geri ödeme beklemede",
-      "status_refunded": "Geri Ödenen"
+      "status_refunded": "Geri Ödenen",
+      "termsAcceptedLabel": "Kabul edilen şartlar",
+      "termsCurrentVersion": "güncel sürüm",
+      "termsOutdatedVersion": "eski sürüm"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Tekrar deneyin"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Geri",
+    "checkboxLabel": "Aşağıdakileri okudum ve kabul ediyorum:",
+    "checkboxLinkText": "Alan Adı Kaydı ve Satın Alma Şartları ve Koşulları",
+    "consentRequired": "Devam etmek için Alan Adı Kayıt ve Satın Alma Şart ve Koşullarını kabul etmeniz gerekmektedir."
   }
 }

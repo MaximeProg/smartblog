@@ -2599,12 +2599,12 @@
     "yourLink": "Din rekommendationslänk",
     "copyLink": "Kopiera länken",
     "copied": "Kopierat!",
-    "balance": "Tillgängligt saldo",
+    "balance": "Utestående belopp",
     "threshold": "Lägsta uttagsbelopp",
     "requestCashout": "Begär utbetalning",
     "cashoutFee": "Avgift",
     "totalEarned": "Totalt intjänat",
-    "totalPaidOut": "Totalt utbetalt",
+    "totalPaidOut": "Betalt belopp",
     "totalReferrals": "Direkta remisser",
     "pendingCommissions": "Pågående uppdrag",
     "commissionsTitle": "Kommissionens historia",
@@ -3863,7 +3863,10 @@
       "status_registered": "Registrerad",
       "status_registration_failed": "Registreringen misslyckades",
       "status_refund_pending": "Återbetalning väntar",
-      "status_refunded": "Återbetalat"
+      "status_refunded": "Återbetalat",
+      "termsAcceptedLabel": "Villkor godkända",
+      "termsCurrentVersion": "aktuell version",
+      "termsOutdatedVersion": "föråldrad version"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Försök igen"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Tillbaka",
+    "checkboxLabel": "Jag har läst och godkänner",
+    "checkboxLinkText": "Allmänna villkor för domänregistrering och köp",
+    "consentRequired": "Du måste godkänna villkoren för domänregistrering och köp för att kunna fortsätta."
   }
 }

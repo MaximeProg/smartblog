@@ -2599,12 +2599,12 @@
     "yourLink": "Vaša povezava za priporočilo",
     "copyLink": "Kopiraj povezavo",
     "copied": "Kopirano!",
-    "balance": "Razpoložljivo stanje",
+    "balance": "Neplačani znesek",
     "threshold": "Najnižji znesek izplačila",
     "requestCashout": "Zahteva za izplačilo",
     "cashoutFee": "Pristojbina",
     "totalEarned": "Skupaj zasluženo",
-    "totalPaidOut": "Skupni izplačani znesek",
+    "totalPaidOut": "Izplačani znesek",
     "totalReferrals": "Neposredna napotila",
     "pendingCommissions": "Nerešene provizije",
     "commissionsTitle": "Zgodovina komisije",
@@ -3863,7 +3863,10 @@
       "status_registered": "Registriran",
       "status_registration_failed": "Prijava ni uspela",
       "status_refund_pending": "Vračilo je v postopku",
-      "status_refunded": "Vračilo"
+      "status_refunded": "Vračilo",
+      "termsAcceptedLabel": "Pogoji so sprejeti",
+      "termsCurrentVersion": "trenutna različica",
+      "termsOutdatedVersion": "zastarela različica"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Poskusi še enkrat"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Nazaj",
+    "checkboxLabel": "Prebral sem in se strinjam s",
+    "checkboxLinkText": "Pogoji in določila za registracijo in nakup domene",
+    "consentRequired": "Da bi lahko nadaljevali, morate sprejeti Pogoje in določila za registracijo in nakup domene."
   }
 }

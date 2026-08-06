@@ -1726,7 +1726,7 @@
           "50 000 hírlevél-előfizető",
           "10 szerző",
           "50 GB tárhely",
-          "Egyéni domainnév",
+          "Egyéni domain",
           "Teljes körű elemzés + SEO",
           "API-hozzáférés",
           "Célzott támogatás"
@@ -2599,7 +2599,7 @@
     "yourLink": "Az Ön ajánló linkje",
     "copyLink": "Link másolása",
     "copied": "Másolva!",
-    "balance": "Rendelkezésre álló egyenleg",
+    "balance": "Kifizetetlen összeg",
     "threshold": "Minimális kifizetési összeg",
     "requestCashout": "Kifizetés igénylése",
     "cashoutFee": "Díj",
@@ -3863,7 +3863,10 @@
       "status_registered": "Regisztrált",
       "status_registration_failed": "A regisztráció nem sikerült",
       "status_refund_pending": "A visszatérítés feldolgozás alatt áll",
-      "status_refunded": "Visszatérítve"
+      "status_refunded": "Visszatérítve",
+      "termsAcceptedLabel": "Elfogadott feltételek",
+      "termsCurrentVersion": "jelenlegi verzió",
+      "termsOutdatedVersion": "elavult verzió"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Próbáld meg újra"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Vissza",
+    "checkboxLabel": "Elolvastam és elfogadom a",
+    "checkboxLinkText": "Domain-regisztráció és -vásárlás Általános Szerződési Feltételei",
+    "consentRequired": "A folytatáshoz el kell fogadnia a domain-regisztrációra és -vásárlásra vonatkozó általános szerződési feltételeket."
   }
 }

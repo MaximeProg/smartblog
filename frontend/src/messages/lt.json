@@ -2599,12 +2599,12 @@
     "yourLink": "Jūsų rekomendacinė nuoroda",
     "copyLink": "Kopijuoti nuorodą",
     "copied": "Nukopijuota!",
-    "balance": "Laisvas likutis",
+    "balance": "Neapmokėta suma",
     "threshold": "Mažiausia išmokėjimo suma",
     "requestCashout": "Prašyti išmokėti pinigus",
     "cashoutFee": "Mokestis",
     "totalEarned": "Iš viso uždirbta",
-    "totalPaidOut": "Išmokėta bendra suma",
+    "totalPaidOut": "Sumokėta suma",
     "totalReferrals": "Tiesioginiai nukreipimai",
     "pendingCommissions": "Neišspręsti užsakymai",
     "commissionsTitle": "Komisijos istorija",
@@ -3863,7 +3863,10 @@
       "status_registered": "Užregistruotas",
       "status_registration_failed": "Registracija nepavyko",
       "status_refund_pending": "Laukiama grąžinamos sumos",
-      "status_refunded": "Grąžinta"
+      "status_refunded": "Grąžinta",
+      "termsAcceptedLabel": "Sąlygos priimtos",
+      "termsCurrentVersion": "dabartinė versija",
+      "termsOutdatedVersion": "pasenusi versija"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Pabandykite dar kartą"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Atgal",
+    "checkboxLabel": "Aš perskaičiau ir sutinku su",
+    "checkboxLinkText": "Domenų registravimo ir pirkimo sąlygos",
+    "consentRequired": "Norėdami tęsti, turite sutikti su domeno registracijos ir pirkimo sąlygomis."
   }
 }

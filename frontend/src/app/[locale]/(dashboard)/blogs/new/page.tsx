@@ -203,6 +203,7 @@ export default function CreateBlogPage() {
   const { user, addTenant, setCurrentTenant } = useAuthStore();
   const t = useTranslations('onboarding');
   const td = useTranslations('domains');
+  const tTerms = useTranslations('domainTerms');
   const ts = useTranslations('studio');
   const { toast } = useToast();
 
@@ -228,6 +229,7 @@ export default function CreateBlogPage() {
   });
   const [registrantYears, setRegistrantYears] = useState(1);
   const [registrantAutoRenew, setRegistrantAutoRenew] = useState(false);
+  const [termsConsent, setTermsConsent] = useState(false);
 
   const { data: domainSearchResults = [], isFetching: searchingDomains } = useQuery({
     queryKey: ['new-blog-domain-search', createdTenant?.id, domainSubmitted],
@@ -241,6 +243,7 @@ export default function CreateBlogPage() {
       years: registrantYears,
       auto_renew: registrantAutoRenew,
       registrant: { ...registrant, phone: formatRegistrantPhone(registrant.country, registrant.phone) },
+      consent: termsConsent,
     }).then(r => r.data),
     onSuccess: (data) => setPayment(data),
   });
@@ -585,9 +588,29 @@ export default function CreateBlogPage() {
                         {[1, 2, 3, 5].map(y => <option key={y} value={y}>{y} {td('years')}</option>)}
                       </select>
                     </div>
+                    <label className="flex items-start gap-2 mt-3.5 text-[12px] text-slate-600 dark:text-slate-400">
+                      <input
+                        type="checkbox"
+                        checked={termsConsent}
+                        onChange={e => setTermsConsent(e.target.checked)}
+                        className="rounded mt-0.5 shrink-0"
+                      />
+                      <span>
+                        {tTerms('checkboxLabel')}{' '}
+                        <Link
+                          href={`/${locale}/legal/domain-purchase-terms`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={e => e.stopPropagation()}
+                          className="font-semibold text-blue-600 hover:underline"
+                        >
+                          {tTerms('checkboxLinkText')}
+                        </Link>
+                      </span>
+                    </label>
                     <button
                       onClick={() => purchaseMut.mutate()}
-                      disabled={purchaseMut.isPending || !registrant.name || !registrant.email || !registrant.address || !registrant.city || !registrant.country || !registrant.zipcode || !isValidLocalPhoneNumber(registrant.country, registrant.phone)}
+                      disabled={purchaseMut.isPending || !registrant.name || !registrant.email || !registrant.address || !registrant.city || !registrant.country || !registrant.zipcode || !isValidLocalPhoneNumber(registrant.country, registrant.phone) || !termsConsent}
                       className="w-full mt-4 flex items-center justify-center gap-2 h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-bold disabled:opacity-50"
                     >
                       {purchaseMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5" />}

@@ -2599,12 +2599,12 @@
     "yourLink": "Ваша реферальная ссылка",
     "copyLink": "Скопировать ссылку",
     "copied": "Скопировано!",
-    "balance": "Доступный остаток",
+    "balance": "Непогашенная сумма",
     "threshold": "Минимальная сумма вывода средств",
     "requestCashout": "Запросить вывод средств",
     "cashoutFee": "Плата",
     "totalEarned": "Общая сумма заработка",
-    "totalPaidOut": "Общая сумма выплат",
+    "totalPaidOut": "Выплаченная сумма",
     "totalReferrals": "Прямые направления",
     "pendingCommissions": "Незавершенные заказы",
     "commissionsTitle": "История комиссии",
@@ -3863,7 +3863,10 @@
       "status_registered": "Зарегистрирован",
       "status_registration_failed": "Регистрация не удалась",
       "status_refund_pending": "Возврат средств находится на рассмотрении",
-      "status_refunded": "Возвращено"
+      "status_refunded": "Возвращено",
+      "termsAcceptedLabel": "Условия приняты",
+      "termsCurrentVersion": "текущая версия",
+      "termsOutdatedVersion": "устаревшая версия"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Попробуйте ещё раз"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Назад",
+    "checkboxLabel": "Я ознакомился с и согласен с",
+    "checkboxLinkText": "Условия регистрации и приобретения доменов",
+    "consentRequired": "Чтобы продолжить, вам необходимо принять «Условия регистрации и покупки домена»."
   }
 }

@@ -2599,12 +2599,12 @@
     "yourLink": "Din henvisningslenke",
     "copyLink": "Kopier lenken",
     "copied": "Kopiert!",
-    "balance": "Tilgjengelig saldo",
+    "balance": "Ubetalt beløp",
     "threshold": "Minimumsbeløp for uttak",
     "requestCashout": "Be om utbetaling",
     "cashoutFee": "Gebyr",
     "totalEarned": "Totalt opptjent",
-    "totalPaidOut": "Totalt utbetalt",
+    "totalPaidOut": "Betalt beløp",
     "totalReferrals": "Direkte henvisninger",
     "pendingCommissions": "Uavklarte oppdrag",
     "commissionsTitle": "Kommisjonens historie",
@@ -3863,7 +3863,10 @@
       "status_registered": "Registrert",
       "status_registration_failed": "Registreringen mislyktes",
       "status_refund_pending": "Tilbakebetaling venter på behandling",
-      "status_refunded": "Refusert"
+      "status_refunded": "Refusert",
+      "termsAcceptedLabel": "Vilkår godkjent",
+      "termsCurrentVersion": "gjeldende versjon",
+      "termsOutdatedVersion": "foreldet versjon"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Prøv på nytt"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Tilbake",
+    "checkboxLabel": "Jeg har lest og godtar",
+    "checkboxLinkText": "Vilkår og betingelser for registrering og kjøp av domener",
+    "consentRequired": "Du må godta vilkårene og betingelsene for domeneregistrering og kjøp for å kunne fortsette."
   }
 }

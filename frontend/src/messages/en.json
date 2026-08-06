@@ -2599,12 +2599,12 @@
     "yourLink": "Your referral link",
     "copyLink": "Copy link",
     "copied": "Copied!",
-    "balance": "Available balance",
+    "balance": "Outstanding amount",
     "threshold": "Minimum cashout",
     "requestCashout": "Request cashout",
     "cashoutFee": "Fee",
     "totalEarned": "Total earned",
-    "totalPaidOut": "Total paid out",
+    "totalPaidOut": "Paid amount",
     "totalReferrals": "Direct referrals",
     "pendingCommissions": "Pending commissions",
     "commissionsTitle": "Commission history",
@@ -2711,6 +2711,12 @@
     "payCta": "Pay ${amount} and verify",
     "paymentConfirmedTitle": "Payment confirmed",
     "paymentConfirmedDesc": "Your identity verification session has started — check back here for updates."
+  },
+  "domainTerms": {
+    "back": "Back",
+    "checkboxLabel": "I have read and agree to the",
+    "checkboxLinkText": "Domain Registration and Purchase Terms & Conditions",
+    "consentRequired": "You must accept the Domain Registration and Purchase Terms & Conditions to continue."
   },
   "invoices": {
     "title": "Invoices",
@@ -3882,6 +3888,9 @@
       "activityLogLabel": "Activity log",
       "yearsUnit": "yr",
       "txLabel": "tx",
+      "termsAcceptedLabel": "Terms accepted",
+      "termsCurrentVersion": "current version",
+      "termsOutdatedVersion": "outdated version",
       "status_pending_payment": "Pending payment",
       "status_paid": "Paid",
       "status_registering": "Registering",

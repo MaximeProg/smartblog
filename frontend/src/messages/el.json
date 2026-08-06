@@ -2599,12 +2599,12 @@
     "yourLink": "Ο σύνδεσμος παραπομπής σας",
     "copyLink": "Αντιγραφή συνδέσμου",
     "copied": "Αντιγράφηκε!",
-    "balance": "Διαθέσιμο υπόλοιπο",
+    "balance": "Υπόλοιπο οφειλής",
     "threshold": "Ελάχιστο ποσό ανάληψης",
     "requestCashout": "Αίτημα εξαργύρωσης",
     "cashoutFee": "Τέλος",
     "totalEarned": "Σύνολο αποδοχών",
-    "totalPaidOut": "Συνολικό ποσό που καταβλήθηκε",
+    "totalPaidOut": "Πληρωθέν ποσό",
     "totalReferrals": "Άμεσες παραπομπές",
     "pendingCommissions": "Εκκρεμείς παραγγελίες",
     "commissionsTitle": "Ιστορικό της Επιτροπής",
@@ -3863,7 +3863,10 @@
       "status_registered": "Εγγεγραμμένος",
       "status_registration_failed": "Η εγγραφή απέτυχε",
       "status_refund_pending": "Η επιστροφή χρημάτων βρίσκεται σε εκκρεμότητα",
-      "status_refunded": "Επιστροφή χρημάτων"
+      "status_refunded": "Επιστροφή χρημάτων",
+      "termsAcceptedLabel": "Οι όροι έγιναν αποδεκτοί",
+      "termsCurrentVersion": "τρέχουσα έκδοση",
+      "termsOutdatedVersion": "παρωχημένη έκδοση"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Προσπάθησε ξανά"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Πίσω",
+    "checkboxLabel": "Έχω διαβάσει και συμφωνώ με τους",
+    "checkboxLinkText": "Όροι και Προϋποθέσεις Εγγραφής και Αγοράς Ονομάτων Χώρου",
+    "consentRequired": "Για να συνεχίσετε, πρέπει να αποδεχτείτε τους Όρους και Προϋποθέσεις Εγγραφής και Αγοράς Ονόματος Χώρου."
   }
 }

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useQuery } from '@tanstack/react-query';
 import {
   Globe, Search, RefreshCw, Loader2, ChevronDown, ChevronUp, Star,
-  ShoppingCart, ExternalLink, AlertTriangle,
+  ShoppingCart, ExternalLink, AlertTriangle, ScrollText,
 } from 'lucide-react';
 import { superadminApi, type SuperAdminDomainView } from '@/lib/api';
 import SAPagination from '@/components/superadmin/SAPagination';
@@ -94,17 +94,38 @@ function DomainRow({ d }: { d: SuperAdminDomainView }) {
                   <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: 'var(--sa-text-3)' }}>{t('domains.ordersLabel')}</p>
                   <div className="space-y-1.5">
                     {detail.orders.map((o) => (
-                      <div key={o.id} className="flex items-center gap-2 text-[12px] p-2 rounded-lg" style={{ background: 'var(--sa-surface)' }}>
-                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${ORDER_STATUS_COLOR[o.status] ?? ''}`}>{t(`domains.status_${o.status}` as any)}</span>
-                        <span style={{ color: 'var(--sa-text-2)' }}>{o.years} {t('domains.yearsUnit')}</span>
-                        {o.purchase_price != null && <span style={{ color: 'var(--sa-text-2)' }}>${o.purchase_price.toFixed(2)}</span>}
-                        <span style={{ color: 'var(--sa-text-3)' }}>{fmtDate(o.created_at)}</span>
-                        {o.transaction_id && (
-                          <span className="flex items-center gap-1 text-[11px]" style={{ color: 'var(--sa-text-3)' }}>
-                            <ExternalLink className="h-3 w-3" /> {t('domains.txLabel')} {o.transaction_id.slice(0, 8)}
-                          </span>
+                      <div key={o.id} className="p-2 rounded-lg space-y-1" style={{ background: 'var(--sa-surface)' }}>
+                        <div className="flex items-center gap-2 text-[12px]">
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${ORDER_STATUS_COLOR[o.status] ?? ''}`}>{t(`domains.status_${o.status}` as any)}</span>
+                          <span style={{ color: 'var(--sa-text-2)' }}>{o.years} {t('domains.yearsUnit')}</span>
+                          {o.purchase_price != null && <span style={{ color: 'var(--sa-text-2)' }}>${o.purchase_price.toFixed(2)}</span>}
+                          <span style={{ color: 'var(--sa-text-3)' }}>{fmtDate(o.created_at)}</span>
+                          {o.transaction_id && (
+                            <span className="flex items-center gap-1 text-[11px]" style={{ color: 'var(--sa-text-3)' }}>
+                              <ExternalLink className="h-3 w-3" /> {t('domains.txLabel')} {o.transaction_id.slice(0, 8)}
+                            </span>
+                          )}
+                          {o.error_message && <span className="text-red-500 truncate">{o.error_message}</span>}
+                        </div>
+                        {o.terms_accepted_at && (
+                          <div className="flex items-center gap-1.5 text-[10.5px] pl-0.5" style={{ color: 'var(--sa-text-3)' }}>
+                            <ScrollText className="h-3 w-3 shrink-0" />
+                            {t('domains.termsAcceptedLabel')} {fmtDate(o.terms_accepted_at)}
+                            {o.terms_accepted_ip && <span>· IP {o.terms_accepted_ip}</span>}
+                            {o.terms_content_hash && (
+                              <span className={`font-mono px-1 py-0.5 rounded border text-[9.5px] ${
+                                o.terms_content_hash === detail.current_terms_content_hash
+                                  ? 'text-emerald-500 border-emerald-500/20 bg-emerald-500/10'
+                                  : 'text-amber-500 border-amber-500/20 bg-amber-500/10'
+                              }`}>
+                                {o.terms_content_hash.slice(0, 8)}
+                                {o.terms_content_hash === detail.current_terms_content_hash
+                                  ? ` · ${t('domains.termsCurrentVersion')}`
+                                  : ` · ${t('domains.termsOutdatedVersion')}`}
+                              </span>
+                            )}
+                          </div>
                         )}
-                        {o.error_message && <span className="text-red-500 truncate">{o.error_message}</span>}
                       </div>
                     ))}
                   </div>

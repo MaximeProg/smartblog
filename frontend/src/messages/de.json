@@ -2599,12 +2599,12 @@
     "yourLink": "Dein Empfehlungslink",
     "copyLink": "Link kopieren",
     "copied": "Kopiert!",
-    "balance": "Verfügbares Guthaben",
+    "balance": "Ausstehender Betrag",
     "threshold": "Mindestauszahlungsbetrag",
     "requestCashout": "Auszahlung beantragen",
     "cashoutFee": "Gebühr",
     "totalEarned": "Gesamtverdienst",
-    "totalPaidOut": "Gesamtbetrag der Auszahlungen",
+    "totalPaidOut": "Gezahlter Betrag",
     "totalReferrals": "Direkte Überweisungen",
     "pendingCommissions": "Ausstehende Aufträge",
     "commissionsTitle": "Entstehungsgeschichte der Kommission",
@@ -3863,7 +3863,10 @@
       "status_registered": "Registriert",
       "status_registration_failed": "Die Registrierung ist fehlgeschlagen",
       "status_refund_pending": "Rückerstattung ausstehend",
-      "status_refunded": "Erstattet"
+      "status_refunded": "Erstattet",
+      "termsAcceptedLabel": "Bedingungen akzeptiert",
+      "termsCurrentVersion": "aktuelle Version",
+      "termsOutdatedVersion": "veraltete Version"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Versuche es noch einmal"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Zurück",
+    "checkboxLabel": "Ich habe die folgenden Bedingungen gelesen und stimme ihnen zu:",
+    "checkboxLinkText": "Allgemeine Geschäftsbedingungen für die Registrierung und den Kauf von Domains",
+    "consentRequired": "Sie müssen die Allgemeinen Geschäftsbedingungen für die Domainregistrierung und den Kauf akzeptieren, um fortzufahren."
   }
 }

@@ -1698,7 +1698,7 @@
           "1 forfatter",
           "1 GB lagerplads",
           "smarterbloggers.com-underdomæne",
-          "Inkluderer virksomhedsskabelon"
+          "Inkluderet virksomhedsskabelon"
         ]
       },
       "starter": {
@@ -2599,12 +2599,12 @@
     "yourLink": "Dit henvisningslink",
     "copyLink": "Kopier link",
     "copied": "Kopieret!",
-    "balance": "Tilgængelig saldo",
+    "balance": "Udestående beløb",
     "threshold": "Minimumsudbetaling",
     "requestCashout": "Anmod om udbetaling",
     "cashoutFee": "Gebyr",
     "totalEarned": "Samlet indtjening",
-    "totalPaidOut": "Samlet udbetalt beløb",
+    "totalPaidOut": "Betalt beløb",
     "totalReferrals": "Direkte henvisninger",
     "pendingCommissions": "Uafsluttede opgaver",
     "commissionsTitle": "Kommissionens historie",
@@ -3863,7 +3863,10 @@
       "status_registered": "Registreret",
       "status_registration_failed": "Registreringen mislykkedes",
       "status_refund_pending": "Refusion afventer",
-      "status_refunded": "Refunderet"
+      "status_refunded": "Refunderet",
+      "termsAcceptedLabel": "Betingelser accepteret",
+      "termsCurrentVersion": "aktuel version",
+      "termsOutdatedVersion": "forældet version"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Prøv igen"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Tilbage",
+    "checkboxLabel": "Jeg har læst og accepterer",
+    "checkboxLinkText": "Vilkår og betingelser for registrering og køb af domæner",
+    "consentRequired": "Du skal acceptere vilkårene og betingelserne for domæneregistrering og -køb for at kunne fortsætte."
   }
 }

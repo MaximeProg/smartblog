@@ -2599,12 +2599,12 @@
     "yourLink": "Tautan rujukan Anda",
     "copyLink": "Salin tautan",
     "copied": "Sudah disalin!",
-    "balance": "Saldo yang tersedia",
+    "balance": "Jumlah yang belum dibayar",
     "threshold": "Jumlah penarikan minimum",
     "requestCashout": "Ajukan penarikan dana",
     "cashoutFee": "Biaya",
     "totalEarned": "Total yang diperoleh",
-    "totalPaidOut": "Total yang telah dibayarkan",
+    "totalPaidOut": "Jumlah yang telah dibayarkan",
     "totalReferrals": "Rujukan langsung",
     "pendingCommissions": "Komisi yang masih tertunda",
     "commissionsTitle": "Riwayat Komisi",
@@ -3863,7 +3863,10 @@
       "status_registered": "Telah terdaftar",
       "status_registration_failed": "Pendaftaran gagal",
       "status_refund_pending": "Pengembalian dana sedang diproses",
-      "status_refunded": "Dikembalikan"
+      "status_refunded": "Dikembalikan",
+      "termsAcceptedLabel": "Ketentuan yang disetujui",
+      "termsCurrentVersion": "versi saat ini",
+      "termsOutdatedVersion": "versi yang sudah usang"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Coba lagi"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Kembali",
+    "checkboxLabel": "Saya telah membaca dan menyetujui",
+    "checkboxLinkText": "Syarat dan Ketentuan Pendaftaran dan Pembelian Domain",
+    "consentRequired": "Anda harus menyetujui Syarat dan Ketentuan Pendaftaran dan Pembelian Domain untuk melanjutkan."
   }
 }

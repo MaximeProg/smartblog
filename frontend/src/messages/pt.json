@@ -2599,12 +2599,12 @@
     "yourLink": "O teu link de indicação",
     "copyLink": "Copiar link",
     "copied": "Copiado!",
-    "balance": "Saldo disponível",
+    "balance": "Montante pendente",
     "threshold": "Levantamento mínimo",
     "requestCashout": "Solicitar levantamento",
     "cashoutFee": "Taxa",
     "totalEarned": "Total auferido",
-    "totalPaidOut": "Total pago",
+    "totalPaidOut": "Montante pago",
     "totalReferrals": "Encaminhamentos diretos",
     "pendingCommissions": "Comissões pendentes",
     "commissionsTitle": "Histórico da Comissão",
@@ -3863,7 +3863,10 @@
       "status_registered": "Registado",
       "status_registration_failed": "O registo falhou",
       "status_refund_pending": "Reembolso pendente",
-      "status_refunded": "Reembolsado"
+      "status_refunded": "Reembolsado",
+      "termsAcceptedLabel": "Termos aceites",
+      "termsCurrentVersion": "versão atual",
+      "termsOutdatedVersion": "versão desatualizada"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Tenta novamente"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Voltar",
+    "checkboxLabel": "Li e concordo com os",
+    "checkboxLinkText": "Termos e Condições de Registo e Compra de Domínios",
+    "consentRequired": "Tem de aceitar os Termos e Condições de Registo e Compra de Domínios para continuar."
   }
 }

@@ -1727,7 +1727,7 @@
           "10 autorov",
           "50 GB úložného priestoru",
           "Vlastná doména",
-          "Komplexná analýza + SEO",
+          "Komplexná analytika + SEO",
           "Prístup k API",
           "Špecializovaná podpora"
         ]
@@ -2599,12 +2599,12 @@
     "yourLink": "Váš odporúčací odkaz",
     "copyLink": "Kopírovať odkaz",
     "copied": "Skopírované!",
-    "balance": "Dostupný zostatok",
+    "balance": "Neuhradená suma",
     "threshold": "Minimálna výška výplaty",
     "requestCashout": "Požiadať o výplatu",
     "cashoutFee": "Poplatok",
     "totalEarned": "Celková suma zarobená",
-    "totalPaidOut": "Celková vyplatená suma",
+    "totalPaidOut": "Vyplatená suma",
     "totalReferrals": "Priame odporúčania",
     "pendingCommissions": "Nevybavené provízie",
     "commissionsTitle": "História komisie",
@@ -3863,7 +3863,10 @@
       "status_registered": "Zaregistrovaný",
       "status_registration_failed": "Registrácia sa nepodarila",
       "status_refund_pending": "Čaká sa na vrátenie peňazí",
-      "status_refunded": "Vrátené"
+      "status_refunded": "Vrátené",
+      "termsAcceptedLabel": "Podmienky prijaté",
+      "termsCurrentVersion": "aktuálna verzia",
+      "termsOutdatedVersion": "zastaraná verzia"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Skúste to znova"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Späť",
+    "checkboxLabel": "Prečítal som si a súhlasím s",
+    "checkboxLinkText": "Obchodné podmienky registrácie a nákupu domén",
+    "consentRequired": "Ak chcete pokračovať, musíte súhlasiť s podmienkami registrácie a nákupu domén."
   }
 }

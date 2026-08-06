@@ -2599,12 +2599,12 @@
     "yourLink": "Je verwijzingslink",
     "copyLink": "Link kopiëren",
     "copied": "Gekopieerd!",
-    "balance": "Beschikbaar saldo",
+    "balance": "Openstaand bedrag",
     "threshold": "Minimumbedrag voor uitbetaling",
     "requestCashout": "Uitbetaling aanvragen",
     "cashoutFee": "Vergoeding",
     "totalEarned": "Totaal verdiend",
-    "totalPaidOut": "Totaal uitgekeerd",
+    "totalPaidOut": "Betaald bedrag",
     "totalReferrals": "Rechtstreekse doorverwijzingen",
     "pendingCommissions": "Lopende opdrachten",
     "commissionsTitle": "Geschiedenis van de Commissie",
@@ -3863,7 +3863,10 @@
       "status_registered": "Geregistreerd",
       "status_registration_failed": "Registratie is mislukt",
       "status_refund_pending": "Terugbetaling in behandeling",
-      "status_refunded": "Terugbetaald"
+      "status_refunded": "Terugbetaald",
+      "termsAcceptedLabel": "Voorwaarden aanvaard",
+      "termsCurrentVersion": "huidige versie",
+      "termsOutdatedVersion": "verouderde versie"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Probeer het nog eens"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Terug",
+    "checkboxLabel": "Ik heb de volgende voorwaarden gelezen en ga hiermee akkoord:",
+    "checkboxLinkText": "Algemene voorwaarden voor domeinregistratie en -aankoop",
+    "consentRequired": "U moet akkoord gaan met de Algemene Voorwaarden voor domeinregistratie en -aankoop om door te gaan."
   }
 }

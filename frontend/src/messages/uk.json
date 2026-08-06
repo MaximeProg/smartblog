@@ -2599,12 +2599,12 @@
     "yourLink": "Ваше реферальне посилання",
     "copyLink": "Скопіювати посилання",
     "copied": "Скопійовано!",
-    "balance": "Доступний залишок",
+    "balance": "Заборгованість",
     "threshold": "Мінімальна сума виведення коштів",
     "requestCashout": "Подати заявку на виведення коштів",
     "cashoutFee": "Плата",
     "totalEarned": "Загальна сума заробленого",
-    "totalPaidOut": "Загальна виплачена сума",
+    "totalPaidOut": "Сума, що була сплачена",
     "totalReferrals": "Прямі направлення",
     "pendingCommissions": "Комісії, що очікують на опрацювання",
     "commissionsTitle": "Історія комісії",
@@ -3863,7 +3863,10 @@
       "status_registered": "Зареєстровано",
       "status_registration_failed": "Реєстрація не вдалася",
       "status_refund_pending": "Повернення коштів очікується",
-      "status_refunded": "Повернуто"
+      "status_refunded": "Повернуто",
+      "termsAcceptedLabel": "Умови прийнято",
+      "termsCurrentVersion": "поточна версія",
+      "termsOutdatedVersion": "застаріла версія"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Спробуйте ще раз"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Назад",
+    "checkboxLabel": "Я ознайомився та погоджуюся з",
+    "checkboxLinkText": "Умови реєстрації та придбання доменів",
+    "consentRequired": "Щоб продовжити, вам необхідно погодитися з Умовами реєстрації та придбання доменів."
   }
 }

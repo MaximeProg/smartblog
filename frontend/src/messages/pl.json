@@ -2599,12 +2599,12 @@
     "yourLink": "Twój link polecający",
     "copyLink": "Skopiuj link",
     "copied": "Skopiowano!",
-    "balance": "Dostępne saldo",
+    "balance": "Należność",
     "threshold": "Minimalna kwota wypłaty",
     "requestCashout": "Zgłoś wypłatę",
     "cashoutFee": "Opłata",
     "totalEarned": "Łączna kwota zarobków",
-    "totalPaidOut": "Łączna wypłacona kwota",
+    "totalPaidOut": "Kwota zapłacona",
     "totalReferrals": "Bezpośrednie skierowania",
     "pendingCommissions": "Zlecenia oczekujące",
     "commissionsTitle": "Historia Komisji",
@@ -3863,7 +3863,10 @@
       "status_registered": "Zarejestrowany",
       "status_registration_failed": "Rejestracja nie powiodła się",
       "status_refund_pending": "Oczekuje się na zwrot środków",
-      "status_refunded": "Zwrot kosztów"
+      "status_refunded": "Zwrot kosztów",
+      "termsAcceptedLabel": "Warunki zaakceptowane",
+      "termsCurrentVersion": "aktualna wersja",
+      "termsOutdatedVersion": "przestarzała wersja"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Spróbuj ponownie"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Powrót",
+    "checkboxLabel": "Zapoznałem się z poniższymi warunkami i wyrażam na nie zgodę:",
+    "checkboxLinkText": "Warunki rejestracji i zakupu domen",
+    "consentRequired": "Aby kontynuować, należy zaakceptować Warunki rejestracji i zakupu domeny."
   }
 }

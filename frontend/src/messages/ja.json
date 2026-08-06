@@ -2599,12 +2599,12 @@
     "yourLink": "あなたの紹介リンク",
     "copyLink": "リンクをコピー",
     "copied": "コピーしました！",
-    "balance": "利用可能残高",
+    "balance": "未払い残高",
     "threshold": "最低出金額",
     "requestCashout": "出金を依頼する",
     "cashoutFee": "手数料",
     "totalEarned": "獲得総額",
-    "totalPaidOut": "支払総額",
+    "totalPaidOut": "支払額",
     "totalReferrals": "直接の紹介",
     "pendingCommissions": "未処理の注文",
     "commissionsTitle": "委員会の沿革",
@@ -3863,7 +3863,10 @@
       "status_registered": "登録済み",
       "status_registration_failed": "登録に失敗しました",
       "status_refund_pending": "返金処理中",
-      "status_refunded": "返金済み"
+      "status_refunded": "返金済み",
+      "termsAcceptedLabel": "条件に同意しました",
+      "termsCurrentVersion": "最新バージョン",
+      "termsOutdatedVersion": "古いバージョン"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "もう一度試してみてください"
       }
     }
+  },
+  "domainTerms": {
+    "back": "戻る",
+    "checkboxLabel": "私は以下の内容を読み、これに同意します。",
+    "checkboxLinkText": "ドメイン登録および購入に関する利用規約",
+    "consentRequired": "続行するには、「ドメイン登録および購入に関する利用規約」に同意する必要があります。"
   }
 }

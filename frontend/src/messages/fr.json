@@ -2599,12 +2599,12 @@
     "yourLink": "Votre lien de parrainage",
     "copyLink": "Copier le lien",
     "copied": "Copié !",
-    "balance": "Solde disponible",
+    "balance": "Montant en attente",
     "threshold": "Retrait minimum",
     "requestCashout": "Demander un retrait",
     "cashoutFee": "Frais",
     "totalEarned": "Total gagné",
-    "totalPaidOut": "Total versé",
+    "totalPaidOut": "Montant payé",
     "totalReferrals": "Filleuls directs",
     "pendingCommissions": "Commissions en attente",
     "commissionsTitle": "Historique des commissions",
@@ -2711,6 +2711,12 @@
     "payCta": "Payer {amount}$ et vérifier",
     "paymentConfirmedTitle": "Paiement confirmé",
     "paymentConfirmedDesc": "Votre session de vérification d'identité a démarré — revenez ici pour suivre son évolution."
+  },
+  "domainTerms": {
+    "back": "Retour",
+    "checkboxLabel": "J'ai lu et j'accepte les",
+    "checkboxLinkText": "Conditions Générales d'Enregistrement et d'Achat de Domaine",
+    "consentRequired": "Vous devez accepter les Conditions Générales d'achat de domaine pour continuer."
   },
   "invoices": {
     "title": "Factures",
@@ -3882,6 +3888,9 @@
       "activityLogLabel": "Journal d'activité",
       "yearsUnit": "an(s)",
       "txLabel": "tx",
+      "termsAcceptedLabel": "CGV acceptées",
+      "termsCurrentVersion": "version actuelle",
+      "termsOutdatedVersion": "version obsolète",
       "status_pending_payment": "Paiement en attente",
       "status_paid": "Payé",
       "status_registering": "Enregistrement en cours",

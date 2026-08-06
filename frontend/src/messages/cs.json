@@ -2599,12 +2599,12 @@
     "yourLink": "Váš referral odkaz",
     "copyLink": "Zkopírovat odkaz",
     "copied": "Zkopírováno!",
-    "balance": "Dostupný zůstatek",
+    "balance": "Dlužná částka",
     "threshold": "Minimální částka pro výběr",
     "requestCashout": "Požádat o výběr",
     "cashoutFee": "Poplatek",
     "totalEarned": "Celkem vydělané",
-    "totalPaidOut": "Celková vyplacená částka",
+    "totalPaidOut": "Vyplacená částka",
     "totalReferrals": "Přímá doporučení",
     "pendingCommissions": "Neuhrazené provize",
     "commissionsTitle": "Historie komise",
@@ -3863,7 +3863,10 @@
       "status_registered": "Zaregistrován",
       "status_registration_failed": "Registrace se nezdařila",
       "status_refund_pending": "Čeká se na vrácení peněz",
-      "status_refunded": "Vráceno"
+      "status_refunded": "Vráceno",
+      "termsAcceptedLabel": "Podmínky byly přijaty",
+      "termsCurrentVersion": "aktuální verze",
+      "termsOutdatedVersion": "zastaralá verze"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Zkuste to znovu"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Zpět",
+    "checkboxLabel": "Přečetl jsem si a souhlasím s",
+    "checkboxLinkText": "Obchodní podmínky pro registraci a nákup domén",
+    "consentRequired": "Chcete-li pokračovat, musíte souhlasit s obchodními podmínkami pro registraci a nákup domén."
   }
 }

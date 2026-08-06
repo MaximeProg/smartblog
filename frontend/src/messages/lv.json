@@ -2599,12 +2599,12 @@
     "yourLink": "Tava ieteikuma saite",
     "copyLink": "Kopēt saiti",
     "copied": "Kopēts!",
-    "balance": "Pieejamais atlikums",
+    "balance": "Neapmaksātā summa",
     "threshold": "Minimālā izmaksas summa",
     "requestCashout": "Pieprasīt izmaksu",
     "cashoutFee": "Maksas",
     "totalEarned": "Kopējie nopelnītie",
-    "totalPaidOut": "Kopējā izmaksātā summa",
+    "totalPaidOut": "Samaksātā summa",
     "totalReferrals": "Tiešas norādes",
     "pendingCommissions": "Neizpildītie pasūtījumi",
     "commissionsTitle": "Komisijas vēsture",
@@ -3863,7 +3863,10 @@
       "status_registered": "Reģistrēts",
       "status_registration_failed": "Reģistrācija neizdevās",
       "status_refund_pending": "Atmaksa tiek apstrādāta",
-      "status_refunded": "Atmaksāts"
+      "status_refunded": "Atmaksāts",
+      "termsAcceptedLabel": "Pieņemtie nosacījumi",
+      "termsCurrentVersion": "pašreizējā versija",
+      "termsOutdatedVersion": "novecojusi versija"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Mēģini vēlreiz"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Atpakaļ",
+    "checkboxLabel": "Esmu izlasījis(-usi) un piekrītu",
+    "checkboxLinkText": "Domēna reģistrācijas un iegādes noteikumi un nosacījumi",
+    "consentRequired": "Lai turpinātu, jums ir jāpiekrīt domēna reģistrācijas un iegādes noteikumiem un nosacījumiem."
   }
 }

@@ -2599,12 +2599,12 @@
     "yourLink": "Linkul tău de recomandare",
     "copyLink": "Copiază linkul",
     "copied": "S-a copiat!",
-    "balance": "Sold disponibil",
+    "balance": "Suma restantă",
     "threshold": "Suma minimă de retragere",
     "requestCashout": "Solicită retragerea fondurilor",
     "cashoutFee": "Taxă",
     "totalEarned": "Totalul veniturilor realizate",
-    "totalPaidOut": "Suma totală plătită",
+    "totalPaidOut": "Suma plătită",
     "totalReferrals": "Recomandări directe",
     "pendingCommissions": "Comisioane în curs de procesare",
     "commissionsTitle": "Istoricul Comisiei",
@@ -3863,7 +3863,10 @@
       "status_registered": "Înregistrat",
       "status_registration_failed": "Înregistrarea a eșuat",
       "status_refund_pending": "Rambursare în curs",
-      "status_refunded": "Rambursat"
+      "status_refunded": "Rambursat",
+      "termsAcceptedLabel": "Termeni acceptați",
+      "termsCurrentVersion": "versiunea actuală",
+      "termsOutdatedVersion": "versiune învechită"
     },
     "platformPages": {
       "cmsLabel": "CMS",
@@ -4050,5 +4053,11 @@
         "cta": "Încearcă din nou"
       }
     }
+  },
+  "domainTerms": {
+    "back": "Înapoi",
+    "checkboxLabel": "Am citit și sunt de acord cu",
+    "checkboxLinkText": "Termeni și condiții privind înregistrarea și achiziționarea domeniilor",
+    "consentRequired": "Pentru a continua, trebuie să acceptați Termenii și condițiile privind înregistrarea și achiziționarea domeniilor."
   }
 }

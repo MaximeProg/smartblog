@@ -612,6 +612,10 @@ async def get_domain_detail(
         params,
     )
 
+    current_terms_row = (await db.execute(
+        text("SELECT content_hash FROM platform_pages WHERE slug = 'legal-domain-purchase-terms'"),
+    )).fetchone()
+
     return {
         "domain": {
             "id": str(d.id),
@@ -623,6 +627,7 @@ async def get_domain_detail(
             "expires_at": d.expires_at.isoformat() if d.expires_at else None,
             "auto_renew": d.auto_renew,
         },
+        "current_terms_content_hash": current_terms_row.content_hash if current_terms_row else None,
         "orders": [
             {
                 "id": str(o.id),
@@ -634,6 +639,13 @@ async def get_domain_detail(
                 "error_message": o.error_message,
                 "created_at": o.created_at.isoformat(),
                 "registered_at": o.registered_at.isoformat() if o.registered_at else None,
+                # Consentement CGV d'achat de domaine (décision PDG 2026-08-06) —
+                # terms_content_hash tronqué à l'affichage, valeur complète
+                # comparable au content_hash courant de platform_pages pour
+                # savoir si le client a accepté une version depuis modifiée.
+                "terms_content_hash": o.terms_content_hash,
+                "terms_accepted_at": o.terms_accepted_at.isoformat() if o.terms_accepted_at else None,
+                "terms_accepted_ip": o.terms_accepted_ip,
             }
             for o in orders
         ],
