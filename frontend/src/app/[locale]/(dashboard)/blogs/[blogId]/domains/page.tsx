@@ -7,7 +7,7 @@ import { useState } from 'react';
 import {
   Globe, Plus, Trash2, RefreshCw, CheckCircle2, XCircle,
   Clock, Copy, Check, Loader2, ExternalLink, ChevronDown, ChevronUp,
-  Search, ShoppingCart, Star, Shield, Link2, AlertTriangle,
+  Search, ShoppingCart, Star, Shield, Link2, AlertTriangle, ScrollText,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { domainsApi, paymentsApi, type CustomDomainInfo, type DomainSearchResult, type CryptoPaymentResponse, type DomainOrderStatusInfo } from '@/lib/api';
@@ -192,23 +192,36 @@ export default function DomainsPage() {
       <div className="px-6 py-6 space-y-5">
 
         {/* ── Tab switcher ─────────────────────────────────────────── */}
-        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl p-1 w-fit">
-          <button
-            onClick={() => setTab('connect')}
-            className={`flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12.5px] font-bold transition-colors ${
-              tab === 'connect' ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'
-            }`}
-          >
-            <Link2 className="h-3.5 w-3.5" /> {t('tabConnect')}
-          </button>
-          <button
-            onClick={() => setTab('buy')}
-            className={`flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12.5px] font-bold transition-colors ${
-              tab === 'buy' ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'
-            }`}
-          >
-            <ShoppingCart className="h-3.5 w-3.5" /> {t('tabBuy')}
-          </button>
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 rounded-xl p-1 w-fit">
+            <button
+              onClick={() => setTab('connect')}
+              className={`flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12.5px] font-bold transition-colors ${
+                tab === 'connect' ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              <Link2 className="h-3.5 w-3.5" /> {t('tabConnect')}
+            </button>
+            <button
+              onClick={() => setTab('buy')}
+              className={`flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12.5px] font-bold transition-colors ${
+                tab === 'buy' ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm' : 'text-slate-500 dark:text-slate-400'
+              }`}
+            >
+              <ShoppingCart className="h-3.5 w-3.5" /> {t('tabBuy')}
+            </button>
+          </div>
+          {tab === 'buy' && (
+            <Link
+              href={`/${locale}/legal/domain-purchase-terms`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-[12px] font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition-colors"
+            >
+              <ScrollText className="h-3.5 w-3.5" />
+              {tTerms('checkboxLinkText')}
+            </Link>
+          )}
         </div>
 
         {/* ── Buy a domain ─────────────────────────────────────────── */}

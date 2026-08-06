@@ -26,7 +26,8 @@
     "payments": "Πληρωμές",
     "invoices": "Τιμολόγια",
     "adminConsole": "Κονσόλα διαχείρισης",
-    "adminConsolePlatform": "Πλατφόρμα SmarterBloggers"
+    "adminConsolePlatform": "Πλατφόρμα SmarterBloggers",
+    "domainTerms": "Όροι αγοράς ονόματος χώρου"
   },
   "auth": {
     "login": {

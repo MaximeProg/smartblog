@@ -26,7 +26,8 @@
     "payments": "Mokėjimai",
     "invoices": "Sąskaitos faktūros",
     "adminConsole": "Administravimo konsolė",
-    "adminConsolePlatform": "„SmarterBloggers“ platforma"
+    "adminConsolePlatform": "„SmarterBloggers“ platforma",
+    "domainTerms": "Domeno įsigijimo sąlygos"
   },
   "auth": {
     "login": {

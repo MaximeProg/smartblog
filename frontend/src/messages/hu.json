@@ -26,7 +26,8 @@
     "payments": "Fizetések",
     "invoices": "Számlák",
     "adminConsole": "Adminisztrációs konzol",
-    "adminConsolePlatform": "SmarterBloggers platform"
+    "adminConsolePlatform": "SmarterBloggers platform",
+    "domainTerms": "A domainvásárlás feltételei"
   },
   "auth": {
     "login": {
@@ -1726,7 +1727,7 @@
           "50 000 hírlevél-előfizető",
           "10 szerző",
           "50 GB tárhely",
-          "Egyéni domain",
+          "Egyéni domainnév",
           "Teljes körű elemzés + SEO",
           "API-hozzáférés",
           "Célzott támogatás"

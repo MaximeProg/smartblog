@@ -5,7 +5,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard, Newspaper, User, Bell, CreditCard, Gift,
-  Plus, LogOut, Zap, X, Wallet, Megaphone, Receipt,
+  Plus, LogOut, Zap, X, Wallet, Megaphone, Receipt, ScrollText,
 } from 'lucide-react';
 import { cn, getInitials } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -175,6 +175,15 @@ export function DashboardSidebar() {
           </div>
           <LogOut className="h-3.5 w-3.5 shrink-0 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" />
         </button>
+
+        <Link
+          href={`/${locale}/legal/domain-purchase-terms`}
+          onClick={handleNavClick}
+          className="flex items-center justify-center gap-1.5 text-[10.5px] font-medium text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors pt-0.5"
+        >
+          <ScrollText className="h-3 w-3" />
+          {t('domainTerms')}
+        </Link>
       </div>
     </aside>
   );

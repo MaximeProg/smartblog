@@ -26,7 +26,8 @@
     "payments": "付款",
     "invoices": "发票",
     "adminConsole": "管理控制台",
-    "adminConsolePlatform": "SmarterBloggers 平台"
+    "adminConsolePlatform": "SmarterBloggers 平台",
+    "domainTerms": "域名购买条款"
   },
   "auth": {
     "login": {

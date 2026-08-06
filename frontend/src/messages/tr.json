@@ -26,7 +26,8 @@
     "payments": "Ödemeler",
     "invoices": "Faturalar",
     "adminConsole": "Yönetici Konsolu",
-    "adminConsolePlatform": "SmarterBloggers Platformu"
+    "adminConsolePlatform": "SmarterBloggers Platformu",
+    "domainTerms": "Alan Adı Satın Alma Koşulları"
   },
   "auth": {
     "login": {

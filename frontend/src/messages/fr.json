@@ -26,7 +26,8 @@
     "payments": "Paiements",
     "invoices": "Factures",
     "adminConsole": "Console Admin",
-    "adminConsolePlatform": "Plateforme SmarterBloggers"
+    "adminConsolePlatform": "Plateforme SmarterBloggers",
+    "domainTerms": "CGV d'achat de domaine"
   },
   "auth": {
     "login": {

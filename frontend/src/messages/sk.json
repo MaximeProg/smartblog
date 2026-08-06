@@ -26,7 +26,8 @@
     "payments": "Platby",
     "invoices": "Faktúry",
     "adminConsole": "Administrátorská konzola",
-    "adminConsolePlatform": "Platforma SmarterBloggers"
+    "adminConsolePlatform": "Platforma SmarterBloggers",
+    "domainTerms": "Podmienky nákupu domén"
   },
   "auth": {
     "login": {
@@ -1743,7 +1744,7 @@
           "Neobmedzený úložný priestor",
           "Viacdoménové",
           "White-label",
-          "Záruka SLA",
+          "Zaručená SLA",
           "Špecializované zaškolenie",
           "Podpora 24 hodín denne, 7 dní v týždni"
         ]

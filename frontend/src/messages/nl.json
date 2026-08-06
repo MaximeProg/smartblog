@@ -26,7 +26,8 @@
     "payments": "Betalingen",
     "invoices": "Facturen",
     "adminConsole": "Beheerdersconsole",
-    "adminConsolePlatform": "SmarterBloggers-platform"
+    "adminConsolePlatform": "SmarterBloggers-platform",
+    "domainTerms": "Voorwaarden voor de aankoop van domeinnamen"
   },
   "auth": {
     "login": {

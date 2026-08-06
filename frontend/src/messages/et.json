@@ -26,7 +26,8 @@
     "payments": "Maksed",
     "invoices": "Arved",
     "adminConsole": "Halduskonsol",
-    "adminConsolePlatform": "SmarterBloggersi platvorm"
+    "adminConsolePlatform": "SmarterBloggersi platvorm",
+    "domainTerms": "Domeeni ostutingimused"
   },
   "auth": {
     "login": {

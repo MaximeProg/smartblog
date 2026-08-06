@@ -26,7 +26,8 @@
     "payments": "Płatności",
     "invoices": "Faktury",
     "adminConsole": "Konsola administracyjna",
-    "adminConsolePlatform": "Platforma SmarterBloggers"
+    "adminConsolePlatform": "Platforma SmarterBloggers",
+    "domainTerms": "Warunki zakupu domeny"
   },
   "auth": {
     "login": {
@@ -1698,7 +1699,7 @@
           "1 autor",
           "1 GB pamięci",
           "poddomena smarterbloggers.com",
-          "W zestawie znajduje się szablon firmowy"
+          "W zestawie znajduje się szablon korporacyjny"
         ]
       },
       "starter": {

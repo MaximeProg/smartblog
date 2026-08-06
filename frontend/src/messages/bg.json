@@ -26,7 +26,8 @@
     "payments": "Плащания",
     "invoices": "Фактури",
     "adminConsole": "Конзола за администратори",
-    "adminConsolePlatform": "Платформата SmarterBloggers"
+    "adminConsolePlatform": "Платформата SmarterBloggers",
+    "domainTerms": "Условия за закупуване на домейни"
   },
   "auth": {
     "login": {

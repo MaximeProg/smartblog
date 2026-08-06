@@ -26,7 +26,8 @@
     "payments": "Betalinger",
     "invoices": "Fakturaer",
     "adminConsole": "Administrasjonskonsoll",
-    "adminConsolePlatform": "SmarterBloggers-plattformen"
+    "adminConsolePlatform": "SmarterBloggers-plattformen",
+    "domainTerms": "Vilkår for kjøp av domener"
   },
   "auth": {
     "login": {

@@ -26,7 +26,8 @@
     "payments": "Platby",
     "invoices": "Faktury",
     "adminConsole": "Správcovská konzole",
-    "adminConsolePlatform": "Platforma SmarterBloggers"
+    "adminConsolePlatform": "Platforma SmarterBloggers",
+    "domainTerms": "Podmínky nákupu domény"
   },
   "auth": {
     "login": {

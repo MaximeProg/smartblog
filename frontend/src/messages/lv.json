@@ -26,7 +26,8 @@
     "payments": "Maksājumi",
     "invoices": "Rēķini",
     "adminConsole": "Administratora konsole",
-    "adminConsolePlatform": "„SmarterBloggers“ platforma"
+    "adminConsolePlatform": "„SmarterBloggers“ platforma",
+    "domainTerms": "Domēna iegādes noteikumi"
   },
   "auth": {
     "login": {
@@ -1729,7 +1730,7 @@
           "Pielāgots domēns",
           "Pilnīga analītika + SEO",
           "API piekļuve",
-          "Speciāls atbalsts"
+          "Speciāli paredzēts atbalsts"
         ]
       },
       "business": {
@@ -1744,7 +1745,7 @@
           "Daudzdomēnu",
           "„White-label“",
           "Garantēts SLA",
-          "Speciāli pielāgota ievadapmācība",
+          "Speciāli izstrādāta ievadapmācība",
           "Atbalsts 24 stundas diennaktī, 7 dienas nedēļā"
         ]
       }

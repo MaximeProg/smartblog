@@ -26,7 +26,8 @@
     "payments": "お支払い",
     "invoices": "請求書",
     "adminConsole": "管理コンソール",
-    "adminConsolePlatform": "SmarterBloggers プラットフォーム"
+    "adminConsolePlatform": "SmarterBloggers プラットフォーム",
+    "domainTerms": "ドメイン購入規約"
   },
   "auth": {
     "login": {

@@ -26,7 +26,8 @@
     "payments": "Plačila",
     "invoices": "Računi",
     "adminConsole": "Upraviteljska konzola",
-    "adminConsolePlatform": "Platforma SmarterBloggers"
+    "adminConsolePlatform": "Platforma SmarterBloggers",
+    "domainTerms": "Pogoji nakupa domene"
   },
   "auth": {
     "login": {

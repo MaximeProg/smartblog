@@ -26,7 +26,8 @@
     "payments": "결제",
     "invoices": "청구서",
     "adminConsole": "관리자 콘솔",
-    "adminConsolePlatform": "SmarterBloggers 플랫폼"
+    "adminConsolePlatform": "SmarterBloggers 플랫폼",
+    "domainTerms": "도메인 구매 약관"
   },
   "auth": {
     "login": {

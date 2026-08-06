@@ -26,7 +26,8 @@
     "payments": "Maksut",
     "invoices": "Laskut",
     "adminConsole": "Hallintakonsoli",
-    "adminConsolePlatform": "SmarterBloggers-alusta"
+    "adminConsolePlatform": "SmarterBloggers-alusta",
+    "domainTerms": "Verkkotunnuksen ostoehdot"
   },
   "auth": {
     "login": {

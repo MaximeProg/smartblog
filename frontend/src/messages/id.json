@@ -26,7 +26,8 @@
     "payments": "Pembayaran",
     "invoices": "Faktur",
     "adminConsole": "Konsol Admin",
-    "adminConsolePlatform": "Platform SmarterBloggers"
+    "adminConsolePlatform": "Platform SmarterBloggers",
+    "domainTerms": "Ketentuan Pembelian Domain"
   },
   "auth": {
     "login": {

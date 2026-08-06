@@ -26,7 +26,8 @@
     "payments": "Платежі",
     "invoices": "Рахунки-фактури",
     "adminConsole": "Консоль адміністратора",
-    "adminConsolePlatform": "Платформа SmarterBloggers"
+    "adminConsolePlatform": "Платформа SmarterBloggers",
+    "domainTerms": "Умови придбання домену"
   },
   "auth": {
     "login": {

@@ -26,7 +26,8 @@
     "payments": "Betalinger",
     "invoices": "Fakturaer",
     "adminConsole": "Administrationskonsol",
-    "adminConsolePlatform": "SmarterBloggers-platformen"
+    "adminConsolePlatform": "SmarterBloggers-platformen",
+    "domainTerms": "Betingelser for køb af domæner"
   },
   "auth": {
     "login": {
@@ -1698,7 +1699,7 @@
           "1 forfatter",
           "1 GB lagerplads",
           "smarterbloggers.com-underdomæne",
-          "Inkluderet virksomhedsskabelon"
+          "Inkluderer virksomhedsskabelon"
         ]
       },
       "starter": {
