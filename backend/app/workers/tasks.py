@@ -14,14 +14,14 @@ logger = structlog.get_logger()
 async def send_newsletter_campaign(ctx: dict, campaign_id: str) -> None:
     """Envoie une campagne newsletter à tous les abonnés actifs du tenant."""
     from sqlalchemy import select
-    from app.core.database import AsyncSessionLocal
+    from app.core.database import admin_session
     from app.models.newsletter import NewsletterCampaign, NewsletterSubscriber
     from app.models.tenant import Tenant
     from app.models.enums import SubscriberStatus, CampaignStatus
     from app.services.email_service import send_newsletter_campaign as _send_batch
     from app.core.config import settings
 
-    async with AsyncSessionLocal() as db:
+    async with admin_session() as db:
         campaign = None
         try:
             result = await db.execute(
@@ -109,13 +109,13 @@ async def send_newsletter_campaign(ctx: dict, campaign_id: str) -> None:
 async def publish_to_social(ctx: dict, post_id: str) -> None:
     """Publie un SocialPost sur la plateforme cible via API."""
     from sqlalchemy import select
-    from app.core.database import AsyncSessionLocal
+    from app.core.database import admin_session
     from app.models.social import SocialAccount, SocialPost
     from app.models.enums import SocialPostStatus
     from app.services.social_publisher import publish_article
     from datetime import datetime, timezone
 
-    async with AsyncSessionLocal() as db:
+    async with admin_session() as db:
         result = await db.execute(
             select(SocialPost).where(SocialPost.id == uuid.UUID(post_id))
         )
@@ -161,14 +161,14 @@ async def publish_to_social(ctx: dict, post_id: str) -> None:
 async def auto_publish_scheduled(ctx: dict) -> None:
     """Publie automatiquement les articles SCHEDULED dont scheduled_at <= maintenant."""
     from sqlalchemy import select
-    from app.core.database import AsyncSessionLocal
+    from app.core.database import admin_session
     from app.models.article import Article
     from app.models.enums import ArticleStatus
     from app.services.article_service import change_status
 
     now = datetime.now(timezone.utc)
 
-    async with AsyncSessionLocal() as db:
+    async with admin_session() as db:
         try:
             result = await db.execute(
                 select(Article).where(
@@ -212,13 +212,13 @@ async def health_check_ping(ctx: dict) -> None:
     sur 30 jours. Ne sera significatif qu'après plusieurs semaines de collecte."""
     import time
     from sqlalchemy import text
-    from app.core.database import AsyncSessionLocal
+    from app.core.database import admin_session
     from app.core.redis_client import redis
 
     t0 = time.monotonic()
     db_ok = True
     try:
-        async with AsyncSessionLocal() as db:
+        async with admin_session() as db:
             await db.execute(text("SELECT 1"))
     except Exception as exc:
         db_ok = False
@@ -234,7 +234,7 @@ async def health_check_ping(ctx: dict) -> None:
     latency_ms = int((time.monotonic() - t0) * 1000)
 
     try:
-        async with AsyncSessionLocal() as db:
+        async with admin_session() as db:
             await db.execute(
                 text(
                     "INSERT INTO health_check_log (success, latency_ms, db_ok, redis_ok) "
@@ -252,14 +252,14 @@ async def health_check_ping(ctx: dict) -> None:
 async def auto_send_scheduled_newsletters(ctx: dict) -> None:
     """Envoie automatiquement les campagnes newsletter dont scheduled_at <= maintenant."""
     from sqlalchemy import select
-    from app.core.database import AsyncSessionLocal
+    from app.core.database import admin_session
     from app.models.newsletter import NewsletterCampaign
     from app.models.enums import CampaignStatus
     from app.core.arq_pool import get_arq_pool
 
     now = datetime.now(timezone.utc)
 
-    async with AsyncSessionLocal() as db:
+    async with admin_session() as db:
         try:
             result = await db.execute(
                 select(NewsletterCampaign).where(
@@ -297,7 +297,7 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
     statut PAID (déjà traitées ou en échec)."""
     from sqlalchemy import text
     from app.core.config import settings
-    from app.core.database import AsyncSessionLocal
+    from app.core.database import admin_session
     from app.models.domain import DomainOrder, CustomDomain
     from app.models.enums import DomainOrderStatus, DomainSource, DomainVerificationStatus
     from app.models.payment import Transaction  # noqa: F401 — DomainOrder.transaction_id FK doit trouver ce modèle enregistré dans ce process worker (import local, sinon NoReferencedTableError)
@@ -305,7 +305,7 @@ async def register_purchased_domain(ctx: dict, order_id: str) -> None:
     from app.services.registrars.base import RegistrarError
     from app.services.log_service import log_event
 
-    async with AsyncSessionLocal() as db:
+    async with admin_session() as db:
         order = await db.get(DomainOrder, uuid.UUID(order_id))
         if not order or order.status != DomainOrderStatus.PAID:
             return
@@ -543,12 +543,12 @@ async def retry_domain_hosting_provisioning(ctx: dict, custom_domain_id: str, do
     register_purchased_domain). Jusqu'à _MAX_HOSTING_ATTEMPTS essais au total,
     espacés de plus en plus, avant d'abandonner et de notifier les super
     admins pour une intervention manuelle."""
-    from app.core.database import AsyncSessionLocal
+    from app.core.database import admin_session
     from app.models.domain import CustomDomain
     from app.services.hosting_service import provision_domain_hosting
     from app.services.log_service import log_event
 
-    async with AsyncSessionLocal() as db:
+    async with admin_session() as db:
         custom_domain = await db.get(CustomDomain, uuid.UUID(custom_domain_id))
         if not custom_domain or custom_domain.ssl_enabled:
             return  # déjà provisionné entre-temps (ex. fix manuel) — rien à faire
@@ -625,14 +625,14 @@ async def sync_purchased_domains_status(ctx: dict) -> None:
     pas de webhook OpenProvider confirmé pour ces changements, donc polling
     périodique plutôt que push."""
     from sqlalchemy import select
-    from app.core.database import AsyncSessionLocal
+    from app.core.database import admin_session
     from app.models.domain import CustomDomain
     from app.models.enums import DomainSource
     from app.services.registrars.registry import get_registrar
     from app.services.registrars.base import RegistrarError
     from app.services.log_service import log_event
 
-    async with AsyncSessionLocal() as db:
+    async with admin_session() as db:
         result = await db.execute(
             select(CustomDomain).where(CustomDomain.source == DomainSource.PURCHASED)
         )
@@ -670,7 +670,7 @@ async def send_domain_renewal_reminders(ctx: dict) -> None:
     de l'action du propriétaire), on envoie un rappel email plutôt qu'un
     renouvellement silencieux."""
     from sqlalchemy import select
-    from app.core.database import AsyncSessionLocal
+    from app.core.database import admin_session
     from app.models.domain import CustomDomain
     from app.models.enums import DomainSource
     from app.services.tenant_service import get_tenant_owner_user_id
@@ -679,7 +679,7 @@ async def send_domain_renewal_reminders(ctx: dict) -> None:
 
     threshold = datetime.now(timezone.utc) + timedelta(days=20)
 
-    async with AsyncSessionLocal() as db:
+    async with admin_session() as db:
         result = await db.execute(
             select(CustomDomain).where(
                 CustomDomain.source == DomainSource.PURCHASED,

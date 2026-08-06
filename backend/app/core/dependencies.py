@@ -37,10 +37,52 @@ async def get_current_user_from_token(request: Request) -> dict:
 
 
 async def get_db_session(request: Request) -> AsyncSession:
-    """Session DB avec RLS injecté depuis request.state."""
-    tenant_id = getattr(request.state, "tenant_id", None)
-    user_id = getattr(request.state, "user_id", None)
-    is_super_admin = getattr(request.state, "is_super_admin", False)
+    """Session DB avec RLS injecté — tenant_id/user_id/is_super_admin.
+
+    Bug réel corrigé le 2026-08-06 : cette dépendance lisait ces 3 valeurs
+    depuis request.state, que TenantMiddleware met TOUJOURS à
+    tenant_id=None/is_super_admin=False pour tout /api/v1/ (bypass exprès —
+    ce middleware ne résout le tenant que par nom d'hôte, pour les pages
+    publiques d'un blog, pas pour les appels API authentifiés). Résultat :
+    les policies RLS (`is_super_admin() OR tenant_id = current_tenant_id()`)
+    étaient fausses sur chaque requête API — sans conséquence tant que RLS
+    n'est qu'ENABLE (pas FORCE) et que le rôle applicatif reste propriétaire
+    des tables, mais ça rendait RLS totalement inopérant pour ce trafic dès
+    l'instant où FORCE serait activé (voir migration 069).
+
+    - user_id / is_super_admin : décodés directement du JWT (si présent et
+      valide — sinon session anonyme, comme avant, pour ne jamais casser un
+      endpoint public qui ne dépend pas de TokenPayload). is_super_admin
+      vient du claim JWT plutôt que d'une requête DB fraîche : acceptable
+      pour ce verrou de secours (defense-in-depth), la fenêtre de validité
+      est bornée par l'expiration du token (15 min) — les actions
+      superadmin sensibles, elles, continuent de revérifier en base via
+      _require_super_admin, jamais sur la seule foi du JWT.
+    - tenant_id : jamais depuis le JWT (un JWT est émis pour UN SEUL tenant
+      "préféré" à la connexion — voir auth_service.py::login — alors qu'un
+      utilisateur membre de plusieurs tenants appelle
+      /tenants/{tenant_id}/... avec des tenant_id différents dans l'URL
+      selon le blog visé, avec le MÊME token). Lu depuis le path param de
+      l'URL, qui est ce que chaque endpoint vérifie déjà explicitement via
+      _assert_role/_assert_member — RLS ne fait que dupliquer cette même
+      valeur déjà validée comme deuxième filet, jamais une vérification
+      indépendante de l'appartenance elle-même.
+    - Repli sur request.state.tenant_id pour les routes hors /api/v1/ (blog
+      public résolu par nom d'hôte par TenantMiddleware), qui n'ont pas de
+      tenant_id dans le chemin."""
+    user_id: str | None = None
+    is_super_admin = False
+
+    authorization = request.headers.get("Authorization", "")
+    if authorization.startswith("Bearer "):
+        try:
+            payload = decode_access_token(authorization.split(" ", 1)[1])
+            user_id = payload.get("sub")
+            is_super_admin = bool(payload.get("is_super_admin", False))
+        except JWTError:
+            pass  # Session anonyme — la route elle-même exigera TokenPayload si l'auth est requise.
+
+    tenant_id = request.path_params.get("tenant_id") or getattr(request.state, "tenant_id", None)
 
     async for session in get_db(
         tenant_id=str(tenant_id) if tenant_id else None,
