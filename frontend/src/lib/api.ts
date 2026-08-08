@@ -1856,6 +1856,9 @@ export interface PublicPlan {
 export const platformApi = {
   getPlans: () => api.get<PublicPlan[]>('/platform/pricing'),
 
+  getBlogCategories: () =>
+    api.get<{ categories: { name: string; slug: string }[] }>('/platform/blog-categories'),
+
   sendContactMessage: (body: { channel: string; name: string; email: string; subject: string; message: string }) =>
     api.post<{ ok: boolean }>('/platform/contact', body),
 

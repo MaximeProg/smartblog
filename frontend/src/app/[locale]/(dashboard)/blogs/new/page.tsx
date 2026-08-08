@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useAuthStore } from '@/store/auth.store';
 import {
-  tenantsApi, mediaApi, domainsApi, paymentsApi,
+  tenantsApi, mediaApi, domainsApi, paymentsApi, platformApi,
   type DomainSearchResult, type CryptoPaymentResponse,
 } from '@/lib/api';
 import { slugify, getErrorMessage, formatRegistrantPhone, sanitizePhoneDigitsInput, isValidLocalPhoneNumber } from '@/lib/utils';
@@ -213,7 +213,15 @@ export default function CreateBlogPage() {
   const [color, setColor] = useState('#2563eb');
   const [slugError, setSlugError] = useState('');
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
   const [selectedTheme, setSelectedTheme] = useState<string>('editorial');
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ['blog-categories'],
+    queryFn: async () => { const { data } = await platformApi.getBlogCategories(); return data; },
+    staleTime: 5 * 60 * 1000,
+  });
+  const categories = categoriesData?.categories ?? [];
 
   // ── Domain step (shown after the blog itself is created) ──────────────────
   const [step, setStep] = useState<'form' | 'domain'>('form');
@@ -337,6 +345,7 @@ export default function CreateBlogPage() {
         slug: slug.trim(),
         primary_color: color,
         description: description.trim() || undefined,
+        category: category || undefined,
         cover_image_url: coverUrl || undefined,
         theme: selectedTheme,
         language: locale,
@@ -759,6 +768,24 @@ export default function CreateBlogPage() {
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[13px] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors resize-none"
                     />
                     <p className="text-[11px] text-slate-400 mt-1.5">{t('quickDescriptionHint')}</p>
+                  </div>
+
+                  {/* Category */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">
+                      {t('quickCategoryLabel')} <span className="font-normal normal-case text-slate-400">{t('quickCoverOptional')}</span>
+                    </label>
+                    <select
+                      value={category}
+                      onChange={e => setCategory(e.target.value)}
+                      className="w-full h-11 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-[14px] text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors"
+                    >
+                      <option value="">{t('quickCategoryPlaceholder')}</option>
+                      {categories.map(c => (
+                        <option key={c.slug} value={c.name}>{c.name}</option>
+                      ))}
+                    </select>
+                    <p className="text-[11px] text-slate-400 mt-1.5">{t('quickCategoryHint')}</p>
                   </div>
 
                   {/* Cover image */}

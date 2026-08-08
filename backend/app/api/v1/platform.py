@@ -24,6 +24,18 @@ from app.services.push_service import send_push_to_user
 router = APIRouter(prefix="/platform", tags=["platform"])
 
 
+# ── GET /platform/blog-categories — sujets de blog actifs ───────────
+# Alimente le filtre de /explore et le sélecteur à la création d'un blog.
+# Gérées par le super admin — voir superadmin.py::list_blog_categories.
+
+@router.get("/blog-categories")
+async def get_active_blog_categories(db: DBSession):
+    rows = await db.execute(text(
+        "SELECT name, slug FROM blog_categories WHERE is_active = true ORDER BY sort_order ASC, name ASC"
+    ))
+    return {"categories": [{"name": r.name, "slug": r.slug} for r in rows]}
+
+
 @router.get("/maintenance-status")
 async def get_maintenance_status():
     """Public, jamais bloqué par le mode maintenance lui-même (voir

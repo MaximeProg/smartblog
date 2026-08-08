@@ -1974,6 +1974,76 @@ async def toggle_template_category(category_id: str, payload: TokenPayload, db: 
     return {"ok": True}
 
 
+# ── Blog Categories (sujet du blog — distinct des template-categories) ──
+# Catégorise le SUJET du blog (Technology, Business...), affiché sur
+# /explore et sélectionnable à la création d'un blog — voir migration 077.
+# À ne pas confondre avec blog_template_categories ci-dessous, qui
+# catégorise les TEMPLATES de design, un système totalement séparé.
+
+class BlogCategoryCreateBody(BaseModel):
+    name: str
+    slug: str
+    description: str = ""
+    sort_order: int = 0
+
+
+@router.get("/blog-categories")
+async def list_blog_categories(payload: TokenPayload, db: DBSession):
+    await _require_super_admin(payload, db)
+    rows = await db.execute(text("""
+        SELECT bc.id, bc.name, bc.slug, bc.description, bc.is_active, bc.sort_order,
+               COUNT(t.id) AS blog_count
+        FROM blog_categories bc
+        LEFT JOIN tenants t ON t.category = bc.name
+        GROUP BY bc.id
+        ORDER BY bc.sort_order ASC, bc.name ASC
+    """))
+    categories = [
+        {
+            "id": str(r.id), "name": r.name, "slug": r.slug,
+            "description": r.description, "is_active": r.is_active,
+            "sort_order": r.sort_order, "blog_count": r.blog_count or 0,
+        }
+        for r in rows
+    ]
+    return {"categories": categories, "total": len(categories)}
+
+
+@router.post("/blog-categories", status_code=201)
+async def create_blog_category(body: BlogCategoryCreateBody, payload: TokenPayload, db: DBSession):
+    await _require_super_admin(payload, db)
+    existing = await db.execute(text("SELECT id FROM blog_categories WHERE slug = :slug"), {"slug": body.slug})
+    if existing.scalar_one_or_none():
+        from fastapi import HTTPException as _HTTPEx
+        raise _HTTPEx(status_code=400, detail=f"A category with the slug '{body.slug}' already exists.")
+    result = await db.execute(text("""
+        INSERT INTO blog_categories (name, slug, description, sort_order)
+        VALUES (:name, :slug, :description, :sort_order)
+        RETURNING id
+    """), {"name": body.name, "slug": body.slug, "description": body.description, "sort_order": body.sort_order})
+    new_id = result.scalar_one()
+    await db.commit()
+    return {"ok": True, "id": str(new_id)}
+
+
+@router.patch("/blog-categories/{category_id}/toggle")
+async def toggle_blog_category(category_id: str, payload: TokenPayload, db: DBSession):
+    await _require_super_admin(payload, db)
+    await db.execute(text("""
+        UPDATE blog_categories SET is_active = NOT is_active WHERE id = :id
+    """), {"id": category_id})
+    await db.commit()
+    return {"ok": True}
+
+
+@router.delete("/blog-categories/{category_id}")
+async def delete_blog_category(category_id: str, payload: TokenPayload, db: DBSession):
+    await _require_super_admin(payload, db)
+    await db.execute(text("DELETE FROM blog_categories WHERE id = :id"), {"id": category_id})
+    await db.commit()
+    return {"ok": True}
+
+
 # ── Blog Templates ────────────────────────────────────────────────
 # Built-in themes: defined in code (ThemeRenderer.tsx).
 # Custom templates: uploaded by superadmin as ZIP → stored in blog_templates.

@@ -43,6 +43,18 @@ const FR_LABELS: BlogExploreLabels = {
   noDescription: 'Aucune description',
 };
 
+async function fetchCategories(): Promise<{ name: string; slug: string }[]> {
+  const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
+  try {
+    const res = await fetch(`${API}/api/v1/platform/blog-categories`, { next: { revalidate: 300 } });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data?.categories) ? data.categories : [];
+  } catch {
+    return [];
+  }
+}
+
 async function fetchBlogs(q?: string, category?: string, lang?: string): Promise<{ blogs: Blog[]; error: boolean }> {
   const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080';
   const params = new URLSearchParams({ limit: '48' });
@@ -81,7 +93,10 @@ export default async function BlogPage({ params, searchParams }: Props) {
   const { locale } = await params;
   const { q, category } = await searchParams;
   const lang = locale.toLowerCase();
-  const { blogs, error } = await fetchBlogs(q, category, lang);
+  const [{ blogs, error }, categories] = await Promise.all([
+    fetchBlogs(q, category, lang),
+    fetchCategories(),
+  ]);
 
   let labels: BlogExploreLabels = lang === 'fr' ? FR_LABELS : EN_LABELS;
   if (lang !== 'en' && lang !== 'fr') {
@@ -100,7 +115,7 @@ export default async function BlogPage({ params, searchParams }: Props) {
       />
 
       <Suspense>
-        <BlogClient blogs={blogs} locale={locale} q={q} category={category} apiError={error} labels={labels} />
+        <BlogClient blogs={blogs} locale={locale} q={q} category={category} apiError={error} labels={labels} categories={categories} />
       </Suspense>
 
       <PublicFooter locale={locale} lang={lang} />

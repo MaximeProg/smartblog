@@ -18,12 +18,6 @@ interface Blog {
   custom_domain?: string | null;
 }
 
-const BLOG_CATEGORIES = [
-  'Technology', 'Business', 'Lifestyle', 'Health', 'Education',
-  'Entertainment', 'Sports', 'Finance', 'Travel', 'Food',
-  'Fashion', 'Science', 'Politics', 'Culture', 'Gaming',
-];
-
 const THEME_LABEL: Record<string, string> = {
   minimal: 'Minimal', magazine: 'Magazine', business: 'Business',
   news: 'News', tech: 'Tech', portfolio: 'Portfolio',
@@ -153,9 +147,10 @@ interface Props {
   category?: string;
   apiError?: boolean;
   labels: BlogExploreLabels;
+  categories: { name: string; slug: string }[];
 }
 
-export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, apiError, labels: l }: Props) {
+export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, apiError, labels: l, categories }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -192,8 +187,8 @@ export function BlogClient({ blogs, locale, q: initialQ, category: initialCat, a
           className="h-11 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 sm:w-52"
         >
           <option value="">{l.allCategories}</option>
-          {BLOG_CATEGORIES.map((c) => (
-            <option key={c} value={c}>{c}</option>
+          {categories.map((c) => (
+            <option key={c.slug} value={c.name}>{c.name}</option>
           ))}
         </select>
         <button
