@@ -7,10 +7,10 @@ import { useTranslations } from 'next-intl';
 import {
   Plus, Search, FileText, Eye, CheckCircle2,
   Archive, Edit2, Trash2, MoreVertical, Clock,
-  Camera, Video, Mic, Radio, Layers, Hash, Mail,
+  Camera, Video, Mic, Radio, Layers, Hash, Mail, Share2,
   AlertTriangle, Zap,
 } from 'lucide-react';
-import { articlesApi, tenantsApi } from '@/lib/api';
+import { articlesApi, tenantsApi, affiliateApi, type AffiliateDashboard } from '@/lib/api';
 import Link from 'next/link';
 import { formatRelativeTime, getErrorMessage } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -28,19 +28,29 @@ const TYPE_ICON: Record<string, { icon: typeof FileText; color: string }> = {
 };
 
 function ArticleRow({
-  article, locale, blogId,
+  article, locale, blogId, blogSlug, affiliateCode,
   onDelete, onPublish, onArchive,
 }: {
   article: ArticleListItem;
   locale: string;
   blogId: string;
+  blogSlug: string | undefined;
+  affiliateCode: string | null | undefined;
   onDelete: (id: string) => void;
   onPublish: (id: string) => void;
   onArchive: (id: string) => void;
 }) {
   const router = useRouter();
   const t = useTranslations('articles');
+  const { toast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const shareArticle = () => {
+    if (!blogSlug || !affiliateCode) return;
+    const url = `https://${blogSlug}.smarterbloggers.com/${article.slug}?ref=${affiliateCode}`;
+    navigator.clipboard.writeText(url);
+    toast({ title: t('shareLinkCopied') });
+  };
 
   const STATUS_CONFIG: Record<ArticleStatus, { label: string; color: string; icon: typeof FileText }> = {
     draft:       { label: t('status.draft'),       color: 'text-slate-500 bg-slate-100 dark:text-slate-400 dark:bg-slate-700',             icon: FileText },
@@ -154,6 +164,12 @@ function ArticleRow({
               >
                 <Mail className="h-3.5 w-3.5 text-violet-500" /> {t('sendAsNewsletter')}
               </button>
+              {blogSlug && affiliateCode && (
+                <button onClick={() => { shareArticle(); setMenuOpen(false); }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
+                  <Share2 className="h-3.5 w-3.5 text-blue-500" /> {t('shareAction')}
+                </button>
+              )}
               <button onClick={() => { onDelete(article.id); setMenuOpen(false); }}
                 className="w-full flex items-center gap-2 px-3 py-2 text-[12px] text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
                 <Trash2 className="h-3.5 w-3.5" /> {t('deleteAction')}
@@ -182,6 +198,11 @@ export default function ArticlesPage() {
   const { data: tenant } = useQuery({
     queryKey: ['tenant', blogId],
     queryFn: async () => { const { data } = await tenantsApi.get(blogId); return data; },
+  });
+
+  const { data: affiliateDashboard } = useQuery<AffiliateDashboard>({
+    queryKey: ['affiliate-dashboard'],
+    queryFn: async () => { const { data } = await affiliateApi.getDashboard(); return data; },
   });
 
   const articlesMax = tenant?.limits?.max_articles ?? null;
@@ -362,6 +383,8 @@ export default function ArticlesPage() {
                 article={a}
                 locale={locale}
                 blogId={blogId}
+                blogSlug={tenant?.slug}
+                affiliateCode={affiliateDashboard?.affiliate_code}
                 onDelete={id => deleteMut.mutate(id)}
                 onPublish={id => publishMut.mutate(id)}
                 onArchive={id => archiveMut.mutate(id)}

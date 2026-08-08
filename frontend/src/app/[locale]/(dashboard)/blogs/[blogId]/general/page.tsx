@@ -4,7 +4,8 @@ import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { tenantsApi } from '@/lib/api';
+import { Copy, Check } from 'lucide-react';
+import { tenantsApi, affiliateApi, type AffiliateDashboard } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorMessage } from '@/lib/utils';
 import { useAutoSave } from '@/hooks/use-auto-save';
@@ -37,6 +38,21 @@ export default function GeneralPage() {
       return data;
     },
   });
+
+  const { data: affiliateDashboard } = useQuery<AffiliateDashboard>({
+    queryKey: ['affiliate-dashboard'],
+    queryFn: async () => { const { data } = await affiliateApi.getDashboard(); return data; },
+  });
+  const [copied, setCopied] = useState(false);
+  const shareUrl = tenant?.slug && affiliateDashboard?.affiliate_code
+    ? `https://${tenant.slug}.smarterbloggers.com/?ref=${affiliateDashboard.affiliate_code}`
+    : null;
+  const copyShareUrl = () => {
+    if (!shareUrl) return;
+    navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   type GeneralForm = {
     name: string;
@@ -156,6 +172,23 @@ export default function GeneralPage() {
           </div>
           <p className="text-[11px] text-slate-400 mt-1">{ts('fieldSlugHint')}</p>
         </StudioField>
+
+        {shareUrl && (
+          <StudioField label={ts('fieldShareLink')} hint={ts('fieldShareLinkHint')}>
+            <div className="flex items-center gap-2">
+              <div className="flex-1 h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 flex items-center overflow-x-auto">
+                <span className="text-[12px] text-slate-600 dark:text-slate-300 font-mono whitespace-nowrap">{shareUrl}</span>
+              </div>
+              <button
+                type="button"
+                onClick={copyShareUrl}
+                className="h-10 w-10 shrink-0 rounded-xl border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+              </button>
+            </div>
+          </StudioField>
+        )}
       </StudioSection>
 
       <StudioSection id="color" title={ts('sectionColor')} defaultOpen>
