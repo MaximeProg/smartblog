@@ -15,7 +15,7 @@ const ICONS: Record<string, LucideIcon> = {
 const FALLBACK = {
   hero: {
     title: 'Put your brand in front of thousands of engaged readers',
-    subtitle: 'Advertise directly on the SmarterBloggers homepage — reviewed and published by our team, paid securely in crypto.',
+    subtitle: 'Advertise directly on the SmarterBloggers homepage — automatically reviewed and published within minutes, paid securely in crypto.',
     cta_label: 'See how it works',
     image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1920&q=80',
   },
@@ -23,7 +23,7 @@ const FALLBACK = {
     title: 'Why advertise with SmarterBloggers',
     items: [
       { icon: 'users', title: 'Real, engaged audience', description: 'Your ad reaches bloggers and readers actively using the platform every day.' },
-      { icon: 'shield-check', title: 'Human-reviewed & scanned', description: 'Every ad link is automatically scanned for malware and phishing (Google Safe Browsing + VirusTotal), then checked for quality by our team before it goes live — no bots, no scams.' },
+      { icon: 'shield-check', title: 'AI-reviewed & scanned', description: 'Every ad is automatically scanned for malware and phishing (Google Safe Browsing + VirusTotal) and reviewed by AI for content quality — most ads go live within minutes. Anything flagged is checked by our team before publishing — no bots, no scams.' },
       { icon: 'bar-chart-3', title: 'Real-time statistics', description: 'Track impressions, clicks, and click-through rate live from your own advertiser dashboard.' },
       { icon: 'shield', title: 'Secure crypto payment', description: 'Pay safely in USDT — no card details shared, no hidden fees.' },
     ],
@@ -33,7 +33,7 @@ const FALLBACK = {
     steps: [
       { title: 'Create your account', description: "Sign up or log in — the same account you'd use anywhere else on SmarterBloggers." },
       { title: 'Submit your ad', description: "Add your title, image, destination link and budget from your Advertiser dashboard. Optionally target specific countries — leave it blank to reach visitors everywhere, or select one or more countries to show your ad only to visitors from those locations." },
-      { title: 'Pay securely', description: 'Complete payment in USDT — your submission is reviewed once payment is confirmed.' },
+      { title: 'Pay securely', description: 'Complete payment in USDT — your ad is automatically reviewed once payment is confirmed, and usually goes live within minutes.' },
       { title: 'Go live', description: 'Once approved, your ad appears on the SmarterBloggers homepage and you can track its performance live.' },
     ],
   },

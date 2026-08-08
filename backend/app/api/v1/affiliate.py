@@ -70,6 +70,7 @@ class CommissionResponse(BaseModel):
     id: str
     source_type: str
     source_transaction_id: str
+    source_user_name: str | None = None
     level: int
     gross_amount: float
     commission_amount: float
@@ -208,19 +209,24 @@ async def list_commissions(
 ):
     user_id = uuid.UUID(payload["sub"])
 
-    q = select(AffiliateCommission).where(AffiliateCommission.affiliate_user_id == user_id)
+    q = (
+        select(AffiliateCommission, User.display_name, User.email)
+        .join(User, User.id == AffiliateCommission.source_user_id)
+        .where(AffiliateCommission.affiliate_user_id == user_id)
+    )
     if status:
         q = q.where(AffiliateCommission.status == status)
     q = q.order_by(AffiliateCommission.created_at.desc()).limit(limit).offset(offset)
 
     result = await db.execute(q)
-    commissions = result.scalars().all()
+    rows = result.all()
 
     return [
         CommissionResponse(
             id=str(c.id),
             source_type=c.source_type.value,
             source_transaction_id=c.source_transaction_id,
+            source_user_name=display_name or email,
             level=c.level,
             gross_amount=float(c.gross_amount),
             commission_amount=float(c.commission_amount),
@@ -228,7 +234,7 @@ async def list_commissions(
             created_at=c.created_at,
             paid_at=c.paid_at,
         )
-        for c in commissions
+        for c, display_name, email in rows
     ]
 
 
@@ -334,19 +340,20 @@ async def export_commissions_csv(payload: TokenPayload, db: DBSession, _kyc: dic
     user_id = uuid.UUID(payload["sub"])
 
     result = await db.execute(
-        select(AffiliateCommission)
+        select(AffiliateCommission, User.display_name, User.email)
+        .join(User, User.id == AffiliateCommission.source_user_id)
         .where(AffiliateCommission.affiliate_user_id == user_id)
         .order_by(AffiliateCommission.created_at.desc())
     )
-    commissions = result.scalars().all()
+    rows = result.all()
 
     buf = io.StringIO()
     writer = csv.writer(buf)
-    writer.writerow(["ID", "Source", "Type", "Commission (USDT)", "Status", "Level", "Date"])
-    for c in commissions:
+    writer.writerow(["ID", "Member", "Type", "Commission (USDT)", "Status", "Level", "Date"])
+    for c, display_name, email in rows:
         writer.writerow([
             str(c.id),
-            str(c.source_user_id),
+            display_name or email,
             c.source_type.value if hasattr(c.source_type, "value") else c.source_type,
             f"{c.commission_amount:.4f}",
             c.status.value if hasattr(c.status, "value") else c.status,

@@ -513,7 +513,7 @@ export default function AffiliatePage() {
                           <table className="w-full text-sm">
                             <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
                               <tr>
-                                {[t('source'), t('level'), t('amount'), t('status'), t('date')].map(h => (
+                                {[t('member'), t('source'), t('level'), t('amount'), t('status'), t('date')].map(h => (
                                   <th key={h} className="px-4 py-2.5 text-left text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{h}</th>
                                 ))}
                               </tr>
@@ -521,6 +521,9 @@ export default function AffiliatePage() {
                             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                               {commissions.map(c => (
                                 <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                  <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100">
+                                    {c.source_user_name ?? '—'}
+                                  </td>
                                   <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-100 capitalize">
                                     {c.source_type === 'subscription' ? t('subscription') : t('ad_slot')}
                                   </td>

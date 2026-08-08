@@ -765,6 +765,7 @@ export interface AffiliateCommission {
   id: string;
   source_type: string;
   source_transaction_id: string;
+  source_user_name: string | null;
   level: number;
   gross_amount: number;
   commission_amount: number;
