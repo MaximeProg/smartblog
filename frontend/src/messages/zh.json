@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Google 地图嵌入链接（可选）",
     "seoGooglePreview": "Google 预览",
     "fieldSeoTitleTemplate": "SEO标题模板",
-    "fieldSeoTitleTemplateHint": "变量：{title} = 文章标题，{blog_name} = 博客名称",
+    "fieldSeoTitleTemplateHint": "变量：'{title}' = 文章标题，'{blog_name}' = 博客名称",
     "fieldMetaDescDefault": "默认元描述",
     "fieldMetaDescDefaultHint": "推荐长度：160个字符。在Google中显示于标题下方。",
     "seoCharCount": "{n} / 160个字符",

@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Einbettungs-URL für Google Maps (optional)",
     "seoGooglePreview": "Google-Vorschau",
     "fieldSeoTitleTemplate": "Vorlage für SEO-Titel",
-    "fieldSeoTitleTemplateHint": "Variablen: {title} = Titel des Artikels, {blog_name} = Name des Blogs",
+    "fieldSeoTitleTemplateHint": "Variablen: '{title}' = Titel des Artikels, '{blog_name}' = Name des Blogs",
     "fieldMetaDescDefault": "Standard-Meta-Beschreibung",
     "fieldMetaDescDefaultHint": "Empfohlen: 160 Zeichen. Wird bei Google unterhalb des Titels angezeigt.",
     "seoCharCount": "{n} / 160 Zeichen",

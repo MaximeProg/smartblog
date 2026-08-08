@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL за вграждане на Google Maps (по избор)",
     "seoGooglePreview": "Предварителен преглед в Google",
     "fieldSeoTitleTemplate": "Шаблон за SEO заглавие",
-    "fieldSeoTitleTemplateHint": "Променливи: {title} = заглавие на статията, {blog_name} = име на блога",
+    "fieldSeoTitleTemplateHint": "Променливи: '{title}' = заглавие на статията, '{blog_name}' = име на блога",
     "fieldMetaDescDefault": "Стандартно метаописание",
     "fieldMetaDescDefaultHint": "Препоръчително: 160 символа. Появява се под заглавието в Google.",
     "seoCharCount": "{n} / 160 символа",

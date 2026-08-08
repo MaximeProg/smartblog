@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "„Google Maps“ ievietošanas URL (pēc izvēles)",
     "seoGooglePreview": "„Google“ priekšskatījums",
     "fieldSeoTitleTemplate": "SEO virsraksta veidne",
-    "fieldSeoTitleTemplateHint": "Mainīgie: {title} = raksta nosaukums, {blog_name} = bloga nosaukums",
+    "fieldSeoTitleTemplateHint": "Mainīgie: '{title}' = raksta nosaukums, '{blog_name}' = bloga nosaukums",
     "fieldMetaDescDefault": "Noklusējuma meta apraksts",
     "fieldMetaDescDefaultHint": "Ieteicams: 160 rakstzīmes. Google meklētājā parādās zem virsraksta.",
     "seoCharCount": "{n} / 160 rakstzīmes",

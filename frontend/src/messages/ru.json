@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL-адрес для встраивания карты Google Maps (необязательно)",
     "seoGooglePreview": "Предварительный просмотр Google",
     "fieldSeoTitleTemplate": "Шаблон SEO-заголовка",
-    "fieldSeoTitleTemplateHint": "Переменные: {title} = заголовок статьи, {blog_name} = название блога",
+    "fieldSeoTitleTemplateHint": "Переменные: '{title}' = заголовок статьи, '{blog_name}' = название блога",
     "fieldMetaDescDefault": "Мета-описание по умолчанию",
     "fieldMetaDescDefaultHint": "Рекомендуемое количество символов: 160. Отображается под заголовком в Google.",
     "seoCharCount": "{n} / 160 символов",

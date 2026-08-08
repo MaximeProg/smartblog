@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Google Maps embed URL (optional)",
     "seoGooglePreview": "Google preview",
     "fieldSeoTitleTemplate": "SEO title template",
-    "fieldSeoTitleTemplateHint": "Variables: {title} = article title, {blog_name} = blog name",
+    "fieldSeoTitleTemplateHint": "Variables: '{title}' = article title, '{blog_name}' = blog name",
     "fieldMetaDescDefault": "Default meta description",
     "fieldMetaDescDefaultHint": "Recommended: 160 characters. Appears below the title in Google.",
     "seoCharCount": "{n} / 160 characters",

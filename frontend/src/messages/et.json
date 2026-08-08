@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Google Mapsi sisseehitatud URL (valikuline)",
     "seoGooglePreview": "Google’i eelvaade",
     "fieldSeoTitleTemplate": "SEO-pealkirja mall",
-    "fieldSeoTitleTemplateHint": "Muutujad: {title} = artikli pealkiri, {blog_name} = blogi nimi",
+    "fieldSeoTitleTemplateHint": "Muutujad: '{title}' = artikli pealkiri, '{blog_name}' = blogi nimi",
     "fieldMetaDescDefault": "Vaikimisi meta-kirjeldus",
     "fieldMetaDescDefaultHint": "Soovituslik pikkus: 160 tähemärki. Ilmub Google’is pealkirja all.",
     "seoCharCount": "{n} / 160 tähemärki",

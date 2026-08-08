@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL za vstavljanje Google Maps (neobvezno)",
     "seoGooglePreview": "Predogled v Googlu",
     "fieldSeoTitleTemplate": "Predloga za naslov za optimizacijo za iskalnike (SEO)",
-    "fieldSeoTitleTemplateHint": "Spremenljivke: {title} = naslov članka, {blog_name} = ime spletnega dnevnika",
+    "fieldSeoTitleTemplateHint": "Spremenljivke: '{title}' = naslov članka, '{blog_name}' = ime spletnega dnevnika",
     "fieldMetaDescDefault": "Privzeti meta opis",
     "fieldMetaDescDefaultHint": "Priporočeno: 160 znakov. V Googlu se prikaže pod naslovom.",
     "seoCharCount": "{n} / 160 znakov",

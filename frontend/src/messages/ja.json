@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Google マップの埋め込み用 URL（任意）",
     "seoGooglePreview": "Googleのプレビュー",
     "fieldSeoTitleTemplate": "SEOタイトルテンプレート",
-    "fieldSeoTitleTemplateHint": "変数：{title} = 記事のタイトル、{blog_name} = ブログ名",
+    "fieldSeoTitleTemplateHint": "変数：'{title}' = 記事のタイトル、'{blog_name}' = ブログ名",
     "fieldMetaDescDefault": "デフォルトのメタディスクリプション",
     "fieldMetaDescDefaultHint": "推奨文字数：160文字。Googleの検索結果ではタイトルの下に表示されます。",
     "seoCharCount": "{n} / 160文字",

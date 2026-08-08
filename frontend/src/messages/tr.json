@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Google Haritalar gömme URL'si (isteğe bağlı)",
     "seoGooglePreview": "Google önizlemesi",
     "fieldSeoTitleTemplate": "SEO başlık şablonu",
-    "fieldSeoTitleTemplateHint": "Değişkenler: {title} = makale başlığı, {blog_name} = blog adı",
+    "fieldSeoTitleTemplateHint": "Değişkenler: '{title}' = makale başlığı, '{blog_name}' = blog adı",
     "fieldMetaDescDefault": "Varsayılan meta açıklaması",
     "fieldMetaDescDefaultHint": "Önerilen: 160 karakter. Google’da başlığın altında görüntülenir.",
     "seoCharCount": "{n} / 160 karakter",

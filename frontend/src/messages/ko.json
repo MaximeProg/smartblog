@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Google 지도 삽입용 URL (선택 사항)",
     "seoGooglePreview": "Google 미리보기",
     "fieldSeoTitleTemplate": "SEO 제목 템플릿",
-    "fieldSeoTitleTemplateHint": "변수: {title} = 기사 제목, {blog_name} = 블로그 이름",
+    "fieldSeoTitleTemplateHint": "변수: '{title}' = 기사 제목, '{blog_name}' = 블로그 이름",
     "fieldMetaDescDefault": "기본 메타 설명",
     "fieldMetaDescDefaultHint": "권장: 160자. Google에서 제목 아래에 표시됩니다.",
     "seoCharCount": "{n} / 160자",

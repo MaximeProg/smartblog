@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL voor het insluiten van Google Maps (optioneel)",
     "seoGooglePreview": "Google-voorbeeld",
     "fieldSeoTitleTemplate": "Sjabloon voor SEO-titel",
-    "fieldSeoTitleTemplateHint": "Variabelen: {title} = titel van het artikel, {blog_name} = naam van de blog",
+    "fieldSeoTitleTemplateHint": "Variabelen: '{title}' = titel van het artikel, '{blog_name}' = naam van de blog",
     "fieldMetaDescDefault": "Standaard metabeschrijving",
     "fieldMetaDescDefaultHint": "Aanbevolen: 160 tekens. Wordt onder de titel weergegeven in Google.",
     "seoCharCount": "{n} / 160 tekens",

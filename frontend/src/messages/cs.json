@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL pro vložení mapy Google (volitelné)",
     "seoGooglePreview": "Náhled Google",
     "fieldSeoTitleTemplate": "Šablona SEO nadpisu",
-    "fieldSeoTitleTemplateHint": "Proměnné: {title} = název článku, {blog_name} = název blogu",
+    "fieldSeoTitleTemplateHint": "Proměnné: '{title}' = název článku, '{blog_name}' = název blogu",
     "fieldMetaDescDefault": "Výchozí meta popisek",
     "fieldMetaDescDefaultHint": "Doporučeno: 160 znaků. Zobrazuje se v Googlu pod názvem.",
     "seoCharCount": "{n} / 160 znaků",

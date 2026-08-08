@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Διεύθυνση URL ενσωμάτωσης του Google Maps (προαιρετικό)",
     "seoGooglePreview": "Προεπισκόπηση Google",
     "fieldSeoTitleTemplate": "Πρότυπο τίτλου SEO",
-    "fieldSeoTitleTemplateHint": "Μεταβλητές: {title} = τίτλος άρθρου, {blog_name} = όνομα ιστολογίου",
+    "fieldSeoTitleTemplateHint": "Μεταβλητές: '{title}' = τίτλος άρθρου, '{blog_name}' = όνομα ιστολογίου",
     "fieldMetaDescDefault": "Προεπιλεγμένη περιγραφή meta",
     "fieldMetaDescDefaultHint": "Συνιστάται: 160 χαρακτήρες. Εμφανίζεται κάτω από τον τίτλο στο Google.",
     "seoCharCount": "{n} / 160 χαρακτήρες",

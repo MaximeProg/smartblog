@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Adres URL do osadzenia mapy Google Maps (opcjonalnie)",
     "seoGooglePreview": "Podgląd Google",
     "fieldSeoTitleTemplate": "Szablon tytułu SEO",
-    "fieldSeoTitleTemplateHint": "Zmienne: {title} = tytuł artykułu, {blog_name} = nazwa bloga",
+    "fieldSeoTitleTemplateHint": "Zmienne: '{title}' = tytuł artykułu, '{blog_name}' = nazwa bloga",
     "fieldMetaDescDefault": "Domyślny opis meta",
     "fieldMetaDescDefaultHint": "Zalecana długość: 160 znaków. Wyświetla się pod tytułem w Google.",
     "seoCharCount": "{n} / 160 znaków",

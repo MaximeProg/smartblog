@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL carte Google Maps (embed, optionnel)",
     "seoGooglePreview": "Aperçu Google",
     "fieldSeoTitleTemplate": "Modèle de titre SEO",
-    "fieldSeoTitleTemplateHint": "Variables : {title} = titre de l'article, {blog_name} = nom du blog",
+    "fieldSeoTitleTemplateHint": "Variables : '{title}' = titre de l''article, '{blog_name}' = nom du blog",
     "fieldMetaDescDefault": "Méta-description par défaut",
     "fieldMetaDescDefaultHint": "160 caractères recommandés. Apparaît sous le titre dans Google.",
     "seoCharCount": "{n} / 160 caractères",

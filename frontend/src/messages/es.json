@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL de Google Maps para insertar (opcional)",
     "seoGooglePreview": "Vista previa de Google",
     "fieldSeoTitleTemplate": "Plantilla de título SEO",
-    "fieldSeoTitleTemplateHint": "Variables: {title} = título del artículo, {blog_name} = nombre del blog",
+    "fieldSeoTitleTemplateHint": "Variables: '{title}' = título del artículo, '{blog_name}' = nombre del blog",
     "fieldMetaDescDefault": "Descripción meta predeterminada",
     "fieldMetaDescDefaultHint": "Recomendado: 160 caracteres. Aparece debajo del título en Google.",
     "seoCharCount": "{n} / 160 caracteres",

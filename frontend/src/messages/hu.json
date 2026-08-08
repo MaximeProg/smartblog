@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "A Google Maps beágyazási URL-je (opcionális)",
     "seoGooglePreview": "Google-előnézet",
     "fieldSeoTitleTemplate": "SEO-cím sablon",
-    "fieldSeoTitleTemplateHint": "Változók: {title} = a cikk címe, {blog_name} = a blog neve",
+    "fieldSeoTitleTemplateHint": "Változók: '{title}' = a cikk címe, '{blog_name}' = a blog neve",
     "fieldMetaDescDefault": "Alapértelmezett meta leírás",
     "fieldMetaDescDefaultHint": "Ajánlott: 160 karakter. A Google-ban a cím alatt jelenik meg.",
     "seoCharCount": "{n} / 160 karakter",

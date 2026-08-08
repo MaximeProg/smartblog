@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "„Google Maps“ įterpimo URL (neprivaloma)",
     "seoGooglePreview": "„Google“ peržiūra",
     "fieldSeoTitleTemplate": "SEO pavadinimo šablonas",
-    "fieldSeoTitleTemplateHint": "Kintamieji: {title} = straipsnio pavadinimas, {blog_name} = tinklaraščio pavadinimas",
+    "fieldSeoTitleTemplateHint": "Kintamieji: '{title}' = straipsnio pavadinimas, '{blog_name}' = tinklaraščio pavadinimas",
     "fieldMetaDescDefault": "Numatytasis metapasakojimas",
     "fieldMetaDescDefaultHint": "Rekomenduojama: 160 simbolių. „Google“ rodomas po pavadinimu.",
     "seoCharCount": "{n} / 160 simbolių",

@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL-адреса для вбудовування Google Maps (не обов’язково)",
     "seoGooglePreview": "Попередній перегляд Google",
     "fieldSeoTitleTemplate": "Шаблон заголовка для SEO",
-    "fieldSeoTitleTemplateHint": "Змінні: {title} = назва статті, {blog_name} = назва блогу",
+    "fieldSeoTitleTemplateHint": "Змінні: '{title}' = назва статті, '{blog_name}' = назва блогу",
     "fieldMetaDescDefault": "Метаопис за замовчуванням",
     "fieldMetaDescDefaultHint": "Рекомендована довжина: 160 символів. Відображається під заголовком у Google.",
     "seoCharCount": "{n} / 160 символів",

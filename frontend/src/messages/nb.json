@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL for innbygging av Google Maps (valgfritt)",
     "seoGooglePreview": "Forhåndsvisning fra Google",
     "fieldSeoTitleTemplate": "Mal for SEO-tittel",
-    "fieldSeoTitleTemplateHint": "Variabler: {title} = artikkelens tittel, {blog_name} = bloggens navn",
+    "fieldSeoTitleTemplateHint": "Variabler: '{title}' = artikkelens tittel, '{blog_name}' = bloggens navn",
     "fieldMetaDescDefault": "Standard metabeskrivelse",
     "fieldMetaDescDefaultHint": "Anbefalt: 160 tegn. Vises under tittelen i Google.",
     "seoCharCount": "{n} / 160 tegn",

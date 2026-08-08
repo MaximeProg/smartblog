@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL-ul de încorporare Google Maps (opțional)",
     "seoGooglePreview": "Previzualizare Google",
     "fieldSeoTitleTemplate": "Șablon pentru titlul SEO",
-    "fieldSeoTitleTemplateHint": "Variabile: {title} = titlul articolului, {blog_name} = numele blogului",
+    "fieldSeoTitleTemplateHint": "Variabile: '{title}' = titlul articolului, '{blog_name}' = numele blogului",
     "fieldMetaDescDefault": "Descriere meta implicită",
     "fieldMetaDescDefaultHint": "Recomandat: 160 de caractere. Apare sub titlu în Google.",
     "seoCharCount": "{n} / 160 de caractere",

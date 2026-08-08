@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Google Mapsin upotus-URL (valinnainen)",
     "seoGooglePreview": "Google-esikatselu",
     "fieldSeoTitleTemplate": "SEO-otsikon malli",
-    "fieldSeoTitleTemplateHint": "Muuttujat: {title} = artikkelin otsikko, {blog_name} = blogin nimi",
+    "fieldSeoTitleTemplateHint": "Muuttujat: '{title}' = artikkelin otsikko, '{blog_name}' = blogin nimi",
     "fieldMetaDescDefault": "Oletusarvoinen metakuvaus",
     "fieldMetaDescDefaultHint": "Suositus: 160 merkkiä. Näkyy Googlessa otsikon alla.",
     "seoCharCount": "{n} / 160 merkkiä",

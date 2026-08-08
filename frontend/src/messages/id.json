@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "URL penyisipan Google Maps (opsional)",
     "seoGooglePreview": "Pratinjau Google",
     "fieldSeoTitleTemplate": "Template judul SEO",
-    "fieldSeoTitleTemplateHint": "Variabel: {title} = judul artikel, {blog_name} = nama blog",
+    "fieldSeoTitleTemplateHint": "Variabel: '{title}' = judul artikel, '{blog_name}' = nama blog",
     "fieldMetaDescDefault": "Deskripsi meta default",
     "fieldMetaDescDefaultHint": "Disarankan: 160 karakter. Muncul di bawah judul di Google.",
     "seoCharCount": "{n} / 160 karakter",

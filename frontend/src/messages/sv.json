@@ -2075,7 +2075,7 @@
     "fieldMapEmbed": "Inbäddnings-URL för Google Maps (valfritt)",
     "seoGooglePreview": "Förhandsgranskning från Google",
     "fieldSeoTitleTemplate": "Mall för SEO-rubrik",
-    "fieldSeoTitleTemplateHint": "Variabler: {title} = artikelns titel, {blog_name} = bloggens namn",
+    "fieldSeoTitleTemplateHint": "Variabler: '{title}' = artikelns titel, '{blog_name}' = bloggens namn",
     "fieldMetaDescDefault": "Standardmetabeskrivning",
     "fieldMetaDescDefaultHint": "Rekommenderat: 160 tecken. Visas under rubriken i Google.",
     "seoCharCount": "{n} / 160 tecken",
