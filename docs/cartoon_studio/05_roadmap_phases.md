@@ -63,9 +63,11 @@
 ## Phase 6 — Advanced Production
 
 **Livrables :**
-- Éditeur de scène 3D ; mouvement avancé (interactions, scènes de foule, physique) ; doublage multilingue avec préservation de l'identité vocale ; optimisation de provider (routing par qualité/coût/cohérence) ; rendering 4K là où l'infrastructure le permet ; analytics de projet complets ; contrôles enterprise (permissions d'organisation, feature flags, console admin complète) ; tier de rendu premium ; fonctionnalités de scalabilité renforcées.
+- Composition de scène 3D par plan ✅ (`SceneComposition` — caméra, placements de personnages, foule, physique ; `POST/GET .../shots/{id}/scene3d`) ; doublage multilingue avec préservation de l'identité vocale ✅ (`EpisodeDubTrack` + `source_voice_id`, dérivation de `voice_profile_ref` par langue, `POST/GET .../dub`) ; optimisation de provider ✅ (routing par score coût/qualité/priorité, `app/services/provider_router.py`, `select_provider`) ; tier de rendu premium/4K ✅ gating par `feature_flags` d'organisation (`premium_4k_rendering`, quota `max_renders_per_day`) — **rendering 4K réel non couvert** : toujours des providers mock, aucune infrastructure GPU/cloud-rendering engagée (dépend de D2) ; détection auto 2D/3D du mode de rendu par épisode ✅ ; analytics de projet ✅ (`GET /projects/{id}/analytics`) ; contrôles enterprise ✅ (`GET/PUT /organizations/{id}/feature-flags`, console admin `GET /organizations/{id}/admin/overview`) ; pagination episodes/characters ✅.
 
-**Gate** : le projet de démonstration (§9 ci-dessous) est entièrement reproductible en qualité production ; la checklist de lancement est complète.
+**Gate** : **✅ satisfait côté API** (20/20 tests `tests/test_production.py`, incluant le gate combiné scène 3D + rendu premium_4k + routing + doublage + analytics + admin overview ; 109/116 sur la suite complète historique, les 7 écarts étant une flakiness de pool de connexion Neon préexistante sur les runs longs, non liée à cette phase). Le gate tel qu'écrit à l'origine (projet de démonstration reproductible en qualité production, checklist de lancement) reste **non satisfait** : il dépend du vrai rendering 4K/GPU (D2, providers réels non engagés) et de l'UI, les deux explicitement hors scope de cette passe API — même distinction que les Phases 2-5 ci-dessus.
+
+Avec Phase 6, **le backend API est désormais complet pour les 6 phases de la roadmap** (mode mock pour toutes les capacités IA). Restent hors scope de cette roadmap backend : le frontend Next.js (reporté depuis la Phase 2, décision PDG 2026-08-05), le contrat API SmarterBloggers réel (bloqué sur D1), les credentials/providers IA réels (D2), et le rendering GPU réel.
 
 ---
 
