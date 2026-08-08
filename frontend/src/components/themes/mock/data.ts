@@ -265,6 +265,7 @@ export const MOCK_BLOG_EDITORIAL: BlogInfo = {
   social_links: { twitter: 'https://twitter.com', linkedin: 'https://linkedin.com', github: 'https://github.com' },
   template_config: null,
   enabled_languages: [],
+  owner_affiliate_code: null,
 };
 
 export const MOCK_BLOG_MAGAZINE: BlogInfo = {
@@ -283,6 +284,7 @@ export const MOCK_BLOG_MAGAZINE: BlogInfo = {
   social_links: { twitter: 'https://twitter.com', linkedin: 'https://linkedin.com' },
   template_config: null,
   enabled_languages: [],
+  owner_affiliate_code: null,
 };
 
 export const MOCK_BLOG_MINIMAL: BlogInfo = {
@@ -301,6 +303,7 @@ export const MOCK_BLOG_MINIMAL: BlogInfo = {
   social_links: { twitter: 'https://twitter.com' },
   template_config: null,
   enabled_languages: [],
+  owner_affiliate_code: null,
 };
 
 export const MOCK_BLOG_CREATIVE: BlogInfo = {
@@ -319,4 +322,5 @@ export const MOCK_BLOG_CREATIVE: BlogInfo = {
   social_links: { instagram: 'https://instagram.com', twitter: 'https://twitter.com', dribbble: 'https://dribbble.com' },
   template_config: null,
   enabled_languages: [],
+  owner_affiliate_code: null,
 };

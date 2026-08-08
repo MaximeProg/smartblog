@@ -170,6 +170,7 @@ export default function CanvasPage() {
     social_links: liveConfig.blog.social_links,
     template_config: liveConfig.template_config as TemplateConfig,
     enabled_languages: [],
+    owner_affiliate_code: null,
   };
 
   const editProps = {

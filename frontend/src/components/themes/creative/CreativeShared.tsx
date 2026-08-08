@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+import { poweredByUrl } from '../shared/poweredByLink';
 import { ShareButtons } from '../shared/ShareButtons';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 import { MobileBottomNav } from '../shared/MobileBottomNav';
@@ -148,7 +149,14 @@ export function CreativeHeader({ blog, categories, basePath, primaryColor }: Sha
               )}
               <div className="mt-6 pt-4 border-t border-zinc-800 text-[11px] text-zinc-500 space-y-1">
                 <p>{footerCopyright}</p>
-                {showPoweredBy && <p>Powered by SmarterBloggers</p>}
+                {showPoweredBy && (
+                  <p>
+                    Powered by{' '}
+                    <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      SmarterBloggers
+                    </a>
+                  </p>
+                )}
               </div>
             </div>
 
@@ -247,7 +255,14 @@ export function CreativeFooter({ blog, categories, basePath, primaryColor }: Sha
               primaryColor={primaryColor}
               variant="blog"
             />
-            {showPoweredBy && <span>Powered by SmarterBloggers</span>}
+            {showPoweredBy && (
+              <span>
+                Powered by{' '}
+                <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  SmarterBloggers
+                </a>
+              </span>
+            )}
           </div>
         </div>
       </div>

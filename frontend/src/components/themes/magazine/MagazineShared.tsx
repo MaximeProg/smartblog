@@ -8,6 +8,7 @@ import { getFetchErrorMessage } from '@/lib/utils';
 import { ShareButtons } from '../shared/ShareButtons';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 import { MobileBottomNav } from '../shared/MobileBottomNav';
+import { poweredByUrl } from '../shared/poweredByLink';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -189,7 +190,7 @@ export function MagazineHeader({ blog, categories, basePath, primaryColor }: Sha
                 {showPoweredBy && (
                   <p>
                     Powered by{' '}
-                    <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                    <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
                       SmarterBloggers
                     </a>
                   </p>
@@ -344,7 +345,7 @@ export function MagazineFooter({ blog, categories, basePath, primaryColor }: Sha
               {showPoweredBy && (
                 <span>
                   Powered by{' '}
-                  <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                  <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
                     SmarterBloggers
                   </a>
                 </span>

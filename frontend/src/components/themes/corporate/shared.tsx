@@ -15,6 +15,7 @@ import { ShareButtons } from '../shared/ShareButtons';
 import { InlineEditable } from '../shared/InlineEditable';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 import { MobileBottomNav } from '../shared/MobileBottomNav';
+import { poweredByUrl } from '../shared/poweredByLink';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -208,7 +209,7 @@ export function CardCompact({ article, href, rank }: { article: PublicArticle; h
 export function CorporateHeader({
   blog, categories, current, searchQuery, primaryColor, minimal = false, basePath, previewSlug,
 }: {
-  blog: { name: string; logo_url?: string | null; language?: string; enabled_languages?: string[]; social_links?: Record<string, string>; template_config?: { header?: { topBar?: { enabled?: boolean; showDate?: boolean; showSocial?: boolean; showNewsletter?: boolean; showRss?: boolean }; subscribe?: { enabled?: boolean; label?: string }; nav?: { links?: { label: string; url: string }[] } }; footer?: { showSocialLinks?: boolean; copyrightText?: string; showPoweredBy?: boolean } } | null };
+  blog: { name: string; logo_url?: string | null; language?: string; enabled_languages?: string[]; social_links?: Record<string, string>; owner_affiliate_code?: string | null; template_config?: { header?: { topBar?: { enabled?: boolean; showDate?: boolean; showSocial?: boolean; showNewsletter?: boolean; showRss?: boolean }; subscribe?: { enabled?: boolean; label?: string }; nav?: { links?: { label: string; url: string }[] } }; footer?: { showSocialLinks?: boolean; copyrightText?: string; showPoweredBy?: boolean } } | null };
   categories: PublicCategory[];
   current?: string;
   searchQuery?: string;
@@ -539,7 +540,7 @@ export function CorporateHeader({
                   {showPoweredBy && (
                     <p>
                       {t('poweredBy')}{' '}
-                      <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                      <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
                         SmarterBloggers
                       </a>
                     </p>
@@ -569,7 +570,7 @@ export function CorporateHeader({
 export function CorporateFooter({
   blog, categories, primaryColor, basePath, previewSlug,
 }: {
-  blog: { name: string; description?: string | null; logo_url?: string | null; social_links?: Record<string, string>; template_config?: { footer?: { description?: string; showCategories?: boolean; navLinks?: { label: string; url: string }[]; showSocialLinks?: boolean; showNewsletterMini?: boolean; newsletterMiniText?: string; copyrightText?: string; showPoweredBy?: boolean } } | null };
+  blog: { name: string; description?: string | null; logo_url?: string | null; social_links?: Record<string, string>; owner_affiliate_code?: string | null; template_config?: { footer?: { description?: string; showCategories?: boolean; navLinks?: { label: string; url: string }[]; showSocialLinks?: boolean; showNewsletterMini?: boolean; newsletterMiniText?: string; copyrightText?: string; showPoweredBy?: boolean } } | null };
   categories: PublicCategory[];
   primaryColor: string;
   basePath?: string;
@@ -704,7 +705,7 @@ export function CorporateFooter({
             />
             {showPoweredBy && (
               <span>{t('poweredBy')}{' '}
-                <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer"
+                <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer"
                   className="font-semibold transition-colors hover:text-white" style={{ color: primaryColor }}>
                   SmarterBloggers
                 </a>

@@ -7,6 +7,7 @@ import type { BlogInfo, PublicCategory } from '@/lib/public-api';
 import { ShareButtons } from '../shared/ShareButtons';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
 import { MobileBottomNav } from '../shared/MobileBottomNav';
+import { poweredByUrl } from '../shared/poweredByLink';
 
 interface SharedProps {
   blog: BlogInfo;
@@ -153,7 +154,7 @@ export function EditorialHeader({ blog, categories, basePath, primaryColor }: Sh
                 {showPoweredBy && (
                   <p>
                     Powered by{' '}
-                    <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                    <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
                       SmarterBloggers
                     </a>
                   </p>
@@ -257,7 +258,7 @@ export function EditorialFooter({ blog, categories, basePath, primaryColor }: Sh
             {showPoweredBy && (
               <span className="flex items-center gap-1.5">
                 Powered by{' '}
-                <a href="https://smarterbloggers.com" target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
+                <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color: primaryColor }}>
                   SmarterBloggers
                 </a>
               </span>

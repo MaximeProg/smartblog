@@ -59,6 +59,7 @@ export interface BlogInfo {
   social_links: Record<string, string>;
   template_config: TemplateConfig | null;
   enabled_languages: string[];
+  owner_affiliate_code: string | null;
 }
 
 export interface PublicArticle {

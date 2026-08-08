@@ -141,6 +141,7 @@ class PublicBlogInfo(BaseModel):
     social_links: dict
     template_config: dict | None
     enabled_languages: list[str] = []
+    owner_affiliate_code: str | None = None
 
 
 # ── GET /public/{slug} — info blog ───────────────────────────────
@@ -158,6 +159,19 @@ async def get_blog_info(slug: str, db: DBSession, lang: str | None = Query(defau
         if translated is not None:
             template_config = translated
 
+    # Permet à n'importe quel visiteur du blog public de s'inscrire sur
+    # SmarterBloggers via le lien de parrainage du propriétaire (badge
+    # "Powered by" + fonctionnalité "Partager" du Studio, voir tenants.py).
+    owner_affiliate_code = None
+    from app.services.tenant_service import get_tenant_owner_user_id
+    owner_user_id = await get_tenant_owner_user_id(db, tenant.id)
+    if owner_user_id:
+        from app.api.v1.affiliate import _get_or_create_affiliate_code
+        from app.models.user import User
+        owner = await db.get(User, owner_user_id)
+        if owner:
+            owner_affiliate_code = await _get_or_create_affiliate_code(db, owner)
+
     return PublicBlogInfo(
         id=str(tenant.id),
         name=tenant.name,
@@ -174,6 +188,7 @@ async def get_blog_info(slug: str, db: DBSession, lang: str | None = Query(defau
         social_links=tenant.social_links or {},
         template_config=template_config,
         enabled_languages=allowed_languages,
+        owner_affiliate_code=owner_affiliate_code,
     )
 
 

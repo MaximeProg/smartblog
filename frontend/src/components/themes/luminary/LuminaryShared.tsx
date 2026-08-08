@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Menu, X, Twitter, Linkedin, Github, ExternalLink, Instagram, Youtube } from 'lucide-react';
 import type { BlogInfo, PublicCategory } from '@/lib/public-api';
+import { poweredByUrl } from '../shared/poweredByLink';
 import { getFetchErrorMessage } from '@/lib/utils';
 import { ShareButtons } from '../shared/ShareButtons';
 import { BlogLanguageSwitcher } from '../shared/BlogLanguageSwitcher';
@@ -193,7 +194,14 @@ export function LuminaryHeader({ blog, categories, basePath, primaryColor }: Sha
               )}
               <div className="mt-6 pt-4 border-t border-zinc-200 text-[11px] text-zinc-500 space-y-1 font-sans">
                 <p>{footerCopyright}</p>
-                {showPoweredBy && <p>Powered by SmarterBloggers</p>}
+                {showPoweredBy && (
+                  <p>
+                    Powered by{' '}
+                    <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      SmarterBloggers
+                    </a>
+                  </p>
+                )}
               </div>
             </div>
 
@@ -350,7 +358,14 @@ export function LuminaryFooter({ blog, categories, basePath, primaryColor }: Sha
               primaryColor={primaryColor}
               variant="blog"
             />
-            {showPoweredBy && <span>Powered by SmarterBloggers</span>}
+            {showPoweredBy && (
+              <span>
+                Powered by{' '}
+                <a href={poweredByUrl(blog.owner_affiliate_code)} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                  SmarterBloggers
+                </a>
+              </span>
+            )}
           </div>
         </div>
       </div>
