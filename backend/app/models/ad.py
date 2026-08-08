@@ -4,7 +4,7 @@ from sqlalchemy import String, Text, Integer, Boolean, Date, DateTime, ForeignKe
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from app.models.base import Base
-from app.models.enums import AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus, AdRevenueShareStatus, ENUM_VALUES
+from app.models.enums import AdCampaignStatus, AdSubmissionStatus, LinkSafetyStatus, AdContentReviewStatus, AdRevenueShareStatus, ENUM_VALUES
 
 
 class Ad(Base):
@@ -33,6 +33,19 @@ class Ad(Base):
     )
     link_last_scanned_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     link_scan_details: Mapped[dict | None] = mapped_column(JSONB)
+
+    # Modération de contenu par IA (GPT-4o) — remplace la revue manuelle
+    # obligatoire par un super admin (décision PDG 2026-08-07) : une pub dont
+    # le lien est sûr ET dont le contenu est approuvé par l'IA est publiée
+    # automatiquement, voir ads.py::_run_ai_moderation_and_maybe_autopublish.
+    # FLAGGED (ou une erreur IA) retombe sur la revue manuelle existante —
+    # jamais d'auto-publication en cas de doute.
+    ai_review_status: Mapped[AdContentReviewStatus] = mapped_column(
+        SAEnum(AdContentReviewStatus, name="ad_content_review_status", create_type=False, values_callable=ENUM_VALUES),
+        nullable=False, default=AdContentReviewStatus.UNCHECKED,
+    )
+    ai_reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    ai_review_details: Mapped[dict | None] = mapped_column(JSONB)
 
     # Statut modération
     submission_status: Mapped[AdSubmissionStatus] = mapped_column(

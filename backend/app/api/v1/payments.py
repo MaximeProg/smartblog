@@ -412,35 +412,43 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
             ad_obj.amount_paid = actually_paid
             await db.commit()
 
-            # Le scan de sécurité du lien et la notification aux super admins
-            # n'ont lieu qu'ici, une fois le paiement confirmé — pas à la
-            # soumission brute (endpoint public sans auth, sinon n'importe
-            # qui pouvait déclencher un scan + un email sans jamais payer).
-            from app.api.v1.ads import _scan_ad_link
+            # Le scan de sécurité du lien puis la modération IA n'ont lieu
+            # qu'ici, une fois le paiement confirmé — pas à la soumission
+            # brute (endpoint public sans auth, sinon n'importe qui pouvait
+            # déclencher un scan + un email sans jamais payer).
+            from app.api.v1.ads import _scan_ad_link, _run_ai_moderation_and_maybe_autopublish
             await _scan_ad_link(str(ad_obj.id), ad_obj.click_url)
+            await _run_ai_moderation_and_maybe_autopublish(str(ad_obj.id))
 
-            try:
-                from app.services.email_service import send_superadmin_event
-                from app.services.auth_service import _get_super_admin_emails
-                from app.services.notification_service import notify_super_admins
-                tenant_obj = await db.get(Tenant, tx.tenant_id)
-                sa_emails = await _get_super_admin_emails(db)
-                await send_superadmin_event(
-                    to=sa_emails,
-                    event_type="ad.submitted",
-                    title=f"New ad submission — {ad_obj.title}",
-                    details=f"Budget: {actually_paid:.2f} USDT · Blog: {tenant_obj.slug if tenant_obj else tx.tenant_id}",
-                    actor_email=ad_obj.advertiser_email,
-                )
-                await notify_super_admins(
-                    db, type="warning", category="ad",
-                    title=f"New ad submission — {ad_obj.title}",
-                    body=f"Budget: ${actually_paid:.2f} USDT · Blog: {tenant_obj.slug if tenant_obj else tx.tenant_id}",
-                    action_url=f"/blogs/{tx.tenant_id}/ads",
-                )
-                await db.commit()
-            except Exception:
-                pass
+            # Relit l'état à jour — la modération IA tourne sur sa propre
+            # session (voir _scan_ad_link) et peut avoir déjà publié la pub.
+            await db.refresh(ad_obj)
+
+            if ad_obj.submission_status == ADS.PENDING:
+                # Pas d'auto-publication (lien pas SAFE, IA a flaggé, ou erreur
+                # IA) — retombe sur la revue manuelle, super admins notifiés.
+                try:
+                    from app.services.email_service import send_superadmin_event
+                    from app.services.auth_service import _get_super_admin_emails
+                    from app.services.notification_service import notify_super_admins
+                    tenant_obj = await db.get(Tenant, tx.tenant_id)
+                    sa_emails = await _get_super_admin_emails(db)
+                    await send_superadmin_event(
+                        to=sa_emails,
+                        event_type="ad.submitted",
+                        title=f"New ad submission — {ad_obj.title}",
+                        details=f"Budget: {actually_paid:.2f} USDT · Blog: {tenant_obj.slug if tenant_obj else tx.tenant_id}",
+                        actor_email=ad_obj.advertiser_email,
+                    )
+                    await notify_super_admins(
+                        db, type="warning", category="ad",
+                        title=f"New ad submission — {ad_obj.title}",
+                        body=f"Budget: ${actually_paid:.2f} USDT · Blog: {tenant_obj.slug if tenant_obj else tx.tenant_id}",
+                        action_url=f"/blogs/{tx.tenant_id}/ads",
+                    )
+                    await db.commit()
+                except Exception:
+                    pass
         else:
             await db.commit()
 
@@ -449,10 +457,15 @@ async def _finalize_transaction(db, tx: Transaction, actually_paid: float) -> No
         if tx.user_id:
             try:
                 from app.services.notification_service import notify_user
+                auto_published = ad_obj is not None and ad_obj.submission_status == ADS.APPROVED
                 await notify_user(
                     db, tx.user_id, type="success", category="ad",
                     title="Ad payment confirmed",
-                    body=f"${actually_paid:.2f} USDT — your ad is now under review.",
+                    body=(
+                        f"${actually_paid:.2f} USDT — your ad passed automatic review and is now live."
+                        if auto_published else
+                        f"${actually_paid:.2f} USDT — your ad is now under review."
+                    ),
                     action_url="/advertiser",
                 )
                 await db.commit()

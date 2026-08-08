@@ -114,6 +114,12 @@ class LinkSafetyStatus(str, enum.Enum):
     DANGEROUS = "dangerous"
 
 
+class AdContentReviewStatus(str, enum.Enum):
+    UNCHECKED = "unchecked"
+    APPROVED = "approved"
+    FLAGGED = "flagged"
+
+
 class AdCampaignStatus(str, enum.Enum):
     ACTIVE = "active"
     PAUSED = "paused"

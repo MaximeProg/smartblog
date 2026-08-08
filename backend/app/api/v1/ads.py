@@ -10,7 +10,7 @@ from fastapi import Depends
 from app.core.dependencies import TokenPayload, DBSession, check_plan_active
 from app.core.exceptions import NotFoundException, ValidationException, ForbiddenException
 from app.models.ad import Ad, AdLinkScan, AdRevenueShare, AdDailyStats
-from app.models.enums import AdSubmissionStatus, AdCampaignStatus, LinkSafetyStatus, UserRole, AdRevenueShareStatus, KycStatus
+from app.models.enums import AdSubmissionStatus, AdCampaignStatus, LinkSafetyStatus, AdContentReviewStatus, UserRole, AdRevenueShareStatus, KycStatus
 from app.api.v1.tenants import _assert_member, _assert_role
 
 logger = logging.getLogger(__name__)
@@ -88,6 +88,8 @@ class AdResponse(BaseModel):
     campaign_status: AdCampaignStatus
     link_safety_status: LinkSafetyStatus
     link_last_scanned_at: datetime | None
+    ai_review_status: AdContentReviewStatus
+    ai_review_details: dict | None = None
     starts_at: datetime | None
     ends_at: datetime | None
     impressions_count: int
@@ -450,116 +452,7 @@ async def review_ad(
         # Garde contre une double approbation : ne recalcule les commissions
         # que lors de la transition PAUSED/PENDING → ACTIVE.
         if ad.amount_paid and float(ad.amount_paid) > 0 and ad.campaign_status != AdCampaignStatus.ACTIVE:
-            ad.campaign_status = AdCampaignStatus.ACTIVE
-
-            if ad.is_platform_ad:
-                # Pub achetée sur smarterbloggers.com lui-même : pas de
-                # propriétaire de blog à payer — la commission part vers la
-                # lignée de parrainage de l'annonceur (10% L1 + 1%×9 L2-10),
-                # le reste (81%) reste à la plateforme (compte 4103).
-                try:
-                    from app.api.v1.affiliate import compute_and_accrue_fixed_level_commissions
-                    from app.api.v1.accounting import book_platform_ad_payment
-                    from app.models.enums import AffiliateCommissionSource
-
-                    if ad.advertiser_user_id:
-                        level_percentages = {1: 0.10, **{lvl: 0.01 for lvl in range(2, 11)}}
-                        await compute_and_accrue_fixed_level_commissions(
-                            db=db,
-                            source_user_id=ad.advertiser_user_id,
-                            source_type=AffiliateCommissionSource.MAIN_SITE_AD,
-                            source_transaction_id=str(ad.id),
-                            gross_amount=float(ad.amount_paid),
-                            level_percentages=level_percentages,
-                        )
-
-                    await book_platform_ad_payment(
-                        db=db,
-                        amount=float(ad.amount_paid),
-                        ad_id=str(ad.id),
-                        transaction_id=str(ad.id),
-                        created_by_system_user_id=uuid.UUID(payload["sub"]),
-                    )
-                except Exception:
-                    logger.exception("Échec du calcul/paiement des commissions (pub site principal) pour l'ad %s", ad.id)
-            else:
-                try:
-                    from app.api.v1.affiliate import compute_and_accrue_commissions
-                    from app.services.tenant_service import get_tenant_owner_user_id
-                    from app.services.nowpayments_service import send_single_payout
-                    from app.api.v1.accounting import book_ad_slot_payment
-                    from app.models.user import User
-
-                    source_user_id = await get_tenant_owner_user_id(db, tenant_id)
-                    if source_user_id:
-                        # 10% commission d'affiliation (inchangé)
-                        await compute_and_accrue_commissions(
-                            db=db,
-                            source_user_id=source_user_id,
-                            source_type="ad_slot",
-                            source_transaction_id=str(ad.id),
-                            gross_amount=float(ad.amount_paid),
-                        )
-
-                        # 60% dus au propriétaire du blog (RG-AD-01, révisé 2026-07-23 :
-                        # 80/10/10 -> 60/10/30, la part plateforme passe de 10% à 30%,
-                        # l'affiliation reste inchangée à 10%) — payé directement s'il a
-                        # un wallet enregistré ET un KYC validé (décision PDG 2026-08-03,
-                        # étendue à tout versement de fonds sur la plateforme). Sans l'un
-                        # des deux, il ne participe pas, rien n'est calculé ni mis de côté.
-                        owner = await db.get(User, source_user_id)
-                        if (
-                            owner and owner.usdt_wallet_address
-                            and owner.kyc_status == KycStatus.VERIFIED
-                            and settings.NOWPAYMENTS_PAYOUT_API_KEY
-                        ):
-                            owner_share = round(float(ad.amount_paid) * 0.60, 2)
-                            try:
-                                result = await send_single_payout(
-                                    wallet_address=owner.usdt_wallet_address,
-                                    amount_usd=owner_share,
-                                )
-                                payout_reference = str(result.get("id", ""))
-                                share = AdRevenueShare(
-                                    ad_id=ad.id,
-                                    tenant_id=tenant_id,
-                                    owner_user_id=source_user_id,
-                                    gross_amount=float(ad.amount_paid),
-                                    owner_share_amount=owner_share,
-                                    status=AdRevenueShareStatus.PAID,
-                                    payout_reference=payout_reference,
-                                    paid_at=datetime.now(timezone.utc),
-                                )
-                                db.add(share)
-
-                                # Écriture comptable 60/10/30 (RG-AD-01 — propriétaire/affiliation/plateforme)
-                                await book_ad_slot_payment(
-                                    db=db,
-                                    amount=float(ad.amount_paid),
-                                    ad_id=str(ad.id),
-                                    transaction_id=str(ad.id),
-                                    created_by_system_user_id=uuid.UUID(payload["sub"]),
-                                )
-
-                                # Facture — n'entrave jamais le versement déjà effectué,
-                                # ni le commit final de la fonction (ligne ~552).
-                                try:
-                                    from app.services.invoice_service import generate_and_send_invoice
-                                    await generate_and_send_invoice(
-                                        db, user=owner,
-                                        amount=owner_share, currency="USDT",
-                                        payment_reference=payout_reference,
-                                        payment_type="ad_revenue_payout",
-                                    )
-                                except Exception:
-                                    logger.exception("Invoice generation failed for ad revenue payout (ad=%s)", ad.id)
-                            except Exception:
-                                logger.exception(
-                                    "Échec du payout NowPayments (part propriétaire) pour l'ad %s (owner=%s, montant=%s) — rien n'est enregistré, pas de retry automatique",
-                                    ad.id, source_user_id, owner_share,
-                                )
-                except Exception:
-                    logger.exception("Échec du calcul/paiement des commissions pour l'ad %s", ad.id)
+            await _activate_ad_and_distribute_commissions(db, ad, tenant_id, uuid.UUID(payload["sub"]))
         elif not (ad.amount_paid and float(ad.amount_paid) > 0):
             # Paiement non encore confirmé — campagne activée automatiquement par le webhook
             ad.campaign_status = AdCampaignStatus.PAUSED
@@ -729,6 +622,128 @@ async def _bump_daily_stat(db, ad_id: uuid.UUID, column: str) -> None:
 
 # ── Helpers ───────────────────────────────────────────────────────
 
+async def _activate_ad_and_distribute_commissions(
+    db, ad: Ad, tenant_id: uuid.UUID, actor_user_id: uuid.UUID,
+) -> None:
+    """Active la campagne et partage les commissions — extrait de review_ad
+    (2026-08-07) pour être partagé à l'identique entre l'approbation manuelle
+    (super admin) et l'approbation automatique par IA
+    (_run_ai_moderation_and_maybe_autopublish). `actor_user_id` est
+    l'approbateur (super admin ou l'utilisateur système pour l'auto-approbation)
+    — utilisé uniquement pour created_by sur les écritures comptables.
+    Ne commit jamais — l'appelant gère sa propre transaction."""
+    ad.campaign_status = AdCampaignStatus.ACTIVE
+
+    if ad.is_platform_ad:
+        # Pub achetée sur smarterbloggers.com lui-même : pas de
+        # propriétaire de blog à payer — la commission part vers la
+        # lignée de parrainage de l'annonceur (10% L1 + 1%×9 L2-10),
+        # le reste (81%) reste à la plateforme (compte 4103).
+        try:
+            from app.api.v1.affiliate import compute_and_accrue_fixed_level_commissions
+            from app.api.v1.accounting import book_platform_ad_payment
+            from app.models.enums import AffiliateCommissionSource
+
+            if ad.advertiser_user_id:
+                level_percentages = {1: 0.10, **{lvl: 0.01 for lvl in range(2, 11)}}
+                await compute_and_accrue_fixed_level_commissions(
+                    db=db,
+                    source_user_id=ad.advertiser_user_id,
+                    source_type=AffiliateCommissionSource.MAIN_SITE_AD,
+                    source_transaction_id=str(ad.id),
+                    gross_amount=float(ad.amount_paid),
+                    level_percentages=level_percentages,
+                )
+
+            await book_platform_ad_payment(
+                db=db,
+                amount=float(ad.amount_paid),
+                ad_id=str(ad.id),
+                transaction_id=str(ad.id),
+                created_by_system_user_id=actor_user_id,
+            )
+        except Exception:
+            logger.exception("Échec du calcul/paiement des commissions (pub site principal) pour l'ad %s", ad.id)
+    else:
+        try:
+            from app.api.v1.affiliate import compute_and_accrue_commissions
+            from app.services.tenant_service import get_tenant_owner_user_id
+            from app.services.nowpayments_service import send_single_payout
+            from app.api.v1.accounting import book_ad_slot_payment
+            from app.models.user import User
+
+            source_user_id = await get_tenant_owner_user_id(db, tenant_id)
+            if source_user_id:
+                # 10% commission d'affiliation (inchangé)
+                await compute_and_accrue_commissions(
+                    db=db,
+                    source_user_id=source_user_id,
+                    source_type="ad_slot",
+                    source_transaction_id=str(ad.id),
+                    gross_amount=float(ad.amount_paid),
+                )
+
+                # 60% dus au propriétaire du blog (RG-AD-01, révisé 2026-07-23 :
+                # 80/10/10 -> 60/10/30, la part plateforme passe de 10% à 30%,
+                # l'affiliation reste inchangée à 10%) — payé directement s'il a
+                # un wallet enregistré ET un KYC validé (décision PDG 2026-08-03,
+                # étendue à tout versement de fonds sur la plateforme). Sans l'un
+                # des deux, il ne participe pas, rien n'est calculé ni mis de côté.
+                owner = await db.get(User, source_user_id)
+                if (
+                    owner and owner.usdt_wallet_address
+                    and owner.kyc_status == KycStatus.VERIFIED
+                    and settings.NOWPAYMENTS_PAYOUT_API_KEY
+                ):
+                    owner_share = round(float(ad.amount_paid) * 0.60, 2)
+                    try:
+                        result = await send_single_payout(
+                            wallet_address=owner.usdt_wallet_address,
+                            amount_usd=owner_share,
+                        )
+                        payout_reference = str(result.get("id", ""))
+                        share = AdRevenueShare(
+                            ad_id=ad.id,
+                            tenant_id=tenant_id,
+                            owner_user_id=source_user_id,
+                            gross_amount=float(ad.amount_paid),
+                            owner_share_amount=owner_share,
+                            status=AdRevenueShareStatus.PAID,
+                            payout_reference=payout_reference,
+                            paid_at=datetime.now(timezone.utc),
+                        )
+                        db.add(share)
+
+                        # Écriture comptable 60/10/30 (RG-AD-01 — propriétaire/affiliation/plateforme)
+                        await book_ad_slot_payment(
+                            db=db,
+                            amount=float(ad.amount_paid),
+                            ad_id=str(ad.id),
+                            transaction_id=str(ad.id),
+                            created_by_system_user_id=actor_user_id,
+                        )
+
+                        # Facture — n'entrave jamais le versement déjà effectué,
+                        # ni le commit final de la fonction appelante.
+                        try:
+                            from app.services.invoice_service import generate_and_send_invoice
+                            await generate_and_send_invoice(
+                                db, user=owner,
+                                amount=owner_share, currency="USDT",
+                                payment_reference=payout_reference,
+                                payment_type="ad_revenue_payout",
+                            )
+                        except Exception:
+                            logger.exception("Invoice generation failed for ad revenue payout (ad=%s)", ad.id)
+                    except Exception:
+                        logger.exception(
+                            "Échec du payout NowPayments (part propriétaire) pour l'ad %s (owner=%s, montant=%s) — rien n'est enregistré, pas de retry automatique",
+                            ad.id, source_user_id, owner_share,
+                        )
+        except Exception:
+            logger.exception("Échec du calcul/paiement des commissions pour l'ad %s", ad.id)
+
+
 async def _get_or_404(db, tenant_id: uuid.UUID, ad_id: uuid.UUID) -> Ad:
     result = await db.execute(
         select(Ad).where(Ad.id == ad_id, Ad.tenant_id == tenant_id)
@@ -778,6 +793,68 @@ async def _scan_ad_link(ad_id: str, url: str) -> None:
             await _run_scan(db, ad)
 
 
+async def _run_ai_moderation_and_maybe_autopublish(ad_id: str) -> None:
+    """Remplace la revue manuelle obligatoire par une vérification automatique
+    (décision PDG 2026-08-07) : appelé depuis _finalize_transaction juste
+    après _scan_ad_link, une fois le paiement confirmé. Si le lien est SAFE
+    ET que l'IA approuve le contenu, la pub est publiée et les commissions
+    partagées exactement comme sur POST /{ad_id}/review (même helper —
+    voir _activate_ad_and_distribute_commissions). Sinon la pub reste
+    PENDING pour la revue manuelle existante (les super admins sont déjà
+    notifiés par _finalize_transaction) — jamais de publication automatique
+    en cas de doute ou d'erreur IA."""
+    from app.core.database import get_db
+    from sqlalchemy import select
+    from app.services.ai_service import moderate_ad_content
+
+    # Pas de `return` anticipé à l'intérieur de la boucle (une seule itération,
+    # comme _scan_ad_link ci-dessus) : `get_db()` ferme la session dans son
+    # `finally` au moment où la boucle reprend normalement — un `return`
+    # prématuré abandonnerait le générateur sans fermeture déterministe.
+    async for db in get_db():
+        result = await db.execute(select(Ad).where(Ad.id == uuid.UUID(ad_id)))
+        ad = result.scalar_one_or_none()
+
+        if not ad or ad.submission_status != AdSubmissionStatus.PENDING:
+            pass
+
+        elif ad.link_safety_status != LinkSafetyStatus.SAFE:
+            # SUSPECT/DANGEROUS/UNCHECKED (scan pas encore fait ou pas concluant)
+            # — reste sur la revue manuelle, coût IA inutile.
+            ad.ai_review_status = AdContentReviewStatus.FLAGGED
+            ad.ai_reviewed_at = datetime.now(timezone.utc)
+            ad.ai_review_details = {"verdict": "flagged", "reason": f"Link safety status is {ad.link_safety_status.value}, not safe.", "concerns": ["link_safety"]}
+            await db.commit()
+
+        else:
+            verdict_result = await moderate_ad_content(
+                title=ad.title, description=ad.description,
+                click_url=ad.click_url, image_url=ad.image_url,
+            )
+            ad.ai_review_details = verdict_result
+            ad.ai_reviewed_at = datetime.now(timezone.utc)
+
+            if verdict_result.get("verdict") != "approve":
+                ad.ai_review_status = AdContentReviewStatus.FLAGGED
+            else:
+                ad.ai_review_status = AdContentReviewStatus.APPROVED
+                ad.submission_status = AdSubmissionStatus.APPROVED
+                # reviewed_by reste NULL — distingue une auto-approbation IA
+                # d'une revue manuelle par un super admin (reviewed_by renseigné).
+
+                if ad.amount_paid and float(ad.amount_paid) > 0 and ad.campaign_status != AdCampaignStatus.ACTIVE:
+                    actor_user_id = ad.advertiser_user_id
+                    if not actor_user_id:
+                        from app.services.tenant_service import get_tenant_owner_user_id
+                        actor_user_id = await get_tenant_owner_user_id(db, ad.tenant_id)
+                    if actor_user_id:
+                        await _activate_ad_and_distribute_commissions(db, ad, ad.tenant_id, actor_user_id)
+
+            await db.commit()
+
+        await db.commit()
+
+
 def _ad_response(a: Ad) -> AdResponse:
     return AdResponse(
         id=str(a.id),
@@ -792,6 +869,8 @@ def _ad_response(a: Ad) -> AdResponse:
         campaign_status=a.campaign_status,
         link_safety_status=a.link_safety_status,
         link_last_scanned_at=a.link_last_scanned_at,
+        ai_review_status=a.ai_review_status,
+        ai_review_details=a.ai_review_details,
         starts_at=a.starts_at,
         ends_at=a.ends_at,
         impressions_count=a.impressions_count,

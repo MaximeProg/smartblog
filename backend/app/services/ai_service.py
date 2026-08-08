@@ -362,6 +362,72 @@ Return this exact JSON structure (fill every field with relevant content):
     return {"result": config, "tokens_used": tokens_used}
 
 
+# ─── Modération automatique du contenu publicitaire ───────────────
+
+_AD_MODERATION_SYSTEM_PROMPT = """You are the automated content moderator for SmarterBloggers' advertising \
+marketplace. You review a submitted ad (title, description, target link, and optionally an image) BEFORE \
+it goes live and BEFORE real money is paid out to the publisher and affiliates. Be strict: this decision is \
+final and unsupervised, nothing else reviews the ad if you approve it.
+
+Reject (flagged) any ad that:
+- promotes illegal goods/services, weapons, drugs (recreational or unlicensed pharma), counterfeit goods
+- contains adult/explicit sexual content, gambling aimed at minors, or extreme violence
+- is a scam, phishing attempt, fake giveaway, or makes deceptive/unverifiable claims (e.g. guaranteed returns)
+- promotes hateful, discriminatory, or harassing content
+- has an image that is misleading relative to the stated product/service, or contains explicit/violent imagery
+- is clearly spam or has no coherent commercial purpose
+
+Approve everything else, including ordinary product, service, blog, app, or brand advertising, even if the \
+copy is unpolished — polish is not a rejection criterion, policy violations are.
+
+Return ONLY a JSON object: {"verdict": "approve"|"flagged", "reason": "one sentence explaining the decision", \
+"concerns": ["short tag", ...]} — concerns is an empty list when approved."""
+
+
+async def moderate_ad_content(
+    title: str,
+    description: str | None,
+    click_url: str,
+    image_url: str | None = None,
+) -> dict:
+    """
+    Vérifie le contenu d'une pub avant publication automatique (voir
+    ads.py::_run_ai_moderation_and_maybe_autopublish). Ne lève JAMAIS —
+    toute erreur (quota, réseau, réponse invalide) doit être traitée par
+    l'appelant comme "pas d'auto-publication, revue manuelle requise",
+    jamais comme une approbation par défaut.
+    """
+    user_content: list[dict] = [{
+        "type": "text",
+        "text": (
+            f"Title: {title}\n"
+            f"Description: {description or '(none)'}\n"
+            f"Target link: {click_url}"
+        ),
+    }]
+    if image_url:
+        user_content.append({"type": "image_url", "image_url": {"url": image_url}})
+
+    try:
+        resp = await _oai().chat.completions.create(
+            model=settings.OPENAI_STRONG_MODEL,
+            messages=[
+                {"role": "system", "content": _AD_MODERATION_SYSTEM_PROMPT},
+                {"role": "user", "content": user_content},
+            ],
+            response_format={"type": "json_object"},
+            temperature=0,
+        )
+        import json
+        result = json.loads(resp.choices[0].message.content)
+        verdict = result.get("verdict")
+        if verdict not in ("approve", "flagged"):
+            return {"verdict": "flagged", "reason": "Unrecognized moderation response.", "concerns": ["moderation_error"]}
+        return result
+    except Exception as exc:
+        return {"verdict": "flagged", "reason": f"Moderation check failed: {exc}", "concerns": ["moderation_error"]}
+
+
 # ─── Remplissage IA des pages CMS plateforme (super admin) ────────
 
 # Même heuristique que PlatformPageJsonEditor.tsx côté frontend : une clé

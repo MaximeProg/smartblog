@@ -22,6 +22,17 @@ changement de owner ici), donc :
 Réversible instantanément si besoin : `ALTER ROLE ... SUPERUSER BYPASSRLS`
 annule ce changement sans aucun autre effet de bord.
 
+MAJ 2026-08-07 — échec réel constaté au déploiement : Postgres refuse de
+retirer SUPERUSER au rôle bootstrap (`rolname = POSTGRES_USER` de l'image
+Docker officielle) — `FeatureNotSupportedError: The bootstrap user must
+have the SUPERUSER attribute`. La transaction avait proprement roll-back
+(alembic_version restait à 069), mais laissée telle quelle cette migration
+bloquerait indéfiniment TOUTE migration suivante, y compris sans rapport
+avec RLS. Chantier RLS explicitement mis en pause par le PDG (nécessiterait
+un rôle applicatif dédié, distinct du bootstrap — voir 069) ; en attendant,
+la tentative reste ici (si un jour le rôle n'est plus le bootstrap user,
+elle s'applique normalement) mais un échec ne bloque plus la chaîne.
+
 Revision ID: 070
 Revises: 069
 Create Date: 2026-08-06
@@ -35,7 +46,14 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute("ALTER ROLE smarterbloggers NOSUPERUSER NOBYPASSRLS")
+    op.execute("""
+        DO $$
+        BEGIN
+            ALTER ROLE smarterbloggers NOSUPERUSER NOBYPASSRLS;
+        EXCEPTION WHEN OTHERS THEN
+            RAISE NOTICE 'Migration 070 skipped: % (RLS step 3 stays pending — see docstring)', SQLERRM;
+        END $$;
+    """)
 
 
 def downgrade() -> None:
