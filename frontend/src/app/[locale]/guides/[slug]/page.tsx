@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
@@ -20,21 +21,13 @@ interface GuideContent {
   next: { title: string; description: string };
 }
 
-const FALLBACK: GuideContent = {
-  hero: {
-    title: 'Creating your account & signing in',
-    subtitle: "Everything you need to know before you start publishing on SmarterBloggers.",
-  },
-  sections: [],
-  next: { title: "What's next?", description: '' },
-};
-
-export default async function AuthenticationGuidePage({
+export default async function GuideDetailPage({
   params,
-}: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  const cms = (await getPlatformPage('guide-authentication', locale)) as GuideContent | null;
-  const c = cms ?? FALLBACK;
+}: { params: Promise<{ locale: string; slug: string }> }) {
+  const { locale, slug } = await params;
+  const cms = (await getPlatformPage(`guide-${slug}`, locale)) as GuideContent | null;
+  if (!cms) notFound();
+  const c = cms;
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white antialiased transition-colors">
