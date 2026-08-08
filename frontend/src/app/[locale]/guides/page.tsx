@@ -1,4 +1,4 @@
-import { Clock, ArrowRight, BookOpen, Rocket, Users, BarChart2, Globe2, Palette, type LucideIcon } from 'lucide-react';
+import { Clock, ArrowRight, BookOpen, Rocket, Users, BarChart2, Globe2, Palette, KeyRound, type LucideIcon } from 'lucide-react';
 import { PublicNav } from '@/components/marketing/PublicNav';
 import { PublicFooter } from '@/components/marketing/PublicFooter';
 import { PageHero } from '@/components/marketing/PageHero';
@@ -7,18 +7,22 @@ import { getPlatformPage } from '@/lib/platform-api';
 export const dynamic = 'force-dynamic';
 
 const ICONS: Record<string, LucideIcon> = {
-  rocket: Rocket, bookopen: BookOpen, users: Users, barchart2: BarChart2, palette: Palette, globe2: Globe2,
+  rocket: Rocket, bookopen: BookOpen, users: Users, barchart2: BarChart2, palette: Palette, globe2: Globe2, keyround: KeyRound,
 };
 
 const ICON_COLORS: Record<string, string> = {
   rocket: 'bg-blue-500/10 text-blue-500', bookopen: 'bg-violet-500/10 text-violet-500',
   users: 'bg-cyan-500/10 text-cyan-500', barchart2: 'bg-emerald-500/10 text-emerald-500',
   palette: 'bg-orange-500/10 text-orange-500', globe2: 'bg-pink-500/10 text-pink-500',
+  keyround: 'bg-indigo-500/10 text-indigo-500',
 };
 
 const FALLBACK = {
   hero: { title: 'Guides', subtitle: 'Everything you need to get the most out of SmarterBloggers.' },
   categories: [
+    { icon: 'keyround', title: 'Account & Sign-in', guides: [
+      { title: 'Creating your account & signing in', time: '4 min', href: 'guides/authentication' },
+    ] },
     { icon: 'rocket', title: 'Getting Started', guides: [
       { title: 'Create your first blog in 5 minutes', time: '5 min' },
       { title: 'Setting up your custom domain', time: '8 min' },
@@ -83,10 +87,10 @@ export default async function GuidesPage({
                   <h2 className="font-bold text-lg">{title}</h2>
                 </div>
                 <div className="space-y-1">
-                  {guides.map(({ title: gt, time }) => (
+                  {guides.map(({ title: gt, time, href }: { title: string; time: string; href?: string }) => (
                     <a
                       key={gt}
-                      href={`/${locale}/contact?subject=${encodeURIComponent(`Question about: ${gt}`)}`}
+                      href={href ? `/${locale}/${href}` : `/${locale}/contact?subject=${encodeURIComponent(`Question about: ${gt}`)}`}
                       className="group flex items-center justify-between gap-4 px-4 py-3.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
                     >
                       <span className="text-sm text-slate-700 dark:text-slate-300 group-hover:text-blue-500 transition-colors">
