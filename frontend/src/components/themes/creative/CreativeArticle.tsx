@@ -132,7 +132,11 @@ export default function CreativeArticle({
               <div className="flex items-center gap-4 text-white/60 text-sm flex-wrap">
                 {article.author_name && (
                   <span className="flex items-center gap-2">
-                    <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black text-white">{initials(article.author_name)}</span>
+                    {article.author_avatar_url ? (
+                      <img src={article.author_avatar_url} alt={article.author_name} className="w-7 h-7 rounded-full object-cover" />
+                    ) : (
+                      <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black text-white">{initials(article.author_name)}</span>
+                    )}
                     {article.author_name}
                   </span>
                 )}
@@ -182,9 +186,13 @@ export default function CreativeArticle({
             <div className="flex items-center gap-4 text-white/60 text-sm flex-wrap">
               {article.author_name && (
                 <span className="flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black text-white">
-                    {initials(article.author_name)}
-                  </span>
+                  {article.author_avatar_url ? (
+                    <img src={article.author_avatar_url} alt={article.author_name} className="w-7 h-7 rounded-full object-cover" />
+                  ) : (
+                    <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black text-white">
+                      {initials(article.author_name)}
+                    </span>
+                  )}
                   {article.author_name}
                 </span>
               )}
@@ -223,9 +231,13 @@ export default function CreativeArticle({
             <div className="flex items-center gap-4 text-white/60 text-sm flex-wrap">
               {article.author_name && (
                 <span className="flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black text-white">
-                    {initials(article.author_name)}
-                  </span>
+                  {article.author_avatar_url ? (
+                    <img src={article.author_avatar_url} alt={article.author_name} className="w-7 h-7 rounded-full object-cover" />
+                  ) : (
+                    <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center text-[10px] font-black text-white">
+                      {initials(article.author_name)}
+                    </span>
+                  )}
                   {article.author_name}
                 </span>
               )}

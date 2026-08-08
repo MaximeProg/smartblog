@@ -213,9 +213,13 @@ export default function EditorialArticle({
         )}
 
         <div className="flex items-center gap-4 py-5 border-y border-zinc-100">
-          <div className="h-11 w-11 rounded-full bg-zinc-900 text-white text-xs font-bold flex items-center justify-center shrink-0">
-            {initials(article.author_name)}
-          </div>
+          {article.author_avatar_url ? (
+            <img src={article.author_avatar_url} alt={article.author_name || ''} className="h-11 w-11 rounded-full object-cover shrink-0" />
+          ) : (
+            <div className="h-11 w-11 rounded-full bg-zinc-900 text-white text-xs font-bold flex items-center justify-center shrink-0">
+              {initials(article.author_name)}
+            </div>
+          )}
           <div>
             <p className="font-semibold text-zinc-900 text-sm">{article.author_name || blog.name}</p>
             <p className="text-xs text-zinc-400">{t('authorLabel')} · {blog.name}</p>

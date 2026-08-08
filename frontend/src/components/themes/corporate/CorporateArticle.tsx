@@ -274,10 +274,14 @@ export default function CorporateArticle({
             <div className="flex items-center gap-4 py-4 border-y border-slate-100 flex-wrap">
               {article.author_name && (
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl flex items-center justify-center text-white font-black text-base shrink-0"
-                    style={{ backgroundColor: primaryColor }}>
-                    {article.author_name[0]?.toUpperCase()}
-                  </div>
+                  {article.author_avatar_url ? (
+                    <img src={article.author_avatar_url} alt={article.author_name} className="h-10 w-10 rounded-xl object-cover shrink-0" />
+                  ) : (
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center text-white font-black text-base shrink-0"
+                      style={{ backgroundColor: primaryColor }}>
+                      {article.author_name[0]?.toUpperCase()}
+                    </div>
+                  )}
                   <div>
                     <p className="text-[10px] text-slate-400 uppercase tracking-wider leading-none mb-0.5">Auteur</p>
                     <p className="font-bold text-slate-800 text-sm leading-none">{article.author_name}</p>
@@ -419,10 +423,14 @@ export default function CorporateArticle({
           {article.author_name && (
             <div className="mt-12 pt-8 border-t border-slate-100">
               <div className="flex gap-5 items-start bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                <div className="h-16 w-16 rounded-2xl flex items-center justify-center text-white font-black text-2xl shrink-0 shadow"
-                  style={{ backgroundColor: primaryColor }}>
-                  {article.author_name[0]?.toUpperCase()}
-                </div>
+                {article.author_avatar_url ? (
+                  <img src={article.author_avatar_url} alt={article.author_name} className="h-16 w-16 rounded-2xl object-cover shrink-0 shadow" />
+                ) : (
+                  <div className="h-16 w-16 rounded-2xl flex items-center justify-center text-white font-black text-2xl shrink-0 shadow"
+                    style={{ backgroundColor: primaryColor }}>
+                    {article.author_name[0]?.toUpperCase()}
+                  </div>
+                )}
                 <div className="flex-1">
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{t('aboutAuthor')}</p>
                   <h3 className="font-black text-slate-900 text-xl mb-2">{article.author_name}</h3>

@@ -99,6 +99,7 @@ class PublicArticle(BaseModel):
     article_type: str | None
     video_url: str | None
     author_name: str | None
+    author_avatar_url: str | None = None
     category_slug: str | None
     category_name: str | None
     tags: list[str]
@@ -791,6 +792,7 @@ async def sitemap(slug: str, db: DBSession):
 
 def _to_public(a: Article) -> PublicArticle:
     author_name = a.author.display_name if a.author else None
+    author_avatar_url = a.author.avatar_url if a.author else None
     category_slug = a.category.slug if a.category else None
     category_name = a.category.name if a.category else None
     return PublicArticle(
@@ -802,6 +804,7 @@ def _to_public(a: Article) -> PublicArticle:
         article_type=a.article_type.value if getattr(a, 'article_type', None) else None,
         video_url=getattr(a, 'video_url', None),
         author_name=author_name,
+        author_avatar_url=author_avatar_url,
         category_slug=category_slug,
         category_name=category_name,
         tags=[],

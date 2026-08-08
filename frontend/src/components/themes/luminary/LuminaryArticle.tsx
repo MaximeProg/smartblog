@@ -213,9 +213,13 @@ export default function LuminaryArticle({
         )}
 
         <div className="flex items-center gap-4 py-5 border-t border-b border-zinc-200">
-          <div className="h-10 w-10 rounded-full bg-zinc-900 text-white text-xs font-bold font-sans flex items-center justify-center shrink-0">
-            {initials(article.author_name)}
-          </div>
+          {article.author_avatar_url ? (
+            <img src={article.author_avatar_url} alt={article.author_name || ''} className="h-10 w-10 rounded-full object-cover shrink-0" />
+          ) : (
+            <div className="h-10 w-10 rounded-full bg-zinc-900 text-white text-xs font-bold font-sans flex items-center justify-center shrink-0">
+              {initials(article.author_name)}
+            </div>
+          )}
           <div>
             <p className="font-sans font-semibold text-sm text-zinc-900 leading-tight">
               {article.author_name || blog.name}
@@ -316,9 +320,13 @@ export default function LuminaryArticle({
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-16">
         <div className="bg-zinc-950 p-8 flex items-start gap-5">
-          <div className="h-12 w-12 rounded-full bg-zinc-700 text-white text-sm font-bold font-sans flex items-center justify-center shrink-0">
-            {initials(article.author_name)}
-          </div>
+          {article.author_avatar_url ? (
+            <img src={article.author_avatar_url} alt={article.author_name || ''} className="h-12 w-12 rounded-full object-cover shrink-0" />
+          ) : (
+            <div className="h-12 w-12 rounded-full bg-zinc-700 text-white text-sm font-bold font-sans flex items-center justify-center shrink-0">
+              {initials(article.author_name)}
+            </div>
+          )}
           <div>
             <p className="font-sans text-[10px] uppercase tracking-widest text-zinc-500 mb-1">
               {t('authorLabel')}

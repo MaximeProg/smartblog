@@ -140,11 +140,15 @@ export default function MagazineArticle({
             )}
 
             <div className="flex items-center gap-3 py-4 border-y border-zinc-200">
-              <div
-                className="h-10 w-10 rounded-full font-black text-white text-sm flex items-center justify-center shrink-0 bg-zinc-800"
-              >
-                {initials(article.author_name)}
-              </div>
+              {article.author_avatar_url ? (
+                <img src={article.author_avatar_url} alt={article.author_name || ''} className="h-10 w-10 rounded-full object-cover shrink-0" />
+              ) : (
+                <div
+                  className="h-10 w-10 rounded-full font-black text-white text-sm flex items-center justify-center shrink-0 bg-zinc-800"
+                >
+                  {initials(article.author_name)}
+                </div>
+              )}
               <div>
                 <p className="font-bold text-zinc-900 text-sm">{article.author_name || blog.name}</p>
                 <p className="text-xs text-zinc-400">{blog.name}</p>

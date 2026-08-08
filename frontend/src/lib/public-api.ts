@@ -70,6 +70,7 @@ export interface PublicArticle {
   article_type: 'article' | 'photo' | 'video' | 'audio' | 'podcast' | 'mixed' | null;
   video_url: string | null;
   author_name: string | null;
+  author_avatar_url: string | null;
   category_slug: string | null;
   category_name: string | null;
   tags: string[];
