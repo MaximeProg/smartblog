@@ -639,13 +639,24 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
     # en dessous, NowPayments rejette silencieusement le virement (voir
     # MIN_CASHOUT ci-dessus). Une seule commission peut suffire à franchir le
     # seuil, ou plusieurs petites commissions accumulées au fil du temps.
+    # Isolé dans son propre try/except : avant le 2026-08-09, une exception
+    # ici (ex: NowPayments) remontait jusqu'à l'appelant partagé
+    # (_activate_ad_and_distribute_commissions, dont le except englobant
+    # avale déjà tout), ce qui empêchait la notification ci-dessous de
+    # s'exécuter — l'utilisateur ne voyait ni le payout ni même le crédit.
     if new_balance >= MIN_CASHOUT:
-        await _trigger_auto_payout_for_user(db, user)
+        try:
+            await _trigger_auto_payout_for_user(db, user)
+        except Exception:
+            logger.exception(
+                "Échec du déclenchement de l'auto-payout pour user=%s (balance=%s)",
+                user.id, new_balance,
+            )
 
-    # Email de notification
+    # Email + notification in-app — isolés l'un de l'autre pour qu'un échec
+    # d'email (Resend down/quota) n'empêche pas la notification in-app.
     try:
         from app.services.email_service import send_affiliate_commission_notification
-        from app.services.notification_service import notify_user
         affiliate_dashboard_url = f"{settings.FRONTEND_URL}/affiliate"
         await send_affiliate_commission_notification(
             to=user.email,
@@ -656,6 +667,11 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
             level=level,
             dashboard_url=affiliate_dashboard_url,
         )
+    except Exception:
+        logger.exception("Échec de l'email de commission pour user=%s", user.id)
+
+    try:
+        from app.services.notification_service import notify_user
         await notify_user(
             db, user.id, type="success", category="affiliate",
             title="Affiliate commission credited",
@@ -664,7 +680,7 @@ async def _accrue_commission(db, affiliate_user_id, source_user_id, source_type,
         )
         await db.commit()
     except Exception:
-        pass
+        logger.exception("Échec de la notification in-app de commission pour user=%s", user.id)
 
 
 async def _trigger_auto_payout_for_user(db, user: User):
